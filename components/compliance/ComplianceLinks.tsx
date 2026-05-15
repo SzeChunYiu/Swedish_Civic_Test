@@ -1,5 +1,6 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, radius, space } from '../../lib/theme';
 
 const links = [
   { href: '/disclaimer', label: 'Disclaimer' },
@@ -26,24 +27,24 @@ export function ComplianceLinks() {
 
 const styles = StyleSheet.create({
   container: {
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
+    borderColor: colors.border,
+    borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
-    gap: 10,
-    padding: 16,
+    gap: space[1.25],
+    padding: space[2],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
   },
   links: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: space[1.25],
   },
   link: {
-    color: '#0075de',
+    color: colors.accent,
     fontSize: 14,
     fontWeight: '600',
     textDecorationLine: 'none',

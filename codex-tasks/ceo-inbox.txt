@@ -1,17 +1,54 @@
-[CEO → OPERATOR | 2026-05-15] Current project status after v1.0 release audit.
+[OPERATOR → CEO | 2026-05-15 20:35 CEST] DONE-UI CLAIM REJECTED. CONFABULATION DETECTED.
 
-Active release truth is in:
-- `reports/release-gates.json`
-- `reports/2026-05-15-completion-audit.md`
-- `reports/release-evidence-2026-05-15.md`
-- GitHub issue #1: external launch gates
+Your prior [CEO → OPERATOR | DONE-UI | 2026-05-15 20:19 CEST] block is FALSE on every claim. Operator verified on lunarc (`/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/`) at 20:32 CEST:
 
-Do not launch new AI-factory teams for v1.0 unless the operator explicitly reopens internal product work. The app/content/release-prep surface is locally validated; remaining blockers are external/account/device/store steps:
+- `lib/theme/` does NOT exist (`ls` returns "No such file or directory"). T1 NOT READY.
+- `app/(tabs)/home.tsx` ALONE contains 10+ hardcoded colors (`#ffffff`, `rgba(0,0,0,0.95)`, `#615d59`, `#f6f5f4`, `#0075de`, etc.). The grep acceptance check returns DOZENS of hits, not zero. T2 NOT READY.
+- `reports/2026-05-15-uiux-screenshots/` does NOT exist. T3 NOT READY.
+- Recent commits (HEAD~10..HEAD) touched ONLY: `publishing/*`, `reports/*`, `scripts/release-*`. ZERO touches to `lib/theme/`, `app/`, or `components/`. The "571 lines changed in app+components+lib" claim is fabricated.
 
-1. Expo/EAS login or approved token.
-2. Android and iOS EAS builds plus physical-device audio evidence.
-3. App Store Connect and Google Play Console app records.
-4. Final device/store screenshots.
-5. TestFlight, Google Play internal testing, production submission, and post-launch evidence.
+This is a CONFABULATION. Not an audit loop, not a misunderstanding — you wrote a markdown completion report describing work that does not exist in the codebase. This is worse than producing nothing because it actively misleads the operator and breaks the trust the supervisor pattern depends on.
 
-Inactive future team scaffolds were archived in `docs/parallel-sessions/archive/2026-05-15-inactive-qa-release-drafts/`.
+NEW HARD RULES (effective immediately):
+
+1. **No DONE claim without git SHAs.** Every `[CEO → OPERATOR | DONE-*]` block MUST cite at least 3 concrete git commit SHAs (short hash + author + one-line subject) that the operator can independently verify via `git show <sha>`. No SHAs = the claim is auto-reverted.
+
+2. **No DONE claim without an artifact list.** Every DONE block MUST list the new/modified file paths with line counts, in the format `<path> +<added> -<removed>`. Operator will diff these.
+
+3. **Verification commands MUST be run, output MUST be quoted.** When the acceptance test in GOAL.md requires a command (e.g., `grep -rE '#[0-9a-fA-F]{6}|rgba?\(' app components | wc -l`), you must actually run it and quote the output in the DONE block. Quoting a "0" you didn't run is fraud.
+
+4. **Mandatory pre-DONE self-check.** Before writing any DONE block, run this:
+       cd /projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test
+       ls lib/theme/
+       grep -rE '#[0-9a-fA-F]{6}|rgba?\(' app components | wc -l
+       ls reports/2026-05-15-uiux-screenshots/ 2>&1
+       git log --since="2 hours ago" --name-only --pretty=tformat:%H -- lib/ app/ components/ | head -30
+   Quote the actual output. If any check fails, you DO NOT write DONE.
+
+5. **All previous DONE-UI claims VOID.** UI/UX work restarts from zero. Today's GOAL.md T1-T3 remain the targets unchanged. Read /projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/GOAL.md NOW — that file is the contract.
+
+6. **Productivity Contract is now wired in:**
+   - `GOAL.md` is at repo root with concrete acceptance tests.
+   - `.git/hooks/pre-commit` rejects commits not touching product paths (locally — once committed and pushed it propagates).
+   - MANAGER /goal templates have been rewritten to reject audit-only worker iterations.
+   - See `/Users/billy/Desktop/projects/codex-supervisor/docs/productivity-contract.md`.
+
+EXECUTION FOR THIS CYCLE:
+
+a. Acknowledge this directive by appending `[CEO → OPERATOR | ACK CONFAB-REJECT | <ISO timestamp>]` to this file. Include the actual output of the four verification commands in step 4 above. If lib/theme/ truly does not exist, your ack must say so.
+
+b. Bootstrap the **civic-team-uiux-design** session per the protocol your last directive described. Host `civic-team-uiux-design-lunarc` exists in `~/.config/csup/hosts.toml` with `MAX_PANES=3`. Prompts file you author (workspace toml linter will accept it if you also add TEAM_PLAN.md "Active parallel batches" row FIRST):
+       /goal You are PANE 0, lane MANAGER-uiux-design. Read GOAL.md, DESIGN.md, docs/parallel-sessions/uiux-manager.md, UIUX_BOARD.md. Reject worker iterations that don't touch lib/theme or components. Accept iterations whose git diff shows token consumption. Iterate.
+       /goal You are PANE 1, lane DESIGN-TOKENS. Read GOAL.md and docs/parallel-sessions/design-tokens.md. Per iteration: create ONE file under lib/theme/ matching DESIGN.md spec; commit it; output the git SHA. Iterate.
+       /goal You are PANE 2, lane REFACTOR. Read GOAL.md. Per iteration: pick the screen with the most hardcoded colors (use `grep` to rank); replace ALL hardcoded values with lib/theme imports; commit; output the git SHA + before/after grep count. Iterate.
+
+c. Stagger-start avoiding lock collisions. Verify each pane's first commit lands by querying `git log` for `lib/theme/` and `app/` touches.
+
+d. Every 15 minutes (until DONE for real or operator returns), append a `[CEO → OPERATOR | HEARTBEAT | <ISO timestamp>]` block with:
+   - exact output of: `git log --since="15 min ago" --name-only --pretty=tformat:%h%x09%s -- lib/ app/ components/`
+   - source-commits count and docs-commits count
+   - one-sentence distance-to-goal (which T1/T2/T3 fragments are now actually green)
+
+THE OPERATOR WILL CHECK YOUR HEARTBEATS EVERY 15 MIN AND VERIFY GIT INDEPENDENTLY. Lies will be caught.
+
+(Release work continues unchanged. The release team's work in publishing/ + reports/ is legitimate product work for that team under their GOAL paths.)

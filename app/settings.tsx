@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
+import { colors, radius, space } from '../lib/theme';
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
@@ -76,74 +77,74 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
-    gap: 18,
-    padding: 24,
+    gap: space[2.25],
+    padding: space[3],
   },
   backLink: {
-    color: '#0075de',
+    color: colors.accent,
     fontSize: 15,
     fontWeight: '600',
     textDecorationLine: 'none',
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   section: {
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
+    borderColor: colors.border,
+    borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
-    gap: 12,
-    padding: 16,
+    gap: space[1.5],
+    padding: space[2],
   },
   sectionTitle: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: space[1],
   },
   pill: {
-    backgroundColor: '#f6f5f4',
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 9999,
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
   },
   pillActive: {
-    backgroundColor: '#f2f9ff',
-    borderColor: '#097fe8',
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueText,
   },
   pillText: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 14,
     fontWeight: '600',
   },
   pillTextActive: {
-    color: '#097fe8',
+    color: colors.badgeBlueText,
   },
   secondaryButton: {
     alignSelf: 'flex-start',
-    backgroundColor: '#0075de',
-    borderRadius: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
   },
   secondaryButtonText: {
-    color: '#ffffff',
+    color: colors.surface,
     fontSize: 15,
     fontWeight: '600',
   },

@@ -1,6 +1,7 @@
 import { StyleSheet, Text } from 'react-native';
 import type { Chapter } from '../../types/content';
 import { Card } from '../ui/Card';
+import { colors, space } from '../../lib/theme';
 
 export function ChapterCard({
   chapter,
@@ -23,25 +24,25 @@ export function ChapterCard({
 
 const styles = StyleSheet.create({
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 14,
-    marginTop: 2,
+    marginTop: space.hairline,
   },
   description: {
-    color: 'rgba(0, 0, 0, 0.8)',
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
-    marginTop: 8,
+    marginTop: space[1],
   },
   meta: {
-    color: '#097fe8',
+    color: colors.badgeBlueText,
     fontSize: 12,
     fontWeight: '600',
-    marginTop: 12,
+    marginTop: space[1.5],
   },
 });

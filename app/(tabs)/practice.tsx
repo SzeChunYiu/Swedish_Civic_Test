@@ -14,6 +14,7 @@ import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { colors, radius, space } from '../../lib/theme';
 
 export default function Screen() {
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
@@ -83,48 +84,48 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
   },
   content: {
-    gap: 16,
-    padding: 24,
+    gap: space[2],
+    padding: space[3],
   },
   emptyContainer: {
     flex: 1,
-    padding: 24,
+    padding: space[3],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   meta: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 14,
   },
   options: {
-    gap: 8,
+    gap: space[1],
   },
   feedback: {
-    gap: 12,
+    gap: space[1.5],
   },
   score: {
-    color: '#1aae39',
+    color: colors.success,
     fontSize: 16,
     fontWeight: '700',
   },
   tryAgain: {
     alignSelf: 'flex-start',
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 4,
+    borderColor: colors.border,
+    borderRadius: radius.micro,
     borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
   },
   tryAgainText: {
-    color: '#0075de',
+    color: colors.accent,
     fontSize: 15,
     fontWeight: '600',
   },

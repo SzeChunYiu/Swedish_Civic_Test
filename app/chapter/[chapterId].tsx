@@ -6,6 +6,7 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
+import { colors, space } from '../../lib/theme';
 
 export default function ChapterScreen() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
@@ -52,56 +53,56 @@ export default function ChapterScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
   },
   content: {
-    gap: 14,
-    padding: 24,
+    gap: space[1.75],
+    padding: space[3],
   },
   centered: {
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
-    gap: 12,
+    gap: space[1.5],
     justifyContent: 'center',
-    padding: 24,
+    padding: space[3],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   description: {
-    color: 'rgba(0, 0, 0, 0.8)',
+    color: colors.textSecondary,
     fontSize: 16,
     lineHeight: 24,
   },
   sectionTitle: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 20,
     fontWeight: '700',
-    marginTop: 8,
+    marginTop: space[1],
   },
   list: {
-    gap: 16,
+    gap: space[2],
   },
   questionBlock: {
-    gap: 8,
+    gap: space[1],
   },
   empty: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
   },
   link: {
-    color: '#0075de',
+    color: colors.accent,
     fontSize: 15,
     fontWeight: '600',
     textDecorationLine: 'none',

@@ -7,6 +7,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { colors, radius, space } from '../../lib/theme';
 
 export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
@@ -51,61 +52,61 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
   },
   content: {
-    gap: 16,
-    padding: 24,
+    gap: space[2],
+    padding: space[3],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   list: {
-    gap: 16,
+    gap: space[2],
   },
   questionBlock: {
-    gap: 8,
+    gap: space[1],
   },
   meta: {
-    color: '#dd5b00',
+    color: colors.warning,
     fontSize: 14,
     fontWeight: '600',
   },
   emptyCard: {
-    backgroundColor: '#f6f5f4',
-    borderRadius: 12,
-    gap: 8,
-    padding: 16,
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    gap: space[1],
+    padding: space[2],
   },
   emptyTitle: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
   },
   emptyText: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
   },
   practiceLink: {
     alignSelf: 'flex-start',
-    backgroundColor: '#0075de',
-    borderRadius: 4,
-    color: '#ffffff',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
     fontSize: 15,
     fontWeight: '600',
-    marginTop: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    marginTop: space[1],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
   },
 });

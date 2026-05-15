@@ -5,6 +5,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
 import { formatExamTime, generateExam, scoreExam } from '../../lib/quiz/examGenerator';
+import { colors, radius, space } from '../../lib/theme';
 
 export default function Screen() {
   const examQuestions = useMemo(
@@ -117,127 +118,127 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
   },
   content: {
-    gap: 16,
-    padding: 24,
+    gap: space[2],
+    padding: space[3],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   sectionTitle: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
   },
   progressCard: {
-    backgroundColor: '#f6f5f4',
-    borderRadius: 12,
-    gap: 4,
-    padding: 16,
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    gap: space[0.5],
+    padding: space[2],
   },
   questionCard: {
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
+    borderColor: colors.border,
+    borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
-    gap: 12,
-    padding: 16,
+    gap: space[1.5],
+    padding: space[2],
   },
   questionMeta: {
-    color: '#097fe8',
+    color: colors.badgeBlueText,
     fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
   },
   questionText: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
     lineHeight: 24,
   },
   options: {
-    gap: 8,
+    gap: space[1],
   },
   option: {
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 8,
+    borderColor: colors.border,
+    borderRadius: radius.small,
     borderWidth: StyleSheet.hairlineWidth,
-    padding: 12,
+    padding: space[1.5],
   },
   optionSelected: {
-    backgroundColor: '#f2f9ff',
-    borderColor: '#097fe8',
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueText,
   },
   optionText: {
-    color: 'rgba(0, 0, 0, 0.9)',
+    color: colors.textSoft,
     fontSize: 15,
   },
   optionTextSelected: {
-    color: '#097fe8',
+    color: colors.badgeBlueText,
     fontWeight: '700',
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#0075de',
-    borderRadius: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.5],
   },
   primaryButtonDisabled: {
     opacity: 0.45,
   },
   primaryButtonText: {
-    color: '#ffffff',
+    color: colors.surface,
     fontSize: 15,
     fontWeight: '700',
   },
   resultCard: {
-    backgroundColor: '#f6f5f4',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    padding: space[2],
   },
   metric: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 40,
     fontWeight: '700',
   },
   breakdownRow: {
     alignItems: 'center',
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 8,
+    borderColor: colors.border,
+    borderRadius: radius.small,
     borderWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 12,
+    padding: space[1.5],
   },
   breakdownChapter: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '700',
   },
   breakdownScore: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 15,
   },
   secondaryButton: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    borderRadius: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
   },
   secondaryButtonText: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '600',
   },

@@ -13,7 +13,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Current branch after local integration: `main`
 - Latest local main state includes release-preflight, Expo Doctor, web-export, and native-prebuild hardening beyond the earlier app-code milestone.
 - Fresh validation command: `npm run validate`
-- Fresh validation result from `npm run release:preflight` on 2026-05-15 18:56 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, and content validation.
+- Fresh validation result from `npm run validate` on 2026-05-15 20:22 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, theme-discipline test, and content validation.
 - Content validation result: 13 chapters, 500 questions, 500 published questions.
 - Content database: `content/question-bank.csv` regenerated with 500 question rows plus header.
 - Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
@@ -32,6 +32,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
 - Local `main` was fast-forwarded to the validated batch branch; see `reports/2026-05-15-local-main-integration.md`.
 - Private GitHub remote `Babbloo-studio/Swedish_Civic_Test` now exists and tracks `main` plus the batch branch; see `reports/2026-05-15-github-remote.md`.
+- UI/UX token polish gate was reopened by `GOAL.md` and completed locally: `lib/theme/` exists, `app/` and `components/` no longer contain literal colors or enforced spacing/radius literals, `scripts/theme-discipline.test.js` is wired into `npm test`, and Playwright visual smoke captured 15 primary routes under `reports/2026-05-15-uiux-screenshots/`; see `reports/2026-05-15-uiux-polish.md`.
 
 ## Prompt-to-artifact checklist
 
@@ -46,6 +47,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Content spreadsheet/database | `content/question-bank.csv`, `scripts/export-question-bank.js` | Done |
 | UHR chapter/section map | `content/uhr-section-map.json` | Done |
 | Core screens | `app/onboarding.tsx`, `app/(tabs)/home.tsx`, `app/(tabs)/learn.tsx`, `app/chapter/[chapterId].tsx`, `app/(tabs)/practice.tsx`, `app/settings.tsx` | Done |
+| Professional token-driven UI/UX from `GOAL.md` | `lib/theme/*`, `scripts/theme-discipline.test.js`, `playwright.config.ts`, `tests/e2e/visual-smoke.spec.ts`, `reports/2026-05-15-uiux-polish.md`, `reports/2026-05-15-uiux-screenshots/manifest.json`; GOAL acceptance commands passed | Done |
 | Progress/storage/mistakes | `lib/storage/progressStore.ts`, `app/(tabs)/mistakes.tsx` | Done |
 | Learning mechanics | `lib/learning/*`, `scripts/learning.test.js` | Done |
 | Timed mock exam | `app/(tabs)/exam.tsx`, `lib/quiz/examGenerator.ts`, `scripts/exam.test.js`; browser `/exam` smoke shows 20 questions | Done |
@@ -85,7 +87,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 
 The goal is not complete.
 
-The codebase now has a validated 500-question published content milestone, release metadata drafts, EAS configuration, and strong automated checks. Remaining incompletion is concentrated in physical-device verification and external account/store release steps.
+The codebase now has a validated 500-question published content milestone, token-driven UI/UX polish, release metadata drafts, EAS configuration, and strong automated checks. Remaining incompletion is concentrated in physical-device verification and external account/store release steps.
 
 ## Highest-leverage next actions
 

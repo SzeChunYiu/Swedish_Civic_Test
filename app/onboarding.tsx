@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
+import { colors, radius, space } from '../lib/theme';
 
 const steps = [
   'Study Swedish civic concepts with English support when needed.',
@@ -43,51 +44,51 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
-    gap: 18,
+    gap: space[2.25],
     justifyContent: 'center',
-    padding: 24,
+    padding: space[3],
   },
   eyebrow: {
-    color: '#097fe8',
+    color: colors.badgeBlueText,
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 0.125,
     textTransform: 'uppercase',
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 32,
     fontWeight: '700',
     letterSpacing: -0.625,
     lineHeight: 38,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   steps: {
-    gap: 12,
+    gap: space[1.5],
   },
   stepRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
+    gap: space[1.5],
   },
   stepNumber: {
-    backgroundColor: '#f2f9ff',
-    borderRadius: 9999,
-    color: '#097fe8',
+    backgroundColor: colors.badgeBlueBg,
+    borderRadius: radius.pill,
+    color: colors.badgeBlueText,
     fontSize: 12,
     fontWeight: '700',
     overflow: 'hidden',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.75],
   },
   stepText: {
-    color: 'rgba(0, 0, 0, 0.8)',
+    color: colors.textSecondary,
     flex: 1,
     fontSize: 15,
     lineHeight: 22,
@@ -95,26 +96,26 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: space[1.5],
   },
   primaryLink: {
-    backgroundColor: '#0075de',
-    borderRadius: 4,
-    color: '#ffffff',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
     fontSize: 15,
     fontWeight: '600',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
   },
   secondaryLink: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    borderRadius: 4,
-    color: 'rgba(0, 0, 0, 0.95)',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
     fontSize: 15,
     fontWeight: '600',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
   },
 });

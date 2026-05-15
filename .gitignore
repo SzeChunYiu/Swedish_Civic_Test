@@ -10,3 +10,5 @@ csup-*.log
 .sync-backups/
 dist-web/
 tmp/
+test-results/
+playwright-report/

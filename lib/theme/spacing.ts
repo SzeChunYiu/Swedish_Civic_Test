@@ -1,0 +1,22 @@
+/** Organic 8px-based spacing scale from DESIGN.md. */
+export const space = {
+  hairline: 2,
+  micro: 3,
+  0: 0,
+  0.5: 4,
+  0.75: 6,
+  1: 8,
+  1.25: 10,
+  1.5: 12,
+  1.75: 14,
+  2: 16,
+  2.25: 18,
+  3: 24,
+  4: 32,
+  5: 40,
+  6: 48,
+  8: 64,
+  10: 80,
+  12: 96,
+  15: 120,
+} as const;

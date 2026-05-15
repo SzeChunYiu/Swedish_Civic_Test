@@ -1,6 +1,7 @@
 import { StyleSheet, Text } from 'react-native';
 import type { PracticeQuestion } from '../../types/content';
 import { Card } from '../ui/Card';
+import { colors, space } from '../../lib/theme';
 
 export function QuestionCard({ question }: { question?: PracticeQuestion }) {
   return (
@@ -14,22 +15,22 @@ export function QuestionCard({ question }: { question?: PracticeQuestion }) {
 
 const styles = StyleSheet.create({
   label: {
-    color: '#097fe8',
+    color: colors.badgeBlueText,
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
   },
   question: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
     lineHeight: 24,
-    marginTop: 6,
+    marginTop: space[0.75],
   },
   translation: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 14,
     lineHeight: 20,
-    marginTop: 8,
+    marginTop: space[1],
   },
 });

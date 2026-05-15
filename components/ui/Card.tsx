@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import type { ComponentProps, PropsWithChildren } from 'react';
+import { colors, radius, space } from '../../lib/theme';
 
 type CardProps = PropsWithChildren<ComponentProps<typeof View>>;
 
@@ -13,10 +14,10 @@ export function Card({ children, style, ...viewProps }: CardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
-    padding: 16,
+    padding: space[2],
   },
 });

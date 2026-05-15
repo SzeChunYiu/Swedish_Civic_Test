@@ -9,6 +9,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { colors, radius, space } from '../../lib/theme';
 
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
@@ -84,62 +85,62 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
-    gap: 16,
-    padding: 24,
+    gap: space[2],
+    padding: space[3],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: space[1.5],
   },
   card: {
-    backgroundColor: '#f6f5f4',
-    borderRadius: 12,
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
     flex: 1,
-    gap: 4,
-    padding: 16,
+    gap: space[0.5],
+    padding: space[2],
   },
   cardWide: {
-    backgroundColor: '#f6f5f4',
-    borderRadius: 12,
-    gap: 4,
-    padding: 16,
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    gap: space[0.5],
+    padding: space[2],
   },
   metric: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 32,
     fontWeight: '700',
   },
   value: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
   },
   label: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 14,
   },
   settingsLink: {
     alignSelf: 'flex-start',
-    backgroundColor: '#0075de',
-    borderRadius: 4,
-    color: '#ffffff',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
     fontSize: 15,
     fontWeight: '600',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
   },
 });

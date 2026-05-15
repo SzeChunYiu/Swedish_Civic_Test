@@ -1,5 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 import { Card } from '../ui/Card';
+import { colors, space } from '../../lib/theme';
 
 export function ExplanationPanel({
   explanationSv = 'Explanation placeholder',
@@ -16,14 +17,14 @@ export function ExplanationPanel({
 
 const styles = StyleSheet.create({
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
   },
   body: {
-    color: 'rgba(0, 0, 0, 0.8)',
+    color: colors.textSecondary,
     fontSize: 15,
     lineHeight: 22,
-    marginTop: 8,
+    marginTop: space[1],
   },
 });

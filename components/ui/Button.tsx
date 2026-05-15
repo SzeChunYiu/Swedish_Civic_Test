@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import type { PropsWithChildren } from 'react';
+import { colors, radius, space } from '../../lib/theme';
 
 type ButtonProps = PropsWithChildren<
   Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle> }
@@ -17,10 +18,10 @@ export function Button({ children, style, ...pressableProps }: ButtonProps) {
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#0075de',
-    borderRadius: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
   },
-  label: { color: '#ffffff', fontSize: 15, fontWeight: '600' },
+  label: { color: colors.surface, fontSize: 15, fontWeight: '600' },
 });

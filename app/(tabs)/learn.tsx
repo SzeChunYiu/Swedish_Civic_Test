@@ -5,6 +5,7 @@ import { ChapterCard } from '../../components/learning/ChapterCard';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
+import { colors, space } from '../../lib/theme';
 
 function questionCountForChapter(chapterId: string) {
   return questions.filter((question) => question.chapterId === chapterId).length;
@@ -31,26 +32,26 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
   },
   content: {
-    gap: 16,
-    padding: 24,
+    gap: space[2],
+    padding: space[3],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   list: {
-    gap: 12,
+    gap: space[1.5],
   },
   link: {
     textDecorationLine: 'none',

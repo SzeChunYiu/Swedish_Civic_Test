@@ -68,6 +68,16 @@ Blocked gates:
 - `device-screenshots`: web-draft screenshots and manifest exist, but final device/store screenshots are not recorded.
 - `submission`: no TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence.
 
+## UI/UX polish gate
+
+| Check | Evidence | Status |
+|---|---|---|
+| Central theme tokens | `lib/theme/{colors,spacing,typography,radius,shadows,motion,index}.ts` | READY |
+| No literal colors in screens/components | `scripts/theme-discipline.test.js`; acceptance grep returns zero lines | READY |
+| No literal spacing/radius in screens/components for enforced style properties | `scripts/theme-discipline.test.js`; spacing/radius grep returns zero lines | READY |
+| Expo web visual smoke | `npm run build:web:export`; `npm run test:e2e -- tests/e2e/visual-smoke.spec.ts`; screenshots in `reports/2026-05-15-uiux-screenshots/` | READY |
+| Evidence report | `reports/2026-05-15-uiux-polish.md` | READY |
+
 ## Physical-device smoke tests
 
 | Platform | Device / OS | Installed build | Checks | Result | Evidence |

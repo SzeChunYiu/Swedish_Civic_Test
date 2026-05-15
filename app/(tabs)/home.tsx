@@ -10,6 +10,7 @@ import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { colors, radius, space } from '../../lib/theme';
 
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
@@ -85,78 +86,78 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     flex: 1,
-    gap: 18,
-    padding: 24,
+    gap: space[2.25],
+    padding: space[3],
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 26,
     fontWeight: '700',
     letterSpacing: -0.625,
   },
   subtitle: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   card: {
-    backgroundColor: '#ffffff',
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
-    gap: 10,
-    padding: 16,
+    gap: space[1.25],
+    padding: space[2],
   },
   cardTitle: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
   },
   metric: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 24,
     fontWeight: '700',
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: space[1.5],
   },
   statCard: {
-    backgroundColor: '#f6f5f4',
-    borderRadius: 12,
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
     flex: 1,
-    padding: 16,
+    padding: space[2],
   },
   statLabel: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 14,
-    marginTop: 4,
+    marginTop: space[0.5],
   },
   actions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: space[1.5],
   },
   primaryLink: {
-    backgroundColor: '#0075de',
-    borderRadius: 4,
-    color: '#ffffff',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
     fontSize: 15,
     fontWeight: '600',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
   },
   secondaryLink: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    borderRadius: 4,
-    color: 'rgba(0, 0, 0, 0.95)',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
     fontSize: 15,
     fontWeight: '600',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
   },
 });

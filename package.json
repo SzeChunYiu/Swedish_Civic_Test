@@ -16,7 +16,7 @@
     "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
     "test:learning": "node --test scripts/learning.test.js",
     "test:exam": "node --test scripts/exam.test.js",
-    "test": "npm run test:learning && npm run test:exam && npm run test:audio && npm run test:derived-content && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:publishing && npm run test:build-config && npm run test:app-assets && npm run test:screenshot-manifest && npm run test:release-preflight",
+    "test": "npm run test:learning && npm run test:exam && npm run test:audio && npm run test:derived-content && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:publishing && npm run test:build-config && npm run test:app-assets && npm run test:screenshot-manifest && npm run test:release-preflight && npm run test:theme-discipline",
     "test:audio": "node --test scripts/audio.test.js",
     "test:content": "node --test scripts/content-production.test.js",
     "content:export": "node scripts/export-question-bank.js",
@@ -33,7 +33,9 @@
     "test:screenshot-manifest": "node --test scripts/screenshot-manifest.test.js",
     "test:release-preflight": "node --test scripts/release-preflight.test.js",
     "release:web-export-smoke": "rm -rf dist-web && npm run build:web:export",
-    "release:native-prebuild-smoke": "node scripts/native-prebuild-smoke.js"
+    "release:native-prebuild-smoke": "node scripts/native-prebuild-smoke.js",
+    "test:theme-discipline": "node --test scripts/theme-discipline.test.js",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "expo": "~54.0.33",
@@ -53,6 +55,7 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/react": "~19.1.0",
     "babel-preset-expo": "~54.0.10",
     "eslint": "^9.0.0",

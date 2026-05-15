@@ -3,6 +3,7 @@ import { StyleSheet, Text } from 'react-native';
 import { isPremiumUser } from '../../lib/monetization/premium';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
+import { colors, space } from '../../lib/theme';
 
 export function PremiumBanner({ entitlements }: { entitlements: PremiumEntitlements }) {
   const isPremium = isPremiumUser(entitlements);
@@ -23,21 +24,21 @@ export function PremiumBanner({ entitlements }: { entitlements: PremiumEntitleme
 
 const styles = StyleSheet.create({
   eyebrow: {
-    color: '#097fe8',
+    color: colors.badgeBlueText,
     fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
   },
   title: {
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
-    marginTop: 4,
+    marginTop: space[0.5],
   },
   meta: {
-    color: '#615d59',
+    color: colors.textMuted,
     fontSize: 13,
     lineHeight: 20,
-    marginTop: 4,
+    marginTop: space[0.5],
   },
 });
