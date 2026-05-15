@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `f775821` on `main` (`feat: verify release evidence artifact paths`); product commit verified before this evidence refresh |
+| Git commit | `86feb6f` on `main` (`feat: require exact public URLs in release evidence`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 22:37 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 22:37 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees and missing referenced local artifact paths before production release actions |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 22:44 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 22:44 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, and READY URL/store evidence missing the exact hosted support/privacy URL values before production release actions |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 22:37 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 22:44 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -44,7 +44,7 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 - Build-config tests passed: 11/11, including preview build auth guard coverage, production build preflight guard coverage, production build/submit run-validation guard coverage, production submit placeholder-credential guard coverage, and production submit release-preflight guard coverage.
 - App-assets test passed: 1/1.
 - Screenshot-manifest test passed: 1/1.
-- Release-preflight tests passed: 11/11, including stale public URL evidence, weak READY manual evidence, placeholder/blocker wording, web-draft screenshot evidence, missing store support/privacy URL entry, generic submission evidence, dirty release worktree coverage, and missing referenced local artifact path fail-closed coverage.
+- Release-preflight tests passed: 12/12, including stale public URL evidence, weak READY manual evidence, placeholder/blocker wording, web-draft screenshot evidence, missing store support/privacy URL entry, exact hosted URL value enforcement, generic submission evidence, dirty release worktree coverage, and missing referenced local artifact path fail-closed coverage.
 - Theme-discipline test passed: 1/1.
 - Accessibility-labels test passed: 1/1.
 - Content validation: 13 chapters, 500 questions, 500 published questions.
