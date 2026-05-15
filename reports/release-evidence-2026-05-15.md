@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `1679282` on `main` (`feat: add explicit accessibility roles`); product commit verified before this evidence refresh |
+| Git commit | `3cb02ed` on `main` (`feat: live-check public release URLs`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 20:46 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 20:46 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 20:54 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 20:54 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 20:46 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 20:54 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -40,10 +40,11 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 - Compliance test passed: 1/1.
 - Monetization tests passed: 2/2.
 - Publishing tests passed: 5/5.
+- Public URL checker tests passed: 2/2.
 - Build-config tests passed: 5/5.
 - App-assets test passed: 1/1.
 - Screenshot-manifest test passed: 1/1.
-- Release-preflight tests passed: 2/2.
+- Release-preflight tests passed: 3/3, including stale public URL evidence fail-closed coverage.
 - Theme-discipline test passed: 1/1.
 - Accessibility-labels test passed: 1/1.
 - Content validation: 13 chapters, 500 questions, 500 published questions.
@@ -66,7 +67,7 @@ Blocked gates:
 - `android-device-audio`: no Android physical-device build/install/audio evidence.
 - `ios-device-audio`: no iOS physical-device/TestFlight build/install/audio evidence.
 - `store-records`: no App Store Connect or Google Play Console app record evidence; AdMob is deferred because real ads are disabled for v1.0.
-- `public-urls`: ready; support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and privacy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200.
+- `public-urls`: ready; support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and privacy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200 during the live release-preflight URL check.
 - `device-screenshots`: web-draft screenshots and manifest exist, but final device/store screenshots are not recorded.
 - `submission`: no TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence.
 

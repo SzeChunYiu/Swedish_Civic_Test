@@ -9,12 +9,14 @@ docs-only checklist.
 
 - `scripts/release-preflight.js`
 - `scripts/release-preflight.test.js`
+- `scripts/check-public-urls.js`
+- `scripts/check-public-urls.test.js`
 - `reports/release-gates.json`
 - package script: `npm run release:preflight`
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 20:46 CEST at product commit `1679282` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
+`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, live-checks the public support/privacy URLs, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 20:54 CEST at product commit `3cb02ed` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
 
 Ready gates:
 
@@ -23,7 +25,7 @@ Ready gates:
 - Web production export smoke passes.
 - Android/iOS native prebuild smoke passes.
 - Pinned npx EAS CLI is available through `npx --yes eas-cli@18.13.0 --version`.
-- Public support/privacy URLs are hosted and verified: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/.
+- Public support/privacy URLs are hosted and live-checked by release preflight: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/.
 
 Blocked gates:
 
@@ -38,6 +40,7 @@ Blocked gates:
 
 ## Verification
 
+- `node --test scripts/check-public-urls.test.js`
 - `node --test scripts/release-preflight.test.js`
-- `npm run validate` includes `npm run test:release-preflight`
-- The test suite verifies both fail-closed current blockers and the future ready path when EAS/auth and `reports/release-gates.json` evidence are complete.
+- `npm run validate` includes `npm run test:public-urls` and `npm run test:release-preflight`
+- The test suite verifies fail-closed current blockers, the future ready path when EAS/auth and `reports/release-gates.json` evidence are complete, and stale public URL evidence blocking when live URL checks fail.
