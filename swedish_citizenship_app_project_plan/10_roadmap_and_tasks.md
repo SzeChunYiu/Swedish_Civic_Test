@@ -107,11 +107,11 @@ Acceptance criteria:
 
 Tasks:
 
-- [ ] Add `expo-speech`.
-- [ ] Build `AudioButton`.
-- [ ] Speak Swedish question.
-- [ ] Speak Swedish answer options.
-- [ ] Add settings for audio.
+- [x] Add `expo-speech`.
+- [x] Build `AudioButton`.
+- [x] Speak Swedish question.
+- [x] Speak Swedish answer options.
+- [x] Add settings for audio.
 - [ ] Test on Android.
 - [ ] Test on iOS.
 

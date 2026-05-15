@@ -15,7 +15,8 @@
     "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
     "test:learning": "node --test scripts/learning.test.js",
     "test:exam": "node --test scripts/exam.test.js",
-    "test": "npm run test:learning && npm run test:exam"
+    "test": "npm run test:learning && npm run test:exam && npm run test:audio",
+    "test:audio": "node --test scripts/audio.test.js"
   },
   "dependencies": {
     "expo": "~54.0.33",

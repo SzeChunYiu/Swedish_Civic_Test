@@ -1,6 +1,27 @@
 import * as Speech from 'expo-speech';
+import type { QuestionOption } from '../../types/content';
+
+type SpeakableQuestion = {
+  questionSv: string;
+  options: QuestionOption[];
+};
+
+function optionLetter(index: number): string {
+  return String.fromCharCode('A'.charCodeAt(0) + index);
+}
+
+export function buildQuestionSpeechText(question: SpeakableQuestion): string {
+  const optionText = question.options
+    .map((option, index) => `Alternativ ${optionLetter(index)}. ${option.textSv}.`)
+    .join(' ');
+  return `${question.questionSv} ${optionText}`.trim();
+}
 
 export function speakSwedish(text: string): void {
   if (text.trim().length === 0) return;
   Speech.speak(text, { language: 'sv-SE' });
+}
+
+export function stopSpeech(): void {
+  Speech.stop();
 }

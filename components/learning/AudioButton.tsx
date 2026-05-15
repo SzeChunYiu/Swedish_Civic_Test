@@ -1,6 +1,20 @@
 import { Button } from '../ui/Button';
-import { speakSwedish } from '../../lib/audio/speak';
+import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
 
-export function AudioButton({ text = '' }: { text?: string }) {
-  return <Button onPress={() => speakSwedish(text)}>Listen</Button>;
+export function AudioButton({ text = '', enabled = true }: { text?: string; enabled?: boolean }) {
+  const label = enabled ? 'Listen' : 'Audio disabled';
+
+  return (
+    <Button
+      disabled={!enabled}
+      onPress={() => {
+        if (!enabled) return;
+        stopSpeech();
+        speakSwedish(text);
+      }}
+      style={!enabled ? { opacity: 0.45 } : undefined}
+    >
+      {label}
+    </Button>
+  );
 }

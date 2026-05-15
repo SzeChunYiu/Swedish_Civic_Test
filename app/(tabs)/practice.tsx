@@ -7,10 +7,12 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
+import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 
 export default function Screen() {
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
@@ -18,6 +20,7 @@ export default function Screen() {
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const question = questions[0];
 
   if (!question) {
@@ -41,7 +44,7 @@ export default function Screen() {
       <QuestionDisclaimer />
       <Text style={styles.meta}>Completed questions: {completedQuestionIds.length}</Text>
       <QuestionCard question={question} />
-      <AudioButton text={question.questionSv} />
+      <AudioButton text={buildQuestionSpeechText(question)} enabled={audioEnabled} />
 
       <View style={styles.options}>
         {question.options.map((option) => {
