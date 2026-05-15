@@ -3,8 +3,9 @@ import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import type { PropsWithChildren } from 'react';
 import { colors, radius, space, typography } from '../../lib/theme';
 
+type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
 type ButtonProps = PropsWithChildren<
-  Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle> }
+  Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle>; variant?: ButtonVariant }
 >;
 
 export function Button({
@@ -13,6 +14,7 @@ export function Button({
   accessibilityRole = 'button',
   accessibilityState,
   disabled,
+  variant = 'primary',
   ...pressableProps
 }: ButtonProps) {
   const mergedAccessibilityState = {
@@ -25,10 +27,12 @@ export function Button({
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
       disabled={disabled}
-      style={[styles.button, style]}
+      style={[styles.button, styles[variant], disabled ? styles.disabled : null, style]}
       {...pressableProps}
     >
-      <Text style={styles.label}>{children}</Text>
+      <Text style={[styles.label, variant === 'primary' ? styles.primaryLabel : styles.darkLabel]}>
+        {children}
+      </Text>
     </Pressable>
   );
 }
@@ -36,14 +40,51 @@ export function Button({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: colors.accent,
+    borderColor: colors.border,
     borderRadius: radius.micro,
+    borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: space[2],
-    paddingVertical: space[1],
+    paddingVertical: space[1.25],
+  },
+  primary: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  secondary: {
+    backgroundColor: colors.surfaceMuted,
+  },
+  option: {
+    alignItems: 'flex-start',
+    backgroundColor: colors.surface,
+    borderRadius: radius.small,
+    paddingVertical: space[1.5],
+  },
+  success: {
+    alignItems: 'flex-start',
+    backgroundColor: colors.successSoft,
+    borderColor: colors.success,
+    borderRadius: radius.small,
+    paddingVertical: space[1.5],
+  },
+  danger: {
+    alignItems: 'flex-start',
+    backgroundColor: colors.warningSoft,
+    borderColor: colors.warning,
+    borderRadius: radius.small,
+    paddingVertical: space[1.5],
+  },
+  disabled: {
+    opacity: 0.45,
   },
   label: {
-    color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
+  },
+  primaryLabel: {
+    color: colors.surface,
+  },
+  darkLabel: {
+    color: colors.text,
   },
 });

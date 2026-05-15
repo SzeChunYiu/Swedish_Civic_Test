@@ -14,9 +14,13 @@ const steps = [
 export default function Screen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.eyebrow}>Welcome</Text>
-      <Text style={styles.title}>Prepare calmly for the civic test</Text>
-      <Text style={styles.subtitle}>A small, independent study companion for daily practice.</Text>
+      <View style={styles.hero}>
+        <Text style={styles.eyebrow}>Welcome</Text>
+        <Text style={styles.title}>Prepare calmly for the civic test</Text>
+        <Text style={styles.subtitle}>
+          A small, independent study companion for daily practice, mock exams, and mistake review.
+        </Text>
+      </View>
 
       <View style={styles.steps}>
         {steps.map((step, index) => (
@@ -58,6 +62,14 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: space[2.25],
     justifyContent: 'center',
+    padding: space[3],
+  },
+  hero: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.25],
     padding: space[3],
   },
   eyebrow: {

@@ -1,12 +1,14 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
+import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { isCorrectAnswer } from '../../lib/quiz/answerValidation';
@@ -23,7 +25,8 @@ export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
-  const question = questions[0];
+  const nextQuestionIndex = completedQuestionIds.length % questions.length;
+  const question = questions[nextQuestionIndex] ?? questions[0];
 
   if (!question) {
     return (
@@ -35,6 +38,8 @@ export default function Screen() {
 
   const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const currentScore = selectedOptionId ? scoreAnswers([selectedIsCorrect]) : null;
+  const questionNumber = nextQuestionIndex + 1;
+  const bankProgress = questions.length > 0 ? questionNumber / questions.length : 0;
   const handleSelectOption = (optionId: string) => {
     selectOption(optionId);
     recordAnswer(question.id, isCorrectAnswer(question, optionId));
@@ -42,9 +47,16 @@ export default function Screen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Practice</Text>
+      <View style={styles.hero}>
+        <Badge>5-minute practice</Badge>
+        <Text style={styles.title}>Question {questionNumber}</Text>
+        <Text style={styles.subtitle}>
+          Answer, get instant feedback, then review the UHR source before moving on.
+        </Text>
+        <ProgressBar progress={bankProgress} />
+        <Text style={styles.meta}>Completed questions: {completedQuestionIds.length}</Text>
+      </View>
       <QuestionDisclaimer />
-      <Text style={styles.meta}>Completed questions: {completedQuestionIds.length}</Text>
       <QuestionCard question={question} />
       <AudioButton text={buildQuestionSpeechText(question)} enabled={audioEnabled} />
 
@@ -58,6 +70,7 @@ export default function Screen() {
               option={option}
               onPress={() => handleSelectOption(option.id)}
               resultLabel={isSelected ? (selectedIsCorrect ? 'Rätt' : 'Fel') : undefined}
+              tone={isSelected ? (selectedIsCorrect ? 'correct' : 'incorrect') : 'idle'}
             />
           );
         })}
@@ -95,9 +108,18 @@ const styles = StyleSheet.create({
   content: {
     gap: space[2],
     padding: space[3],
+    paddingBottom: space[10],
   },
   emptyContainer: {
     flex: 1,
+    padding: space[3],
+  },
+  hero: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.25],
     padding: space[3],
   },
   title: {
@@ -105,6 +127,11 @@ const styles = StyleSheet.create({
     fontSize: typography.subHeading.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
     letterSpacing: typography.subHeading.letterSpacing,
+  },
+  subtitle: {
+    color: colors.textMuted,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   meta: {
     color: colors.textMuted,

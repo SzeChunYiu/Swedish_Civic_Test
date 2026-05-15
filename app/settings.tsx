@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: space[2.25],
     padding: space[3],
+    paddingBottom: space[10],
   },
   backLink: {
     color: colors.accent,

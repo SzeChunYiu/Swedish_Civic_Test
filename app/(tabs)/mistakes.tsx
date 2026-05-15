@@ -2,6 +2,7 @@ import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
+import { Badge } from '../../components/ui/Badge';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -17,8 +18,14 @@ export default function Screen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Mistakes</Text>
-      <Text style={styles.subtitle}>Review questions you previously answered incorrectly.</Text>
+      <View style={styles.hero}>
+        <Badge tone="orange">Smart review</Badge>
+        <Text style={styles.title}>Mistakes</Text>
+        <Text style={styles.subtitle}>
+          Review wrong answers with the question, source reference, and repetition count in one
+          place.
+        </Text>
+      </View>
       <QuestionDisclaimer />
 
       <NativeAdCard />
@@ -62,6 +69,15 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: space[2],
+    padding: space[3],
+    paddingBottom: space[10],
+  },
+  hero: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.25],
     padding: space[3],
   },
   title: {

@@ -3,6 +3,10 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
+import { Badge } from '../../components/ui/Badge';
+import { Card } from '../../components/ui/Card';
+import { MetricCard } from '../../components/ui/MetricCard';
+import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
@@ -32,46 +36,40 @@ export default function Screen() {
   });
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-      <Text style={styles.subtitle}>Your local study preferences and progress.</Text>
-
+    <ScreenShell
+      eyebrow="Local profile"
+      title="Progress without an account"
+      subtitle="Your goals, language mode, streaks, and badges stay on this device for a private study experience."
+    >
       <View style={styles.statsRow}>
-        <View style={styles.card}>
-          <Text style={styles.metric}>{level}</Text>
-          <Text style={styles.label}>level</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.metric}>{totalXp}</Text>
-          <Text style={styles.label}>XP</Text>
-        </View>
+        <MetricCard label="level" value={level} tone="blue" />
+        <MetricCard label="XP" value={totalXp} />
       </View>
-
       <View style={styles.statsRow}>
-        <View style={styles.card}>
-          <Text style={styles.metric}>{currentStreak}</Text>
-          <Text style={styles.label}>day streak</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.metric}>{completedQuestionIds.length}</Text>
-          <Text style={styles.label}>completed questions</Text>
-        </View>
+        <MetricCard label="day streak" value={currentStreak} />
+        <MetricCard label="completed" value={completedQuestionIds.length} helper="questions" />
       </View>
 
-      <View style={styles.cardWide}>
-        <Text style={styles.label}>Daily goal</Text>
-        <Text style={styles.value}>{dailyGoalAnswers} answers</Text>
-        <Text style={styles.label}>
-          Language: {language === 'sv' ? 'Swedish' : 'English support'}
-        </Text>
-      </View>
+      <Card style={styles.cardWide}>
+        <SectionHeader
+          title="Study setup"
+          subtitle="Small daily goals are easier to keep than long cram sessions."
+        />
+        <View style={styles.pillRow}>
+          <Badge tone="blue">{dailyGoalAnswers} answers/day</Badge>
+          <Badge tone="warm">{language === 'sv' ? 'Swedish' : 'English support'}</Badge>
+        </View>
+      </Card>
 
-      <View style={styles.cardWide}>
-        <Text style={styles.label}>Badges</Text>
+      <Card style={styles.cardWide}>
+        <SectionHeader
+          title="Badges"
+          subtitle="Achievement cues make progress visible without distracting from learning."
+        />
         <Text style={styles.value}>
           {badges.length > 0 ? badges.map((badge) => badge.title).join(', ') : 'No badges yet'}
         </Text>
-      </View>
+      </Card>
 
       <PremiumBanner entitlements={FREE_ENTITLEMENTS} />
       <ComplianceLinks />
@@ -84,58 +82,28 @@ export default function Screen() {
       >
         Open settings
       </Link>
-    </View>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    flex: 1,
-    gap: space[2],
-    padding: space[3],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
   statsRow: {
     flexDirection: 'row',
     gap: space[1.5],
   },
-  card: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    flex: 1,
-    gap: space[0.5],
-    padding: space[2],
-  },
   cardWide: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    gap: space[0.5],
-    padding: space[2],
+    gap: space[1.5],
   },
-  metric: {
-    color: colors.text,
-    fontSize: typography.heroMobile.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
+  pillRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
   },
   value: {
     color: colors.text,
     fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  label: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
+    fontWeight: typography.sectionTitle.fontWeight,
+    lineHeight: typography.sectionTitle.lineHeight,
   },
   settingsLink: {
     alignSelf: 'flex-start',
