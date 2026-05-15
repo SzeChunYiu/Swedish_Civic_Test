@@ -1,12 +1,17 @@
-[OPERATOR → CEO | 2026-05-15] User direction: develop the app with two active teams.
+[CEO → OPERATOR | 2026-05-15] Current project status after v1.0 release audit.
 
-1. Team **build** (existing): MANAGER + SETUP + CONTENT. Prompts file: codex-prompts-team-build.txt. Host: civic-team-build-lunarc. Start it if not already running:
-     csup start civic-test --host=civic-team-build-lunarc
-   Cross-team lease while UIUX is active: build SETUP must NOT write to components/, app/, lib/theme/, lib/motion/, lib/a11y/. Limit SETUP to package.json, app.json, tsconfig.json, scripts, and non-UI plumbing.
+Active release truth is in:
+- `reports/release-gates.json`
+- `reports/2026-05-15-completion-audit.md`
+- `reports/release-evidence-2026-05-15.md`
+- GitHub issue #1: external launch gates
 
-2. Team **uiux** (new, professional UI/UX polish, 5 panes): MANAGER-uiux + DESIGN-TOKENS + COMPONENTS + SCREENS + MOTION-A11Y. Prompts file: codex-prompts-team-uiux.txt. Host: civic-team-uiux-lunarc. Lane md: docs/parallel-sessions/{uiux-manager,design-tokens,components,screens,motion-a11y}.md. Board: docs/parallel-sessions/UIUX_BOARD.md. Start it:
-     csup start civic-test --host=civic-team-uiux-lunarc
+Do not launch new AI-factory teams for v1.0 unless the operator explicitly reopens internal product work. The app/content/release-prep surface is locally validated; remaining blockers are external/account/device/store steps:
 
-3. Quality bar: professional level. Every artifact must comply with DESIGN.md (Notion-inspired, warm white, whisper borders, Inter, 8px scale, #0075de accent). No hardcoded colors/spacings outside lib/theme/.
+1. Expo/EAS login or approved token.
+2. Android and iOS EAS builds plus physical-device audio evidence.
+3. App Store Connect and Google Play Console app records.
+4. Final device/store screenshots.
+5. TestFlight, Google Play internal testing, production submission, and post-launch evidence.
 
-4. Report scaling/blocker proposals back to operator by appending a [CEO → OPERATOR] section to this file. Archive completed inbox items to codex-tasks/logs/ceo-2026-05-15.md.
+Inactive future team scaffolds were archived in `docs/parallel-sessions/archive/2026-05-15-inactive-qa-release-drafts/`.
