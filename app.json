@@ -9,11 +9,13 @@
     "scheme": "swedish-civic-test",
     "plugins": ["expo-router"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.billyyiu.swedishcivictest"
     },
     "android": {
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.billyyiu.swedishcivictest"
     }
   }
 }

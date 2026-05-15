@@ -1,0 +1,40 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
+
+function read(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+test('store publishing metadata is prepared', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  assert.equal(appConfig.name, 'Sweden Citizenship Test Prep');
+  assert.equal(appConfig.slug, 'swedish-civic-test');
+  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.swedishcivictest');
+  assert.equal(appConfig.android.package, 'com.billyyiu.swedishcivictest');
+
+  const appStoreListing = read('publishing/app-store-listing.md');
+  assert.match(appStoreListing, /Sweden Citizenship Test Prep/);
+  assert.match(appStoreListing, /not official/i);
+  assert.match(appStoreListing, /UHR/i);
+
+  const googlePlayListing = read('publishing/google-play-listing.md');
+  assert.match(googlePlayListing, /Sweden Citizenship Test Prep/);
+  assert.match(googlePlayListing, /not official/i);
+  assert.match(googlePlayListing, /Data safety/i);
+});
+
+test('privacy labels and data safety answers match current MVP data practices', () => {
+  const privacyLabels = read('publishing/privacy-labels.md');
+  assert.match(privacyLabels, /Apple App Privacy/i);
+  assert.match(privacyLabels, /Data Not Collected/i);
+  assert.match(privacyLabels, /local/i);
+
+  const dataSafety = read('publishing/google-play-data-safety.md');
+  assert.match(dataSafety, /No user data collected/i);
+  assert.match(dataSafety, /No user data shared/i);
+  assert.match(dataSafety, /local device/i);
+});

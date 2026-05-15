@@ -4,7 +4,7 @@
 
 Tasks:
 
-- [ ] Choose final app name.
+- [x] Choose final app name.
 - [x] Create Git repository.
 - [x] Create Expo project.
 - [x] Add TypeScript.
@@ -162,10 +162,10 @@ Tasks:
 - [x] Add privacy policy.
 - [x] Add terms of use.
 - [x] Add source page with UHR links.
-- [ ] Prepare App Store listing.
-- [ ] Prepare Google Play listing.
-- [ ] Complete privacy labels.
-- [ ] Complete Data Safety form.
+- [x] Prepare App Store listing.
+- [x] Prepare Google Play listing.
+- [x] Complete privacy labels.
+- [x] Complete Data Safety form.
 - [ ] TestFlight beta.
 - [ ] Google Play internal test.
 
