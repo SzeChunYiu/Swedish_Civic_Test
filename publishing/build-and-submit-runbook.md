@@ -4,6 +4,8 @@ Reference: Expo EAS `eas.json` documentation, https://docs.expo.dev/build/eas-js
 
 ## Prerequisites
 
+- Run `npm ci` before build/submit commands so the project-local `eas-cli` is
+  available; no global EAS CLI install is required.
 - Expo account access.
 - Apple Developer account access.
 - App Store Connect app record for `com.billyyiu.swedishcivictest`.

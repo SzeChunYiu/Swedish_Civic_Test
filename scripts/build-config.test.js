@@ -28,3 +28,8 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['build:production'], 'eas build --profile production --platform all');
   assert.equal(pkg.scripts['submit:production'], 'eas submit --profile production --platform all');
 });
+
+test('EAS CLI is project-local so build scripts do not require a global install', () => {
+  const pkg = readJson('package.json');
+  assert.match(pkg.devDependencies['eas-cli'], /^\^18\./);
+});
