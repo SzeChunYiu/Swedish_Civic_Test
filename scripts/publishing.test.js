@@ -64,3 +64,15 @@ test('hostable public support and privacy pages are prepared', () => {
   assert.match(privacy, /no user data is collected/i);
   assert.match(privacy, /<html lang="en">/i);
 });
+
+test('post-EAS-auth runbook covers build, device, and store evidence sequence', () => {
+  const runbook = read('publishing/post-eas-auth-runbook.md');
+  assert.match(runbook, /npm exec -- eas whoami/);
+  assert.match(runbook, /npm run release:preflight/);
+  assert.match(runbook, /npm run build:preview/);
+  assert.match(runbook, /Android physical-device audio/i);
+  assert.match(runbook, /iOS physical-device audio/i);
+  assert.match(runbook, /TestFlight/i);
+  assert.match(runbook, /Google Play internal/i);
+  assert.match(runbook, /reports\/release-evidence-YYYY-MM-DD\.md/);
+});

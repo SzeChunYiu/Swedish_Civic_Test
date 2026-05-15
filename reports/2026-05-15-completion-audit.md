@@ -24,6 +24,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Public support/privacy page copy and static HTML pages are prepared in `publishing/public-support-and-privacy.md` and `publishing/public-site/`, but final hosted HTTPS URLs remain external.
 - Screenshot manifest and web-draft screenshot evidence are prepared in `publishing/screenshot-manifest.json` and `reports/2026-05-15-web-draft-screenshots.md`, but final device/store screenshots remain external.
 - Executable release preflight exists at `scripts/release-preflight.js`; current result is `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
+- Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
 
 ## Prompt-to-artifact checklist
 
@@ -65,6 +66,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Public support URL | In-app support surface and static public pages exist, but public URL/mailbox must be hosted and entered in stores | Blocked external/account |
 | Store screenshot manifest and web drafts | `publishing/screenshot-manifest.json`, `reports/2026-05-15-web-draft-screenshots.md`, `publishing/screenshot-shotlist.md` | Draft done; final device screenshots still external |
 | Executable release preflight | `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `npm run release:preflight` | Done; currently reports BLOCKED external gates |
+| Post-EAS-auth release runbook | `publishing/post-eas-auth-runbook.md`, `scripts/publishing.test.js` | Done |
 | Submit Android app | Requires store account, internal testing, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
 | Submit iOS app | Requires store account, TestFlight, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
 | Monitor crash reports/content reports/first-week fixes/reviews | Requires launched app and telemetry/support process; release evidence template exists in `reports/release-evidence-template.md` | Not done |

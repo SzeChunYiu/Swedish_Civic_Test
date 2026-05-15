@@ -25,6 +25,7 @@
 - Screenshot manifest: `publishing/screenshot-manifest.json`
 - Web-draft screenshot evidence: `reports/2026-05-15-web-draft-screenshots.md`
 - Executable release preflight: `npm run release:preflight`
+- Post-EAS-auth runbook: `publishing/post-eas-auth-runbook.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`
