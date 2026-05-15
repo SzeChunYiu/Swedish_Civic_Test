@@ -32,10 +32,7 @@ test('store build scripts document the exact release commands', () => {
     pkg.scripts['build:production'],
     'npx --yes eas-cli@18.13.0 build --profile production --platform all',
   );
-  assert.equal(
-    pkg.scripts['submit:production'],
-    'npx --yes eas-cli@18.13.0 submit --profile production --platform all',
-  );
+  assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
 test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph', () => {
@@ -43,7 +40,28 @@ test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph
   assert.equal(pkg.devDependencies['eas-cli'], undefined);
   assert.match(pkg.scripts['build:preview'], /^npx --yes eas-cli@18\.13\.0 /);
   assert.match(pkg.scripts['build:production'], /^npx --yes eas-cli@18\.13\.0 /);
-  assert.match(pkg.scripts['submit:production'], /^npx --yes eas-cli@18\.13\.0 /);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/submit-production-guard.js')), true);
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, 'scripts/submit-production-guard.js'), 'utf8'),
+    /eas-cli@18\.13\.0/,
+  );
+});
+
+test('production submit guard blocks placeholder Apple identifiers before EAS submit', () => {
+  const result = require('node:child_process').spawnSync(
+    process.execPath,
+    ['scripts/submit-production-guard.js', '--check-only'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /appleId/i);
+  assert.match(result.stdout, /ascAppId/i);
+  assert.match(result.stdout, /appleTeamId/i);
+  assert.match(result.stdout, /TBD/i);
 });
 
 test('web export script is available for local production bundle smoke', () => {

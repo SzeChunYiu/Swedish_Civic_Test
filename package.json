@@ -26,7 +26,7 @@
     "build:preview": "npx --yes eas-cli@18.13.0 build --profile preview --platform all",
     "build:production": "npx --yes eas-cli@18.13.0 build --profile production --platform all",
     "build:web:export": "expo export --platform web --output-dir dist-web",
-    "submit:production": "npx --yes eas-cli@18.13.0 submit --profile production --platform all",
+    "submit:production": "node scripts/submit-production-guard.js",
     "test:build-config": "node --test scripts/build-config.test.js",
     "test:derived-content": "node --test scripts/derived-content.test.js",
     "test:app-assets": "node --test scripts/app-assets.test.js",
