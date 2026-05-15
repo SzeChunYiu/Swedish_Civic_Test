@@ -2,7 +2,7 @@ import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
-export const REAL_ADS_ENABLED_FOR_V1 = true;
+export const REAL_ADS_ENABLED_FOR_V1 = false;
 
 const GOOGLE_ADS_ENABLED = process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED !== 'false';
 

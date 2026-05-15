@@ -17,7 +17,7 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
-test('monetization uses Google AdMob test units and premium disables ads', () => {
+test('monetization keeps real ads fail-closed for v1.0 while preserving test-unit config', () => {
   const { TEST_AD_UNITS, adsConfig, getPlatformAdUnitId, shouldShowAd } =
     loadTs('lib/monetization/ads.ts');
   assert.ok(TEST_AD_UNITS.length >= 4);
@@ -26,10 +26,10 @@ test('monetization uses Google AdMob test units and premium disables ads', () =>
       .readFileSync(path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'), 'utf8')
       .includes('results_native'),
   );
-  assert.equal(adsConfig.realAdsEnabled, true);
+  assert.equal(adsConfig.realAdsEnabled, false);
   assert.equal(adsConfig.googleMobileAdsEnabled, true);
   assert.ok(TEST_AD_UNITS.every((unit) => unit.testOnly));
-  assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), true);
+  assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), false);
   assert.equal(shouldShowAd('home_banner', { adsDisabled: true }), false);
   assert.equal(shouldShowAd('exam_screen', { adsDisabled: false }), false);
   assert.match(getPlatformAdUnitId('home_banner', 'android'), /^ca-app-pub-/);
