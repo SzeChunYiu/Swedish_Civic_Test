@@ -71,7 +71,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           'store-records': {
             status: 'READY',
             evidence:
-              'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; real ads deferred.',
+              'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; real ads deferred.',
           },
           'public-urls': {
             status: 'READY',
@@ -247,4 +247,32 @@ test('release preflight blocks web-draft screenshots as final device screenshot 
   assert.equal(screenshots.status, 'BLOCKED');
   assert.match(screenshots.evidence, /web-draft/i);
   assert.match(screenshots.evidence, /not final/i);
+});
+
+test('release preflight blocks store records without support and privacy URL entry evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-url-entry-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    'store-records': {
+      status: 'READY',
+      evidence:
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; real ads deferred.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const storeRecords = report.gates.find((gate) => gate.id === 'store-records');
+  assert.equal(storeRecords.status, 'BLOCKED');
+  assert.match(storeRecords.evidence, /Support URL/i);
+  assert.match(storeRecords.evidence, /Privacy Policy URL/i);
 });

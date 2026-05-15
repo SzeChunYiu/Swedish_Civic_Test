@@ -26,6 +26,8 @@ const evidenceRequirements = {
     ['App Store Connect record', /App Store Connect|Apple/i],
     ['Google Play Console record', /Google Play/i],
     ['bundle/package identifier', /com\.billyyiu\.swedishcivictest/i],
+    ['Support URL entered in store records', /Support URL/i],
+    ['Privacy Policy URL entered in store records', /Privacy Policy URL/i],
   ],
   'device-screenshots': [
     ['screenshot evidence', /screenshot/i],
