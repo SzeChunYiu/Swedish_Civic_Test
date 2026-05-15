@@ -5,27 +5,27 @@
 Tasks:
 
 - [ ] Choose final app name.
-- [ ] Create Git repository.
-- [ ] Create Expo project.
-- [ ] Add TypeScript.
-- [ ] Add Expo Router.
+- [x] Create Git repository.
+- [x] Create Expo project.
+- [x] Add TypeScript.
+- [x] Add Expo Router.
 - [ ] Add linting and formatting.
-- [ ] Set up basic folder structure.
-- [ ] Add README and project docs.
+- [x] Set up basic folder structure.
+- [x] Add README and project docs.
 
 ## Phase 1 — Content schema and sample data
 
 Tasks:
 
-- [ ] Define `Chapter` type.
-- [ ] Define `PracticeQuestion` type.
-- [ ] Define `UHRReference` type.
-- [ ] Create 13 chapter records.
-- [ ] Create 20 sample questions.
-- [ ] Add Swedish/English fields.
-- [ ] Add UHR reference fields.
-- [ ] Add review status.
-- [ ] Add validation script.
+- [x] Define `Chapter` type.
+- [x] Define `PracticeQuestion` type.
+- [x] Define `UHRReference` type.
+- [x] Create 13 chapter records.
+- [x] Create 20 sample questions.
+- [x] Add Swedish/English fields.
+- [x] Add UHR reference fields.
+- [x] Add review status.
+- [x] Add validation script.
 
 Acceptance criteria:
 

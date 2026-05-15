@@ -7,7 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate:content": "node scripts/validate-content.js",
+    "validate": "npm run typecheck && npm run validate:content"
   },
   "dependencies": {
     "expo": "~54.0.33",
