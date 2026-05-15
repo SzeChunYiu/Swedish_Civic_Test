@@ -38,3 +38,12 @@ test('privacy labels and data safety answers match current MVP data practices', 
   assert.match(dataSafety, /No user data shared/i);
   assert.match(dataSafety, /local device/i);
 });
+
+test('public support and privacy URL copy is ready for hosting', () => {
+  const publicCopy = read('publishing/public-support-and-privacy.md');
+  assert.match(publicCopy, /Support URL/i);
+  assert.match(publicCopy, /Privacy Policy URL/i);
+  assert.match(publicCopy, /no personal data/i);
+  assert.match(publicCopy, /no account/i);
+  assert.match(publicCopy, /not affiliated/i);
+});

@@ -20,6 +20,7 @@
 - Release asset evidence: `reports/2026-05-15-release-assets.md`
 - App icon/splash assets: `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash-icon.png`
 - In-app support surface: `/support`, evidence in `reports/2026-05-15-support-surface.md`
+- Public support/privacy hosting copy: `publishing/public-support-and-privacy.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`
