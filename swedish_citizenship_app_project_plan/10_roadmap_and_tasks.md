@@ -36,7 +36,7 @@ Acceptance criteria:
 
 Tasks:
 
-- [ ] Build onboarding screen.
+- [x] Build onboarding screen.
 - [x] Build home dashboard.
 - [x] Build chapter list.
 - [x] Build chapter detail.
