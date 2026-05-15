@@ -77,8 +77,8 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
 function buildReport() {
   const manualEvidence = loadManualEvidence();
   const validation = runValidate ? commandSucceeds('npm', ['run', 'validate']) : null;
-  const easVersion = commandSucceeds('npm', ['exec', '--', 'eas', '--version']);
-  const easWhoami = commandSucceeds('npm', ['exec', '--', 'eas', 'whoami']);
+  const easVersion = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', '--version']);
+  const easWhoami = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', 'whoami']);
 
   const gates = [
     gate(
@@ -94,17 +94,17 @@ function buildReport() {
     ),
     gate(
       'eas-cli',
-      'Project-local EAS CLI',
+      'Pinned npx EAS CLI',
       easVersion.ok ? 'READY' : 'BLOCKED',
       easVersion.ok ? easVersion.stdout : easVersion.stderr || easVersion.stdout,
-      'Run `npm ci` and verify `npm exec -- eas --version`.',
+      'Run `npx --yes eas-cli@18.13.0 --version`.',
     ),
     gate(
       'eas-auth',
       'Expo/EAS authentication',
       easWhoami.ok ? 'READY' : 'BLOCKED',
       easWhoami.ok ? easWhoami.stdout : easWhoami.stderr || easWhoami.stdout || 'Not logged in',
-      'Log in to Expo/EAS or provide an approved Expo token, then rerun `npm exec -- eas whoami`.',
+      'Log in to Expo/EAS or provide an approved Expo token, then rerun `npx --yes eas-cli@18.13.0 whoami`.',
     ),
     evidenceGate(
       manualEvidence,

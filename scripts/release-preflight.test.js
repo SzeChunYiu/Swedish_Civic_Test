@@ -46,7 +46,7 @@ test('release preflight fails closed on external launch blockers', () => {
 test('release preflight can pass after recorded external evidence and EAS auth are ready', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const fakeNpm = path.join(tmpDir, 'npm');
+  const fakeNpx = path.join(tmpDir, 'npx');
 
   fs.writeFileSync(
     evidencePath,
@@ -91,12 +91,12 @@ test('release preflight can pass after recorded external evidence and EAS auth a
   );
 
   fs.writeFileSync(
-    fakeNpm,
+    fakeNpx,
     [
       '#!/bin/sh',
-      'if [ "$1 $2 $3 $4" = "exec -- eas --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
-      'if [ "$1 $2 $3" = "exec -- eas" ] && [ "$4" = "whoami" ]; then echo "expo-user"; exit 0; fi',
-      'echo "unexpected npm command: $@" >&2',
+      'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
+      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
+      'echo "unexpected npx command: $@" >&2',
       'exit 2',
       '',
     ].join('\n'),

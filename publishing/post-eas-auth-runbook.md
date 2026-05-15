@@ -6,7 +6,7 @@ to preserve evidence for every remaining release gate.
 ## 1. Confirm account and preflight state
 
 ```bash
-npm exec -- eas whoami
+npx --yes eas-cli@18.13.0 whoami
 npm run release:preflight
 ```
 

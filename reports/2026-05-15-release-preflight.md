@@ -14,16 +14,16 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after gate-manifest hardening on 2026-05-15 18:30 CEST reported `BLOCKED`, with local validation and EAS CLI ready.
+`npm run release:preflight` reruns `npm run validate`, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after Expo Doctor/EAS CLI remediation on 2026-05-15 18:38 CEST reported `BLOCKED`, with local validation and pinned npx EAS CLI ready.
 
 Ready gates:
 
 - Local validation runs inside `npm run release:preflight` for each release candidate.
-- Project-local EAS CLI is available through `npm exec -- eas --version`.
+- Pinned npx EAS CLI is available through `npx --yes eas-cli@18.13.0 --version`.
 
 Blocked gates:
 
-- Expo/EAS authentication: `npm exec -- eas whoami` returns `Not logged in`.
+- Expo/EAS authentication: `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in`.
 - Android physical-device audio smoke evidence is missing.
 - iOS physical-device or TestFlight audio smoke evidence is missing.
 - App Store Connect and Google Play Console app record evidence is missing.

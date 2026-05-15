@@ -8,24 +8,25 @@
 | Git commit | Branch HEAD for this evidence file; latest validated runtime/app commit is `ac58046 chore: add web export smoke script` and later changes are documentation/evidence refreshes only |
 | Branch | `batch/2026-05-15-foundation` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
-| Android build ID / URL | BLOCKED — no EAS preview/internal build because `npm exec -- eas whoami` returns `Not logged in` |
-| iOS build ID / URL | BLOCKED — no EAS preview/TestFlight build because `npm exec -- eas whoami` returns `Not logged in` |
+| Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
+| iOS build ID / URL | BLOCKED — no EAS preview/TestFlight build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
 | Tester / device owner | Not assigned; physical-device tests blocked until installable builds exist |
 
 ## Build commands
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS for runtime/app tree at `ac58046` on 2026-05-15 18:23 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED after gate-manifest hardening on 2026-05-15 18:30 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
+| Local validation | `npm run validate` | PASS after Expo Doctor/EAS CLI remediation on 2026-05-15 18:37 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED after Expo Doctor/EAS CLI remediation on 2026-05-15 18:38 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
 | Web production export smoke | `npm run build:web:export` | PASS; exported `dist-web/index.html` and `dist-web/metadata.json` |
+| Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Preview/internal build | `npm run build:preview` | Not run; blocked by EAS authentication |
 | Production build | `npm run build:production` | Not run; must wait for preview/internal device evidence |
 | Production submit | `npm run submit:production` | Not run; must wait for store records, device evidence, final screenshots, and preflight pass |
 
 ## Validation details
 
-Latest `npm run validate` evidence for runtime/app tree at `ac58046` on 2026-05-15 18:23 CEST:
+Latest `npm run validate` evidence after Expo Doctor/EAS CLI remediation on 2026-05-15 18:37 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -51,7 +52,7 @@ Latest `npm run validate` evidence for runtime/app tree at `ac58046` on 2026-05-
 Ready gates:
 
 - `local-validation`: ready; rerun for the exact release candidate.
-- `eas-cli`: ready; `npm exec -- eas --version` reports `eas-cli/18.13.0 darwin-arm64 node-v26.0.0`.
+- `eas-cli`: ready through pinned npx; `npx --yes eas-cli@18.13.0 --version` reports `eas-cli/18.13.0 darwin-arm64 node-v26.0.0`.
 
 Blocked gates:
 
@@ -119,5 +120,5 @@ Decision: `BLOCKED`
 Decision notes:
 
 - The repository is locally validated and release-preflighted, but this candidate is not ready for internal test or store submission.
-- First unblocker: log in to Expo/EAS or provide an approved Expo token, then run `npm exec -- eas whoami` and `npm run release:preflight`.
+- First unblocker: log in to Expo/EAS or provide an approved Expo token, then run `npx --yes eas-cli@18.13.0 whoami` and `npm run release:preflight`.
 - Follow `publishing/post-eas-auth-runbook.md` after EAS auth is available.

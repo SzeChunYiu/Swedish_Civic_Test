@@ -13,7 +13,7 @@ available.
 
 The runbook covers:
 
-- `npm exec -- eas whoami`
+- `npx --yes eas-cli@18.13.0 whoami`
 - `npm run release:preflight`
 - `npm run build:preview`
 - Android physical-device audio checks

@@ -24,14 +24,26 @@ test('EAS build and submit profiles are configured for internal and production r
 
 test('store build scripts document the exact release commands', () => {
   const pkg = readJson('package.json');
-  assert.equal(pkg.scripts['build:preview'], 'eas build --profile preview --platform all');
-  assert.equal(pkg.scripts['build:production'], 'eas build --profile production --platform all');
-  assert.equal(pkg.scripts['submit:production'], 'eas submit --profile production --platform all');
+  assert.equal(
+    pkg.scripts['build:preview'],
+    'npx --yes eas-cli@18.13.0 build --profile preview --platform all',
+  );
+  assert.equal(
+    pkg.scripts['build:production'],
+    'npx --yes eas-cli@18.13.0 build --profile production --platform all',
+  );
+  assert.equal(
+    pkg.scripts['submit:production'],
+    'npx --yes eas-cli@18.13.0 submit --profile production --platform all',
+  );
 });
 
-test('EAS CLI is project-local so build scripts do not require a global install', () => {
+test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph', () => {
   const pkg = readJson('package.json');
-  assert.match(pkg.devDependencies['eas-cli'], /^\^18\./);
+  assert.equal(pkg.devDependencies['eas-cli'], undefined);
+  assert.match(pkg.scripts['build:preview'], /^npx --yes eas-cli@18\.13\.0 /);
+  assert.match(pkg.scripts['build:production'], /^npx --yes eas-cli@18\.13\.0 /);
+  assert.match(pkg.scripts['submit:production'], /^npx --yes eas-cli@18\.13\.0 /);
 });
 
 test('web export script is available for local production bundle smoke', () => {
