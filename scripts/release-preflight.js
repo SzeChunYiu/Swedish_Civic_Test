@@ -4,6 +4,12 @@ const { spawnSync } = require('node:child_process');
 const jsonMode = process.argv.includes('--json');
 const runValidate = process.argv.includes('--run-validate');
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
+const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
+  ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
+  : [
+      'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/',
+      'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/',
+    ];
 
 function exists(path) {
   return fs.existsSync(path);
@@ -72,6 +78,61 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
   }
 
   return gate(id, label, 'BLOCKED', recordedEvidence || fallbackEvidence, nextAction);
+}
+
+function publicUrlsGate(manualEvidence) {
+  const manualGate = evidenceGate(
+    manualEvidence,
+    'public-urls',
+    'Public support and privacy URLs',
+    'Static pages exist locally, but no hosted HTTPS URL evidence is recorded.',
+    'Host the static pages, verify public HTTPS access, and enter URLs in both store records.',
+    {
+      requiredArtifactMissing:
+        exists('publishing/public-site/support/index.html') &&
+        exists('publishing/public-site/privacy/index.html')
+          ? null
+          : 'Local static support/privacy pages are missing from publishing/public-site.',
+    },
+  );
+
+  if (manualGate.status !== 'READY') {
+    return manualGate;
+  }
+
+  if (process.env.RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK === '1') {
+    return gate(
+      manualGate.id,
+      manualGate.label,
+      'READY',
+      `${manualGate.evidence}\nLive URL check skipped by RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK=1.`,
+      manualGate.nextAction,
+    );
+  }
+
+  const liveCheck = commandSucceeds(process.execPath, [
+    'scripts/check-public-urls.js',
+    ...publicUrls,
+  ]);
+  if (liveCheck.ok) {
+    return gate(
+      manualGate.id,
+      manualGate.label,
+      'READY',
+      `${manualGate.evidence}\nLive URL check passed: ${liveCheck.stdout}`,
+      manualGate.nextAction,
+    );
+  }
+
+  return gate(
+    manualGate.id,
+    manualGate.label,
+    'BLOCKED',
+    `Recorded public URL evidence exists, but live URL check failed: ${
+      liveCheck.stderr || liveCheck.stdout || 'no checker output'
+    }`,
+    'Restore public support/privacy URLs or update the recorded URLs and rerun `npm run release:preflight`.',
+  );
 }
 
 function buildReport() {
@@ -151,20 +212,7 @@ function buildReport() {
       'No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0.',
       'Create Apple/Google account/app records and copy URLs into a release evidence file.',
     ),
-    evidenceGate(
-      manualEvidence,
-      'public-urls',
-      'Public support and privacy URLs',
-      'Static pages exist locally, but no hosted HTTPS URL evidence is recorded.',
-      'Host the static pages, verify public HTTPS access, and enter URLs in both store records.',
-      {
-        requiredArtifactMissing:
-          exists('publishing/public-site/support/index.html') &&
-          exists('publishing/public-site/privacy/index.html')
-            ? null
-            : 'Local static support/privacy pages are missing from publishing/public-site.',
-      },
-    ),
+    publicUrlsGate(manualEvidence),
     evidenceGate(
       manualEvidence,
       'device-screenshots',

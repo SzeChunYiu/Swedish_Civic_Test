@@ -126,6 +126,7 @@ test('release preflight can pass after recorded external evidence and EAS auth a
     env: {
       PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
       RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
     },
   });
 
@@ -135,4 +136,87 @@ test('release preflight can pass after recorded external evidence and EAS auth a
     report.gates.every((gate) => gate.status === 'READY'),
     true,
   );
+});
+
+test('release preflight blocks stale public URL evidence when live check fails', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-public-url-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const fakeNpm = path.join(tmpDir, 'npm');
+  const fakeNpx = path.join(tmpDir, 'npx');
+
+  fs.writeFileSync(
+    evidencePath,
+    JSON.stringify(
+      {
+        gates: {
+          'android-device-audio': {
+            status: 'READY',
+            evidence: 'Android physical-device audio evidence recorded.',
+          },
+          'ios-device-audio': {
+            status: 'READY',
+            evidence: 'iOS physical-device audio evidence recorded.',
+          },
+          'store-records': {
+            status: 'READY',
+            evidence: 'Apple and Google store records recorded.',
+          },
+          'public-urls': {
+            status: 'READY',
+            evidence: 'Public URLs were previously recorded as reachable.',
+          },
+          'device-screenshots': {
+            status: 'READY',
+            evidence: 'Final device screenshots recorded.',
+          },
+          submission: {
+            status: 'READY',
+            evidence: 'Submission and monitoring evidence recorded.',
+          },
+        },
+      },
+      null,
+      2,
+    ),
+  );
+
+  fs.writeFileSync(
+    fakeNpm,
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
+      'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
+      'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "Android and iOS native prebuild smoke passed"; exit 0; fi',
+      'echo "unexpected npm command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  fs.writeFileSync(
+    fakeNpx,
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
+      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
+      'echo "unexpected npx command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_PUBLIC_URLS: JSON.stringify(['http://127.0.0.1:9/not-reachable']),
+    },
+  });
+
+  const publicUrls = report.gates.find((gate) => gate.id === 'public-urls');
+  assert.equal(publicUrls.status, 'BLOCKED');
+  assert.match(publicUrls.evidence, /live URL check failed/i);
 });
