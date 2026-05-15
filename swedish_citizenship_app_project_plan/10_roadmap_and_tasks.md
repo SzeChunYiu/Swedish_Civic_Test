@@ -37,14 +37,14 @@ Acceptance criteria:
 Tasks:
 
 - [ ] Build onboarding screen.
-- [ ] Build home dashboard.
+- [x] Build home dashboard.
 - [x] Build chapter list.
 - [x] Build chapter detail.
 - [x] Build quiz screen.
 - [x] Build answer option component.
 - [x] Build explanation screen.
 - [x] Build UHR reference card.
-- [ ] Build settings screen.
+- [x] Build settings screen.
 
 Acceptance criteria:
 
