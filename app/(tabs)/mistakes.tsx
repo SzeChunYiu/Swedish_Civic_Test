@@ -15,6 +15,9 @@ export default function Screen() {
   const mistakenQuestions = questions.filter(
     (question) => questionProgress[question.id]?.wrongCount > 0,
   );
+  const bookmarkedQuestions = questions.filter(
+    (question) => questionProgress[question.id]?.bookmarked,
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -29,6 +32,14 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <NativeAdCard />
+
+      {bookmarkedQuestions.length > 0 ? (
+        <View style={styles.list}>
+          <Text style={styles.bookmarkMeta}>
+            Bookmarked questions: {bookmarkedQuestions.length}
+          </Text>
+        </View>
+      ) : null}
 
       {mistakenQuestions.length > 0 ? (
         <View style={styles.list}>
@@ -96,6 +107,11 @@ const styles = StyleSheet.create({
   },
   questionBlock: {
     gap: space[1],
+  },
+  bookmarkMeta: {
+    color: colors.badgeBlueText,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
   meta: {
     color: colors.warning,

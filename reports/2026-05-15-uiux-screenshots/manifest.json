@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-15T19:54:43.296Z",
+  "capturedAt": "2026-05-15T20:12:14.095Z",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "routes": [
@@ -31,7 +31,7 @@
       "name": "practice",
       "route": "/practice",
       "file": "practice.png",
-      "bytes": 143573
+      "bytes": 147892
     },
     {
       "name": "exam",
