@@ -248,7 +248,83 @@ function validateStoreRecordEvidence(evidencePath) {
   return errors;
 }
 
+function validateSubmissionEvidence(evidencePath) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'submitted') {
+    errors.push('status must be submitted');
+  }
+
+  const testFlight = evidence.testFlightBuild || {};
+  if (!testFlight.buildNumber || !String(testFlight.buildNumber).trim()) {
+    errors.push('testFlightBuild.buildNumber is required');
+  }
+  if (!/processed|approved|ready/i.test(testFlight.processingStatus || '')) {
+    errors.push('testFlightBuild.processingStatus must be processed/approved/ready');
+  }
+  if (!/approved|accepted|submitted|ready/i.test(testFlight.betaReviewStatus || '')) {
+    errors.push('testFlightBuild.betaReviewStatus must be approved/accepted/submitted/ready');
+  }
+  if (!/^https:\/\/appstoreconnect\.apple\.com\//i.test(testFlight.url || '')) {
+    errors.push('testFlightBuild.url must be an App Store Connect URL');
+  }
+
+  const googlePlay = evidence.googlePlayInternal || {};
+  if (!/^https:\/\/play\.google\.com\/console\//i.test(googlePlay.trackUrl || '')) {
+    errors.push('googlePlayInternal.trackUrl must be a Google Play Console URL');
+  }
+  if (!Number.isInteger(googlePlay.versionCode) || googlePlay.versionCode <= 0) {
+    errors.push('googlePlayInternal.versionCode must be a positive integer');
+  }
+  if (!googlePlay.testerGroup || !String(googlePlay.testerGroup).trim()) {
+    errors.push('googlePlayInternal.testerGroup is required');
+  }
+
+  const submissions = Array.isArray(evidence.productionSubmissions)
+    ? evidence.productionSubmissions
+    : [];
+  for (const platform of ['ios', 'android']) {
+    const item = submissions.find((submission) => submission.platform === platform);
+    if (!item) {
+      errors.push(`missing ${platform} production submission`);
+      continue;
+    }
+    if (!item.submissionId || !String(item.submissionId).trim()) {
+      errors.push(`${platform} production submissionId is required`);
+    }
+    if (!/submitted|approved|accepted|in review/i.test(item.reviewStatus || '')) {
+      errors.push(
+        `${platform} production reviewStatus must be submitted/approved/accepted/in review`,
+      );
+    }
+  }
+
+  if (!evidence.monitoringReport || !String(evidence.monitoringReport).trim()) {
+    errors.push('monitoringReport is required');
+  } else if (!exists(evidence.monitoringReport)) {
+    errors.push(`monitoringReport does not exist: ${evidence.monitoringReport}`);
+  }
+
+  return errors;
+}
+
 function validateLocalArtifactContents(id, artifactPaths) {
+  if (id === 'submission') {
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validateSubmissionEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
   if (id === 'store-records') {
     const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
     if (jsonPaths.length === 0) return null;

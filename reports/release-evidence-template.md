@@ -90,6 +90,15 @@ Google Play Data safety, and the disabled Google Mobile Ads SDK posture.
 | Does Google Play Data safety still match the binary? | TBD | `publishing/google-play-data-safety.md` review |
 | Does the generated binary match the documented Google Mobile Ads SDK posture? | TBD | build ID plus `REAL_ADS_ENABLED_FOR_V1=false` / test app ID review |
 
+## Submission evidence
+
+If submission evidence is recorded in local JSON, use a path such as
+`reports/submission/submission.json`. Local JSON referenced by the `submission`
+gate is validated by `npm run release:preflight` and must include: `status:
+"submitted"`, TestFlight build number/status/URL, Google Play internal track
+URL/version code/tester group, iOS and Android production submission IDs and
+review statuses, and an existing monitoring report path.
+
 ## Submission decision
 
 - [ ] Local validation passed.

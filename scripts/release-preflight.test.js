@@ -229,6 +229,64 @@ function createStoreRecordEvidence(options = {}) {
   };
 }
 
+function createSubmissionEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'submission',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'submitted',
+    testFlightBuild: {
+      buildNumber: '100',
+      processingStatus: 'processed',
+      betaReviewStatus: 'approved',
+      url: 'https://appstoreconnect.apple.com/apps/1234567890/testflight/ios/100',
+    },
+    googlePlayInternal: {
+      trackUrl: 'https://play.google.com/console/u/0/developers/123/app/497123/tracks/internal',
+      versionCode: 100,
+      testerGroup: 'internal-testers',
+    },
+    productionSubmissions: [
+      {
+        platform: 'ios',
+        submissionId: 'ios-submit-100',
+        reviewStatus: 'submitted',
+      },
+      {
+        platform: 'android',
+        submissionId: 'android-submit-100',
+        reviewStatus: 'submitted',
+      },
+    ],
+    monitoringReport: 'reports/monitoring/v1-week1.md',
+    ...options.evidence,
+  };
+
+  if (options.createMonitoringReport !== false) {
+    const monitoringPath = path.join(repoRoot, evidence.monitoringReport);
+    fs.mkdirSync(path.dirname(monitoringPath), { recursive: true });
+    fs.writeFileSync(monitoringPath, '# v1 week-one monitoring\n\nNo launch incidents recorded.\n');
+  }
+
+  const evidencePath = path.join(absoluteDir, 'submission.json');
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'submission.json'),
+    cleanup: () => {
+      fs.rmSync(absoluteDir, { recursive: true, force: true });
+      if (options.createMonitoringReport !== false) {
+        fs.rmSync(path.join(repoRoot, evidence.monitoringReport), { force: true });
+      }
+    },
+  };
+}
+
 test('release preflight fails closed on external launch blockers', () => {
   const report = runPreflight({ expectedStatus: 1 });
   assert.equal(report.status, 'BLOCKED');
@@ -438,6 +496,77 @@ test('release preflight blocks generic submission evidence without concrete IDs 
   assert.match(submission.evidence, /Google Play internal track URL/i);
   assert.match(submission.evidence, /production submission ID/i);
   assert.match(submission.evidence, /monitoring report/i);
+});
+
+test('release preflight blocks local submission evidence missing production submissions', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-submission-json-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const submissionEvidence = createSubmissionEvidence({
+    evidence: {
+      productionSubmissions: [
+        {
+          platform: 'ios',
+          submissionId: 'ios-submit-100',
+          reviewStatus: 'submitted',
+        },
+      ],
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      submission: {
+        status: 'READY',
+        evidence: `TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; monitoring report reports/monitoring/v1-week1.md recorded; reports in ${submissionEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const submission = report.gates.find((gate) => gate.id === 'submission');
+    assert.equal(submission.status, 'BLOCKED');
+    assert.match(submission.evidence, /local artifact content/i);
+    assert.match(submission.evidence, /android production submission/i);
+  } finally {
+    submissionEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local submission evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-submission-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const submissionEvidence = createSubmissionEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      submission: {
+        status: 'READY',
+        evidence: `TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; monitoring report reports/monitoring/v1-week1.md recorded; reports in ${submissionEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'submission').status, 'READY');
+  } finally {
+    submissionEvidence.cleanup();
+  }
 });
 
 test('release preflight blocks dirty release worktrees', () => {

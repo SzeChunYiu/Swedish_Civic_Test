@@ -182,6 +182,44 @@ When TestFlight, Google Play internal, production submission, and first
 monitoring evidence are all recorded, update `submission` in
 `reports/release-gates.json`.
 
+If recording submission evidence locally, create
+`reports/submission/submission.json` and reference that path in the `submission`
+gate evidence. `npm run release:preflight` validates local JSON for TestFlight
+build status, Google Play internal track, iOS and Android production submission
+IDs/statuses, and an existing monitoring report path.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "submitted",
+  "testFlightBuild": {
+    "buildNumber": "100",
+    "processingStatus": "processed",
+    "betaReviewStatus": "approved",
+    "url": "https://appstoreconnect.apple.com/apps/1234567890/testflight/ios/100"
+  },
+  "googlePlayInternal": {
+    "trackUrl": "https://play.google.com/console/u/0/developers/123/app/497123/tracks/internal",
+    "versionCode": 100,
+    "testerGroup": "internal-testers"
+  },
+  "productionSubmissions": [
+    {
+      "platform": "ios",
+      "submissionId": "ios-submit-100",
+      "reviewStatus": "submitted"
+    },
+    {
+      "platform": "android",
+      "submissionId": "android-submit-100",
+      "reviewStatus": "submitted"
+    }
+  ],
+  "monitoringReport": "reports/monitoring/v1-week1.md"
+}
+```
+
 ## 8. Re-run release preflight
 
 ```bash
