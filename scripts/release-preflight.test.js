@@ -220,3 +220,31 @@ test('release preflight blocks READY manual gates with contradictory placeholder
   assert.match(androidAudio.evidence, /placeholder/i);
   assert.match(androidAudio.evidence, /TBD/i);
 });
+
+test('release preflight blocks web-draft screenshots as final device screenshot evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-web-draft-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    'device-screenshots': {
+      status: 'READY',
+      evidence:
+        'Web-draft screenshots captured from browser and recorded in reports/2026-05-15-uiux-screenshots/manifest.json for store listing.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const screenshots = report.gates.find((gate) => gate.id === 'device-screenshots');
+  assert.equal(screenshots.status, 'BLOCKED');
+  assert.match(screenshots.evidence, /web-draft/i);
+  assert.match(screenshots.evidence, /not final/i);
+});

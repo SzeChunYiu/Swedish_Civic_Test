@@ -52,6 +52,13 @@ const blockedEvidencePatterns = [
   [/missing/i, 'missing'],
 ];
 
+const gateSpecificBlockedEvidencePatterns = {
+  'device-screenshots': [
+    [/web[- ]draft/i, 'web-draft evidence is not final store screenshot evidence'],
+    [/browser/i, 'browser screenshots are not final store screenshot evidence'],
+  ],
+};
+
 function exists(path) {
   return fs.existsSync(path);
 }
@@ -105,7 +112,10 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
   const recordedEvidence = typeof recorded?.evidence === 'string' ? recorded.evidence.trim() : '';
 
   if (status === 'READY' && recordedEvidence.length > 0) {
-    const blockedTerms = blockedEvidencePatterns
+    const blockedTerms = [
+      ...blockedEvidencePatterns,
+      ...(gateSpecificBlockedEvidencePatterns[id] || []),
+    ]
       .filter(([pattern]) => pattern.test(recordedEvidence))
       .map(([, label]) => label);
     if (blockedTerms.length > 0) {
@@ -113,10 +123,10 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
         id,
         label,
         'BLOCKED',
-        `Gate ${id} is marked READY in ${evidencePath}, but evidence still contains blocker or placeholder language: ${blockedTerms.join(
+        `Gate ${id} is marked READY in ${evidencePath}, but evidence still contains blocker, placeholder, or not-final language: ${blockedTerms.join(
           ', ',
         )}. Recorded evidence: ${recordedEvidence}`,
-        `Replace placeholder/blocker wording with concrete evidence for ${id} in ${evidencePath}.`,
+        `Replace placeholder/blocker/not-final wording with concrete evidence for ${id} in ${evidencePath}.`,
       );
     }
 
