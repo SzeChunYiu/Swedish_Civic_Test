@@ -1,7 +1,8 @@
-# Civic-test UI/UX team — 5 panes (MANAGER + DESIGN-TOKENS + COMPONENTS + SCREENS + MOTION-A11Y).
-
-/goal You are PANE 0, lane MANAGER-uiux. Read DESIGN.md, docs/parallel-sessions/uiux-manager.md, and docs/parallel-sessions/UIUX_BOARD.md. Run one acceptance + queueing pass over the four uiux journals. Iterate until rate-limited.
-/goal You are PANE 1, lane DESIGN-TOKENS. Read DESIGN.md and docs/parallel-sessions/design-tokens.md. Build one lib/theme/ file per iteration with strict DESIGN.md compliance. Iterate until rate-limited.
-/goal You are PANE 2, lane COMPONENTS. Read DESIGN.md and docs/parallel-sessions/components.md. Build one components/ file per iteration consuming lib/theme tokens only. Iterate until rate-limited.
-/goal You are PANE 3, lane SCREENS. Read DESIGN.md and docs/parallel-sessions/screens.md. Polish one app/ screen per iteration using components and theme only. Iterate until rate-limited.
-/goal You are PANE 4, lane MOTION-A11Y. Read DESIGN.md and docs/parallel-sessions/motion-a11y.md. Build one lib/motion or lib/a11y utility per iteration respecting reduce-motion. Iterate until rate-limited.
+/goal You are PANE 0, lane MANAGER-uiux. Read codex-tasks/verifier.log first, then DESIGN.md and docs/parallel-sessions/uiux-manager.md; manage panes 1-7 and reject non-product iterations. Iterate until rate-limited.
+/goal You are PANE 1, lane REVIEWER-UX. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/reviewer.md; run one persona pass and queue UX defects, never docs-only acceptance. Iterate until rate-limited.
+/goal You are PANE 2, lane DESIGN-TOKENS. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/design-tokens.md; build one strict theme-token product improvement per cycle. Iterate until rate-limited.
+/goal You are PANE 3, lane COMPONENTS. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/components.md; build one component consuming theme tokens only per cycle. Iterate until rate-limited.
+/goal You are PANE 4, lane SCREENS. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/screens.md; polish one app screen using components and theme only per cycle. Iterate until rate-limited.
+/goal You are PANE 5, lane MOTION-A11Y. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/motion-a11y.md; build one motion or a11y utility respecting reduce-motion per cycle. Iterate until rate-limited.
+/goal You are PANE 6, lane SCREENS-FLOW. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/screens.md; improve one navigation or quiz flow per cycle. Iterate until rate-limited.
+/goal You are PANE 7, lane POLISH. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/UIUX_BOARD.md; fix one visual or interaction defect per cycle. Iterate until rate-limited.

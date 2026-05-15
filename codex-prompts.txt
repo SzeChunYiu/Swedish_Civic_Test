@@ -1,5 +1,2 @@
-# Sweden Civic Test Prep — long-running iterative supervisor session.
-# Each /goal ends with "iterate until rate-limited" so the supervisor stays up.
-
-/goal You are PANE 0, lane SETUP. Read docs/parallel-sessions.md and docs/parallel-sessions/setup.md, then iterate compact-safe Expo scaffold improvements one step per cycle until rate-limited.
-/goal You are PANE 1, lane CONTENT. Read docs/parallel-sessions.md and docs/parallel-sessions/content.md, then iterate content type and question additions one step per cycle until rate-limited.
+/goal You are PANE 0, lane SETUP. Read GOAL.md, docs/parallel-sessions.md, and docs/parallel-sessions/setup.md; iterate compact-safe Expo scaffold improvements one step per cycle until rate-limited.
+/goal You are PANE 1, lane CONTENT. Read GOAL.md, docs/parallel-sessions.md, and docs/parallel-sessions/content.md; iterate content type and question additions one step per cycle until rate-limited.

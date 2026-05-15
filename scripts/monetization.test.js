@@ -34,6 +34,8 @@ test('monetization keeps real ads fail-closed for v1.0 while preserving test-uni
   assert.equal(shouldShowAd('exam_screen', { adsDisabled: false }), false);
   assert.match(getPlatformAdUnitId('home_banner', 'android'), /^ca-app-pub-/);
   assert.match(getPlatformAdUnitId('home_banner', 'ios'), /^ca-app-pub-/);
+  assert.match(getPlatformAdUnitId('app_open_launch', 'android'), /9257395921$/);
+  assert.match(getPlatformAdUnitId('app_open_launch', 'ios'), /5575463023$/);
 });
 
 test('app config registers the Google Mobile Ads Expo plugin with test app ids', () => {
@@ -46,6 +48,26 @@ test('app config registers the Google Mobile Ads Expo plugin with test app ids',
   assert.match(plugin[1].androidAppId, /^ca-app-pub-/);
   assert.match(plugin[1].iosAppId, /^ca-app-pub-/);
   assert.equal(plugin[1].delayAppMeasurementInit, true);
+});
+
+test('launch popup ad remains fail-closed for v1.0 and respects launch cap/premium', () => {
+  const { shouldShowLaunchPopupAd } = loadTs('lib/monetization/ads.ts');
+
+  assert.equal(
+    shouldShowLaunchPopupAd({
+      alreadyShownThisLaunch: false,
+      entitlements: { adsDisabled: false },
+    }),
+    false,
+  );
+  assert.equal(
+    shouldShowLaunchPopupAd({ alreadyShownThisLaunch: true, entitlements: { adsDisabled: false } }),
+    false,
+  );
+  assert.equal(
+    shouldShowLaunchPopupAd({ alreadyShownThisLaunch: false, entitlements: { adsDisabled: true } }),
+    false,
+  );
 });
 
 test('exam screen does not import ad components', () => {
