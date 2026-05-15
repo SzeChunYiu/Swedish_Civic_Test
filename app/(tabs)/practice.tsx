@@ -17,7 +17,7 @@ export default function Screen() {
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
-  const markQuestionCompleted = useProgressStore((state) => state.markQuestionCompleted);
+  const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const question = questions[0];
 
   if (!question) {
@@ -32,7 +32,7 @@ export default function Screen() {
   const currentScore = selectedOptionId ? scoreAnswers([selectedIsCorrect]) : null;
   const handleSelectOption = (optionId: string) => {
     selectOption(optionId);
-    markQuestionCompleted(question.id);
+    recordAnswer(question.id, isCorrectAnswer(question, optionId));
   };
 
   return (

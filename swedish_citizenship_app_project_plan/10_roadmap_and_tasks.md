@@ -55,13 +55,13 @@ Acceptance criteria:
 
 Tasks:
 
-- [ ] Add local storage.
-- [ ] Track seen/correct/wrong counts.
+- [x] Add local storage.
+- [x] Track seen/correct/wrong counts.
 - [ ] Track current streak.
-- [ ] Track daily goal.
+- [x] Track daily goal.
 - [ ] Track chapter mastery.
-- [ ] Track bookmarked questions.
-- [ ] Build mistake review screen.
+- [x] Track bookmarked questions.
+- [x] Build mistake review screen.
 
 Acceptance criteria:
 
