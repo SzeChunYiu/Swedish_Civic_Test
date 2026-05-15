@@ -17,6 +17,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Content validation result: 13 chapters, 500 questions, 500 published questions.
 - Content database: `content/question-bank.csv` regenerated with 500 question rows plus header.
 - Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
+- Release evidence capture is now templated in `reports/release-evidence-template.md`; store screenshots are planned in `publishing/screenshot-shotlist.md`.
 
 ## Prompt-to-artifact checklist
 
@@ -50,9 +51,9 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | EAS build config | `eas.json`, `publishing/build-and-submit-runbook.md`, build-config test | Done |
 | TestFlight beta | Requires Apple account, App Store Connect app record, build upload, beta review | Blocked external |
 | Google Play internal test | Requires Play Console app record, service account/upload, internal release | Blocked external |
-| Submit Android app | Requires store account, internal testing, final screenshots/assets | Not done |
-| Submit iOS app | Requires store account, TestFlight, final screenshots/assets | Not done |
-| Monitor crash reports/content reports/first-week fixes/reviews | Requires launched app and telemetry/support process | Not done |
+| Submit Android app | Requires store account, internal testing, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
+| Submit iOS app | Requires store account, TestFlight, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
+| Monitor crash reports/content reports/first-week fixes/reviews | Requires launched app and telemetry/support process; release evidence template exists in `reports/release-evidence-template.md` | Not done |
 | Plan v1.1 | `docs/release/post-launch-v1.1-plan.md` | Done for post-launch planning; execution deferred until v1.0 launch evidence exists |
 
 ## Conclusion
@@ -66,5 +67,5 @@ The codebase now has a validated 500-question published content milestone, relea
 1. Run Android and iOS physical-device audio tests from an EAS preview build.
 2. Create App Store Connect, Google Play Console, and AdMob records.
 3. Upload TestFlight and Google Play internal test builds.
-4. Prepare final public support/privacy URLs and screenshots.
+4. Use `reports/release-evidence-template.md` and `publishing/screenshot-shotlist.md` to capture public support/privacy URLs, screenshots, and device-test evidence.
 5. Submit store builds only after device/store verification and privacy review are current.
