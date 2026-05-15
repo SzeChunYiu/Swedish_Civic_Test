@@ -28,6 +28,15 @@ const evidenceRequirements = {
     ['Support URL entered in store records', /Support URL/i],
     ['Privacy Policy URL entered in store records', /Privacy Policy URL/i],
   ],
+  'privacy-review': [
+    ['Apple privacy labels review', /Apple privacy labels|App Store privacy/i],
+    ['Google Play Data safety review', /Google Play Data safety|Data safety/i],
+    ['generated binary or build evidence', /binary|build|EAS|TestFlight|APK|AAB|IPA|version/i],
+    [
+      'disabled ad SDK posture',
+      /Google Mobile Ads|react-native-google-mobile-ads|REAL_ADS_ENABLED_FOR_V1=false|real ads disabled/i,
+    ],
+  ],
   'device-screenshots': [
     ['screenshot evidence', /screenshot/i],
     ['device or accepted tooling evidence', /device|accepted|store/i],
@@ -375,6 +384,13 @@ function buildReport() {
       'Apple/Google store records',
       'No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0.',
       'Create Apple/Google account/app records and copy URLs into a release evidence file.',
+    ),
+    evidenceGate(
+      manualEvidence,
+      'privacy-review',
+      'Store privacy questionnaire review against binary',
+      'No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded.',
+      'After EAS build and store records exist, review Apple privacy labels and Google Play Data safety against the generated binary, including Google Mobile Ads SDK test configuration and real-ads-disabled posture.',
     ),
     publicUrlsGate(manualEvidence),
     evidenceGate(

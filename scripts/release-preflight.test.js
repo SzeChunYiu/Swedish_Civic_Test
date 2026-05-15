@@ -91,6 +91,11 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
             evidence:
               'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred.',
           },
+          'privacy-review': {
+            status: 'READY',
+            evidence:
+              'Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled.',
+          },
           'public-urls': {
             status: 'READY',
             evidence:
@@ -130,6 +135,7 @@ test('release preflight fails closed on external launch blockers', () => {
     'android-device-audio',
     'ios-device-audio',
     'store-records',
+    'privacy-review',
     'public-urls',
     'device-screenshots',
   ]) {
@@ -439,4 +445,31 @@ test('release preflight blocks store record evidence without exact public URLs',
     storeRecords.evidence,
     /https:\/\/babbloo-studio\.github\.io\/Swedish_Civic_Test-public-site\/privacy\//i,
   );
+});
+
+test('release preflight blocks privacy review evidence without binary and ad sdk posture', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-privacy-review-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    'privacy-review': {
+      status: 'READY',
+      evidence: 'Apple privacy labels and Google Play Data safety reviewed.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const privacyReview = report.gates.find((gate) => gate.id === 'privacy-review');
+  assert.equal(privacyReview.status, 'BLOCKED');
+  assert.match(privacyReview.evidence, /generated binary or build/i);
+  assert.match(privacyReview.evidence, /ad SDK/i);
 });

@@ -84,7 +84,21 @@ Record evidence for:
 
 Public support/privacy pages are already hosted on GitHub Pages and `public-urls` is READY in `reports/release-gates.json`. Enter those URLs in the store records after App Store Connect and Google Play Console app records exist.
 
-## 5. Capture final store screenshots
+## 5. Re-review store privacy questionnaires against the generated binary
+
+After the EAS build and store records exist, re-review:
+
+- Apple privacy labels against `publishing/privacy-labels.md`.
+- Google Play Data safety against `publishing/google-play-data-safety.md`.
+- The generated binary/build configuration, including the Google Mobile Ads SDK
+  test configuration and `REAL_ADS_ENABLED_FOR_V1=false` posture.
+- Any newly enabled real ad, purchase, analytics, crash, or support SDK.
+
+Do not mark `privacy-review` READY in `reports/release-gates.json` until the
+review evidence names the build/binary, Apple privacy labels, Google Play Data
+safety, and the disabled Google Mobile Ads SDK posture.
+
+## 6. Capture final store screenshots
 
 Use `publishing/screenshot-shotlist.md` and
 `publishing/screenshot-manifest.json`.
@@ -94,7 +108,7 @@ accepted by the platform, or another store-approved capture method. Web-draft
 screenshots are not sufficient for final submission. Update `device-screenshots`
 in `reports/release-gates.json` only after final files/paths are recorded.
 
-## 6. Upload internal test builds
+## 7. Upload internal test builds
 
 Apple:
 
@@ -110,23 +124,16 @@ When TestFlight, Google Play internal, production submission, and first
 monitoring evidence are all recorded, update `submission` in
 `reports/release-gates.json`.
 
-## 7. Re-run privacy and release preflight
+## 8. Re-run release preflight
 
 ```bash
 npm run validate
 npm run release:preflight
 ```
 
-If any real ad, purchase, analytics, crash, or support SDK was enabled, re-review:
-
-- `publishing/privacy-labels.md`
-- `publishing/google-play-data-safety.md`
-- `app/privacy.tsx`
-- `publishing/public-site/privacy/index.html`
-
 Do not submit until `npm run release:preflight` exits 0.
 
-## 8. Submit production builds
+## 9. Submit production builds
 
 Only after all evidence gates are ready:
 

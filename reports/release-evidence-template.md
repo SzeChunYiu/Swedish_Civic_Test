@@ -59,6 +59,10 @@ screenshot path, or reviewer note. Manual release gates are also represented in
 
 ## Privacy and monetization review
 
+Do not mark `privacy-review` READY in `reports/release-gates.json` until this
+section names the generated binary/build reviewed for Apple privacy labels,
+Google Play Data safety, and the disabled Google Mobile Ads SDK posture.
+
 | Question | Answer for this candidate | Evidence |
 |---|---|---|
 | Are real ads enabled? | TBD | SDK/config review |
@@ -66,6 +70,7 @@ screenshot path, or reviewer note. Manual release gates are also represented in
 | Is analytics or crash reporting enabled? | TBD | SDK/config review |
 | Do Apple privacy labels still match the binary? | TBD | `publishing/privacy-labels.md` review |
 | Does Google Play Data safety still match the binary? | TBD | `publishing/google-play-data-safety.md` review |
+| Does the generated binary match the documented Google Mobile Ads SDK posture? | TBD | build ID plus `REAL_ADS_ENABLED_FOR_V1=false` / test app ID review |
 
 ## Submission decision
 
@@ -73,6 +78,7 @@ screenshot path, or reviewer note. Manual release gates are also represented in
 - [ ] Android physical-device smoke passed.
 - [ ] iOS physical-device smoke passed.
 - [ ] Store metadata reviewed against submitted binary.
+- [ ] Apple privacy labels and Google Play Data safety reviewed against the generated binary.
 - [ ] Screenshots captured from real target devices or accepted store tooling.
 - [ ] Support and privacy URLs are public and match in-app copy.
 - [ ] No unresolved blocker remains in this evidence file.
