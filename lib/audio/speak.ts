@@ -19,9 +19,17 @@ export function buildQuestionSpeechText(question: SpeakableQuestion): string {
 
 export function speakSwedish(text: string): void {
   if (text.trim().length === 0) return;
-  Speech.speak(text, { language: 'sv-SE' });
+  try {
+    Speech.speak(text, { language: 'sv-SE' });
+  } catch (error) {
+    console.warn('Speech unavailable:', error);
+  }
 }
 
 export function stopSpeech(): void {
-  Speech.stop();
+  try {
+    Speech.stop();
+  } catch (error) {
+    console.warn('Speech stop unavailable:', error);
+  }
 }
