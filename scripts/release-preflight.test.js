@@ -20,38 +20,39 @@ function runPreflight(options = {}) {
   return JSON.parse(result.stdout);
 }
 
-test('release preflight fails closed on external launch blockers', () => {
-  const report = runPreflight({ expectedStatus: 1 });
-  assert.equal(report.status, 'BLOCKED');
-  assert.equal(report.readyForSubmission, false);
-
-  const gateIds = new Set(report.gates.map((gate) => gate.id));
-  for (const id of [
-    'local-validation',
-    'expo-doctor',
-    'web-export',
-    'native-prebuild',
-    'eas-auth',
-    'android-device-audio',
-    'ios-device-audio',
-    'store-records',
-    'public-urls',
-    'device-screenshots',
-  ]) {
-    assert.ok(gateIds.has(id), `${id} should be represented`);
-  }
-
-  const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
-  assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
-  assert.match(report.nextActions[0], /Expo\/EAS/i);
-});
-
-test('release preflight can pass after recorded external evidence and EAS auth are ready', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
+function writeFakeReleaseCommands(tmpDir) {
   const fakeNpm = path.join(tmpDir, 'npm');
   const fakeNpx = path.join(tmpDir, 'npx');
 
+  fs.writeFileSync(
+    fakeNpm,
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
+      'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
+      'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "Android and iOS native prebuild smoke passed"; exit 0; fi',
+      'echo "unexpected npm command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  fs.writeFileSync(
+    fakeNpx,
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
+      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
+      'echo "unexpected npx command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+}
+
+function writeAllReadyEvidence(evidencePath, overrides = {}) {
   fs.writeFileSync(
     evidencePath,
     JSON.stringify(
@@ -87,39 +88,46 @@ test('release preflight can pass after recorded external evidence and EAS auth a
             evidence:
               'TestFlight, Google Play internal, production submission, and monitoring evidence recorded.',
           },
+          ...overrides,
         },
       },
       null,
       2,
     ),
   );
+}
 
-  fs.writeFileSync(
-    fakeNpm,
-    [
-      '#!/bin/sh',
-      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
-      'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
-      'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "Android and iOS native prebuild smoke passed"; exit 0; fi',
-      'echo "unexpected npm command: $@" >&2',
-      'exit 2',
-      '',
-    ].join('\n'),
-    { mode: 0o755 },
-  );
+test('release preflight fails closed on external launch blockers', () => {
+  const report = runPreflight({ expectedStatus: 1 });
+  assert.equal(report.status, 'BLOCKED');
+  assert.equal(report.readyForSubmission, false);
 
-  fs.writeFileSync(
-    fakeNpx,
-    [
-      '#!/bin/sh',
-      'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
-      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
-      'echo "unexpected npx command: $@" >&2',
-      'exit 2',
-      '',
-    ].join('\n'),
-    { mode: 0o755 },
-  );
+  const gateIds = new Set(report.gates.map((gate) => gate.id));
+  for (const id of [
+    'local-validation',
+    'expo-doctor',
+    'web-export',
+    'native-prebuild',
+    'eas-auth',
+    'android-device-audio',
+    'ios-device-audio',
+    'store-records',
+    'public-urls',
+    'device-screenshots',
+  ]) {
+    assert.ok(gateIds.has(id), `${id} should be represented`);
+  }
+
+  const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
+  assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
+  assert.match(report.nextActions[0], /Expo\/EAS/i);
+});
+
+test('release preflight can pass after recorded external evidence and EAS auth are ready', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir);
 
   const report = runPreflight({
     expectedStatus: 0,
@@ -141,71 +149,8 @@ test('release preflight can pass after recorded external evidence and EAS auth a
 test('release preflight blocks stale public URL evidence when live check fails', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-public-url-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const fakeNpm = path.join(tmpDir, 'npm');
-  const fakeNpx = path.join(tmpDir, 'npx');
-
-  fs.writeFileSync(
-    evidencePath,
-    JSON.stringify(
-      {
-        gates: {
-          'android-device-audio': {
-            status: 'READY',
-            evidence: 'Android physical-device audio evidence recorded.',
-          },
-          'ios-device-audio': {
-            status: 'READY',
-            evidence: 'iOS physical-device audio evidence recorded.',
-          },
-          'store-records': {
-            status: 'READY',
-            evidence: 'Apple and Google store records recorded.',
-          },
-          'public-urls': {
-            status: 'READY',
-            evidence: 'Public URLs were previously recorded as reachable.',
-          },
-          'device-screenshots': {
-            status: 'READY',
-            evidence: 'Final device screenshots recorded.',
-          },
-          submission: {
-            status: 'READY',
-            evidence: 'Submission and monitoring evidence recorded.',
-          },
-        },
-      },
-      null,
-      2,
-    ),
-  );
-
-  fs.writeFileSync(
-    fakeNpm,
-    [
-      '#!/bin/sh',
-      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
-      'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
-      'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "Android and iOS native prebuild smoke passed"; exit 0; fi',
-      'echo "unexpected npm command: $@" >&2',
-      'exit 2',
-      '',
-    ].join('\n'),
-    { mode: 0o755 },
-  );
-
-  fs.writeFileSync(
-    fakeNpx,
-    [
-      '#!/bin/sh',
-      'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
-      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
-      'echo "unexpected npx command: $@" >&2',
-      'exit 2',
-      '',
-    ].join('\n'),
-    { mode: 0o755 },
-  );
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir);
 
   const report = runPreflight({
     expectedStatus: 1,
@@ -219,4 +164,32 @@ test('release preflight blocks stale public URL evidence when live check fails',
   const publicUrls = report.gates.find((gate) => gate.id === 'public-urls');
   assert.equal(publicUrls.status, 'BLOCKED');
   assert.match(publicUrls.evidence, /live URL check failed/i);
+});
+
+test('release preflight blocks READY manual gates with weak evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-weak-evidence-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    'android-device-audio': {
+      status: 'READY',
+      evidence: 'done',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const androidAudio = report.gates.find((gate) => gate.id === 'android-device-audio');
+  assert.equal(androidAudio.status, 'BLOCKED');
+  assert.match(androidAudio.evidence, /marked READY/i);
+  assert.match(androidAudio.evidence, /Android/i);
+  assert.match(androidAudio.evidence, /audio/i);
 });

@@ -11,6 +11,38 @@ const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
       'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/',
     ];
 
+const evidenceRequirements = {
+  'android-device-audio': [
+    ['Android device or platform', /Android|Pixel|Galaxy/i],
+    ['audio smoke result', /audio/i],
+    ['build URL, ID, or install evidence', /build|EAS|APK|AAB|https?:\/\/|install/i],
+  ],
+  'ios-device-audio': [
+    ['iOS device, iPhone, or TestFlight platform', /iOS|iPhone|iPad|TestFlight/i],
+    ['audio smoke result', /audio/i],
+    ['build URL, ID, or TestFlight evidence', /build|TestFlight|https?:\/\/|install/i],
+  ],
+  'store-records': [
+    ['App Store Connect record', /App Store Connect|Apple/i],
+    ['Google Play Console record', /Google Play/i],
+    ['bundle/package identifier', /com\.billyyiu\.swedishcivictest/i],
+  ],
+  'device-screenshots': [
+    ['screenshot evidence', /screenshot/i],
+    ['device or accepted tooling evidence', /device|accepted|store/i],
+    [
+      'path, manifest, URL, or artifact reference',
+      /manifest|path|reports\/|publishing\/|https?:\/\//i,
+    ],
+  ],
+  submission: [
+    ['TestFlight evidence', /TestFlight/i],
+    ['Google Play internal evidence', /Google Play internal/i],
+    ['production submission evidence', /production|submit|submission/i],
+    ['monitoring evidence', /monitoring|post-launch/i],
+  ],
+};
+
 function exists(path) {
   return fs.existsSync(path);
 }
@@ -64,6 +96,20 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
   const recordedEvidence = typeof recorded?.evidence === 'string' ? recorded.evidence.trim() : '';
 
   if (status === 'READY' && recordedEvidence.length > 0) {
+    const missingRequirements = (evidenceRequirements[id] || [])
+      .filter(([, pattern]) => !pattern.test(recordedEvidence))
+      .map(([requirement]) => requirement);
+    if (missingRequirements.length > 0) {
+      return gate(
+        id,
+        label,
+        'BLOCKED',
+        `Gate ${id} is marked READY in ${evidencePath}, but evidence is too weak. Missing: ${missingRequirements.join(
+          ', ',
+        )}. Recorded evidence: ${recordedEvidence}`,
+        `Add concrete evidence for ${id} to ${evidencePath}.`,
+      );
+    }
     return gate(id, label, 'READY', recordedEvidence, nextAction);
   }
 
