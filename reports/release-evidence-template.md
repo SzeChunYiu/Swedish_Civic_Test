@@ -26,6 +26,16 @@ screenshot path, or reviewer note. Manual release gates are also represented in
 | Production build | `npm run build:production` | TBD |
 | Production submit | `npm run submit:production` | TBD |
 
+## EAS build artifact evidence
+
+If build evidence is recorded in local JSON, use a path such as
+`reports/eas-builds/eas-builds.json`. Local JSON referenced by the
+`eas-build-artifacts` gate is validated by `npm run release:preflight` and must
+include: `status: "ready"`, `appVersion`, `gitCommit`, and Android plus iOS
+build records with profile, build ID, Expo/App Store/Google Play URL, artifact
+type (`apk`/`aab` for Android and `ipa`/`testflight` for iOS), and
+ready/complete/uploaded/installed status.
+
 ## Physical-device smoke tests
 
 | Platform | Device / OS | Installed build | Checks | Result | Evidence |

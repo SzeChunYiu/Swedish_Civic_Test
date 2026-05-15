@@ -78,6 +78,11 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
     JSON.stringify(
       {
         gates: {
+          'eas-build-artifacts': {
+            status: 'READY',
+            evidence:
+              'Android EAS AAB build and iOS EAS IPA/TestFlight build artifacts recorded at https://expo.dev/builds/ready.',
+          },
           'android-device-audio': {
             status: 'READY',
             evidence:
@@ -166,6 +171,47 @@ function createFinalScreenshotManifest(options = {}) {
 
   return {
     relativePath: path.join(relativeDir, 'manifest.json'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
+function createEasBuildEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'eas-builds',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'ready',
+    appVersion: '1.0.0',
+    gitCommit: 'abcdef1',
+    android: {
+      profile: 'internal',
+      buildId: 'android-build-100',
+      buildUrl:
+        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/android-build-100',
+      artifactType: 'aab',
+      installOrTestStatus: 'ready-for-device-smoke',
+    },
+    ios: {
+      profile: 'internal',
+      buildId: 'ios-build-100',
+      buildUrl:
+        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/ios-build-100',
+      artifactType: 'ipa',
+      installOrTestStatus: 'ready-for-testflight',
+    },
+    ...options.evidence,
+  };
+
+  const evidencePath = path.join(absoluteDir, 'eas-builds.json');
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'eas-builds.json'),
     cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
   };
 }
@@ -400,6 +446,7 @@ test('release preflight fails closed on external launch blockers', () => {
     'web-export',
     'native-prebuild',
     'eas-auth',
+    'eas-build-artifacts',
     'android-device-audio',
     'ios-device-audio',
     'store-records',
@@ -413,6 +460,77 @@ test('release preflight fails closed on external launch blockers', () => {
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
   assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
+});
+
+test('release preflight blocks local EAS build evidence missing platform artifacts', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-eas-builds-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const buildEvidence = createEasBuildEvidence({
+    evidence: {
+      android: {
+        profile: 'internal',
+        buildId: '',
+        buildUrl: '',
+        artifactType: 'apk',
+        installOrTestStatus: 'ready-for-device-smoke',
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'eas-build-artifacts': {
+        status: 'READY',
+        evidence: `EAS Android and iOS internal build artifacts recorded in ${buildEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const buildGate = report.gates.find((gate) => gate.id === 'eas-build-artifacts');
+    assert.equal(buildGate.status, 'BLOCKED');
+    assert.match(buildGate.evidence, /local artifact content/i);
+    assert.match(buildGate.evidence, /android.buildId/i);
+  } finally {
+    buildEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local EAS build evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-eas-builds-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const buildEvidence = createEasBuildEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'eas-build-artifacts': {
+        status: 'READY',
+        evidence: `EAS Android and iOS internal build artifacts recorded in ${buildEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'eas-build-artifacts').status, 'READY');
+  } finally {
+    buildEvidence.cleanup();
+  }
 });
 
 test('release preflight can pass after recorded external evidence and EAS auth are ready', () => {

@@ -2,6 +2,10 @@
   "schemaVersion": 1,
   "description": "Machine-readable release gate evidence consumed by scripts/release-preflight.js. Mark a gate READY only after copying concrete build IDs, URLs, screenshot paths, or reviewer notes into evidence.",
   "gates": {
+    "eas-build-artifacts": {
+      "status": "BLOCKED",
+      "evidence": "No EAS Android/iOS build artifact evidence is recorded."
+    },
     "android-device-audio": {
       "status": "BLOCKED",
       "evidence": "No Android physical-device build/install/audio evidence is recorded."
