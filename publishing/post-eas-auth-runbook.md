@@ -150,6 +150,48 @@ Do not mark `privacy-review` READY in `reports/release-gates.json` until the
 review evidence names the build/binary, Apple privacy labels, Google Play Data
 safety, and the disabled Google Mobile Ads SDK posture.
 
+If recording the final privacy review locally, create
+`reports/privacy-review/privacy-review.json` and reference that path in the
+`privacy-review` gate evidence. `npm run release:preflight` validates local JSON
+for the reviewed build, Apple privacy labels, Google Play Data safety, Google
+Mobile Ads test/real-ads-disabled posture, and disabled analytics, crash,
+purchase, and real-ad SDKs.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "reviewed",
+  "reviewedBuild": {
+    "id": "EAS build ios-100/android-100",
+    "version": "1.0.0",
+    "commit": "abcdef1"
+  },
+  "applePrivacyLabels": {
+    "reviewed": true,
+    "path": "publishing/privacy-labels.md",
+    "matchesBinary": true
+  },
+  "googlePlayDataSafety": {
+    "reviewed": true,
+    "path": "publishing/google-play-data-safety.md",
+    "matchesBinary": true
+  },
+  "googleMobileAds": {
+    "sdkPresent": true,
+    "testAppIds": true,
+    "realAdsEnabled": false,
+    "gate": "REAL_ADS_ENABLED_FOR_V1=false"
+  },
+  "disabledSdks": {
+    "analytics": true,
+    "crashReporting": true,
+    "purchases": true,
+    "realAds": true
+  }
+}
+```
+
 ## 6. Capture final store screenshots
 
 Use `publishing/screenshot-shotlist.md` and

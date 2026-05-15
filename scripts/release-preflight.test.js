@@ -287,6 +287,56 @@ function createSubmissionEvidence(options = {}) {
   };
 }
 
+function createPrivacyReviewEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'privacy-review',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'reviewed',
+    reviewedBuild: {
+      id: 'EAS build ios-100/android-100',
+      version: '1.0.0',
+      commit: 'abcdef1',
+    },
+    applePrivacyLabels: {
+      reviewed: true,
+      path: 'publishing/privacy-labels.md',
+      matchesBinary: true,
+    },
+    googlePlayDataSafety: {
+      reviewed: true,
+      path: 'publishing/google-play-data-safety.md',
+      matchesBinary: true,
+    },
+    googleMobileAds: {
+      sdkPresent: true,
+      testAppIds: true,
+      realAdsEnabled: false,
+      gate: 'REAL_ADS_ENABLED_FOR_V1=false',
+    },
+    disabledSdks: {
+      analytics: true,
+      crashReporting: true,
+      purchases: true,
+      realAds: true,
+    },
+    ...options.evidence,
+  };
+
+  const evidencePath = path.join(absoluteDir, 'privacy-review.json');
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'privacy-review.json'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 test('release preflight fails closed on external launch blockers', () => {
   const report = runPreflight({ expectedStatus: 1 });
   assert.equal(report.status, 'BLOCKED');
@@ -919,4 +969,74 @@ test('release preflight blocks privacy review evidence without binary and ad sdk
   assert.equal(privacyReview.status, 'BLOCKED');
   assert.match(privacyReview.evidence, /generated binary or build/i);
   assert.match(privacyReview.evidence, /ad SDK/i);
+});
+
+test('release preflight blocks local privacy review evidence with real ads enabled', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-privacy-json-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const privacyEvidence = createPrivacyReviewEvidence({
+    evidence: {
+      googleMobileAds: {
+        sdkPresent: true,
+        testAppIds: true,
+        realAdsEnabled: true,
+        gate: 'REAL_ADS_ENABLED_FOR_V1=true',
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'privacy-review': {
+        status: 'READY',
+        evidence: `Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled; reports in ${privacyEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const privacyReview = report.gates.find((gate) => gate.id === 'privacy-review');
+    assert.equal(privacyReview.status, 'BLOCKED');
+    assert.match(privacyReview.evidence, /local artifact content/i);
+    assert.match(privacyReview.evidence, /realAdsEnabled/i);
+  } finally {
+    privacyEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local privacy review evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-privacy-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const privacyEvidence = createPrivacyReviewEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'privacy-review': {
+        status: 'READY',
+        evidence: `Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled; reports in ${privacyEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'privacy-review').status, 'READY');
+  } finally {
+    privacyEvidence.cleanup();
+  }
 });

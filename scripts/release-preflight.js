@@ -248,6 +248,78 @@ function validateStoreRecordEvidence(evidencePath) {
   return errors;
 }
 
+function validatePrivacyReviewEvidence(evidencePath) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'reviewed') {
+    errors.push('status must be reviewed');
+  }
+
+  const reviewedBuild = evidence.reviewedBuild || {};
+  for (const field of ['id', 'version', 'commit']) {
+    if (!reviewedBuild[field] || !String(reviewedBuild[field]).trim()) {
+      errors.push(`reviewedBuild.${field} is required`);
+    }
+  }
+
+  const applePrivacyLabels = evidence.applePrivacyLabels || {};
+  if (applePrivacyLabels.reviewed !== true) {
+    errors.push('applePrivacyLabels.reviewed must be true');
+  }
+  if (applePrivacyLabels.matchesBinary !== true) {
+    errors.push('applePrivacyLabels.matchesBinary must be true');
+  }
+  if (applePrivacyLabels.path !== 'publishing/privacy-labels.md') {
+    errors.push('applePrivacyLabels.path must be publishing/privacy-labels.md');
+  } else if (!exists(applePrivacyLabels.path)) {
+    errors.push(`applePrivacyLabels.path does not exist: ${applePrivacyLabels.path}`);
+  }
+
+  const googlePlayDataSafety = evidence.googlePlayDataSafety || {};
+  if (googlePlayDataSafety.reviewed !== true) {
+    errors.push('googlePlayDataSafety.reviewed must be true');
+  }
+  if (googlePlayDataSafety.matchesBinary !== true) {
+    errors.push('googlePlayDataSafety.matchesBinary must be true');
+  }
+  if (googlePlayDataSafety.path !== 'publishing/google-play-data-safety.md') {
+    errors.push('googlePlayDataSafety.path must be publishing/google-play-data-safety.md');
+  } else if (!exists(googlePlayDataSafety.path)) {
+    errors.push(`googlePlayDataSafety.path does not exist: ${googlePlayDataSafety.path}`);
+  }
+
+  const googleMobileAds = evidence.googleMobileAds || {};
+  if (googleMobileAds.sdkPresent !== true) {
+    errors.push('googleMobileAds.sdkPresent must be true');
+  }
+  if (googleMobileAds.testAppIds !== true) {
+    errors.push('googleMobileAds.testAppIds must be true');
+  }
+  if (googleMobileAds.realAdsEnabled !== false) {
+    errors.push('googleMobileAds.realAdsEnabled must be false');
+  }
+  if (!/REAL_ADS_ENABLED_FOR_V1=false|real ads disabled/i.test(googleMobileAds.gate || '')) {
+    errors.push(
+      'googleMobileAds.gate must mention REAL_ADS_ENABLED_FOR_V1=false or real ads disabled',
+    );
+  }
+
+  const disabledSdks = evidence.disabledSdks || {};
+  for (const sdk of ['analytics', 'crashReporting', 'purchases', 'realAds']) {
+    if (disabledSdks[sdk] !== true) {
+      errors.push(`disabledSdks.${sdk} must be true`);
+    }
+  }
+
+  return errors;
+}
+
 function validateSubmissionEvidence(evidencePath) {
   let evidence;
   try {
@@ -315,6 +387,16 @@ function validateSubmissionEvidence(evidencePath) {
 }
 
 function validateLocalArtifactContents(id, artifactPaths) {
+  if (id === 'privacy-review') {
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validatePrivacyReviewEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
   if (id === 'submission') {
     const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
     if (jsonPaths.length === 0) return null;
