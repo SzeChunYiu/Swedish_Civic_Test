@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | Local `main` fast-forwarded to `4cab819 chore: add native prebuild release gate`; subsequent integration evidence is documented in `reports/2026-05-15-local-main-integration.md` |
+| Git commit | `18309b1` on `main` (`docs: refresh completion audit blocker list`); pushed to private GitHub and synced to LUNARC |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 18:56 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED after adding Expo Doctor, web export, and native prebuild as preflight gates on 2026-05-15 18:56 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 20:10 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 20:10 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 18:56 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 20:10 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -40,10 +40,10 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 - Compliance test passed: 1/1.
 - Monetization tests passed: 2/2.
 - Publishing tests passed: 5/5.
-- Build-config tests passed: 4/4.
+- Build-config tests passed: 5/5.
 - App-assets test passed: 1/1.
 - Screenshot-manifest test passed: 1/1.
-- Release-preflight test passed: 1/1.
+- Release-preflight tests passed: 2/2.
 - Content validation: 13 chapters, 500 questions, 500 published questions.
 
 ## Release preflight result
@@ -53,6 +53,9 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 Ready gates:
 
 - `local-validation`: ready; rerun for the exact release candidate.
+- `expo-doctor`: ready; 17/17 checks passed.
+- `web-export`: ready; production web export passed.
+- `native-prebuild`: ready; Android and iOS prebuild smoke passed.
 - `eas-cli`: ready through pinned npx; `npx --yes eas-cli@18.13.0 --version` reports `eas-cli/18.13.0 darwin-arm64 node-v26.0.0`.
 
 Blocked gates:
