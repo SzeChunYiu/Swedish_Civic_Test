@@ -43,6 +43,15 @@ const evidenceRequirements = {
   ],
 };
 
+const blockedEvidencePatterns = [
+  [/TBD/i, 'TBD'],
+  [/BLOCKED/i, 'BLOCKED'],
+  [/not run/i, 'not run'],
+  [/no .*evidence/i, 'no evidence'],
+  [/placeholder/i, 'placeholder'],
+  [/missing/i, 'missing'],
+];
+
 function exists(path) {
   return fs.existsSync(path);
 }
@@ -96,6 +105,21 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
   const recordedEvidence = typeof recorded?.evidence === 'string' ? recorded.evidence.trim() : '';
 
   if (status === 'READY' && recordedEvidence.length > 0) {
+    const blockedTerms = blockedEvidencePatterns
+      .filter(([pattern]) => pattern.test(recordedEvidence))
+      .map(([, label]) => label);
+    if (blockedTerms.length > 0) {
+      return gate(
+        id,
+        label,
+        'BLOCKED',
+        `Gate ${id} is marked READY in ${evidencePath}, but evidence still contains blocker or placeholder language: ${blockedTerms.join(
+          ', ',
+        )}. Recorded evidence: ${recordedEvidence}`,
+        `Replace placeholder/blocker wording with concrete evidence for ${id} in ${evidencePath}.`,
+      );
+    }
+
     const missingRequirements = (evidenceRequirements[id] || [])
       .filter(([, pattern]) => !pattern.test(recordedEvidence))
       .map(([requirement]) => requirement);

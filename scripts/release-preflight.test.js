@@ -193,3 +193,30 @@ test('release preflight blocks READY manual gates with weak evidence', () => {
   assert.match(androidAudio.evidence, /Android/i);
   assert.match(androidAudio.evidence, /audio/i);
 });
+
+test('release preflight blocks READY manual gates with contradictory placeholder evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-placeholder-evidence-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    'android-device-audio': {
+      status: 'READY',
+      evidence: 'Android audio smoke passed on Pixel build TBD.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const androidAudio = report.gates.find((gate) => gate.id === 'android-device-audio');
+  assert.equal(androidAudio.status, 'BLOCKED');
+  assert.match(androidAudio.evidence, /placeholder/i);
+  assert.match(androidAudio.evidence, /TBD/i);
+});
