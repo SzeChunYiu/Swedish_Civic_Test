@@ -5,6 +5,10 @@ screens. Browser screenshots may help draft copy, but store-ready screenshots
 must come from real devices, simulator/store tooling accepted by the platform,
 or another method allowed by the store review process.
 
+Machine-readable route coverage lives in `publishing/screenshot-manifest.json`.
+Web-draft capture evidence is recorded in
+`reports/2026-05-15-web-draft-screenshots.md`.
+
 ## Required screens
 
 | Priority | Screen | Route / setup | Message to show | Notes |

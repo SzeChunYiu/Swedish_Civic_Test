@@ -22,6 +22,8 @@
 - In-app support surface: `/support`, evidence in `reports/2026-05-15-support-surface.md`
 - Public support/privacy hosting copy: `publishing/public-support-and-privacy.md`
 - Hostable public support/privacy pages: `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`
+- Screenshot manifest: `publishing/screenshot-manifest.json`
+- Web-draft screenshot evidence: `reports/2026-05-15-web-draft-screenshots.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`

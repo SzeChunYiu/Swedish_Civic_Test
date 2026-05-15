@@ -1,0 +1,68 @@
+{
+  "appName": "Sweden Citizenship Test Prep",
+  "status": "web-draft-only",
+  "finalDeviceRequirement": "Store-ready screenshots must be captured from real devices, simulator/store tooling accepted by the platform, or another method allowed by store review.",
+  "draftViewport": {
+    "width": 390,
+    "height": 844,
+    "description": "iPhone-like portrait web draft viewport for copy/layout planning only"
+  },
+  "shots": [
+    {
+      "id": "home-dashboard",
+      "priority": 1,
+      "route": "/home",
+      "message": "500-question UHR-based study coverage, streak/progress overview",
+      "finalUse": "App Store and Google Play listing"
+    },
+    {
+      "id": "learn-chapters",
+      "priority": 2,
+      "route": "/learn",
+      "message": "13 chapters aligned to UHR study material",
+      "finalUse": "App Store and Google Play listing"
+    },
+    {
+      "id": "practice-question",
+      "priority": 3,
+      "route": "/practice",
+      "message": "Swedish question, answer options, independent-study disclaimer",
+      "finalUse": "App Store and Google Play listing"
+    },
+    {
+      "id": "mock-exam",
+      "priority": 4,
+      "route": "/exam",
+      "message": "Timed 20-question mock exam with no ads during exam",
+      "finalUse": "App Store and Google Play listing"
+    },
+    {
+      "id": "profile-progress",
+      "priority": 5,
+      "route": "/profile",
+      "message": "Local-only progress, settings, legal/source links, support access",
+      "finalUse": "App Store and Google Play listing"
+    },
+    {
+      "id": "sources-compliance",
+      "priority": 6,
+      "route": "/sources",
+      "message": "UHR source attribution and independent-app language",
+      "finalUse": "Reviewer support or listing screenshot if needed"
+    },
+    {
+      "id": "support-guidance",
+      "priority": 7,
+      "route": "/support",
+      "message": "Support guidance with no personal data instruction",
+      "finalUse": "Reviewer support evidence"
+    },
+    {
+      "id": "privacy-local-data",
+      "priority": 8,
+      "route": "/privacy",
+      "message": "No account required and local-only study progress",
+      "finalUse": "Reviewer support evidence"
+    }
+  ]
+}
