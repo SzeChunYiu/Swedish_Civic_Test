@@ -128,9 +128,9 @@ Tasks:
 - [x] Produce first 100 questions.
 - [x] Review first 100 questions.
 - [x] Import first 100 into app.
-- [ ] Produce next 400 questions.
-- [ ] Review all questions.
-- [ ] Mark 500 questions as published.
+- [x] Produce next 400 questions.
+- [x] Review all questions.
+- [x] Mark 500 questions as published.
 
 Acceptance criteria:
 

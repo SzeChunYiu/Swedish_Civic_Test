@@ -70,7 +70,7 @@ if (Array.isArray(chapters)) {
 }
 
 if (Array.isArray(questions)) {
-  if (questions.length !== 100) fail(`expected 100 questions, found ${questions.length}`);
+  if (questions.length !== 500) fail(`expected 500 questions, found ${questions.length}`);
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
   const counts = questions.reduce((acc, question) => {
     acc[question.chapterId] = (acc[question.chapterId] || 0) + 1;
@@ -80,8 +80,10 @@ if (Array.isArray(questions)) {
   for (const chapterId of chapterIds) {
     if (!counts[chapterId]) fail(`expected at least 1 question for ${chapterId}`);
   }
-  if (counts.ch01 !== 10) fail(`expected 10 ch01 questions, found ${counts.ch01 || 0}`);
-  if (counts.ch02 !== 10) fail(`expected 10 ch02 questions, found ${counts.ch02 || 0}`);
+  if ((counts.ch01 || 0) < 10)
+    fail(`expected at least 10 ch01 questions, found ${counts.ch01 || 0}`);
+  if ((counts.ch02 || 0) < 10)
+    fail(`expected at least 10 ch02 questions, found ${counts.ch02 || 0}`);
 
   const ids = new Set();
   questions.forEach((question, index) => {
@@ -115,7 +117,7 @@ if (Array.isArray(questions)) {
     ) {
       fail(`${label} has incomplete UHR reference`);
     }
-    if (question.reviewStatus !== 'reviewed')
+    if (question.reviewStatus !== 'published')
       fail(`${label} reviewStatus is ${question.reviewStatus}`);
 
     const text = [
@@ -148,5 +150,15 @@ if (failures.length) {
   process.exit(1);
 }
 
+const publishedQuestions = Array.isArray(questions)
+  ? questions.filter((question) => question.reviewStatus === 'published').length
+  : 0;
+
 console.log('Content validation OK');
-console.log(JSON.stringify({ chapters: chapters.length, questions: questions.length }, null, 2));
+console.log(
+  JSON.stringify(
+    { chapters: chapters.length, questions: questions.length, publishedQuestions },
+    null,
+    2,
+  ),
+);

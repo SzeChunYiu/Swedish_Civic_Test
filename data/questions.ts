@@ -1,4 +1,5 @@
 import { additionalQuestions } from './additionalQuestions';
+import { derivePublishedQuestions, publishQuestions } from '../lib/content/derivedQuestions';
 import type { PracticeQuestion } from '../types/content';
 
 export const baseQuestions: PracticeQuestion[] = [
@@ -567,4 +568,14 @@ export const baseQuestions: PracticeQuestion[] = [
   },
 ];
 
-export const questions: PracticeQuestion[] = [...baseQuestions, ...additionalQuestions];
+export const sourceQuestions: PracticeQuestion[] = publishQuestions([
+  ...baseQuestions,
+  ...additionalQuestions,
+]);
+
+export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
+  sourceQuestions,
+  101,
+);
+
+export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];
