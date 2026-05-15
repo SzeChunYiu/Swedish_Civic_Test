@@ -32,11 +32,17 @@ test('privacy labels and data safety answers match current MVP data practices', 
   assert.match(privacyLabels, /Apple App Privacy/i);
   assert.match(privacyLabels, /Data Not Collected/i);
   assert.match(privacyLabels, /local/i);
+  assert.match(privacyLabels, /react-native-google-mobile-ads/i);
+  assert.match(privacyLabels, /REAL_ADS_ENABLED_FOR_V1.*false/i);
+  assert.match(privacyLabels, /test app IDs/i);
 
   const dataSafety = read('publishing/google-play-data-safety.md');
   assert.match(dataSafety, /No user data collected/i);
   assert.match(dataSafety, /No user data shared/i);
   assert.match(dataSafety, /local device/i);
+  assert.match(dataSafety, /Google Mobile Ads SDK/i);
+  assert.match(dataSafety, /real ads disabled/i);
+  assert.match(dataSafety, /test app IDs/i);
 });
 
 test('public support and privacy URL copy is ready for hosting', () => {

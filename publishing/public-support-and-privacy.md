@@ -45,9 +45,10 @@ Study progress, settings, mistakes, XP, streaks, badges, bookmarks, and audio
 preferences are stored locally on the device. The current MVP privacy posture is
 that no user data is collected by the app and no user data is shared by the app.
 
-The current implementation uses placeholders for ads and premium flags. If real
-ad, purchase, analytics, crash-reporting, or support SDKs are enabled later,
-this privacy policy, Apple privacy labels, Google Play Data safety answers, and
+The native build includes Google Mobile Ads test configuration, but real ad
+rendering is disabled for the v1.0 release candidate. If real ad requests,
+purchase, analytics, crash-reporting, or support SDKs are enabled later, this
+privacy policy, Apple privacy labels, Google Play Data safety answers, and
 in-app privacy copy must be reviewed and updated before submission.
 
 ## Hosting checklist

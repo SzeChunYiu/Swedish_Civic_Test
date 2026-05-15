@@ -12,9 +12,9 @@ export default function Screen() {
         locally on the device so the app can remember your practice state.
       </LegalSection>
       <LegalSection title="Ads and purchases">
-        The current implementation uses placeholders for ads and premium flags. If live ad or
-        purchase SDKs are enabled later, this page and store privacy labels must be updated before
-        release.
+        The native build includes Google Mobile Ads test configuration, but real ad rendering is
+        disabled for the v1.0 release candidate. If live ad requests or purchase SDKs are enabled
+        later, this page and store privacy labels must be updated before release.
       </LegalSection>
     </LegalPage>
   );
