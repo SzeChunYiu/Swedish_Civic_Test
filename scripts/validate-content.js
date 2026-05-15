@@ -5,9 +5,25 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
+const moduleCache = new Map();
+
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
 
 function loadTs(relativePath, exportName) {
-  const filePath = path.join(repoRoot, relativePath);
+  const filePath = path.resolve(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) {
+    const cached = moduleCache.get(filePath);
+    return exportName ? cached[exportName] : cached;
+  }
+
   const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: {
@@ -16,8 +32,20 @@ function loadTs(relativePath, exportName) {
     },
   }).outputText;
   const mod = { exports: {} };
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
-  return mod.exports[exportName];
+  moduleCache.set(filePath, mod.exports);
+
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      const resolvedPath = resolveLocalModule(filePath, request);
+      const relativeResolvedPath = path.relative(repoRoot, resolvedPath);
+      return loadTs(relativeResolvedPath);
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  moduleCache.set(filePath, mod.exports);
+  return exportName ? mod.exports[exportName] : mod.exports;
 }
 
 function fail(message) {
@@ -42,11 +70,16 @@ if (Array.isArray(chapters)) {
 }
 
 if (Array.isArray(questions)) {
-  if (questions.length !== 20) fail(`expected 20 questions, found ${questions.length}`);
+  if (questions.length !== 100) fail(`expected 100 questions, found ${questions.length}`);
+  const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
   const counts = questions.reduce((acc, question) => {
     acc[question.chapterId] = (acc[question.chapterId] || 0) + 1;
     return acc;
   }, {});
+
+  for (const chapterId of chapterIds) {
+    if (!counts[chapterId]) fail(`expected at least 1 question for ${chapterId}`);
+  }
   if (counts.ch01 !== 10) fail(`expected 10 ch01 questions, found ${counts.ch01 || 0}`);
   if (counts.ch02 !== 10) fail(`expected 10 ch02 questions, found ${counts.ch02 || 0}`);
 
@@ -56,6 +89,9 @@ if (Array.isArray(questions)) {
     if (!question.id) fail(`question[${index}] missing id`);
     if (ids.has(question.id)) fail(`duplicate question id ${question.id}`);
     ids.add(question.id);
+    if (chapterIds.size && !chapterIds.has(question.chapterId)) {
+      fail(`${label} references unknown chapter ${question.chapterId}`);
+    }
 
     for (const field of [
       'questionSv',

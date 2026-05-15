@@ -15,8 +15,10 @@
     "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
     "test:learning": "node --test scripts/learning.test.js",
     "test:exam": "node --test scripts/exam.test.js",
-    "test": "npm run test:learning && npm run test:exam && npm run test:audio",
-    "test:audio": "node --test scripts/audio.test.js"
+    "test": "npm run test:learning && npm run test:exam && npm run test:audio && npm run test:content",
+    "test:audio": "node --test scripts/audio.test.js",
+    "test:content": "node --test scripts/content-production.test.js",
+    "content:export": "node scripts/export-question-bank.js"
   },
   "dependencies": {
     "expo": "~54.0.33",

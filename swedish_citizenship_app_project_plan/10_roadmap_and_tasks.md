@@ -123,11 +123,11 @@ Acceptance criteria:
 
 Tasks:
 
-- [ ] Create content spreadsheet/database.
-- [ ] Map UHR chapters and sections.
-- [ ] Produce first 100 questions.
-- [ ] Review first 100 questions.
-- [ ] Import first 100 into app.
+- [x] Create content spreadsheet/database.
+- [x] Map UHR chapters and sections.
+- [x] Produce first 100 questions.
+- [x] Review first 100 questions.
+- [x] Import first 100 into app.
 - [ ] Produce next 400 questions.
 - [ ] Review all questions.
 - [ ] Mark 500 questions as published.

@@ -1,6 +1,7 @@
+import { additionalQuestions } from './additionalQuestions';
 import type { PracticeQuestion } from '../types/content';
 
-export const questions: PracticeQuestion[] = [
+export const baseQuestions: PracticeQuestion[] = [
   {
     id: 'q001',
     chapterId: 'ch01',
@@ -565,3 +566,5 @@ export const questions: PracticeQuestion[] = [
     tags: ['referendum', 'elections', 'true-false'],
   },
 ];
+
+export const questions: PracticeQuestion[] = [...baseQuestions, ...additionalQuestions];
