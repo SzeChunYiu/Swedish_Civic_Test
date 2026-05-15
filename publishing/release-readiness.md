@@ -34,6 +34,7 @@
 - Native prebuild smoke evidence: `reports/2026-05-15-native-prebuild-smoke.md`
 - Local main integration evidence: `reports/2026-05-15-local-main-integration.md`
 - Private GitHub remote evidence: `reports/2026-05-15-github-remote.md`
+- External release-gates tracking issue: https://github.com/Babbloo-studio/Swedish_Civic_Test/issues/1
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`

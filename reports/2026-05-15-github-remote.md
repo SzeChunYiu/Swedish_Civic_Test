@@ -37,6 +37,17 @@ Local tracking branches after push:
 - `batch/2026-05-15-foundation` tracks `origin/batch/2026-05-15-foundation` at
   `4cab819 chore: add native prebuild release gate`.
 
+## Release blocker issue
+
+Created a private GitHub issue to track the remaining external release gates:
+
+- https://github.com/Babbloo-studio/Swedish_Civic_Test/issues/1
+
+The issue mirrors the current `npm run release:preflight` blockers: Expo/EAS
+auth, EAS builds, Android/iOS physical-device audio, store records, hosted
+support/privacy URLs, final screenshots, internal testing, production
+submission, and post-launch monitoring evidence.
+
 ## Scope and limitation
 
 The private GitHub remote provides source control backup and review/publishing
