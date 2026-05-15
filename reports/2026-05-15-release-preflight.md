@@ -14,7 +14,7 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after adding Expo Doctor and web export as preflight gates on 2026-05-15 18:45 CEST reported `BLOCKED`, with local validation, Expo Doctor, web export, and pinned npx EAS CLI ready.
+`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after adding Expo Doctor and web export as preflight gates on 2026-05-15 18:49 CEST reported `BLOCKED`, with local validation, Expo Doctor, web export, and pinned npx EAS CLI ready.
 
 Ready gates:
 

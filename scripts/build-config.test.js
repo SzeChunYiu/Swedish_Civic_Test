@@ -55,3 +55,11 @@ test('web export script is available for local production bundle smoke', () => {
   );
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
 });
+
+test('native appearance config has its required Expo module', () => {
+  const pkg = readJson('package.json');
+  const appConfig = readJson('app.json').expo;
+
+  assert.equal(appConfig.userInterfaceStyle, 'light');
+  assert.match(pkg.dependencies['expo-system-ui'], /^~/);
+});

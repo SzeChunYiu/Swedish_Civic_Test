@@ -9,3 +9,4 @@ csup-*.log
 *.tmp
 .sync-backups/
 dist-web/
+tmp/
