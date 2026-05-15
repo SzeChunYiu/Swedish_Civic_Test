@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `05f7122` on `main` (`feat: support release gate evidence files`); product commit verified before this evidence refresh |
+| Git commit | `8e52f0f` on `main` (`docs: disclose disabled ad sdk privacy posture`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 23:15 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 23:15 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, and READY URL/store evidence missing the exact hosted support/privacy URL values before production release actions |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 23:23 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 23:23 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, and READY URL/store evidence missing the exact hosted support/privacy URL values before production release actions |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 23:15 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 23:23 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -40,7 +40,7 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 - Content production test passed: 1/1.
 - Compliance test passed: 1/1.
 - Monetization tests passed: 3/3, including real-ads-fail-closed coverage after the UI/UX merge.
-- Publishing tests passed: 5/5.
+- Publishing tests passed: 5/5, including explicit disabled Google Mobile Ads SDK privacy/data-safety posture coverage for `react-native-google-mobile-ads`, Google sample test app IDs, and `REAL_ADS_ENABLED_FOR_V1=false`.
 - Public URL checker tests passed: 2/2.
 - Build-config tests passed: 12/12, including preview build auth guard coverage, production build preflight guard coverage, production build/submit run-validation guard coverage, dependency audit validation coverage, production submit placeholder-credential guard coverage, and production submit release-preflight guard coverage.
 - App-assets test passed: 1/1.
@@ -122,8 +122,8 @@ Blocked gates:
 | Are real ads enabled? | No; `REAL_ADS_ENABLED_FOR_V1` is `false` and ad rendering is fail-closed | `lib/monetization/ads.ts`, `scripts/monetization.test.js` |
 | Is any purchase SDK enabled? | No; premium flag placeholder only | `lib/monetization/premium.ts`, `scripts/monetization.test.js` |
 | Is analytics or crash reporting enabled? | No analytics/crash SDK evidence in current MVP | `package.json`, privacy/data-safety docs |
-| Do Apple privacy labels still match the binary? | Draft matches current MVP local-only/no-collection posture, but must be re-reviewed before submission | `publishing/privacy-labels.md` |
-| Does Google Play Data safety still match the binary? | Draft matches current MVP local-only/no-collection posture, but must be re-reviewed before submission | `publishing/google-play-data-safety.md` |
+| Do Apple privacy labels still match the binary? | Draft now explicitly discloses the included `react-native-google-mobile-ads` test configuration and `REAL_ADS_ENABLED_FOR_V1=false`; must still be re-reviewed against the generated binary before submission | `publishing/privacy-labels.md`, `scripts/publishing.test.js` |
+| Does Google Play Data safety still match the binary? | Draft now explicitly discloses the Google Mobile Ads SDK test configuration and real-ads-disabled posture; must still be re-reviewed against the generated binary before submission | `publishing/google-play-data-safety.md`, `scripts/publishing.test.js` |
 
 ## Submission decision
 
