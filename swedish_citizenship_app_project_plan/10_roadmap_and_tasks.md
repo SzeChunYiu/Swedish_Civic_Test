@@ -158,10 +158,10 @@ Acceptance criteria:
 
 Tasks:
 
-- [ ] Add disclaimer page.
-- [ ] Add privacy policy.
-- [ ] Add terms of use.
-- [ ] Add source page with UHR links.
+- [x] Add disclaimer page.
+- [x] Add privacy policy.
+- [x] Add terms of use.
+- [x] Add source page with UHR links.
 - [ ] Prepare App Store listing.
 - [ ] Prepare Google Play listing.
 - [ ] Complete privacy labels.

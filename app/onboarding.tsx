@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 
 const steps = [
@@ -26,6 +27,7 @@ export default function Screen() {
       </View>
 
       <QuestionDisclaimer />
+      <ComplianceLinks />
 
       <View style={styles.actions}>
         <Link href="/home" style={styles.primaryLink}>

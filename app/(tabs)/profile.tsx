@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
@@ -68,6 +69,8 @@ export default function Screen() {
           {badges.length > 0 ? badges.map((badge) => badge.title).join(', ') : 'No badges yet'}
         </Text>
       </View>
+
+      <ComplianceLinks />
 
       <Link href="/settings" style={styles.settingsLink}>
         Open settings
