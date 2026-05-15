@@ -4,14 +4,23 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
+import { findWeakChapterIds } from '../../lib/learning/mastery';
+import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateLevel } from '../../lib/learning/xp';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
+  const questionProgress = useProgressStore((state) => state.questionProgress);
+  const totalXp = useProgressStore((state) => state.totalXp);
+  const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const completedToday = Math.min(completedQuestionIds.length, dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
+  const currentStreak = calculateStreak(answerDates);
+  const level = calculateLevel(totalXp);
+  const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
 
   return (
     <View style={styles.container}>
@@ -24,6 +33,28 @@ export default function Screen() {
           {completedToday}/{dailyGoalAnswers} answers
         </Text>
         <ProgressBar progress={progress} />
+      </View>
+
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Text style={styles.metric}>{level}</Text>
+          <Text style={styles.statLabel}>level</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={styles.metric}>{totalXp}</Text>
+          <Text style={styles.statLabel}>XP</Text>
+        </View>
+      </View>
+
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Text style={styles.metric}>{currentStreak}</Text>
+          <Text style={styles.statLabel}>day streak</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={styles.metric}>{weakChapterCount}</Text>
+          <Text style={styles.statLabel}>weak chapters</Text>
+        </View>
       </View>
 
       <View style={styles.statsRow}>

@@ -9,10 +9,11 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "validate:content": "node scripts/validate-content.js",
-    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run validate:content",
+    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test:learning && npm run validate:content",
     "lint": "expo lint -- --max-warnings=0",
     "format:check": "prettier --check \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
-    "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\""
+    "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
+    "test:learning": "node --test scripts/learning.test.js"
   },
   "dependencies": {
     "expo": "~54.0.33",

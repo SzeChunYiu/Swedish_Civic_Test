@@ -57,9 +57,9 @@ Tasks:
 
 - [x] Add local storage.
 - [x] Track seen/correct/wrong counts.
-- [ ] Track current streak.
+- [x] Track current streak.
 - [x] Track daily goal.
-- [ ] Track chapter mastery.
+- [x] Track chapter mastery.
 - [x] Track bookmarked questions.
 - [x] Build mistake review screen.
 
@@ -72,13 +72,13 @@ Acceptance criteria:
 
 Tasks:
 
-- [ ] Add XP system.
-- [ ] Add level calculation.
-- [ ] Add daily goal.
-- [ ] Add streak logic.
-- [ ] Add spaced repetition logic.
-- [ ] Add weak-topic detection.
-- [ ] Add badges.
+- [x] Add XP system.
+- [x] Add level calculation.
+- [x] Add daily goal.
+- [x] Add streak logic.
+- [x] Add spaced repetition logic.
+- [x] Add weak-topic detection.
+- [x] Add badges.
 
 Acceptance criteria:
 

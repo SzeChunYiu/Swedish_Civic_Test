@@ -2,6 +2,9 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import { getNextReviewAt } from '../learning/spacedRepetition';
+import { calculateAnswerXp } from '../learning/xp';
+
 export type QuestionProgress = {
   questionId: string;
   seenCount: number;
@@ -9,6 +12,7 @@ export type QuestionProgress = {
   wrongCount: number;
   correctStreak: number;
   lastAnsweredAt?: string;
+  nextReviewAt?: string;
   bookmarked?: boolean;
 };
 
@@ -25,11 +29,15 @@ try {
 type PersistedProgress = {
   completedQuestionIds: string[];
   questionProgress: Record<string, QuestionProgress>;
+  totalXp: number;
+  answerDates: string[];
 };
 
 const emptyProgress: PersistedProgress = {
   completedQuestionIds: [],
   questionProgress: {},
+  totalXp: 0,
+  answerDates: [],
 };
 
 function normalizeProgress(value: unknown): PersistedProgress {
@@ -38,6 +46,9 @@ function normalizeProgress(value: unknown): PersistedProgress {
   const candidate = value as Partial<PersistedProgress>;
   const completedQuestionIds = Array.isArray(candidate.completedQuestionIds)
     ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
+    : [];
+  const answerDates = Array.isArray(candidate.answerDates)
+    ? [...new Set(candidate.answerDates.filter((day): day is string => typeof day === 'string'))]
     : [];
   const questionProgress: Record<string, QuestionProgress> = {};
 
@@ -52,12 +63,18 @@ function normalizeProgress(value: unknown): PersistedProgress {
         wrongCount: Math.max(0, item.wrongCount ?? 0),
         correctStreak: Math.max(0, item.correctStreak ?? 0),
         lastAnsweredAt: item.lastAnsweredAt,
+        nextReviewAt: item.nextReviewAt,
         bookmarked: item.bookmarked,
       };
     }
   }
 
-  return { completedQuestionIds, questionProgress };
+  return {
+    completedQuestionIds,
+    questionProgress,
+    totalXp: Math.max(0, candidate.totalXp ?? 0),
+    answerDates,
+  };
 }
 
 function readProgress(): PersistedProgress {
@@ -93,6 +110,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
       const nextProgress = {
         completedQuestionIds: [...state.completedQuestionIds, questionId],
         questionProgress: state.questionProgress,
+        totalXp: state.totalXp,
+        answerDates: state.answerDates,
       };
       writeProgress(nextProgress);
 
@@ -100,6 +119,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
     }),
   recordAnswer: (questionId, isCorrect) =>
     set((state) => {
+      const answeredAt = new Date().toISOString();
+      const answerDate = answeredAt.slice(0, 10);
       const previous = state.questionProgress[questionId] ?? {
         questionId,
         seenCount: 0,
@@ -107,23 +128,30 @@ export const useProgressStore = create<ProgressState>((set) => ({
         wrongCount: 0,
         correctStreak: 0,
       };
+      const correctStreak = isCorrect ? previous.correctStreak + 1 : 0;
       const nextQuestionProgress: QuestionProgress = {
         ...previous,
         seenCount: previous.seenCount + 1,
         correctCount: previous.correctCount + (isCorrect ? 1 : 0),
         wrongCount: previous.wrongCount + (isCorrect ? 0 : 1),
-        correctStreak: isCorrect ? previous.correctStreak + 1 : 0,
-        lastAnsweredAt: new Date().toISOString(),
+        correctStreak,
+        lastAnsweredAt: answeredAt,
+        nextReviewAt: getNextReviewAt({ isCorrect, correctStreak, answeredAt }),
       };
       const completedQuestionIds = state.completedQuestionIds.includes(questionId)
         ? state.completedQuestionIds
         : [...state.completedQuestionIds, questionId];
+      const answerDates = state.answerDates.includes(answerDate)
+        ? state.answerDates
+        : [...state.answerDates, answerDate];
       const nextProgress = {
         completedQuestionIds,
         questionProgress: {
           ...state.questionProgress,
           [questionId]: nextQuestionProgress,
         },
+        totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
+        answerDates,
       };
       writeProgress(nextProgress);
 
@@ -144,6 +172,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
           ...state.questionProgress,
           [questionId]: { ...previous, bookmarked: !previous.bookmarked },
         },
+        totalXp: state.totalXp,
+        answerDates: state.answerDates,
       };
       writeProgress(nextProgress);
 

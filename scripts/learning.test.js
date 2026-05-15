@@ -1,0 +1,104 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+const ts = require('typescript');
+
+const repoRoot = path.resolve(__dirname, '..');
+
+function loadTs(relativePath, exportName) {
+  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+  const mod = { exports: {} };
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      const resolved = path.join(path.dirname(path.join(repoRoot, relativePath)), request);
+      const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
+      return loadAllTs(normalized);
+    }
+    return require(request);
+  }
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return exportName ? mod.exports[exportName] : mod.exports;
+}
+
+function loadAllTs(relativePath) {
+  return loadTs(relativePath);
+}
+
+test('XP rules follow the MVP gamification table', () => {
+  const { calculateAnswerXp, calculateLevel, calculateQuizCompletionXp } =
+    loadAllTs('lib/learning/xp.ts');
+
+  assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
+  assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: true }), 4);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }), 70);
+  assert.equal(calculateLevel(0), 1);
+  assert.equal(calculateLevel(100), 2);
+  assert.equal(calculateLevel(400), 3);
+});
+
+test('streak logic counts consecutive unique answer dates through today', () => {
+  const { calculateStreak } = loadAllTs('lib/learning/streaks.ts');
+
+  assert.equal(calculateStreak(['2026-05-13', '2026-05-14', '2026-05-15'], '2026-05-15'), 3);
+  assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
+  assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
+});
+
+test('mastery blends accuracy, coverage, and recency', () => {
+  const { calculateMastery, findWeakChapterIds } = loadAllTs('lib/learning/mastery.ts');
+
+  assert.equal(
+    calculateMastery({ correctCount: 8, seenCount: 10, totalQuestions: 20, recent: true }),
+    0.75,
+  );
+  assert.equal(
+    calculateMastery({ correctCount: 0, seenCount: 0, totalQuestions: 20, recent: false }),
+    0,
+  );
+
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch01' },
+    { id: 'q3', chapterId: 'ch02' },
+  ];
+  const progress = {
+    q1: { correctCount: 0, seenCount: 2, wrongCount: 2 },
+    q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
+    q3: { correctCount: 3, seenCount: 3, wrongCount: 0 },
+  };
+  assert.deepEqual(findWeakChapterIds(questions, progress, 0.7), ['ch01']);
+});
+
+test('spaced repetition schedules wrong answers soon and known answers later', () => {
+  const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
+
+  assert.equal(
+    getNextReviewAt({ isCorrect: false, correctStreak: 0, answeredAt: '2026-05-15T10:00:00.000Z' }),
+    '2026-05-16T10:00:00.000Z',
+  );
+  assert.equal(
+    getNextReviewAt({ isCorrect: true, correctStreak: 3, answeredAt: '2026-05-15T10:00:00.000Z' }),
+    '2026-05-30T10:00:00.000Z',
+  );
+});
+
+test('badges unlock from progress milestones', () => {
+  const { deriveBadges } = loadAllTs('lib/learning/badges.ts');
+
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: 1,
+      currentStreak: 3,
+      level: 2,
+      wrongAnswerCount: 1,
+    }).map((badge) => badge.id),
+    ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'],
+  );
+});
