@@ -16,7 +16,7 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, live-checks the public support/privacy URLs, requires concrete non-placeholder manual evidence for READY manual gates, rejects web-draft/browser-only screenshots for final screenshot gates, requires store-record evidence to include Support URL and Privacy Policy URL entry, requires concrete submission IDs/URLs/reports, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 21:56 CEST at product commit `8a2ac11` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
+`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, live-checks the public support/privacy URLs, requires concrete non-placeholder manual evidence for READY manual gates, rejects web-draft/browser-only screenshots for final screenshot gates, requires store-record evidence to include Support URL and Privacy Policy URL entry, requires concrete submission IDs/URLs/reports, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 22:17 CEST at product commit `05da3e6` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
 
 Ready gates:
 
@@ -24,7 +24,7 @@ Ready gates:
 - Expo Doctor passes 17/17 checks.
 - Web production export smoke passes.
 - Android/iOS native prebuild smoke passes.
-- Pinned npx EAS CLI is available through `npx --yes eas-cli@18.13.0 --version`; `npm run build:preview` now fails closed before EAS cloud build unless `npx --yes eas-cli@18.13.0 whoami` succeeds; `npm run submit:production` now fails closed unless store submit credentials are concrete and this release preflight is fully ready.
+- Pinned npx EAS CLI is available through `npx --yes eas-cli@18.13.0 --version`; `npm run build:preview` now fails closed before EAS cloud build unless `npx --yes eas-cli@18.13.0 whoami` succeeds; `npm run build:production` and `npm run submit:production` now fail closed unless this release preflight is fully ready with `npm run validate` rerun; submit also requires concrete store submit credentials.
 - Public support/privacy URLs are hosted and live-checked by release preflight: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/.
 
 Blocked gates:
