@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `51027b2` on `main` (`feat: enforce typography theme tokens`); product commit verified before this evidence refresh |
+| Git commit | `1679282` on `main` (`feat: add explicit accessibility roles`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 20:39 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 20:39 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 20:46 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 20:46 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 20:39 CEST:33 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 20:46 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -79,7 +79,7 @@ Blocked gates:
 | No literal spacing/radius in screens/components for enforced style properties | `scripts/theme-discipline.test.js`; spacing/radius grep returns zero lines | READY |
 | No literal typography values in screens/components | `scripts/theme-discipline.test.js`; typography grep returns zero lines for font size, line height, letter spacing, and font weight | READY |
 | Expo web visual smoke | `npm run build:web:export`; `npm run test:e2e -- tests/e2e/visual-smoke.spec.ts`; screenshots in `reports/2026-05-15-uiux-screenshots/` | READY |
-| Interactive accessibility labels | `scripts/accessibility-labels.test.js`; `npm run test:a11y-labels`; `reports/2026-05-15-accessibility-labels.md` | READY |
+| Interactive accessibility semantics | `scripts/accessibility-labels.test.js`; `npm run test:a11y-labels`; explicit labels, roles, and disabled/selected/checked states; `reports/2026-05-15-accessibility-labels.md` | READY |
 | Evidence report | `reports/2026-05-15-uiux-polish.md` | READY |
 
 ## Physical-device smoke tests

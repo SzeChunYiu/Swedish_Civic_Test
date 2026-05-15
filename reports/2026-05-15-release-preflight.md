@@ -14,7 +14,7 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 20:39 CEST at product commit `51027b2` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, accessibility-label discipline, and public URLs ready.
+`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 20:46 CEST at product commit `1679282` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
 
 Ready gates:
 

@@ -13,7 +13,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Current branch after local integration: `main`
 - Latest local main state includes release-preflight, Expo Doctor, web-export, and native-prebuild hardening beyond the earlier app-code milestone.
 - Fresh validation command: `npm run validate`
-- Fresh validation result from `npm run validate` on 2026-05-15 20:39 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, theme-discipline test, accessibility-labels test, and content validation.
+- Fresh validation result from `npm run validate` on 2026-05-15 20:46 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, theme-discipline test, accessibility-labels test, and content validation.
 - Content validation result: 13 chapters, 500 questions, 500 published questions.
 - Content database: `content/question-bank.csv` regenerated with 500 question rows plus header.
 - Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
@@ -23,7 +23,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Support surface check: `/support` exists, is linked from the profile legal links, is covered by `scripts/compliance-pages.test.js`, and rendered in Expo web with 0 console errors; see `reports/2026-05-15-support-surface.md`.
 - Public support/privacy page copy and static HTML pages are hosted on GitHub Pages; support URL `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/` and privacy URL `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/` returned HTTP 200; see `reports/2026-05-15-public-urls-hosted.md`.
 - Screenshot manifest and web-draft screenshot evidence are prepared in `publishing/screenshot-manifest.json` and `reports/2026-05-15-web-draft-screenshots.md`, but final device/store screenshots remain external.
-- Executable release preflight exists at `scripts/release-preflight.js`; it now reruns local validation, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, checks pinned npx EAS CLI/authentication, and consumes manual gate evidence from `reports/release-gates.json`. The latest run on 2026-05-15 20:39 CEST at product commit `51027b2` still reported `BLOCKED`; local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, and public URLs were ready, while EAS auth, device audio, store records, final screenshots, and submissions still lacked evidence.
+- Executable release preflight exists at `scripts/release-preflight.js`; it now reruns local validation, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, checks pinned npx EAS CLI/authentication, and consumes manual gate evidence from `reports/release-gates.json`. The latest run on 2026-05-15 20:46 CEST at product commit `1679282` still reported `BLOCKED`; local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, and public URLs were ready, while EAS auth, device audio, store records, final screenshots, and submissions still lacked evidence.
 - Filled release evidence artifact exists at `reports/release-evidence-2026-05-15.md`; decision is `BLOCKED`.
 - v1.0 real ads are deferred and ad rendering is fail-closed; see `reports/2026-05-15-v1-ads-deferred.md`.
 - Web production export smoke passed and is now part of `npm run release:preflight`; see `reports/2026-05-15-web-export-smoke.md`.
@@ -32,7 +32,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
 - Local `main` was fast-forwarded to the validated batch branch; see `reports/2026-05-15-local-main-integration.md`.
 - Private GitHub remote `Babbloo-studio/Swedish_Civic_Test` now exists and tracks `main` plus the batch branch; see `reports/2026-05-15-github-remote.md`.
-- UI/UX token polish gate was reopened by `GOAL.md` and completed locally: `lib/theme/` exists, `app/` and `components/` no longer contain literal colors or enforced spacing/radius literals, `scripts/theme-discipline.test.js` is wired into `npm test`, and Playwright visual smoke captured 15 primary routes under `reports/2026-05-15-uiux-screenshots/`; see `reports/2026-05-15-uiux-polish.md`.
+- UI/UX token polish gate was reopened by `GOAL.md` and completed locally: `lib/theme/` exists, `app/` and `components/` no longer contain literal colors or enforced spacing/radius/typography literals, `scripts/theme-discipline.test.js` is wired into `npm test`, and Playwright visual smoke captured 15 primary routes under `reports/2026-05-15-uiux-screenshots/`; see `reports/2026-05-15-uiux-polish.md`.
 
 ## Prompt-to-artifact checklist
 
@@ -48,7 +48,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | UHR chapter/section map | `content/uhr-section-map.json` | Done |
 | Core screens | `app/onboarding.tsx`, `app/(tabs)/home.tsx`, `app/(tabs)/learn.tsx`, `app/chapter/[chapterId].tsx`, `app/(tabs)/practice.tsx`, `app/settings.tsx` | Done |
 | Professional token-driven UI/UX from `GOAL.md` | `lib/theme/*`, typography-token enforcement, `scripts/theme-discipline.test.js`, `playwright.config.ts`, `tests/e2e/visual-smoke.spec.ts`, `reports/2026-05-15-uiux-polish.md`, `reports/2026-05-15-uiux-screenshots/manifest.json`; GOAL acceptance commands passed | Done |
-| Interactive accessibility labels from `GOAL.md` | `scripts/accessibility-labels.test.js`, `npm run test:a11y-labels`, explicit `accessibilityLabel` props in app/component interactive call sites, `reports/2026-05-15-accessibility-labels.md` | Done |
+| Interactive accessibility semantics from `GOAL.md` | `scripts/accessibility-labels.test.js`, `npm run test:a11y-labels`, explicit `accessibilityLabel`, `accessibilityRole`, and disabled/selected/checked `accessibilityState` props in app/component interactive call sites, `reports/2026-05-15-accessibility-labels.md` | Done |
 | Progress/storage/mistakes | `lib/storage/progressStore.ts`, `app/(tabs)/mistakes.tsx` | Done |
 | Learning mechanics | `lib/learning/*`, `scripts/learning.test.js` | Done |
 | Timed mock exam | `app/(tabs)/exam.tsx`, `lib/quiz/examGenerator.ts`, `scripts/exam.test.js`; browser `/exam` smoke shows 20 questions | Done |
@@ -88,7 +88,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 
 The goal is not complete.
 
-The codebase now has a validated 500-question published content milestone, token-driven UI/UX polish, release metadata drafts, EAS configuration, and strong automated checks. Remaining incompletion is concentrated in physical-device verification and external account/store release steps.
+The codebase now has a validated 500-question published content milestone, token-driven UI/UX polish, interactive accessibility semantics, release metadata drafts, EAS configuration, and strong automated checks. Remaining incompletion is concentrated in physical-device verification and external account/store release steps.
 
 ## Highest-leverage next actions
 
