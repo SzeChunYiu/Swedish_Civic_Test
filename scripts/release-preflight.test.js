@@ -151,6 +151,13 @@ function createFinalScreenshotManifest(options = {}) {
 
   const manifest = {
     status: 'final-device',
+    contentReview: {
+      noOfficialAffiliationClaims: true,
+      noGuaranteedExamResultClaims: true,
+      mockExamShowsNoAds: true,
+      noTestAdBanners: true,
+      privacyAndSourcePagesMatchPublishingDocs: true,
+    },
     screenshots,
     ...options.manifest,
   };
@@ -953,6 +960,48 @@ test('release preflight blocks final screenshot manifests missing store metadata
     assert.match(screenshots.evidence, /pixelWidth/i);
     assert.match(screenshots.evidence, /pixelHeight/i);
     assert.match(screenshots.evidence, /locale/i);
+  } finally {
+    manifest.cleanup();
+  }
+});
+
+test('release preflight blocks final screenshot manifests without content review', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-shot-content-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const manifest = createFinalScreenshotManifest({
+    manifest: {
+      contentReview: {
+        noOfficialAffiliationClaims: false,
+        noGuaranteedExamResultClaims: true,
+        mockExamShowsNoAds: true,
+        noTestAdBanners: true,
+        privacyAndSourcePagesMatchPublishingDocs: true,
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'device-screenshots': {
+        status: 'READY',
+        evidence: `Final screenshots captured from accepted device tooling and recorded in ${manifest.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const screenshots = report.gates.find((gate) => gate.id === 'device-screenshots');
+    assert.equal(screenshots.status, 'BLOCKED');
+    assert.match(screenshots.evidence, /contentReview/i);
+    assert.match(screenshots.evidence, /noOfficialAffiliationClaims/i);
   } finally {
     manifest.cleanup();
   }
