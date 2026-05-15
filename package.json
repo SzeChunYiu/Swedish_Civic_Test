@@ -25,6 +25,7 @@
     "test:publishing": "node --test scripts/publishing.test.js",
     "build:preview": "eas build --profile preview --platform all",
     "build:production": "eas build --profile production --platform all",
+    "build:web:export": "expo export --platform web --output-dir dist-web",
     "submit:production": "eas submit --profile production --platform all",
     "test:build-config": "node --test scripts/build-config.test.js",
     "test:derived-content": "node --test scripts/derived-content.test.js",

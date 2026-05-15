@@ -26,6 +26,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Executable release preflight exists at `scripts/release-preflight.js`; current result is `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
 - Filled release evidence artifact exists at `reports/release-evidence-2026-05-15.md`; decision is `BLOCKED`.
 - v1.0 real ads are deferred and ad rendering is fail-closed; see `reports/2026-05-15-v1-ads-deferred.md`.
+- Web production export smoke passed with `npm run build:web:export`; see `reports/2026-05-15-web-export-smoke.md`.
 - Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
 
 ## Prompt-to-artifact checklist
@@ -60,6 +61,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Google Play Data Safety | `publishing/google-play-data-safety.md`, publishing test | Draft done for current MVP |
 | App icon and splash assets | `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash-icon.png`, `app.json`, `scripts/app-assets.test.js` | Done |
 | EAS build config | `eas.json`, `publishing/build-and-submit-runbook.md`, build-config test | Done |
+| Web production export smoke | `npm run build:web:export`, `reports/2026-05-15-web-export-smoke.md` | Done |
 | EAS CLI availability | `package.json` devDependency `eas-cli`; `npm exec -- eas --version` works | Done |
 | EAS account authentication | `reports/2026-05-15-eas-access-check.md`; `npm exec -- eas whoami` returned `Not logged in` | Blocked external/account |
 | TestFlight beta | Requires Apple account, App Store Connect app record, build upload, beta review | Blocked external |

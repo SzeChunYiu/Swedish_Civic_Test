@@ -18,6 +18,7 @@
 |---|---|---|
 | Local validation | `npm run validate` | PASS on 2026-05-15; includes typecheck, lint, format check, all test suites, and content validation |
 | Release preflight | `npm run release:preflight` | BLOCKED by external/device/store gates; expected non-zero exit 1 |
+| Web production export smoke | `npm run build:web:export` | PASS; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Preview/internal build | `npm run build:preview` | Not run; blocked by EAS authentication |
 | Production build | `npm run build:production` | Not run; must wait for preview/internal device evidence |
 | Production submit | `npm run submit:production` | Not run; must wait for store records, device evidence, final screenshots, and preflight pass |

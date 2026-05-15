@@ -28,6 +28,7 @@
 - Post-EAS-auth runbook: `publishing/post-eas-auth-runbook.md`
 - Filled release evidence: `reports/release-evidence-2026-05-15.md`
 - v1.0 ads deferred evidence: `reports/2026-05-15-v1-ads-deferred.md`
+- Web export smoke evidence: `reports/2026-05-15-web-export-smoke.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`

@@ -33,3 +33,9 @@ test('EAS CLI is project-local so build scripts do not require a global install'
   const pkg = readJson('package.json');
   assert.match(pkg.devDependencies['eas-cli'], /^\^18\./);
 });
+
+test('web export script is available for local production bundle smoke', () => {
+  const pkg = readJson('package.json');
+  assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
+  assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
+});
