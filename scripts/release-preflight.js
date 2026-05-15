@@ -263,6 +263,20 @@ function validateStoreRecordEvidence(evidencePath) {
     errors.push(`privacyUrl must be ${privacyUrl}`);
   }
 
+  const accountOwnership = evidence.accountOwnership || {};
+  if (!/^[A-Z0-9]{10}$/.test(String(accountOwnership.appleDeveloperTeamId || ''))) {
+    errors.push('accountOwnership.appleDeveloperTeamId must be a concrete 10-character Team ID');
+  }
+  if (accountOwnership.appleBundleIdReviewed !== true) {
+    errors.push('accountOwnership.appleBundleIdReviewed must be true');
+  }
+  if (!/^[0-9]{6,}$/.test(String(accountOwnership.googlePlayDeveloperId || ''))) {
+    errors.push('accountOwnership.googlePlayDeveloperId must be a concrete numeric developer ID');
+  }
+  if (accountOwnership.googlePackageNameReviewed !== true) {
+    errors.push('accountOwnership.googlePackageNameReviewed must be true');
+  }
+
   const adMob = evidence.adMob || {};
   const adMobStatus = String(adMob.status || '');
   const adMobAppId = String(adMob.appId || '');
