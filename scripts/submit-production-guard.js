@@ -41,6 +41,32 @@ function validateSubmitConfig() {
   return blockers;
 }
 
+function run(command, args, options = {}) {
+  return spawnSync(command, args, { encoding: 'utf8', ...options });
+}
+
+function validateReleasePreflight() {
+  const preflight = run(process.execPath, ['scripts/release-preflight.js', '--json']);
+  let report = null;
+  try {
+    report = JSON.parse(preflight.stdout || '{}');
+  } catch (_error) {
+    // Keep report null; output below includes raw command output.
+  }
+
+  if (preflight.status === 0 && report?.readyForSubmission === true) {
+    return [];
+  }
+
+  if (report?.gates) {
+    return report.gates
+      .filter((gate) => gate.status !== 'READY')
+      .map((gate) => `[${gate.status}] ${gate.id}: ${gate.evidence}`);
+  }
+
+  return [preflight.stderr || preflight.stdout || 'release preflight did not return JSON'];
+}
+
 function main() {
   const blockers = validateSubmitConfig();
   if (blockers.length > 0) {
@@ -54,12 +80,24 @@ function main() {
     process.exit(1);
   }
 
+  const preflightBlockers = validateReleasePreflight();
+  if (preflightBlockers.length > 0) {
+    console.log('Production submit blocked: release preflight is not ready.');
+    for (const blocker of preflightBlockers) {
+      console.log(`- ${blocker}`);
+    }
+    console.log(
+      'Run npm run release:preflight and clear every release gate before production submit.',
+    );
+    process.exit(1);
+  }
+
   if (checkOnly) {
     console.log('Production submit config is ready.');
     return;
   }
 
-  const result = spawnSync(
+  const result = run(
     'npx',
     ['--yes', 'eas-cli@18.13.0', 'submit', '--profile', 'production', '--platform', 'all'],
     { stdio: 'inherit' },

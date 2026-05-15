@@ -132,6 +132,40 @@ test('production submit guard blocks placeholder Apple identifiers before EAS su
   assert.match(result.stdout, /TBD/i);
 });
 
+test('production submit guard blocks while release preflight is not ready', () => {
+  const easPath = path.join(repoRoot, 'eas.json');
+  const originalEas = fs.readFileSync(easPath, 'utf8');
+  const fakeServiceAccount = path.join(repoRoot, 'tmp/fake-google-play-service-account.json');
+
+  try {
+    const eas = JSON.parse(originalEas);
+    eas.submit.production.ios.appleId = 'release@example.com';
+    eas.submit.production.ios.ascAppId = '1234567890';
+    eas.submit.production.ios.appleTeamId = 'TEAM123456';
+    eas.submit.production.android.serviceAccountKeyPath =
+      './tmp/fake-google-play-service-account.json';
+    fs.mkdirSync(path.dirname(fakeServiceAccount), { recursive: true });
+    fs.writeFileSync(fakeServiceAccount, '{"type":"service_account"}\n');
+    fs.writeFileSync(easPath, `${JSON.stringify(eas, null, 2)}\n`);
+
+    const result = spawnSync(
+      process.execPath,
+      ['scripts/submit-production-guard.js', '--check-only'],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+      },
+    );
+
+    assert.equal(result.status, 1);
+    assert.match(result.stdout, /Production submit blocked/i);
+    assert.match(result.stdout, /release preflight/i);
+  } finally {
+    fs.writeFileSync(easPath, originalEas);
+    fs.rmSync(fakeServiceAccount, { force: true });
+  }
+});
+
 test('web export script is available for local production bundle smoke', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
