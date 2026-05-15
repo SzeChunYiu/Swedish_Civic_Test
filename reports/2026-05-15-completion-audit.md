@@ -11,9 +11,9 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 ## Evidence snapshot
 
 - Current branch: `batch/2026-05-15-foundation`
-- Latest verified app-code commit: `333d347 fix: include published questions in mock exam`
+- Latest validated runtime/app commit: `ac58046 chore: add web export smoke script`; later changes in this branch are documentation/evidence refreshes only.
 - Fresh validation command: `npm run validate`
-- Fresh validation result after latest app-code commit `333d347`: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, and content validation.
+- Fresh validation result for the runtime/app tree at `ac58046` on 2026-05-15 18:23 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, and content validation.
 - Content validation result: 13 chapters, 500 questions, 500 published questions.
 - Content database: `content/question-bank.csv` regenerated with 500 question rows plus header.
 - Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
@@ -23,7 +23,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Support surface check: `/support` exists, is linked from the profile legal links, is covered by `scripts/compliance-pages.test.js`, and rendered in Expo web with 0 console errors; see `reports/2026-05-15-support-surface.md`.
 - Public support/privacy page copy and static HTML pages are prepared in `publishing/public-support-and-privacy.md` and `publishing/public-site/`, but final hosted HTTPS URLs remain external.
 - Screenshot manifest and web-draft screenshot evidence are prepared in `publishing/screenshot-manifest.json` and `reports/2026-05-15-web-draft-screenshots.md`, but final device/store screenshots remain external.
-- Executable release preflight exists at `scripts/release-preflight.js`; current result is `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
+- Executable release preflight exists at `scripts/release-preflight.js`; rerun for the runtime/app tree at `ac58046` on 2026-05-15 18:22 CEST and still reports `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
 - Filled release evidence artifact exists at `reports/release-evidence-2026-05-15.md`; decision is `BLOCKED`.
 - v1.0 real ads are deferred and ad rendering is fail-closed; see `reports/2026-05-15-v1-ads-deferred.md`.
 - Web production export smoke passed with `npm run build:web:export`; see `reports/2026-05-15-web-export-smoke.md`.

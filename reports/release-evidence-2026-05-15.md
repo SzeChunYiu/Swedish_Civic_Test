@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | Current branch evidence file; generated after `e70c8d7` and refreshed after v1.0 ad-defer changes |
+| Git commit | Branch HEAD for this evidence file; latest validated runtime/app commit is `ac58046 chore: add web export smoke script` and later changes are documentation/evidence refreshes only |
 | Branch | `batch/2026-05-15-foundation` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npm exec -- eas whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS on 2026-05-15; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED by external/device/store gates; expected non-zero exit 1 |
+| Local validation | `npm run validate` | PASS for runtime/app tree at `ac58046` on 2026-05-15 18:23 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED for runtime/app tree at `ac58046` on 2026-05-15 18:22 CEST by external/device/store gates; expected non-zero exit 1 |
 | Web production export smoke | `npm run build:web:export` | PASS; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Preview/internal build | `npm run build:preview` | Not run; blocked by EAS authentication |
 | Production build | `npm run build:production` | Not run; must wait for preview/internal device evidence |
@@ -25,7 +25,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence:
+Latest `npm run validate` evidence for runtime/app tree at `ac58046` on 2026-05-15 18:23 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -38,7 +38,7 @@ Latest `npm run validate` evidence:
 - Compliance test passed: 1/1.
 - Monetization tests passed: 2/2.
 - Publishing tests passed: 5/5.
-- Build-config tests passed: 3/3.
+- Build-config tests passed: 4/4.
 - App-assets test passed: 1/1.
 - Screenshot-manifest test passed: 1/1.
 - Release-preflight test passed: 1/1.

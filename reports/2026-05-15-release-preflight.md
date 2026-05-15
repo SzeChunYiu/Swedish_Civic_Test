@@ -13,7 +13,7 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` exits non-zero and reports `BLOCKED`.
+`npm run release:preflight` was rerun for the runtime/app tree at `ac58046` on 2026-05-15 18:22 CEST. It exits non-zero and reports `BLOCKED`.
 
 Ready gates:
 
