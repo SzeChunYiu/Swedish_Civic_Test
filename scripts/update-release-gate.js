@@ -11,6 +11,7 @@ function parseArgs(argv) {
     else if (arg === '--gate') parsed.gate = argv[++index];
     else if (arg === '--status') parsed.status = argv[++index];
     else if (arg === '--evidence') parsed.evidence = argv[++index];
+    else if (arg === '--evidence-file') parsed.evidenceFile = argv[++index];
     else if (arg === '--help' || arg === '-h') parsed.help = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
@@ -21,9 +22,11 @@ function parseArgs(argv) {
 function usage() {
   return [
     'Usage: node scripts/update-release-gate.js --gate <id> --status READY|BLOCKED --evidence <text> [--path reports/release-gates.json]',
+    '   or: node scripts/update-release-gate.js --gate <id> --status READY|BLOCKED --evidence-file <path> [--path reports/release-gates.json]',
     '',
     'Examples:',
     '  node scripts/update-release-gate.js --gate android-device-audio --status READY --evidence "Android Pixel 8 audio smoke passed; build https://expo.dev/..."',
+    '  node scripts/update-release-gate.js --gate device-screenshots --status READY --evidence-file reports/final-store-screenshots/evidence.txt',
     '  node scripts/update-release-gate.js --gate store-records --status BLOCKED --evidence "App Store Connect record not created yet"',
   ].join('\n');
 }
@@ -62,7 +65,19 @@ function main() {
   if (!args.status) fail('Missing --status.');
   if (!['READY', 'BLOCKED'].includes(args.status)) fail('--status must be READY or BLOCKED.');
 
-  const evidence = typeof args.evidence === 'string' ? args.evidence.trim() : '';
+  if (args.evidence && args.evidenceFile) {
+    fail('Use either --evidence or --evidence-file, not both.');
+  }
+
+  let rawEvidence = args.evidence;
+  if (args.evidenceFile) {
+    if (!fs.existsSync(args.evidenceFile)) {
+      fail(`Evidence file not found: ${args.evidenceFile}`);
+    }
+    rawEvidence = fs.readFileSync(args.evidenceFile, 'utf8');
+  }
+
+  const evidence = typeof rawEvidence === 'string' ? rawEvidence.trim() : '';
   if (!evidence) fail(`${args.status} evidence must be a non-empty string.`);
   if (args.status === 'READY' && evidence.length < 20) {
     fail('READY evidence must be concrete, not a short placeholder.');

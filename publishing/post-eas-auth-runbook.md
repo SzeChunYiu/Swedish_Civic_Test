@@ -41,6 +41,13 @@ node scripts/update-release-gate.js --gate android-device-audio --status READY -
 node scripts/update-release-gate.js --gate ios-device-audio --status READY --evidence "iPhone 15 TestFlight audio smoke passed; build https://appstoreconnect.apple.com/..."
 ```
 
+For longer evidence, write a short text file and pass it with
+`--evidence-file`:
+
+```bash
+node scripts/update-release-gate.js --gate android-device-audio --status READY --evidence-file reports/android-device-audio-evidence.txt
+```
+
 ## 3. Run physical-device smoke tests
 
 Install the preview/internal builds and record results.

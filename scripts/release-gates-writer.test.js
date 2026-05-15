@@ -102,3 +102,41 @@ test('release gate writer refuses unknown gates and empty READY evidence', () =>
   assert.equal(emptyReady.status, 1);
   assert.match(emptyReady.stderr || emptyReady.stdout, /READY evidence/i);
 });
+
+test('release gate writer accepts longer evidence from a file', () => {
+  const gatesPath = makeGatesFile();
+  const evidenceFile = path.join(path.dirname(gatesPath), 'android-evidence.txt');
+  fs.writeFileSync(
+    evidenceFile,
+    [
+      'Android Pixel 8 physical-device audio smoke passed.',
+      'Build URL: https://expo.dev/build/android-456',
+      'Tester: release operator',
+      '',
+    ].join('\n'),
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/update-release-gate.js',
+      '--path',
+      gatesPath,
+      '--gate',
+      'android-device-audio',
+      '--status',
+      'READY',
+      '--evidence-file',
+      evidenceFile,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const updated = JSON.parse(fs.readFileSync(gatesPath, 'utf8'));
+  assert.match(updated.gates['android-device-audio'].evidence, /Android Pixel 8/);
+  assert.match(
+    updated.gates['android-device-audio'].evidence,
+    /https:\/\/expo\.dev\/build\/android-456/,
+  );
+});
