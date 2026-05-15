@@ -13,6 +13,7 @@
 - Google Play listing draft: `publishing/google-play-listing.md`
 - Apple privacy label answers: `publishing/privacy-labels.md`
 - Google Play Data safety answers: `publishing/google-play-data-safety.md`
+- Post-launch v1.1 plan: `docs/release/post-launch-v1.1-plan.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`

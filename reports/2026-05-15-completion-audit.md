@@ -11,11 +11,12 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 ## Evidence snapshot
 
 - Current branch: `batch/2026-05-15-foundation`
-- Current HEAD at audit time: `0f42c87 feat: publish 500 UHR practice questions`
+- Latest verified app-code commit: `333d347 fix: include published questions in mock exam`
 - Fresh validation command: `npm run validate`
-- Fresh validation result: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, and content validation.
+- Fresh validation result after latest app-code commit `333d347`: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, and content validation.
 - Content validation result: 13 chapters, 500 questions, 500 published questions.
 - Content database: `content/question-bank.csv` regenerated with 500 question rows plus header.
+- Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
 
 ## Prompt-to-artifact checklist
 
@@ -32,7 +33,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Core screens | `app/onboarding.tsx`, `app/(tabs)/home.tsx`, `app/(tabs)/learn.tsx`, `app/chapter/[chapterId].tsx`, `app/(tabs)/practice.tsx`, `app/settings.tsx` | Done |
 | Progress/storage/mistakes | `lib/storage/progressStore.ts`, `app/(tabs)/mistakes.tsx` | Done |
 | Learning mechanics | `lib/learning/*`, `scripts/learning.test.js` | Done |
-| Timed mock exam | `app/(tabs)/exam.tsx`, `lib/quiz/examGenerator.ts`, `scripts/exam.test.js` | Done |
+| Timed mock exam | `app/(tabs)/exam.tsx`, `lib/quiz/examGenerator.ts`, `scripts/exam.test.js`; browser `/exam` smoke shows 20 questions | Done |
 | Ads disabled during exam | `app/(tabs)/exam.tsx` has no ad imports; `scripts/monetization.test.js` verifies no ad import | Done |
 | Swedish audio code | `lib/audio/speak.ts`, `components/learning/AudioButton.tsx`, `scripts/audio.test.js` | Code done |
 | Android audio device test | No physical Android build/device evidence | Missing |
@@ -52,7 +53,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Submit Android app | Requires store account, internal testing, final screenshots/assets | Not done |
 | Submit iOS app | Requires store account, TestFlight, final screenshots/assets | Not done |
 | Monitor crash reports/content reports/first-week fixes/reviews | Requires launched app and telemetry/support process | Not done |
-| Plan v1.1 | Ideas exist in roadmap; no post-launch v1.1 plan artifact yet | Partial |
+| Plan v1.1 | `docs/release/post-launch-v1.1-plan.md` | Done for post-launch planning; execution deferred until v1.0 launch evidence exists |
 
 ## Conclusion
 
