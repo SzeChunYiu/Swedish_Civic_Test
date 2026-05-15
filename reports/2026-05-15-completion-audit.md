@@ -20,6 +20,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Release evidence capture is now templated in `reports/release-evidence-template.md`; store screenshots are planned in `publishing/screenshot-shotlist.md`.
 - EAS access check: project-local `eas-cli` added and `npm exec -- eas --version` works; `npm exec -- eas whoami` remains blocked by `Not logged in`; see `reports/2026-05-15-eas-access-check.md`.
 - Release asset check: `assets/icon.png`, `assets/adaptive-icon.png`, and `assets/splash-icon.png` are configured in `app.json` and verified by `scripts/app-assets.test.js`; see `reports/2026-05-15-release-assets.md`.
+- Support surface check: `/support` exists, is linked from the profile legal links, is covered by `scripts/compliance-pages.test.js`, and rendered in Expo web with 0 console errors; see `reports/2026-05-15-support-surface.md`.
 
 ## Prompt-to-artifact checklist
 
@@ -46,6 +47,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Premium ad disable flag | `lib/monetization/premium.ts`, `PremiumBanner`, monetization test | Done |
 | RevenueCat later if needed | Deferred in docs; no SDK by design | Deferred/external decision |
 | Disclaimer/privacy/terms/sources | `app/disclaimer.tsx`, `app/privacy.tsx`, `app/terms.tsx`, `app/sources.tsx`, compliance test | Done |
+| In-app support surface | `app/support.tsx`, `components/compliance/ComplianceLinks.tsx`, `scripts/compliance-pages.test.js` | Done |
 | App Store listing | `publishing/app-store-listing.md`, publishing test | Draft done; needs account upload |
 | Google Play listing | `publishing/google-play-listing.md`, publishing test | Draft done; needs account upload |
 | Apple privacy labels | `publishing/privacy-labels.md`, publishing test | Draft done for current MVP |
@@ -56,6 +58,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | EAS account authentication | `reports/2026-05-15-eas-access-check.md`; `npm exec -- eas whoami` returned `Not logged in` | Blocked external/account |
 | TestFlight beta | Requires Apple account, App Store Connect app record, build upload, beta review | Blocked external |
 | Google Play internal test | Requires Play Console app record, service account/upload, internal release | Blocked external |
+| Public support URL | In-app support surface exists, but public URL/mailbox must be created and entered in stores | Blocked external/account |
 | Submit Android app | Requires store account, internal testing, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
 | Submit iOS app | Requires store account, TestFlight, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
 | Monitor crash reports/content reports/first-week fixes/reviews | Requires launched app and telemetry/support process; release evidence template exists in `reports/release-evidence-template.md` | Not done |

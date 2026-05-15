@@ -15,6 +15,7 @@ test('compliance pages and source links are present', () => {
     'app/privacy.tsx',
     'app/terms.tsx',
     'app/sources.tsx',
+    'app/support.tsx',
   ];
   for (const file of expectedFiles) {
     assert.ok(fs.existsSync(path.join(repoRoot, file)), `${file} should exist`);
@@ -28,4 +29,8 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/terms.tsx'), /no guarantee/i);
   assert.match(read('app/sources.tsx'), /uhr\.se\/medborgarskapsprovet\/utbildningsmaterial/i);
   assert.match(read('app/sources.tsx'), /Sverige i fokus/i);
+  assert.match(read('app/support.tsx'), /support/i);
+  assert.match(read('app/support.tsx'), /content issue/i);
+  assert.match(read('app/support.tsx'), /no personal data/i);
+  assert.match(read('components/compliance/ComplianceLinks.tsx'), /Support/);
 });
