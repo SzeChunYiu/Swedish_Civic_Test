@@ -197,6 +197,38 @@ function createDeviceAudioEvidence(platform, options = {}) {
   };
 }
 
+function createStoreRecordEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'store-records',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'ready',
+    bundleIdentifier: 'com.billyyiu.swedishcivictest',
+    appStoreConnectUrl: 'https://appstoreconnect.apple.com/apps/1234567890/appstore',
+    googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
+    supportUrl: 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/',
+    privacyUrl: 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/',
+    adMob: {
+      status: 'deferred-real-ads-disabled',
+      note: 'REAL_ADS_ENABLED_FOR_V1=false',
+    },
+    ...options.evidence,
+  };
+
+  const evidencePath = path.join(absoluteDir, 'store-records.json');
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'store-records.json'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 test('release preflight fails closed on external launch blockers', () => {
   const report = runPreflight({ expectedStatus: 1 });
   assert.equal(report.status, 'BLOCKED');
@@ -664,6 +696,73 @@ test('release preflight blocks store record evidence without exact public URLs',
     storeRecords.evidence,
     /https:\/\/babbloo-studio\.github\.io\/Swedish_Civic_Test-public-site\/privacy\//i,
   );
+});
+
+test('release preflight blocks local store record evidence missing store URLs', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-record-json-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const storeEvidence = createStoreRecordEvidence({
+    evidence: {
+      appStoreConnectUrl: '',
+      googlePlayConsoleUrl: '',
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-records': {
+        status: 'READY',
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const storeRecords = report.gates.find((gate) => gate.id === 'store-records');
+    assert.equal(storeRecords.status, 'BLOCKED');
+    assert.match(storeRecords.evidence, /local artifact content/i);
+    assert.match(storeRecords.evidence, /appStoreConnectUrl/i);
+    assert.match(storeRecords.evidence, /googlePlayConsoleUrl/i);
+  } finally {
+    storeEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local store record evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-store-record-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const storeEvidence = createStoreRecordEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-records': {
+        status: 'READY',
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'store-records').status, 'READY');
+  } finally {
+    storeEvidence.cleanup();
+  }
 });
 
 test('release preflight blocks privacy review evidence without binary and ad sdk posture', () => {

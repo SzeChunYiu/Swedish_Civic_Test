@@ -200,7 +200,65 @@ function validateDeviceAudioEvidence(evidencePath, expectedPlatform) {
   return errors;
 }
 
+function validateStoreRecordEvidence(evidencePath) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'ready') {
+    errors.push('status must be ready');
+  }
+  if (evidence.bundleIdentifier !== 'com.billyyiu.swedishcivictest') {
+    errors.push('bundleIdentifier must be com.billyyiu.swedishcivictest');
+  }
+  if (!/^https:\/\/appstoreconnect\.apple\.com\//i.test(evidence.appStoreConnectUrl || '')) {
+    errors.push('appStoreConnectUrl must be an App Store Connect URL');
+  }
+  if (!/^https:\/\/play\.google\.com\/console\//i.test(evidence.googlePlayConsoleUrl || '')) {
+    errors.push('googlePlayConsoleUrl must be a Google Play Console URL');
+  }
+  if (evidence.supportUrl !== supportUrl) {
+    errors.push(`supportUrl must be ${supportUrl}`);
+  }
+  if (evidence.privacyUrl !== privacyUrl) {
+    errors.push(`privacyUrl must be ${privacyUrl}`);
+  }
+
+  const adMob = evidence.adMob || {};
+  const adMobStatus = String(adMob.status || '');
+  const adMobAppId = String(adMob.appId || '');
+  if (adMobStatus !== 'deferred-real-ads-disabled' && !/^ca-app-pub-/i.test(adMobAppId)) {
+    errors.push('adMob must record deferred-real-ads-disabled status or a concrete AdMob app ID');
+  }
+  if (
+    adMobStatus === 'deferred-real-ads-disabled' &&
+    !/REAL_ADS_ENABLED_FOR_V1=false|real ads disabled/i.test(
+      `${adMob.note || ''} ${evidence.adMobDecision || ''}`,
+    )
+  ) {
+    errors.push(
+      'deferred AdMob decision must mention REAL_ADS_ENABLED_FOR_V1=false or real ads disabled',
+    );
+  }
+
+  return errors;
+}
+
 function validateLocalArtifactContents(id, artifactPaths) {
+  if (id === 'store-records') {
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validateStoreRecordEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
   if (id === 'android-device-audio' || id === 'ios-device-audio') {
     const expectedPlatform = id === 'android-device-audio' ? 'android' : 'ios';
     const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));

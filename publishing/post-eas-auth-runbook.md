@@ -112,6 +112,30 @@ Record evidence for:
 
 Public support/privacy pages are already hosted on GitHub Pages and `public-urls` is READY in `reports/release-gates.json`. Enter those URLs in the store records after App Store Connect and Google Play Console app records exist.
 
+If recording store/account evidence locally, create
+`reports/store-records/store-records.json` and reference that path in the
+`store-records` gate evidence. `npm run release:preflight` validates local JSON
+for the bundle identifier, App Store Connect URL, Google Play Console URL, exact
+hosted support/privacy URLs, and either a concrete AdMob app ID or the v1.0
+real-ads-disabled decision.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "ready",
+  "bundleIdentifier": "com.billyyiu.swedishcivictest",
+  "appStoreConnectUrl": "https://appstoreconnect.apple.com/apps/1234567890/appstore",
+  "googlePlayConsoleUrl": "https://play.google.com/console/u/0/developers/123/app/497123",
+  "supportUrl": "https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/",
+  "privacyUrl": "https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/",
+  "adMob": {
+    "status": "deferred-real-ads-disabled",
+    "note": "REAL_ADS_ENABLED_FOR_V1=false"
+  }
+}
+```
+
 ## 5. Re-review store privacy questionnaires against the generated binary
 
 After the EAS build and store records exist, re-review:

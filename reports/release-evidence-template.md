@@ -56,6 +56,14 @@ and `privacy-legal-pages`.
 
 ## Store/account gates
 
+If store/account evidence is recorded in local JSON, use a path such as
+`reports/store-records/store-records.json`. Local JSON referenced by the
+`store-records` gate is validated by `npm run release:preflight` and must
+include: `status: "ready"`, `bundleIdentifier:
+"com.billyyiu.swedishcivictest"`, App Store Connect URL, Google Play Console
+URL, exact hosted support/privacy URLs, and either a concrete AdMob app ID or a
+v1.0 real-ads-disabled decision.
+
 | Gate | Required evidence | Status |
 |---|---|---|
 | Apple Developer account | Team ID or App Store Connect access note | TBD |
