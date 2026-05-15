@@ -245,6 +245,31 @@ function validateStoreRecordEvidence(evidencePath) {
     );
   }
 
+  const listingMetadata = evidence.listingMetadata || {};
+  if (listingMetadata.appStoreListingReviewed !== true) {
+    errors.push('listingMetadata.appStoreListingReviewed must be true');
+  }
+  if (listingMetadata.appStoreListingPath !== 'publishing/app-store-listing.md') {
+    errors.push('listingMetadata.appStoreListingPath must be publishing/app-store-listing.md');
+  } else if (!exists(listingMetadata.appStoreListingPath)) {
+    errors.push(
+      `listingMetadata.appStoreListingPath does not exist: ${listingMetadata.appStoreListingPath}`,
+    );
+  }
+  if (listingMetadata.googlePlayListingReviewed !== true) {
+    errors.push('listingMetadata.googlePlayListingReviewed must be true');
+  }
+  if (listingMetadata.googlePlayListingPath !== 'publishing/google-play-listing.md') {
+    errors.push('listingMetadata.googlePlayListingPath must be publishing/google-play-listing.md');
+  } else if (!exists(listingMetadata.googlePlayListingPath)) {
+    errors.push(
+      `listingMetadata.googlePlayListingPath does not exist: ${listingMetadata.googlePlayListingPath}`,
+    );
+  }
+  if (listingMetadata.matchesStoreRecords !== true) {
+    errors.push('listingMetadata.matchesStoreRecords must be true');
+  }
+
   return errors;
 }
 

@@ -117,7 +117,8 @@ If recording store/account evidence locally, create
 `store-records` gate evidence. `npm run release:preflight` validates local JSON
 for the bundle identifier, App Store Connect URL, Google Play Console URL, exact
 hosted support/privacy URLs, and either a concrete AdMob app ID or the v1.0
-real-ads-disabled decision.
+real-ads-disabled decision. It also validates that App Store and Google Play
+listing metadata were reviewed against the store records.
 
 Required local JSON shape:
 
@@ -132,6 +133,13 @@ Required local JSON shape:
   "adMob": {
     "status": "deferred-real-ads-disabled",
     "note": "REAL_ADS_ENABLED_FOR_V1=false"
+  },
+  "listingMetadata": {
+    "appStoreListingReviewed": true,
+    "appStoreListingPath": "publishing/app-store-listing.md",
+    "googlePlayListingReviewed": true,
+    "googlePlayListingPath": "publishing/google-play-listing.md",
+    "matchesStoreRecords": true
   }
 }
 ```

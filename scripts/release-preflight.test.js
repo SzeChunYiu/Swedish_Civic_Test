@@ -217,6 +217,13 @@ function createStoreRecordEvidence(options = {}) {
       status: 'deferred-real-ads-disabled',
       note: 'REAL_ADS_ENABLED_FOR_V1=false',
     },
+    listingMetadata: {
+      appStoreListingReviewed: true,
+      appStoreListingPath: 'publishing/app-store-listing.md',
+      googlePlayListingReviewed: true,
+      googlePlayListingPath: 'publishing/google-play-listing.md',
+      matchesStoreRecords: true,
+    },
     ...options.evidence,
   };
 
@@ -959,6 +966,48 @@ test('release preflight blocks local store record evidence missing store URLs', 
     assert.match(storeRecords.evidence, /local artifact content/i);
     assert.match(storeRecords.evidence, /appStoreConnectUrl/i);
     assert.match(storeRecords.evidence, /googlePlayConsoleUrl/i);
+  } finally {
+    storeEvidence.cleanup();
+  }
+});
+
+test('release preflight blocks local store record evidence without listing metadata review', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-listing-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const storeEvidence = createStoreRecordEvidence({
+    evidence: {
+      listingMetadata: {
+        appStoreListingReviewed: false,
+        appStoreListingPath: 'publishing/app-store-listing.md',
+        googlePlayListingReviewed: true,
+        googlePlayListingPath: 'publishing/google-play-listing.md',
+        matchesStoreRecords: true,
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-records': {
+        status: 'READY',
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const storeRecords = report.gates.find((gate) => gate.id === 'store-records');
+    assert.equal(storeRecords.status, 'BLOCKED');
+    assert.match(storeRecords.evidence, /listingMetadata/i);
+    assert.match(storeRecords.evidence, /appStoreListingReviewed/i);
   } finally {
     storeEvidence.cleanup();
   }
