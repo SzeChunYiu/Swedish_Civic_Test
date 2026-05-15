@@ -27,7 +27,10 @@ export function formatExamTime(remainingSeconds: number): string {
 }
 
 function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
-  return question.reviewStatus === 'reviewed' && Boolean(question.uhrReference?.chapter);
+  return (
+    ['reviewed', 'published'].includes(question.reviewStatus) &&
+    Boolean(question.uhrReference?.chapter)
+  );
 }
 
 export function generateExam(

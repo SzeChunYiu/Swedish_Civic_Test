@@ -32,11 +32,11 @@ const baseQuestion = {
   tags: [],
 };
 
-test('generateExam selects reviewed UHR-based questions up to requested count', () => {
+test('generateExam selects reviewed or published UHR-based questions up to requested count', () => {
   const { generateExam } = loadTs('lib/quiz/examGenerator.ts');
   const questions = [
     { ...baseQuestion, id: 'q1' },
-    { ...baseQuestion, id: 'q2', chapterId: 'ch02' },
+    { ...baseQuestion, id: 'q2', chapterId: 'ch02', reviewStatus: 'published' },
     { ...baseQuestion, id: 'draft', reviewStatus: 'draft' },
     { ...baseQuestion, id: 'no-source', uhrReference: undefined },
   ];
