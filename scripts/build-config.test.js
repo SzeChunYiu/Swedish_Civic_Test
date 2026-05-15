@@ -28,10 +28,7 @@ test('store build scripts document the exact release commands', () => {
     pkg.scripts['build:preview'],
     'npx --yes eas-cli@18.13.0 build --profile preview --platform all',
   );
-  assert.equal(
-    pkg.scripts['build:production'],
-    'npx --yes eas-cli@18.13.0 build --profile production --platform all',
-  );
+  assert.equal(pkg.scripts['build:production'], 'node scripts/build-production-guard.js');
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
@@ -39,12 +36,31 @@ test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph
   const pkg = readJson('package.json');
   assert.equal(pkg.devDependencies['eas-cli'], undefined);
   assert.match(pkg.scripts['build:preview'], /^npx --yes eas-cli@18\.13\.0 /);
-  assert.match(pkg.scripts['build:production'], /^npx --yes eas-cli@18\.13\.0 /);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/build-production-guard.js')), true);
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, 'scripts/build-production-guard.js'), 'utf8'),
+    /eas-cli@18\.13\.0/,
+  );
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/submit-production-guard.js')), true);
   assert.match(
     fs.readFileSync(path.join(repoRoot, 'scripts/submit-production-guard.js'), 'utf8'),
     /eas-cli@18\.13\.0/,
   );
+});
+
+test('production build guard blocks while release preflight is not ready', () => {
+  const result = require('node:child_process').spawnSync(
+    process.execPath,
+    ['scripts/build-production-guard.js', '--check-only'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /Production build blocked/i);
+  assert.match(result.stdout, /release preflight/i);
 });
 
 test('production submit guard blocks placeholder Apple identifiers before EAS submit', () => {
