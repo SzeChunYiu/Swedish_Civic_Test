@@ -142,6 +142,9 @@ function createFinalScreenshotManifest(options = {}) {
       device: index % 2 === 0 ? 'iPhone 15' : 'Pixel 8',
       captureMethod: index % 2 === 0 ? 'device' : 'accepted store tooling',
       sourceBuild: index % 2 === 0 ? 'TestFlight build 100' : 'EAS Android build 100',
+      pixelWidth: index % 2 === 0 ? 1290 : 1080,
+      pixelHeight: index % 2 === 0 ? 2796 : 2400,
+      locale: 'sv-SE',
       file,
     };
   });
@@ -798,6 +801,101 @@ test('release preflight blocks local screenshot manifests that are not final dev
     assert.match(screenshots.evidence, /local artifact content/i);
     assert.match(screenshots.evidence, /final-device/i);
     assert.match(screenshots.evidence, /web-draft/i);
+  } finally {
+    manifest.cleanup();
+  }
+});
+
+test('release preflight blocks final screenshot manifests missing store metadata', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-shot-metadata-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const manifest = createFinalScreenshotManifest({
+    manifest: {
+      screenshots: [
+        {
+          id: 'home',
+          route: '/home',
+          platform: 'ios',
+          device: 'iPhone 15',
+          captureMethod: 'device',
+          sourceBuild: 'TestFlight build 100',
+          file: '01-home.png',
+        },
+        {
+          id: 'learn',
+          route: '/learn',
+          platform: 'android',
+          device: 'Pixel 8',
+          captureMethod: 'accepted store tooling',
+          sourceBuild: 'EAS Android build 100',
+          pixelWidth: 1080,
+          pixelHeight: 2400,
+          locale: 'sv-SE',
+          file: '02-learn.png',
+        },
+        {
+          id: 'practice',
+          route: '/practice',
+          platform: 'ios',
+          device: 'iPhone 15',
+          captureMethod: 'device',
+          sourceBuild: 'TestFlight build 100',
+          pixelWidth: 1290,
+          pixelHeight: 2796,
+          locale: 'sv-SE',
+          file: '03-practice.png',
+        },
+        {
+          id: 'exam',
+          route: '/exam',
+          platform: 'android',
+          device: 'Pixel 8',
+          captureMethod: 'accepted store tooling',
+          sourceBuild: 'EAS Android build 100',
+          pixelWidth: 1080,
+          pixelHeight: 2400,
+          locale: 'sv-SE',
+          file: '04-exam.png',
+        },
+        {
+          id: 'profile',
+          route: '/profile',
+          platform: 'ios',
+          device: 'iPhone 15',
+          captureMethod: 'device',
+          sourceBuild: 'TestFlight build 100',
+          pixelWidth: 1290,
+          pixelHeight: 2796,
+          locale: 'sv-SE',
+          file: '05-profile.png',
+        },
+      ],
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'device-screenshots': {
+        status: 'READY',
+        evidence: `Final screenshots captured from accepted device tooling and recorded in ${manifest.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const screenshots = report.gates.find((gate) => gate.id === 'device-screenshots');
+    assert.equal(screenshots.status, 'BLOCKED');
+    assert.match(screenshots.evidence, /pixelWidth/i);
+    assert.match(screenshots.evidence, /pixelHeight/i);
+    assert.match(screenshots.evidence, /locale/i);
   } finally {
     manifest.cleanup();
   }
