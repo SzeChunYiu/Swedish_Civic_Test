@@ -26,6 +26,7 @@
 - Web-draft screenshot evidence: `reports/2026-05-15-web-draft-screenshots.md`
 - Executable release preflight: `npm run release:preflight`
 - Post-EAS-auth runbook: `publishing/post-eas-auth-runbook.md`
+- Filled release evidence: `reports/release-evidence-2026-05-15.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`
