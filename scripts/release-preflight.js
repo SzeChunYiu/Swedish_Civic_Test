@@ -150,7 +150,70 @@ function validateFinalScreenshotManifest(manifestPath) {
   return errors;
 }
 
+function validateDeviceAudioEvidence(evidencePath, expectedPlatform) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'passed') {
+    errors.push('status must be passed');
+  }
+  if (String(evidence.platform || '').toLowerCase() !== expectedPlatform) {
+    errors.push(`platform must be ${expectedPlatform}`);
+  }
+  if (!evidence.device || !String(evidence.device).trim()) {
+    errors.push('device is required');
+  }
+  if (!evidence.sourceBuild || !String(evidence.sourceBuild).trim()) {
+    errors.push('sourceBuild is required');
+  }
+
+  const checks = Array.isArray(evidence.checks) ? evidence.checks : [];
+  if (checks.length === 0) {
+    errors.push('checks array is required');
+  }
+
+  const passedChecks = new Set(
+    checks
+      .filter((check) => check && check.result === 'passed')
+      .map((check) => String(check.id || '')),
+  );
+  for (const checkId of [
+    'sv-se-question-audio',
+    'audio-button-state',
+    'speech-engine-unavailable',
+    'onboarding',
+    'practice-answer-flow',
+    'mock-exam-no-ads',
+    'progress-restart',
+    'privacy-legal-pages',
+  ]) {
+    if (!passedChecks.has(checkId)) {
+      errors.push(`missing passed check ${checkId}`);
+    }
+  }
+
+  return errors;
+}
+
 function validateLocalArtifactContents(id, artifactPaths) {
+  if (id === 'android-device-audio' || id === 'ios-device-audio') {
+    const expectedPlatform = id === 'android-device-audio' ? 'android' : 'ios';
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validateDeviceAudioEvidence(jsonPath, expectedPlatform).map(
+        (error) => `${jsonPath}: ${error}`,
+      ),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
   if (id !== 'device-screenshots') return null;
 
   const manifestPaths = artifactPaths.filter((artifactPath) =>

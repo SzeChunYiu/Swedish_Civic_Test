@@ -52,6 +52,13 @@ node scripts/update-release-gate.js --gate android-device-audio --status READY -
 
 Install the preview/internal builds and record results.
 
+If recording device smoke locally, create JSON evidence files such as
+`reports/device-smoke/android-audio.json` and
+`reports/device-smoke/ios-audio.json`, then reference those paths in the
+`android-device-audio` and `ios-device-audio` gate evidence. `npm run
+release:preflight` validates local JSON evidence for the platform, device,
+source build, and all required checks.
+
 Android physical-device audio checks:
 
 - Swedish `sv-SE` question text speaks clearly.
@@ -71,6 +78,27 @@ Shared device smoke checks:
 - Mock exam shows no ads during exam.
 - Progress persists after app restart.
 - Privacy, terms, disclaimer, sources, and support pages open.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "passed",
+  "platform": "android",
+  "device": "Pixel 8 / Android 15",
+  "sourceBuild": "EAS Android preview build android-100",
+  "checks": [
+    { "id": "sv-se-question-audio", "result": "passed" },
+    { "id": "audio-button-state", "result": "passed" },
+    { "id": "speech-engine-unavailable", "result": "passed" },
+    { "id": "onboarding", "result": "passed" },
+    { "id": "practice-answer-flow", "result": "passed" },
+    { "id": "mock-exam-no-ads", "result": "passed" },
+    { "id": "progress-restart", "result": "passed" },
+    { "id": "privacy-legal-pages", "result": "passed" }
+  ]
+}
+```
 
 ## 4. Create store/account records
 

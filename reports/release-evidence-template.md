@@ -35,6 +35,16 @@ screenshot path, or reviewer note. Manual release gates are also represented in
 
 ## Audio-specific checks
 
+If device smoke evidence is recorded in local JSON, use paths such as
+`reports/device-smoke/android-audio.json` and
+`reports/device-smoke/ios-audio.json`. Local JSON referenced by
+`android-device-audio` or `ios-device-audio` gate evidence is validated by
+`npm run release:preflight` and must include: `status: "passed"`, matching
+`platform`, `device`, `sourceBuild`, and passed checks for
+`sv-se-question-audio`, `audio-button-state`, `speech-engine-unavailable`,
+`onboarding`, `practice-answer-flow`, `mock-exam-no-ads`, `progress-restart`,
+and `privacy-legal-pages`.
+
 | Platform | Check | Result | Notes |
 |---|---|---|---|
 | Android | Swedish `sv-SE` question text speaks clearly | TBD |  |

@@ -160,6 +160,43 @@ function createFinalScreenshotManifest(options = {}) {
   };
 }
 
+function createDeviceAudioEvidence(platform, options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'device-smoke',
+    `test-${platform}-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'passed',
+    platform,
+    device: platform === 'android' ? 'Pixel 8 / Android 15' : 'iPhone 15 / iOS 18',
+    sourceBuild:
+      platform === 'android' ? 'EAS Android preview build android-100' : 'TestFlight build ios-100',
+    checks: [
+      { id: 'sv-se-question-audio', result: 'passed' },
+      { id: 'audio-button-state', result: 'passed' },
+      { id: 'speech-engine-unavailable', result: 'passed' },
+      { id: 'onboarding', result: 'passed' },
+      { id: 'practice-answer-flow', result: 'passed' },
+      { id: 'mock-exam-no-ads', result: 'passed' },
+      { id: 'progress-restart', result: 'passed' },
+      { id: 'privacy-legal-pages', result: 'passed' },
+    ],
+    ...options.evidence,
+  };
+
+  const evidencePath = path.join(absoluteDir, `${platform}-audio.json`);
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, `${platform}-audio.json`),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 test('release preflight fails closed on external launch blockers', () => {
   const report = runPreflight({ expectedStatus: 1 });
   assert.equal(report.status, 'BLOCKED');
@@ -422,6 +459,79 @@ test('release preflight blocks READY screenshot evidence with a missing local ar
   assert.equal(screenshots.status, 'BLOCKED');
   assert.match(screenshots.evidence, /referenced local artifact/i);
   assert.match(screenshots.evidence, /reports\/final-store-screenshots\/manifest\.json/i);
+});
+
+test('release preflight blocks local device audio evidence missing required checks', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-audio-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const audioEvidence = createDeviceAudioEvidence('android', {
+    evidence: {
+      checks: [{ id: 'sv-se-question-audio', result: 'passed' }],
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'android-device-audio': {
+        status: 'READY',
+        evidence: `Android Pixel 8 physical-device audio smoke passed; EAS build android-100; reports in ${audioEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const androidAudio = report.gates.find((gate) => gate.id === 'android-device-audio');
+    assert.equal(androidAudio.status, 'BLOCKED');
+    assert.match(androidAudio.evidence, /local artifact content/i);
+    assert.match(androidAudio.evidence, /mock-exam-no-ads/i);
+    assert.match(androidAudio.evidence, /privacy-legal-pages/i);
+  } finally {
+    audioEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local device audio evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-audio-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const androidEvidence = createDeviceAudioEvidence('android');
+  const iosEvidence = createDeviceAudioEvidence('ios');
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'android-device-audio': {
+        status: 'READY',
+        evidence: `Android Pixel 8 physical-device audio smoke passed; EAS build android-100; reports in ${androidEvidence.relativePath}.`,
+      },
+      'ios-device-audio': {
+        status: 'READY',
+        evidence: `iPhone 15 TestFlight audio smoke passed; TestFlight build ios-100; reports in ${iosEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'android-device-audio').status, 'READY');
+    assert.equal(report.gates.find((gate) => gate.id === 'ios-device-audio').status, 'READY');
+  } finally {
+    androidEvidence.cleanup();
+    iosEvidence.cleanup();
+  }
 });
 
 test('release preflight blocks local screenshot manifests that are not final device evidence', () => {
