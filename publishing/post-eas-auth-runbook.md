@@ -57,7 +57,9 @@ If recording device smoke locally, create JSON evidence files such as
 `reports/device-smoke/ios-audio.json`, then reference those paths in the
 `android-device-audio` and `ios-device-audio` gate evidence. `npm run
 release:preflight` validates local JSON evidence for the platform, device,
-source build, and all required checks.
+source build, all required checks, and at least one proof artifact. Proof
+artifacts may be local log/video/screenshot/audio files next to the JSON file or
+HTTPS URLs.
 
 Android physical-device audio checks:
 
