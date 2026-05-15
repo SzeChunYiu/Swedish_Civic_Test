@@ -16,7 +16,7 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, live-checks the public support/privacy URLs, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 20:54 CEST at product commit `3cb02ed` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
+`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, live-checks the public support/privacy URLs, requires concrete manual evidence for READY manual gates, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 21:00 CEST at product commit `374cdf1` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
 
 Ready gates:
 
@@ -43,4 +43,4 @@ Blocked gates:
 - `node --test scripts/check-public-urls.test.js`
 - `node --test scripts/release-preflight.test.js`
 - `npm run validate` includes `npm run test:public-urls` and `npm run test:release-preflight`
-- The test suite verifies fail-closed current blockers, the future ready path when EAS/auth and `reports/release-gates.json` evidence are complete, and stale public URL evidence blocking when live URL checks fail.
+- The test suite verifies fail-closed current blockers, the future ready path when EAS/auth and `reports/release-gates.json` evidence are complete, stale public URL evidence blocking when live URL checks fail, and weak READY manual evidence blocking when it lacks required concrete details.
