@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "description": "Machine-readable release gate evidence consumed by scripts/release-preflight.js. Mark a gate READY only after copying concrete build IDs, URLs, screenshot paths, or reviewer notes into evidence.",
+  "gates": {
+    "android-device-audio": {
+      "status": "BLOCKED",
+      "evidence": "No Android physical-device build/install/audio evidence is recorded."
+    },
+    "ios-device-audio": {
+      "status": "BLOCKED",
+      "evidence": "No iOS physical-device/TestFlight build/install/audio evidence is recorded."
+    },
+    "store-records": {
+      "status": "BLOCKED",
+      "evidence": "No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0."
+    },
+    "public-urls": {
+      "status": "BLOCKED",
+      "evidence": "Static support/privacy pages exist locally, but no hosted HTTPS URL evidence is recorded."
+    },
+    "device-screenshots": {
+      "status": "BLOCKED",
+      "evidence": "Web-draft screenshots and manifest exist, but final device/store screenshots are not recorded."
+    },
+    "submission": {
+      "status": "BLOCKED",
+      "evidence": "No TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence is recorded."
+    }
+  }
+}

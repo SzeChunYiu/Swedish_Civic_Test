@@ -25,6 +25,7 @@
 - Screenshot manifest: `publishing/screenshot-manifest.json`
 - Web-draft screenshot evidence: `reports/2026-05-15-web-draft-screenshots.md`
 - Executable release preflight: `npm run release:preflight`
+- Machine-readable external gate evidence: `reports/release-gates.json`
 - Post-EAS-auth runbook: `publishing/post-eas-auth-runbook.md`
 - Filled release evidence: `reports/release-evidence-2026-05-15.md`
 - v1.0 ads deferred evidence: `reports/2026-05-15-v1-ads-deferred.md`
@@ -55,9 +56,11 @@ Run:
 npm run release:preflight
 ```
 
-The command exits non-zero until every external/device/store gate has concrete
-evidence. It is intentionally fail-closed and should be copied into each release
-evidence file.
+The command reruns local validation, checks EAS CLI/authentication, reads
+`reports/release-gates.json`, and exits non-zero until every
+external/device/store gate has concrete evidence. It is intentionally
+fail-closed; update both `reports/release-gates.json` and the dated release
+evidence file when external evidence is collected.
 
 ## If live SDKs are enabled before release
 

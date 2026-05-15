@@ -9,15 +9,16 @@ docs-only checklist.
 
 - `scripts/release-preflight.js`
 - `scripts/release-preflight.test.js`
+- `reports/release-gates.json`
 - package script: `npm run release:preflight`
 
 ## Current result
 
-`npm run release:preflight` was rerun for the runtime/app tree at `ac58046` on 2026-05-15 18:22 CEST. It exits non-zero and reports `BLOCKED`.
+`npm run release:preflight` reruns `npm run validate`, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after gate-manifest hardening on 2026-05-15 18:30 CEST reported `BLOCKED`, with local validation and EAS CLI ready.
 
 Ready gates:
 
-- Local validation evidence exists and must be rerun for each release candidate.
+- Local validation runs inside `npm run release:preflight` for each release candidate.
 - Project-local EAS CLI is available through `npm exec -- eas --version`.
 
 Blocked gates:
@@ -37,3 +38,4 @@ Blocked gates:
 
 - `node --test scripts/release-preflight.test.js`
 - `npm run validate` includes `npm run test:release-preflight`
+- The test suite verifies both fail-closed current blockers and the future ready path when EAS/auth and `reports/release-gates.json` evidence are complete.

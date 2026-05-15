@@ -2,7 +2,8 @@
 
 Copy this file to `reports/release-evidence-YYYY-MM-DD.md` for each release
 candidate. Do not mark a gate complete without a concrete record, URL, build ID,
-screenshot path, or reviewer note.
+screenshot path, or reviewer note. Manual release gates are also represented in
+`reports/release-gates.json`, which is consumed by `npm run release:preflight`.
 
 ## Candidate identity
 
@@ -20,7 +21,7 @@ screenshot path, or reviewer note.
 | Gate | Command or URL | Result |
 |---|---|---|
 | Local validation | `npm run validate` | TBD |
-| Release preflight | `npm run release:preflight` | TBD |
+| Release preflight | `npm run release:preflight` | TBD; also update `reports/release-gates.json` for manual gates |
 | Preview/internal build | `npm run build:preview` | TBD |
 | Production build | `npm run build:production` | TBD |
 | Production submit | `npm run submit:production` | TBD |

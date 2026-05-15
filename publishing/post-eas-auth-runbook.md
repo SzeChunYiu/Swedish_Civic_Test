@@ -21,7 +21,8 @@ cp reports/release-evidence-template.md reports/release-evidence-YYYY-MM-DD.md
 ```
 
 Record the Expo account name and current git commit in
-`reports/release-evidence-YYYY-MM-DD.md`.
+`reports/release-evidence-YYYY-MM-DD.md`. Keep `reports/release-gates.json`
+blocked until each manual gate has concrete evidence.
 
 ## 2. Create preview/internal builds
 
@@ -30,7 +31,9 @@ npm run validate
 npm run build:preview
 ```
 
-Record Android and iOS build URLs/IDs in the release evidence file.
+Record Android and iOS build URLs/IDs in the release evidence file. Do not mark
+`android-device-audio` or `ios-device-audio` READY in `reports/release-gates.json`
+until physical-device audio smoke tests pass.
 
 ## 3. Run physical-device smoke tests
 
@@ -68,7 +71,8 @@ Record evidence for:
 
 Host `publishing/public-site/support/index.html` and
 `publishing/public-site/privacy/index.html` before entering public URLs in the
-stores.
+stores. After verifying public HTTPS access, update `public-urls` in
+`reports/release-gates.json`.
 
 ## 5. Capture final store screenshots
 
@@ -77,7 +81,8 @@ Use `publishing/screenshot-shotlist.md` and
 
 Final screenshots must come from target devices, simulator/store tooling
 accepted by the platform, or another store-approved capture method. Web-draft
-screenshots are not sufficient for final submission.
+screenshots are not sufficient for final submission. Update `device-screenshots`
+in `reports/release-gates.json` only after final files/paths are recorded.
 
 ## 6. Upload internal test builds
 
@@ -90,6 +95,10 @@ Google:
 
 - Upload to Google Play internal testing.
 - Record track URL, version code, and tester group.
+
+When TestFlight, Google Play internal, production submission, and first
+monitoring evidence are all recorded, update `submission` in
+`reports/release-gates.json`.
 
 ## 7. Re-run privacy and release preflight
 

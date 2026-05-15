@@ -23,7 +23,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Support surface check: `/support` exists, is linked from the profile legal links, is covered by `scripts/compliance-pages.test.js`, and rendered in Expo web with 0 console errors; see `reports/2026-05-15-support-surface.md`.
 - Public support/privacy page copy and static HTML pages are prepared in `publishing/public-support-and-privacy.md` and `publishing/public-site/`, but final hosted HTTPS URLs remain external.
 - Screenshot manifest and web-draft screenshot evidence are prepared in `publishing/screenshot-manifest.json` and `reports/2026-05-15-web-draft-screenshots.md`, but final device/store screenshots remain external.
-- Executable release preflight exists at `scripts/release-preflight.js`; rerun for the runtime/app tree at `ac58046` on 2026-05-15 18:22 CEST and still reports `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
+- Executable release preflight exists at `scripts/release-preflight.js`; it now reruns local validation, checks EAS CLI/authentication, and consumes manual gate evidence from `reports/release-gates.json`. The latest run after gate-manifest hardening on 2026-05-15 18:30 CEST still reported `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
 - Filled release evidence artifact exists at `reports/release-evidence-2026-05-15.md`; decision is `BLOCKED`.
 - v1.0 real ads are deferred and ad rendering is fail-closed; see `reports/2026-05-15-v1-ads-deferred.md`.
 - Web production export smoke passed with `npm run build:web:export`; see `reports/2026-05-15-web-export-smoke.md`.
@@ -69,7 +69,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Public support/privacy URL copy | `publishing/public-support-and-privacy.md`, `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`, `scripts/publishing.test.js` | Static pages done; hosting still external |
 | Public support URL | In-app support surface and static public pages exist, but public URL/mailbox must be hosted and entered in stores | Blocked external/account |
 | Store screenshot manifest and web drafts | `publishing/screenshot-manifest.json`, `reports/2026-05-15-web-draft-screenshots.md`, `publishing/screenshot-shotlist.md` | Draft done; final device screenshots still external |
-| Executable release preflight | `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `npm run release:preflight` | Done; currently reports BLOCKED external gates |
+| Executable release preflight | `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `reports/release-gates.json`, `npm run release:preflight` | Done; currently reports BLOCKED external gates |
 | Filled release evidence | `reports/release-evidence-2026-05-15.md` | Done; decision BLOCKED |
 | Post-EAS-auth release runbook | `publishing/post-eas-auth-runbook.md`, `scripts/publishing.test.js` | Done |
 | Submit Android app | Requires store account, internal testing, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |

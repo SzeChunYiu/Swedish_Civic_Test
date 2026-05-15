@@ -17,7 +17,7 @@
 | Gate | Command or URL | Result |
 |---|---|---|
 | Local validation | `npm run validate` | PASS for runtime/app tree at `ac58046` on 2026-05-15 18:23 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED for runtime/app tree at `ac58046` on 2026-05-15 18:22 CEST by external/device/store gates; expected non-zero exit 1 |
+| Release preflight | `npm run release:preflight` | BLOCKED after gate-manifest hardening on 2026-05-15 18:30 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
 | Web production export smoke | `npm run build:web:export` | PASS; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Preview/internal build | `npm run build:preview` | Not run; blocked by EAS authentication |
 | Production build | `npm run build:production` | Not run; must wait for preview/internal device evidence |
