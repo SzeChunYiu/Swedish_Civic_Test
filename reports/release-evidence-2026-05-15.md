@@ -16,18 +16,18 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 18:49 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED after adding Expo Doctor and web export as preflight gates on 2026-05-15 18:49 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 18:56 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED after adding Expo Doctor, web export, and native prebuild as preflight gates on 2026-05-15 18:56 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
-| Native prebuild smoke | `npx expo prebuild --no-install --platform android/ios --clean` in isolated temp copies | PASS after adding `expo-system-ui`; Android and iOS prebuild finished |
+| Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
 | Preview/internal build | `npm run build:preview` | Not run; blocked by EAS authentication |
 | Production build | `npm run build:production` | Not run; must wait for preview/internal device evidence |
 | Production submit | `npm run submit:production` | Not run; must wait for store records, device evidence, final screenshots, and preflight pass |
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 18:49 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 18:56 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.

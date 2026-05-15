@@ -62,4 +62,10 @@ test('native appearance config has its required Expo module', () => {
 
   assert.equal(appConfig.userInterfaceStyle, 'light');
   assert.match(pkg.dependencies['expo-system-ui'], /^~/);
+  assert.equal(
+    pkg.scripts['release:native-prebuild-smoke'],
+    'node scripts/native-prebuild-smoke.js',
+  );
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/native-prebuild-smoke.js')), true);
+  assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^tmp\/$/m);
 });

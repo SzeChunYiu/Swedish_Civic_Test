@@ -49,7 +49,7 @@ Result: `✔ Finished prebuild`.
 
 ## Scope and limitation
 
-This is a local native-project generation smoke. It does not require Expo/EAS
+This smoke is executable through `npm run release:native-prebuild-smoke` and now runs inside `npm run release:preflight`. It is a local native-project generation smoke. It does not require Expo/EAS
 authentication, but it also does not prove Gradle/Xcode compilation, app-store
 signing, Android/iOS installability, audio behavior on physical devices, or store
 submission readiness.

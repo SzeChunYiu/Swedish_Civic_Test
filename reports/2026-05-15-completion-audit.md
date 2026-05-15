@@ -13,7 +13,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Current branch: `batch/2026-05-15-foundation`
 - Latest local branch state includes release-preflight, Expo Doctor, and web-export hardening beyond the earlier app-code milestone.
 - Fresh validation command: `npm run validate`
-- Fresh validation result from `npm run release:preflight` on 2026-05-15 18:49 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, and content validation.
+- Fresh validation result from `npm run release:preflight` on 2026-05-15 18:56 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, and content validation.
 - Content validation result: 13 chapters, 500 questions, 500 published questions.
 - Content database: `content/question-bank.csv` regenerated with 500 question rows plus header.
 - Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
@@ -23,12 +23,12 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Support surface check: `/support` exists, is linked from the profile legal links, is covered by `scripts/compliance-pages.test.js`, and rendered in Expo web with 0 console errors; see `reports/2026-05-15-support-surface.md`.
 - Public support/privacy page copy and static HTML pages are prepared in `publishing/public-support-and-privacy.md` and `publishing/public-site/`, but final hosted HTTPS URLs remain external.
 - Screenshot manifest and web-draft screenshot evidence are prepared in `publishing/screenshot-manifest.json` and `reports/2026-05-15-web-draft-screenshots.md`, but final device/store screenshots remain external.
-- Executable release preflight exists at `scripts/release-preflight.js`; it now reruns local validation, runs Expo Doctor, runs the web export smoke, checks pinned npx EAS CLI/authentication, and consumes manual gate evidence from `reports/release-gates.json`. The latest run on 2026-05-15 18:49 CEST still reported `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
+- Executable release preflight exists at `scripts/release-preflight.js`; it now reruns local validation, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, checks pinned npx EAS CLI/authentication, and consumes manual gate evidence from `reports/release-gates.json`. The latest run on 2026-05-15 18:56 CEST still reported `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
 - Filled release evidence artifact exists at `reports/release-evidence-2026-05-15.md`; decision is `BLOCKED`.
 - v1.0 real ads are deferred and ad rendering is fail-closed; see `reports/2026-05-15-v1-ads-deferred.md`.
 - Web production export smoke passed and is now part of `npm run release:preflight`; see `reports/2026-05-15-web-export-smoke.md`.
 - Expo Doctor initially flagged the local `eas-cli` dependency; after switching build/preflight commands to pinned `npx --yes eas-cli@18.13.0`, `npm exec -- expo-doctor` passed 17/17 checks; see `reports/2026-05-15-expo-doctor.md`.
-- Isolated Android/iOS native prebuild smoke passed after adding `expo-system-ui` for the configured `userInterfaceStyle`; see `reports/2026-05-15-native-prebuild-smoke.md`.
+- Isolated Android/iOS native prebuild smoke passed after adding `expo-system-ui` for the configured `userInterfaceStyle`; it is now part of `npm run release:preflight`; see `reports/2026-05-15-native-prebuild-smoke.md`.
 - Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
 
 ## Prompt-to-artifact checklist
@@ -62,7 +62,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Apple privacy labels | `publishing/privacy-labels.md`, publishing test | Draft done for current MVP |
 | Google Play Data Safety | `publishing/google-play-data-safety.md`, publishing test | Draft done for current MVP |
 | App icon and splash assets | `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash-icon.png`, `app.json`, `scripts/app-assets.test.js` | Done |
-| EAS/build/native config | `eas.json`, `publishing/build-and-submit-runbook.md`, `scripts/build-config.test.js`, isolated native prebuild smoke | Done locally; EAS cloud build still blocked by auth |
+| EAS/build/native config | `eas.json`, `publishing/build-and-submit-runbook.md`, `scripts/build-config.test.js`, `scripts/native-prebuild-smoke.js`, isolated native prebuild smoke | Done locally; EAS cloud build still blocked by auth |
 | Web production export smoke | `npm run release:web-export-smoke`, `reports/2026-05-15-web-export-smoke.md`; also runs in `npm run release:preflight` | Done |
 | EAS CLI availability | Build/preflight scripts use pinned `npx --yes eas-cli@18.13.0`; `npx --yes eas-cli@18.13.0 --version` works | Done |
 | EAS account authentication | `reports/2026-05-15-eas-access-check.md`; `npx --yes eas-cli@18.13.0 whoami` returned `Not logged in` | Blocked external/account |
@@ -71,7 +71,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Public support/privacy URL copy | `publishing/public-support-and-privacy.md`, `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`, `scripts/publishing.test.js` | Static pages done; hosting still external |
 | Public support URL | In-app support surface and static public pages exist, but public URL/mailbox must be hosted and entered in stores | Blocked external/account |
 | Store screenshot manifest and web drafts | `publishing/screenshot-manifest.json`, `reports/2026-05-15-web-draft-screenshots.md`, `publishing/screenshot-shotlist.md` | Draft done; final device screenshots still external |
-| Executable release preflight | `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `reports/release-gates.json`, `npm run release:preflight` | Done; runs validation, Expo Doctor, web export, EAS auth, and manual gate checks; currently reports BLOCKED external gates |
+| Executable release preflight | `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `reports/release-gates.json`, `npm run release:preflight` | Done; runs validation, Expo Doctor, web export, native prebuild, EAS auth, and manual gate checks; currently reports BLOCKED external gates |
 | Filled release evidence | `reports/release-evidence-2026-05-15.md` | Done; decision BLOCKED |
 | Post-EAS-auth release runbook | `publishing/post-eas-auth-runbook.md`, `scripts/publishing.test.js` | Done |
 | Submit Android app | Requires store account, internal testing, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |

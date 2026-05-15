@@ -79,6 +79,7 @@ function buildReport() {
   const validation = runValidate ? commandSucceeds('npm', ['run', 'validate']) : null;
   const expoDoctor = commandSucceeds('npm', ['exec', '--', 'expo-doctor']);
   const webExport = commandSucceeds('npm', ['run', 'release:web-export-smoke']);
+  const nativePrebuild = commandSucceeds('npm', ['run', 'release:native-prebuild-smoke']);
   const easVersion = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', '--version']);
   const easWhoami = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', 'whoami']);
 
@@ -107,6 +108,13 @@ function buildReport() {
       webExport.ok ? 'READY' : 'BLOCKED',
       webExport.ok ? webExport.stdout : webExport.stderr || webExport.stdout,
       'Run `npm run release:web-export-smoke` and fix any Expo web export errors.',
+    ),
+    gate(
+      'native-prebuild',
+      'Android/iOS native prebuild smoke',
+      nativePrebuild.ok ? 'READY' : 'BLOCKED',
+      nativePrebuild.ok ? nativePrebuild.stdout : nativePrebuild.stderr || nativePrebuild.stdout,
+      'Run `npm run release:native-prebuild-smoke` and fix any Expo native prebuild warnings or errors.',
     ),
     gate(
       'eas-cli',
