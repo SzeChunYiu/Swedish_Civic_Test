@@ -18,6 +18,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Content database: `content/question-bank.csv` regenerated with 500 question rows plus header.
 - Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
 - Release evidence capture is now templated in `reports/release-evidence-template.md`; store screenshots are planned in `publishing/screenshot-shotlist.md`.
+- EAS access check: `npx --yes eas-cli whoami` returned `Not logged in`; see `reports/2026-05-15-eas-access-check.md`.
 
 ## Prompt-to-artifact checklist
 
@@ -49,6 +50,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Apple privacy labels | `publishing/privacy-labels.md`, publishing test | Draft done for current MVP |
 | Google Play Data Safety | `publishing/google-play-data-safety.md`, publishing test | Draft done for current MVP |
 | EAS build config | `eas.json`, `publishing/build-and-submit-runbook.md`, build-config test | Done |
+| EAS account authentication | `reports/2026-05-15-eas-access-check.md`; `npx --yes eas-cli whoami` returned `Not logged in` | Blocked external/account |
 | TestFlight beta | Requires Apple account, App Store Connect app record, build upload, beta review | Blocked external |
 | Google Play internal test | Requires Play Console app record, service account/upload, internal release | Blocked external |
 | Submit Android app | Requires store account, internal testing, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
@@ -64,7 +66,7 @@ The codebase now has a validated 500-question published content milestone, relea
 
 ## Highest-leverage next actions
 
-1. Run Android and iOS physical-device audio tests from an EAS preview build.
+1. Log in to Expo/EAS, then create an EAS preview build for Android and iOS physical-device audio tests.
 2. Create App Store Connect, Google Play Console, and AdMob records.
 3. Upload TestFlight and Google Play internal test builds.
 4. Use `reports/release-evidence-template.md` and `publishing/screenshot-shotlist.md` to capture public support/privacy URLs, screenshots, and device-test evidence.

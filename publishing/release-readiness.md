@@ -16,6 +16,7 @@
 - Post-launch v1.1 plan: `docs/release/post-launch-v1.1-plan.md`
 - Store screenshot shotlist: `publishing/screenshot-shotlist.md`
 - Release evidence template: `reports/release-evidence-template.md`
+- EAS access check: `reports/2026-05-15-eas-access-check.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`
