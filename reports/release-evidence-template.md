@@ -88,10 +88,12 @@ Google Play Data safety, and the disabled Google Mobile Ads SDK posture.
 If privacy evidence is recorded in local JSON, use a path such as
 `reports/privacy-review/privacy-review.json`. Local JSON referenced by the
 `privacy-review` gate is validated by `npm run release:preflight` and must
-include: `status: "reviewed"`, reviewed build ID/version/commit, Apple privacy
-labels reviewed against `publishing/privacy-labels.md`, Google Play Data safety
-reviewed against `publishing/google-play-data-safety.md`, Google Mobile Ads SDK
-present with test app IDs, `realAdsEnabled: false`, a
+include: `status: "reviewed"`, `reviewedAt`, `reviewer`, reviewed build
+ID/version/commit, App Store Connect and Google Play questionnaire review
+status, Apple privacy labels reviewed against `publishing/privacy-labels.md`,
+Google Play Data safety reviewed against
+`publishing/google-play-data-safety.md`, Google Mobile Ads SDK present with test
+app IDs, `realAdsEnabled: false`, a
 `REAL_ADS_ENABLED_FOR_V1=false` or real-ads-disabled gate note, and disabled
 analytics, crash reporting, purchase, and real-ad SDKs.
 
