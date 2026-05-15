@@ -1,7 +1,7 @@
 import { StyleSheet, Text } from 'react-native';
 import type { PracticeQuestion } from '../../types/content';
 import { Card } from '../ui/Card';
-import { colors, space } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 export function QuestionCard({ question }: { question?: PracticeQuestion }) {
   return (
@@ -16,21 +16,21 @@ export function QuestionCard({ question }: { question?: PracticeQuestion }) {
 const styles = StyleSheet.create({
   label: {
     color: colors.badgeBlueText,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     textTransform: 'uppercase',
   },
   question: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 24,
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.body.lineHeight,
     marginTop: space[0.75],
   },
   translation: {
     color: colors.textMuted,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
     marginTop: space[1],
   },
 });

@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import type { PropsWithChildren } from 'react';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 type ButtonProps = PropsWithChildren<
   Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle> }
@@ -23,5 +23,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: space[2],
     paddingVertical: space[1],
   },
-  label: { color: colors.surface, fontSize: 15, fontWeight: '600' },
+  label: {
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+  },
 });

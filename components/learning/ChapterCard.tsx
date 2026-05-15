@@ -1,7 +1,7 @@
 import { StyleSheet, Text } from 'react-native';
 import type { Chapter } from '../../types/content';
 import { Card } from '../ui/Card';
-import { colors, space } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 export function ChapterCard({
   chapter,
@@ -25,24 +25,24 @@ export function ChapterCard({
 const styles = StyleSheet.create({
   title: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     marginTop: space.hairline,
   },
   description: {
     color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
     marginTop: space[1],
   },
   meta: {
     color: colors.badgeBlueText,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     marginTop: space[1.5],
   },
 });

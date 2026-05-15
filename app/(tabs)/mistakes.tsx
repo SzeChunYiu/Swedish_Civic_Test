@@ -7,7 +7,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
@@ -65,14 +65,14 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   list: {
     gap: space[2],
@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
   },
   meta: {
     color: colors.warning,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
   emptyCard: {
     backgroundColor: colors.surfaceWarm,
@@ -93,21 +93,21 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   emptyText: {
     color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: typography.navButton.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
   },
   practiceLink: {
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
     borderRadius: radius.micro,
     color: colors.surface,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     marginTop: space[1],
     paddingHorizontal: space[2],
     paddingVertical: space[1],

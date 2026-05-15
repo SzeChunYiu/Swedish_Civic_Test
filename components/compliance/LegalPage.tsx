@@ -1,7 +1,7 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { PropsWithChildren } from 'react';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 export function LegalPage({ title, children }: PropsWithChildren<{ title: string }>) {
   return (
@@ -35,15 +35,15 @@ const styles = StyleSheet.create({
   },
   backLink: {
     color: colors.accent,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     textDecorationLine: 'none',
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   body: {
     gap: space[1.75],
@@ -56,12 +56,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   paragraph: {
     color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: typography.navButton.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
   },
 });

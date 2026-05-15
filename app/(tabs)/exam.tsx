@@ -5,7 +5,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
 import { formatExamTime, generateExam, scoreExam } from '../../lib/quiz/examGenerator';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
   const examQuestions = useMemo(
@@ -133,19 +133,19 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   sectionTitle: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   progressCard: {
     backgroundColor: colors.surfaceWarm,
@@ -162,15 +162,15 @@ const styles = StyleSheet.create({
   },
   questionMeta: {
     color: colors.badgeBlueText,
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
     textTransform: 'uppercase',
   },
   questionText: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 24,
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.body.lineHeight,
   },
   options: {
     gap: space[1],
@@ -187,11 +187,11 @@ const styles = StyleSheet.create({
   },
   optionText: {
     color: colors.textSoft,
-    fontSize: 15,
+    fontSize: typography.navButton.fontSize,
   },
   optionTextSelected: {
     color: colors.badgeBlueText,
-    fontWeight: '700',
+    fontWeight: typography.bodyBold.fontWeight,
   },
   primaryButton: {
     alignItems: 'center',
@@ -205,8 +205,8 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: colors.surface,
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   resultCard: {
     backgroundColor: colors.surfaceWarm,
@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
   },
   metric: {
     color: colors.text,
-    fontSize: 40,
-    fontWeight: '700',
+    fontSize: typography.subHeadingLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   breakdownRow: {
     alignItems: 'center',
@@ -229,12 +229,12 @@ const styles = StyleSheet.create({
   },
   breakdownChapter: {
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   breakdownScore: {
     color: colors.textMuted,
-    fontSize: 15,
+    fontSize: typography.navButton.fontSize,
   },
   secondaryButton: {
     alignSelf: 'flex-start',
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
 });

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
-import { colors, radius, space } from '../lib/theme';
+import { colors, radius, space, typography } from '../lib/theme';
 
 const steps = [
   'Study Swedish civic concepts with English support when needed.',
@@ -52,22 +52,22 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     color: colors.badgeBlueText,
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.125,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
     textTransform: 'uppercase',
   },
   title: {
     color: colors.text,
-    fontSize: 32,
-    fontWeight: '700',
-    letterSpacing: -0.625,
-    lineHeight: 38,
+    fontSize: typography.heroMobile.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
+    lineHeight: typography.heroMobile.lineHeight,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   steps: {
     gap: space[1.5],
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.badgeBlueBg,
     borderRadius: radius.pill,
     color: colors.badgeBlueText,
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
     overflow: 'hidden',
     paddingHorizontal: space[1.25],
     paddingVertical: space[0.75],
@@ -90,8 +90,8 @@ const styles = StyleSheet.create({
   stepText: {
     color: colors.textSecondary,
     flex: 1,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: typography.navButton.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
   },
   actions: {
     flexDirection: 'row',
@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     borderRadius: radius.micro,
     color: colors.surface,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     borderRadius: radius.micro,
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',

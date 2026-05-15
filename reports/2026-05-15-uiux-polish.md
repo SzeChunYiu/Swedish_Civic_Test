@@ -13,7 +13,7 @@ Operator reopened the internal UI/UX gate in `GOAL.md` and `codex-tasks/ceo-inbo
 - `lib/theme/shadows.ts`
 - `lib/theme/motion.ts`
 - `lib/theme/index.ts`
-- Refactored `app/**/*.tsx` and `components/**/*.tsx` style colors, border radii, gaps, margins, heights, and padding to consume theme tokens.
+- Refactored `app/**/*.tsx` and `components/**/*.tsx` style colors, border radii, gaps, margins, heights, padding, font sizes, line heights, letter spacing, and font weights to consume theme tokens.
 - Added `scripts/theme-discipline.test.js` and wired it into `npm test` as `npm run test:theme-discipline`.
 - Added Playwright visual smoke:
   - `playwright.config.ts`
@@ -25,8 +25,10 @@ Operator reopened the internal UI/UX gate in `GOAL.md` and `codex-tasks/ceo-inbo
 
 - `npm run test:theme-discipline` passes.
 - `scripts/accessibility-labels.test.js` confirms interactive labels.
+- `scripts/theme-discipline.test.js` now rejects literal typography values (`fontSize`, `lineHeight`, `letterSpacing`, `fontWeight`) in `app/` and `components/`.
 - `grep -rE '#[0-9a-fA-F]{6}|rgba?\(' app components` returns zero lines.
 - `grep -rE '\b(padding(Horizontal|Vertical)?|marginTop|gap|borderRadius):[[:space:]]*[0-9]' app components` returns zero lines.
+- `grep -rE 'fontSize: [0-9]|lineHeight: [0-9]|letterSpacing: -?[0-9]|fontWeight: ["'][0-9]' app components` returns zero lines after adapting the quote spacing in shell.
 - `npm run validate` passes after adding the theme-discipline test.
 - `npm run build:web:export` passes.
 - `npm run test:e2e -- tests/e2e/visual-smoke.spec.ts` passes and captures all primary routes.

@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-15T18:32:02.758Z",
+  "capturedAt": "2026-05-15T18:37:07.796Z",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "routes": [

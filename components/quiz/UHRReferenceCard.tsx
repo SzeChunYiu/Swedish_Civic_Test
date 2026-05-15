@@ -1,7 +1,7 @@
 import { StyleSheet, Text } from 'react-native';
 import type { UHRReference } from '../../types/content';
 import { Card } from '../ui/Card';
-import { colors, space } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 export function UHRReferenceCard({ reference }: { reference?: UHRReference }) {
   const label = reference
@@ -21,18 +21,18 @@ export function UHRReferenceCard({ reference }: { reference?: UHRReference }) {
 const styles = StyleSheet.create({
   title: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   body: {
     color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
     marginTop: space[1],
   },
   meta: {
     color: colors.textMuted,
-    fontSize: 12,
+    fontSize: typography.badge.fontSize,
     marginTop: space[0.5],
   },
 });

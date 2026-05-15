@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colors, radius, space } from '../lib/theme';
+import { colors, radius, space, typography } from '../lib/theme';
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
@@ -90,20 +90,20 @@ const styles = StyleSheet.create({
   },
   backLink: {
     color: colors.accent,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     textDecorationLine: 'none',
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   section: {
     borderColor: colors.border,
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   row: {
     flexDirection: 'row',
@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
   },
   pillText: {
     color: colors.textMuted,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
   pillTextActive: {
     color: colors.badgeBlueText,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: colors.surface,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
 });

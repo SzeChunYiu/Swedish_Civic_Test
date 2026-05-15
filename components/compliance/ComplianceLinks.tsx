@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 const links = [
   { href: '/disclaimer', label: 'Disclaimer' },
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   links: {
     flexDirection: 'row',
@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
   },
   link: {
     color: colors.accent,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     textDecorationLine: 'none',
   },
 });

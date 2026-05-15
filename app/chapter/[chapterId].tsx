@@ -6,7 +6,7 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
-import { colors, space } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 export default function ChapterScreen() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
@@ -70,24 +70,24 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   description: {
     color: colors.textSecondary,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   sectionTitle: {
     color: colors.text,
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: typography.bodyLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
     marginTop: space[1],
   },
   list: {
@@ -98,13 +98,13 @@ const styles = StyleSheet.create({
   },
   empty: {
     color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: typography.navButton.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
   },
   link: {
     color: colors.accent,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     textDecorationLine: 'none',
   },
 });

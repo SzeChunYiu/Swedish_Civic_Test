@@ -4,7 +4,7 @@ import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
-import { colors, space } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 export function AdBanner({
   placement = 'home_banner',
@@ -28,20 +28,20 @@ export function AdBanner({
 const styles = StyleSheet.create({
   eyebrow: {
     color: colors.badgeBlueText,
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
     textTransform: 'uppercase',
   },
   title: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
     marginTop: space[0.5],
     textTransform: 'capitalize',
   },
   meta: {
     color: colors.textMuted,
-    fontSize: 13,
+    fontSize: typography.finePrint.fontSize,
     marginTop: space[0.5],
   },
 });

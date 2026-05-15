@@ -10,7 +10,7 @@ import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
@@ -93,14 +93,14 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   card: {
     backgroundColor: colors.surface,
@@ -112,13 +112,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   metric: {
     color: colors.text,
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: typography.metric.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   statsRow: {
     flexDirection: 'row',
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     color: colors.textMuted,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     marginTop: space[0.5],
   },
   actions: {
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     borderRadius: radius.micro,
     color: colors.surface,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     borderRadius: radius.micro,
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',

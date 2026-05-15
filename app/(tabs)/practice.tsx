@@ -14,7 +14,7 @@ import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
@@ -101,13 +101,13 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   meta: {
     color: colors.textMuted,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
   },
   options: {
     gap: space[1],
@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
   },
   score: {
     color: colors.success,
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   tryAgain: {
     alignSelf: 'flex-start',
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
   tryAgainText: {
     color: colors.accent,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
 });

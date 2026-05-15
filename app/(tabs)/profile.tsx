@@ -9,7 +9,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
-import { colors, radius, space } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
@@ -92,14 +92,14 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.625,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   statsRow: {
     flexDirection: 'row',
@@ -120,25 +120,25 @@ const styles = StyleSheet.create({
   },
   metric: {
     color: colors.text,
-    fontSize: 32,
-    fontWeight: '700',
+    fontSize: typography.heroMobile.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   value: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   label: {
     color: colors.textMuted,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
   },
   settingsLink: {
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
     borderRadius: radius.micro,
     color: colors.surface,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
