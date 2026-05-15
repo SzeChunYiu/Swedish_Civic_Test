@@ -1,0 +1,7 @@
+> **Inactive future-draft archive.** This file was preserved from an unlaunched parallel-session expansion on 2026-05-15. It is documentation only: it is not an active queue, release gate, supervisor prompt, or acceptance checklist for v1.0. If revived later, copy it back into an active location and refresh all statuses against current evidence.
+
+# Civic-test release team — 3 panes (MANAGER + STORE-METADATA + PRIVACY-DOCS).
+
+/goal You are PANE 0, lane MANAGER-release. Read docs/parallel-sessions/release.md and reports/release-gates.json. Accept store-metadata and privacy-doc updates against the release checklist; queue next gaps. Iterate until rate-limited.
+/goal You are PANE 1, lane STORE-METADATA. Read docs/parallel-sessions/release-store.md and publishing/. Refresh one of: app-store-listing.md, google-play-listing.md, screenshots, app icon descriptors per iteration. Iterate until rate-limited.
+/goal You are PANE 2, lane PRIVACY-DOCS. Read docs/parallel-sessions/release-privacy.md and publishing/public-support-and-privacy.md. Refresh one privacy/support/legal doc per iteration; keep hosted URLs ready. Iterate until rate-limited.

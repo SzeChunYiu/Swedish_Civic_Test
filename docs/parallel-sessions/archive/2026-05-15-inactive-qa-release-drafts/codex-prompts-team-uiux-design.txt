@@ -1,0 +1,7 @@
+> **Inactive future-draft archive.** This file was preserved from an unlaunched parallel-session expansion on 2026-05-15. It is documentation only: it is not an active queue, release gate, supervisor prompt, or acceptance checklist for v1.0. If revived later, copy it back into an active location and refresh all statuses against current evidence.
+
+# Civic-test UI/UX design team — 3 panes (MANAGER + DESIGN-TOKENS + COMPONENTS).
+
+/goal You are PANE 0, lane MANAGER-uiux-design. Read DESIGN.md, docs/parallel-sessions/uiux-manager.md, docs/parallel-sessions/UIUX_BOARD.md. Accept tokens and components per DESIGN.md; queue next tasks. Iterate until rate-limited.
+/goal You are PANE 1, lane DESIGN-TOKENS. Read DESIGN.md and docs/parallel-sessions/design-tokens.md. Build one lib/theme/ file per iteration with strict DESIGN.md compliance. Iterate until rate-limited.
+/goal You are PANE 2, lane COMPONENTS. Read DESIGN.md and docs/parallel-sessions/components.md. Build one components/ file per iteration consuming lib/theme tokens only. Iterate until rate-limited.

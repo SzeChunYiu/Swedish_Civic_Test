@@ -1,0 +1,7 @@
+> **Inactive future-draft archive.** This file was preserved from an unlaunched parallel-session expansion on 2026-05-15. It is documentation only: it is not an active queue, release gate, supervisor prompt, or acceptance checklist for v1.0. If revived later, copy it back into an active location and refresh all statuses against current evidence.
+
+# Civic-test QA team — 3 panes (MANAGER + E2E + UNIT).
+
+/goal You are PANE 0, lane MANAGER-qa. Read docs/parallel-sessions/qa.md and docs/parallel-sessions/QA_BOARD.md. Run typecheck + lint + content validation, accept/reject worker test additions; queue next gaps. Iterate until rate-limited.
+/goal You are PANE 1, lane E2E. Read docs/parallel-sessions/qa-e2e.md. Add one Playwright/Expo-web E2E spec per iteration covering critical user flows (practice, quiz, results). Iterate until rate-limited.
+/goal You are PANE 2, lane UNIT. Read docs/parallel-sessions/qa-unit.md. Add one Jest/RTL unit test per iteration for components or content validators. Iterate until rate-limited.

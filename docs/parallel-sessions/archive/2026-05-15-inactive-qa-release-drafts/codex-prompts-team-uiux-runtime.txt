@@ -1,0 +1,7 @@
+> **Inactive future-draft archive.** This file was preserved from an unlaunched parallel-session expansion on 2026-05-15. It is documentation only: it is not an active queue, release gate, supervisor prompt, or acceptance checklist for v1.0. If revived later, copy it back into an active location and refresh all statuses against current evidence.
+
+# Civic-test UI/UX runtime team — 3 panes (MANAGER + SCREENS + MOTION-A11Y).
+
+/goal You are PANE 0, lane MANAGER-uiux-runtime. Read DESIGN.md, docs/parallel-sessions/uiux-manager.md, docs/parallel-sessions/UIUX_BOARD.md. Accept screens and motion/a11y deliveries; queue next tasks. Iterate until rate-limited.
+/goal You are PANE 1, lane SCREENS. Read DESIGN.md and docs/parallel-sessions/screens.md. Polish one app/ screen per iteration using components and theme only. Iterate until rate-limited.
+/goal You are PANE 2, lane MOTION-A11Y. Read DESIGN.md and docs/parallel-sessions/motion-a11y.md. Build one lib/motion or lib/a11y utility per iteration respecting reduce-motion. Iterate until rate-limited.
