@@ -66,13 +66,10 @@ Record evidence for:
 - App Store Connect app record for `com.billyyiu.swedishcivictest`.
 - Google Play Console app record for `com.billyyiu.swedishcivictest`.
 - AdMob app record, or a recorded decision to keep real ads disabled for v1.0.
-- Public Support URL.
-- Public Privacy Policy URL.
+- Public Support URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/.
+- Public Privacy Policy URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/.
 
-Host `publishing/public-site/support/index.html` and
-`publishing/public-site/privacy/index.html` before entering public URLs in the
-stores. After verifying public HTTPS access, update `public-urls` in
-`reports/release-gates.json`.
+Public support/privacy pages are already hosted on GitHub Pages and `public-urls` is READY in `reports/release-gates.json`. Enter those URLs in the store records after App Store Connect and Google Play Console app records exist.
 
 ## 5. Capture final store screenshots
 

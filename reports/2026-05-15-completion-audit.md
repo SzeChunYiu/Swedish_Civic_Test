@@ -21,7 +21,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - EAS access check: local `eas-cli` dependency was removed after Expo Doctor flagged it; pinned `npx --yes eas-cli@18.13.0 --version` works, while `npx --yes eas-cli@18.13.0 whoami` remains blocked by `Not logged in`; see `reports/2026-05-15-eas-access-check.md`.
 - Release asset check: `assets/icon.png`, `assets/adaptive-icon.png`, and `assets/splash-icon.png` are configured in `app.json` and verified by `scripts/app-assets.test.js`; see `reports/2026-05-15-release-assets.md`.
 - Support surface check: `/support` exists, is linked from the profile legal links, is covered by `scripts/compliance-pages.test.js`, and rendered in Expo web with 0 console errors; see `reports/2026-05-15-support-surface.md`.
-- Public support/privacy page copy and static HTML pages are prepared in `publishing/public-support-and-privacy.md` and `publishing/public-site/`, but final hosted HTTPS URLs remain external.
+- Public support/privacy page copy and static HTML pages are hosted on GitHub Pages; support URL `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/` and privacy URL `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/` returned HTTP 200; see `reports/2026-05-15-public-urls-hosted.md`.
 - Screenshot manifest and web-draft screenshot evidence are prepared in `publishing/screenshot-manifest.json` and `reports/2026-05-15-web-draft-screenshots.md`, but final device/store screenshots remain external.
 - Executable release preflight exists at `scripts/release-preflight.js`; it now reruns local validation, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, checks pinned npx EAS CLI/authentication, and consumes manual gate evidence from `reports/release-gates.json`. The latest run on 2026-05-15 18:56 CEST still reported `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
 - Filled release evidence artifact exists at `reports/release-evidence-2026-05-15.md`; decision is `BLOCKED`.
@@ -70,8 +70,8 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | EAS account authentication | `reports/2026-05-15-eas-access-check.md`; `npx --yes eas-cli@18.13.0 whoami` returned `Not logged in` | Blocked external/account |
 | TestFlight beta | Requires Apple account, App Store Connect app record, build upload, beta review | Blocked external |
 | Google Play internal test | Requires Play Console app record, service account/upload, internal release | Blocked external |
-| Public support/privacy URL copy | `publishing/public-support-and-privacy.md`, `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`, `scripts/publishing.test.js` | Static pages done; hosting still external |
-| Public support URL | In-app support surface and static public pages exist, but public URL/mailbox must be hosted and entered in stores | Blocked external/account |
+| Public support/privacy URL copy | `publishing/public-support-and-privacy.md`, `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`, hosted URLs in `reports/2026-05-15-public-urls-hosted.md`, `scripts/publishing.test.js` | Done; store-record entry still external |
+| Public support URL | `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/`; `reports/2026-05-15-public-urls-hosted.md` | Hosted; still must be entered in store records |
 | Store screenshot manifest and web drafts | `publishing/screenshot-manifest.json`, `reports/2026-05-15-web-draft-screenshots.md`, `publishing/screenshot-shotlist.md` | Draft done; final device screenshots still external |
 | Executable release preflight | `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `reports/release-gates.json`, `npm run release:preflight` | Done; runs validation, Expo Doctor, web export, native prebuild, EAS auth, and manual gate checks; currently reports BLOCKED external gates |
 | Filled release evidence | `reports/release-evidence-2026-05-15.md` | Done; decision BLOCKED |
@@ -90,7 +90,7 @@ The codebase now has a validated 500-question published content milestone, relea
 ## Highest-leverage next actions
 
 1. Log in to Expo/EAS, then create an EAS preview build for Android and iOS physical-device audio tests.
-2. Create App Store Connect, Google Play Console, and AdMob records.
+2. Create App Store Connect and Google Play Console records, then enter the hosted support/privacy URLs. AdMob remains deferred unless live ads are enabled.
 3. Upload TestFlight and Google Play internal test builds.
 4. Use `reports/release-evidence-template.md` and `publishing/screenshot-shotlist.md` to capture public support/privacy URLs, screenshots, and device-test evidence.
 5. Submit store builds only after device/store verification and privacy review are current.

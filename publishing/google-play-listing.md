@@ -37,6 +37,12 @@ Education, citizenship, Sweden, Swedish, civic knowledge, exam practice
 
 Educational content only. No user-generated content, gambling, sexual content, or violence.
 
+## Public URLs
+
+Support URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/
+
+Privacy Policy URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/
+
 ## Data safety summary
 
 Data safety answers are prepared in `publishing/google-play-data-safety.md`. Current MVP answer: no user data collected and no user data shared; local progress remains on the local device.

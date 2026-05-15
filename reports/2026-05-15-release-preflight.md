@@ -14,7 +14,7 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after adding Expo Doctor, web export, and native prebuild as preflight gates on 2026-05-15 18:56 CEST reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, and pinned npx EAS CLI ready.
+`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after hosting public support/privacy URLs on 2026-05-15 19:11 CEST reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, and public URLs ready.
 
 Ready gates:
 
@@ -23,6 +23,7 @@ Ready gates:
 - Web production export smoke passes.
 - Android/iOS native prebuild smoke passes.
 - Pinned npx EAS CLI is available through `npx --yes eas-cli@18.13.0 --version`.
+- Public support/privacy URLs are hosted and verified: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/.
 
 Blocked gates:
 
@@ -31,8 +32,6 @@ Blocked gates:
 - iOS physical-device or TestFlight audio smoke evidence is missing.
 - App Store Connect and Google Play Console app record evidence is missing.
 - AdMob is deferred because real ads are disabled for v1.0.
-- Public support/privacy static pages exist locally, but hosted HTTPS URL
-  evidence is missing.
 - Final store screenshots from an accepted capture method are missing.
 - TestFlight, Google Play internal test, production submission, and post-launch
   monitoring evidence are missing.

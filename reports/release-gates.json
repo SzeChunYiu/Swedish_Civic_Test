@@ -15,8 +15,8 @@
       "evidence": "No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0."
     },
     "public-urls": {
-      "status": "BLOCKED",
-      "evidence": "Static support/privacy pages exist locally, but no hosted HTTPS URL evidence is recorded."
+      "status": "READY",
+      "evidence": "Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200 from GitHub Pages on 2026-05-15. They still need to be entered in the Apple/Google store records."
     },
     "device-screenshots": {
       "status": "BLOCKED",

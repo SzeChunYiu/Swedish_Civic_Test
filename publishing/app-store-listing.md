@@ -35,15 +35,15 @@ Sweden,citizenship,civic test,medborgarskap,Sverige,UHR,Swedish,study,exam,pract
 
 ## Support URL
 
-TBD before submission.
+https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/
 
 ## Marketing URL
 
-TBD before submission.
+https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/
 
 ## Privacy Policy URL
 
-TBD before submission; in-app privacy page exists at `/privacy`.
+https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/
 
 ## Category
 

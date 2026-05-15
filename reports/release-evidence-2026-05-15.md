@@ -61,7 +61,7 @@ Blocked gates:
 - `android-device-audio`: no Android physical-device build/install/audio evidence.
 - `ios-device-audio`: no iOS physical-device/TestFlight build/install/audio evidence.
 - `store-records`: no App Store Connect or Google Play Console app record evidence; AdMob is deferred because real ads are disabled for v1.0.
-- `public-urls`: static pages exist locally, but no hosted HTTPS URL evidence.
+- `public-urls`: ready; support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and privacy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200.
 - `device-screenshots`: web-draft screenshots and manifest exist, but final device/store screenshots are not recorded.
 - `submission`: no TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence.
 
@@ -93,8 +93,8 @@ Blocked gates:
 | Google Play Console app record | App record URL for `com.billyyiu.swedishcivictest` | BLOCKED — no app record evidence recorded |
 | Google Play internal release | Track URL, version code, tester group | BLOCKED — no Android internal release evidence |
 | AdMob app record | AdMob app ID or decision to keep ads disabled/placeholders | DEFERRED — real ads are disabled for v1.0; AdMob required only before enabling live ads |
-| Public support URL | URL visible in both store records | BLOCKED — static page exists locally only |
-| Public privacy URL | URL visible in both store records | BLOCKED — static page exists locally only |
+| Public support URL | URL visible in both store records | HOSTED — https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/; still must be entered in store records |
+| Public privacy URL | URL visible in both store records | HOSTED — https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/; still must be entered in store records |
 
 ## Privacy and monetization review
 
@@ -113,7 +113,7 @@ Blocked gates:
 - [ ] iOS physical-device smoke passed.
 - [ ] Store metadata reviewed against submitted binary.
 - [ ] Screenshots captured from real target devices or accepted store tooling.
-- [ ] Support and privacy URLs are public and match in-app copy.
+- [x] Support and privacy URLs are public and match in-app copy.
 - [ ] No unresolved blocker remains in this evidence file.
 
 Decision: `BLOCKED`

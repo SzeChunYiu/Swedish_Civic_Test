@@ -34,6 +34,7 @@
 - Native prebuild smoke evidence: `reports/2026-05-15-native-prebuild-smoke.md`
 - Local main integration evidence: `reports/2026-05-15-local-main-integration.md`
 - Private GitHub remote evidence: `reports/2026-05-15-github-remote.md`
+- Hosted public URL evidence: `reports/2026-05-15-public-urls-hosted.md`
 - External release-gates tracking issue: https://github.com/Babbloo-studio/Swedish_Civic_Test/issues/1
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
@@ -44,8 +45,9 @@
 
 - Apple Developer account access and App Store Connect app record.
 - Google Play Console account access and app record.
-- Public support URL.
-- Public privacy policy URL.
+- Public support URL hosted: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/
+- Public privacy policy URL hosted: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/
+  - Store-record entry remains blocked until Apple/Google app records exist.
 - Real screenshots from target devices.
 - TestFlight build upload and beta review.
 - Google Play internal test release.

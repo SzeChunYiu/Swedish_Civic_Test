@@ -8,8 +8,8 @@ addresses in both store records and in the release evidence file.
 
 | Store field | Final value |
 |---|---|
-| Support URL | `https://<public-domain>/swedish-civic-test/support` |
-| Privacy Policy URL | `https://<public-domain>/swedish-civic-test/privacy` |
+| Support URL | `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/` |
+| Privacy Policy URL | `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/` |
 
 ## Support URL page copy
 
@@ -52,11 +52,11 @@ in-app privacy copy must be reviewed and updated before submission.
 
 ## Hosting checklist
 
-- [ ] Upload `publishing/public-site/support/index.html` and
+- [x] Upload `publishing/public-site/support/index.html` and
       `publishing/public-site/privacy/index.html` to the chosen public host.
-- [ ] Publish these pages on a public HTTPS URL.
-- [ ] Confirm the pages are reachable without login.
-- [ ] Confirm the hosted text still says no account and no personal data.
+- [x] Publish these pages on a public HTTPS URL.
+- [x] Confirm the pages are reachable without login.
+- [x] Confirm the hosted text still says no account and no personal data.
 - [ ] Enter the Support URL in App Store Connect and Google Play Console.
 - [ ] Enter the Privacy Policy URL in App Store Connect and Google Play Console.
-- [ ] Record final URLs in `reports/release-evidence-YYYY-MM-DD.md`.
+- [x] Record final URLs in `reports/release-evidence-2026-05-15.md`.
