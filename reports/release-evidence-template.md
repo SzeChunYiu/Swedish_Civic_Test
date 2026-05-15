@@ -43,7 +43,9 @@ If device smoke evidence is recorded in local JSON, use paths such as
 `platform`, `device`, `sourceBuild`, and passed checks for
 `sv-se-question-audio`, `audio-button-state`, `speech-engine-unavailable`,
 `onboarding`, `practice-answer-flow`, `mock-exam-no-ads`, `progress-restart`,
-and `privacy-legal-pages`.
+and `privacy-legal-pages`. The JSON must also include at least one proof
+artifact (`log`, `video`, `screenshot`, or `audio`) as either a local file next
+to the JSON evidence or an HTTPS URL.
 
 | Platform | Check | Result | Notes |
 |---|---|---|---|

@@ -206,6 +206,32 @@ function validateDeviceAudioEvidence(evidencePath, expectedPlatform) {
     }
   }
 
+  const artifacts = Array.isArray(evidence.artifacts) ? evidence.artifacts : [];
+  if (artifacts.length === 0) {
+    errors.push('artifacts must include at least one proof artifact file or URL');
+  }
+  artifacts.forEach((artifact, index) => {
+    const label = artifact?.type || `artifacts[${index}]`;
+    if (!/^(log|video|screenshot|audio)$/i.test(artifact?.type || '')) {
+      errors.push(`${label} proof artifact type must be log/video/screenshot/audio`);
+    }
+    if (!artifact?.file && !artifact?.url) {
+      errors.push(`${label} proof artifact must include file or url`);
+      return;
+    }
+    if (artifact.file) {
+      const artifactPath = path.isAbsolute(artifact.file)
+        ? artifact.file
+        : path.resolve(path.dirname(evidencePath), artifact.file);
+      if (!exists(artifactPath)) {
+        errors.push(`${label} proof artifact file does not exist: ${artifact.file}`);
+      }
+    }
+    if (artifact.url && !/^https:\/\//i.test(artifact.url)) {
+      errors.push(`${label} proof artifact url must be HTTPS`);
+    }
+  });
+
   return errors;
 }
 

@@ -188,8 +188,17 @@ function createDeviceAudioEvidence(platform, options = {}) {
       { id: 'progress-restart', result: 'passed' },
       { id: 'privacy-legal-pages', result: 'passed' },
     ],
+    artifacts: [{ type: 'log', file: `${platform}-audio-smoke.log` }],
     ...options.evidence,
   };
+
+  if (options.createArtifactFiles !== false) {
+    for (const artifact of evidence.artifacts || []) {
+      if (artifact.file) {
+        fs.writeFileSync(path.join(absoluteDir, artifact.file), `${platform} audio smoke log\n`);
+      }
+    }
+  }
 
   const evidencePath = path.join(absoluteDir, `${platform}-audio.json`);
   fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
@@ -727,6 +736,42 @@ test('release preflight blocks local device audio evidence missing required chec
     assert.match(androidAudio.evidence, /local artifact content/i);
     assert.match(androidAudio.evidence, /mock-exam-no-ads/i);
     assert.match(androidAudio.evidence, /privacy-legal-pages/i);
+  } finally {
+    audioEvidence.cleanup();
+  }
+});
+
+test('release preflight blocks local device audio evidence without proof artifacts', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-audio-proof-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const audioEvidence = createDeviceAudioEvidence('android', {
+    evidence: {
+      artifacts: [],
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'android-device-audio': {
+        status: 'READY',
+        evidence: `Android Pixel 8 physical-device audio smoke passed; EAS build android-100; reports in ${audioEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const androidAudio = report.gates.find((gate) => gate.id === 'android-device-audio');
+    assert.equal(androidAudio.status, 'BLOCKED');
+    assert.match(androidAudio.evidence, /proof artifact/i);
+    assert.match(androidAudio.evidence, /artifacts/i);
   } finally {
     audioEvidence.cleanup();
   }
