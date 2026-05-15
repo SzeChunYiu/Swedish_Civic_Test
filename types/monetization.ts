@@ -3,7 +3,8 @@ export type AdPlacement =
   | 'chapter_list_banner'
   | 'quiz_completed_interstitial'
   | 'results_native'
-  | 'rewarded_extra_exam';
+  | 'rewarded_extra_exam'
+  | 'app_open_launch';
 
 export interface AdUnitConfig {
   placement: AdPlacement;

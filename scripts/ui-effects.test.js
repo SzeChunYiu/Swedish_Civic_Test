@@ -51,3 +51,16 @@ test('home screen surfaces the 10000-learner feedback loop and review action', (
   assert.match(source, /Review saved questions/);
   assert.match(source, /href="\/mistakes"/);
 });
+
+test('launch popup ad has native app-open implementation and safe web preview', () => {
+  const layoutSource = read('app/_layout.tsx');
+  const webSource = read('components/monetization/LaunchPopupAd.tsx');
+  const nativeSource = read('components/monetization/LaunchPopupAd.native.tsx');
+
+  assert.match(layoutSource, /<LaunchPopupAd \/>/);
+  assert.match(webSource, /launchPopupShownThisRuntime/);
+  assert.match(webSource, /Modal/);
+  assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
+  assert.match(nativeSource, /AppOpenAd/);
+  assert.match(nativeSource, /launchPopupShownThisRuntime/);
+});

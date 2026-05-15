@@ -1,5 +1,7 @@
-# Civic-test build team — 3 panes (MANAGER + SETUP + CONTENT).
-
-/goal You are PANE 0, lane MANAGER-build. Manage Team build workers panes 1-2 (SETUP, CONTENT). Read docs/architecture.md and (if present) docs/parallel-sessions/MANAGER.md. Review evidence, accept/reject, queue next tasks, report scaling proposals to CEO via codex-tasks/ceo-inbox.txt. Iterate until rate-limited.
-/goal You are PANE 1, lane SETUP. Read docs/architecture.md and any docs/parallel-sessions/setup.md if present, then iterate compact-safe Expo scaffold improvements one step per cycle until rate-limited.
-/goal You are PANE 2, lane CONTENT. Read docs/architecture.md and any docs/parallel-sessions/content.md if present, then iterate content type and question additions one step per cycle until rate-limited.
+/goal You are PANE 0, lane MANAGER-build. Read codex-tasks/verifier.log first, then GOAL.md and docs/parallel-sessions/TEAM_PLAN.md; manage panes 1-6, reject non-product iterations, route blockers to ceo-inbox.txt. Iterate until rate-limited.
+/goal You are PANE 1, lane REVIEWER. Read codex-tasks/verifier.log then GOAL.md and docs/parallel-sessions/reviewer.md; run one functional pass and queue defects, never docs-only acceptance. Iterate until rate-limited.
+/goal You are PANE 2, lane SETUP. Read codex-tasks/verifier.log then GOAL.md and docs/architecture.md; ship one compact-safe Expo scaffold improvement touching a product path per cycle. Iterate until rate-limited.
+/goal You are PANE 3, lane CONTENT. Read codex-tasks/verifier.log then GOAL.md and docs/content-strategy.md; add one UHR-traceable Swedish-English question batch per cycle. Iterate until rate-limited.
+/goal You are PANE 4, lane DATA-INTEGRITY. Read codex-tasks/verifier.log then GOAL.md and docs/architecture.md; fix schema, UHR references, or Swedish-English parity per cycle. Iterate until rate-limited.
+/goal You are PANE 5, lane TESTS. Read codex-tasks/verifier.log then GOAL.md and docs/architecture.md; add one product-source test or fix one failing test per cycle. Iterate until rate-limited.
+/goal You are PANE 6, lane CONTENT-EXPAND. Read codex-tasks/verifier.log then GOAL.md and docs/content-strategy.md; expand categories and explanations with one product change per cycle. Iterate until rate-limited.

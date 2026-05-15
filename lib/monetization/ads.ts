@@ -35,6 +35,13 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
     enabled: true,
     testOnly: true,
   },
+  {
+    placement: 'app_open_launch',
+    iosUnitId: 'ca-app-pub-3940256099942544/5575463023',
+    androidUnitId: 'ca-app-pub-3940256099942544/9257395921',
+    enabled: true,
+    testOnly: true,
+  },
 ];
 
 export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
@@ -50,6 +57,16 @@ export function shouldShowAd(
   if (entitlements.adsDisabled) return false;
   const unit = getAdUnit(placement);
   return Boolean(unit?.enabled);
+}
+
+export function shouldShowLaunchPopupAd({
+  alreadyShownThisLaunch,
+  entitlements,
+}: {
+  alreadyShownThisLaunch: boolean;
+  entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
+}): boolean {
+  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements);
 }
 
 export function getPlatformAdUnitId(
@@ -72,6 +89,7 @@ export const adsConfig = {
     'chapter_list_banner',
     'quiz_completed_interstitial',
     'results_native',
+    'app_open_launch',
   ],
   blockedPlacements: ['exam_screen'],
 };

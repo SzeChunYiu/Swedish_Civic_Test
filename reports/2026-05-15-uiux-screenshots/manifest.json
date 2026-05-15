@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-15T20:35:46.473Z",
+  "capturedAt": "2026-05-15T22:11:54.999Z",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "routes": [
@@ -43,7 +43,7 @@
       "name": "mistakes",
       "route": "/mistakes",
       "file": "mistakes.png",
-      "bytes": 172943
+      "bytes": 148934
     },
     {
       "name": "profile",
@@ -73,7 +73,7 @@
       "name": "privacy",
       "route": "/privacy",
       "file": "privacy.png",
-      "bytes": 213573
+      "bytes": 232231
     },
     {
       "name": "terms",
