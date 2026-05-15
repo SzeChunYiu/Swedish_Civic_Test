@@ -10,7 +10,7 @@
     "release:preflight": "node scripts/release-preflight.js --run-validate",
     "typecheck": "tsc --noEmit",
     "validate:content": "node scripts/validate-content.js",
-    "validate": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run validate:content",
+    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run audit:release && npm test && npm run validate:content",
     "lint": "expo lint -- --max-warnings=0",
     "format:check": "prettier --check \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
     "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
@@ -40,7 +40,8 @@
     "test:public-urls": "node --test scripts/check-public-urls.test.js",
     "test:ui-effects": "node --test scripts/ui-effects.test.js",
     "simulate:ux-users": "node scripts/simulate-ux-users.js",
-    "test:ux-simulation": "node --test scripts/ux-simulation.test.js"
+    "test:ux-simulation": "node --test scripts/ux-simulation.test.js",
+    "audit:release": "npm audit --audit-level=moderate"
   },
   "dependencies": {
     "expo": "~54.0.33",
@@ -69,5 +70,8 @@
     "prettier": "^3.8.3",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "postcss": "8.5.10"
+  }
 }

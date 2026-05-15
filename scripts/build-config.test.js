@@ -31,6 +31,13 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
+test('release validation includes dependency security audit', () => {
+  const pkg = readJson('package.json');
+  assert.equal(pkg.scripts['audit:release'], 'npm audit --audit-level=moderate');
+  assert.match(pkg.scripts.validate, /npm run audit:release/);
+  assert.equal(pkg.overrides.postcss, '8.5.10');
+});
+
 test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.devDependencies['eas-cli'], undefined);
