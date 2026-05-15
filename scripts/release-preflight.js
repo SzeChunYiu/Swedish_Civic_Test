@@ -38,10 +38,13 @@ const evidenceRequirements = {
     ],
   ],
   submission: [
-    ['TestFlight evidence', /TestFlight/i],
-    ['Google Play internal evidence', /Google Play internal/i],
-    ['production submission evidence', /production|submit|submission/i],
-    ['monitoring evidence', /monitoring|post-launch/i],
+    ['TestFlight build evidence', /TestFlight build/i],
+    [
+      'Google Play internal track URL evidence',
+      /Google Play internal track URL|https?:\/\/.*play\.google/i,
+    ],
+    ['production submission ID evidence', /production submission ID|submit-[\w-]+/i],
+    ['monitoring report evidence', /monitoring report|reports\/.*monitoring|post-launch report/i],
   ],
 };
 

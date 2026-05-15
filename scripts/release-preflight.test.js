@@ -86,7 +86,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           submission: {
             status: 'READY',
             evidence:
-              'TestFlight, Google Play internal, production submission, and monitoring evidence recorded.',
+              'TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; post-launch monitoring report reports/monitoring/v1-week1.md recorded.',
           },
           ...overrides,
         },
@@ -275,4 +275,34 @@ test('release preflight blocks store records without support and privacy URL ent
   assert.equal(storeRecords.status, 'BLOCKED');
   assert.match(storeRecords.evidence, /Support URL/i);
   assert.match(storeRecords.evidence, /Privacy Policy URL/i);
+});
+
+test('release preflight blocks generic submission evidence without concrete IDs or URLs', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-submission-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    submission: {
+      status: 'READY',
+      evidence:
+        'TestFlight, Google Play internal, production submission, and monitoring evidence recorded.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const submission = report.gates.find((gate) => gate.id === 'submission');
+  assert.equal(submission.status, 'BLOCKED');
+  assert.match(submission.evidence, /TestFlight build/i);
+  assert.match(submission.evidence, /Google Play internal track URL/i);
+  assert.match(submission.evidence, /production submission ID/i);
+  assert.match(submission.evidence, /monitoring report/i);
 });
