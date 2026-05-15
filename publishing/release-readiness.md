@@ -24,6 +24,7 @@
 - Hostable public support/privacy pages: `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`
 - Screenshot manifest: `publishing/screenshot-manifest.json`
 - Web-draft screenshot evidence: `reports/2026-05-15-web-draft-screenshots.md`
+- Executable release preflight: `npm run release:preflight`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`
@@ -41,6 +42,18 @@
 - Android device audio verification.
 - iOS device audio verification.
 - Decision whether to keep placeholders or enable real AdMob/RevenueCat SDKs before v1.0.
+
+## Executable blocker check
+
+Run:
+
+```bash
+npm run release:preflight
+```
+
+The command exits non-zero until every external/device/store gate has concrete
+evidence. It is intentionally fail-closed and should be copied into each release
+evidence file.
 
 ## If live SDKs are enabled before release
 
