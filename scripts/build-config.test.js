@@ -115,6 +115,17 @@ test('production build guard blocks while release preflight is not ready', () =>
   assert.match(result.stdout, /release preflight/i);
 });
 
+test('production build and submit guards rerun validation inside release preflight', () => {
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, 'scripts/build-production-guard.js'), 'utf8'),
+    /--run-validate/,
+  );
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, 'scripts/submit-production-guard.js'), 'utf8'),
+    /--run-validate/,
+  );
+});
+
 test('production submit guard blocks placeholder Apple identifiers before EAS submit', () => {
   const result = spawnSync(
     process.execPath,

@@ -9,7 +9,11 @@ function run(command, args, options = {}) {
 }
 
 function main() {
-  const preflight = run(process.execPath, ['scripts/release-preflight.js', '--json']);
+  const preflight = run(process.execPath, [
+    'scripts/release-preflight.js',
+    '--json',
+    '--run-validate',
+  ]);
   let report = null;
   try {
     report = JSON.parse(preflight.stdout || '{}');
