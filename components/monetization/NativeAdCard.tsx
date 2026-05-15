@@ -1,25 +1,24 @@
 import { StyleSheet, Text } from 'react-native';
 
-import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
+import { shouldShowAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
-import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
+import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
-export function AdBanner({
-  placement = 'home_banner',
+export function NativeAdCard({
   entitlements = FREE_ENTITLEMENTS,
 }: {
-  placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
-  if (!shouldShowAd(placement, entitlements)) return null;
+  if (!shouldShowAd('results_native', entitlements)) return null;
 
-  const unit = getAdUnit(placement);
   return (
     <Card>
-      <Text style={styles.eyebrow}>Test ad</Text>
-      <Text style={styles.title}>{placement.replaceAll('_', ' ')}</Text>
-      <Text style={styles.meta}>AdMob test unit · {unit?.testOnly ? 'test only' : 'disabled'}</Text>
+      <Text style={styles.eyebrow}>Test native ad</Text>
+      <Text style={styles.title}>Sponsored study placement</Text>
+      <Text style={styles.meta}>
+        Native ad placeholder using AdMob test placement. Keep out of timed exams.
+      </Text>
     </Card>
   );
 }
@@ -36,11 +35,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     marginTop: 4,
-    textTransform: 'capitalize',
   },
   meta: {
     color: '#615d59',
     fontSize: 13,
+    lineHeight: 20,
     marginTop: 4,
   },
 });

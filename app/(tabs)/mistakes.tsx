@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -18,6 +19,8 @@ export default function Screen() {
       <Text style={styles.title}>Mistakes</Text>
       <Text style={styles.subtitle}>Review questions you previously answered incorrectly.</Text>
       <QuestionDisclaimer />
+
+      <NativeAdCard />
 
       {mistakenQuestions.length > 0 ? (
         <View style={styles.list}>

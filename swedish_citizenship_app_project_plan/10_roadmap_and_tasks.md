@@ -142,11 +142,11 @@ Acceptance criteria:
 Tasks:
 
 - [ ] Create AdMob account/app.
-- [ ] Add test ad units.
-- [ ] Implement banner/native ad.
-- [ ] Implement interstitial after quiz completion.
-- [ ] Ensure no ads during exam.
-- [ ] Add premium flag.
+- [x] Add test ad units.
+- [x] Implement banner/native ad.
+- [x] Implement interstitial after quiz completion.
+- [x] Ensure no ads during exam.
+- [x] Add premium flag.
 - [ ] Add RevenueCat later if needed.
 
 Acceptance criteria:

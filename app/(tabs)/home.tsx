@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AdBanner } from '../../components/monetization/AdBanner';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
@@ -67,6 +68,8 @@ export default function Screen() {
           <Text style={styles.statLabel}>questions</Text>
         </View>
       </View>
+
+      <AdBanner placement="home_banner" />
 
       <View style={styles.actions}>
         <Link href="/practice" style={styles.primaryLink}>

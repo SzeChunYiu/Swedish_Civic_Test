@@ -2,9 +2,11 @@ import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
+import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
+import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 
@@ -70,6 +72,7 @@ export default function Screen() {
         </Text>
       </View>
 
+      <PremiumBanner entitlements={FREE_ENTITLEMENTS} />
       <ComplianceLinks />
 
       <Link href="/settings" style={styles.settingsLink}>

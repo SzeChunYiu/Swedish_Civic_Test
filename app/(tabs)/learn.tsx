@@ -2,6 +2,7 @@ import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ChapterCard } from '../../components/learning/ChapterCard';
+import { AdBanner } from '../../components/monetization/AdBanner';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 
@@ -22,6 +23,8 @@ export default function Screen() {
           </Link>
         ))}
       </View>
+
+      <AdBanner placement="chapter_list_banner" />
     </ScrollView>
   );
 }
