@@ -20,9 +20,10 @@ function runPreflight(options = {}) {
   return JSON.parse(result.stdout);
 }
 
-function writeFakeReleaseCommands(tmpDir) {
+function writeFakeReleaseCommands(tmpDir, options = {}) {
   const fakeNpm = path.join(tmpDir, 'npm');
   const fakeNpx = path.join(tmpDir, 'npx');
+  const fakeGit = path.join(tmpDir, 'git');
 
   fs.writeFileSync(
     fakeNpm,
@@ -45,6 +46,23 @@ function writeFakeReleaseCommands(tmpDir) {
       'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
       'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
       'echo "unexpected npx command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  fs.writeFileSync(
+    fakeGit,
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2" = "status --porcelain" ]; then',
+      options.gitStatusPorcelain
+        ? `  printf '%s\\n' '${options.gitStatusPorcelain.replace(/'/g, "'\\''")}'`
+        : '  exit 0',
+      '  exit 0',
+      'fi',
+      'echo "unexpected git command: $@" >&2',
       'exit 2',
       '',
     ].join('\n'),
@@ -120,7 +138,7 @@ test('release preflight fails closed on external launch blockers', () => {
 
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
-  assert.match(report.nextActions[0], /Expo\/EAS/i);
+  assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
 });
 
 test('release preflight can pass after recorded external evidence and EAS auth are ready', () => {
@@ -305,4 +323,29 @@ test('release preflight blocks generic submission evidence without concrete IDs 
   assert.match(submission.evidence, /Google Play internal track URL/i);
   assert.match(submission.evidence, /production submission ID/i);
   assert.match(submission.evidence, /monitoring report/i);
+});
+
+test('release preflight blocks dirty release worktrees', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-dirty-worktree-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir, {
+    gitStatusPorcelain: ' M app/index.tsx\n?? untracked-release-file.txt',
+  });
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const worktree = report.gates.find((gate) => gate.id === 'git-worktree-clean');
+  assert.equal(worktree.status, 'BLOCKED');
+  assert.match(worktree.evidence, /uncommitted/i);
+  assert.match(worktree.evidence, /app\/index\.tsx/i);
+  assert.match(worktree.evidence, /untracked-release-file\.txt/i);
 });

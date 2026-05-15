@@ -81,6 +81,38 @@ function gate(id, label, status, evidence, nextAction) {
   return { id, label, status, evidence, nextAction };
 }
 
+function gitWorktreeGate() {
+  const status = commandSucceeds('git', ['status', '--porcelain']);
+  if (!status.ok) {
+    return gate(
+      'git-worktree-clean',
+      'Clean git worktree for release candidate',
+      'BLOCKED',
+      status.stderr || status.stdout || '`git status --porcelain` failed.',
+      'Run release preflight from a git checkout and resolve the git status failure.',
+    );
+  }
+
+  if (status.stdout.length > 0) {
+    const changedFiles = status.stdout.split('\n').slice(0, 25).join('\n');
+    return gate(
+      'git-worktree-clean',
+      'Clean git worktree for release candidate',
+      'BLOCKED',
+      `Release candidate has uncommitted or untracked files:\n${changedFiles}`,
+      'Commit, stash, remove, or move local changes before production build or store submission.',
+    );
+  }
+
+  return gate(
+    'git-worktree-clean',
+    'Clean git worktree for release candidate',
+    'READY',
+    '`git status --porcelain` returned no uncommitted or untracked files.',
+    'Run release preflight from the exact clean release commit.',
+  );
+}
+
 function loadManualEvidence() {
   if (!exists(evidencePath)) {
     return { gates: {} };
@@ -241,6 +273,7 @@ function buildReport() {
         : '`npm run validate` was not run in this direct script invocation; `npm run release:preflight` runs it.',
       'Run `npm run release:preflight` for the exact release candidate.',
     ),
+    gitWorktreeGate(),
     gate(
       'expo-doctor',
       'Expo Doctor native dependency checks',
