@@ -33,7 +33,13 @@ npm run build:preview
 
 Record Android and iOS build URLs/IDs in the release evidence file. Do not mark
 `android-device-audio` or `ios-device-audio` READY in `reports/release-gates.json`
-until physical-device audio smoke tests pass.
+until physical-device audio smoke tests pass. Use the checked gate writer instead
+of hand-editing JSON, for example:
+
+```bash
+node scripts/update-release-gate.js --gate android-device-audio --status READY --evidence "Android Pixel 8 audio smoke passed; build https://expo.dev/..."
+node scripts/update-release-gate.js --gate ios-device-audio --status READY --evidence "iPhone 15 TestFlight audio smoke passed; build https://appstoreconnect.apple.com/..."
+```
 
 ## 3. Run physical-device smoke tests
 

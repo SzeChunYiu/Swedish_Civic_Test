@@ -1,0 +1,104 @@
+const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
+
+function makeGatesFile() {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-gates-writer-'));
+  const gatesPath = path.join(tmpDir, 'release-gates.json');
+  fs.writeFileSync(
+    gatesPath,
+    JSON.stringify(
+      {
+        schemaVersion: 1,
+        description: 'test gate file',
+        gates: {
+          'android-device-audio': {
+            status: 'BLOCKED',
+            evidence: 'No Android evidence recorded.',
+          },
+          'public-urls': {
+            status: 'READY',
+            evidence: 'Support URL and Privacy Policy URL ready.',
+          },
+        },
+      },
+      null,
+      2,
+    ),
+  );
+  return gatesPath;
+}
+
+test('release gate writer updates existing gate evidence without hand-editing JSON', () => {
+  const gatesPath = makeGatesFile();
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/update-release-gate.js',
+      '--path',
+      gatesPath,
+      '--gate',
+      'android-device-audio',
+      '--status',
+      'READY',
+      '--evidence',
+      'Android Pixel 8 audio smoke passed; build https://expo.dev/build/android-123',
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /android-device-audio/i);
+  const updated = JSON.parse(fs.readFileSync(gatesPath, 'utf8'));
+  assert.equal(updated.gates['android-device-audio'].status, 'READY');
+  assert.equal(
+    updated.gates['android-device-audio'].evidence,
+    'Android Pixel 8 audio smoke passed; build https://expo.dev/build/android-123',
+  );
+});
+
+test('release gate writer refuses unknown gates and empty READY evidence', () => {
+  const gatesPath = makeGatesFile();
+
+  const unknown = spawnSync(
+    process.execPath,
+    [
+      'scripts/update-release-gate.js',
+      '--path',
+      gatesPath,
+      '--gate',
+      'not-a-real-gate',
+      '--status',
+      'BLOCKED',
+      '--evidence',
+      'blocked',
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(unknown.status, 1);
+  assert.match(unknown.stderr || unknown.stdout, /Unknown gate/i);
+
+  const emptyReady = spawnSync(
+    process.execPath,
+    [
+      'scripts/update-release-gate.js',
+      '--path',
+      gatesPath,
+      '--gate',
+      'android-device-audio',
+      '--status',
+      'READY',
+      '--evidence',
+      '   ',
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(emptyReady.status, 1);
+  assert.match(emptyReady.stderr || emptyReady.stdout, /READY evidence/i);
+});

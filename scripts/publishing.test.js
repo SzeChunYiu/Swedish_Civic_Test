@@ -75,4 +75,6 @@ test('post-EAS-auth runbook covers build, device, and store evidence sequence', 
   assert.match(runbook, /TestFlight/i);
   assert.match(runbook, /Google Play internal/i);
   assert.match(runbook, /reports\/release-evidence-YYYY-MM-DD\.md/);
+  assert.match(runbook, /scripts\/update-release-gate\.js/);
+  assert.match(runbook, /--gate android-device-audio/);
 });
