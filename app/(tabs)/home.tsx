@@ -2,9 +2,14 @@ import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
+import { Badge } from '../../components/ui/Badge';
+import { Card } from '../../components/ui/Card';
+import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
+import { uxBenchmarks } from '../../data/uxBenchmarks';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
@@ -23,58 +28,28 @@ export default function Screen() {
   const currentStreak = calculateStreak(answerDates);
   const level = calculateLevel(totalXp);
   const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
+  const nextAction =
+    weakChapterCount > 0 ? 'Review weak chapters' : 'Start a 5-minute practice set';
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <Text style={styles.subtitle}>Study UHR-based civic questions in small daily sessions.</Text>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Today&apos;s goal</Text>
-        <Text style={styles.metric}>
-          {completedToday}/{dailyGoalAnswers} answers
-        </Text>
-        <ProgressBar progress={progress} />
-      </View>
-
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.metric}>{level}</Text>
-          <Text style={styles.statLabel}>level</Text>
+    <ScreenShell
+      eyebrow="Study dashboard"
+      title="Prepare calmly, one civic concept at a time"
+      subtitle="A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations."
+      rightSlot={
+        <View style={styles.goalCard}>
+          <Text style={styles.goalLabel}>Today&apos;s goal</Text>
+          <Text style={styles.goalMetric}>
+            {completedToday}/{dailyGoalAnswers}
+          </Text>
+          <ProgressBar progress={progress} />
+          <Text style={styles.goalHint}>{nextAction}</Text>
         </View>
-        <View style={styles.statCard}>
-          <Text style={styles.metric}>{totalXp}</Text>
-          <Text style={styles.statLabel}>XP</Text>
-        </View>
-      </View>
-
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.metric}>{currentStreak}</Text>
-          <Text style={styles.statLabel}>day streak</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.metric}>{weakChapterCount}</Text>
-          <Text style={styles.statLabel}>weak chapters</Text>
-        </View>
-      </View>
-
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.metric}>{chapters.length}</Text>
-          <Text style={styles.statLabel}>chapters</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.metric}>{questions.length}</Text>
-          <Text style={styles.statLabel}>questions</Text>
-        </View>
-      </View>
-
-      <AdBanner placement="home_banner" />
-
+      }
+    >
       <View style={styles.actions}>
         <Link
-          accessibilityLabel="Start practice"
+          accessibilityLabel="Start the recommended practice session"
           accessibilityRole="link"
           href="/practice"
           style={styles.primaryLink}
@@ -82,7 +57,7 @@ export default function Screen() {
           Start practice
         </Link>
         <Link
-          accessibilityLabel="Browse chapters"
+          accessibilityLabel="Browse all civic chapters"
           accessibilityRole="link"
           href="/learn"
           style={styles.secondaryLink}
@@ -90,60 +65,62 @@ export default function Screen() {
           Browse chapters
         </Link>
       </View>
-    </View>
+
+      <View style={styles.statsRow}>
+        <MetricCard label="level" value={level} tone="blue" helper="XP-based" />
+        <MetricCard label="day streak" value={currentStreak} helper="daily habit" />
+      </View>
+      <View style={styles.statsRow}>
+        <MetricCard label="weak chapters" value={weakChapterCount} helper="needs review" />
+        <MetricCard
+          label="questions"
+          value={questions.length}
+          helper={`${chapters.length} chapters`}
+        />
+      </View>
+
+      <SectionHeader
+        title="Optimized study loop"
+        subtitle="Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress."
+      />
+      <View style={styles.loopGrid}>
+        {uxBenchmarks.map((item) => (
+          <Card key={item.product} style={styles.loopCard}>
+            <Badge tone="warm">{item.product}</Badge>
+            <Text style={styles.loopText}>{item.lesson}</Text>
+          </Card>
+        ))}
+      </View>
+
+      <AdBanner placement="home_banner" />
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    flex: 1,
-    gap: space[2.25],
-    padding: space[3],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  card: {
-    backgroundColor: colors.surface,
+  goalCard: {
+    backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1.25],
+    gap: space[1],
     padding: space[2],
   },
-  cardTitle: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  metric: {
-    color: colors.text,
-    fontSize: typography.metric.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: space[1.5],
-  },
-  statCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    flex: 1,
-    padding: space[2],
-  },
-  statLabel: {
+  goalLabel: {
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
-    marginTop: space[0.5],
+    fontWeight: typography.caption.fontWeight,
+  },
+  goalMetric: {
+    color: colors.text,
+    fontSize: typography.subHeadingLarge.fontSize,
+    fontWeight: typography.subHeadingLarge.fontWeight,
+    lineHeight: typography.subHeadingLarge.lineHeight,
+  },
+  goalHint: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   actions: {
     flexDirection: 'row',
@@ -169,5 +146,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: space[1.5],
+  },
+  loopGrid: {
+    gap: space[1.5],
+  },
+  loopCard: {
+    gap: space[1],
+  },
+  loopText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
 });

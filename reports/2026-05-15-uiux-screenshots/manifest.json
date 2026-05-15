@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-15T18:58:02.675Z",
+  "capturedAt": "2026-05-15T20:12:14.095Z",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "routes": [
@@ -7,49 +7,49 @@
       "name": "index",
       "route": "/",
       "file": "index.png",
-      "bytes": 100805
+      "bytes": 151042
     },
     {
       "name": "onboarding",
       "route": "/onboarding",
       "file": "onboarding.png",
-      "bytes": 192125
+      "bytes": 205949
     },
     {
       "name": "home",
       "route": "/home",
       "file": "home.png",
-      "bytes": 100805
+      "bytes": 151042
     },
     {
       "name": "learn",
       "route": "/learn",
       "file": "learn.png",
-      "bytes": 180503
+      "bytes": 167913
     },
     {
       "name": "practice",
       "route": "/practice",
       "file": "practice.png",
-      "bytes": 133456
+      "bytes": 147892
     },
     {
       "name": "exam",
       "route": "/exam",
       "file": "exam.png",
-      "bytes": 138661
+      "bytes": 136687
     },
     {
       "name": "mistakes",
       "route": "/mistakes",
       "file": "mistakes.png",
-      "bytes": 129836
+      "bytes": 148934
     },
     {
       "name": "profile",
       "route": "/profile",
       "file": "profile.png",
-      "bytes": 102725
+      "bytes": 120501
     },
     {
       "name": "settings",

@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { Badge } from '../../components/ui/Badge';
+import { ProgressBar } from '../../components/ui/ProgressBar';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
 import { formatExamTime, generateExam, scoreExam } from '../../lib/quiz/examGenerator';
@@ -35,10 +37,13 @@ export default function Screen() {
   if (result) {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Exam result</Text>
-        <Text style={styles.subtitle}>
-          Explanations and review are shown only after the exam is submitted.
-        </Text>
+        <View style={styles.hero}>
+          <Badge tone={result.percent >= 75 ? 'green' : 'orange'}>Mock exam result</Badge>
+          <Text style={styles.title}>Exam result</Text>
+          <Text style={styles.subtitle}>
+            Explanations and review are shown only after the exam is submitted.
+          </Text>
+        </View>
         <QuestionDisclaimer />
         <View style={styles.resultCard}>
           <Text style={styles.metric}>{result.percent}%</Text>
@@ -71,11 +76,17 @@ export default function Screen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Mock exam</Text>
-      <Text style={styles.subtitle}>
-        Time left {formatExamTime(remainingSeconds)} · {examQuestions.length} UHR-based questions ·
-        no ads during exam
-      </Text>
+      <View style={styles.hero}>
+        <Badge tone="orange">Timed simulation</Badge>
+        <Text style={styles.title}>Mock exam</Text>
+        <Text style={styles.subtitle}>
+          Time left {formatExamTime(remainingSeconds)} · {examQuestions.length} UHR-based questions
+          · no ads during exam
+        </Text>
+        <ProgressBar
+          progress={examQuestions.length > 0 ? answeredCount / examQuestions.length : 0}
+        />
+      </View>
       <QuestionDisclaimer />
 
       <View style={styles.progressCard}>
@@ -134,6 +145,15 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: space[2],
+    padding: space[3],
+    paddingBottom: space[10],
+  },
+  hero: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.25],
     padding: space[3],
   },
   title: {

@@ -20,6 +20,12 @@ Operator reopened the internal UI/UX gate in `GOAL.md` and `codex-tasks/ceo-inbo
   - `tests/e2e/serve-dist-web.cjs`
   - `tests/e2e/visual-smoke.spec.ts`
   - package script `npm run test:e2e`
+- Refreshed the primary study flow with shared UI primitives:
+  - `components/ui/Badge.tsx`
+  - `components/ui/MetricCard.tsx`
+  - `components/ui/ScreenShell.tsx`
+  - richer `Button`, `Card`, `ChapterCard`, answer-state, dashboard, practice, learn, exam, mistakes, profile, onboarding, and settings surfaces
+  - `data/uxBenchmarks.ts` to document the product-pattern rationale surfaced on the dashboard
 
 ## Executable acceptance evidence
 
@@ -31,7 +37,7 @@ Operator reopened the internal UI/UX gate in `GOAL.md` and `codex-tasks/ceo-inbo
 - `grep -rE 'fontSize: [0-9]|lineHeight: [0-9]|letterSpacing: -?[0-9]|fontWeight: ["'][0-9]' app components` returns zero lines after adapting the quote spacing in shell.
 - `npm run validate` passes after adding the theme-discipline test.
 - `npm run build:web:export` passes.
-- `npm run test:e2e -- tests/e2e/visual-smoke.spec.ts` passes and captures all primary routes.
+- `npm run test:e2e -- tests/e2e/visual-smoke.spec.ts` passes and captures all primary routes; latest refreshed run completed on 2026-05-15 21:54 CEST.
 
 ## Screenshot evidence
 
