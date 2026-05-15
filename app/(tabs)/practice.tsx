@@ -1,8 +1,11 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
+import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
 import { isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
@@ -19,7 +22,7 @@ export default function Screen() {
 
   if (!question) {
     return (
-      <View style={styles.container}>
+      <View style={styles.emptyContainer}>
         <Text>No practice questions are available yet.</Text>
       </View>
     );
@@ -33,11 +36,11 @@ export default function Screen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text>Practice</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.title}>Practice</Text>
       <QuestionDisclaimer />
-      <Text>Completed questions: {completedQuestionIds.length}</Text>
-      <Text>{question.questionSv}</Text>
+      <Text style={styles.meta}>Completed questions: {completedQuestionIds.length}</Text>
+      <QuestionCard question={question} />
       <AudioButton text={question.questionSv} />
 
       <View style={styles.options}>
@@ -56,29 +59,68 @@ export default function Screen() {
       </View>
 
       {selectedOptionId ? (
-        <>
+        <View style={styles.feedback}>
           {currentScore ? (
-            <Text>
+            <Text style={styles.score}>
               Score: {currentScore.correct}/{currentScore.total}
             </Text>
           ) : null}
-          <Text>{question.explanationSv}</Text>
-          <Pressable onPress={resetSelection}>
-            <Text>Try again</Text>
+          <ExplanationPanel explanationSv={question.explanationSv} />
+          <UHRReferenceCard reference={question.uhrReference} />
+          <Pressable onPress={resetSelection} style={styles.tryAgain}>
+            <Text style={styles.tryAgainText}>Try again</Text>
           </Pressable>
-        </>
+        </View>
       ) : null}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#ffffff',
     flex: 1,
+  },
+  content: {
     gap: 16,
     padding: 24,
   },
+  emptyContainer: {
+    flex: 1,
+    padding: 24,
+  },
+  title: {
+    color: 'rgba(0, 0, 0, 0.95)',
+    fontSize: 26,
+    fontWeight: '700',
+    letterSpacing: -0.625,
+  },
+  meta: {
+    color: '#615d59',
+    fontSize: 14,
+  },
   options: {
     gap: 8,
+  },
+  feedback: {
+    gap: 12,
+  },
+  score: {
+    color: '#1aae39',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  tryAgain: {
+    alignSelf: 'flex-start',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 4,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  tryAgainText: {
+    color: '#0075de',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

@@ -38,12 +38,12 @@ Tasks:
 
 - [ ] Build onboarding screen.
 - [ ] Build home dashboard.
-- [ ] Build chapter list.
-- [ ] Build chapter detail.
-- [ ] Build quiz screen.
-- [ ] Build answer option component.
-- [ ] Build explanation screen.
-- [ ] Build UHR reference card.
+- [x] Build chapter list.
+- [x] Build chapter detail.
+- [x] Build quiz screen.
+- [x] Build answer option component.
+- [x] Build explanation screen.
+- [x] Build UHR reference card.
 - [ ] Build settings screen.
 
 Acceptance criteria:
