@@ -25,6 +25,7 @@ Initial result: `16/17 checks passed` and Expo Doctor flagged a local
 - Changed release preflight EAS CLI/auth checks to pinned `npx --yes
   eas-cli@18.13.0 ...` invocations.
 - Updated build-config and release-preflight tests to cover the new behavior.
+- Added Expo Doctor as an executable `npm run release:preflight` gate so this check stays current for each release candidate.
 
 ## Final verification
 

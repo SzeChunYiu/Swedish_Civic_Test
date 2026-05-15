@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS after Expo Doctor/EAS CLI remediation on 2026-05-15 18:37 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED after Expo Doctor/EAS CLI remediation on 2026-05-15 18:38 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 18:41 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED after adding Expo Doctor as a preflight gate on 2026-05-15 18:41 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
 | Web production export smoke | `npm run build:web:export` | PASS; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Preview/internal build | `npm run build:preview` | Not run; blocked by EAS authentication |
@@ -26,7 +26,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence after Expo Doctor/EAS CLI remediation on 2026-05-15 18:37 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 18:41 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.

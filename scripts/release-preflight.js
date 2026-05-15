@@ -77,6 +77,7 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
 function buildReport() {
   const manualEvidence = loadManualEvidence();
   const validation = runValidate ? commandSucceeds('npm', ['run', 'validate']) : null;
+  const expoDoctor = commandSucceeds('npm', ['exec', '--', 'expo-doctor']);
   const easVersion = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', '--version']);
   const easWhoami = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', 'whoami']);
 
@@ -91,6 +92,13 @@ function buildReport() {
           : validation.stderr || validation.stdout || '`npm run validate` failed.'
         : '`npm run validate` was not run in this direct script invocation; `npm run release:preflight` runs it.',
       'Run `npm run release:preflight` for the exact release candidate.',
+    ),
+    gate(
+      'expo-doctor',
+      'Expo Doctor native dependency checks',
+      expoDoctor.ok ? 'READY' : 'BLOCKED',
+      expoDoctor.ok ? expoDoctor.stdout : expoDoctor.stderr || expoDoctor.stdout,
+      'Run `npm exec -- expo-doctor` and fix any Expo/native dependency findings.',
     ),
     gate(
       'eas-cli',

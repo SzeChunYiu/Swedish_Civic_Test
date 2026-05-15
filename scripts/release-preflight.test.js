@@ -28,6 +28,7 @@ test('release preflight fails closed on external launch blockers', () => {
   const gateIds = new Set(report.gates.map((gate) => gate.id));
   for (const id of [
     'local-validation',
+    'expo-doctor',
     'eas-auth',
     'android-device-audio',
     'ios-device-audio',
@@ -46,6 +47,7 @@ test('release preflight fails closed on external launch blockers', () => {
 test('release preflight can pass after recorded external evidence and EAS auth are ready', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const fakeNpm = path.join(tmpDir, 'npm');
   const fakeNpx = path.join(tmpDir, 'npx');
 
   fs.writeFileSync(
@@ -88,6 +90,18 @@ test('release preflight can pass after recorded external evidence and EAS auth a
       null,
       2,
     ),
+  );
+
+  fs.writeFileSync(
+    fakeNpm,
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
+      'echo "unexpected npm command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
   );
 
   fs.writeFileSync(

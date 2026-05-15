@@ -14,11 +14,12 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after Expo Doctor/EAS CLI remediation on 2026-05-15 18:38 CEST reported `BLOCKED`, with local validation and pinned npx EAS CLI ready.
+`npm run release:preflight` reruns `npm run validate`, runs Expo Doctor, reads `reports/release-gates.json`, checks EAS CLI/auth, and exits non-zero until every automated and manually evidenced gate is ready. The latest run after adding Expo Doctor as a preflight gate on 2026-05-15 18:41 CEST reported `BLOCKED`, with local validation, Expo Doctor, and pinned npx EAS CLI ready.
 
 Ready gates:
 
 - Local validation runs inside `npm run release:preflight` for each release candidate.
+- Expo Doctor passes 17/17 checks.
 - Pinned npx EAS CLI is available through `npx --yes eas-cli@18.13.0 --version`.
 
 Blocked gates:
