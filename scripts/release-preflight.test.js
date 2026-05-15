@@ -5,6 +5,8 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
+const repoRoot = path.resolve(__dirname, '..');
+
 function runPreflight(options = {}) {
   const result = spawnSync(
     process.execPath,
@@ -104,7 +106,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           'device-screenshots': {
             status: 'READY',
             evidence:
-              'Final screenshots captured from accepted device tooling and recorded in screenshot manifest.',
+              'Final screenshots captured from accepted device tooling and recorded at https://example.com/final-store-screenshots/manifest.json.',
           },
           submission: {
             status: 'READY',
@@ -118,6 +120,44 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
       2,
     ),
   );
+}
+
+function createFinalScreenshotManifest(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'final-store-screenshots',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const routes = ['/home', '/learn', '/practice', '/exam', '/profile'];
+  const screenshots = routes.map((route, index) => {
+    const file = `${String(index + 1).padStart(2, '0')}-${route.replace('/', '')}.png`;
+    fs.writeFileSync(path.join(absoluteDir, file), `fake png ${route}`);
+    return {
+      id: route.slice(1),
+      route,
+      platform: index % 2 === 0 ? 'ios' : 'android',
+      device: index % 2 === 0 ? 'iPhone 15' : 'Pixel 8',
+      captureMethod: index % 2 === 0 ? 'device' : 'accepted store tooling',
+      sourceBuild: index % 2 === 0 ? 'TestFlight build 100' : 'EAS Android build 100',
+      file,
+    };
+  });
+
+  const manifest = {
+    status: 'final-device',
+    screenshots,
+    ...options.manifest,
+  };
+  const manifestPath = path.join(absoluteDir, 'manifest.json');
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'manifest.json'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
 }
 
 test('release preflight fails closed on external launch blockers', () => {
@@ -382,6 +422,75 @@ test('release preflight blocks READY screenshot evidence with a missing local ar
   assert.equal(screenshots.status, 'BLOCKED');
   assert.match(screenshots.evidence, /referenced local artifact/i);
   assert.match(screenshots.evidence, /reports\/final-store-screenshots\/manifest\.json/i);
+});
+
+test('release preflight blocks local screenshot manifests that are not final device evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-invalid-shot-manifest-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const manifest = createFinalScreenshotManifest({
+    manifest: {
+      status: 'web-draft-only',
+      note: 'browser web-draft screenshots are not final evidence',
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'device-screenshots': {
+        status: 'READY',
+        evidence: `Final screenshots captured from accepted device tooling and recorded in ${manifest.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const screenshots = report.gates.find((gate) => gate.id === 'device-screenshots');
+    assert.equal(screenshots.status, 'BLOCKED');
+    assert.match(screenshots.evidence, /local artifact content/i);
+    assert.match(screenshots.evidence, /final-device/i);
+    assert.match(screenshots.evidence, /web-draft/i);
+  } finally {
+    manifest.cleanup();
+  }
+});
+
+test('release preflight accepts a valid local final screenshot manifest', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-shot-manifest-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const manifest = createFinalScreenshotManifest();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'device-screenshots': {
+        status: 'READY',
+        evidence: `Final screenshots captured from accepted device tooling and recorded in ${manifest.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const screenshots = report.gates.find((gate) => gate.id === 'device-screenshots');
+    assert.equal(screenshots.status, 'READY');
+    assert.match(screenshots.evidence, /final-store-screenshots/i);
+  } finally {
+    manifest.cleanup();
+  }
 });
 
 test('release preflight blocks READY submission evidence with a missing local monitoring report', () => {

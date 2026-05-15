@@ -108,6 +108,12 @@ accepted by the platform, or another store-approved capture method. Web-draft
 screenshots are not sufficient for final submission. Update `device-screenshots`
 in `reports/release-gates.json` only after final files/paths are recorded.
 
+If using local screenshot files, write
+`reports/final-store-screenshots/manifest.json` with `status:
+"final-device"`, the source build, device/capture method, route, and file path
+for each final screenshot. `npm run release:preflight` validates referenced local
+final screenshot manifests and rejects browser/web-draft evidence.
+
 ## 7. Upload internal test builds
 
 Apple:

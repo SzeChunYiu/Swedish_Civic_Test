@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const jsonMode = process.argv.includes('--json');
@@ -41,8 +42,8 @@ const evidenceRequirements = {
     ['screenshot evidence', /screenshot/i],
     ['device or accepted tooling evidence', /device|accepted|store/i],
     [
-      'path, manifest, URL, or artifact reference',
-      /manifest|path|reports\/|publishing\/|https?:\/\//i,
+      'local artifact path or URL reference',
+      /\b(?:reports|publishing|content|assets)\/[^\s,;:]+|https?:\/\//i,
     ],
   ],
   submission: [
@@ -90,6 +91,77 @@ function exists(path) {
 function extractLocalArtifactPaths(evidence) {
   const matches = evidence.match(/\b(?:reports|publishing|content|assets)\/[^\s,;:]+/g) || [];
   return [...new Set(matches.map((item) => item.replace(/[.)\]]+$/g, '')))];
+}
+
+function validateFinalScreenshotManifest(manifestPath) {
+  let manifest;
+  try {
+    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${manifestPath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (manifest.status !== 'final-device') {
+    errors.push('manifest status must be final-device');
+  }
+
+  if (/web[- ]draft|browser/i.test(JSON.stringify(manifest))) {
+    errors.push('manifest must not contain web-draft or browser-only evidence');
+  }
+
+  const screenshots = Array.isArray(manifest.screenshots) ? manifest.screenshots : [];
+  if (screenshots.length < 5) {
+    errors.push('manifest must include at least five final screenshots');
+  }
+
+  const routes = new Set(screenshots.map((shot) => shot.route));
+  for (const route of ['/home', '/learn', '/practice', '/exam', '/profile']) {
+    if (!routes.has(route)) errors.push(`manifest missing required route ${route}`);
+  }
+
+  screenshots.forEach((shot, index) => {
+    const label = shot.id || `screenshot[${index}]`;
+    if (!/^(ios|android)$/i.test(shot.platform || '')) {
+      errors.push(`${label} missing platform ios/android`);
+    }
+    if (!shot.device || !String(shot.device).trim()) {
+      errors.push(`${label} missing device`);
+    }
+    if (!/device|simulator|store tooling|accepted/i.test(shot.captureMethod || '')) {
+      errors.push(`${label} missing accepted capture method`);
+    }
+    if (!shot.sourceBuild || !String(shot.sourceBuild).trim()) {
+      errors.push(`${label} missing source build`);
+    }
+    if (!shot.file || !String(shot.file).trim()) {
+      errors.push(`${label} missing screenshot file path`);
+      return;
+    }
+
+    const screenshotPath = path.isAbsolute(shot.file)
+      ? shot.file
+      : path.resolve(path.dirname(manifestPath), shot.file);
+    if (!exists(screenshotPath)) {
+      errors.push(`${label} screenshot file does not exist: ${shot.file}`);
+    }
+  });
+
+  return errors;
+}
+
+function validateLocalArtifactContents(id, artifactPaths) {
+  if (id !== 'device-screenshots') return null;
+
+  const manifestPaths = artifactPaths.filter((artifactPath) =>
+    /manifest\.json$/i.test(artifactPath),
+  );
+  if (manifestPaths.length === 0) return null;
+
+  const errors = manifestPaths.flatMap((manifestPath) =>
+    validateFinalScreenshotManifest(manifestPath).map((error) => `${manifestPath}: ${error}`),
+  );
+  return errors.length > 0 ? errors : null;
 }
 
 function commandSucceeds(command, args) {
@@ -221,9 +293,8 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
       );
     }
 
-    const missingArtifactPaths = extractLocalArtifactPaths(recordedEvidence).filter(
-      (artifactPath) => !exists(artifactPath),
-    );
+    const artifactPaths = extractLocalArtifactPaths(recordedEvidence);
+    const missingArtifactPaths = artifactPaths.filter((artifactPath) => !exists(artifactPath));
     if (missingArtifactPaths.length > 0) {
       return gate(
         id,
@@ -233,6 +304,19 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
           ', ',
         )}. Recorded evidence: ${recordedEvidence}`,
         `Create the referenced local artifact(s), fix their paths, or replace them with externally verifiable URLs for ${id}.`,
+      );
+    }
+
+    const invalidArtifactContents = validateLocalArtifactContents(id, artifactPaths);
+    if (invalidArtifactContents) {
+      return gate(
+        id,
+        label,
+        'BLOCKED',
+        `Gate ${id} is marked READY in ${evidencePath}, but referenced local artifact content is not valid final evidence: ${invalidArtifactContents.join(
+          '; ',
+        )}. Recorded evidence: ${recordedEvidence}`,
+        `Fix the referenced local artifact content or replace it with externally verifiable final evidence for ${id}.`,
       );
     }
 

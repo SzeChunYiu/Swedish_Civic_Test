@@ -49,3 +49,34 @@ Web-draft capture evidence is recorded in
 - [ ] Privacy/source pages match `publishing/privacy-labels.md` and
       `publishing/google-play-data-safety.md`.
 - [ ] File names include platform, device size, route, and date.
+
+## Final manifest schema
+
+If final screenshots are recorded as local files, create a manifest such as
+`reports/final-store-screenshots/manifest.json` and reference that exact path in
+the `device-screenshots` gate evidence. `npm run release:preflight` validates
+local final screenshot manifests before allowing the gate to pass.
+
+Required shape:
+
+```json
+{
+  "status": "final-device",
+  "screenshots": [
+    {
+      "id": "home",
+      "route": "/home",
+      "platform": "ios",
+      "device": "iPhone 15",
+      "captureMethod": "device",
+      "sourceBuild": "TestFlight build 100",
+      "file": "ios-iphone15-home-2026-05-15.png"
+    }
+  ]
+}
+```
+
+The manifest must include final evidence for at least `/home`, `/learn`,
+`/practice`, `/exam`, and `/profile`. Local screenshot files are resolved
+relative to the manifest directory. Browser or web-draft evidence is rejected for
+the final `device-screenshots` release gate.
