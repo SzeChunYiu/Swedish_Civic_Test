@@ -33,6 +33,7 @@
 - Expo Doctor evidence: `reports/2026-05-15-expo-doctor.md`
 - Native prebuild smoke evidence: `reports/2026-05-15-native-prebuild-smoke.md`
 - Local main integration evidence: `reports/2026-05-15-local-main-integration.md`
+- Private GitHub remote evidence: `reports/2026-05-15-github-remote.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`

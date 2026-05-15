@@ -30,7 +30,8 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Expo Doctor initially flagged the local `eas-cli` dependency; after switching build/preflight commands to pinned `npx --yes eas-cli@18.13.0`, `npm exec -- expo-doctor` passed 17/17 checks; see `reports/2026-05-15-expo-doctor.md`.
 - Isolated Android/iOS native prebuild smoke passed after adding `expo-system-ui` for the configured `userInterfaceStyle`; it is now part of `npm run release:preflight`; see `reports/2026-05-15-native-prebuild-smoke.md`.
 - Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
-- Local `main` was fast-forwarded to the validated batch branch because no Git remote exists for the planned PR; see `reports/2026-05-15-local-main-integration.md`.
+- Local `main` was fast-forwarded to the validated batch branch; see `reports/2026-05-15-local-main-integration.md`.
+- Private GitHub remote `Babbloo-studio/Swedish_Civic_Test` now exists and tracks `main` plus the batch branch; see `reports/2026-05-15-github-remote.md`.
 
 ## Prompt-to-artifact checklist
 
