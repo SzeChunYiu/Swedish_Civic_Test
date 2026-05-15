@@ -330,10 +330,16 @@ function createPrivacyReviewEvidence(options = {}) {
 
   const evidence = {
     status: 'reviewed',
+    reviewedAt: '2026-05-16T00:40:00Z',
+    reviewer: 'release-owner',
     reviewedBuild: {
       id: 'EAS build ios-100/android-100',
       version: '1.0.0',
       commit: 'abcdef1',
+    },
+    storeQuestionnaires: {
+      appleAppStoreConnectReviewed: true,
+      googlePlayConsoleReviewed: true,
     },
     applePrivacyLabels: {
       reviewed: true,
@@ -1248,6 +1254,48 @@ test('release preflight blocks local privacy review evidence with real ads enabl
     assert.equal(privacyReview.status, 'BLOCKED');
     assert.match(privacyReview.evidence, /local artifact content/i);
     assert.match(privacyReview.evidence, /realAdsEnabled/i);
+  } finally {
+    privacyEvidence.cleanup();
+  }
+});
+
+test('release preflight blocks local privacy review evidence without audit trail', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-privacy-audit-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const privacyEvidence = createPrivacyReviewEvidence({
+    evidence: {
+      reviewedAt: '',
+      reviewer: '',
+      storeQuestionnaires: {
+        appleAppStoreConnectReviewed: false,
+        googlePlayConsoleReviewed: true,
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'privacy-review': {
+        status: 'READY',
+        evidence: `Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled; reports in ${privacyEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const privacyReview = report.gates.find((gate) => gate.id === 'privacy-review');
+    assert.equal(privacyReview.status, 'BLOCKED');
+    assert.match(privacyReview.evidence, /reviewedAt/i);
+    assert.match(privacyReview.evidence, /reviewer/i);
+    assert.match(privacyReview.evidence, /appleAppStoreConnectReviewed/i);
   } finally {
     privacyEvidence.cleanup();
   }

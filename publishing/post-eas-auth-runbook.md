@@ -163,8 +163,9 @@ safety, and the disabled Google Mobile Ads SDK posture.
 If recording the final privacy review locally, create
 `reports/privacy-review/privacy-review.json` and reference that path in the
 `privacy-review` gate evidence. `npm run release:preflight` validates local JSON
-for the reviewed build, Apple privacy labels, Google Play Data safety, Google
-Mobile Ads test/real-ads-disabled posture, and disabled analytics, crash,
+for the reviewer audit trail, reviewed build, App Store Connect and Google Play
+questionnaire review status, Apple privacy labels, Google Play Data safety,
+Google Mobile Ads test/real-ads-disabled posture, and disabled analytics, crash,
 purchase, and real-ad SDKs.
 
 Required local JSON shape:
@@ -172,10 +173,16 @@ Required local JSON shape:
 ```json
 {
   "status": "reviewed",
+  "reviewedAt": "2026-05-16T00:40:00Z",
+  "reviewer": "release-owner",
   "reviewedBuild": {
     "id": "EAS build ios-100/android-100",
     "version": "1.0.0",
     "commit": "abcdef1"
+  },
+  "storeQuestionnaires": {
+    "appleAppStoreConnectReviewed": true,
+    "googlePlayConsoleReviewed": true
   },
   "applePrivacyLabels": {
     "reviewed": true,

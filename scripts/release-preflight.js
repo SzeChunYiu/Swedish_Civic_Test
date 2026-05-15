@@ -320,12 +320,26 @@ function validatePrivacyReviewEvidence(evidencePath) {
   if (evidence.status !== 'reviewed') {
     errors.push('status must be reviewed');
   }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(evidence.reviewedAt || '')) {
+    errors.push('reviewedAt must be an ISO UTC timestamp');
+  }
+  if (!evidence.reviewer || !String(evidence.reviewer).trim()) {
+    errors.push('reviewer is required');
+  }
 
   const reviewedBuild = evidence.reviewedBuild || {};
   for (const field of ['id', 'version', 'commit']) {
     if (!reviewedBuild[field] || !String(reviewedBuild[field]).trim()) {
       errors.push(`reviewedBuild.${field} is required`);
     }
+  }
+
+  const storeQuestionnaires = evidence.storeQuestionnaires || {};
+  if (storeQuestionnaires.appleAppStoreConnectReviewed !== true) {
+    errors.push('storeQuestionnaires.appleAppStoreConnectReviewed must be true');
+  }
+  if (storeQuestionnaires.googlePlayConsoleReviewed !== true) {
+    errors.push('storeQuestionnaires.googlePlayConsoleReviewed must be true');
   }
 
   const applePrivacyLabels = evidence.applePrivacyLabels || {};
