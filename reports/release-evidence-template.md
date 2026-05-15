@@ -63,8 +63,9 @@ If store/account evidence is recorded in local JSON, use a path such as
 `store-records` gate is validated by `npm run release:preflight` and must
 include: `status: "ready"`, `bundleIdentifier:
 "com.billyyiu.swedishcivictest"`, App Store Connect URL, Google Play Console
-URL, exact hosted support/privacy URLs, and either a concrete AdMob app ID or a
-v1.0 real-ads-disabled decision. It must also confirm App Store and Google Play
+URL, exact hosted support/privacy URLs, concrete Apple Team ID / Google Play
+developer ID ownership review, and either a concrete AdMob app ID or a v1.0
+real-ads-disabled decision. It must also confirm App Store and Google Play
 listing metadata were reviewed against `publishing/app-store-listing.md` and
 `publishing/google-play-listing.md` and match the store records.
 

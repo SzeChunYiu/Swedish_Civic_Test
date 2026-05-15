@@ -225,6 +225,12 @@ function createStoreRecordEvidence(options = {}) {
     googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
     supportUrl: 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/',
     privacyUrl: 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/',
+    accountOwnership: {
+      appleDeveloperTeamId: 'ABCDE12345',
+      appleBundleIdReviewed: true,
+      googlePlayDeveloperId: '123456789012',
+      googlePackageNameReviewed: true,
+    },
     adMob: {
       status: 'deferred-real-ads-disabled',
       note: 'REAL_ADS_ENABLED_FOR_V1=false',
@@ -1157,6 +1163,47 @@ test('release preflight blocks local store record evidence without listing metad
     assert.equal(storeRecords.status, 'BLOCKED');
     assert.match(storeRecords.evidence, /listingMetadata/i);
     assert.match(storeRecords.evidence, /appStoreListingReviewed/i);
+  } finally {
+    storeEvidence.cleanup();
+  }
+});
+
+test('release preflight blocks local store record evidence without account ownership review', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-owner-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const storeEvidence = createStoreRecordEvidence({
+    evidence: {
+      accountOwnership: {
+        appleDeveloperTeamId: '',
+        appleBundleIdReviewed: false,
+        googlePlayDeveloperId: '',
+        googlePackageNameReviewed: true,
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-records': {
+        status: 'READY',
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const storeRecords = report.gates.find((gate) => gate.id === 'store-records');
+    assert.equal(storeRecords.status, 'BLOCKED');
+    assert.match(storeRecords.evidence, /accountOwnership/i);
+    assert.match(storeRecords.evidence, /appleDeveloperTeamId/i);
   } finally {
     storeEvidence.cleanup();
   }
