@@ -25,21 +25,34 @@ function collectOpeningTag(lines, startIndex) {
   return tag;
 }
 
-test('interactive elements expose explicit accessibility labels', () => {
+test('interactive elements expose explicit accessibility labels, roles, and states', () => {
   const offenders = [];
 
   for (const sourceDir of SOURCE_DIRS) {
     for (const filePath of walk(path.join(ROOT, sourceDir))) {
       const relPath = path.relative(ROOT, filePath);
-      // Button itself forwards accessibility props; this test covers call-sites.
-      if (relPath === 'components/ui/Button.tsx') continue;
-
       const lines = fs.readFileSync(filePath, 'utf8').split('\n');
       lines.forEach((line, index) => {
         if (!INTERACTIVE_TAG.test(line)) return;
         const tag = collectOpeningTag(lines, index);
-        if (!tag.includes('accessibilityLabel=')) {
-          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
+        const isButtonImplementation = relPath === 'components/ui/Button.tsx';
+        const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
+        if (!isButtonImplementation && !tag.includes('accessibilityLabel=')) {
+          offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
+        }
+        if (!tag.includes('accessibilityRole=')) {
+          offenders.push(`${relPath}:${index + 1}: missing accessibilityRole: ${line.trim()}`);
+        }
+        if (tagName === 'Link' && !tag.includes('accessibilityRole="link"')) {
+          offenders.push(
+            `${relPath}:${index + 1}: Link should use accessibilityRole="link": ${line.trim()}`,
+          );
+        }
+        if (
+          (tag.includes('disabled=') || tag.includes('Selected') || tag.includes('Active')) &&
+          !tag.includes('accessibilityState=')
+        ) {
+          offenders.push(`${relPath}:${index + 1}: missing accessibilityState: ${line.trim()}`);
         }
       });
     }

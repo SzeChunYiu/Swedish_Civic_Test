@@ -7,9 +7,27 @@ type ButtonProps = PropsWithChildren<
   Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle> }
 >;
 
-export function Button({ children, style, ...pressableProps }: ButtonProps) {
+export function Button({
+  children,
+  style,
+  accessibilityRole = 'button',
+  accessibilityState,
+  disabled,
+  ...pressableProps
+}: ButtonProps) {
+  const mergedAccessibilityState = {
+    ...accessibilityState,
+    ...(disabled == null ? {} : { disabled }),
+  };
+
   return (
-    <Pressable style={[styles.button, style]} {...pressableProps}>
+    <Pressable
+      accessibilityRole={accessibilityRole}
+      accessibilityState={mergedAccessibilityState}
+      disabled={disabled}
+      style={[styles.button, style]}
+      {...pressableProps}
+    >
       <Text style={styles.label}>{children}</Text>
     </Pressable>
   );

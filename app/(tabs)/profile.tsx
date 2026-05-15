@@ -76,7 +76,12 @@ export default function Screen() {
       <PremiumBanner entitlements={FREE_ENTITLEMENTS} />
       <ComplianceLinks />
 
-      <Link accessibilityLabel="Open settings" href="/settings" style={styles.settingsLink}>
+      <Link
+        accessibilityLabel="Open settings"
+        accessibilityRole="link"
+        href="/settings"
+        style={styles.settingsLink}
+      >
         Open settings
       </Link>
     </View>

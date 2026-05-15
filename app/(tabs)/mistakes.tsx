@@ -43,6 +43,7 @@ export default function Screen() {
           </Text>
           <Link
             accessibilityLabel="Practice weak questions"
+            accessibilityRole="link"
             href="/practice"
             style={styles.practiceLink}
           >

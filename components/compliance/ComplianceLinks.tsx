@@ -19,6 +19,7 @@ export function ComplianceLinks() {
           <Link
             key={link.href}
             accessibilityLabel={`Open ${link.label}`}
+            accessibilityRole="link"
             href={link.href}
             style={styles.link}
           >

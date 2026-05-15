@@ -13,7 +13,11 @@ export function AnswerOption({
   const label = option?.textSv ?? 'Answer option';
 
   return (
-    <Button accessibilityLabel={`Select answer ${label}`} onPress={onPress}>
+    <Button
+      accessibilityLabel={`Select answer ${label}`}
+      accessibilityRole="button"
+      onPress={onPress}
+    >
       {resultLabel ? `${label} — ${resultLabel}` : label}
     </Button>
   );

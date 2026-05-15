@@ -73,10 +73,20 @@ export default function Screen() {
       <AdBanner placement="home_banner" />
 
       <View style={styles.actions}>
-        <Link accessibilityLabel="Start practice" href="/practice" style={styles.primaryLink}>
+        <Link
+          accessibilityLabel="Start practice"
+          accessibilityRole="link"
+          href="/practice"
+          style={styles.primaryLink}
+        >
           Start practice
         </Link>
-        <Link accessibilityLabel="Browse chapters" href="/learn" style={styles.secondaryLink}>
+        <Link
+          accessibilityLabel="Browse chapters"
+          accessibilityRole="link"
+          href="/learn"
+          style={styles.secondaryLink}
+        >
           Browse chapters
         </Link>
       </View>

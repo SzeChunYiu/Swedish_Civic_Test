@@ -6,7 +6,12 @@ import { colors, radius, space, typography } from '../../lib/theme';
 export function LegalPage({ title, children }: PropsWithChildren<{ title: string }>) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Link accessibilityLabel="Back to profile" href="/(tabs)/profile" style={styles.backLink}>
+      <Link
+        accessibilityLabel="Back to profile"
+        accessibilityRole="link"
+        href="/(tabs)/profile"
+        style={styles.backLink}
+      >
         ← Back to Profile
       </Link>
       <Text style={styles.title}>{title}</Text>

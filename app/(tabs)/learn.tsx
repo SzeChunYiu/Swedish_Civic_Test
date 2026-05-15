@@ -22,6 +22,7 @@ export default function Screen() {
           <Link
             key={chapter.id}
             accessibilityLabel={`Open chapter ${chapter.nameSv}`}
+            accessibilityRole="link"
             href={`/chapter/${chapter.id}`}
             style={styles.link}
           >

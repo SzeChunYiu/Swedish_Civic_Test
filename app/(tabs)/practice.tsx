@@ -75,6 +75,7 @@ export default function Screen() {
           <AdBanner placement="quiz_completed_interstitial" />
           <Pressable
             accessibilityLabel="Try this practice question again"
+            accessibilityRole="button"
             onPress={resetSelection}
             style={styles.tryAgain}
           >

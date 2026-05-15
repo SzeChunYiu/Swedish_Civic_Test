@@ -9,6 +9,8 @@ export function AudioButton({ text = '', enabled = true }: { text?: string; enab
       accessibilityLabel={
         enabled ? 'Listen to the Swedish question and answers' : 'Audio is disabled'
       }
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !enabled }}
       disabled={!enabled}
       onPress={() => {
         if (!enabled) return;

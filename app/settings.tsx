@@ -18,6 +18,8 @@ export default function Screen() {
     <Pressable
       key={value}
       accessibilityLabel={`Set question language to ${label}`}
+      accessibilityRole="button"
+      accessibilityState={{ selected: language === value }}
       onPress={() => setLanguage(value)}
       style={[styles.pill, language === value ? styles.pillActive : null]}
     >
@@ -29,7 +31,12 @@ export default function Screen() {
 
   return (
     <View style={styles.container}>
-      <Link accessibilityLabel="Back to profile" href="/(tabs)/profile" style={styles.backLink}>
+      <Link
+        accessibilityLabel="Back to profile"
+        accessibilityRole="link"
+        href="/(tabs)/profile"
+        style={styles.backLink}
+      >
         ← Back to Profile
       </Link>
       <Text style={styles.title}>Settings</Text>
@@ -46,6 +53,8 @@ export default function Screen() {
         <Text style={styles.sectionTitle}>Audio</Text>
         <Pressable
           accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: audioEnabled }}
           onPress={() => setAudioEnabled(!audioEnabled)}
           style={styles.secondaryButton}
         >
@@ -63,6 +72,8 @@ export default function Screen() {
             <Pressable
               key={goal}
               accessibilityLabel={`Set daily goal to ${goal} answers`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: dailyGoalAnswers === goal }}
               onPress={() => setDailyGoalAnswers(goal)}
               style={[styles.pill, dailyGoalAnswers === goal ? styles.pillActive : null]}
             >

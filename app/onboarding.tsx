@@ -31,10 +31,20 @@ export default function Screen() {
       <ComplianceLinks />
 
       <View style={styles.actions}>
-        <Link accessibilityLabel="Start studying" href="/home" style={styles.primaryLink}>
+        <Link
+          accessibilityLabel="Start studying"
+          accessibilityRole="link"
+          href="/home"
+          style={styles.primaryLink}
+        >
           Start studying
         </Link>
-        <Link accessibilityLabel="Adjust settings" href="/settings" style={styles.secondaryLink}>
+        <Link
+          accessibilityLabel="Adjust settings"
+          accessibilityRole="link"
+          href="/settings"
+          style={styles.secondaryLink}
+        >
           Adjust settings
         </Link>
       </View>
