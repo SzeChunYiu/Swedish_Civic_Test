@@ -68,6 +68,11 @@ function exists(path) {
   return fs.existsSync(path);
 }
 
+function extractLocalArtifactPaths(evidence) {
+  const matches = evidence.match(/\b(?:reports|publishing|content|assets)\/[^\s,;:]+/g) || [];
+  return [...new Set(matches.map((item) => item.replace(/[.)\]]+$/g, '')))];
+}
+
 function commandSucceeds(command, args) {
   const result = spawnSync(command, args, { encoding: 'utf8' });
   return {
@@ -181,6 +186,22 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
         `Add concrete evidence for ${id} to ${evidencePath}.`,
       );
     }
+
+    const missingArtifactPaths = extractLocalArtifactPaths(recordedEvidence).filter(
+      (artifactPath) => !exists(artifactPath),
+    );
+    if (missingArtifactPaths.length > 0) {
+      return gate(
+        id,
+        label,
+        'BLOCKED',
+        `Gate ${id} is marked READY in ${evidencePath}, but referenced local artifact path(s) do not exist: ${missingArtifactPaths.join(
+          ', ',
+        )}. Recorded evidence: ${recordedEvidence}`,
+        `Create the referenced local artifact(s), fix their paths, or replace them with externally verifiable URLs for ${id}.`,
+      );
+    }
+
     return gate(id, label, 'READY', recordedEvidence, nextAction);
   }
 

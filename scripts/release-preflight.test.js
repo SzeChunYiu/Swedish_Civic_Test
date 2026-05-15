@@ -104,7 +104,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           submission: {
             status: 'READY',
             evidence:
-              'TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; post-launch monitoring report reports/monitoring/v1-week1.md recorded.',
+              'TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; post-launch report https://example.com/monitoring/v1-week1 recorded.',
           },
           ...overrides,
         },
@@ -348,4 +348,60 @@ test('release preflight blocks dirty release worktrees', () => {
   assert.match(worktree.evidence, /uncommitted/i);
   assert.match(worktree.evidence, /app\/index\.tsx/i);
   assert.match(worktree.evidence, /untracked-release-file\.txt/i);
+});
+
+test('release preflight blocks READY screenshot evidence with a missing local artifact path', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-missing-shot-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    'device-screenshots': {
+      status: 'READY',
+      evidence:
+        'Final screenshots captured from accepted device tooling and recorded in reports/final-store-screenshots/manifest.json.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const screenshots = report.gates.find((gate) => gate.id === 'device-screenshots');
+  assert.equal(screenshots.status, 'BLOCKED');
+  assert.match(screenshots.evidence, /referenced local artifact/i);
+  assert.match(screenshots.evidence, /reports\/final-store-screenshots\/manifest\.json/i);
+});
+
+test('release preflight blocks READY submission evidence with a missing local monitoring report', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-missing-monitoring-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    submission: {
+      status: 'READY',
+      evidence:
+        'TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; monitoring report reports/monitoring/v1-week1.md recorded.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const submission = report.gates.find((gate) => gate.id === 'submission');
+  assert.equal(submission.status, 'BLOCKED');
+  assert.match(submission.evidence, /referenced local artifact/i);
+  assert.match(submission.evidence, /reports\/monitoring\/v1-week1\.md/i);
 });
