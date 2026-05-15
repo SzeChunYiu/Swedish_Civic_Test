@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `fd06e63` on `main` candidate (`feat: validate privacy review evidence [allow-meta]`); product commit verified before this evidence refresh |
+| Git commit | `a7e2edf` on `main` candidate (`feat: validate monitoring report evidence [allow-meta]`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-16 00:08 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-16 00:08 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, READY URL/store evidence missing exact hosted support/privacy URL values, and invalid local privacy-review JSON before production release actions |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-16 00:19 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-16 00:19 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, READY URL/store evidence missing exact hosted support/privacy URL values, and invalid local privacy-review JSON before production release actions |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-16 00:08 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-16 00:19 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -39,13 +39,13 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 - Derived-content test passed: 1/1.
 - Content production test passed: 1/1.
 - Compliance test passed: 1/1.
-- Monetization tests passed: 3/3, including real-ads-fail-closed coverage after the UI/UX merge.
+- Monetization tests passed: 4/4, including real-ads-fail-closed coverage and launch popup ad fail-closed/cap/premium behavior.
 - Publishing tests passed: 5/5, including explicit disabled Google Mobile Ads SDK privacy/data-safety posture coverage for `react-native-google-mobile-ads`, Google sample test app IDs, and `REAL_ADS_ENABLED_FOR_V1=false`.
 - Public URL checker tests passed: 2/2.
 - Build-config tests passed: 12/12, including preview build auth guard coverage, production build preflight guard coverage, production build/submit run-validation guard coverage, dependency audit validation coverage, production submit placeholder-credential guard coverage, and production submit release-preflight guard coverage.
 - App-assets test passed: 1/1.
 - Screenshot-manifest test passed: 1/1.
-- Release-preflight tests passed: 23/23, including stale public URL evidence, weak READY manual evidence, placeholder/blocker wording, web-draft screenshot evidence, missing store support/privacy URL entry, exact hosted URL value enforcement, local store-record JSON validation for App Store Connect / Google Play Console URLs and exact support/privacy URLs, valid store-record JSON acceptance, generic submission evidence, local submission JSON validation for TestFlight, Google Play internal track, iOS/Android production submissions, and monitoring report evidence, valid submission JSON acceptance, dirty release worktree coverage, missing referenced local artifact path fail-closed coverage, local device-audio JSON validation for required audio/shared smoke checks, valid device-audio JSON acceptance, local final screenshot manifest validation/rejection of web-draft manifests, valid final screenshot manifest acceptance, final privacy-questionnaire review evidence that must name the generated binary/build plus disabled Google Mobile Ads SDK posture, local privacy-review JSON rejection when real ads are enabled, and valid local privacy-review JSON acceptance for generated build, Apple privacy labels, Google Play Data safety, Google Mobile Ads test/real-ads-disabled posture, and disabled SDKs. Release-gate writer tests passed: 3/3 for safe manual gate updates, fail-closed invalid input handling, and longer evidence loaded from `--evidence-file`.
+- Release-preflight tests passed: 24/24, including stale public URL evidence, weak READY manual evidence, placeholder/blocker wording, web-draft screenshot evidence, missing store support/privacy URL entry, exact hosted URL value enforcement, local store-record JSON validation for App Store Connect / Google Play Console URLs and exact support/privacy URLs, valid store-record JSON acceptance, generic submission evidence, local submission JSON validation for TestFlight, Google Play internal track, iOS/Android production submissions, and monitoring report evidence, valid submission JSON acceptance, dirty release worktree coverage, missing referenced local artifact path fail-closed coverage, local device-audio JSON validation for required audio/shared smoke checks, valid device-audio JSON acceptance, local final screenshot manifest validation/rejection of web-draft manifests, valid final screenshot manifest acceptance, final privacy-questionnaire review evidence that must name the generated binary/build plus disabled Google Mobile Ads SDK posture, local privacy-review JSON rejection when real ads are enabled, and valid local privacy-review JSON acceptance for generated build, Apple privacy labels, Google Play Data safety, Google Mobile Ads test/real-ads-disabled posture, and disabled SDKs. Release-gate writer tests passed: 3/3 for safe manual gate updates, fail-closed invalid input handling, and longer evidence loaded from `--evidence-file`.
 - Theme-discipline test passed: 1/1.
 - Accessibility-labels test passed: 1/1.
 - Content validation: 13 chapters, 500 questions, 500 published questions.
@@ -71,7 +71,7 @@ Blocked gates:
 - `privacy-review`: no final Apple privacy labels / Google Play Data safety review against the generated binary is recorded; release preflight now requires this evidence to include the generated binary/build plus disabled Google Mobile Ads SDK posture and validates referenced local JSON for reviewed build ID/version/commit, Apple privacy labels, Google Play Data safety, Google Mobile Ads test/real-ads-disabled posture, and disabled analytics/crash/purchase/real-ad SDKs.
 - `public-urls`: ready; support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and privacy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200 during the live release-preflight URL check.
 - `device-screenshots`: web-draft screenshots and manifest exist, but final device/store screenshots are not recorded; release preflight now validates referenced local `reports/final-store-screenshots/manifest.json` files for `status: final-device`, required routes, device/capture/build metadata, and existing screenshot files.
-- `submission`: no TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence; release preflight now validates referenced local JSON for TestFlight build status, Google Play internal track/version/tester group, iOS and Android production submission IDs/statuses, and an existing monitoring report path.
+- `submission`: no TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence; release preflight now validates referenced local JSON for TestFlight build status, Google Play internal track/version/tester group, iOS and Android production submission IDs/statuses, an existing monitoring report path, and monitoring report content covering first-week window, crash reports, content/support reports, and reviews/ratings.
 
 ## UI/UX polish gate
 
