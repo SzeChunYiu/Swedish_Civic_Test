@@ -90,13 +90,13 @@ Acceptance criteria:
 
 Tasks:
 
-- [ ] Create exam generator.
-- [ ] Select only `uhr_based` questions by default.
-- [ ] Add timer.
-- [ ] Add exam result screen.
-- [ ] Add chapter breakdown.
-- [ ] Hide explanations until end.
-- [ ] Disable ads during exam.
+- [x] Create exam generator.
+- [x] Select only `uhr_based` questions by default.
+- [x] Add timer.
+- [x] Add exam result screen.
+- [x] Add chapter breakdown.
+- [x] Hide explanations until end.
+- [x] Disable ads during exam.
 
 Acceptance criteria:
 

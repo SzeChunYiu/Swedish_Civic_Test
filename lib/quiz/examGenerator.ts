@@ -1,5 +1,64 @@
 import type { PracticeQuestion } from '../../types/content';
 
-export function generateExam(questions: PracticeQuestion[] = []): PracticeQuestion[] {
-  return questions;
+export type ExamOptions = {
+  questionCount?: number;
+};
+
+export type ExamAnswerMap = Record<string, string>;
+
+export type ExamChapterResult = {
+  chapterId: string;
+  correctCount: number;
+  totalCount: number;
+};
+
+export type ExamResult = {
+  correctCount: number;
+  totalCount: number;
+  percent: number;
+  chapterBreakdown: ExamChapterResult[];
+};
+
+export function formatExamTime(remainingSeconds: number): string {
+  const safeSeconds = Math.max(0, Math.floor(remainingSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
+  return question.reviewStatus === 'reviewed' && Boolean(question.uhrReference?.chapter);
+}
+
+export function generateExam(
+  questions: PracticeQuestion[] = [],
+  { questionCount = 20 }: ExamOptions = {},
+): PracticeQuestion[] {
+  return questions.filter(isReviewedUhrQuestion).slice(0, questionCount);
+}
+
+export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap): ExamResult {
+  const chapterMap = new Map<string, ExamChapterResult>();
+  let correctCount = 0;
+
+  for (const question of questions) {
+    const isCorrect = answers[question.id] === question.correctOptionId;
+    if (isCorrect) correctCount += 1;
+
+    const existing = chapterMap.get(question.chapterId) ?? {
+      chapterId: question.chapterId,
+      correctCount: 0,
+      totalCount: 0,
+    };
+    existing.totalCount += 1;
+    if (isCorrect) existing.correctCount += 1;
+    chapterMap.set(question.chapterId, existing);
+  }
+
+  return {
+    correctCount,
+    totalCount: questions.length,
+    percent: questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0,
+    chapterBreakdown: [...chapterMap.values()],
+  };
 }
