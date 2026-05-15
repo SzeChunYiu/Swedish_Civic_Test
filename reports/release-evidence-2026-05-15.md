@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `e70c8d7` |
+| Git commit | Current branch evidence file; generated after `e70c8d7` and refreshed after v1.0 ad-defer changes |
 | Branch | `batch/2026-05-15-foundation` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npm exec -- eas whoami` returns `Not logged in` |
@@ -57,7 +57,7 @@ Blocked gates:
 - `eas-auth`: `Not logged in`.
 - `android-device-audio`: no Android physical-device build/install/audio evidence.
 - `ios-device-audio`: no iOS physical-device/TestFlight build/install/audio evidence.
-- `store-records`: no App Store Connect, Google Play Console, or AdMob app record evidence.
+- `store-records`: no App Store Connect or Google Play Console app record evidence; AdMob is deferred because real ads are disabled for v1.0.
 - `public-urls`: static pages exist locally, but no hosted HTTPS URL evidence.
 - `device-screenshots`: web-draft screenshots and manifest exist, but final device/store screenshots are not recorded.
 - `submission`: no TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence.
@@ -89,7 +89,7 @@ Blocked gates:
 | TestFlight upload | Build number, processing status, beta review status | BLOCKED — no iOS build upload evidence |
 | Google Play Console app record | App record URL for `com.billyyiu.swedishcivictest` | BLOCKED — no app record evidence recorded |
 | Google Play internal release | Track URL, version code, tester group | BLOCKED — no Android internal release evidence |
-| AdMob app record | AdMob app ID or decision to keep ads disabled/placeholders | BLOCKED — no AdMob app record or final no-ads decision recorded |
+| AdMob app record | AdMob app ID or decision to keep ads disabled/placeholders | DEFERRED — real ads are disabled for v1.0; AdMob required only before enabling live ads |
 | Public support URL | URL visible in both store records | BLOCKED — static page exists locally only |
 | Public privacy URL | URL visible in both store records | BLOCKED — static page exists locally only |
 
@@ -97,7 +97,7 @@ Blocked gates:
 
 | Question | Answer for this candidate | Evidence |
 |---|---|---|
-| Are real ads enabled? | No; placeholders/test configuration only | `lib/monetization/ads.ts`, `scripts/monetization.test.js` |
+| Are real ads enabled? | No; `REAL_ADS_ENABLED_FOR_V1` is `false` and ad rendering is fail-closed | `lib/monetization/ads.ts`, `scripts/monetization.test.js` |
 | Is any purchase SDK enabled? | No; premium flag placeholder only | `lib/monetization/premium.ts`, `scripts/monetization.test.js` |
 | Is analytics or crash reporting enabled? | No analytics/crash SDK evidence in current MVP | `package.json`, privacy/data-safety docs |
 | Do Apple privacy labels still match the binary? | Draft matches current MVP local-only/no-collection posture, but must be re-reviewed before submission | `publishing/privacy-labels.md` |

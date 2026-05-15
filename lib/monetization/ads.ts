@@ -2,6 +2,8 @@ import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
+export const REAL_ADS_ENABLED_FOR_V1 = false;
+
 export const TEST_AD_UNITS: AdUnitConfig[] = [
   {
     placement: 'home_banner',
@@ -41,6 +43,7 @@ export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
 ): boolean {
+  if (!REAL_ADS_ENABLED_FOR_V1) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   const unit = getAdUnit(placement);
@@ -48,6 +51,7 @@ export function shouldShowAd(
 }
 
 export const adsConfig = {
+  realAdsEnabled: REAL_ADS_ENABLED_FOR_V1,
   units: TEST_AD_UNITS,
   safePlacements: [
     'home_banner',

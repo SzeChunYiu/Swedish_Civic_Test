@@ -52,7 +52,7 @@ screenshot path, or reviewer note.
 | TestFlight upload | Build number, processing status, beta review status | TBD |
 | Google Play Console app record | App record URL for `com.billyyiu.swedishcivictest` | TBD |
 | Google Play internal release | Track URL, version code, tester group | TBD |
-| AdMob app record | AdMob app ID or decision to keep ads disabled/placeholders | TBD |
+| AdMob app record | AdMob app ID, or explicit decision to keep real ads disabled for this release | TBD |
 | Public support URL | URL visible in both store records | TBD |
 | Public privacy URL | URL visible in both store records | TBD |
 

@@ -25,6 +25,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Screenshot manifest and web-draft screenshot evidence are prepared in `publishing/screenshot-manifest.json` and `reports/2026-05-15-web-draft-screenshots.md`, but final device/store screenshots remain external.
 - Executable release preflight exists at `scripts/release-preflight.js`; current result is `BLOCKED` because EAS auth, device audio, store records, public hosted URLs, final screenshots, and submissions lack evidence.
 - Filled release evidence artifact exists at `reports/release-evidence-2026-05-15.md`; decision is `BLOCKED`.
+- v1.0 real ads are deferred and ad rendering is fail-closed; see `reports/2026-05-15-v1-ads-deferred.md`.
 - Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
 
 ## Prompt-to-artifact checklist
@@ -47,8 +48,8 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Swedish audio code | `lib/audio/speak.ts`, `components/learning/AudioButton.tsx`, `scripts/audio.test.js` | Code done |
 | Android audio device test | No physical Android build/device evidence | Missing |
 | iOS audio device test | No physical iOS/TestFlight/device evidence | Missing |
-| AdMob test units and safe placements | `lib/monetization/ads.ts`, `components/monetization/*`, `scripts/monetization.test.js` | Code done |
-| AdMob account/app | Requires external AdMob account/app record; no account evidence | Blocked external |
+| AdMob test units and safe placements | `lib/monetization/ads.ts`, `components/monetization/*`, `scripts/monetization.test.js`, `reports/2026-05-15-v1-ads-deferred.md` | Code done; real ads fail-closed for v1.0 |
+| AdMob account/app | Real ads deferred for v1.0; required only before enabling live ads | Deferred external |
 | Premium ad disable flag | `lib/monetization/premium.ts`, `PremiumBanner`, monetization test | Done |
 | RevenueCat later if needed | Deferred in docs; no SDK by design | Deferred/external decision |
 | Disclaimer/privacy/terms/sources | `app/disclaimer.tsx`, `app/privacy.tsx`, `app/terms.tsx`, `app/sources.tsx`, compliance test | Done |

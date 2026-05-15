@@ -27,6 +27,7 @@
 - Executable release preflight: `npm run release:preflight`
 - Post-EAS-auth runbook: `publishing/post-eas-auth-runbook.md`
 - Filled release evidence: `reports/release-evidence-2026-05-15.md`
+- v1.0 ads deferred evidence: `reports/2026-05-15-v1-ads-deferred.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`
@@ -43,7 +44,7 @@
 - Google Play internal test release.
 - Android device audio verification.
 - iOS device audio verification.
-- Decision whether to keep placeholders or enable real AdMob/RevenueCat SDKs before v1.0.
+- Real ads and RevenueCat are deferred for v1.0. Re-enable only after AdMob/product setup plus privacy and data-safety review.
 
 ## Executable blocker check
 

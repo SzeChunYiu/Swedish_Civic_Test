@@ -25,8 +25,8 @@ Blocked gates:
 - Expo/EAS authentication: `npm exec -- eas whoami` returns `Not logged in`.
 - Android physical-device audio smoke evidence is missing.
 - iOS physical-device or TestFlight audio smoke evidence is missing.
-- App Store Connect, Google Play Console, and AdMob app record evidence is
-  missing.
+- App Store Connect and Google Play Console app record evidence is missing.
+- AdMob is deferred because real ads are disabled for v1.0.
 - Public support/privacy static pages exist locally, but hosted HTTPS URL
   evidence is missing.
 - Final store screenshots from an accepted capture method are missing.

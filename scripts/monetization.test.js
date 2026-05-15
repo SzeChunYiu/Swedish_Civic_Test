@@ -18,15 +18,16 @@ function loadTs(relativePath, exportName) {
 }
 
 test('monetization uses test ad units and premium disables ads', () => {
-  const { TEST_AD_UNITS, shouldShowAd } = loadTs('lib/monetization/ads.ts');
+  const { TEST_AD_UNITS, adsConfig, shouldShowAd } = loadTs('lib/monetization/ads.ts');
   assert.ok(TEST_AD_UNITS.length >= 4);
   assert.ok(
     fs
       .readFileSync(path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'), 'utf8')
       .includes('results_native'),
   );
-  assert.ok(TEST_AD_UNITS.every((unit) => unit.testOnly && unit.enabled));
-  assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), true);
+  assert.equal(adsConfig.realAdsEnabled, false);
+  assert.ok(TEST_AD_UNITS.every((unit) => unit.testOnly));
+  assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), false);
   assert.equal(shouldShowAd('home_banner', { adsDisabled: true }), false);
   assert.equal(shouldShowAd('exam_screen', { adsDisabled: false }), false);
 });

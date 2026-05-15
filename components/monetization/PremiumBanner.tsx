@@ -10,10 +10,12 @@ export function PremiumBanner({ entitlements }: { entitlements: PremiumEntitleme
   return (
     <Card>
       <Text style={styles.eyebrow}>{isPremium ? 'Premium active' : 'Premium preview'}</Text>
-      <Text style={styles.title}>{isPremium ? 'Ads disabled' : 'Upgrade later to remove ads'}</Text>
+      <Text style={styles.title}>
+        {isPremium ? 'Premium active' : 'Premium and ads are deferred for v1.0'}
+      </Text>
       <Text style={styles.meta}>
-        Premium entitlements are wired as a local flag for now. RevenueCat can be added after the
-        store product setup is approved.
+        Premium entitlements are wired as a local flag for now. Real ads and RevenueCat can be added
+        only after store product, privacy, and data-safety review are approved.
       </Text>
     </Card>
   );

@@ -62,10 +62,10 @@ function buildReport() {
     ),
     gate(
       'store-records',
-      'Apple/Google/AdMob account records',
+      'Apple/Google store records',
       'BLOCKED',
-      'No App Store Connect, Google Play Console, or AdMob app record evidence is recorded.',
-      'Create account/app records and copy URLs/IDs into a release evidence file.',
+      'No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0.',
+      'Create Apple/Google account/app records and copy URLs into a release evidence file.',
     ),
     gate(
       'public-urls',
