@@ -19,7 +19,12 @@ export default function Screen() {
 
       <View style={styles.list}>
         {chapters.map((chapter) => (
-          <Link key={chapter.id} href={`/chapter/${chapter.id}`} style={styles.link}>
+          <Link
+            key={chapter.id}
+            accessibilityLabel={`Open chapter ${chapter.nameSv}`}
+            href={`/chapter/${chapter.id}`}
+            style={styles.link}
+          >
             <ChapterCard chapter={chapter} questionCount={questionCountForChapter(chapter.id)} />
           </Link>
         ))}

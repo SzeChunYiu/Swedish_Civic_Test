@@ -17,7 +17,7 @@ export default function ChapterScreen() {
     return (
       <View style={styles.centered}>
         <Text style={styles.title}>Chapter not found</Text>
-        <Link href="/learn" style={styles.link}>
+        <Link accessibilityLabel="Back to chapter list" href="/learn" style={styles.link}>
           Back to Learn
         </Link>
       </View>
@@ -26,7 +26,7 @@ export default function ChapterScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Link href="/learn" style={styles.link}>
+      <Link accessibilityLabel="Back to chapter list" href="/learn" style={styles.link}>
         ← Back to Learn
       </Link>
       <Text style={styles.title}>{chapter.nameSv}</Text>

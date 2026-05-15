@@ -16,7 +16,12 @@ export function ComplianceLinks() {
       <Text style={styles.title}>Legal and sources</Text>
       <View style={styles.links}>
         {links.map((link) => (
-          <Link key={link.href} href={link.href} style={styles.link}>
+          <Link
+            key={link.href}
+            accessibilityLabel={`Open ${link.label}`}
+            href={link.href}
+            style={styles.link}
+          >
             {link.label}
           </Link>
         ))}

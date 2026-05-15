@@ -24,6 +24,7 @@ Operator reopened the internal UI/UX gate in `GOAL.md` and `codex-tasks/ceo-inbo
 ## Executable acceptance evidence
 
 - `npm run test:theme-discipline` passes.
+- `scripts/accessibility-labels.test.js` confirms interactive labels.
 - `grep -rE '#[0-9a-fA-F]{6}|rgba?\(' app components` returns zero lines.
 - `grep -rE '\b(padding(Horizontal|Vertical)?|marginTop|gap|borderRadius):[[:space:]]*[0-9]' app components` returns zero lines.
 - `npm run validate` passes after adding the theme-discipline test.

@@ -12,3 +12,6 @@ dist-web/
 tmp/
 test-results/
 playwright-report/
+dist/
+codex-tasks/logs/.watchdog-*
+codex-tasks/logs/events.jsonl

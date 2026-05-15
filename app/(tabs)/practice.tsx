@@ -73,7 +73,11 @@ export default function Screen() {
           <ExplanationPanel explanationSv={question.explanationSv} />
           <UHRReferenceCard reference={question.uhrReference} />
           <AdBanner placement="quiz_completed_interstitial" />
-          <Pressable onPress={resetSelection} style={styles.tryAgain}>
+          <Pressable
+            accessibilityLabel="Try this practice question again"
+            onPress={resetSelection}
+            style={styles.tryAgain}
+          >
             <Text style={styles.tryAgainText}>Try again</Text>
           </Pressable>
         </View>

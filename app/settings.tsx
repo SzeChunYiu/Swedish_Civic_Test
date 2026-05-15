@@ -17,6 +17,7 @@ export default function Screen() {
   const renderLanguageButton = (value: AppLanguage, label: string) => (
     <Pressable
       key={value}
+      accessibilityLabel={`Set question language to ${label}`}
       onPress={() => setLanguage(value)}
       style={[styles.pill, language === value ? styles.pillActive : null]}
     >
@@ -28,7 +29,7 @@ export default function Screen() {
 
   return (
     <View style={styles.container}>
-      <Link href="/(tabs)/profile" style={styles.backLink}>
+      <Link accessibilityLabel="Back to profile" href="/(tabs)/profile" style={styles.backLink}>
         ← Back to Profile
       </Link>
       <Text style={styles.title}>Settings</Text>
@@ -43,7 +44,11 @@ export default function Screen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Audio</Text>
-        <Pressable onPress={() => setAudioEnabled(!audioEnabled)} style={styles.secondaryButton}>
+        <Pressable
+          accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}
+          onPress={() => setAudioEnabled(!audioEnabled)}
+          style={styles.secondaryButton}
+        >
           <Text style={styles.secondaryButtonText}>
             {audioEnabled ? 'Audio enabled' : 'Audio disabled'}
           </Text>
@@ -57,6 +62,7 @@ export default function Screen() {
           {[5, 10, 20].map((goal) => (
             <Pressable
               key={goal}
+              accessibilityLabel={`Set daily goal to ${goal} answers`}
               onPress={() => setDailyGoalAnswers(goal)}
               style={[styles.pill, dailyGoalAnswers === goal ? styles.pillActive : null]}
             >

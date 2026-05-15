@@ -41,7 +41,11 @@ export default function Screen() {
           <Text style={styles.emptyText}>
             Answer a practice question incorrectly and it will appear here.
           </Text>
-          <Link href="/practice" style={styles.practiceLink}>
+          <Link
+            accessibilityLabel="Practice weak questions"
+            href="/practice"
+            style={styles.practiceLink}
+          >
             Start practice
           </Link>
         </View>

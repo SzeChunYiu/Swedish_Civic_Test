@@ -57,7 +57,11 @@ export default function Screen() {
           </View>
         ))}
 
-        <Pressable onPress={() => setSubmitted(false)} style={styles.secondaryButton}>
+        <Pressable
+          accessibilityLabel="Back to exam answers"
+          onPress={() => setSubmitted(false)}
+          style={styles.secondaryButton}
+        >
           <Text style={styles.secondaryButtonText}>Back to answers</Text>
         </Pressable>
       </ScrollView>
@@ -90,6 +94,7 @@ export default function Screen() {
               return (
                 <Pressable
                   key={option.id}
+                  accessibilityLabel={`Select answer ${option.textSv} for question ${index + 1}`}
                   onPress={() =>
                     setAnswers((current) => ({ ...current, [question.id]: option.id }))
                   }
@@ -106,6 +111,7 @@ export default function Screen() {
       ))}
 
       <Pressable
+        accessibilityLabel="Submit mock exam"
         disabled={!canSubmit}
         onPress={() => setSubmitted(true)}
         style={[styles.primaryButton, !canSubmit ? styles.primaryButtonDisabled : null]}
