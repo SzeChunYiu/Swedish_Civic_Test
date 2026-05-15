@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `56a7e0a` on `main` (`fix: guard unavailable speech engine`); product commit verified before this evidence refresh |
+| Git commit | `1b262e1` on `main` (`feat: reject placeholder release evidence`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 21:03 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 21:03 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 21:09 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 21:09 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 21:03 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 21:09 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -44,7 +44,7 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 - Build-config tests passed: 5/5.
 - App-assets test passed: 1/1.
 - Screenshot-manifest test passed: 1/1.
-- Release-preflight tests passed: 4/4, including stale public URL evidence and weak READY manual evidence fail-closed coverage.
+- Release-preflight tests passed: 5/5, including stale public URL evidence, weak READY manual evidence, and placeholder/blocker wording fail-closed coverage.
 - Theme-discipline test passed: 1/1.
 - Accessibility-labels test passed: 1/1.
 - Content validation: 13 chapters, 500 questions, 500 published questions.
