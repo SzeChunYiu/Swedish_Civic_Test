@@ -100,6 +100,14 @@ Communication surfaces:
 - `codex-tasks/open.txt` — generic tasks any dynamic worker can take
 - `codex-tasks/setup.txt` — SETUP lane tasks
 - `codex-tasks/content.txt` — CONTENT lane tasks
+- `codex-tasks/ceo-inbox.txt` — operator → CEO direction queue
+- `codex-tasks/uiux-manager.txt` / `uiux-design-tokens.txt` / `uiux-components.txt` / `uiux-screens.txt` / `uiux-motion-a11y.txt` — UI/UX team queues
+
+## Active parallel batches
+
+| Batch | Board | Status | Notes |
+|---|---|---|---|
+| UIUX-Batch-1 | `docs/parallel-sessions/UIUX_BOARD.md` | accepted to launch (2026-05-15) | 5-pane UI/UX team (MANAGER-uiux + DESIGN-TOKENS + COMPONENTS + SCREENS + MOTION-A11Y) on host `civic-team-uiux-lunarc`. Preconditions met: `DESIGN.md` present, `UIUX_BOARD.md` authored, all 5 lane md files present, queue files seeded. While active, build SETUP lane lease tightens (no writes to `components/`, `app/`, `lib/theme/`, `lib/motion/`, `lib/a11y/`). |
 
 ## Decisions and blockers
 

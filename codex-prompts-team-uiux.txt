@@ -1,0 +1,7 @@
+# Civic-test UI/UX team — 5 panes (MANAGER + DESIGN-TOKENS + COMPONENTS + SCREENS + MOTION-A11Y).
+
+/goal You are PANE 0, lane MANAGER-uiux. Read DESIGN.md, docs/parallel-sessions/uiux-manager.md, and docs/parallel-sessions/UIUX_BOARD.md. Run one acceptance + queueing pass over the four uiux journals. Iterate until rate-limited.
+/goal You are PANE 1, lane DESIGN-TOKENS. Read DESIGN.md and docs/parallel-sessions/design-tokens.md. Build one lib/theme/ file per iteration with strict DESIGN.md compliance. Iterate until rate-limited.
+/goal You are PANE 2, lane COMPONENTS. Read DESIGN.md and docs/parallel-sessions/components.md. Build one components/ file per iteration consuming lib/theme tokens only. Iterate until rate-limited.
+/goal You are PANE 3, lane SCREENS. Read DESIGN.md and docs/parallel-sessions/screens.md. Polish one app/ screen per iteration using components and theme only. Iterate until rate-limited.
+/goal You are PANE 4, lane MOTION-A11Y. Read DESIGN.md and docs/parallel-sessions/motion-a11y.md. Build one lib/motion or lib/a11y utility per iteration respecting reduce-motion. Iterate until rate-limited.

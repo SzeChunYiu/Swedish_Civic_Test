@@ -1,0 +1,13 @@
+Blocked until DESIGN-TOKENS publishes lib/theme/index.ts (tasks 1-7). Manager will queue concrete tasks below once tokens land.
+
+Planned (do NOT start until manager confirms tokens are accepted):
+1. components/Surface.tsx — base card wrapper using shadow.card + radius.card + surface color.
+2. components/Text.tsx — variant prop (h1|h2|body|caption|label) from typography tokens.
+3. components/Button.tsx — primary/secondary/ghost × sm/md/lg, loading + disabled states.
+4. components/OptionCard.tsx — quiz answer option (idle/selected/correct/incorrect), Pressable, a11y as radio.
+5. components/PillBadge.tsx — 4 variants (neutral/accent/success/warning).
+6. components/ProgressBar.tsx — accent fill, animated width.
+7. components/ChapterRow.tsx — title + secondary + chevron.
+8. components/DisclaimerBanner.tsx — required independent-app disclaimer.
+9. components/Screen.tsx — safe-area + padding wrapper.
+10. components/Divider.tsx — whisper-thin border.
