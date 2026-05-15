@@ -21,6 +21,8 @@ This app is not official and is not affiliated with UHR, Skolverket, Migrationsv
 ```bash
 npm ci
 npm run typecheck
+npm run lint
+npm run format:check
 npm run validate:content
 npm run validate
 npx expo start

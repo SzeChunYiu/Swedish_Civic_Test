@@ -1,8 +1,8 @@
-export type ReviewStatus = "draft" | "reviewed" | "published";
+export type ReviewStatus = 'draft' | 'reviewed' | 'published';
 
-export type QuestionType = "single_choice" | "true_false" | "flashcard";
+export type QuestionType = 'single_choice' | 'true_false' | 'flashcard';
 
-export type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export interface UHRReference {
   chapter: string;

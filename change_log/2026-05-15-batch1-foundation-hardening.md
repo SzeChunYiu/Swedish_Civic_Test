@@ -3,6 +3,7 @@
 ## Added
 
 - `scripts/validate-content.js` and npm scripts `validate:content` / `validate`.
+- Expo ESLint and Prettier scripts (`lint`, `format:check`, `format`).
 - Missing architecture placeholders:
   - `data/glossary.ts`
   - `data/mockExamConfig.ts`

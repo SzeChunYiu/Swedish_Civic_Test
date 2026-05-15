@@ -9,7 +9,7 @@ Tasks:
 - [x] Create Expo project.
 - [x] Add TypeScript.
 - [x] Add Expo Router.
-- [ ] Add linting and formatting.
+- [x] Add linting and formatting.
 - [x] Set up basic folder structure.
 - [x] Add README and project docs.
 

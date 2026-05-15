@@ -1,0 +1,5 @@
+node_modules/
+.expo/
+.git/
+package-lock.json
+swedish_citizenship_app_project_plan_md.zip

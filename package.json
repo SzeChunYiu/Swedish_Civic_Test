@@ -9,7 +9,10 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "validate:content": "node scripts/validate-content.js",
-    "validate": "npm run typecheck && npm run validate:content"
+    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run validate:content",
+    "lint": "expo lint -- --max-warnings=0",
+    "format:check": "prettier --check \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
+    "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\""
   },
   "dependencies": {
     "expo": "~54.0.33",
@@ -30,6 +33,9 @@
   "devDependencies": {
     "@types/react": "~19.1.0",
     "babel-preset-expo": "~54.0.10",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~10.0.0",
+    "prettier": "^3.8.3",
     "typescript": "~5.9.2"
   },
   "private": true

@@ -18,7 +18,9 @@ function readCompletedQuestionIds(): string[] {
 
   try {
     const parsedIds = JSON.parse(rawIds);
-    return Array.isArray(parsedIds) ? parsedIds.filter((id): id is string => typeof id === 'string') : [];
+    return Array.isArray(parsedIds)
+      ? parsedIds.filter((id): id is string => typeof id === 'string')
+      : [];
   } catch {
     return [];
   }

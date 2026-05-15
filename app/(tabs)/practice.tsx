@@ -57,7 +57,11 @@ export default function Screen() {
 
       {selectedOptionId ? (
         <>
-          {currentScore ? <Text>Score: {currentScore.correct}/{currentScore.total}</Text> : null}
+          {currentScore ? (
+            <Text>
+              Score: {currentScore.correct}/{currentScore.total}
+            </Text>
+          ) : null}
           <Text>{question.explanationSv}</Text>
           <Pressable onPress={resetSelection}>
             <Text>Try again</Text>

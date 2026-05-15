@@ -2,7 +2,9 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import type { PropsWithChildren } from 'react';
 
-type ButtonProps = PropsWithChildren<Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle> }>;
+type ButtonProps = PropsWithChildren<
+  Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle> }
+>;
 
 export function Button({ children, style, ...pressableProps }: ButtonProps) {
   return (

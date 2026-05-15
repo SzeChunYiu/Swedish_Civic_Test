@@ -57,7 +57,14 @@ if (Array.isArray(questions)) {
     if (ids.has(question.id)) fail(`duplicate question id ${question.id}`);
     ids.add(question.id);
 
-    for (const field of ['questionSv', 'questionEn', 'explanationSv', 'explanationEn', 'correctOptionId', 'chapterId']) {
+    for (const field of [
+      'questionSv',
+      'questionEn',
+      'explanationSv',
+      'explanationEn',
+      'correctOptionId',
+      'chapterId',
+    ]) {
       if (!question[field]) fail(`${label} missing ${field}`);
     }
     if (!Array.isArray(question.options) || ![2, 4].includes(question.options.length)) {
@@ -65,10 +72,15 @@ if (Array.isArray(questions)) {
     } else if (!question.options.some((option) => option.id === question.correctOptionId)) {
       fail(`${label} correctOptionId does not match an option`);
     }
-    if (!question.uhrReference?.chapter || !question.uhrReference?.section || !question.uhrReference?.pageApprox) {
+    if (
+      !question.uhrReference?.chapter ||
+      !question.uhrReference?.section ||
+      !question.uhrReference?.pageApprox
+    ) {
       fail(`${label} has incomplete UHR reference`);
     }
-    if (question.reviewStatus !== 'reviewed') fail(`${label} reviewStatus is ${question.reviewStatus}`);
+    if (question.reviewStatus !== 'reviewed')
+      fail(`${label} reviewStatus is ${question.reviewStatus}`);
 
     const text = [
       question.questionSv,
@@ -84,8 +96,12 @@ if (Array.isArray(questions)) {
 }
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-const disclaimer = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'), 'utf8');
-if (!practiceScreen.includes('<QuestionDisclaimer />')) fail('practice screen is missing QuestionDisclaimer');
+const disclaimer = fs.readFileSync(
+  path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
+  'utf8',
+);
+if (!practiceScreen.includes('<QuestionDisclaimer />'))
+  fail('practice screen is missing QuestionDisclaimer');
 if (!/not official/i.test(disclaimer) || !/not real exam questions/i.test(disclaimer)) {
   fail('QuestionDisclaimer missing required independent/not-real-exam wording');
 }
