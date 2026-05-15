@@ -1,0 +1,1 @@
+/goal [BID=G-001] [type=approval] Batch 0 kickoff: confirm team roster, lane leases, and batch outcome in TEAM_PLAN.md are correct before any worker starts. Read docs/parallel-sessions.md and docs/parallel-sessions/gm.md.

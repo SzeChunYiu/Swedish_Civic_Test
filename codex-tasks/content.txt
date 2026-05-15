@@ -1,0 +1,3 @@
+/goal [BID=C-001] Define all TypeScript types in types/content.ts (Chapter, PracticeQuestion, UHRReference). Read docs/parallel-sessions.md and docs/parallel-sessions/content.md Task 1.
+/goal [BID=C-002] Create 13 chapter records in data/chapters.ts from UHR source. Read docs/parallel-sessions.md and docs/parallel-sessions/content.md Task 2.
+/goal [BID=C-003] Write 20 sample questions (10 ch01, 10 ch02) in data/questions.ts, reviewStatus=reviewed. Read docs/parallel-sessions.md and docs/parallel-sessions/content.md Task 3.

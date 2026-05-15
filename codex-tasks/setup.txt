@@ -1,0 +1,3 @@
+/goal [BID=S-001] Create Expo TypeScript project with Expo Router, Zustand, MMKV, expo-speech. Read docs/parallel-sessions.md and docs/parallel-sessions/setup.md Task 1.
+/goal [BID=S-002] Create full folder structure per docs/architecture.md with placeholder files. Read docs/parallel-sessions.md and docs/parallel-sessions/setup.md Task 2.
+/goal [BID=S-003] Build minimal quiz screen in app/(tabs)/practice.tsx that shows questions and answer options. Read docs/parallel-sessions.md and docs/parallel-sessions/setup.md Task 3.
