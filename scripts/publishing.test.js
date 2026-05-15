@@ -47,3 +47,20 @@ test('public support and privacy URL copy is ready for hosting', () => {
   assert.match(publicCopy, /no account/i);
   assert.match(publicCopy, /not affiliated/i);
 });
+
+test('hostable public support and privacy pages are prepared', () => {
+  const support = read('publishing/public-site/support/index.html');
+  const privacy = read('publishing/public-site/privacy/index.html');
+
+  assert.match(support, /Sweden Citizenship Test Prep support/i);
+  assert.match(support, /content issue/i);
+  assert.match(support, /no personal data/i);
+  assert.match(support, /not affiliated/i);
+  assert.match(support, /<html lang="en">/i);
+
+  assert.match(privacy, /Sweden Citizenship Test Prep privacy policy/i);
+  assert.match(privacy, /no account/i);
+  assert.match(privacy, /stored locally on the device/i);
+  assert.match(privacy, /no user data is collected/i);
+  assert.match(privacy, /<html lang="en">/i);
+});

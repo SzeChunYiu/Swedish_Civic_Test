@@ -21,7 +21,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - EAS access check: project-local `eas-cli` added and `npm exec -- eas --version` works; `npm exec -- eas whoami` remains blocked by `Not logged in`; see `reports/2026-05-15-eas-access-check.md`.
 - Release asset check: `assets/icon.png`, `assets/adaptive-icon.png`, and `assets/splash-icon.png` are configured in `app.json` and verified by `scripts/app-assets.test.js`; see `reports/2026-05-15-release-assets.md`.
 - Support surface check: `/support` exists, is linked from the profile legal links, is covered by `scripts/compliance-pages.test.js`, and rendered in Expo web with 0 console errors; see `reports/2026-05-15-support-surface.md`.
-- Public support/privacy page copy is prepared in `publishing/public-support-and-privacy.md`, but final hosted HTTPS URLs remain external.
+- Public support/privacy page copy and static HTML pages are prepared in `publishing/public-support-and-privacy.md` and `publishing/public-site/`, but final hosted HTTPS URLs remain external.
 
 ## Prompt-to-artifact checklist
 
@@ -59,8 +59,8 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | EAS account authentication | `reports/2026-05-15-eas-access-check.md`; `npm exec -- eas whoami` returned `Not logged in` | Blocked external/account |
 | TestFlight beta | Requires Apple account, App Store Connect app record, build upload, beta review | Blocked external |
 | Google Play internal test | Requires Play Console app record, service account/upload, internal release | Blocked external |
-| Public support/privacy URL copy | `publishing/public-support-and-privacy.md`, `scripts/publishing.test.js` | Draft done; hosting still external |
-| Public support URL | In-app support surface and public copy exist, but public URL/mailbox must be hosted and entered in stores | Blocked external/account |
+| Public support/privacy URL copy | `publishing/public-support-and-privacy.md`, `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`, `scripts/publishing.test.js` | Static pages done; hosting still external |
+| Public support URL | In-app support surface and static public pages exist, but public URL/mailbox must be hosted and entered in stores | Blocked external/account |
 | Submit Android app | Requires store account, internal testing, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
 | Submit iOS app | Requires store account, TestFlight, final screenshots/assets; screenshot shotlist exists in `publishing/screenshot-shotlist.md` | Not done |
 | Monitor crash reports/content reports/first-week fixes/reviews | Requires launched app and telemetry/support process; release evidence template exists in `reports/release-evidence-template.md` | Not done |

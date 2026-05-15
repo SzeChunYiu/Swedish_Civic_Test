@@ -52,6 +52,8 @@ in-app privacy copy must be reviewed and updated before submission.
 
 ## Hosting checklist
 
+- [ ] Upload `publishing/public-site/support/index.html` and
+      `publishing/public-site/privacy/index.html` to the chosen public host.
 - [ ] Publish these pages on a public HTTPS URL.
 - [ ] Confirm the pages are reachable without login.
 - [ ] Confirm the hosted text still says no account and no personal data.
