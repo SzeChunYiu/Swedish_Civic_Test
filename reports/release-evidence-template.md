@@ -107,7 +107,9 @@ If submission evidence is recorded in local JSON, use a path such as
 gate is validated by `npm run release:preflight` and must include: `status:
 "submitted"`, TestFlight build number/status/URL, Google Play internal track
 URL/version code/tester group, iOS and Android production submission IDs and
-review statuses, and an existing monitoring report path.
+review statuses, and an existing monitoring report path. The referenced
+monitoring report must also cover the first-week window, crash reports,
+content/support reports, and store reviews/ratings.
 
 ## Submission decision
 

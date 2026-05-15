@@ -270,7 +270,20 @@ function createSubmissionEvidence(options = {}) {
   if (options.createMonitoringReport !== false) {
     const monitoringPath = path.join(repoRoot, evidence.monitoringReport);
     fs.mkdirSync(path.dirname(monitoringPath), { recursive: true });
-    fs.writeFileSync(monitoringPath, '# v1 week-one monitoring\n\nNo launch incidents recorded.\n');
+    fs.writeFileSync(
+      monitoringPath,
+      options.monitoringReportContent ||
+        [
+          '# v1 week-one monitoring',
+          '',
+          '- First-week window: 2026-05-16 through 2026-05-23.',
+          '- Crash reports: none open in App Store Connect or Google Play Console.',
+          '- Content/support reports: none open from support email or store reports.',
+          '- Store reviews/ratings: no urgent review issues requiring a hotfix.',
+          '- Decision: continue monitoring the launch and keep release notes current.',
+          '',
+        ].join('\n'),
+    );
   }
 
   const evidencePath = path.join(absoluteDir, 'submission.json');
@@ -840,6 +853,42 @@ test('release preflight blocks READY submission evidence with a missing local mo
   assert.equal(submission.status, 'BLOCKED');
   assert.match(submission.evidence, /referenced local artifact/i);
   assert.match(submission.evidence, /reports\/monitoring\/v1-week1\.md/i);
+});
+
+test('release preflight blocks local submission evidence with incomplete monitoring report content', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-thin-monitoring-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const submissionEvidence = createSubmissionEvidence({
+    monitoringReportContent: '# v1 week-one monitoring\n\nNo launch incidents recorded.\n',
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      submission: {
+        status: 'READY',
+        evidence: `TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; monitoring report reports/monitoring/v1-week1.md recorded; reports in ${submissionEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const submission = report.gates.find((gate) => gate.id === 'submission');
+    assert.equal(submission.status, 'BLOCKED');
+    assert.match(submission.evidence, /monitoringReport content/i);
+    assert.match(submission.evidence, /crash reports/i);
+    assert.match(submission.evidence, /content\/support reports/i);
+    assert.match(submission.evidence, /reviews\/ratings/i);
+  } finally {
+    submissionEvidence.cleanup();
+  }
 });
 
 test('release preflight blocks store record evidence without exact public URLs', () => {

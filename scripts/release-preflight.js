@@ -320,6 +320,29 @@ function validatePrivacyReviewEvidence(evidencePath) {
   return errors;
 }
 
+function validateMonitoringReportContent(monitoringPath) {
+  let content;
+  try {
+    content = fs.readFileSync(monitoringPath, 'utf8');
+  } catch (error) {
+    return [`monitoringReport content could not be read: ${error.message}`];
+  }
+
+  const requirements = [
+    ['first-week window', /first[- ]week|week[- ]one|7[- ]day|seven[- ]day/i],
+    ['crash reports', /crash(?:es)?|crash reports|crash-free/i],
+    [
+      'content/support reports',
+      /content(?:\/support)? reports|content reports|support reports|support tickets|support email/i,
+    ],
+    ['reviews/ratings', /reviews?\/ratings|store reviews?|ratings?/i],
+  ];
+
+  return requirements
+    .filter(([, pattern]) => !pattern.test(content))
+    .map(([label]) => `monitoringReport content missing ${label}`);
+}
+
 function validateSubmissionEvidence(evidencePath) {
   let evidence;
   try {
@@ -381,6 +404,8 @@ function validateSubmissionEvidence(evidencePath) {
     errors.push('monitoringReport is required');
   } else if (!exists(evidence.monitoringReport)) {
     errors.push(`monitoringReport does not exist: ${evidence.monitoringReport}`);
+  } else {
+    errors.push(...validateMonitoringReportContent(evidence.monitoringReport));
   }
 
   return errors;

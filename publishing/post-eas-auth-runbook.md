@@ -228,7 +228,9 @@ If recording submission evidence locally, create
 `reports/submission/submission.json` and reference that path in the `submission`
 gate evidence. `npm run release:preflight` validates local JSON for TestFlight
 build status, Google Play internal track, iOS and Android production submission
-IDs/statuses, and an existing monitoring report path.
+IDs/statuses, and an existing monitoring report path. The referenced monitoring
+report must cover the first-week window, crash reports, content/support reports,
+and store reviews/ratings.
 
 Required local JSON shape:
 
@@ -281,4 +283,6 @@ npm run submit:production
 ```
 
 Record submission IDs, review status, approval/rejection notes, and first-week
-monitoring tasks in the release evidence file.
+monitoring tasks in the release evidence file. A minimal monitoring report must
+state the first-week window plus crash, content/support, and reviews/ratings
+status, even when there are no incidents.
