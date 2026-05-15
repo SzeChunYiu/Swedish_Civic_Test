@@ -16,12 +16,13 @@ docs-only checklist.
 
 ## Current result
 
-`npm run release:preflight` reruns `npm run validate`, blocks dirty release worktrees, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, live-checks the public support/privacy URLs, requires concrete non-placeholder manual evidence for READY manual gates, rejects web-draft/browser-only screenshots for final screenshot gates, requires store-record evidence to include Support URL and Privacy Policy URL entry, requires concrete submission IDs/URLs/reports, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 22:27 CEST at product commit `5808a3e` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
+`npm run release:preflight` reruns `npm run validate`, blocks dirty release worktrees, verifies referenced local artifact paths exist, runs Expo Doctor, runs the web export smoke, runs Android/iOS native prebuild smoke, reads `reports/release-gates.json`, checks EAS CLI/auth, live-checks the public support/privacy URLs, requires concrete non-placeholder manual evidence for READY manual gates, rejects web-draft/browser-only screenshots for final screenshot gates, requires store-record evidence to include Support URL and Privacy Policy URL entry, requires concrete submission IDs/URLs/reports, and exits non-zero until every automated and manually evidenced gate is ready. The latest run on 2026-05-15 22:37 CEST at product commit `f775821` reported `BLOCKED`, with local validation, Expo Doctor, web export, native prebuild, pinned npx EAS CLI, UI/UX token discipline including typography, interactive accessibility label/role/state discipline, and public URLs ready.
 
 Ready gates:
 
 - Local validation runs inside `npm run release:preflight` for each release candidate.
 - Clean git worktree is required; dirty tracked or untracked files block release preflight.
+- READY manual evidence that names local `reports/`, `publishing/`, `content/`, or `assets/` artifact paths is checked against the filesystem.
 - Expo Doctor passes 17/17 checks.
 - Web production export smoke passes.
 - Android/iOS native prebuild smoke passes.
