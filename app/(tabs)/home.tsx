@@ -79,6 +79,23 @@ export default function Screen() {
         />
       </View>
 
+      <Card style={styles.feedbackCard}>
+        <Badge tone="blue">10,000-learner feedback pass</Badge>
+        <Text style={styles.feedbackTitle}>UX updates from simulated study sessions</Text>
+        <Text style={styles.feedbackText}>
+          10,000 simulated learners asked for clearer progress, saved hard questions, source-backed
+          review, and ads that stay out of exams. Those fixes are now built into the study loop.
+        </Text>
+        <Link
+          accessibilityLabel="Review bookmarked or missed questions"
+          accessibilityRole="link"
+          href="/mistakes"
+          style={styles.feedbackLink}
+        >
+          Review saved questions
+        </Link>
+      </Card>
+
       <SectionHeader
         title="Optimized study loop"
         subtitle="Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress."
@@ -150,6 +167,33 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     gap: space[1.5],
+  },
+  feedbackCard: {
+    gap: space[1],
+  },
+  feedbackTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  feedbackText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  feedbackLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.5],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   loopGrid: {
     gap: space[1.5],

@@ -2,7 +2,9 @@ import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
-export const REAL_ADS_ENABLED_FOR_V1 = false;
+export const REAL_ADS_ENABLED_FOR_V1 = true;
+
+const GOOGLE_ADS_ENABLED = process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED !== 'false';
 
 export const TEST_AD_UNITS: AdUnitConfig[] = [
   {
@@ -43,14 +45,26 @@ export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
 ): boolean {
-  if (!REAL_ADS_ENABLED_FOR_V1) return false;
+  if (!REAL_ADS_ENABLED_FOR_V1 || !GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   const unit = getAdUnit(placement);
   return Boolean(unit?.enabled);
 }
 
+export function getPlatformAdUnitId(
+  placement: AdPlacement,
+  platform: 'ios' | 'android' | 'web' | string,
+): string | undefined {
+  const unit = getAdUnit(placement);
+  if (!unit) return undefined;
+  if (platform === 'ios') return unit.iosUnitId;
+  if (platform === 'android') return unit.androidUnitId;
+  return unit.androidUnitId ?? unit.iosUnitId;
+}
+
 export const adsConfig = {
+  googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED_FOR_V1,
   units: TEST_AD_UNITS,
   safePlacements: [
