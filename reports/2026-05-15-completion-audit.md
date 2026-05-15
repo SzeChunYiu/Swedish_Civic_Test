@@ -19,6 +19,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Browser smoke after mock-exam fix: `/exam` renders `20 UHR-based questions` and `no ads during exam`; browser console had 0 errors and 1 known React Native web `pointerEvents` deprecation warning.
 - Release evidence capture is now templated in `reports/release-evidence-template.md`; store screenshots are planned in `publishing/screenshot-shotlist.md`.
 - EAS access check: project-local `eas-cli` added and `npm exec -- eas --version` works; `npm exec -- eas whoami` remains blocked by `Not logged in`; see `reports/2026-05-15-eas-access-check.md`.
+- Release asset check: `assets/icon.png`, `assets/adaptive-icon.png`, and `assets/splash-icon.png` are configured in `app.json` and verified by `scripts/app-assets.test.js`; see `reports/2026-05-15-release-assets.md`.
 
 ## Prompt-to-artifact checklist
 
@@ -49,6 +50,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 | Google Play listing | `publishing/google-play-listing.md`, publishing test | Draft done; needs account upload |
 | Apple privacy labels | `publishing/privacy-labels.md`, publishing test | Draft done for current MVP |
 | Google Play Data Safety | `publishing/google-play-data-safety.md`, publishing test | Draft done for current MVP |
+| App icon and splash assets | `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash-icon.png`, `app.json`, `scripts/app-assets.test.js` | Done |
 | EAS build config | `eas.json`, `publishing/build-and-submit-runbook.md`, build-config test | Done |
 | EAS CLI availability | `package.json` devDependency `eas-cli`; `npm exec -- eas --version` works | Done |
 | EAS account authentication | `reports/2026-05-15-eas-access-check.md`; `npm exec -- eas whoami` returned `Not logged in` | Blocked external/account |

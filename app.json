@@ -4,15 +4,25 @@
     "slug": "swedish-civic-test",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "swedish-civic-test",
     "plugins": ["expo-router"],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f5f8ff"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.billyyiu.swedishcivictest"
     },
     "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#005293"
+      },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.billyyiu.swedishcivictest"

@@ -17,6 +17,8 @@
 - Store screenshot shotlist: `publishing/screenshot-shotlist.md`
 - Release evidence template: `reports/release-evidence-template.md`
 - EAS access check: `reports/2026-05-15-eas-access-check.md`
+- Release asset evidence: `reports/2026-05-15-release-assets.md`
+- App icon/splash assets: `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash-icon.png`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`
