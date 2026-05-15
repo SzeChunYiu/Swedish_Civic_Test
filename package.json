@@ -15,13 +15,17 @@
     "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
     "test:learning": "node --test scripts/learning.test.js",
     "test:exam": "node --test scripts/exam.test.js",
-    "test": "npm run test:learning && npm run test:exam && npm run test:audio && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:publishing",
+    "test": "npm run test:learning && npm run test:exam && npm run test:audio && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:publishing && npm run test:build-config",
     "test:audio": "node --test scripts/audio.test.js",
     "test:content": "node --test scripts/content-production.test.js",
     "content:export": "node scripts/export-question-bank.js",
     "test:compliance": "node --test scripts/compliance-pages.test.js",
     "test:monetization": "node --test scripts/monetization.test.js",
-    "test:publishing": "node --test scripts/publishing.test.js"
+    "test:publishing": "node --test scripts/publishing.test.js",
+    "build:preview": "eas build --profile preview --platform all",
+    "build:production": "eas build --profile production --platform all",
+    "submit:production": "eas submit --profile production --platform all",
+    "test:build-config": "node --test scripts/build-config.test.js"
   },
   "dependencies": {
     "expo": "~54.0.33",
