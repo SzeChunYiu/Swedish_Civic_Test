@@ -43,3 +43,11 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /<BannerAd/);
 });
+
+test('home screen surfaces the 10000-learner feedback loop and review action', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /10,000-learner feedback pass/);
+  assert.match(source, /Review saved questions/);
+  assert.match(source, /href="\/mistakes"/);
+});
