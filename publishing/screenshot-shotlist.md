@@ -62,6 +62,13 @@ Required shape:
 ```json
 {
   "status": "final-device",
+  "contentReview": {
+    "noOfficialAffiliationClaims": true,
+    "noGuaranteedExamResultClaims": true,
+    "mockExamShowsNoAds": true,
+    "noTestAdBanners": true,
+    "privacyAndSourcePagesMatchPublishingDocs": true
+  },
   "screenshots": [
     {
       "id": "home",
@@ -83,5 +90,8 @@ The manifest must include final evidence for at least `/home`, `/learn`,
 `/practice`, `/exam`, and `/profile`. Each screenshot must include platform,
 device, accepted capture method, source build, pixel width/height, locale, and a
 local file path. Local screenshot files are resolved relative to the manifest
-directory. Browser or web-draft evidence is rejected for the final
-`device-screenshots` release gate.
+directory. The manifest-level `contentReview` block must confirm that the final
+screenshots contain no official-affiliation claim, no guaranteed-exam-result
+claim, no test ad banners, no ads in mock exam, and privacy/source pages that
+match the publishing docs. Browser or web-draft evidence is rejected for the
+final `device-screenshots` release gate.

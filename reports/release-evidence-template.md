@@ -115,7 +115,10 @@ the `device-screenshots` gate are validated by `npm run release:preflight` and
 must include: `status: "final-device"`, at least five screenshots, required
 routes `/home`, `/learn`, `/practice`, `/exam`, and `/profile`, final
 device/accepted capture metadata, source build, pixel width/height, locale, and
-existing local screenshot files.
+existing local screenshot files. It must also include a `contentReview` block
+confirming no official-affiliation claims, no guaranteed-exam-result claims, no
+test ad banners, no ads in mock exam, and privacy/source pages matching the
+publishing docs.
 
 ## Submission evidence
 

@@ -120,6 +120,19 @@ function validateFinalScreenshotManifest(manifestPath) {
     if (!routes.has(route)) errors.push(`manifest missing required route ${route}`);
   }
 
+  const contentReview = manifest.contentReview || {};
+  for (const field of [
+    'noOfficialAffiliationClaims',
+    'noGuaranteedExamResultClaims',
+    'mockExamShowsNoAds',
+    'noTestAdBanners',
+    'privacyAndSourcePagesMatchPublishingDocs',
+  ]) {
+    if (contentReview[field] !== true) {
+      errors.push(`contentReview.${field} must be true`);
+    }
+  }
+
   screenshots.forEach((shot, index) => {
     const label = shot.id || `screenshot[${index}]`;
     if (!/^(ios|android)$/i.test(shot.platform || '')) {
