@@ -70,6 +70,9 @@ Required shape:
       "device": "iPhone 15",
       "captureMethod": "device",
       "sourceBuild": "TestFlight build 100",
+      "pixelWidth": 1290,
+      "pixelHeight": 2796,
+      "locale": "sv-SE",
       "file": "ios-iphone15-home-2026-05-15.png"
     }
   ]
@@ -77,6 +80,8 @@ Required shape:
 ```
 
 The manifest must include final evidence for at least `/home`, `/learn`,
-`/practice`, `/exam`, and `/profile`. Local screenshot files are resolved
-relative to the manifest directory. Browser or web-draft evidence is rejected for
-the final `device-screenshots` release gate.
+`/practice`, `/exam`, and `/profile`. Each screenshot must include platform,
+device, accepted capture method, source build, pixel width/height, locale, and a
+local file path. Local screenshot files are resolved relative to the manifest
+directory. Browser or web-draft evidence is rejected for the final
+`device-screenshots` release gate.

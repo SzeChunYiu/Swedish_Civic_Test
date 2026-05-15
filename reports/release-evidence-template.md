@@ -102,6 +102,16 @@ analytics, crash reporting, purchase, and real-ad SDKs.
 | Does Google Play Data safety still match the binary? | TBD | `publishing/google-play-data-safety.md` review |
 | Does the generated binary match the documented Google Mobile Ads SDK posture? | TBD | build ID plus `REAL_ADS_ENABLED_FOR_V1=false` / test app ID review |
 
+## Final store screenshot evidence
+
+If final screenshot evidence is recorded in local JSON, use a path such as
+`reports/final-store-screenshots/manifest.json`. Local manifests referenced by
+the `device-screenshots` gate are validated by `npm run release:preflight` and
+must include: `status: "final-device"`, at least five screenshots, required
+routes `/home`, `/learn`, `/practice`, `/exam`, and `/profile`, final
+device/accepted capture metadata, source build, pixel width/height, locale, and
+existing local screenshot files.
+
 ## Submission evidence
 
 If submission evidence is recorded in local JSON, use a path such as

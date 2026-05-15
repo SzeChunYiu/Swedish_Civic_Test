@@ -134,6 +134,15 @@ function validateFinalScreenshotManifest(manifestPath) {
     if (!shot.sourceBuild || !String(shot.sourceBuild).trim()) {
       errors.push(`${label} missing source build`);
     }
+    if (!Number.isInteger(shot.pixelWidth) || shot.pixelWidth < 320) {
+      errors.push(`${label} missing pixelWidth`);
+    }
+    if (!Number.isInteger(shot.pixelHeight) || shot.pixelHeight < 320) {
+      errors.push(`${label} missing pixelHeight`);
+    }
+    if (!/^[a-z]{2}(?:-[A-Z]{2})?$/.test(shot.locale || '')) {
+      errors.push(`${label} missing locale`);
+    }
     if (!shot.file || !String(shot.file).trim()) {
       errors.push(`${label} missing screenshot file path`);
       return;
