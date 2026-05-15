@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `374cdf1` on `main` (`feat: require concrete manual release evidence`); product commit verified before this evidence refresh |
+| Git commit | `56a7e0a` on `main` (`fix: guard unavailable speech engine`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `Babbloo-studio/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 21:00 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 21:00 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 21:03 CEST; includes typecheck, lint, format check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-15 21:03 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,14 +27,14 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 21:00 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-15 21:03 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
 - Prettier format check passed.
 - Learning tests passed: 5/5.
 - Exam tests passed: 3/3.
-- Audio test passed: 1/1.
+- Audio tests passed: 2/2, including speech-engine-unavailable no-crash coverage.
 - Derived-content test passed: 1/1.
 - Content production test passed: 1/1.
 - Compliance test passed: 1/1.
@@ -96,10 +96,10 @@ Blocked gates:
 |---|---|---|---|
 | Android | Swedish `sv-SE` question text speaks clearly | BLOCKED | Requires physical Android build install |
 | Android | Audio button respects mute/disabled state | BLOCKED | Requires physical Android build install |
-| Android | App remains usable if speech engine is unavailable | BLOCKED | Requires physical Android build install |
+| Android | App remains usable if speech engine is unavailable | CODE READY; DEVICE BLOCKED | `speakSwedish` and `stopSpeech` catch/log platform speech errors; physical Android install still required |
 | iOS | Swedish `sv-SE` question text speaks clearly | BLOCKED | Requires physical iOS/TestFlight build install |
 | iOS | Audio button respects mute/disabled state | BLOCKED | Requires physical iOS/TestFlight build install |
-| iOS | App remains usable if speech engine is unavailable | BLOCKED | Requires physical iOS/TestFlight build install |
+| iOS | App remains usable if speech engine is unavailable | CODE READY; DEVICE BLOCKED | `speakSwedish` and `stopSpeech` catch/log platform speech errors; physical iOS/TestFlight install still required |
 
 ## Store/account gates
 
