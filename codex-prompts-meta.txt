@@ -1,0 +1,3 @@
+# Swedish Civic Test — CEO session — 1 pane.
+
+/goal PANE 0, lane CEO. Read docs/architecture.md and (if present) docs/ceo-staffing.md. For every team missing codex-prompts-team-<TEAM>.txt or MANAGER pane, YOU author the file (PANE 0=MANAGER-<TEAM>, ≤50 words), add host block in .codex-supervisor.toml, run csup start civic-test --host=civic-team-<TEAM>-lunarc. Process codex-tasks/ceo-inbox.txt, archive to codex-tasks/logs/.

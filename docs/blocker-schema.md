@@ -35,4 +35,4 @@ the next human decision recorded.
 
 ## Current blockers (Batch 0)
 
-None — `codex-tasks/blockers.txt` is empty.
+None — `codex-tasks/blockers.txt` is empty. Historical blocker `B3` is recorded as resolved in `docs/parallel-sessions/TEAM_PLAN.md`.

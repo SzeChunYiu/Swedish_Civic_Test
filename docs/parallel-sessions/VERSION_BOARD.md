@@ -23,11 +23,11 @@ None currently declared.
 
 | Worker branch / commit | Lane | Checklist ID | Intake status | Evidence | Notes |
 |---|---|---|---|---|---|
-| `work/batch-0/setup-scaffold` | SETUP | A2, A3 | open | `npx tsc --noEmit` | Expo scaffold + folder structure |
-| `work/batch-0/setup-quiz` | SETUP | A7 | open | Expo Go | Basic quiz screen |
-| `work/batch-0/content-types` | CONTENT | A4 | open | `npx tsc --noEmit` | types/content.ts |
-| `work/batch-0/content-chapters` | CONTENT | A5 | open | `cat data/chapters.ts` | 13 chapter records |
-| `work/batch-0/content-questions` | CONTENT | A6 | open | question count + tsc | 20 sample questions |
+| `work/batch-0/setup-scaffold` | SETUP | A2, A3 | accepted | `npm ci`; `npm run typecheck`; structure audit | Expo scaffold + folder structure |
+| `work/batch-0/setup-quiz` | SETUP | A7 | accepted | Expo web/Playwright `/practice` (simulator unavailable) | Basic quiz screen + required disclaimer |
+| `work/batch-0/content-types` | CONTENT | A4 | accepted | `npm run typecheck` | types/content.ts |
+| `work/batch-0/content-chapters` | CONTENT | A5 | accepted | validation loaded 13 records | 13 chapter records |
+| `work/batch-0/content-questions` | CONTENT | A6 | accepted | validation loaded 20 questions, 10/10 split | 20 sample questions |
 
 Statuses: `open` `accepted` `rejected` `needs_followup` `deferred`
 
@@ -35,7 +35,7 @@ Statuses: `open` `accepted` `rejected` `needs_followup` `deferred`
 
 | Commit / artifact | Source lane | Integrated into batch? | Verification |
 |---|---|---|---|
-| (none yet) | — | no | — |
+| Local working tree | SETUP/CONTENT/operator validation | pending commit on `batch/2026-05-15-foundation` | `npm ci`; `npm run typecheck`; content validation; Expo smoke; Playwright `/practice` |
 
 ## Separate PR exceptions
 
@@ -43,9 +43,9 @@ None declared.
 
 ## Final batch PR checklist
 
-- [ ] All TEAM_PLAN.md acceptance rows A1–A8 accepted or blocked with evidence
-- [ ] All accepted worker commits merged into `batch/2026-05-15-foundation`
-- [ ] `npx tsc --noEmit` passes on batch branch
-- [ ] Basic quiz screen verified in Expo Go
-- [ ] PR body links TEAM_PLAN.md, VERSION_BOARD.md, and verification output
-- [ ] Temporary worker branches deleted or documented
+- [x] All TEAM_PLAN.md acceptance rows A1–A8 accepted with evidence
+- [x] Accepted worker artifacts synced into local working tree; commit pending
+- [x] `npm run typecheck` passes locally
+- [x] Basic quiz screen verified with Expo web + Playwright (`/practice`); iOS/Android simulator unavailable here
+- [ ] PR not opened: repository has no configured Git remote
+- [x] Temporary remote worker state documented in TEAM_PLAN/journals; no local worker branches created

@@ -2,9 +2,11 @@
 name = "civic-test"
 description = "Sweden Citizenship Test Prep — React Native + Expo + TypeScript"
 
-[hosts."ng-meta-lunarc"]
+[hosts."civic-lunarc"]
+ssh = "lunarc"
 session = "civic-test"
 prompts = "codex-prompts.txt"
 tasks_dir = "codex-tasks"
-role = "ceo"
+role = "team"
 project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
