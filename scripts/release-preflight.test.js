@@ -29,6 +29,7 @@ test('release preflight fails closed on external launch blockers', () => {
   for (const id of [
     'local-validation',
     'expo-doctor',
+    'web-export',
     'eas-auth',
     'android-device-audio',
     'ios-device-audio',
@@ -97,6 +98,7 @@ test('release preflight can pass after recorded external evidence and EAS auth a
     [
       '#!/bin/sh',
       'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
+      'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
       'echo "unexpected npm command: $@" >&2',
       'exit 2',
       '',

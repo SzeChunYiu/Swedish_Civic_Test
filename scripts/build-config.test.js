@@ -49,5 +49,9 @@ test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph
 test('web export script is available for local production bundle smoke', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
+  assert.equal(
+    pkg.scripts['release:web-export-smoke'],
+    'rm -rf dist-web && npm run build:web:export',
+  );
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
 });

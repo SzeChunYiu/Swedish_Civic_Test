@@ -31,7 +31,8 @@
     "test:derived-content": "node --test scripts/derived-content.test.js",
     "test:app-assets": "node --test scripts/app-assets.test.js",
     "test:screenshot-manifest": "node --test scripts/screenshot-manifest.test.js",
-    "test:release-preflight": "node --test scripts/release-preflight.test.js"
+    "test:release-preflight": "node --test scripts/release-preflight.test.js",
+    "release:web-export-smoke": "rm -rf dist-web && npm run build:web:export"
   },
   "dependencies": {
     "expo": "~54.0.33",

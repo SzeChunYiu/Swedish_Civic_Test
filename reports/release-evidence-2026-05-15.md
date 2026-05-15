@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | Branch HEAD for this evidence file; latest validated runtime/app commit is `ac58046 chore: add web export smoke script` and later changes are documentation/evidence refreshes only |
+| Git commit | Current branch evidence file; latest branch state includes release-preflight, Expo Doctor, and web-export hardening beyond the earlier app-code milestone |
 | Branch | `batch/2026-05-15-foundation` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -17,8 +17,8 @@
 | Gate | Command or URL | Result |
 |---|---|---|
 | Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-15 18:41 CEST; includes typecheck, lint, format check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED after adding Expo Doctor as a preflight gate on 2026-05-15 18:41 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
-| Web production export smoke | `npm run build:web:export` | PASS; exported `dist-web/index.html` and `dist-web/metadata.json` |
+| Release preflight | `npm run release:preflight` | BLOCKED after adding Expo Doctor and web export as preflight gates on 2026-05-15 18:45 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json` |
+| Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Preview/internal build | `npm run build:preview` | Not run; blocked by EAS authentication |
 | Production build | `npm run build:production` | Not run; must wait for preview/internal device evidence |

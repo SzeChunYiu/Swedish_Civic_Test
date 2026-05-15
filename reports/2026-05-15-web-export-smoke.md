@@ -9,13 +9,12 @@ Expo/EAS account authentication.
 ## Command
 
 ```bash
-rm -rf dist-web
-npm run build:web:export
+npm run release:web-export-smoke
 ```
 
 ## Result
 
-`npm run build:web:export` passed and exported to `dist-web`.
+`npm run release:web-export-smoke` passed and exported to `dist-web`. This smoke is now also executed by `npm run release:preflight`.
 
 Observed output:
 

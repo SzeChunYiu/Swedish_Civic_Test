@@ -78,6 +78,7 @@ function buildReport() {
   const manualEvidence = loadManualEvidence();
   const validation = runValidate ? commandSucceeds('npm', ['run', 'validate']) : null;
   const expoDoctor = commandSucceeds('npm', ['exec', '--', 'expo-doctor']);
+  const webExport = commandSucceeds('npm', ['run', 'release:web-export-smoke']);
   const easVersion = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', '--version']);
   const easWhoami = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', 'whoami']);
 
@@ -99,6 +100,13 @@ function buildReport() {
       expoDoctor.ok ? 'READY' : 'BLOCKED',
       expoDoctor.ok ? expoDoctor.stdout : expoDoctor.stderr || expoDoctor.stdout,
       'Run `npm exec -- expo-doctor` and fix any Expo/native dependency findings.',
+    ),
+    gate(
+      'web-export',
+      'Web production export smoke',
+      webExport.ok ? 'READY' : 'BLOCKED',
+      webExport.ok ? webExport.stdout : webExport.stderr || webExport.stdout,
+      'Run `npm run release:web-export-smoke` and fix any Expo web export errors.',
     ),
     gate(
       'eas-cli',

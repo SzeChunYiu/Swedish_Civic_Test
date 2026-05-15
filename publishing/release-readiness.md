@@ -57,8 +57,8 @@ Run:
 npm run release:preflight
 ```
 
-The command reruns local validation, runs Expo Doctor, checks EAS
-CLI/authentication, reads `reports/release-gates.json`, and exits non-zero until every
+The command reruns local validation, runs Expo Doctor, runs the web export
+smoke, checks EAS CLI/authentication, reads `reports/release-gates.json`, and exits non-zero until every
 external/device/store gate has concrete evidence. It is intentionally
 fail-closed; update both `reports/release-gates.json` and the dated release
 evidence file when external evidence is collected.
