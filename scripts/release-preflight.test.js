@@ -89,12 +89,12 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           'store-records': {
             status: 'READY',
             evidence:
-              'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; real ads deferred.',
+              'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred.',
           },
           'public-urls': {
             status: 'READY',
             evidence:
-              'Support and privacy pages verified over HTTPS and entered in both store records.',
+              'Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ verified over HTTPS and entered in both store records.',
           },
           'device-screenshots': {
             status: 'READY',
@@ -404,4 +404,39 @@ test('release preflight blocks READY submission evidence with a missing local mo
   assert.equal(submission.status, 'BLOCKED');
   assert.match(submission.evidence, /referenced local artifact/i);
   assert.match(submission.evidence, /reports\/monitoring\/v1-week1\.md/i);
+});
+
+test('release preflight blocks store record evidence without exact public URLs', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-exact-url-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {
+    'store-records': {
+      status: 'READY',
+      evidence:
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; real ads deferred.',
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const storeRecords = report.gates.find((gate) => gate.id === 'store-records');
+  assert.equal(storeRecords.status, 'BLOCKED');
+  assert.match(storeRecords.evidence, /expected Support URL/i);
+  assert.match(
+    storeRecords.evidence,
+    /https:\/\/babbloo-studio\.github\.io\/Swedish_Civic_Test-public-site\/support\//i,
+  );
+  assert.match(
+    storeRecords.evidence,
+    /https:\/\/babbloo-studio\.github\.io\/Swedish_Civic_Test-public-site\/privacy\//i,
+  );
 });

@@ -4,12 +4,11 @@ const { spawnSync } = require('node:child_process');
 const jsonMode = process.argv.includes('--json');
 const runValidate = process.argv.includes('--run-validate');
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
+const supportUrl = 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/';
+const privacyUrl = 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/';
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
-  : [
-      'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/',
-      'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/',
-    ];
+  : [supportUrl, privacyUrl];
 
 const evidenceRequirements = {
   'android-device-audio': [
@@ -61,6 +60,17 @@ const gateSpecificBlockedEvidencePatterns = {
   'device-screenshots': [
     [/web[- ]draft/i, 'web-draft evidence is not final store screenshot evidence'],
     [/browser/i, 'browser screenshots are not final store screenshot evidence'],
+  ],
+};
+
+const expectedPublicUrlEvidenceRequirements = {
+  'store-records': [
+    ['expected Support URL', supportUrl],
+    ['expected Privacy Policy URL', privacyUrl],
+  ],
+  'public-urls': [
+    ['expected Support URL', supportUrl],
+    ['expected Privacy Policy URL', privacyUrl],
   ],
 };
 
@@ -184,6 +194,21 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
           ', ',
         )}. Recorded evidence: ${recordedEvidence}`,
         `Add concrete evidence for ${id} to ${evidencePath}.`,
+      );
+    }
+
+    const missingExpectedUrls = (expectedPublicUrlEvidenceRequirements[id] || [])
+      .filter(([, url]) => !recordedEvidence.includes(url))
+      .map(([requirement, url]) => `${requirement} ${url}`);
+    if (missingExpectedUrls.length > 0) {
+      return gate(
+        id,
+        label,
+        'BLOCKED',
+        `Gate ${id} is marked READY in ${evidencePath}, but evidence is missing exact hosted URL value(s): ${missingExpectedUrls.join(
+          ', ',
+        )}. Recorded evidence: ${recordedEvidence}`,
+        `Copy the exact hosted support/privacy URL values into ${id} evidence in ${evidencePath}.`,
       );
     }
 
