@@ -15,6 +15,9 @@ export default function Screen() {
   const mistakenQuestions = questions.filter(
     (question) => questionProgress[question.id]?.wrongCount > 0,
   );
+  const bookmarkedQuestions = questions.filter(
+    (question) => questionProgress[question.id]?.bookmarked,
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -30,8 +33,28 @@ export default function Screen() {
 
       <NativeAdCard />
 
+      {bookmarkedQuestions.length > 0 ? (
+        <View style={styles.list}>
+          <View style={styles.sectionHeading}>
+            <Badge tone="blue">Saved list</Badge>
+            <Text style={styles.sectionTitle}>Bookmarked questions</Text>
+          </View>
+          {bookmarkedQuestions.map((question) => (
+            <View key={question.id} style={styles.questionBlock}>
+              <QuestionCard question={question} />
+              <Text style={styles.bookmarkMeta}>Saved for focused review</Text>
+              <UHRReferenceCard reference={question.uhrReference} />
+            </View>
+          ))}
+        </View>
+      ) : null}
+
       {mistakenQuestions.length > 0 ? (
         <View style={styles.list}>
+          <View style={styles.sectionHeading}>
+            <Badge tone="orange">Mistake log</Badge>
+            <Text style={styles.sectionTitle}>Wrong answers to revisit</Text>
+          </View>
           {mistakenQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
               <QuestionCard question={question} />
@@ -42,7 +65,7 @@ export default function Screen() {
             </View>
           ))}
         </View>
-      ) : (
+      ) : bookmarkedQuestions.length === 0 ? (
         <View style={styles.emptyCard}>
           <Text style={styles.emptyTitle}>No mistakes yet</Text>
           <Text style={styles.emptyText}>
@@ -57,7 +80,7 @@ export default function Screen() {
             Start practice
           </Link>
         </View>
-      )}
+      ) : null}
     </ScrollView>
   );
 }
@@ -94,8 +117,23 @@ const styles = StyleSheet.create({
   list: {
     gap: space[2],
   },
+  sectionHeading: {
+    gap: space[0.75],
+  },
+  sectionTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
   questionBlock: {
     gap: space[1],
+  },
+  bookmarkMeta: {
+    color: colors.badgeBlueText,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
   meta: {
     color: colors.warning,

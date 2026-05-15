@@ -17,19 +17,35 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
-test('monetization uses test ad units and premium disables ads', () => {
-  const { TEST_AD_UNITS, adsConfig, shouldShowAd } = loadTs('lib/monetization/ads.ts');
+test('monetization uses Google AdMob test units and premium disables ads', () => {
+  const { TEST_AD_UNITS, adsConfig, getPlatformAdUnitId, shouldShowAd } =
+    loadTs('lib/monetization/ads.ts');
   assert.ok(TEST_AD_UNITS.length >= 4);
   assert.ok(
     fs
       .readFileSync(path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'), 'utf8')
       .includes('results_native'),
   );
-  assert.equal(adsConfig.realAdsEnabled, false);
+  assert.equal(adsConfig.realAdsEnabled, true);
+  assert.equal(adsConfig.googleMobileAdsEnabled, true);
   assert.ok(TEST_AD_UNITS.every((unit) => unit.testOnly));
-  assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), false);
+  assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), true);
   assert.equal(shouldShowAd('home_banner', { adsDisabled: true }), false);
   assert.equal(shouldShowAd('exam_screen', { adsDisabled: false }), false);
+  assert.match(getPlatformAdUnitId('home_banner', 'android'), /^ca-app-pub-/);
+  assert.match(getPlatformAdUnitId('home_banner', 'ios'), /^ca-app-pub-/);
+});
+
+test('app config registers the Google Mobile Ads Expo plugin with test app ids', () => {
+  const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
+  const plugin = appJson.expo.plugins.find(
+    (entry) => Array.isArray(entry) && entry[0] === 'react-native-google-mobile-ads',
+  );
+
+  assert.ok(plugin, 'react-native-google-mobile-ads plugin should be configured');
+  assert.match(plugin[1].androidAppId, /^ca-app-pub-/);
+  assert.match(plugin[1].iosAppId, /^ca-app-pub-/);
+  assert.equal(plugin[1].delayAppMeasurementInit, true);
 });
 
 test('exam screen does not import ad components', () => {

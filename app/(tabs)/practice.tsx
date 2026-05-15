@@ -24,6 +24,8 @@ export default function Screen() {
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const questionProgress = useProgressStore((state) => state.questionProgress);
+  const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const nextQuestionIndex = completedQuestionIds.length % questions.length;
   const question = questions[nextQuestionIndex] ?? questions[0];
@@ -37,6 +39,7 @@ export default function Screen() {
   }
 
   const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
+  const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = selectedOptionId ? scoreAnswers([selectedIsCorrect]) : null;
   const questionNumber = nextQuestionIndex + 1;
   const bankProgress = questions.length > 0 ? questionNumber / questions.length : 0;
@@ -55,6 +58,19 @@ export default function Screen() {
         </Text>
         <ProgressBar progress={bankProgress} />
         <Text style={styles.meta}>Completed questions: {completedQuestionIds.length}</Text>
+        <Pressable
+          accessibilityLabel={
+            isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question'
+          }
+          accessibilityRole="button"
+          accessibilityState={{ selected: isBookmarked }}
+          onPress={() => toggleBookmark(question.id)}
+          style={[styles.bookmarkButton, isBookmarked ? styles.bookmarkButtonActive : null]}
+        >
+          <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
+            {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+          </Text>
+        </Pressable>
       </View>
       <QuestionDisclaimer />
       <QuestionCard question={question} />
@@ -136,6 +152,29 @@ const styles = StyleSheet.create({
   meta: {
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
+  },
+  bookmarkButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[0.75],
+  },
+  bookmarkButtonActive: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.focusSoft,
+  },
+  bookmarkText: {
+    color: colors.textSecondary,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+    textTransform: 'uppercase',
+  },
+  bookmarkTextActive: {
+    color: colors.badgeBlueText,
   },
   options: {
     gap: space[1],

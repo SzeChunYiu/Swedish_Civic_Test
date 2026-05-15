@@ -2,9 +2,9 @@ import { StyleSheet, Text } from 'react-native';
 
 import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { colors, space, typography } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
-import { colors, space, typography } from '../../lib/theme';
 
 export function AdBanner({
   placement = 'home_banner',
@@ -18,9 +18,11 @@ export function AdBanner({
   const unit = getAdUnit(placement);
   return (
     <Card>
-      <Text style={styles.eyebrow}>Test ad</Text>
+      <Text style={styles.eyebrow}>Google AdMob</Text>
       <Text style={styles.title}>{placement.replaceAll('_', ' ')}</Text>
-      <Text style={styles.meta}>AdMob test unit · {unit?.testOnly ? 'test only' : 'disabled'}</Text>
+      <Text style={styles.meta}>
+        {unit?.testOnly ? 'AdMob test unit active · web preview' : 'AdMob placement active'}
+      </Text>
     </Card>
   );
 }
