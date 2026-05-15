@@ -32,6 +32,7 @@
 - Web export smoke evidence: `reports/2026-05-15-web-export-smoke.md`
 - Expo Doctor evidence: `reports/2026-05-15-expo-doctor.md`
 - Native prebuild smoke evidence: `reports/2026-05-15-native-prebuild-smoke.md`
+- Local main integration evidence: `reports/2026-05-15-local-main-integration.md`
 - In-app disclaimer: `/disclaimer`
 - In-app privacy policy: `/privacy`
 - In-app terms: `/terms`

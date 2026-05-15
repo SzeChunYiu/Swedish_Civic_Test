@@ -7,7 +7,7 @@ Owned by VALIDATOR. Updated when worker commits are accepted into the batch bran
 - Batch outcome: working Expo scaffold + content types + 20 sample questions + basic quiz screen
 - Base branch: `main`
 - Integration branch: `batch/2026-05-15-foundation`
-- Planned PR title: "Batch 0: Expo scaffold, content types, and 20 sample UHR questions"
+- Planned PR title: not opened; no Git remote configured. Local `main` was fast-forwarded after validation.
 - Release owner: `VALIDATOR`
 - Split decision: `single_batch_pr`
 
@@ -47,5 +47,5 @@ None declared.
 - [x] Accepted worker artifacts synced into local working tree; commit pending
 - [x] `npm run typecheck` passes locally
 - [x] Basic quiz screen verified with Expo web + Playwright (`/practice`); iOS/Android simulator unavailable here
-- [ ] PR not opened: repository has no configured Git remote
+- [x] PR not opened: repository has no configured Git remote; local `main` fast-forwarded to `batch/2026-05-15-foundation` at `4cab819`
 - [x] Temporary remote worker state documented in TEAM_PLAN/journals; no local worker branches created

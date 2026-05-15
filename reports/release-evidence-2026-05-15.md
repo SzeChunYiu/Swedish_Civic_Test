@@ -5,8 +5,8 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | Current branch evidence file; latest branch state includes release-preflight, Expo Doctor, and web-export hardening beyond the earlier app-code milestone |
-| Branch | `batch/2026-05-15-foundation` |
+| Git commit | Local `main` fast-forwarded to `4cab819 chore: add native prebuild release gate`; subsequent integration evidence is documented in `reports/2026-05-15-local-main-integration.md` |
+| Branch | `main` after local fast-forward from `batch/2026-05-15-foundation`; no remote PR exists |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
 | iOS build ID / URL | BLOCKED — no EAS preview/TestFlight build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |

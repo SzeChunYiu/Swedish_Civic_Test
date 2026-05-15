@@ -10,8 +10,8 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 
 ## Evidence snapshot
 
-- Current branch: `batch/2026-05-15-foundation`
-- Latest local branch state includes release-preflight, Expo Doctor, and web-export hardening beyond the earlier app-code milestone.
+- Current branch after local integration: `main`
+- Latest local main state includes release-preflight, Expo Doctor, web-export, and native-prebuild hardening beyond the earlier app-code milestone.
 - Fresh validation command: `npm run validate`
 - Fresh validation result from `npm run release:preflight` on 2026-05-15 18:56 CEST: pass; includes typecheck, lint, format, learning tests, exam tests, audio tests, derived-content test, content-production test, compliance test, monetization test, publishing test, build-config test, app-assets test, screenshot-manifest test, release-preflight test, and content validation.
 - Content validation result: 13 chapters, 500 questions, 500 published questions.
@@ -30,6 +30,7 @@ The project is finished only when all roadmap phases 0–10 are complete, verifi
 - Expo Doctor initially flagged the local `eas-cli` dependency; after switching build/preflight commands to pinned `npx --yes eas-cli@18.13.0`, `npm exec -- expo-doctor` passed 17/17 checks; see `reports/2026-05-15-expo-doctor.md`.
 - Isolated Android/iOS native prebuild smoke passed after adding `expo-system-ui` for the configured `userInterfaceStyle`; it is now part of `npm run release:preflight`; see `reports/2026-05-15-native-prebuild-smoke.md`.
 - Post-EAS-auth runbook exists at `publishing/post-eas-auth-runbook.md` to sequence build, physical-device, store-record, TestFlight, Google Play internal, preflight, and submission evidence collection.
+- Local `main` was fast-forwarded to the validated batch branch because no Git remote exists for the planned PR; see `reports/2026-05-15-local-main-integration.md`.
 
 ## Prompt-to-artifact checklist
 
