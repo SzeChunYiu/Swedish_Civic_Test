@@ -9,6 +9,30 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function parseExternalBlockerRows(markdown) {
+  return markdown
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('| `'))
+    .map((line) => {
+      const cells = line
+        .slice(1, -1)
+        .split('|')
+        .map((cell) => cell.trim());
+      assert.equal(cells.length, 4, `unexpected blocker row shape: ${line}`);
+
+      const gateMatch = cells[0].match(/^`([^`]+)`$/);
+      assert.ok(gateMatch, `gate cell must be backtick-wrapped: ${cells[0]}`);
+
+      return {
+        gate: gateMatch[1],
+        requiredEvidence: cells[1],
+        whereToRecord: cells[2],
+        status: cells[3],
+      };
+    });
+}
+
 test('store publishing metadata is prepared', () => {
   const appConfig = JSON.parse(read('app.json')).expo;
   assert.equal(appConfig.name, 'Sweden Citizenship Test Prep');
@@ -108,4 +132,33 @@ test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
   assert.match(checklist, /npx --yes eas-cli@18\.13\.0 whoami/);
   assert.match(checklist, /npm run release:preflight/);
   assert.match(checklist, /update-release-gate/);
+});
+
+test('external release blocker checklist stays synchronized with release gates', () => {
+  const rows = parseExternalBlockerRows(read('reports/external-release-blockers.md'));
+  const releaseGates = JSON.parse(read('reports/release-gates.json')).gates;
+  const rowsByGate = new Map(rows.map((row) => [row.gate, row]));
+  const blockedReleaseGates = Object.entries(releaseGates)
+    .filter(([, gate]) => gate.status === 'BLOCKED')
+    .map(([gate]) => gate);
+
+  assert.deepEqual(
+    rows.map((row) => row.gate),
+    ['eas-auth', ...blockedReleaseGates],
+  );
+  assert.equal(rowsByGate.has('public-urls'), false);
+
+  for (const gate of blockedReleaseGates) {
+    assert.equal(rowsByGate.get(gate)?.status, 'BLOCKED', gate);
+  }
+
+  assert.equal(rowsByGate.get('eas-auth')?.status, 'BLOCKED');
+
+  for (const row of rows) {
+    if (row.gate !== 'eas-auth') {
+      assert.ok(releaseGates[row.gate], `${row.gate} is not in release-gates.json`);
+    }
+    assert.ok(row.requiredEvidence.length > 0, `${row.gate} missing evidence`);
+    assert.ok(row.whereToRecord.length > 0, `${row.gate} missing record location`);
+  }
 });
