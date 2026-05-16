@@ -14,6 +14,7 @@ Run these after each evidence update:
 
 ```bash
 npx --yes eas-cli@18.13.0 whoami
+npm run release:eas-access-check -- --out reports/eas-access-check-latest.md
 npm run release:preflight
 ```
 
@@ -25,7 +26,7 @@ evidence.
 
 | Gate | Required evidence | Where to record | Current status |
 |---|---|---|---|
-| `eas-auth` | Successful `npx --yes eas-cli@18.13.0 whoami` output or approved Expo token state | `reports/2026-05-15-eas-access-check.md`, issue #11 comment | BLOCKED |
+| `eas-auth` | Successful `npx --yes eas-cli@18.13.0 whoami` output or approved Expo token state | `reports/2026-05-15-eas-access-check.md`, `reports/eas-access-check-latest.md`, issue #11 comment | BLOCKED |
 | `eas-build-artifacts` | Android and iOS EAS build IDs, URLs, profiles, artifact types, readiness | `reports/eas-build-artifacts/eas-build-artifacts.json` or dated release evidence | BLOCKED |
 | `android-device-audio` | Android installed build, device/OS, Swedish audio smoke, proof artifact | `reports/device-smoke/android.json` or dated release evidence | BLOCKED |
 | `ios-device-audio` | iOS/TestFlight installed build, device/OS, Swedish audio smoke, proof artifact | `reports/device-smoke/ios.json` or dated release evidence | BLOCKED |
