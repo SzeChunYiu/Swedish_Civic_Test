@@ -18,6 +18,13 @@ printing the value:
 npm run release:set-expo-token-secret -- --out reports/set-expo-token-secret-latest.md
 ```
 
+To run the full secret-set, secret-verify, and external-loop dispatch sequence
+in one fail-closed command after exporting a local token:
+
+```bash
+npm run release:expo-token-bootstrap -- --out reports/expo-token-bootstrap-latest.md
+```
+
 Run the full safe evidence loop after each evidence update:
 
 ```bash

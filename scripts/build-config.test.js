@@ -142,6 +142,93 @@ test('GitHub EXPO_TOKEN secret setter reads token from env without leaking value
   assert.doesNotMatch(report, /super-secret-token/);
 });
 
+test('Expo token bootstrap blocks without a local token before running release commands', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'expo-token-bootstrap-blocked-'));
+  const reportPath = path.join(tmpDir, 'bootstrap.md');
+  const npmLog = path.join(tmpDir, 'npm.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    ['#!/bin/sh', `echo "$@" >> "${npmLog}"`, 'exit 2', ''].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const env = { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` };
+  delete env.EXPO_TOKEN;
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/bootstrap-expo-token-release.js', '--out', reportPath],
+    { cwd: repoRoot, encoding: 'utf8', env },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 1);
+  assert.equal(
+    pkg.scripts['release:expo-token-bootstrap'],
+    'node scripts/bootstrap-expo-token-release.js',
+  );
+  assert.match(result.stdout, /Expo token release bootstrap BLOCKED/i);
+  assert.match(report, /Status \| BLOCKED/);
+  assert.match(report, /Environment variable \| EXPO_TOKEN/);
+  assert.equal(fs.existsSync(npmLog), false);
+});
+
+test('Expo token bootstrap sets secret, verifies it, dispatches blocker loop, and redacts token', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'expo-token-bootstrap-ready-'));
+  const reportPath = path.join(tmpDir, 'bootstrap.md');
+  const npmLog = path.join(tmpDir, 'npm.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${npmLog}"`,
+      'args="$*"',
+      'out=""',
+      'prev=""',
+      'for arg in "$@"; do if [ "$prev" = "--out" ]; then out="$arg"; fi; prev="$arg"; done',
+      'case "$args" in',
+      '  *"release:set-expo-token-secret"*) echo "stored super-secret-token"; printf "# set secret\\nREADY\\n" > "$out"; exit 0 ;;',
+      '  *"release:github-secrets-check"*) echo "EXPO_TOKEN present"; printf "# check secret\\nREADY\\n" > "$out"; exit 0 ;;',
+      '  *"release:external-loop-dispatch"*) echo "dispatch super-secret-token"; printf "# dispatch\\nhttps://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/789\\n" > "$out"; exit 0 ;;',
+      'esac',
+      'echo "unexpected npm command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/bootstrap-expo-token-release.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        EXPO_TOKEN: 'super-secret-token',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const npmCalls = fs.readFileSync(npmLog, 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /Expo token release bootstrap DISPATCHED/i);
+  assert.match(report, /Status \| DISPATCHED/);
+  assert.match(report, /release:set-expo-token-secret/);
+  assert.match(report, /release:github-secrets-check/);
+  assert.match(report, /release:external-loop-dispatch/);
+  assert.match(report, /actions\/runs\/789/);
+  assert.match(npmCalls, /run release:set-expo-token-secret -- --out/);
+  assert.match(npmCalls, /run release:github-secrets-check -- --out/);
+  assert.match(npmCalls, /run release:external-loop-dispatch -- --out/);
+  assert.doesNotMatch(report, /super-secret-token/);
+  assert.doesNotMatch(result.stdout, /super-secret-token/);
+});
+
 test('EAS preview dispatch command blocks without EXPO_TOKEN secret and does not start workflow', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-blocked-'));
   const reportPath = path.join(tmpDir, 'dispatch.md');
