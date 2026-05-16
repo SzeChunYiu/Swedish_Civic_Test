@@ -1,0 +1,13 @@
+{
+  "gate": "device-screenshots",
+  "status": "blocked",
+  "screenshotStatus": "TBD_FINAL_DEVICE_OR_ACCEPTED_STORE_TOOLING",
+  "contentReview": {
+    "noOfficialAffiliationClaims": false,
+    "noGuaranteedExamResultClaims": false,
+    "mockExamShowsNoAds": false,
+    "noTestAdBanners": false,
+    "privacyAndSourcePagesMatchPublishingDocs": false
+  },
+  "screenshots": []
+}

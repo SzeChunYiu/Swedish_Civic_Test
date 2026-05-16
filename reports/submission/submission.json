@@ -1,0 +1,10 @@
+{
+  "gate": "submission",
+  "status": "blocked",
+  "testFlightBuild": "TBD",
+  "googlePlayInternalTrackUrl": "TBD",
+  "iosProductionSubmissionId": "TBD",
+  "androidProductionSubmissionId": "TBD",
+  "monitoringReportPath": "reports/monitoring/v1-week1.md",
+  "notes": "Submit only after every pre-submission gate is READY."
+}

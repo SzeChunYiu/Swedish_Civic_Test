@@ -1,0 +1,13 @@
+{
+  "gate": "ios-device-audio",
+  "status": "blocked",
+  "platform": "ios",
+  "device": "TBD",
+  "osVersion": "TBD",
+  "buildIdOrTestFlightUrl": "TBD",
+  "installedBuild": false,
+  "swedishAudioSmoke": "TBD",
+  "proofArtifact": "TBD",
+  "tester": "TBD",
+  "checkedAtUtc": "TBD"
+}

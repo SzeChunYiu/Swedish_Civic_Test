@@ -1,0 +1,17 @@
+{
+  "gate": "store-records",
+  "status": "blocked",
+  "bundleIdentifier": "com.billyyiu.swedishcivictest",
+  "packageName": "com.billyyiu.swedishcivictest",
+  "supportUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/",
+  "privacyPolicyUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/",
+  "appStoreConnectUrl": "TBD",
+  "googlePlayConsoleUrl": "TBD",
+  "supportUrlEnteredInApple": false,
+  "privacyPolicyUrlEnteredInApple": false,
+  "supportUrlEnteredInGooglePlay": false,
+  "privacyPolicyUrlEnteredInGooglePlay": false,
+  "listingMetadataReviewed": false,
+  "accountOwnershipReviewed": false,
+  "notes": "Do not include account secrets or private credentials."
+}

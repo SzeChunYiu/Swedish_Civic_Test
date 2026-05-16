@@ -1,0 +1,19 @@
+{
+  "gate": "store-policy-questionnaires",
+  "status": "blocked",
+  "apple": {
+    "ageRatingReviewed": false,
+    "exportComplianceReviewed": false,
+    "contentRightsReviewed": false,
+    "noOfficialGovernmentAffiliationReviewed": false
+  },
+  "googlePlay": {
+    "contentRatingReviewed": false,
+    "targetAudienceReviewed": false,
+    "adsDeclarationReviewed": false,
+    "gamblingDeclarationReviewed": false,
+    "governmentAffiliationReviewed": false
+  },
+  "reviewer": "TBD",
+  "checkedAtUtc": "TBD"
+}
