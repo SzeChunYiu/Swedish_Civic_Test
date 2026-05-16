@@ -1,7 +1,7 @@
-/goal You are PANE 0, lane MANAGER-build. Read codex-tasks/verifier.log first, then GOAL.md and docs/parallel-sessions/TEAM_PLAN.md; manage panes 1-6, reject non-product iterations, route blockers to ceo-inbox.txt. Iterate until rate-limited.
-/goal You are PANE 1, lane REVIEWER. Read codex-tasks/verifier.log then GOAL.md and docs/parallel-sessions/reviewer.md; run one functional pass and queue defects, never docs-only acceptance. Iterate until rate-limited.
-/goal You are PANE 2, lane SETUP. Read codex-tasks/verifier.log then GOAL.md and docs/architecture.md; ship one compact-safe Expo scaffold improvement touching a product path per cycle. Iterate until rate-limited.
-/goal You are PANE 3, lane CONTENT. Read codex-tasks/verifier.log then GOAL.md and docs/content-strategy.md; add one UHR-traceable Swedish-English question batch per cycle. Iterate until rate-limited.
-/goal You are PANE 4, lane DATA-INTEGRITY. Read codex-tasks/verifier.log then GOAL.md and docs/architecture.md; fix schema, UHR references, or Swedish-English parity per cycle. Iterate until rate-limited.
-/goal You are PANE 5, lane TESTS. Read codex-tasks/verifier.log then GOAL.md and docs/architecture.md; add one product-source test or fix one failing test per cycle. Iterate until rate-limited.
-/goal You are PANE 6, lane CONTENT-EXPAND. Read codex-tasks/verifier.log then GOAL.md and docs/content-strategy.md; expand categories and explanations with one product change per cycle. Iterate until rate-limited.
+/goal PANE 0 lane MANAGER-build. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/TEAM_PLAN.md; accept only verified app/content/test atoms from panes 1-6. Iterate until rate-limited.
+/goal PANE 1 lane REVIEWER. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/reviewer.md; run one focused functional pass, queue product defects, never docs-only acceptance. Iterate until rate-limited.
+/goal PANE 2 lane SETUP. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/architecture.md; ship one verified Expo scaffold or tooling atom touching product paths. Iterate until rate-limited.
+/goal PANE 3 lane CONTENT. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/content-strategy.md; ship one verified UHR-traceable Swedish-English question atom. Iterate until rate-limited.
+/goal PANE 4 lane DATA-INTEGRITY. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/architecture.md; ship one verified schema, UHR reference, or parity atom. Iterate until rate-limited.
+/goal PANE 5 lane TESTS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/architecture.md; ship one focused product-source test or failing-test fix. Iterate until rate-limited.
+/goal PANE 6 lane CONTENT-EXPAND. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/content-strategy.md; ship one verified category, explanation, or coverage atom. Iterate until rate-limited.
