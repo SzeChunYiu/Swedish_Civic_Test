@@ -47,7 +47,8 @@
     "test:ownership": "node --test scripts/release-ownership.test.js",
     "test:external-blockers": "node --test scripts/publishing.test.js --test-name-pattern \"external release blocker checklist\"",
     "release:eas-access-check": "node scripts/check-eas-access.js",
-    "release:blockers-snapshot": "node scripts/write-release-blocker-snapshot.js --run-validate --out reports/release-blockers-latest.md"
+    "release:blockers-snapshot": "node scripts/write-release-blocker-snapshot.js --run-validate --out reports/release-blockers-latest.md",
+    "release:evidence-stub": "node scripts/create-release-evidence-stub.js"
   },
   "dependencies": {
     "expo": "~54.0.33",
