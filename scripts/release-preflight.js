@@ -4,6 +4,9 @@ const { spawnSync } = require('node:child_process');
 
 const jsonMode = process.argv.includes('--json');
 const runValidate = process.argv.includes('--run-validate');
+const skipExternalChecks = /^(1|true|yes)$/i.test(
+  String(process.env.RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS || '').trim(),
+);
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
@@ -860,6 +863,18 @@ function commandSucceeds(command, args) {
   };
 }
 
+function skippedExternalCheck(command, args) {
+  return {
+    ok: false,
+    stdout: '',
+    stderr: `Skipped by RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS=1: ${[command, ...args].join(' ')}`,
+  };
+}
+
+function externalCommandSucceeds(command, args) {
+  return skipExternalChecks ? skippedExternalCheck(command, args) : commandSucceeds(command, args);
+}
+
 function gate(id, label, status, evidence, nextAction) {
   return { id, label, status, evidence, nextAction };
 }
@@ -1081,11 +1096,11 @@ function publicUrlsGate(manualEvidence) {
 function buildReport() {
   const manualEvidence = loadManualEvidence();
   const validation = runValidate ? commandSucceeds('npm', ['run', 'validate']) : null;
-  const expoDoctor = commandSucceeds('npm', ['exec', '--', 'expo-doctor']);
-  const webExport = commandSucceeds('npm', ['run', 'release:web-export-smoke']);
-  const nativePrebuild = commandSucceeds('npm', ['run', 'release:native-prebuild-smoke']);
-  const easVersion = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', '--version']);
-  const easWhoami = commandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', 'whoami']);
+  const expoDoctor = externalCommandSucceeds('npm', ['exec', '--', 'expo-doctor']);
+  const webExport = externalCommandSucceeds('npm', ['run', 'release:web-export-smoke']);
+  const nativePrebuild = externalCommandSucceeds('npm', ['run', 'release:native-prebuild-smoke']);
+  const easVersion = externalCommandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', '--version']);
+  const easWhoami = externalCommandSucceeds('npx', ['--yes', 'eas-cli@18.13.0', 'whoami']);
 
   const gates = [
     gate(
