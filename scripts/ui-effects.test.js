@@ -26,6 +26,16 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
+test('practice answer flow requires explicit next question after feedback', () => {
+  const source = read('app/(tabs)/practice.tsx');
+
+  assert.match(source, /getPracticeQuestionForSession/);
+  assert.match(source, /activeQuestionId/);
+  assert.match(source, /selectOption\(question\.id,\s*optionId\)/);
+  assert.match(source, /advanceQuestion/);
+  assert.match(source, /Next question/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
