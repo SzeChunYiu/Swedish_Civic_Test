@@ -168,6 +168,69 @@ test('EAS preview dispatch command starts manual workflow when EXPO_TOKEN secret
   assert.doesNotMatch(report, /super-secret|token value/i);
 });
 
+test('external release blocker loop runs every safe evidence command and records blocked exits', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'external-release-loop-'));
+  const reportPath = path.join(tmpDir, 'loop.md');
+  const commandLog = path.join(tmpDir, 'commands.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npx'),
+    [
+      '#!/bin/sh',
+      `echo "npx $@" >> "${commandLog}"`,
+      'echo "Not logged in" >&2',
+      'exit 1',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    [
+      '#!/bin/sh',
+      `echo "npm $@" >> "${commandLog}"`,
+      'case "$*" in',
+      '  *"release:evidence-index"*) echo "STUBS_READY"; exit 0 ;;',
+      '  *) echo "blocked by external evidence super-secret-token"; exit 1 ;;',
+      'esac',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/run-external-release-loop.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        EXPO_TOKEN: 'super-secret-token',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const calls = fs.readFileSync(commandLog, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 1);
+  assert.equal(
+    pkg.scripts['release:external-blocker-loop'],
+    'node scripts/run-external-release-loop.js',
+  );
+  assert.match(result.stdout, /External release blocker loop BLOCKED/i);
+  assert.match(report, /release:eas-access-check/);
+  assert.match(report, /release:github-secrets-check/);
+  assert.match(report, /release:eas-preview-dispatch/);
+  assert.match(report, /release:preflight/);
+  assert.match(report, /release:evidence-index/);
+  assert.match(calls, /npx --yes eas-cli@18\.13\.0 whoami/);
+  assert.match(calls, /npm run release:eas-preview-dispatch -- --run-build false/);
+  assert.match(calls, /npm run release:evidence-index/);
+  assert.doesNotMatch(report, /super-secret-token/);
+});
+
 test('manual EAS preview workflow requires Expo token and runs preview build guard', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/eas-preview-build.yml');
   assert.equal(fs.existsSync(workflowPath), true);
