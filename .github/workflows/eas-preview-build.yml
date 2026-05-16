@@ -1,0 +1,57 @@
+name: EAS preview build
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_build:
+        description: Run the actual EAS preview build after the auth/check-only guard passes
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+jobs:
+  preview:
+    name: EAS preview build guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 26.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Expo/EAS access and write redacted evidence
+        run: npm run release:eas-access-check -- --out reports/eas-access-check-latest.md
+
+      - name: Verify preview build guard without starting a build
+        run: npm run build:preview -- --check-only
+
+      - name: Run EAS preview build when explicitly requested
+        if: ${{ inputs.run_build == 'true' }}
+        run: npm run build:preview
+
+      - name: Upload EAS access evidence
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: eas-access-check
+          path: reports/eas-access-check-latest.md
+          if-no-files-found: ignore
