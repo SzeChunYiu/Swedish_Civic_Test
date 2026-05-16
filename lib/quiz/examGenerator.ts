@@ -62,7 +62,35 @@ export function generateExam(
   questions: PracticeQuestion[] = [],
   { questionCount = 20 }: ExamOptions = {},
 ): PracticeQuestion[] {
-  return questions.filter(isReviewedUhrQuestion).slice(0, questionCount);
+  const targetCount = Math.max(0, Math.floor(questionCount));
+  const chapterBuckets = new Map<string, PracticeQuestion[]>();
+
+  for (const question of questions.filter(isReviewedUhrQuestion)) {
+    const bucket = chapterBuckets.get(question.chapterId) ?? [];
+    bucket.push(question);
+    chapterBuckets.set(question.chapterId, bucket);
+  }
+
+  const selected: PracticeQuestion[] = [];
+  let round = 0;
+
+  while (selected.length < targetCount) {
+    let addedQuestionThisRound = false;
+
+    for (const bucket of chapterBuckets.values()) {
+      const question = bucket[round];
+      if (!question) continue;
+
+      selected.push(question);
+      addedQuestionThisRound = true;
+      if (selected.length >= targetCount) break;
+    }
+
+    if (!addedQuestionThisRound) break;
+    round += 1;
+  }
+
+  return selected;
 }
 
 export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap): ExamResult {
