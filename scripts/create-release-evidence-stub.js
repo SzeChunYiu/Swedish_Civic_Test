@@ -215,6 +215,16 @@ function fail(message) {
   process.exit(1);
 }
 
+function blockedManualGates(root) {
+  const gatesPath = path.join(root, 'reports/release-gates.json');
+  if (!fs.existsSync(gatesPath)) return Object.keys(templates);
+
+  const gates = JSON.parse(fs.readFileSync(gatesPath, 'utf8')).gates || {};
+  return Object.entries(gates)
+    .filter(([, gate]) => gate.status === 'BLOCKED')
+    .map(([gate]) => gate);
+}
+
 function main() {
   let args;
   try {
@@ -229,11 +239,13 @@ function main() {
   }
 
   if (args.list) {
-    const rows = Object.entries(templates).map(([gate, template]) => ({
-      gate,
-      path: template.path,
-      status: template.content.status,
-    }));
+    const rows = blockedManualGates(args.root)
+      .filter((gate) => templates[gate])
+      .map((gate) => ({
+        gate,
+        path: templates[gate].path,
+        status: templates[gate].content.status,
+      }));
     process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
     return;
   }
@@ -257,5 +269,6 @@ if (require.main === module) {
 }
 
 module.exports = {
+  blockedManualGates,
   templates,
 };

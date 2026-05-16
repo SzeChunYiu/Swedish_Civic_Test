@@ -23,8 +23,8 @@
       "evidence": "No App Store Connect or Google Play submit credential evidence is recorded."
     },
     "store-policy-questionnaires": {
-      "status": "BLOCKED",
-      "evidence": "No App Store age rating/export compliance or Google Play content rating/ads declaration evidence is recorded."
+      "status": "READY",
+      "evidence": "Apple age rating/export compliance/content rights/no-official-affiliation review completed against publishing/app-store-listing.md; Google Play content rating/target audience/ads declaration/no-government-affiliation review completed against publishing/google-play-listing.md, publishing/google-play-data-safety.md, and reports/2026-05-15-v1-ads-deferred.md. Local policy evidence recorded in reports/store-policy-questionnaires/store-policy-questionnaires.json; real ads remain disabled for v1.0 and no real-money gambling or official-government affiliation claims are present."
     },
     "privacy-review": {
       "status": "BLOCKED",
