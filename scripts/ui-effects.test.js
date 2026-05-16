@@ -53,6 +53,15 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /Saved for focused review/);
 });
 
+test('mistakes screen teaches with explanations before source references', () => {
+  const source = read('app/(tabs)/mistakes.tsx');
+
+  assert.match(source, /ExplanationPanel/);
+  assert.match(source, /question\.explanationSv/);
+  assert.match(source, /question, explanation, source reference/);
+  assert.match(source, /<ExplanationPanel[\s\S]*<UHRReferenceCard/);
+});
+
 test('native ads use Google Mobile Ads while web keeps a safe preview component', () => {
   const webSource = read('components/monetization/AdBanner.tsx');
   const nativeSource = read('components/monetization/AdBanner.native.tsx');
