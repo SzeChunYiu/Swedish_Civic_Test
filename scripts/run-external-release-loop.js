@@ -11,6 +11,7 @@ function buildSteps(artifactDir) {
       name: 'eas-whoami',
       command: 'npx',
       args: ['--yes', 'eas-cli@18.13.0', 'whoami'],
+      requiresExpoToken: true,
       timeoutMs: 120_000,
     },
     {
@@ -23,6 +24,7 @@ function buildSteps(artifactDir) {
         '--out',
         path.join(artifactDir, 'eas-access-check.md'),
       ],
+      requiresExpoToken: true,
     },
     {
       name: 'release:github-secrets-check',
@@ -58,6 +60,7 @@ function buildSteps(artifactDir) {
         '--out',
         path.join(artifactDir, 'eas-preview-dispatch.md'),
       ],
+      requiresExpoToken: true,
     },
     { name: 'release:preflight', command: 'npm', args: ['run', 'release:preflight'] },
     {
@@ -173,7 +176,21 @@ function timedOutMessage(timeoutMs) {
   return `Timed out after ${timeoutMs}ms`;
 }
 
+function skippedMissingExpoToken(step) {
+  return {
+    ...step,
+    exitCode: 1,
+    status: 'BLOCKED',
+    stdout: '',
+    stderr: 'Skipped because EXPO_TOKEN is not configured',
+  };
+}
+
 function runStep(step) {
+  if (step.requiresExpoToken && !process.env.EXPO_TOKEN) {
+    return skippedMissingExpoToken(step);
+  }
+
   const timeoutMs = stepTimeoutMs(step);
   const result = spawnSync(step.command, step.args, {
     encoding: 'utf8',
