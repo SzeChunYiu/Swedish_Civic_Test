@@ -67,6 +67,30 @@ test('scoreExam returns score and per-chapter breakdown', () => {
   ]);
 });
 
+test('buildExamReviewItems returns selected answer, correct answer, source, and explanation', () => {
+  const { buildExamReviewItems } = loadTs('lib/quiz/examGenerator.ts');
+  const questions = [
+    {
+      ...baseQuestion,
+      id: 'q1',
+      correctOptionId: 'b',
+      options: [
+        { id: 'a', textSv: 'Fel svar', textEn: 'Wrong answer' },
+        { id: 'b', textSv: 'Rätt svar', textEn: 'Correct answer' },
+      ],
+    },
+  ];
+
+  const [review] = buildExamReviewItems(questions, { q1: 'a' });
+
+  assert.equal(review.questionId, 'q1');
+  assert.equal(review.isCorrect, false);
+  assert.equal(review.selectedOptionTextSv, 'Fel svar');
+  assert.equal(review.correctOptionTextSv, 'Rätt svar');
+  assert.equal(review.explanationSv, 'Förklaring');
+  assert.deepEqual(review.uhrReference, baseQuestion.uhrReference);
+});
+
 test('formatExamTime renders remaining seconds as mm:ss', () => {
   const { formatExamTime } = loadTs('lib/quiz/examGenerator.ts');
 

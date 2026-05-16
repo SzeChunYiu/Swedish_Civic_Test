@@ -64,3 +64,14 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(nativeSource, /AppOpenAd/);
   assert.match(nativeSource, /launchPopupShownThisRuntime/);
 });
+
+test('exam results include per-question explanations and UHR sources', () => {
+  const source = read('app/(tabs)/exam.tsx');
+
+  assert.match(source, /buildExamReviewItems/);
+  assert.match(source, /Question review/);
+  assert.match(source, /Selected answer/);
+  assert.match(source, /Correct answer/);
+  assert.match(source, /<ExplanationPanel/);
+  assert.match(source, /<UHRReferenceCard/);
+});
