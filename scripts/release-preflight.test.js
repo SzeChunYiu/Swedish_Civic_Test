@@ -231,6 +231,77 @@ function createEasBuildEvidence(options = {}) {
   };
 }
 
+test('release blocker snapshot command writes issue-ready blocker report from preflight JSON', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-blockers-snapshot-'));
+  const preflightJsonPath = path.join(tmpDir, 'preflight.json');
+  const reportPath = path.join(tmpDir, 'release-blockers.md');
+  fs.writeFileSync(
+    preflightJsonPath,
+    JSON.stringify(
+      {
+        status: 'BLOCKED',
+        readyForSubmission: false,
+        gates: [
+          {
+            id: 'local-validation',
+            label: 'Local validation suite',
+            status: 'READY',
+            evidence: '`npm run validate` passed.',
+            nextAction: 'Run `npm run release:preflight`.',
+          },
+          {
+            id: 'eas-auth',
+            label: 'Expo/EAS authentication',
+            status: 'BLOCKED',
+            evidence: 'Not logged in',
+            nextAction:
+              'Log in to Expo/EAS or provide an approved Expo token, then rerun `npx --yes eas-cli@18.13.0 whoami`.',
+          },
+          {
+            id: 'public-urls',
+            label: 'Public support and privacy URLs',
+            status: 'READY',
+            evidence: 'Support and Privacy Policy URLs returned HTTP 200.',
+            nextAction: 'Enter URLs in both store records.',
+          },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/write-release-blocker-snapshot.js',
+      '--preflight-json',
+      preflightJsonPath,
+      '--out',
+      reportPath,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  assert.equal(result.status, 1, result.stdout || result.stderr);
+  assert.equal(
+    pkg.scripts['release:blockers-snapshot'],
+    'node scripts/write-release-blocker-snapshot.js --run-validate --out reports/release-blockers-latest.md',
+  );
+  assert.match(result.stdout, /Release blocker snapshot BLOCKED/i);
+  assert.match(report, /https:\/\/github\.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/11/);
+  assert.match(report, /## Blocked gates/);
+  assert.match(
+    report,
+    /\| `eas-auth` \| Expo\/EAS authentication \| Not logged in \| Log in to Expo\/EAS/,
+  );
+  assert.doesNotMatch(report, /\| `public-urls` \| Public support and privacy URLs \|/);
+  assert.match(report, /## Ready gates/);
+  assert.match(report, /`public-urls`/);
+});
+
 function createDeviceAudioEvidence(platform, options = {}) {
   const relativeDir = path.join(
     'reports',
