@@ -252,4 +252,10 @@ function main() {
   process.stdout.write(`Created ${args.gate} evidence stub at ${outputPath}\n`);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  templates,
+};
