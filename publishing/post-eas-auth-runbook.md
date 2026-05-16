@@ -11,8 +11,8 @@ npm run release:preflight
 ```
 
 Expected state immediately after login: `eas-auth` should become ready, while
-device, store-record, public-URL, screenshot, and submission gates should remain
-blocked until evidence is collected.
+EAS build artifact, device, store-record, public-URL, screenshot, and submission
+gates should remain blocked until evidence is collected.
 
 Create a release evidence file before building:
 
@@ -31,10 +31,44 @@ npm run validate
 npm run build:preview
 ```
 
-Record Android and iOS build URLs/IDs in the release evidence file. Do not mark
-`android-device-audio` or `ios-device-audio` READY in `reports/release-gates.json`
-until physical-device audio smoke tests pass. Use the checked gate writer instead
-of hand-editing JSON, for example:
+Record Android and iOS build URLs/IDs in the release evidence file and in local
+JSON such as `reports/eas-builds/eas-builds.json`. Reference that JSON path in
+the `eas-build-artifacts` gate evidence before device-smoke gates can become
+meaningful.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "ready",
+  "appVersion": "1.0.0",
+  "gitCommit": "abcdef1",
+  "android": {
+    "profile": "internal",
+    "buildId": "android-build-100",
+    "buildUrl": "https://expo.dev/accounts/example/projects/swedish-civic-test/builds/android-build-100",
+    "artifactType": "aab",
+    "installOrTestStatus": "ready-for-device-smoke"
+  },
+  "ios": {
+    "profile": "internal",
+    "buildId": "ios-build-100",
+    "buildUrl": "https://expo.dev/accounts/example/projects/swedish-civic-test/builds/ios-build-100",
+    "artifactType": "ipa",
+    "installOrTestStatus": "ready-for-testflight"
+  }
+}
+```
+
+Use the checked gate writer instead of hand-editing JSON, for example:
+
+```bash
+node scripts/update-release-gate.js --gate eas-build-artifacts --status READY --evidence "EAS Android/iOS build artifacts recorded in reports/eas-builds/eas-builds.json."
+```
+
+Do not mark `android-device-audio` or `ios-device-audio` READY in
+`reports/release-gates.json` until physical-device audio smoke tests pass.
+Use the checked gate writer for device gates as well:
 
 ```bash
 node scripts/update-release-gate.js --gate android-device-audio --status READY --evidence "Android Pixel 8 audio smoke passed; build https://expo.dev/..."

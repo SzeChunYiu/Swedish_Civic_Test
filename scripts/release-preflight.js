@@ -12,6 +12,14 @@ const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   : [supportUrl, privacyUrl];
 
 const evidenceRequirements = {
+  'eas-build-artifacts': [
+    ['Android EAS build artifact', /Android|APK|AAB|EAS/i],
+    ['iOS EAS or TestFlight build artifact', /iOS|IPA|TestFlight|EAS/i],
+    [
+      'local build evidence path or URL reference',
+      /\b(?:reports|publishing)\/[^\s,;:]+|https?:\/\//i,
+    ],
+  ],
   'android-device-audio': [
     ['Android device or platform', /Android|Pixel|Galaxy/i],
     ['audio smoke result', /audio/i],
@@ -91,6 +99,56 @@ function exists(path) {
 function extractLocalArtifactPaths(evidence) {
   const matches = evidence.match(/\b(?:reports|publishing|content|assets)\/[^\s,;:]+/g) || [];
   return [...new Set(matches.map((item) => item.replace(/[.)\]]+$/g, '')))];
+}
+
+function validateEasBuildEvidence(evidencePath) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'ready') {
+    errors.push('status must be ready');
+  }
+  if (!evidence.appVersion || !String(evidence.appVersion).trim()) {
+    errors.push('appVersion is required');
+  }
+  if (!/^[0-9a-f]{7,40}$/i.test(String(evidence.gitCommit || ''))) {
+    errors.push('gitCommit must be a concrete git commit hash');
+  }
+
+  for (const platform of ['android', 'ios']) {
+    const artifact = evidence[platform] || {};
+    if (!artifact.profile || !String(artifact.profile).trim()) {
+      errors.push(`${platform}.profile is required`);
+    }
+    if (!artifact.buildId || !String(artifact.buildId).trim()) {
+      errors.push(`${platform}.buildId is required`);
+    }
+    if (
+      !/^https:\/\/(expo\.dev|appstoreconnect\.apple\.com|play\.google\.com)\//i.test(
+        artifact.buildUrl || '',
+      )
+    ) {
+      errors.push(`${platform}.buildUrl must be an Expo, App Store Connect, or Google Play URL`);
+    }
+    const expectedArtifactTypes = platform === 'android' ? /^(apk|aab)$/i : /^(ipa|testflight)$/i;
+    if (!expectedArtifactTypes.test(artifact.artifactType || '')) {
+      errors.push(
+        `${platform}.artifactType must be ${platform === 'android' ? 'apk/aab' : 'ipa/testflight'}`,
+      );
+    }
+    if (!/ready|complete|installed|uploaded|processed/i.test(artifact.installOrTestStatus || '')) {
+      errors.push(
+        `${platform}.installOrTestStatus must record ready/complete/uploaded/installed status`,
+      );
+    }
+  }
+
+  return errors;
 }
 
 function validateFinalScreenshotManifest(manifestPath) {
@@ -513,6 +571,16 @@ function validateSubmissionEvidence(evidencePath) {
 }
 
 function validateLocalArtifactContents(id, artifactPaths) {
+  if (id === 'eas-build-artifacts') {
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validateEasBuildEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
   if (id === 'privacy-review') {
     const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
     if (jsonPaths.length === 0) return null;
@@ -852,6 +920,13 @@ function buildReport() {
       easWhoami.ok ? 'READY' : 'BLOCKED',
       easWhoami.ok ? easWhoami.stdout : easWhoami.stderr || easWhoami.stdout || 'Not logged in',
       'Log in to Expo/EAS or provide an approved Expo token, then rerun `npx --yes eas-cli@18.13.0 whoami`.',
+    ),
+    evidenceGate(
+      manualEvidence,
+      'eas-build-artifacts',
+      'EAS Android/iOS build artifacts',
+      'No EAS Android/iOS build artifact evidence is recorded.',
+      'Create EAS Android and iOS internal/preview builds and record build IDs, URLs, profiles, artifact types, and readiness status.',
     ),
     evidenceGate(
       manualEvidence,
