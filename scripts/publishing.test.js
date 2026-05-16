@@ -99,6 +99,7 @@ test('post-EAS-auth runbook covers build, device, and store evidence sequence', 
   const runbook = read('publishing/post-eas-auth-runbook.md');
   assert.match(runbook, /npx --yes eas-cli@18\.13\.0 whoami/);
   assert.match(runbook, /npm run release:preflight/);
+  assert.match(runbook, /npm run release:eas-preview-dispatch/);
   assert.match(runbook, /npm run build:preview/);
   assert.match(runbook, /Android physical-device audio/i);
   assert.match(runbook, /iOS physical-device audio/i);
