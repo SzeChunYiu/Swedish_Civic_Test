@@ -44,6 +44,27 @@ test('release validation includes dependency security audit', () => {
   assert.equal(pkg.overrides.postcss, '8.5.10');
 });
 
+test('GitHub release validation workflow runs safe validation and blocker evidence checks', () => {
+  const workflowPath = path.join(repoRoot, '.github/workflows/release-validation.yml');
+  assert.equal(fs.existsSync(workflowPath), true);
+
+  const workflow = fs.readFileSync(workflowPath, 'utf8');
+  assert.match(workflow, /pull_request:/);
+  assert.match(workflow, /branches:\s*\[\s*main\s*\]/);
+  assert.match(workflow, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*true/);
+  assert.match(workflow, /actions\/checkout@v5/);
+  assert.match(workflow, /actions\/setup-node@v5/);
+  assert.match(workflow, /actions\/upload-artifact@v6/);
+  assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
+  assert.match(workflow, /npm ci/);
+  assert.match(workflow, /npm run validate/);
+  assert.match(workflow, /npm run test:ownership/);
+  assert.match(workflow, /npm run test:external-blockers/);
+  assert.match(workflow, /npm run release:evidence-index/);
+  assert.match(workflow, /STUBS_READY\|READY/);
+  assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+});
+
 test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.devDependencies['eas-cli'], undefined);

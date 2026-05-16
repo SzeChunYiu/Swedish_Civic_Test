@@ -1,0 +1,61 @@
+name: Release validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  validate:
+    name: Validate release-safe candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 26.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run full local validation suite
+        run: npm run validate
+
+      - name: Verify release ownership guard
+        run: npm run test:ownership
+
+      - name: Verify external blocker checklist
+        run: npm run test:external-blockers
+
+      - name: Verify release evidence stubs are present or release is ready
+        shell: bash
+        run: |
+          set +e
+          npm run release:evidence-index
+          code=$?
+          set -e
+          if [ "$code" -gt 1 ]; then
+            exit "$code"
+          fi
+          grep -Eq 'Status \| (STUBS_READY|READY)' reports/release-evidence-index-latest.md
+
+      - name: Upload release evidence index
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: release-evidence-index
+          path: reports/release-evidence-index-latest.md
+          if-no-files-found: ignore
