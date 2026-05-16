@@ -30,11 +30,25 @@ export type ExamReviewItem = {
   uhrReference: PracticeQuestion['uhrReference'];
 };
 
+export type ExamAutoSubmitState = {
+  remainingSeconds: number;
+  submitted: boolean;
+  questionCount: number;
+};
+
 export function formatExamTime(remainingSeconds: number): string {
   const safeSeconds = Math.max(0, Math.floor(remainingSeconds));
   const minutes = Math.floor(safeSeconds / 60);
   const seconds = safeSeconds % 60;
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+export function shouldAutoSubmitExam({
+  remainingSeconds,
+  submitted,
+  questionCount,
+}: ExamAutoSubmitState): boolean {
+  return !submitted && questionCount > 0 && remainingSeconds <= 0;
 }
 
 function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
