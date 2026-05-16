@@ -53,6 +53,7 @@
     "release:issue-update": "node scripts/write-release-issue-update.js --run-validate --out reports/release-issue-update-latest.md",
     "release:evidence-index": "node scripts/write-release-evidence-index.js --out reports/release-evidence-index-latest.md",
     "release:github-secrets-check": "node scripts/check-github-release-secrets.js",
+    "release:set-expo-token-secret": "node scripts/set-github-expo-token-secret.js",
     "release:eas-preview-dispatch": "node scripts/dispatch-eas-preview-workflow.js",
     "release:external-blocker-loop": "node scripts/run-external-release-loop.js",
     "release:external-loop-dispatch": "node scripts/dispatch-external-blocker-loop.js"

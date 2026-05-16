@@ -82,6 +82,66 @@ test('GitHub release secrets check reports whether EXPO_TOKEN is configured with
   assert.doesNotMatch(report, /super-secret|token value/i);
 });
 
+test('GitHub EXPO_TOKEN secret setter reads token from env without leaking values', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-expo-token-secret-setter-'));
+  const reportPath = path.join(tmpDir, 'set-expo-token.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  const stdinLog = path.join(tmpDir, 'stdin.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'if [ "$1 $2 $3" = "secret set EXPO_TOKEN" ]; then cat > "' +
+        stdinLog +
+        '"; echo "stored super-secret-token"; exit 0; fi',
+      'if [ "$1 $2 $3" = "secret list --repo" ]; then echo "EXPO_TOKEN 2026-05-16T00:00:00Z"; exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/set-github-expo-token-secret.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        EXPO_TOKEN: 'super-secret-token',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+  const stdin = fs.readFileSync(stdinLog, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:set-expo-token-secret'],
+    'node scripts/set-github-expo-token-secret.js',
+  );
+  assert.match(result.stdout, /GitHub EXPO_TOKEN secret set READY/i);
+  assert.match(report, /Status \| READY/);
+  assert.match(report, /Secret \| EXPO_TOKEN/);
+  assert.match(report, /Environment variable \| EXPO_TOKEN/);
+  assert.match(report, /SzeChunYiu\/Swedish_Civic_Test/);
+  assert.match(
+    ghCalls,
+    /secret set EXPO_TOKEN --repo SzeChunYiu\/Swedish_Civic_Test --app actions/,
+  );
+  assert.match(ghCalls, /secret list --repo SzeChunYiu\/Swedish_Civic_Test/);
+  assert.equal(stdin, 'super-secret-token\n');
+  assert.doesNotMatch(ghCalls, /super-secret-token/);
+  assert.doesNotMatch(result.stdout, /super-secret-token/);
+  assert.doesNotMatch(report, /super-secret-token/);
+});
+
 test('EAS preview dispatch command blocks without EXPO_TOKEN secret and does not start workflow', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-blocked-'));
   const reportPath = path.join(tmpDir, 'dispatch.md');
