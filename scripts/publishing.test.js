@@ -84,3 +84,28 @@ test('post-EAS-auth runbook covers build, device, and store evidence sequence', 
   assert.match(runbook, /scripts\/update-release-gate\.js/);
   assert.match(runbook, /--gate android-device-audio/);
 });
+
+test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
+  const checklist = read('reports/external-release-blockers.md');
+  assert.match(checklist, /https:\/\/github\.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/11/);
+
+  for (const gate of [
+    'eas-auth',
+    'eas-build-artifacts',
+    'android-device-audio',
+    'ios-device-audio',
+    'store-records',
+    'store-credentials',
+    'store-policy-questionnaires',
+    'privacy-review',
+    'release-owner-approval',
+    'device-screenshots',
+    'submission',
+  ]) {
+    assert.match(checklist, new RegExp(`\\b${gate}\\b`));
+  }
+
+  assert.match(checklist, /npx --yes eas-cli@18\.13\.0 whoami/);
+  assert.match(checklist, /npm run release:preflight/);
+  assert.match(checklist, /update-release-gate/);
+});
