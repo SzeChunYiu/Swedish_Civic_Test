@@ -1,8 +1,7 @@
-/goal You are PANE 0, lane MANAGER-uiux. Read codex-tasks/verifier.log first, then DESIGN.md and docs/parallel-sessions/uiux-manager.md; manage panes 1-7 and reject non-product iterations. Iterate until rate-limited.
-/goal You are PANE 1, lane REVIEWER-UX. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/reviewer.md; run one persona pass and queue UX defects, never docs-only acceptance. Iterate until rate-limited.
-/goal You are PANE 2, lane DESIGN-TOKENS. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/design-tokens.md; build one strict theme-token product improvement per cycle. Iterate until rate-limited.
-/goal You are PANE 3, lane COMPONENTS. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/components.md; build one component consuming theme tokens only per cycle. Iterate until rate-limited.
-/goal You are PANE 4, lane SCREENS. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/screens.md; polish one app screen using components and theme only per cycle. Iterate until rate-limited.
-/goal You are PANE 5, lane MOTION-A11Y. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/motion-a11y.md; build one motion or a11y utility respecting reduce-motion per cycle. Iterate until rate-limited.
-/goal You are PANE 6, lane SCREENS-FLOW. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/screens.md; improve one navigation or quiz flow per cycle. Iterate until rate-limited.
-/goal You are PANE 7, lane POLISH. Read codex-tasks/verifier.log then DESIGN.md and docs/parallel-sessions/UIUX_BOARD.md; fix one visual or interaction defect per cycle. Iterate until rate-limited.
+/goal PANE 0 lane MANAGER-uiux. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/uiux-manager.md; accept only verified UI atoms from panes 1-6. Iterate until rate-limited.
+/goal PANE 1 lane REVIEWER-UX. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/reviewer.md; run one persona pass, queue UX defects, never docs-only acceptance. Iterate until rate-limited.
+/goal PANE 2 lane DESIGN-TOKENS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/design-tokens.md; ship one strict theme-token product atom. Iterate until rate-limited.
+/goal PANE 3 lane COMPONENTS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/components.md; ship one component atom using theme tokens only. Iterate until rate-limited.
+/goal PANE 4 lane SCREENS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/screens.md; ship one screen-polish atom using components and theme. Iterate until rate-limited.
+/goal PANE 5 lane MOTION-A11Y. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/motion-a11y.md; ship one reduce-motion-safe motion or a11y atom. Iterate until rate-limited.
+/goal PANE 6 lane SCREENS-FLOW. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/screens.md; ship one navigation or quiz-flow atom. Iterate until rate-limited.

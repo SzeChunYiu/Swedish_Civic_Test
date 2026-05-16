@@ -1,1 +1,1 @@
-/goal You are PANE 0, lane CEO. Read GOAL.md and docs/parallel-sessions/TEAM_PLAN.md; do not rewrite codex-prompts*.txt; process ceo-inbox, protect MANAGER and REVIEWER lanes, archive logs. Iterate until rate-limited.
+/goal PANE 0 lane CEO. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/TEAM_PLAN.md; convert blockers into product atoms, protect team scope, archive evidence. Iterate until rate-limited.
