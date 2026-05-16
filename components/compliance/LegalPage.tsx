@@ -1,18 +1,47 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { PropsWithChildren } from 'react';
+import type { ComponentProps, PropsWithChildren } from 'react';
 import { colors, radius, space, typography } from '../../lib/theme';
 
-export function LegalPage({ title, children }: PropsWithChildren<{ title: string }>) {
+type LegalBackHref = ComponentProps<typeof Link>['href'];
+
+/**
+ * Defaults: links back to Profile with `← Back to Profile`, derives the back
+ * link spoken label from `backLabel`, and preserves the tokenized legal page
+ * layout. Pass `backAccessibilityLabel` only when the visible label needs
+ * a more specific spoken destination.
+ */
+export interface LegalPageProps extends PropsWithChildren {
+  backAccessibilityLabel?: string;
+  backHref?: LegalBackHref;
+  backLabel?: string;
+  title: string;
+}
+
+/**
+ * Defaults: renders a warm tokenized legal section with the provided `title`
+ * and body copy.
+ */
+export interface LegalSectionProps extends PropsWithChildren {
+  title: string;
+}
+
+export function LegalPage({
+  backAccessibilityLabel,
+  backHref = '/(tabs)/profile',
+  backLabel = '← Back to Profile',
+  children,
+  title,
+}: LegalPageProps) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Link
-        accessibilityLabel="Back to profile"
+        accessibilityLabel={backAccessibilityLabel ?? getBackAccessibilityLabel(backLabel)}
         accessibilityRole="link"
-        href="/(tabs)/profile"
+        href={backHref}
         style={styles.backLink}
       >
-        ← Back to Profile
+        {backLabel}
       </Link>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.body}>{children}</View>
@@ -20,13 +49,17 @@ export function LegalPage({ title, children }: PropsWithChildren<{ title: string
   );
 }
 
-export function LegalSection({ title, children }: PropsWithChildren<{ title: string }>) {
+export function LegalSection({ title, children }: LegalSectionProps) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
       <Text style={styles.paragraph}>{children}</Text>
     </View>
   );
+}
+
+function getBackAccessibilityLabel(label: string) {
+  return label.replace(/^[←\s]+/, '').trim();
 }
 
 const styles = StyleSheet.create({
