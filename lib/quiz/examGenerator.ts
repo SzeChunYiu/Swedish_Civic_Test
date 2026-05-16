@@ -1,4 +1,4 @@
-import type { PracticeQuestion } from '../../types/content';
+import type { Chapter, PracticeQuestion } from '../../types/content';
 
 export type ExamOptions = {
   questionCount?: number;
@@ -17,6 +17,11 @@ export type ExamResult = {
   totalCount: number;
   percent: number;
   chapterBreakdown: ExamChapterResult[];
+};
+
+export type ExamChapterBreakdownItem = ExamChapterResult & {
+  chapterNameSv: string;
+  chapterNameEn: string;
 };
 
 export type ExamReviewItem = {
@@ -117,6 +122,23 @@ export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap)
     percent: questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0,
     chapterBreakdown: [...chapterMap.values()],
   };
+}
+
+export function buildExamChapterBreakdownItems(
+  chapterBreakdown: ExamChapterResult[],
+  chapters: Chapter[],
+): ExamChapterBreakdownItem[] {
+  const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+
+  return chapterBreakdown.map((result) => {
+    const chapter = chapterById.get(result.chapterId);
+
+    return {
+      ...result,
+      chapterNameSv: chapter?.nameSv ?? result.chapterId,
+      chapterNameEn: chapter?.nameEn ?? result.chapterId,
+    };
+  });
 }
 
 export function buildExamReviewItems(

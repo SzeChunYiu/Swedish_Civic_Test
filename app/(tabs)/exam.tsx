@@ -6,9 +6,11 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { chapters } from '../../data/chapters';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
 import {
+  buildExamChapterBreakdownItems,
   buildExamReviewItems,
   formatExamTime,
   generateExam,
@@ -51,6 +53,9 @@ export default function Screen() {
   }, [examQuestions.length, remainingSeconds, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
+  const chapterBreakdown = result
+    ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
+    : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
@@ -80,9 +85,12 @@ export default function Screen() {
         </View>
 
         <Text style={styles.sectionTitle}>Chapter breakdown</Text>
-        {result.chapterBreakdown.map((chapter) => (
+        {chapterBreakdown.map((chapter) => (
           <View key={chapter.chapterId} style={styles.breakdownRow}>
-            <Text style={styles.breakdownChapter}>{chapter.chapterId}</Text>
+            <View style={styles.breakdownLabel}>
+              <Text style={styles.breakdownChapter}>{chapter.chapterNameSv}</Text>
+              <Text style={styles.breakdownId}>{chapter.chapterId}</Text>
+            </View>
             <Text style={styles.breakdownScore}>
               {chapter.correctCount}/{chapter.totalCount}
             </Text>
@@ -304,10 +312,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: space[1.5],
   },
+  breakdownLabel: {
+    flex: 1,
+    gap: space[0.5],
+  },
   breakdownChapter: {
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
+  },
+  breakdownId: {
+    color: colors.textMuted,
+    fontSize: typography.badge.fontSize,
+    textTransform: 'uppercase',
   },
   breakdownScore: {
     color: colors.textMuted,
