@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { Badge } from '../../components/ui/Badge';
+import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -25,8 +26,8 @@ export default function Screen() {
         <Badge tone="orange">Smart review</Badge>
         <Text style={styles.title}>Mistakes</Text>
         <Text style={styles.subtitle}>
-          Review wrong answers with the question, source reference, and repetition count in one
-          place.
+          Review wrong answers with the question, explanation, source reference, and repetition
+          count in one place.
         </Text>
       </View>
       <QuestionDisclaimer />
@@ -43,6 +44,7 @@ export default function Screen() {
             <View key={question.id} style={styles.questionBlock}>
               <QuestionCard question={question} />
               <Text style={styles.bookmarkMeta}>Saved for focused review</Text>
+              <ExplanationPanel explanationSv={question.explanationSv} />
               <UHRReferenceCard reference={question.uhrReference} />
             </View>
           ))}
@@ -61,6 +63,7 @@ export default function Screen() {
               <Text style={styles.meta}>
                 Wrong answers: {questionProgress[question.id]?.wrongCount ?? 0}
               </Text>
+              <ExplanationPanel explanationSv={question.explanationSv} />
               <UHRReferenceCard reference={question.uhrReference} />
             </View>
           ))}
