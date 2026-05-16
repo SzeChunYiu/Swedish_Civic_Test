@@ -31,6 +31,12 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
+test('EAS access evidence command is wired for repeatable non-secret checks', () => {
+  const pkg = readJson('package.json');
+  assert.equal(pkg.scripts['release:eas-access-check'], 'node scripts/check-eas-access.js');
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/check-eas-access.js')), true);
+});
+
 test('release validation includes dependency security audit', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.scripts['audit:release'], 'npm audit --audit-level=moderate');
@@ -105,6 +111,41 @@ test('preview build guard check passes when EAS auth is ready', () => {
 
   assert.equal(result.status, 0, result.stdout || result.stderr);
   assert.match(result.stdout, /Preview build config is ready/i);
+});
+
+test('EAS access evidence check writes a redacted blocked report when auth is missing', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-access-check-'));
+  const reportPath = path.join(tmpDir, 'eas-access.md');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npx'),
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "Not logged in" >&2; exit 1; fi',
+      'echo "unexpected npx command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(process.execPath, ['scripts/check-eas-access.js', '--out', reportPath], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      EXPO_TOKEN: 'super-secret-token',
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+    },
+  });
+  const report = fs.readFileSync(reportPath, 'utf8');
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /EAS access check BLOCKED/i);
+  assert.match(report, /Status \\| BLOCKED/);
+  assert.match(report, /EXPO_TOKEN_SET \\| yes/);
+  assert.match(report, /npx --yes eas-cli@18\.13\.0 whoami/);
+  assert.match(report, /Not logged in/);
+  assert.doesNotMatch(report, /super-secret-token/);
 });
 
 test('production build guard blocks while release preflight is not ready', () => {
