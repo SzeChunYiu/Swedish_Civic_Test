@@ -1,0 +1,13 @@
+{
+  "gate": "android-device-audio",
+  "status": "blocked",
+  "platform": "android",
+  "device": "TBD",
+  "osVersion": "TBD",
+  "buildIdOrUrl": "TBD",
+  "installedBuild": false,
+  "swedishAudioSmoke": "TBD",
+  "proofArtifact": "TBD",
+  "tester": "TBD",
+  "checkedAtUtc": "TBD"
+}

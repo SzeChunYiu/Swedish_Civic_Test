@@ -1,0 +1,21 @@
+{
+  "gate": "eas-build-artifacts",
+  "status": "blocked",
+  "appVersion": "1.0.0",
+  "gitCommit": "TBD",
+  "android": {
+    "profile": "preview",
+    "buildId": "TBD",
+    "buildUrl": "TBD",
+    "artifactType": "apk",
+    "installOrTestStatus": "TBD"
+  },
+  "ios": {
+    "profile": "preview",
+    "buildId": "TBD",
+    "buildUrl": "TBD",
+    "artifactType": "ipa",
+    "installOrTestStatus": "TBD"
+  },
+  "notes": "Record only non-secret build IDs, URLs, profiles, and readiness states."
+}

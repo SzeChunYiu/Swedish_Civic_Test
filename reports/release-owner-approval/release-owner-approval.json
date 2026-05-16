@@ -1,0 +1,10 @@
+{
+  "gate": "release-owner-approval",
+  "status": "blocked",
+  "approved": false,
+  "approver": "TBD",
+  "approvedCommit": "TBD",
+  "approvedForStoreSubmission": false,
+  "noKnownBlockersAssertion": false,
+  "checkedAtUtc": "TBD"
+}
