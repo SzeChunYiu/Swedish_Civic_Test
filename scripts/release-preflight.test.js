@@ -429,6 +429,86 @@ test('release issue update draft command writes tracker-ready status comment', (
   assert.match(report, /Completion audit decision: do not mark the goal complete/i);
 });
 
+test('release issue comment command posts the generated blocked status draft', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-issue-comment-'));
+  const preflightJsonPath = path.join(tmpDir, 'preflight.json');
+  const bodyPath = path.join(tmpDir, 'issue-update.md');
+  const reportPath = path.join(tmpDir, 'issue-comment.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  fs.writeFileSync(
+    preflightJsonPath,
+    JSON.stringify(
+      {
+        status: 'BLOCKED',
+        readyForSubmission: false,
+        gates: [
+          {
+            id: 'eas-auth',
+            label: 'Expo/EAS authentication',
+            status: 'BLOCKED',
+            evidence: 'Not logged in',
+            nextAction: 'Log in to Expo/EAS.',
+          },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'if [ "$1 $2" = "issue comment" ] && [ "$3" = "11" ]; then echo "https://github.com/SzeChunYiu/Swedish_Civic_Test/issues/11#issuecomment-123"; exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/post-release-issue-update.js',
+      '--preflight-json',
+      preflightJsonPath,
+      '--body-out',
+      bodyPath,
+      '--out',
+      reportPath,
+      '--merge',
+      'abc1234',
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+  const body = fs.readFileSync(bodyPath, 'utf8');
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:issue-comment'],
+    'node scripts/post-release-issue-update.js --run-validate --body-out reports/release-issue-update-latest.md --out reports/release-issue-comment-latest.md',
+  );
+  assert.match(result.stdout, /Release issue update comment POSTED/i);
+  assert.match(body, /Release status update for issue #11/);
+  assert.match(body, /merge `abc1234`/);
+  assert.match(report, /Status \| POSTED/);
+  assert.match(
+    report,
+    /Issue comment URL \| https:\/\/github.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/11#issuecomment-123/,
+  );
+  assert.match(ghCalls, /issue comment 11 --repo SzeChunYiu\/Swedish_Civic_Test --body-file/);
+  assert.match(ghCalls, new RegExp(bodyPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+});
+
 function createDeviceAudioEvidence(platform, options = {}) {
   const relativeDir = path.join(
     'reports',

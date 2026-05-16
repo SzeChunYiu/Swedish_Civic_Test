@@ -58,7 +58,8 @@
     "release:eas-preview-dispatch": "node scripts/dispatch-eas-preview-workflow.js",
     "release:external-blocker-loop": "node scripts/run-external-release-loop.js",
     "release:external-loop-dispatch": "node scripts/dispatch-external-blocker-loop.js",
-    "release:store-expo-token-keychain": "node scripts/store-expo-token-keychain.js"
+    "release:store-expo-token-keychain": "node scripts/store-expo-token-keychain.js",
+    "release:issue-comment": "node scripts/post-release-issue-update.js --run-validate --body-out reports/release-issue-update-latest.md --out reports/release-issue-comment-latest.md"
   },
   "dependencies": {
     "expo": "~54.0.33",
