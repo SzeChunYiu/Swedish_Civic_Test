@@ -102,6 +102,18 @@ service-account email, SHA256 key fingerprint, package name
 not commit service-account private keys or passwords; record only non-secret
 identifiers and fingerprints.
 
+## Store policy questionnaire evidence
+
+If store policy questionnaire evidence is recorded in local JSON, use a path
+such as `reports/store-policy-questionnaires/store-policy-questionnaires.json`.
+Local JSON referenced by the `store-policy-questionnaires` gate is validated by
+`npm run release:preflight` and must include: `status: "reviewed"`,
+`reviewedAt`, `reviewer`, Apple age-rating review, Apple export-compliance
+review with `usesNonExemptEncryption: false`, content-rights review, no
+official-affiliation claims, Google Play content-rating review, target-audience
+review, ads declaration review, no real-money gambling, and no government
+affiliation claims.
+
 ## Privacy and monetization review
 
 Do not mark `privacy-review` READY in `reports/release-gates.json` until this

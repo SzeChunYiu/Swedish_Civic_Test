@@ -181,6 +181,37 @@ Do not commit Apple passwords, API keys, private keys, or Google service-account
 JSON. The evidence file should contain only non-secret identifiers, source notes,
 and fingerprints.
 
+## 4c. Review store policy questionnaires
+
+Record age-rating, export-compliance, content-rating, target-audience, ads
+declaration, and affiliation/gambling questionnaire evidence in
+`reports/store-policy-questionnaires/store-policy-questionnaires.json`. Reference
+that path in the `store-policy-questionnaires` release gate.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "reviewed",
+  "reviewedAt": "2026-05-16T02:35:00Z",
+  "reviewer": "release-owner",
+  "apple": {
+    "ageRatingReviewed": true,
+    "exportComplianceReviewed": true,
+    "usesNonExemptEncryption": false,
+    "contentRightsReviewed": true,
+    "noOfficialAffiliationClaims": true
+  },
+  "google": {
+    "contentRatingReviewed": true,
+    "targetAudienceReviewed": true,
+    "adsDeclarationReviewed": true,
+    "containsRealMoneyGambling": false,
+    "noGovernmentAffiliationClaims": true
+  }
+}
+```
+
 If recording store/account evidence locally, create
 `reports/store-records/store-records.json` and reference that path in the
 `store-records` gate evidence. `npm run release:preflight` validates local JSON
