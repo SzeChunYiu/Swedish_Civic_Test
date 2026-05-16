@@ -42,6 +42,9 @@ You can also run the same check from GitHub Actions with the manual
 `External release blocker loop` workflow. It uploads
 `reports/external-release-loop-latest.md` as the `external-release-loop`
 artifact even when gates are still blocked.
+When this workflow runs in GitHub Actions, it uses injected `EXPO_TOKEN` for
+secret-presence checks and `GH_TOKEN: ${{ github.token }}` with `actions: write`
+to dispatch the follow-up EAS preview workflow.
 
 The loop runs these commands in order and continues after expected blocked exits:
 it writes intermediate command artifacts under `/tmp` so `release:preflight`
