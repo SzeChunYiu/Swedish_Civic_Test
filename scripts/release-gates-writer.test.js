@@ -140,3 +140,49 @@ test('release gate writer accepts longer evidence from a file', () => {
     /https:\/\/expo\.dev\/build\/android-456/,
   );
 });
+
+test('release evidence stub command creates gate-specific non-secret evidence files', () => {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-stub-'));
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/create-release-evidence-stub.js', '--root', tmpRoot, '--gate', 'store-records'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const outputPath = path.join(tmpRoot, 'reports/store-records/store-records.json');
+  const stub = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:evidence-stub'],
+    'node scripts/create-release-evidence-stub.js',
+  );
+  assert.match(result.stdout, /store-records/i);
+  assert.equal(stub.gate, 'store-records');
+  assert.equal(stub.status, 'blocked');
+  assert.equal(stub.bundleIdentifier, 'com.billyyiu.swedishcivictest');
+  assert.equal(stub.packageName, 'com.billyyiu.swedishcivictest');
+  assert.match(stub.supportUrl, /szechunyiu.github.io/);
+  assert.match(stub.privacyPolicyUrl, /szechunyiu.github.io/);
+
+  const secondRun = spawnSync(
+    process.execPath,
+    ['scripts/create-release-evidence-stub.js', '--root', tmpRoot, '--gate', 'store-records'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(secondRun.status, 1);
+  assert.match(secondRun.stderr || secondRun.stdout, /already exists/i);
+});
+
+test('release evidence stub command rejects unknown gates', () => {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-stub-unknown-'));
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/create-release-evidence-stub.js', '--root', tmpRoot, '--gate', 'not-a-gate'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr || result.stdout, /Unknown gate/i);
+});
