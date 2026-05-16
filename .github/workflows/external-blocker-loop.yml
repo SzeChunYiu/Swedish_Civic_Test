@@ -1,0 +1,48 @@
+name: External release blocker loop
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+jobs:
+  evidence:
+    name: Run external release blocker loop
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 26.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run external blocker loop and keep report
+        shell: bash
+        run: |
+          set +e
+          npm run release:external-blocker-loop -- --out reports/external-release-loop-latest.md
+          code=$?
+          set -e
+          echo "EXTERNAL_RELEASE_LOOP_EXIT=$code"
+          exit 0
+
+      - name: Upload external blocker loop report
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: external-release-loop
+          path: reports/external-release-loop-latest.md
+          if-no-files-found: error
