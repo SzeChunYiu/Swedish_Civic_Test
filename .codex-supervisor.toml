@@ -31,6 +31,42 @@ role = "team"
 project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
 
+[hosts."civic-team-uiux-design-lunarc"]
+ssh = "lunarc"
+session = "civic-team-uiux-design"
+prompts = "codex-prompts-civic-team-uiux-design.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-uiux-runtime-lunarc"]
+ssh = "lunarc"
+session = "civic-team-uiux-runtime"
+prompts = "codex-prompts-civic-team-uiux-runtime.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-qa-lunarc"]
+ssh = "lunarc"
+session = "civic-team-qa"
+prompts = "codex-prompts-civic-team-qa.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-release-lunarc"]
+ssh = "lunarc"
+session = "civic-team-release"
+prompts = "codex-prompts-civic-team-release.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
 # Legacy host kept for compatibility — superseded by civic-team-build-lunarc.
 [hosts."civic-lunarc"]
 ssh = "lunarc"
