@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `c25e6b7` on `SzeChunYiu` PR branch (`fix: point public release urls to SzeChunYiu [allow-meta]`); product commit verified before this evidence refresh |
+| Git commit | `0112837` on `SzeChunYiu` main (`Merge pull request #13 from SzeChunYiu/codex/release-ownership-target-gate`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `SzeChunYiu/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-16 02:52 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-16 02:52 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, READY URL/store evidence missing exact hosted support/privacy URL values, invalid local store policy questionnaire JSON, invalid local release-owner approval JSON, and invalid local privacy-review JSON before production release actions |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-16 03:04 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-16 03:04 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, READY URL/store evidence missing exact hosted support/privacy URL values, invalid local store policy questionnaire JSON, invalid local release-owner approval JSON, and invalid local privacy-review JSON before production release actions |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-16 02:52 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-16 03:04 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -42,6 +42,7 @@ Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-1
 - Monetization tests passed: 4/4, including real-ads-fail-closed coverage and launch popup ad fail-closed/cap/premium behavior.
 - Publishing tests passed: 5/5, including explicit disabled Google Mobile Ads SDK privacy/data-safety posture coverage for `react-native-google-mobile-ads`, Google sample test app IDs, and `REAL_ADS_ENABLED_FOR_V1=false`.
 - Public URL checker tests passed: 2/2.
+- Ownership target test passed: 1/1, verifying SzeChunYiu app/public-site targets, SzeChunYiu support/privacy URLs, and no legacy owner references in tracked files.
 - Build-config tests passed: 12/12, including preview build auth guard coverage, production build preflight guard coverage, production build/submit run-validation guard coverage, dependency audit validation coverage, production submit placeholder-credential guard coverage, and production submit release-preflight guard coverage.
 - App-assets test passed: 1/1.
 - Screenshot-manifest test passed: 1/1.
