@@ -186,3 +186,28 @@ test('release evidence stub command rejects unknown gates', () => {
   assert.equal(result.status, 1);
   assert.match(result.stderr || result.stdout, /Unknown gate/i);
 });
+
+test('release evidence stub list stays synchronized with blocked manual gates', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/create-release-evidence-stub.js', '--list'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const rows = JSON.parse(result.stdout);
+  const gates = JSON.parse(fs.readFileSync(path.join(repoRoot, 'reports/release-gates.json')));
+  const blockedManualGates = Object.entries(gates.gates)
+    .filter(([, gate]) => gate.status === 'BLOCKED')
+    .map(([gate]) => gate)
+    .sort();
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.deepEqual(rows.map((row) => row.gate).sort(), blockedManualGates);
+  assert.equal(
+    rows.some((row) => row.gate === 'public-urls'),
+    false,
+  );
+  for (const row of rows) {
+    assert.match(row.path, /^reports\//);
+    assert.equal(row.status, 'blocked');
+  }
+});

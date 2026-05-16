@@ -193,6 +193,7 @@ function parseArgs(argv) {
     if (arg === '--root') parsed.root = argv[++index];
     else if (arg === '--gate') parsed.gate = argv[++index];
     else if (arg === '--force') parsed.force = true;
+    else if (arg === '--list') parsed.list = true;
     else if (arg === '--help' || arg === '-h') parsed.help = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
@@ -203,6 +204,7 @@ function parseArgs(argv) {
 function usage() {
   return [
     'Usage: node scripts/create-release-evidence-stub.js --gate <gate> [--root <repo>] [--force]',
+    '   or: node scripts/create-release-evidence-stub.js --list',
     '',
     `Known gates: ${Object.keys(templates).join(', ')}`,
   ].join('\n');
@@ -223,6 +225,16 @@ function main() {
 
   if (args.help) {
     process.stdout.write(`${usage()}\n`);
+    return;
+  }
+
+  if (args.list) {
+    const rows = Object.entries(templates).map(([gate, template]) => ({
+      gate,
+      path: template.path,
+      status: template.content.status,
+    }));
+    process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
     return;
   }
 
