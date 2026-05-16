@@ -56,6 +56,14 @@ const evidenceRequirements = {
       /\b(?:reports|publishing)\/[^\s,;:]+|https?:\/\//i,
     ],
   ],
+  'release-owner-approval': [
+    ['release owner approval', /release owner|approver|approved/i],
+    ['store submission decision', /store submission|approved-for-store-submission|submission/i],
+    [
+      'local approval evidence path or URL reference',
+      /\b(?:reports|publishing)\/[^\s,;:]+|https?:\/\//i,
+    ],
+  ],
   'privacy-review': [
     ['Apple privacy labels review', /Apple privacy labels|App Store privacy/i],
     ['Google Play Data safety review', /Google Play Data safety|Data safety/i],
@@ -514,6 +522,61 @@ function validateStorePolicyQuestionnaireEvidence(evidencePath) {
   return errors;
 }
 
+function validateReleaseOwnerApprovalEvidence(evidencePath) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'approved') {
+    errors.push('status must be approved');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(evidence.approvedAt || '')) {
+    errors.push('approvedAt must be an ISO UTC timestamp');
+  }
+  if (!evidence.approver || !String(evidence.approver).trim()) {
+    errors.push('approver is required');
+  }
+  if (!/^[0-9a-f]{7,40}$/i.test(String(evidence.approvedCommit || ''))) {
+    errors.push('approvedCommit must be a short or full git SHA');
+  }
+  if (evidence.releaseDecision !== 'approved-for-store-submission') {
+    errors.push('releaseDecision must be approved-for-store-submission');
+  }
+  if (evidence.noKnownBlockers !== true) {
+    errors.push('noKnownBlockers must be true');
+  }
+  if (evidence.evidenceReport !== 'reports/release-evidence-2026-05-15.md') {
+    errors.push('evidenceReport must be reports/release-evidence-2026-05-15.md');
+  } else if (!exists(evidence.evidenceReport)) {
+    errors.push(`evidenceReport does not exist: ${evidence.evidenceReport}`);
+  }
+
+  const checkedGates = Array.isArray(evidence.checkedGates) ? evidence.checkedGates : [];
+  const requiredCheckedGates = [
+    'eas-auth',
+    'eas-build-artifacts',
+    'android-device-audio',
+    'ios-device-audio',
+    'store-records',
+    'store-credentials',
+    'store-policy-questionnaires',
+    'privacy-review',
+    'public-urls',
+    'device-screenshots',
+  ];
+  for (const gateId of requiredCheckedGates) {
+    if (!checkedGates.includes(gateId)) {
+      errors.push(`checkedGates must include ${gateId}`);
+    }
+  }
+
+  return errors;
+}
+
 function validatePrivacyReviewEvidence(evidencePath) {
   let evidence;
   try {
@@ -708,6 +771,16 @@ function validateLocalArtifactContents(id, artifactPaths) {
 
     const errors = jsonPaths.flatMap((jsonPath) =>
       validatePrivacyReviewEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
+  if (id === 'release-owner-approval') {
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validateReleaseOwnerApprovalEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
     );
     return errors.length > 0 ? errors : null;
   }
@@ -1110,6 +1183,13 @@ function buildReport() {
       'Store privacy questionnaire review against binary',
       'No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded.',
       'After EAS build and store records exist, review Apple privacy labels and Google Play Data safety against the generated binary, including Google Mobile Ads SDK test configuration and real-ads-disabled posture.',
+    ),
+    evidenceGate(
+      manualEvidence,
+      'release-owner-approval',
+      'Release owner approval',
+      'No final release-owner approval for store submission is recorded.',
+      'After build, device, store, policy, privacy, URL, and screenshot gates are ready, record release-owner approval before submission.',
     ),
     publicUrlsGate(manualEvidence),
     evidenceGate(

@@ -114,6 +114,18 @@ official-affiliation claims, Google Play content-rating review, target-audience
 review, ads declaration review, no real-money gambling, and no government
 affiliation claims.
 
+## Release-owner approval evidence
+
+If final release-owner approval is recorded in local JSON, use a path such as
+`reports/release-owner-approval/release-owner-approval.json`. Local JSON
+referenced by the `release-owner-approval` gate is validated by
+`npm run release:preflight` and must include: `status: "approved"`,
+`approvedAt`, `approver`, `approvedCommit`,
+`releaseDecision: "approved-for-store-submission"`, `noKnownBlockers: true`,
+`evidenceReport: "reports/release-evidence-2026-05-15.md"`, and checked gate
+IDs for EAS auth/builds, device audio, store records/credentials/policy,
+privacy review, public URLs, and final screenshots.
+
 ## Privacy and monetization review
 
 Do not mark `privacy-review` READY in `reports/release-gates.json` until this
