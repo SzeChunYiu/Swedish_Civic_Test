@@ -732,6 +732,58 @@ test('external release blocker loop runs every safe evidence command and records
   assert.doesNotMatch(report, /super-secret-token/);
 });
 
+test('external release blocker loop times out a stuck step and continues evidence collection', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'external-release-loop-timeout-'));
+  const reportPath = path.join(tmpDir, 'external-release-loop.md');
+  const commandLog = path.join(tmpDir, 'commands.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npx'),
+    [
+      '#!/bin/sh',
+      `echo "npx $@" >> "${commandLog}"`,
+      'sleep 0.4',
+      'echo "late eas success"',
+      'exit 0',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    [
+      '#!/bin/sh',
+      `echo "npm $@" >> "${commandLog}"`,
+      'echo "follow-up evidence ran"',
+      'exit 1',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/run-external-release-loop.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS: '100',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const calls = fs.readFileSync(commandLog, 'utf8');
+
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(report, /eas-whoami/);
+  assert.match(report, /Timed out after 100ms/);
+  assert.match(report, /release:evidence-index/);
+  assert.match(calls, /npm run release:evidence-index/);
+  assert.doesNotMatch(report, /late eas success/);
+});
+
 test('manual EAS preview workflow requires Expo token and runs preview build guard', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/eas-preview-build.yml');
   assert.equal(fs.existsSync(workflowPath), true);
