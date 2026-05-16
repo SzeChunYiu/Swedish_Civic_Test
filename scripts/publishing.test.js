@@ -138,6 +138,7 @@ test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
   assert.match(checklist, /npm run release:github-secrets-check/);
   assert.match(checklist, /npm run release:set-expo-token-secret/);
   assert.match(checklist, /npm run release:expo-token-bootstrap/);
+  assert.match(checklist, /macOS Keychain service `EXPO_TOKEN`/);
   assert.match(checklist, /npm run release:eas-preview-dispatch/);
   assert.match(checklist, /npm run release:evidence-index/);
   assert.match(checklist, /update-release-gate/);

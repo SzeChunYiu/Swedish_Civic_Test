@@ -229,6 +229,64 @@ test('Expo token bootstrap sets secret, verifies it, dispatches blocker loop, an
   assert.doesNotMatch(result.stdout, /super-secret-token/);
 });
 
+test('Expo token bootstrap can read the local token from macOS Keychain fallback', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'expo-token-bootstrap-keychain-'));
+  const reportPath = path.join(tmpDir, 'bootstrap.md');
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const securityLog = path.join(tmpDir, 'security.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'security'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${securityLog}"`,
+      'if [ "$1 $2 $3" = "find-generic-password -w -s" ] && [ "$4" = "EXPO_TOKEN" ]; then echo "keychain-secret-token"; exit 0; fi',
+      'exit 44',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    [
+      '#!/bin/sh',
+      `echo "$@ EXPO_TOKEN=$EXPO_TOKEN" >> "${npmLog}"`,
+      'args="$*"',
+      'out=""',
+      'prev=""',
+      'for arg in "$@"; do if [ "$prev" = "--out" ]; then out="$arg"; fi; prev="$arg"; done',
+      'case "$args" in',
+      '  *"release:set-expo-token-secret"*) printf "# set secret\\nREADY\\n" > "$out"; exit 0 ;;',
+      '  *"release:github-secrets-check"*) printf "# check secret\\nREADY\\n" > "$out"; exit 0 ;;',
+      '  *"release:external-loop-dispatch"*) printf "# dispatch\\nhttps://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/790\\n" > "$out"; exit 0 ;;',
+      'esac',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const env = { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` };
+  delete env.EXPO_TOKEN;
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/bootstrap-expo-token-release.js', '--out', reportPath],
+    { cwd: repoRoot, encoding: 'utf8', env },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const npmCalls = fs.readFileSync(npmLog, 'utf8');
+  const securityCalls = fs.readFileSync(securityLog, 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /Expo token release bootstrap DISPATCHED/i);
+  assert.match(report, /Status \| DISPATCHED/);
+  assert.match(report, /Token source \| macOS Keychain service EXPO_TOKEN/);
+  assert.match(securityCalls, /find-generic-password -w -s EXPO_TOKEN/);
+  assert.match(npmCalls, /EXPO_TOKEN=keychain-secret-token/);
+  assert.doesNotMatch(report, /keychain-secret-token/);
+  assert.doesNotMatch(result.stdout, /keychain-secret-token/);
+});
+
 test('EAS preview dispatch command blocks without EXPO_TOKEN secret and does not start workflow', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-blocked-'));
   const reportPath = path.join(tmpDir, 'dispatch.md');
