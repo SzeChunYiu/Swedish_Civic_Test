@@ -59,7 +59,8 @@
     "release:external-blocker-loop": "node scripts/run-external-release-loop.js",
     "release:external-loop-dispatch": "node scripts/dispatch-external-blocker-loop.js",
     "release:store-expo-token-keychain": "node scripts/store-expo-token-keychain.js",
-    "release:issue-comment": "node scripts/post-release-issue-update.js --run-validate --body-out reports/release-issue-update-latest.md --out reports/release-issue-comment-latest.md"
+    "release:issue-comment": "node scripts/post-release-issue-update.js --run-validate --body-out reports/release-issue-update-latest.md --out reports/release-issue-comment-latest.md",
+    "release:expo-token-request": "node scripts/write-expo-token-owner-request.js --out reports/expo-token-owner-request-latest.md"
   },
   "dependencies": {
     "expo": "~54.0.33",

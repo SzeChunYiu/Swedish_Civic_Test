@@ -448,6 +448,82 @@ test('Expo token Keychain writer stores a stdin token without printing it', () =
   assert.doesNotMatch(result.stdout, /super-secret-token/);
 });
 
+test('Expo token owner request reports current auth blockers and exact next commands', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'expo-token-owner-request-'));
+  const reportPath = path.join(tmpDir, 'token-request.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  const securityLog = path.join(tmpDir, 'security.log');
+  const npxLog = path.join(tmpDir, 'npx.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'if [ "$1 $2 $3" = "secret list --repo" ]; then exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'security'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${securityLog}"`,
+      'if [ "$1 $2 $3" = "find-generic-password -s" ] && [ "$4" = "EXPO_TOKEN" ]; then exit 44; fi',
+      'echo "unexpected security command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'npx'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${npxLog}"`,
+      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "Not logged in" >&2; exit 1; fi',
+      'echo "unexpected npx command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const env = {
+    ...process.env,
+    GITHUB_ACTIONS: 'false',
+    PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+  };
+  delete env.EXPO_TOKEN;
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/write-expo-token-owner-request.js', '--out', reportPath],
+    { cwd: repoRoot, encoding: 'utf8', env },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 1);
+  assert.equal(
+    pkg.scripts['release:expo-token-request'],
+    'node scripts/write-expo-token-owner-request.js --out reports/expo-token-owner-request-latest.md',
+  );
+  assert.match(result.stdout, /Expo token owner request BLOCKED/i);
+  assert.match(report, /Status \| BLOCKED/);
+  assert.match(report, /Repository \| SzeChunYiu\/Swedish_Civic_Test/);
+  assert.match(report, /Local EXPO_TOKEN env \| missing/);
+  assert.match(report, /macOS Keychain EXPO_TOKEN \| missing/);
+  assert.match(report, /GitHub Actions EXPO_TOKEN secret \| missing/);
+  assert.match(report, /EAS whoami \| blocked/);
+  assert.match(report, /release:store-expo-token-keychain -- --token-stdin/);
+  assert.match(report, /release:expo-token-bootstrap/);
+  assert.doesNotMatch(report, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+  assert.doesNotMatch(report, /super-secret-token|token value/i);
+});
+
 test('EAS preview dispatch command blocks without EXPO_TOKEN secret and does not start workflow', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-blocked-'));
   const reportPath = path.join(tmpDir, 'dispatch.md');

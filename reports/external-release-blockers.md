@@ -18,6 +18,13 @@ the repository Actions secret without printing the value:
 npm run release:set-expo-token-secret -- --out reports/set-expo-token-secret-latest.md
 ```
 
+If the token is still absent, generate the current non-secret owner request and
+post the report body to issue #11:
+
+```bash
+npm run release:expo-token-request -- --out reports/expo-token-owner-request-latest.md
+```
+
 If you have a valid Expo token but do not want to keep it in shell history,
 paste or pipe it into the local macOS Keychain helper first. The report redacts
 the token and the follow-up bootstrap command can read the `EXPO_TOKEN`
