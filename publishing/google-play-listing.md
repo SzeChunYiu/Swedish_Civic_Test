@@ -39,9 +39,9 @@ Educational content only. No user-generated content, gambling, sexual content, o
 
 ## Public URLs
 
-Support URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/
+Support URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/
 
-Privacy Policy URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/
+Privacy Policy URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/
 
 ## Data safety summary
 

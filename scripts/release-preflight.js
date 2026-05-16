@@ -5,8 +5,8 @@ const { spawnSync } = require('node:child_process');
 const jsonMode = process.argv.includes('--json');
 const runValidate = process.argv.includes('--run-validate');
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
-const supportUrl = 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/';
-const privacyUrl = 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/';
+const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
   : [supportUrl, privacyUrl];

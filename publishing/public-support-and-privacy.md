@@ -8,8 +8,8 @@ addresses in both store records and in the release evidence file.
 
 | Store field | Final value |
 |---|---|
-| Support URL | `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/` |
-| Privacy Policy URL | `https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/` |
+| Support URL | `https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/` |
+| Privacy Policy URL | `https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/` |
 
 ## Support URL page copy
 

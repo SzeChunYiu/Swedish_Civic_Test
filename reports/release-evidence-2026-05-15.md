@@ -5,7 +5,7 @@
 | Field | Evidence |
 |---|---|
 | Date | 2026-05-15 |
-| Git commit | `ca5e5ec` on `SzeChunYiu` PR branch (`feat: validate release owner approval evidence [allow-meta]`); product commit verified before this evidence refresh |
+| Git commit | `c25e6b7` on `SzeChunYiu` PR branch (`fix: point public release urls to SzeChunYiu [allow-meta]`); product commit verified before this evidence refresh |
 | Branch | `main`; private GitHub remote is `SzeChunYiu/Swedish_Civic_Test` |
 | EAS build profile | Not built; blocked before EAS build by authentication |
 | Android build ID / URL | BLOCKED — no EAS preview/internal build because `npx --yes eas-cli@18.13.0 whoami` returns `Not logged in` |
@@ -16,8 +16,8 @@
 
 | Gate | Command or URL | Result |
 |---|---|---|
-| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-16 02:43 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
-| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-16 02:43 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, READY URL/store evidence missing exact hosted support/privacy URL values, invalid local store policy questionnaire JSON, invalid local release-owner approval JSON, and invalid local privacy-review JSON before production release actions |
+| Local validation | `npm run validate` | PASS inside `npm run release:preflight` on 2026-05-16 02:52 CEST; includes typecheck, lint, format, npm audit check, all test suites, and content validation |
+| Release preflight | `npm run release:preflight` | BLOCKED on 2026-05-16 02:52 CEST by external/device/store gates; expected non-zero exit 1; current manual gate evidence lives in `reports/release-gates.json`; public support/privacy URLs are READY; release preflight now also blocks dirty release worktrees, missing referenced local artifact paths, READY URL/store evidence missing exact hosted support/privacy URL values, invalid local store policy questionnaire JSON, invalid local release-owner approval JSON, and invalid local privacy-review JSON before production release actions |
 | Web production export smoke | `npm run release:web-export-smoke` | PASS as part of release-preflight hardening; exported `dist-web/index.html` and `dist-web/metadata.json` |
 | Expo Doctor | `npm exec -- expo-doctor` | PASS at 2026-05-15 18:36 CEST; 17/17 checks passed after removing local `eas-cli` |
 | Native prebuild smoke | `npm run release:native-prebuild-smoke` | PASS and now runs in release preflight; Android and iOS prebuild finished |
@@ -27,7 +27,7 @@
 
 ## Validation details
 
-Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-16 02:43 CEST:
+Latest `npm run validate` evidence from `npm run release:preflight` on 2026-05-16 02:52 CEST:
 
 - TypeScript typecheck passed.
 - Expo lint passed with `--max-warnings=0`.
@@ -73,7 +73,7 @@ Blocked gates:
 - `store-policy-questionnaires`: no App Store age rating/export compliance or Google Play content rating/ads declaration evidence is recorded; release preflight validates referenced local JSON for Apple age rating, export compliance, content rights, no official-affiliation claims, Google Play content rating, target audience, ads declaration, no real-money gambling, and no government-affiliation claims.
 - `privacy-review`: no final Apple privacy labels / Google Play Data safety review against the generated binary is recorded; release preflight now requires this evidence to include the generated binary/build plus disabled Google Mobile Ads SDK posture and validates referenced local JSON for reviewed build ID/version/commit, Apple privacy labels, Google Play Data safety, Google Mobile Ads test/real-ads-disabled posture, and disabled analytics/crash/purchase/real-ad SDKs.
 - `release-owner-approval`: no final release-owner approval for store submission is recorded; release preflight validates referenced local JSON for approval time, approver, approved commit, store-submission decision, no-known-blockers assertion, evidence report path, and checked gate IDs.
-- `public-urls`: ready; support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and privacy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200 during the live release-preflight URL check.
+- `public-urls`: ready; support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and privacy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200 during the live release-preflight URL check.
 - `device-screenshots`: web-draft screenshots and manifest exist, but final device/store screenshots are not recorded; release preflight now validates referenced local `reports/final-store-screenshots/manifest.json` files for `status: final-device`, required routes, device/capture/build metadata, and existing screenshot files.
 - `submission`: no TestFlight, Google Play internal test, production submission, or post-launch monitoring evidence; release preflight now validates referenced local JSON for TestFlight build status, Google Play internal track/version/tester group, iOS and Android production submission IDs/statuses, an existing monitoring report path, and monitoring report content covering first-week window, crash reports, content/support reports, and reviews/ratings.
 
@@ -117,8 +117,8 @@ Blocked gates:
 | Google Play Console app record | App record URL for `com.billyyiu.swedishcivictest` | BLOCKED — no app record evidence recorded |
 | Google Play internal release | Track URL, version code, tester group | BLOCKED — no Android internal release evidence |
 | AdMob app record | AdMob app ID or decision to keep ads disabled/placeholders | DEFERRED — real ads are disabled for v1.0; AdMob required only before enabling live ads |
-| Public support URL | URL visible in both store records | HOSTED — https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/; still must be entered in store records |
-| Public privacy URL | URL visible in both store records | HOSTED — https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/; still must be entered in store records |
+| Public support URL | URL visible in both store records | HOSTED — https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/; still must be entered in store records |
+| Public privacy URL | URL visible in both store records | HOSTED — https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/; still must be entered in store records |
 | Store policy questionnaires | Apple age rating/export compliance/content-rights/no-affiliation review and Google Play content rating/target audience/ads/gambling/government-affiliation review; local `reports/store-policy-questionnaires/store-policy-questionnaires.json` schema is validated when referenced | BLOCKED — no store policy questionnaire evidence recorded |
 | Release-owner approval | Final release-owner approval for store submission; local `reports/release-owner-approval/release-owner-approval.json` schema is validated when referenced | BLOCKED — no release-owner approval evidence recorded |
 | Final privacy questionnaire review | Apple privacy labels and Google Play Data safety reviewed against generated binary/build, including disabled Google Mobile Ads SDK posture; local `reports/privacy-review/privacy-review.json` schema is validated when referenced | BLOCKED — no generated binary/store questionnaire review evidence recorded |

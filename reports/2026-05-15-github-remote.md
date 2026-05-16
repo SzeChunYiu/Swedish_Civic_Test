@@ -7,7 +7,7 @@ the earlier no-remote limitation.
 
 ## Remote repository
 
-- GitHub repository: https://github.com/Babbloo-studio/Swedish_Civic_Test
+- GitHub repository: https://github.com/SzeChunYiu/Swedish_Civic_Test
 - Visibility: private
 - Default branch: `main`
 - Local remote: `origin`
@@ -24,9 +24,9 @@ Observed evidence:
 
 ```json
 {
-  "nameWithOwner": "Babbloo-studio/Swedish_Civic_Test",
+  "nameWithOwner": "SzeChunYiu/Swedish_Civic_Test",
   "isPrivate": true,
-  "url": "https://github.com/Babbloo-studio/Swedish_Civic_Test",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test",
   "defaultBranchRef": { "name": "main" }
 }
 ```
@@ -41,7 +41,7 @@ Local tracking branches after push:
 
 Created a private GitHub issue to track the remaining external release gates:
 
-- https://github.com/Babbloo-studio/Swedish_Civic_Test/issues/1
+- https://github.com/SzeChunYiu/Swedish_Civic_Test/issues/11
 
 The issue mirrors the current `npm run release:preflight` blockers: Expo/EAS
 auth, EAS builds, Android/iOS physical-device audio, store records, hosted
