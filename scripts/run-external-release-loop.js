@@ -11,6 +11,7 @@ function buildSteps(artifactDir) {
       name: 'eas-whoami',
       command: 'npx',
       args: ['--yes', 'eas-cli@18.13.0', 'whoami'],
+      timeoutMs: 120_000,
     },
     {
       name: 'release:eas-access-check',
@@ -155,15 +156,41 @@ function summarizeOutput(value) {
   return text.length > 800 ? `${text.slice(0, 800)}…` : text;
 }
 
+function parsePositiveInteger(value) {
+  const parsed = Number.parseInt(value || '', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function stepTimeoutMs(step) {
+  return (
+    parsePositiveInteger(process.env.EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS) ||
+    step.timeoutMs ||
+    300_000
+  );
+}
+
+function timedOutMessage(timeoutMs) {
+  return `Timed out after ${timeoutMs}ms`;
+}
+
 function runStep(step) {
-  const result = spawnSync(step.command, step.args, { encoding: 'utf8' });
+  const timeoutMs = stepTimeoutMs(step);
+  const result = spawnSync(step.command, step.args, {
+    encoding: 'utf8',
+    killSignal: 'SIGTERM',
+    timeout: timeoutMs,
+  });
   const exitCode = result.status ?? 1;
+  const timedOut = result.error && result.error.code === 'ETIMEDOUT';
+  const stderr = [result.stderr, timedOut ? timedOutMessage(timeoutMs) : result.error?.message]
+    .filter(Boolean)
+    .join('\n');
   return {
     ...step,
     exitCode,
     status: exitCode === 0 ? 'READY' : 'BLOCKED',
     stdout: summarizeOutput(result.stdout),
-    stderr: summarizeOutput(result.stderr),
+    stderr: summarizeOutput(stderr),
   };
 }
 
