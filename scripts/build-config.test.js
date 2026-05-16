@@ -768,6 +768,7 @@ test('external release blocker loop times out a stuck step and continues evidenc
       encoding: 'utf8',
       env: {
         ...process.env,
+        EXPO_TOKEN: 'super-secret-token',
         EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS: '100',
         PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
       },
@@ -782,6 +783,53 @@ test('external release blocker loop times out a stuck step and continues evidenc
   assert.match(report, /release:evidence-index/);
   assert.match(calls, /npm run release:evidence-index/);
   assert.doesNotMatch(report, /late eas success/);
+});
+
+test('external release blocker loop skips EAS commands when Expo token is absent', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'external-release-loop-no-token-'));
+  const reportPath = path.join(tmpDir, 'external-release-loop.md');
+  const commandLog = path.join(tmpDir, 'commands.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npx'),
+    ['#!/bin/sh', `echo "npx $@" >> "${commandLog}"`, 'exit 1', ''].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    [
+      '#!/bin/sh',
+      `echo "npm $@" >> "${commandLog}"`,
+      'echo "non-eas evidence ran"',
+      'exit 1',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/run-external-release-loop.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        EXPO_TOKEN: '',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const calls = fs.readFileSync(commandLog, 'utf8');
+
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(report, /eas-whoami/);
+  assert.match(report, /Skipped because EXPO_TOKEN is not configured/);
+  assert.doesNotMatch(calls, /npx /);
+  assert.doesNotMatch(calls, /release:eas-access-check/);
+  assert.doesNotMatch(calls, /release:eas-preview-dispatch/);
+  assert.match(calls, /npm run release:github-secrets-check/);
+  assert.match(calls, /npm run release:evidence-index/);
 });
 
 test('external release blocker loop timeout kills descendant processes', () => {
@@ -801,7 +849,7 @@ test('external release blocker loop timeout kills descendant processes', () => {
       '#!/bin/sh',
       `echo "npm $@" >> "${commandLog}"`,
       'case "$*" in',
-      '  *"release:eas-access-check"*) node -e "setTimeout(() => console.log(\'late descendant output\'), 600)" ;;',
+      "  *\"release:eas-access-check\"*) node -e \"process.on('SIGTERM', () => {}); process.on('SIGHUP', () => {}); setTimeout(() => console.log('late descendant output'), 1000)\" ;;",
       '  *) echo "follow-up evidence ran"; exit 1 ;;',
       'esac',
       '',
@@ -818,6 +866,8 @@ test('external release blocker loop timeout kills descendant processes', () => {
       encoding: 'utf8',
       env: {
         ...process.env,
+        EXPO_TOKEN: 'super-secret-token',
+        EXTERNAL_RELEASE_LOOP_KILL_GRACE_MS: '100',
         EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS: '100',
         PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
       },
@@ -828,7 +878,7 @@ test('external release blocker loop timeout kills descendant processes', () => {
   const calls = fs.readFileSync(commandLog, 'utf8');
 
   assert.equal(result.status, 1, result.stderr || result.stdout);
-  assert.ok(elapsedMs < 500, `expected process-group timeout, elapsed ${elapsedMs}ms`);
+  assert.ok(elapsedMs < 700, `expected process-tree timeout, elapsed ${elapsedMs}ms`);
   assert.match(report, /release:eas-access-check/);
   assert.match(report, /Timed out after 100ms/);
   assert.match(calls, /npm run release:evidence-index/);
