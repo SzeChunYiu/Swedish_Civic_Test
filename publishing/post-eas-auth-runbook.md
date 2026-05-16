@@ -143,8 +143,8 @@ Record evidence for:
 - App Store Connect app record for `com.billyyiu.swedishcivictest`.
 - Google Play Console app record for `com.billyyiu.swedishcivictest`.
 - AdMob app record, or a recorded decision to keep real ads disabled for v1.0.
-- Public Support URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/.
-- Public Privacy Policy URL: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/.
+- Public Support URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/.
+- Public Privacy Policy URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/.
 
 Public support/privacy pages are already hosted on GitHub Pages and `public-urls` is READY in `reports/release-gates.json`. Enter those URLs in the store records after App Store Connect and Google Play Console app records exist.
 
@@ -229,8 +229,8 @@ Required local JSON shape:
   "bundleIdentifier": "com.billyyiu.swedishcivictest",
   "appStoreConnectUrl": "https://appstoreconnect.apple.com/apps/1234567890/appstore",
   "googlePlayConsoleUrl": "https://play.google.com/console/u/0/developers/123/app/497123",
-  "supportUrl": "https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/",
-  "privacyUrl": "https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/",
+  "supportUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/",
+  "privacyUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/",
   "accountOwnership": {
     "appleDeveloperTeamId": "ABCDE12345",
     "appleBundleIdReviewed": true,

@@ -29,7 +29,7 @@ Ready gates:
 - Web production export smoke passes.
 - Android/iOS native prebuild smoke passes.
 - Pinned npx EAS CLI is available through `npx --yes eas-cli@18.13.0 --version`; `npm run build:preview` now fails closed before EAS cloud build unless `npx --yes eas-cli@18.13.0 whoami` succeeds; `npm run build:production` and `npm run submit:production` now fail closed unless this release preflight is fully ready from a clean git worktree with `npm run validate` rerun; submit also requires concrete store submit credentials.
-- Public support/privacy URLs are hosted and live-checked by release preflight: https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/.
+- Public support/privacy URLs are hosted and live-checked by release preflight: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/.
 
 Blocked gates:
 

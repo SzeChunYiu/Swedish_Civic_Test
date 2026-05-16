@@ -96,7 +96,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           'store-records': {
             status: 'READY',
             evidence:
-              'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred.',
+              'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred.',
           },
           'store-credentials': {
             status: 'READY',
@@ -116,7 +116,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           'public-urls': {
             status: 'READY',
             evidence:
-              'Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ verified over HTTPS and entered in both store records.',
+              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ verified over HTTPS and entered in both store records.',
           },
           'device-screenshots': {
             status: 'READY',
@@ -291,8 +291,8 @@ function createStoreRecordEvidence(options = {}) {
     bundleIdentifier: 'com.billyyiu.swedishcivictest',
     appStoreConnectUrl: 'https://appstoreconnect.apple.com/apps/1234567890/appstore',
     googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
-    supportUrl: 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/',
-    privacyUrl: 'https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/',
+    supportUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
+    privacyUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
     accountOwnership: {
       appleDeveloperTeamId: 'ABCDE12345',
       appleBundleIdReviewed: true,
@@ -1604,11 +1604,11 @@ test('release preflight blocks store record evidence without exact public URLs',
   assert.match(storeRecords.evidence, /expected Support URL/i);
   assert.match(
     storeRecords.evidence,
-    /https:\/\/babbloo-studio\.github\.io\/Swedish_Civic_Test-public-site\/support\//i,
+    /https:\/\/szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/support\//i,
   );
   assert.match(
     storeRecords.evidence,
-    /https:\/\/babbloo-studio\.github\.io\/Swedish_Civic_Test-public-site\/privacy\//i,
+    /https:\/\/szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/privacy\//i,
   );
 });
 
@@ -1626,7 +1626,7 @@ test('release preflight blocks local store record evidence missing store URLs', 
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -1669,7 +1669,7 @@ test('release preflight blocks local store record evidence without listing metad
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -1710,7 +1710,7 @@ test('release preflight blocks local store record evidence without account owner
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -1742,7 +1742,7 @@ test('release preflight accepts valid local store record evidence', () => {
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
       },
     });
     writeFakeReleaseCommands(tmpDir);
