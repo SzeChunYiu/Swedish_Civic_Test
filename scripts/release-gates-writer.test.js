@@ -211,3 +211,34 @@ test('release evidence stub list stays synchronized with blocked manual gates', 
     assert.equal(row.status, 'blocked');
   }
 });
+
+test('release evidence index command summarizes stub readiness for blocked manual gates', () => {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-index-'));
+  const reportPath = path.join(tmpRoot, 'evidence-index.md');
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  fs.mkdirSync(path.join(tmpRoot, 'reports/store-records'), { recursive: true });
+  fs.writeFileSync(
+    path.join(tmpRoot, 'reports/store-records/store-records.json'),
+    `${JSON.stringify({ gate: 'store-records', status: 'blocked' }, null, 2)}\n`,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/write-release-evidence-index.js', '--root', tmpRoot, '--out', reportPath],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:evidence-index'],
+    'node scripts/write-release-evidence-index.js --out reports/release-evidence-index-latest.md',
+  );
+  assert.match(result.stdout, /Release evidence index BLOCKED/i);
+  assert.match(report, /# Release evidence index/);
+  assert.match(report, /\| `store-records` \| BLOCKED \| exists \|/);
+  assert.match(report, /\| `eas-build-artifacts` \| BLOCKED \| missing \|/);
+  assert.match(report, /npm run release:evidence-stub -- --gate eas-build-artifacts/);
+  assert.doesNotMatch(report, /`public-urls`/);
+});

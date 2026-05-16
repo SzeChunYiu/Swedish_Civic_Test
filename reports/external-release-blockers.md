@@ -19,6 +19,7 @@ npm run release:preflight
 npm run release:blockers-snapshot
 npm run release:completion-audit
 npm run release:issue-update
+npm run release:evidence-index
 ```
 
 Use `scripts/update-release-gate.js` or `npm run release:gate` to update
@@ -28,6 +29,8 @@ evidence.
 Use `npm run release:evidence-stub -- --list` to inspect scaffold paths, then
 `npm run release:evidence-stub -- --gate <gate>` to create the exact non-secret
 evidence file scaffold for a blocked manual gate before filling it.
+Use `npm run release:evidence-index` to summarize which blocked gates still
+need scaffold files versus filled evidence.
 
 ## Blocker checklist
 

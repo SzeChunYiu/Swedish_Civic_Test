@@ -131,6 +131,7 @@ test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
 
   assert.match(checklist, /npx --yes eas-cli@18\.13\.0 whoami/);
   assert.match(checklist, /npm run release:preflight/);
+  assert.match(checklist, /npm run release:evidence-index/);
   assert.match(checklist, /update-release-gate/);
 });
 
