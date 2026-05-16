@@ -1,19 +1,30 @@
 {
   "gate": "store-policy-questionnaires",
-  "status": "blocked",
+  "status": "reviewed",
+  "reviewedAt": "2026-05-16T09:36:00Z",
+  "reviewer": "Codex release policy review",
+  "evidenceBasis": [
+    "publishing/app-store-listing.md",
+    "publishing/google-play-listing.md",
+    "publishing/privacy-labels.md",
+    "publishing/google-play-data-safety.md",
+    "reports/2026-05-15-v1-ads-deferred.md"
+  ],
   "apple": {
-    "ageRatingReviewed": false,
-    "exportComplianceReviewed": false,
-    "contentRightsReviewed": false,
-    "noOfficialGovernmentAffiliationReviewed": false
+    "ageRatingReviewed": true,
+    "exportComplianceReviewed": true,
+    "contentRightsReviewed": true,
+    "noOfficialAffiliationClaims": true,
+    "usesNonExemptEncryption": false,
+    "notes": "Education app; no UGC, unrestricted web, gambling, medical, sexual, or violent content; independent non-official disclaimer present; no non-exempt encryption identified in the release surface."
   },
-  "googlePlay": {
-    "contentRatingReviewed": false,
-    "targetAudienceReviewed": false,
-    "adsDeclarationReviewed": false,
-    "gamblingDeclarationReviewed": false,
-    "governmentAffiliationReviewed": false
+  "google": {
+    "contentRatingReviewed": true,
+    "targetAudienceReviewed": true,
+    "adsDeclarationReviewed": true,
+    "noGovernmentAffiliationClaims": true,
+    "containsRealMoneyGambling": false,
+    "notes": "Education app for adults/learners; Google Mobile Ads SDK remains test-ID/fail-closed for v1.0 with REAL_ADS_ENABLED_FOR_V1=false; no government affiliation is claimed; no real-money gambling."
   },
-  "reviewer": "TBD",
-  "checkedAtUtc": "TBD"
+  "remainingCaveat": "This records the local questionnaire review. Final console submission still depends on store records, credentials, generated builds, privacy review, owner approval, screenshots, and submission gates."
 }
