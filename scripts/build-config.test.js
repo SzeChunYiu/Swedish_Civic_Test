@@ -268,6 +268,29 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 
+test('manual external blocker loop workflow runs redacted evidence loop and uploads report', () => {
+  const workflowPath = path.join(repoRoot, '.github/workflows/external-blocker-loop.yml');
+  assert.equal(fs.existsSync(workflowPath), true);
+
+  const workflow = fs.readFileSync(workflowPath, 'utf8');
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*true/);
+  assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
+  assert.match(workflow, /actions\/checkout@v5/);
+  assert.match(workflow, /actions\/setup-node@v5/);
+  assert.match(workflow, /actions\/upload-artifact@v6/);
+  assert.match(workflow, /npm ci/);
+  assert.match(
+    workflow,
+    /npm run release:external-blocker-loop -- --out reports\/external-release-loop-latest\.md/,
+  );
+  assert.match(workflow, /EXTERNAL_RELEASE_LOOP_EXIT=\$code/);
+  assert.match(workflow, /exit 0/);
+  assert.match(workflow, /reports\/external-release-loop-latest\.md/);
+  assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
+  assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+});
+
 test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.devDependencies['eas-cli'], undefined);

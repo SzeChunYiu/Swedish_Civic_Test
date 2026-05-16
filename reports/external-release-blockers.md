@@ -16,6 +16,11 @@ Run the full safe evidence loop after each evidence update:
 npm run release:external-blocker-loop -- --out reports/external-release-loop-latest.md
 ```
 
+You can also run the same check from GitHub Actions with the manual
+`External release blocker loop` workflow. It uploads
+`reports/external-release-loop-latest.md` as the `external-release-loop`
+artifact even when gates are still blocked.
+
 The loop runs these commands in order and continues after expected blocked exits:
 it writes intermediate command artifacts under `/tmp` so `release:preflight`
 can still evaluate the repository clean-worktree gate.
