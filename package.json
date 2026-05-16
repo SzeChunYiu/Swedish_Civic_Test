@@ -57,7 +57,8 @@
     "release:expo-token-bootstrap": "node scripts/bootstrap-expo-token-release.js",
     "release:eas-preview-dispatch": "node scripts/dispatch-eas-preview-workflow.js",
     "release:external-blocker-loop": "node scripts/run-external-release-loop.js",
-    "release:external-loop-dispatch": "node scripts/dispatch-external-blocker-loop.js"
+    "release:external-loop-dispatch": "node scripts/dispatch-external-blocker-loop.js",
+    "release:store-expo-token-keychain": "node scripts/store-expo-token-keychain.js"
   },
   "dependencies": {
     "expo": "~54.0.33",
