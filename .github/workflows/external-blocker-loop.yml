@@ -6,6 +6,7 @@ on:
 permissions:
   contents: read
   actions: write
+  issues: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -41,10 +42,24 @@ jobs:
           echo "EXTERNAL_RELEASE_LOOP_EXIT=$code"
           exit 0
 
+      - name: Post release issue update and keep report
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          npm run release:issue-comment -- --out reports/release-issue-comment-latest.md
+          code=$?
+          set -e
+          echo "RELEASE_ISSUE_COMMENT_EXIT=$code"
+          exit 0
+
       - name: Upload external blocker loop report
         uses: actions/upload-artifact@v6
         if: always()
         with:
           name: external-release-loop
-          path: reports/external-release-loop-latest.md
+          path: |
+            reports/external-release-loop-latest.md
+            reports/release-issue-update-latest.md
+            reports/release-issue-comment-latest.md
           if-no-files-found: error

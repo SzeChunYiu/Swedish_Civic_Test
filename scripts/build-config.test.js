@@ -779,6 +779,7 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
   assert.match(workflow, /GH_TOKEN:\s*\$\{\{ github\.token \}\}/);
   assert.match(workflow, /actions:\s*write/);
+  assert.match(workflow, /issues:\s*write/);
   assert.match(workflow, /actions\/checkout@v5/);
   assert.match(workflow, /actions\/setup-node@v5/);
   assert.match(workflow, /actions\/upload-artifact@v6/);
@@ -788,8 +789,15 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
     /npm run release:external-blocker-loop -- --out reports\/external-release-loop-latest\.md/,
   );
   assert.match(workflow, /EXTERNAL_RELEASE_LOOP_EXIT=\$code/);
+  assert.match(
+    workflow,
+    /npm run release:issue-comment -- --out reports\/release-issue-comment-latest\.md/,
+  );
+  assert.match(workflow, /RELEASE_ISSUE_COMMENT_EXIT=\$code/);
   assert.match(workflow, /exit 0/);
   assert.match(workflow, /reports\/external-release-loop-latest\.md/);
+  assert.match(workflow, /reports\/release-issue-update-latest\.md/);
+  assert.match(workflow, /reports\/release-issue-comment-latest\.md/);
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
