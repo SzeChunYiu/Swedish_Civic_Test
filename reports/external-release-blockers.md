@@ -16,6 +16,12 @@ Run the full safe evidence loop after each evidence update:
 npm run release:external-blocker-loop -- --out reports/external-release-loop-latest.md
 ```
 
+To dispatch the same check in GitHub Actions from the CLI and record the run URL:
+
+```bash
+npm run release:external-loop-dispatch -- --out reports/external-loop-dispatch-latest.md
+```
+
 You can also run the same check from GitHub Actions with the manual
 `External release blocker loop` workflow. It uploads
 `reports/external-release-loop-latest.md` as the `external-release-loop`
