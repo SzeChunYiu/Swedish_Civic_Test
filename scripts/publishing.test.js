@@ -134,6 +134,8 @@ test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
   assert.match(checklist, /npm run release:external-blocker-loop/);
   assert.match(checklist, /npm run release:external-loop-dispatch/);
   assert.match(checklist, /External release blocker loop/);
+  assert.match(checklist, /GH_TOKEN: \$\{\{ github\.token \}\}/);
+  assert.match(checklist, /actions: write/);
   assert.match(checklist, /npm run release:preflight/);
   assert.match(checklist, /npm run release:github-secrets-check/);
   assert.match(checklist, /injected EXPO_TOKEN environment variable/);

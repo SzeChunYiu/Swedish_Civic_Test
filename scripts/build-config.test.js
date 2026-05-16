@@ -388,7 +388,11 @@ test('EAS preview dispatch command blocks without EXPO_TOKEN secret and does not
     {
       cwd: repoRoot,
       encoding: 'utf8',
-      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+      env: {
+        ...process.env,
+        GITHUB_ACTIONS: 'false',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
     },
   );
   const report = fs.readFileSync(reportPath, 'utf8');
@@ -432,7 +436,11 @@ test('EAS preview dispatch command starts manual workflow when EXPO_TOKEN secret
     {
       cwd: repoRoot,
       encoding: 'utf8',
-      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+      env: {
+        ...process.env,
+        GITHUB_ACTIONS: 'false',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
     },
   );
   const report = fs.readFileSync(reportPath, 'utf8');
@@ -449,6 +457,55 @@ test('EAS preview dispatch command starts manual workflow when EXPO_TOKEN secret
     /workflow run eas-preview-build\.yml --repo SzeChunYiu\/Swedish_Civic_Test -f run_build=true/,
   );
   assert.doesNotMatch(report, /super-secret|token value/i);
+});
+
+test('EAS preview dispatch uses injected Actions env and GH_TOKEN without secret-list auth', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-actions-env-'));
+  const reportPath = path.join(tmpDir, 'dispatch.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@ GH_TOKEN=$GH_TOKEN" >> "${ghLog}"`,
+      'if [ "$1 $2 $3" = "secret list --repo" ]; then echo "secret list should not be called in Actions" >&2; exit 2; fi',
+      'if [ "$1 $2 $3" = "workflow run eas-preview-build.yml" ]; then test -n "$GH_TOKEN"; exit $?; fi',
+      'if [ "$1 $2 $3" = "run list --workflow" ]; then printf \'%s\\n\' \'[{"databaseId":321,"url":"https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/321","status":"queued","headSha":"abcdef1","createdAt":"2026-05-16T00:00:00Z"}]\'; exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/dispatch-eas-preview-workflow.js', '--run-build', 'false', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        GITHUB_ACTIONS: 'true',
+        EXPO_TOKEN: 'super-secret-token',
+        GH_TOKEN: 'ghs_fake_token',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /EAS preview workflow dispatch DISPATCHED/i);
+  assert.match(report, /Status \| DISPATCHED/);
+  assert.match(report, /Secret source \| GitHub Actions injected environment/);
+  assert.match(report, /EXPO_TOKEN \| present/);
+  assert.match(report, /actions\/runs\/321/);
+  assert.match(ghCalls, /workflow run eas-preview-build\.yml/);
+  assert.match(ghCalls, /GH_TOKEN=ghs_fake_token/);
+  assert.doesNotMatch(ghCalls, /secret list/);
+  assert.doesNotMatch(report, /super-secret-token|ghs_fake_token/);
 });
 
 test('external release blocker loop runs every safe evidence command and records blocked exits', () => {
@@ -559,6 +616,8 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*true/);
   assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
+  assert.match(workflow, /GH_TOKEN:\s*\$\{\{ github\.token \}\}/);
+  assert.match(workflow, /actions:\s*write/);
   assert.match(workflow, /actions\/checkout@v5/);
   assert.match(workflow, /actions\/setup-node@v5/);
   assert.match(workflow, /actions\/upload-artifact@v6/);

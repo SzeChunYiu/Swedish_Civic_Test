@@ -75,6 +75,7 @@ function writeReport({
   targetRepo,
   status,
   runBuild,
+  secretSource,
   commandStatus,
   rows,
   latestRun,
@@ -90,6 +91,7 @@ function writeReport({
     `| Repository | ${targetRepo} |`,
     `| Workflow | ${workflow} |`,
     `| Run build | ${runBuild} |`,
+    `| Secret source | ${tableCell(secretSource)} |`,
     `| Command exit code | ${commandStatus} |`,
     '',
     '## Required GitHub Actions secrets',
@@ -135,12 +137,28 @@ function main() {
   }
 
   const targetRepo = args.repo || repo;
-  const secretResult = spawnSync('gh', ['secret', 'list', '--repo', targetRepo], {
-    encoding: 'utf8',
-  });
-  const names = secretResult.status === 0 ? parseSecretNames(secretResult.stdout) : new Set();
-  const rows = requiredSecrets.map((name) => ({ name, present: names.has(name) }));
-  const secretsReady = secretResult.status === 0 && rows.every((row) => row.present);
+  const runningInActions = process.env.GITHUB_ACTIONS === 'true';
+
+  let secretResult = { status: 0, stdout: '', stderr: '' };
+  let secretSource = 'gh secret list';
+  let rows;
+
+  if (runningInActions) {
+    secretSource = 'GitHub Actions injected environment';
+    rows = requiredSecrets.map((name) => ({
+      name,
+      present: String(process.env[name] || '').trim().length > 0,
+    }));
+  } else {
+    secretResult = spawnSync('gh', ['secret', 'list', '--repo', targetRepo], {
+      encoding: 'utf8',
+    });
+    const names = secretResult.status === 0 ? parseSecretNames(secretResult.stdout) : new Set();
+    rows = requiredSecrets.map((name) => ({ name, present: names.has(name) }));
+  }
+
+  const secretsReady =
+    (runningInActions || secretResult.status === 0) && rows.every((row) => row.present);
 
   if (!secretsReady) {
     writeReport({
@@ -148,7 +166,8 @@ function main() {
       targetRepo,
       status: 'BLOCKED',
       runBuild: args.runBuild,
-      commandStatus: secretResult.status ?? 1,
+      secretSource,
+      commandStatus: runningInActions ? 'not-run' : (secretResult.status ?? 1),
       rows,
       latestRun: null,
       note: 'Required GitHub Actions secret names are missing or `gh secret list` failed. Add `EXPO_TOKEN` before dispatching the manual EAS preview workflow.',
@@ -189,6 +208,7 @@ function main() {
     targetRepo,
     status,
     runBuild: args.runBuild,
+    secretSource,
     commandStatus: dispatchResult.status ?? 1,
     rows,
     latestRun,
