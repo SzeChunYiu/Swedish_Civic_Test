@@ -54,7 +54,7 @@ A question may NOT be submitted to VALIDATOR if:
 
 ## Ownership rule — enforced by pre-commit hook
 
-**Never write the strings `babbloo` or `babbloo-studio` anywhere in any file** — not in comments, strings, doc blocks, or prompts. The CI ownership gate runs a blunt regex scan and will fail even when the mention is negational (e.g. "do not use babbloo").
+**Never write legacy-owner names anywhere in any file** — not in comments, strings, doc blocks, or prompts. The CI ownership gate runs a blunt regex scan and will fail even when the mention is negational.
 
 Use `legacy-owner` or `non-SzeChunYiu` as substitutes when referring to the old account.
 
