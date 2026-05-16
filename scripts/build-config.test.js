@@ -683,6 +683,17 @@ test('external release blocker loop runs every safe evidence command and records
     { mode: 0o755 },
   );
   fs.writeFileSync(
+    path.join(tmpDir, 'node'),
+    [
+      '#!/bin/sh',
+      `echo "node $@" >> "${commandLog}"`,
+      'echo "direct evidence command ran"',
+      'exit 1',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
     path.join(tmpDir, 'npm'),
     [
       '#!/bin/sh',
@@ -728,7 +739,12 @@ test('external release blocker loop runs every safe evidence command and records
   assert.match(calls, /npx --yes eas-cli@18\.13\.0 whoami/);
   assert.match(calls, /npm run release:expo-token-request/);
   assert.match(calls, /npm run release:eas-preview-dispatch -- --run-build false/);
+  assert.match(calls, /node scripts\/release-preflight\.js/);
+  assert.match(calls, /node scripts\/write-release-blocker-snapshot\.js --out /);
+  assert.match(calls, /node scripts\/write-release-completion-audit\.js --out /);
+  assert.match(calls, /node scripts\/write-release-issue-update\.js --out /);
   assert.match(calls, /npm run release:evidence-index/);
+  assert.doesNotMatch(calls, /--run-validate/);
   assert.doesNotMatch(report, /super-secret-token/);
 });
 
@@ -931,6 +947,7 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*true/);
   assert.match(workflow, /EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS:\s*120000/);
   assert.match(workflow, /EXTERNAL_RELEASE_LOOP_SKIP_EAS:\s*true/);
+  assert.match(workflow, /RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS:\s*true/);
   assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
   assert.match(workflow, /GH_TOKEN:\s*\$\{\{ github\.token \}\}/);
   assert.match(workflow, /actions:\s*write/);
@@ -946,8 +963,9 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /EXTERNAL_RELEASE_LOOP_EXIT=\$code/);
   assert.match(
     workflow,
-    /npm run release:issue-comment -- --out reports\/release-issue-comment-latest\.md/,
+    /node scripts\/post-release-issue-update\.js --body-out reports\/release-issue-update-latest\.md --out reports\/release-issue-comment-latest\.md/,
   );
+  assert.doesNotMatch(workflow, /npm run release:issue-comment/);
   assert.match(workflow, /RELEASE_ISSUE_COMMENT_EXIT=\$code/);
   assert.match(workflow, /exit 0/);
   assert.match(workflow, /reports\/external-release-loop-latest\.md/);

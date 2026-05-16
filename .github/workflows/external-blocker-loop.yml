@@ -12,6 +12,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS: 120000
   EXTERNAL_RELEASE_LOOP_SKIP_EAS: true
+  RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS: true
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
   GH_TOKEN: ${{ github.token }}
 
@@ -49,7 +50,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          npm run release:issue-comment -- --out reports/release-issue-comment-latest.md
+          node scripts/post-release-issue-update.js --body-out reports/release-issue-update-latest.md --out reports/release-issue-comment-latest.md
           code=$?
           set -e
           echo "RELEASE_ISSUE_COMMENT_EXIT=$code"

@@ -6,6 +6,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 function buildSteps(artifactDir) {
+  const quickPreflightEnv = { RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS: '1' };
   return [
     {
       name: 'eas-whoami',
@@ -62,39 +63,41 @@ function buildSteps(artifactDir) {
       ],
       requiresExpoToken: true,
     },
-    { name: 'release:preflight', command: 'npm', args: ['run', 'release:preflight'] },
+    {
+      name: 'release:preflight',
+      command: 'node',
+      args: ['scripts/release-preflight.js'],
+      env: quickPreflightEnv,
+    },
     {
       name: 'release:blockers-snapshot',
-      command: 'npm',
+      command: 'node',
       args: [
-        'run',
-        'release:blockers-snapshot',
-        '--',
+        'scripts/write-release-blocker-snapshot.js',
         '--out',
         path.join(artifactDir, 'release-blockers.md'),
       ],
+      env: quickPreflightEnv,
     },
     {
       name: 'release:completion-audit',
-      command: 'npm',
+      command: 'node',
       args: [
-        'run',
-        'release:completion-audit',
-        '--',
+        'scripts/write-release-completion-audit.js',
         '--out',
         path.join(artifactDir, 'release-completion-audit.md'),
       ],
+      env: quickPreflightEnv,
     },
     {
       name: 'release:issue-update',
-      command: 'npm',
+      command: 'node',
       args: [
-        'run',
-        'release:issue-update',
-        '--',
+        'scripts/write-release-issue-update.js',
         '--out',
         path.join(artifactDir, 'release-issue-update.md'),
       ],
+      env: quickPreflightEnv,
     },
     {
       name: 'release:evidence-index',
@@ -209,6 +212,7 @@ function runStep(step) {
   const timeoutMs = stepTimeoutMs(step);
   const result = spawnSync(step.command, step.args, {
     encoding: 'utf8',
+    env: { ...process.env, ...(step.env || {}) },
     killSignal: 'SIGTERM',
     timeout: timeoutMs,
   });
