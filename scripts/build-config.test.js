@@ -82,6 +82,92 @@ test('GitHub release secrets check reports whether EXPO_TOKEN is configured with
   assert.doesNotMatch(report, /super-secret|token value/i);
 });
 
+test('EAS preview dispatch command blocks without EXPO_TOKEN secret and does not start workflow', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-blocked-'));
+  const reportPath = path.join(tmpDir, 'dispatch.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'if [ "$1 $2 $3" = "secret list --repo" ]; then exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/dispatch-eas-preview-workflow.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 1);
+  assert.equal(
+    pkg.scripts['release:eas-preview-dispatch'],
+    'node scripts/dispatch-eas-preview-workflow.js',
+  );
+  assert.match(result.stdout, /EAS preview workflow dispatch BLOCKED/i);
+  assert.match(report, /Status \| BLOCKED/);
+  assert.match(report, /EXPO_TOKEN \| missing/);
+  assert.match(report, /Run build \| false/);
+  assert.doesNotMatch(ghCalls, /workflow run/);
+});
+
+test('EAS preview dispatch command starts manual workflow when EXPO_TOKEN secret exists', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-ready-'));
+  const reportPath = path.join(tmpDir, 'dispatch.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'if [ "$1 $2 $3" = "secret list --repo" ]; then echo "EXPO_TOKEN 2026-05-16T00:00:00Z"; exit 0; fi',
+      'if [ "$1 $2 $3" = "workflow run eas-preview-build.yml" ]; then exit 0; fi',
+      'if [ "$1 $2 $3" = "run list --workflow" ]; then echo "[{\\"databaseId\\":123,\\"url\\":\\"https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/123\\",\\"status\\":\\"queued\\",\\"headSha\\":\\"abcdef1\\",\\"createdAt\\":\\"2026-05-16T00:00:00Z\\"}]"; exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/dispatch-eas-preview-workflow.js', '--run-build', 'true', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /EAS preview workflow dispatch DISPATCHED/i);
+  assert.match(report, /Status \| DISPATCHED/);
+  assert.match(report, /EXPO_TOKEN \| present/);
+  assert.match(report, /Run build \| true/);
+  assert.match(report, /actions\/runs\/123/);
+  assert.match(
+    ghCalls,
+    /workflow run eas-preview-build\.yml --repo SzeChunYiu\/Swedish_Civic_Test -f run_build=true/,
+  );
+  assert.doesNotMatch(report, /super-secret|token value/i);
+});
+
 test('manual EAS preview workflow requires Expo token and runs preview build guard', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/eas-preview-build.yml');
   assert.equal(fs.existsSync(workflowPath), true);

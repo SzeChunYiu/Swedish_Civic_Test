@@ -7,8 +7,15 @@ to preserve evidence for every remaining release gate.
 
 ```bash
 npx --yes eas-cli@18.13.0 whoami
+npm run release:github-secrets-check -- --out reports/github-release-secrets-latest.md
+npm run release:eas-preview-dispatch -- --run-build false --out reports/eas-preview-dispatch-latest.md
 npm run release:preflight
 ```
+
+Use `--run-build false` first to prove the manual GitHub Actions workflow can
+reach the EAS/auth guard without starting a build. After that check passes and
+you are ready to create preview binaries, dispatch the same workflow with
+`--run-build true` or continue locally with `npm run build:preview`.
 
 Expected state immediately after login: `eas-auth` should become ready, while
 EAS build artifact, device, store-record, public-URL, screenshot, and submission
