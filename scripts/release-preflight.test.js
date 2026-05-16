@@ -365,6 +365,70 @@ test('release completion audit command maps objective to preflight evidence befo
   assert.match(report, /Do not mark the active goal complete/i);
 });
 
+test('release issue update draft command writes tracker-ready status comment', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-issue-update-'));
+  const preflightJsonPath = path.join(tmpDir, 'preflight.json');
+  const reportPath = path.join(tmpDir, 'issue-update.md');
+  fs.writeFileSync(
+    preflightJsonPath,
+    JSON.stringify(
+      {
+        status: 'BLOCKED',
+        readyForSubmission: false,
+        gates: [
+          {
+            id: 'eas-auth',
+            label: 'Expo/EAS authentication',
+            status: 'BLOCKED',
+            evidence: 'Not logged in',
+            nextAction: 'Log in to Expo/EAS.',
+          },
+          {
+            id: 'public-urls',
+            label: 'Public support and privacy URLs',
+            status: 'READY',
+            evidence: 'SzeChunYiu Pages returned HTTP 200.',
+            nextAction: 'Enter URLs in store records.',
+          },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/write-release-issue-update.js',
+      '--preflight-json',
+      preflightJsonPath,
+      '--out',
+      reportPath,
+      '--merge',
+      'abc1234',
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  assert.equal(result.status, 1, result.stdout || result.stderr);
+  assert.equal(
+    pkg.scripts['release:issue-update'],
+    'node scripts/write-release-issue-update.js --run-validate --out reports/release-issue-update-latest.md',
+  );
+  assert.match(result.stdout, /Release issue update draft BLOCKED/i);
+  assert.match(report, /issue #11/i);
+  assert.match(report, /merge `abc1234`/);
+  assert.match(report, /SzeChunYiu\/Swedish_Civic_Test/);
+  assert.match(report, /Current blocked gates/);
+  assert.match(report, /`eas-auth`/);
+  assert.match(report, /Ready gates/);
+  assert.match(report, /`public-urls`/);
+  assert.match(report, /Completion audit decision: do not mark the goal complete/i);
+});
+
 function createDeviceAudioEvidence(platform, options = {}) {
   const relativeDir = path.join(
     'reports',

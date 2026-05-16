@@ -49,7 +49,8 @@
     "release:eas-access-check": "node scripts/check-eas-access.js",
     "release:blockers-snapshot": "node scripts/write-release-blocker-snapshot.js --run-validate --out reports/release-blockers-latest.md",
     "release:evidence-stub": "node scripts/create-release-evidence-stub.js",
-    "release:completion-audit": "node scripts/write-release-completion-audit.js --run-validate --out reports/release-completion-audit-latest.md"
+    "release:completion-audit": "node scripts/write-release-completion-audit.js --run-validate --out reports/release-completion-audit-latest.md",
+    "release:issue-update": "node scripts/write-release-issue-update.js --run-validate --out reports/release-issue-update-latest.md"
   },
   "dependencies": {
     "expo": "~54.0.33",
