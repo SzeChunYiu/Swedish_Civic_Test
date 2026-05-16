@@ -1,8 +1,8 @@
 import { additionalQuestions } from './additionalQuestions';
 import { derivePublishedQuestions, publishQuestions } from '../lib/content/derivedQuestions';
-import type { PracticeQuestion } from '../types/content';
+import type { DraftPracticeQuestion, PracticeQuestion } from '../types/content';
 
-export const baseQuestions: PracticeQuestion[] = [
+export const baseQuestions: DraftPracticeQuestion[] = [
   {
     id: 'q001',
     chapterId: 'ch01',
@@ -237,7 +237,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q010',
-    chapterId: 'ch01',
+    chapterId: 'ch03',
     type: 'single_choice',
     questionSv: 'Vilken stad är Sveriges huvudstad?',
     questionEn: "Which city is Sweden's capital?",
@@ -436,7 +436,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q016',
-    chapterId: 'ch02',
+    chapterId: 'ch03',
     type: 'single_choice',
     questionSv: 'Vad betyder det att Sverige är en parlamentarisk representativ demokrati?',
     questionEn: 'What does it mean that Sweden is a parliamentary representative democracy?',
@@ -474,7 +474,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q017',
-    chapterId: 'ch02',
+    chapterId: 'ch03',
     type: 'single_choice',
     questionSv: 'Hur många ledamöter har riksdagen?',
     questionEn: 'How many members does the Riksdag have?',
@@ -496,7 +496,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q018',
-    chapterId: 'ch02',
+    chapterId: 'ch03',
     type: 'single_choice',
     questionSv: 'Vem väljer statsministern enligt materialet?',
     questionEn: 'Who chooses the prime minister according to the material?',
@@ -518,7 +518,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q019',
-    chapterId: 'ch02',
+    chapterId: 'ch04',
     type: 'single_choice',
     questionSv: 'Hur gammal måste man ha fyllt för att ha rätt att rösta?',
     questionEn: 'How old must a person be to have the right to vote?',
@@ -544,7 +544,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q020',
-    chapterId: 'ch02',
+    chapterId: 'ch04',
     type: 'true_false',
     questionSv: 'Sant eller falskt: Folkomröstningar i Sverige är rådgivande enligt materialet.',
     questionEn: 'True or false: Referendums in Sweden are advisory according to the material.',
@@ -573,9 +573,11 @@ export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...additionalQuestions,
 ]);
 
+const TARGET_QUESTION_COUNT = 500;
+
 export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
   101,
-);
+).slice(0, Math.max(0, TARGET_QUESTION_COUNT - sourceQuestions.length));
 
 export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];

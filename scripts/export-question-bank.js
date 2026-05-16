@@ -43,39 +43,124 @@ function csvCell(value) {
   return `"${String(value ?? '').replaceAll('"', '""')}"`;
 }
 
-const questions = loadTs('data/questions.ts', 'questions');
-const rows = [
-  [
-    'id',
-    'chapterId',
-    'type',
-    'questionSv',
-    'questionEn',
-    'correctOptionId',
-    'uhrChapter',
-    'uhrSection',
-    'uhrPageApprox',
-    'difficulty',
-    'reviewStatus',
-    'tags',
-  ],
-  ...questions.map((question) => [
-    question.id,
-    question.chapterId,
-    question.type,
-    question.questionSv,
-    question.questionEn,
-    question.correctOptionId,
-    question.uhrReference.chapter,
-    question.uhrReference.section,
-    question.uhrReference.pageApprox,
-    question.difficulty,
-    question.reviewStatus,
-    question.tags.join('|'),
-  ]),
+function assertUniqueExportQuestionIds(questionsToExport) {
+  const seenIds = new Set();
+
+  for (const question of questionsToExport) {
+    if (seenIds.has(question.id)) {
+      throw new Error(
+        `Duplicate question id ${question.id} would be exported to question-bank.csv`,
+      );
+    }
+    seenIds.add(question.id);
+  }
+}
+
+function serializableQuestionOptions(question) {
+  return (question.options || []).map((option) => ({
+    id: option.id,
+    textSv: option.textSv,
+    textEn: option.textEn,
+  }));
+}
+
+function serializeQuestionOptions(question) {
+  return JSON.stringify(serializableQuestionOptions(question));
+}
+
+const QUESTION_BANK_CSV_HEADER = [
+  'id',
+  'chapterId',
+  'examScope',
+  'type',
+  'questionSv',
+  'questionEn',
+  'correctOptionId',
+  'optionsJson',
+  'uhrChapter',
+  'uhrSection',
+  'uhrPageApprox',
+  'uhrChapterStartPage',
+  'uhrChapterEndPage',
+  'uhrSectionStartPage',
+  'uhrSectionEndPage',
+  'uhrDocumentTitle',
+  'uhrSourceEdition',
+  'uhrSourceUrl',
+  'difficulty',
+  'reviewStatus',
+  'tags',
 ];
 
-const outPath = path.join(repoRoot, 'content', 'question-bank.csv');
-fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, `${rows.map((row) => row.map(csvCell).join(',')).join('\n')}\n`);
-console.log(`Exported ${questions.length} questions to ${path.relative(repoRoot, outPath)}`);
+const { findUhrChapterPageRange, findUhrSectionReference } = loadTs('data/uhrReferenceMap.ts');
+
+function getPageRange(question) {
+  const pageRange = findUhrChapterPageRange(question.chapterId);
+  if (!pageRange) {
+    throw new Error(`Missing UHR page range for ${question.id} (${question.chapterId})`);
+  }
+  return pageRange;
+}
+
+function getSectionRange(question) {
+  const sectionRange = findUhrSectionReference(question.chapterId, question.uhrReference.section);
+  if (!sectionRange) {
+    throw new Error(
+      `Missing UHR section range for ${question.id} (${question.chapterId}: ${question.uhrReference.section})`,
+    );
+  }
+  return sectionRange;
+}
+
+function exportQuestionBank() {
+  const questions = loadTs('data/questions.ts', 'questions');
+
+  assertUniqueExportQuestionIds(questions);
+
+  const rows = [
+    QUESTION_BANK_CSV_HEADER,
+    ...questions.map((question) => {
+      const pageRange = getPageRange(question);
+      const sectionRange = getSectionRange(question);
+      return [
+        question.id,
+        question.chapterId,
+        question.examScope,
+        question.type,
+        question.questionSv,
+        question.questionEn,
+        question.correctOptionId,
+        serializeQuestionOptions(question),
+        question.uhrReference.chapter,
+        question.uhrReference.section,
+        question.uhrReference.pageApprox,
+        pageRange.startPage,
+        pageRange.endPage,
+        sectionRange.startPage,
+        sectionRange.endPage,
+        question.uhrReference.documentTitle,
+        question.uhrReference.sourceEdition,
+        question.uhrReference.sourceUrl,
+        question.difficulty,
+        question.reviewStatus,
+        question.tags.join('|'),
+      ];
+    }),
+  ];
+
+  const outPath = path.join(repoRoot, 'content', 'question-bank.csv');
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, `${rows.map((row) => row.map(csvCell).join(',')).join('\n')}\n`);
+  console.log(`Exported ${questions.length} questions to ${path.relative(repoRoot, outPath)}`);
+}
+
+if (require.main === module) {
+  exportQuestionBank();
+}
+
+module.exports = {
+  assertUniqueExportQuestionIds,
+  exportQuestionBank,
+  QUESTION_BANK_CSV_HEADER,
+  serializeQuestionOptions,
+};

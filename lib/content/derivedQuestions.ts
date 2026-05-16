@@ -1,4 +1,17 @@
-import type { PracticeQuestion, QuestionOption } from '../../types/content';
+import type {
+  DraftPracticeQuestion,
+  DraftUHRReference,
+  PracticeQuestion,
+  QuestionOption,
+  UHRReference,
+} from '../../types/content';
+
+export const DEFAULT_UHR_SOURCE_METADATA = {
+  documentTitle: 'Sverige i fokus: Utbildningsmaterial till medborgarskapsprov',
+  sourceEdition: '2026, 1:a upplagan',
+  sourceUrl:
+    'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
+} satisfies Pick<UHRReference, 'documentTitle' | 'sourceEdition' | 'sourceUrl'>;
 
 const UNKNOWN_OPTION: QuestionOption = {
   id: 'unknown',
@@ -28,8 +41,20 @@ function wrongOption(question: PracticeQuestion): QuestionOption {
   );
 }
 
-function publishedCopy(question: PracticeQuestion): PracticeQuestion {
-  return { ...question, reviewStatus: 'published' };
+function normalizeUhrReference(reference: DraftUHRReference): UHRReference {
+  return {
+    ...DEFAULT_UHR_SOURCE_METADATA,
+    ...reference,
+  };
+}
+
+function publishedCopy(question: DraftPracticeQuestion): PracticeQuestion {
+  return {
+    ...question,
+    examScope: question.examScope ?? 'uhr_based',
+    uhrReference: normalizeUhrReference(question.uhrReference),
+    reviewStatus: 'published',
+  };
 }
 
 function withSharedFields(
@@ -46,6 +71,7 @@ function withSharedFields(
     id,
     chapterId: source.chapterId,
     type,
+    examScope: source.examScope,
     questionSv,
     questionEn,
     options,
@@ -148,6 +174,6 @@ export function derivePublishedQuestions(
   });
 }
 
-export function publishQuestions(sourceQuestions: PracticeQuestion[]): PracticeQuestion[] {
+export function publishQuestions(sourceQuestions: DraftPracticeQuestion[]): PracticeQuestion[] {
   return sourceQuestions.map(publishedCopy);
 }
