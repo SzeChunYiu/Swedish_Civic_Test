@@ -36,6 +36,15 @@ test('practice answer flow requires explicit next question after feedback', () =
   assert.match(source, /Next question/);
 });
 
+test('practice locks answer options after feedback is visible', () => {
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const answerOptionSource = read('components/quiz/AnswerOption.tsx');
+
+  assert.match(answerOptionSource, /disabled\?: boolean/);
+  assert.match(answerOptionSource, /disabled=\{disabled\}/);
+  assert.match(practiceSource, /disabled=\{hasSelectedAnswer\}/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
