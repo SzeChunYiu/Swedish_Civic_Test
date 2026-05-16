@@ -90,6 +90,18 @@ listing metadata were reviewed against `publishing/app-store-listing.md` and
 | Public support URL | URL visible in both store records | TBD |
 | Public privacy URL | URL visible in both store records | TBD |
 
+## Store submit credential evidence
+
+If store submit credential evidence is recorded in local JSON, use a path such
+as `reports/store-credentials/store-credentials.json`. Local JSON referenced by
+the `store-credentials` gate is validated by `npm run release:preflight` and
+must include: `status: "ready"`, iOS Apple ID email, App Store Connect app ID,
+Apple Team ID, credentials source and review timestamp, plus Android Google Play
+service-account email, SHA256 key fingerprint, package name
+`com.billyyiu.swedishcivictest`, credentials source, and review timestamp. Do
+not commit service-account private keys or passwords; record only non-secret
+identifiers and fingerprints.
+
 ## Privacy and monetization review
 
 Do not mark `privacy-review` READY in `reports/release-gates.json` until this

@@ -148,6 +148,39 @@ Record evidence for:
 
 Public support/privacy pages are already hosted on GitHub Pages and `public-urls` is READY in `reports/release-gates.json`. Enter those URLs in the store records after App Store Connect and Google Play Console app records exist.
 
+## 4b. Verify submit credentials without committing secrets
+
+Record non-secret credential evidence in
+`reports/store-credentials/store-credentials.json` and reference that path in the
+`store-credentials` release gate. `npm run release:preflight` validates the local
+JSON before allowing the gate to pass.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "ready",
+  "ios": {
+    "appleId": "release-owner@example.com",
+    "ascAppId": "1234567890",
+    "appleTeamId": "ABCDE12345",
+    "credentialsSource": "EAS credentials store",
+    "credentialsCheckedAt": "2026-05-16T01:25:00Z"
+  },
+  "android": {
+    "serviceAccountEmail": "play-submit@swedish-civic-test.iam.gserviceaccount.com",
+    "serviceAccountKeyFingerprint": "SHA256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "packageName": "com.billyyiu.swedishcivictest",
+    "credentialsSource": "local secure file outside git",
+    "credentialsCheckedAt": "2026-05-16T01:25:00Z"
+  }
+}
+```
+
+Do not commit Apple passwords, API keys, private keys, or Google service-account
+JSON. The evidence file should contain only non-secret identifiers, source notes,
+and fingerprints.
+
 If recording store/account evidence locally, create
 `reports/store-records/store-records.json` and reference that path in the
 `store-records` gate evidence. `npm run release:preflight` validates local JSON
