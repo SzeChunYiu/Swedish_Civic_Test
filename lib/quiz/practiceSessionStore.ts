@@ -1,13 +1,18 @@
 import { create } from 'zustand';
 
 type PracticeSessionState = {
+  activeQuestionId: string | null;
   selectedOptionId: string | null;
-  selectOption: (optionId: string) => void;
+  selectOption: (questionId: string, optionId: string) => void;
   resetSelection: () => void;
+  advanceQuestion: () => void;
 };
 
 export const usePracticeSessionStore = create<PracticeSessionState>((set) => ({
+  activeQuestionId: null,
   selectedOptionId: null,
-  selectOption: (optionId) => set({ selectedOptionId: optionId }),
+  selectOption: (questionId, optionId) =>
+    set({ activeQuestionId: questionId, selectedOptionId: optionId }),
   resetSelection: () => set({ selectedOptionId: null }),
+  advanceQuestion: () => set({ activeQuestionId: null, selectedOptionId: null }),
 }));

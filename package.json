@@ -16,7 +16,7 @@
     "format": "prettier --write \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"lib/**/*.ts\" \"types/**/*.ts\" \"scripts/**/*.js\" \"*.json\" \"eslint.config.js\"",
     "test:learning": "node --test scripts/learning.test.js",
     "test:exam": "node --test scripts/exam.test.js",
-    "test": "npm run test:learning && npm run test:exam && npm run test:audio && npm run test:derived-content && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:ui-effects && npm run test:ux-simulation && npm run test:publishing && npm run test:ownership && npm run test:external-blockers && npm run test:public-urls && npm run test:build-config && npm run test:app-assets && npm run test:screenshot-manifest && npm run test:release-preflight && npm run test:release-gates-writer && npm run test:theme-discipline && npm run test:a11y-labels",
+    "test": "npm run test:learning && npm run test:practice && npm run test:exam && npm run test:audio && npm run test:derived-content && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:ui-effects && npm run test:ux-simulation && npm run test:publishing && npm run test:ownership && npm run test:external-blockers && npm run test:public-urls && npm run test:build-config && npm run test:app-assets && npm run test:screenshot-manifest && npm run test:release-preflight && npm run test:release-gates-writer && npm run test:theme-discipline && npm run test:a11y-labels",
     "test:audio": "node --test scripts/audio.test.js",
     "test:content": "node --test scripts/content-production.test.js",
     "content:export": "node scripts/export-question-bank.js",
@@ -60,7 +60,8 @@
     "release:external-loop-dispatch": "node scripts/dispatch-external-blocker-loop.js",
     "release:store-expo-token-keychain": "node scripts/store-expo-token-keychain.js",
     "release:issue-comment": "node scripts/post-release-issue-update.js --run-validate --body-out reports/release-issue-update-latest.md --out reports/release-issue-comment-latest.md",
-    "release:expo-token-request": "node scripts/write-expo-token-owner-request.js --out reports/expo-token-owner-request-latest.md"
+    "release:expo-token-request": "node scripts/write-expo-token-owner-request.js --out reports/expo-token-owner-request-latest.md",
+    "test:practice": "node --test scripts/practice-flow.test.js"
   },
   "dependencies": {
     "expo": "~54.0.33",

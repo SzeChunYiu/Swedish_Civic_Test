@@ -12,6 +12,7 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -19,16 +20,17 @@ import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
+  const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
+  const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
-  const nextQuestionIndex = completedQuestionIds.length % questions.length;
-  const question = questions[nextQuestionIndex] ?? questions[0];
+  const question = getPracticeQuestionForSession(questions, completedQuestionIds, activeQuestionId);
 
   if (!question) {
     return (
@@ -38,13 +40,16 @@ export default function Screen() {
     );
   }
 
-  const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
+  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
+  const selectedIsCorrect =
+    hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
-  const currentScore = selectedOptionId ? scoreAnswers([selectedIsCorrect]) : null;
-  const questionNumber = nextQuestionIndex + 1;
+  const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const questionIndex = questions.findIndex((candidate) => candidate.id === question.id);
+  const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = questions.length > 0 ? questionNumber / questions.length : 0;
   const handleSelectOption = (optionId: string) => {
-    selectOption(optionId);
+    selectOption(question.id, optionId);
     recordAnswer(question.id, isCorrectAnswer(question, optionId));
   };
 
@@ -78,7 +83,7 @@ export default function Screen() {
 
       <View style={styles.options}>
         {question.options.map((option) => {
-          const isSelected = selectedOptionId === option.id;
+          const isSelected = hasSelectedAnswer && selectedOptionId === option.id;
 
           return (
             <AnswerOption
@@ -92,7 +97,7 @@ export default function Screen() {
         })}
       </View>
 
-      {selectedOptionId ? (
+      {hasSelectedAnswer ? (
         <View style={styles.feedback}>
           {currentScore ? (
             <Text style={styles.score}>
@@ -102,14 +107,24 @@ export default function Screen() {
           <ExplanationPanel explanationSv={question.explanationSv} />
           <UHRReferenceCard reference={question.uhrReference} />
           <AdBanner placement="quiz_completed_interstitial" />
-          <Pressable
-            accessibilityLabel="Try this practice question again"
-            accessibilityRole="button"
-            onPress={resetSelection}
-            style={styles.tryAgain}
-          >
-            <Text style={styles.tryAgainText}>Try again</Text>
-          </Pressable>
+          <View style={styles.feedbackActions}>
+            <Pressable
+              accessibilityLabel="Move to the next practice question"
+              accessibilityRole="button"
+              onPress={advanceQuestion}
+              style={styles.nextQuestion}
+            >
+              <Text style={styles.nextQuestionText}>Next question</Text>
+            </Pressable>
+            <Pressable
+              accessibilityLabel="Try this practice question again"
+              accessibilityRole="button"
+              onPress={resetSelection}
+              style={styles.tryAgain}
+            >
+              <Text style={styles.tryAgainText}>Try again</Text>
+            </Pressable>
+          </View>
         </View>
       ) : null}
     </ScrollView>
@@ -182,10 +197,27 @@ const styles = StyleSheet.create({
   feedback: {
     gap: space[1.5],
   },
+  feedbackActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
   score: {
     color: colors.success,
     fontSize: typography.body.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
+  },
+  nextQuestion: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  nextQuestionText: {
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
   },
   tryAgain: {
     alignSelf: 'flex-start',
