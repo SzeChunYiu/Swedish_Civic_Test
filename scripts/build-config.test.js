@@ -721,10 +721,12 @@ test('external release blocker loop runs every safe evidence command and records
   assert.match(result.stdout, /External release blocker loop BLOCKED/i);
   assert.match(report, /release:eas-access-check/);
   assert.match(report, /release:github-secrets-check/);
+  assert.match(report, /release:expo-token-request/);
   assert.match(report, /release:eas-preview-dispatch/);
   assert.match(report, /release:preflight/);
   assert.match(report, /release:evidence-index/);
   assert.match(calls, /npx --yes eas-cli@18\.13\.0 whoami/);
+  assert.match(calls, /npm run release:expo-token-request/);
   assert.match(calls, /npm run release:eas-preview-dispatch -- --run-build false/);
   assert.match(calls, /npm run release:evidence-index/);
   assert.doesNotMatch(report, /super-secret-token/);
