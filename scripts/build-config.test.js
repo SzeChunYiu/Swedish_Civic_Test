@@ -44,6 +44,44 @@ test('release validation includes dependency security audit', () => {
   assert.equal(pkg.overrides.postcss, '8.5.10');
 });
 
+test('GitHub release secrets check reports whether EXPO_TOKEN is configured without leaking values', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-release-secrets-check-'));
+  const reportPath = path.join(tmpDir, 'github-secrets.md');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2 $3" = "secret list --repo" ]; then echo "EXPO_TOKEN 2026-05-16T00:00:00Z"; exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/check-github-release-secrets.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:github-secrets-check'],
+    'node scripts/check-github-release-secrets.js',
+  );
+  assert.match(result.stdout, /GitHub release secrets check READY/i);
+  assert.match(report, /SzeChunYiu\/Swedish_Civic_Test/);
+  assert.match(report, /EXPO_TOKEN \| present/);
+  assert.doesNotMatch(report, /super-secret|token value/i);
+});
+
 test('manual EAS preview workflow requires Expo token and runs preview build guard', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/eas-preview-build.yml');
   assert.equal(fs.existsSync(workflowPath), true);

@@ -51,7 +51,8 @@
     "release:evidence-stub": "node scripts/create-release-evidence-stub.js",
     "release:completion-audit": "node scripts/write-release-completion-audit.js --run-validate --out reports/release-completion-audit-latest.md",
     "release:issue-update": "node scripts/write-release-issue-update.js --run-validate --out reports/release-issue-update-latest.md",
-    "release:evidence-index": "node scripts/write-release-evidence-index.js --out reports/release-evidence-index-latest.md"
+    "release:evidence-index": "node scripts/write-release-evidence-index.js --out reports/release-evidence-index-latest.md",
+    "release:github-secrets-check": "node scripts/check-github-release-secrets.js"
   },
   "dependencies": {
     "expo": "~54.0.33",
