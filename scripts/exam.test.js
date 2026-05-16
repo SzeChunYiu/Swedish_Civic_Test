@@ -86,6 +86,41 @@ test('scoreExam returns score and per-chapter breakdown', () => {
   ]);
 });
 
+test('buildExamChapterBreakdownItems adds human-readable chapter names', () => {
+  const { buildExamChapterBreakdownItems } = loadTs('lib/quiz/examGenerator.ts');
+  const breakdown = [
+    { chapterId: 'ch01', correctCount: 1, totalCount: 2 },
+    { chapterId: 'unknown', correctCount: 0, totalCount: 1 },
+  ];
+  const chapters = [
+    {
+      id: 'ch01',
+      nameSv: 'Landet Sverige',
+      nameEn: 'The country of Sweden',
+      descriptionSv: '',
+      descriptionEn: '',
+      questionCount: 0,
+    },
+  ];
+
+  assert.deepEqual(buildExamChapterBreakdownItems(breakdown, chapters), [
+    {
+      chapterId: 'ch01',
+      chapterNameSv: 'Landet Sverige',
+      chapterNameEn: 'The country of Sweden',
+      correctCount: 1,
+      totalCount: 2,
+    },
+    {
+      chapterId: 'unknown',
+      chapterNameSv: 'unknown',
+      chapterNameEn: 'unknown',
+      correctCount: 0,
+      totalCount: 1,
+    },
+  ]);
+});
+
 test('buildExamReviewItems returns selected answer, correct answer, source, and explanation', () => {
   const { buildExamReviewItems } = loadTs('lib/quiz/examGenerator.ts');
   const questions = [

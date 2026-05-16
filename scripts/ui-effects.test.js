@@ -84,3 +84,12 @@ test('exam auto-submits at timeout and explains unanswered scoring', () => {
   assert.match(source, /Time expired/);
   assert.match(source, /Unanswered questions count as incorrect/);
 });
+
+test('exam chapter breakdown uses chapter names instead of raw ids only', () => {
+  const source = read('app/(tabs)/exam.tsx');
+
+  assert.match(source, /buildExamChapterBreakdownItems/);
+  assert.match(source, /data\/chapters/);
+  assert.match(source, /chapter\.chapterNameSv/);
+  assert.match(source, /chapter\.chapterId/);
+});
