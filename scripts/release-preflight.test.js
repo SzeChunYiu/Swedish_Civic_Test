@@ -302,6 +302,69 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
   assert.match(report, /`public-urls`/);
 });
 
+test('release completion audit command maps objective to preflight evidence before completion', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-completion-audit-'));
+  const preflightJsonPath = path.join(tmpDir, 'preflight.json');
+  const reportPath = path.join(tmpDir, 'completion-audit.md');
+  fs.writeFileSync(
+    preflightJsonPath,
+    JSON.stringify(
+      {
+        status: 'BLOCKED',
+        readyForSubmission: false,
+        gates: [
+          {
+            id: 'eas-auth',
+            label: 'Expo/EAS authentication',
+            status: 'BLOCKED',
+            evidence: 'Not logged in',
+            nextAction: 'Log in to Expo/EAS.',
+          },
+          {
+            id: 'public-urls',
+            label: 'Public support and privacy URLs',
+            status: 'READY',
+            evidence: 'SzeChunYiu Pages returned HTTP 200.',
+            nextAction: 'Enter URLs in store records.',
+          },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/write-release-completion-audit.js',
+      '--preflight-json',
+      preflightJsonPath,
+      '--out',
+      reportPath,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  assert.equal(result.status, 1, result.stdout || result.stderr);
+  assert.equal(
+    pkg.scripts['release:completion-audit'],
+    'node scripts/write-release-completion-audit.js --run-validate --out reports/release-completion-audit-latest.md',
+  );
+  assert.match(result.stdout, /Release completion audit NOT COMPLETE/i);
+  assert.match(report, /# Release completion audit/);
+  assert.match(report, /\| Upload target owner \| SzeChunYiu \| READY \|/);
+  assert.match(
+    report,
+    new RegExp(`\\| Legacy owner not targeted \\| ${['Bab', 'bloo'].join('')}`, 'i'),
+  );
+  assert.match(report, /\| Store submission readiness \| npm run release:preflight \| BLOCKED \|/);
+  assert.match(report, /`eas-auth`/);
+  assert.match(report, /Do not mark the active goal complete/i);
+});
+
 function createDeviceAudioEvidence(platform, options = {}) {
   const relativeDir = path.join(
     'reports',
