@@ -98,6 +98,11 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
             evidence:
               'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://babbloo-studio.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred.',
           },
+          'store-credentials': {
+            status: 'READY',
+            evidence:
+              'App Store Connect and Google Play service-account submit credentials verified at https://example.com/store-credentials/evidence.',
+          },
           'privacy-review': {
             status: 'READY',
             evidence:
@@ -307,6 +312,44 @@ function createStoreRecordEvidence(options = {}) {
   };
 }
 
+function createStoreCredentialEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'store-credentials',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'ready',
+    ios: {
+      appleId: 'release-owner@example.com',
+      ascAppId: '1234567890',
+      appleTeamId: 'ABCDE12345',
+      credentialsSource: 'EAS credentials store',
+      credentialsCheckedAt: '2026-05-16T01:25:00Z',
+    },
+    android: {
+      serviceAccountEmail: 'play-submit@swedish-civic-test.iam.gserviceaccount.com',
+      serviceAccountKeyFingerprint:
+        'SHA256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+      packageName: 'com.billyyiu.swedishcivictest',
+      credentialsSource: 'local secure file outside git',
+      credentialsCheckedAt: '2026-05-16T01:25:00Z',
+    },
+    ...options.evidence,
+  };
+
+  const evidencePath = path.join(absoluteDir, 'store-credentials.json');
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'store-credentials.json'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 function createSubmissionEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -450,6 +493,7 @@ test('release preflight fails closed on external launch blockers', () => {
     'android-device-audio',
     'ios-device-audio',
     'store-records',
+    'store-credentials',
     'privacy-review',
     'public-urls',
     'device-screenshots',
@@ -460,6 +504,78 @@ test('release preflight fails closed on external launch blockers', () => {
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
   assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
+});
+
+test('release preflight blocks local store credential evidence with placeholders', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-creds-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const credentialEvidence = createStoreCredentialEvidence({
+    evidence: {
+      ios: {
+        appleId: 'TBD',
+        ascAppId: '',
+        appleTeamId: 'ABCDE12345',
+        credentialsSource: 'EAS credentials store',
+        credentialsCheckedAt: '2026-05-16T01:25:00Z',
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-credentials': {
+        status: 'READY',
+        evidence: `App Store Connect and Google Play service-account submit credentials verified in ${credentialEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const credentials = report.gates.find((gate) => gate.id === 'store-credentials');
+    assert.equal(credentials.status, 'BLOCKED');
+    assert.match(credentials.evidence, /local artifact content/i);
+    assert.match(credentials.evidence, /ios.appleId/i);
+    assert.match(credentials.evidence, /ios.ascAppId/i);
+  } finally {
+    credentialEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local store credential evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-store-creds-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const credentialEvidence = createStoreCredentialEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-credentials': {
+        status: 'READY',
+        evidence: `App Store Connect and Google Play service-account submit credentials verified in ${credentialEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'store-credentials').status, 'READY');
+  } finally {
+    credentialEvidence.cleanup();
+  }
 });
 
 test('release preflight blocks local EAS build evidence missing platform artifacts', () => {

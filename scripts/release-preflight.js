@@ -37,6 +37,14 @@ const evidenceRequirements = {
     ['Support URL entered in store records', /Support URL/i],
     ['Privacy Policy URL entered in store records', /Privacy Policy URL/i],
   ],
+  'store-credentials': [
+    ['App Store Connect submit credentials', /App Store Connect|Apple|ASC/i],
+    ['Google Play service-account credentials', /Google Play|service-account/i],
+    [
+      'local credential evidence path or URL reference',
+      /\b(?:reports|publishing)\/[^\s,;:]+|https?:\/\//i,
+    ],
+  ],
   'privacy-review': [
     ['Apple privacy labels review', /Apple privacy labels|App Store privacy/i],
     ['Google Play Data safety review', /Google Play Data safety|Data safety/i],
@@ -393,6 +401,56 @@ function validateStoreRecordEvidence(evidencePath) {
   return errors;
 }
 
+function validateStoreCredentialEvidence(evidencePath) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'ready') {
+    errors.push('status must be ready');
+  }
+
+  const ios = evidence.ios || {};
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(ios.appleId || ''))) {
+    errors.push('ios.appleId must be a concrete Apple ID email');
+  }
+  if (!/^[0-9]{6,}$/.test(String(ios.ascAppId || ''))) {
+    errors.push('ios.ascAppId must be a concrete numeric App Store Connect app ID');
+  }
+  if (!/^[A-Z0-9]{10}$/.test(String(ios.appleTeamId || ''))) {
+    errors.push('ios.appleTeamId must be a concrete 10-character Team ID');
+  }
+  if (!ios.credentialsSource || !String(ios.credentialsSource).trim()) {
+    errors.push('ios.credentialsSource is required');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(ios.credentialsCheckedAt || '')) {
+    errors.push('ios.credentialsCheckedAt must be an ISO UTC timestamp');
+  }
+
+  const android = evidence.android || {};
+  if (!/^[^\s@]+@[^\s@]+\.iam\.gserviceaccount\.com$/i.test(android.serviceAccountEmail || '')) {
+    errors.push('android.serviceAccountEmail must be a Google service-account email');
+  }
+  if (!/^SHA256:[0-9a-f]{64}$/i.test(android.serviceAccountKeyFingerprint || '')) {
+    errors.push('android.serviceAccountKeyFingerprint must be a SHA256 fingerprint');
+  }
+  if (android.packageName !== 'com.billyyiu.swedishcivictest') {
+    errors.push('android.packageName must be com.billyyiu.swedishcivictest');
+  }
+  if (!android.credentialsSource || !String(android.credentialsSource).trim()) {
+    errors.push('android.credentialsSource is required');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(android.credentialsCheckedAt || '')) {
+    errors.push('android.credentialsCheckedAt must be an ISO UTC timestamp');
+  }
+
+  return errors;
+}
+
 function validatePrivacyReviewEvidence(evidencePath) {
   let evidence;
   try {
@@ -607,6 +665,16 @@ function validateLocalArtifactContents(id, artifactPaths) {
 
     const errors = jsonPaths.flatMap((jsonPath) =>
       validateStoreRecordEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
+  if (id === 'store-credentials') {
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validateStoreCredentialEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
     );
     return errors.length > 0 ? errors : null;
   }
@@ -948,6 +1016,13 @@ function buildReport() {
       'Apple/Google store records',
       'No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0.',
       'Create Apple/Google account/app records and copy URLs into a release evidence file.',
+    ),
+    evidenceGate(
+      manualEvidence,
+      'store-credentials',
+      'Apple/Google submit credentials',
+      'No App Store Connect or Google Play submit credential evidence is recorded.',
+      'Verify App Store Connect submit identifiers and Google Play service-account credentials, then record credential evidence outside secrets.',
     ),
     evidenceGate(
       manualEvidence,
