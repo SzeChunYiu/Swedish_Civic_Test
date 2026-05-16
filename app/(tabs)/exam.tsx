@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
-import { formatExamTime, generateExam, scoreExam } from '../../lib/quiz/examGenerator';
+import {
+  buildExamReviewItems,
+  formatExamTime,
+  generateExam,
+  scoreExam,
+} from '../../lib/quiz/examGenerator';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
@@ -31,6 +38,7 @@ export default function Screen() {
   }, [remainingSeconds, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
+  const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
 
@@ -59,6 +67,31 @@ export default function Screen() {
             <Text style={styles.breakdownScore}>
               {chapter.correctCount}/{chapter.totalCount}
             </Text>
+          </View>
+        ))}
+
+        <Text style={styles.sectionTitle}>Question review</Text>
+        {reviewItems.map((item, index) => (
+          <View key={item.questionId} style={styles.reviewCard}>
+            <View style={styles.reviewHeader}>
+              <Text style={styles.questionMeta}>Question {index + 1}</Text>
+              <Badge tone={item.isCorrect ? 'green' : 'orange'}>
+                {item.isCorrect ? 'Correct' : 'Review'}
+              </Badge>
+            </View>
+            <Text style={styles.questionText}>{item.questionSv}</Text>
+            <View style={styles.answerGrid}>
+              <View style={styles.answerCard}>
+                <Text style={styles.answerLabel}>Selected answer</Text>
+                <Text style={styles.answerText}>{item.selectedOptionTextSv}</Text>
+              </View>
+              <View style={styles.answerCard}>
+                <Text style={styles.answerLabel}>Correct answer</Text>
+                <Text style={styles.answerText}>{item.correctOptionTextSv}</Text>
+              </View>
+            </View>
+            <ExplanationPanel explanationSv={item.explanationSv} />
+            <UHRReferenceCard reference={item.uhrReference} />
           </View>
         ))}
 
@@ -260,6 +293,38 @@ const styles = StyleSheet.create({
   breakdownScore: {
     color: colors.textMuted,
     fontSize: typography.navButton.fontSize,
+  },
+  reviewCard: {
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.5],
+    padding: space[2],
+  },
+  reviewHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  answerGrid: {
+    gap: space[1],
+  },
+  answerCard: {
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.small,
+    gap: space[0.5],
+    padding: space[1.5],
+  },
+  answerLabel: {
+    color: colors.textMuted,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    textTransform: 'uppercase',
+  },
+  answerText: {
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
   },
   secondaryButton: {
     alignSelf: 'flex-start',

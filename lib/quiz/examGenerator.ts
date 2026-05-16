@@ -19,6 +19,17 @@ export type ExamResult = {
   chapterBreakdown: ExamChapterResult[];
 };
 
+export type ExamReviewItem = {
+  questionId: string;
+  questionSv: string;
+  chapterId: string;
+  selectedOptionTextSv: string;
+  correctOptionTextSv: string;
+  isCorrect: boolean;
+  explanationSv: string;
+  uhrReference: PracticeQuestion['uhrReference'];
+};
+
 export function formatExamTime(remainingSeconds: number): string {
   const safeSeconds = Math.max(0, Math.floor(remainingSeconds));
   const minutes = Math.floor(safeSeconds / 60);
@@ -64,4 +75,25 @@ export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap)
     percent: questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0,
     chapterBreakdown: [...chapterMap.values()],
   };
+}
+
+export function buildExamReviewItems(
+  questions: PracticeQuestion[],
+  answers: ExamAnswerMap,
+): ExamReviewItem[] {
+  return questions.map((question) => {
+    const selectedOption = question.options.find((option) => option.id === answers[question.id]);
+    const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+
+    return {
+      questionId: question.id,
+      questionSv: question.questionSv,
+      chapterId: question.chapterId,
+      selectedOptionTextSv: selectedOption?.textSv ?? 'Not answered',
+      correctOptionTextSv: correctOption?.textSv ?? 'Correct answer missing',
+      isCorrect: answers[question.id] === question.correctOptionId,
+      explanationSv: question.explanationSv,
+      uhrReference: question.uhrReference,
+    };
+  });
 }
