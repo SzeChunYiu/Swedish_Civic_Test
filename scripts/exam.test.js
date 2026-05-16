@@ -50,6 +50,25 @@ test('generateExam selects reviewed or published UHR-based questions up to reque
   );
 });
 
+test('generateExam balances chapter coverage before repeating a chapter', () => {
+  const { generateExam } = loadTs('lib/quiz/examGenerator.ts');
+  const questions = [
+    { ...baseQuestion, id: 'ch01-a', chapterId: 'ch01' },
+    { ...baseQuestion, id: 'ch01-b', chapterId: 'ch01' },
+    { ...baseQuestion, id: 'ch02-a', chapterId: 'ch02' },
+    { ...baseQuestion, id: 'ch02-b', chapterId: 'ch02' },
+    { ...baseQuestion, id: 'ch03-a', chapterId: 'ch03' },
+    { ...baseQuestion, id: 'ch03-b', chapterId: 'ch03' },
+  ];
+
+  const exam = generateExam(questions, { questionCount: 5 });
+
+  assert.deepEqual(
+    exam.map((question) => question.id),
+    ['ch01-a', 'ch02-a', 'ch03-a', 'ch01-b', 'ch02-b'],
+  );
+});
+
 test('scoreExam returns score and per-chapter breakdown', () => {
   const { scoreExam } = loadTs('lib/quiz/examGenerator.ts');
   const questions = [
