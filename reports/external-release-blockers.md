@@ -15,6 +15,7 @@ Run these after each evidence update:
 ```bash
 npx --yes eas-cli@18.13.0 whoami
 npm run release:eas-access-check -- --out reports/eas-access-check-latest.md
+npm run release:github-secrets-check -- --out reports/github-release-secrets-latest.md
 npm run release:preflight
 npm run release:blockers-snapshot
 npm run release:completion-audit
