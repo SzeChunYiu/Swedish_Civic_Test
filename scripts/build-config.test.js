@@ -44,6 +44,22 @@ test('release validation includes dependency security audit', () => {
   assert.equal(pkg.overrides.postcss, '8.5.10');
 });
 
+test('manual EAS preview workflow requires Expo token and runs preview build guard', () => {
+  const workflowPath = path.join(repoRoot, '.github/workflows/eas-preview-build.yml');
+  assert.equal(fs.existsSync(workflowPath), true);
+
+  const workflow = fs.readFileSync(workflowPath, 'utf8');
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
+  assert.match(workflow, /npm run release:eas-access-check/);
+  assert.match(workflow, /npm run build:preview -- --check-only/);
+  assert.match(workflow, /npm run build:preview/);
+  assert.match(workflow, /actions\/checkout@v5/);
+  assert.match(workflow, /actions\/setup-node@v5/);
+  assert.match(workflow, /actions\/upload-artifact@v6/);
+  assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+});
+
 test('GitHub release validation workflow runs safe validation and blocker evidence checks', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/release-validation.yml');
   assert.equal(fs.existsSync(workflowPath), true);
