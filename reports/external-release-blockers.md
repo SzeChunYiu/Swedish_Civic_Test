@@ -16,6 +16,7 @@ Run these after each evidence update:
 npx --yes eas-cli@18.13.0 whoami
 npm run release:eas-access-check -- --out reports/eas-access-check-latest.md
 npm run release:preflight
+npm run release:blockers-snapshot
 ```
 
 Use `scripts/update-release-gate.js` or `npm run release:gate` to update
