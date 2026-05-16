@@ -1448,6 +1448,32 @@ test('release preflight blocks dirty release worktrees', () => {
   assert.match(worktree.evidence, /untracked-release-file\.txt/i);
 });
 
+test('release preflight can ignore workflow-generated report files', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-generated-reports-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir, {
+    gitStatusPorcelain:
+      '?? reports/external-release-loop-latest.md\n?? reports/release-issue-update-latest.md',
+  });
+
+  const report = runPreflight({
+    expectedStatus: 0,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:
+        'reports/external-release-loop-latest.md,reports/release-issue-update-latest.md',
+    },
+  });
+
+  const worktree = report.gates.find((gate) => gate.id === 'git-worktree-clean');
+  assert.equal(worktree.status, 'READY');
+  assert.match(worktree.evidence, /Only ignored generated files were present/);
+});
+
 test('release preflight blocks READY screenshot evidence with a missing local artifact path', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-missing-shot-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');

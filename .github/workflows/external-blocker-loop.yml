@@ -13,6 +13,7 @@ env:
   EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS: 120000
   EXTERNAL_RELEASE_LOOP_SKIP_EAS: true
   RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS: true
+  RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS: reports/external-release-loop-latest.md,reports/release-issue-update-latest.md,reports/release-issue-comment-latest.md
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
   GH_TOKEN: ${{ github.token }}
 
