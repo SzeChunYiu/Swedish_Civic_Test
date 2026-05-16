@@ -75,3 +75,12 @@ test('exam results include per-question explanations and UHR sources', () => {
   assert.match(source, /<ExplanationPanel/);
   assert.match(source, /<UHRReferenceCard/);
 });
+
+test('exam auto-submits at timeout and explains unanswered scoring', () => {
+  const source = read('app/(tabs)/exam.tsx');
+
+  assert.match(source, /shouldAutoSubmitExam/);
+  assert.match(source, /setSubmitted\(true\)/);
+  assert.match(source, /Time expired/);
+  assert.match(source, /Unanswered questions count as incorrect/);
+});

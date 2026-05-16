@@ -98,3 +98,28 @@ test('formatExamTime renders remaining seconds as mm:ss', () => {
   assert.equal(formatExamTime(75), '01:15');
   assert.equal(formatExamTime(-5), '00:00');
 });
+
+test('shouldAutoSubmitExam submits only when a live exam reaches zero', () => {
+  const { shouldAutoSubmitExam } = loadTs('lib/quiz/examGenerator.ts');
+
+  assert.equal(
+    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: false, questionCount: 20 }),
+    true,
+  );
+  assert.equal(
+    shouldAutoSubmitExam({ remainingSeconds: -1, submitted: false, questionCount: 20 }),
+    true,
+  );
+  assert.equal(
+    shouldAutoSubmitExam({ remainingSeconds: 1, submitted: false, questionCount: 20 }),
+    false,
+  );
+  assert.equal(
+    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: true, questionCount: 20 }),
+    false,
+  );
+  assert.equal(
+    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: false, questionCount: 0 }),
+    false,
+  );
+});

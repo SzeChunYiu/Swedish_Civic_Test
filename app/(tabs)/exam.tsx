@@ -13,6 +13,7 @@ import {
   formatExamTime,
   generateExam,
   scoreExam,
+  shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -37,19 +38,37 @@ export default function Screen() {
     return () => clearInterval(interval);
   }, [remainingSeconds, submitted]);
 
+  useEffect(() => {
+    if (
+      shouldAutoSubmitExam({
+        remainingSeconds,
+        submitted,
+        questionCount: examQuestions.length,
+      })
+    ) {
+      setSubmitted(true);
+    }
+  }, [examQuestions.length, remainingSeconds, submitted]);
+
   const result = submitted ? scoreExam(examQuestions, answers) : null;
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
+  const endedByTime = Boolean(result && remainingSeconds <= 0);
 
   if (result) {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Badge tone={result.percent >= 75 ? 'green' : 'orange'}>Mock exam result</Badge>
+          <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
+            {endedByTime ? 'Time expired' : 'Mock exam result'}
+          </Badge>
           <Text style={styles.title}>Exam result</Text>
           <Text style={styles.subtitle}>
             Explanations and review are shown only after the exam is submitted.
+            {endedByTime
+              ? ' Unanswered questions count as incorrect and are marked Not answered.'
+              : ''}
           </Text>
         </View>
         <QuestionDisclaimer />
