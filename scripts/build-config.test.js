@@ -948,6 +948,10 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /EXTERNAL_RELEASE_LOOP_STEP_TIMEOUT_MS:\s*120000/);
   assert.match(workflow, /EXTERNAL_RELEASE_LOOP_SKIP_EAS:\s*true/);
   assert.match(workflow, /RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS:\s*true/);
+  assert.match(
+    workflow,
+    /RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:\s*reports\/external-release-loop-latest\.md,reports\/release-issue-update-latest\.md,reports\/release-issue-comment-latest\.md/,
+  );
   assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
   assert.match(workflow, /GH_TOKEN:\s*\$\{\{ github\.token \}\}/);
   assert.match(workflow, /actions:\s*write/);

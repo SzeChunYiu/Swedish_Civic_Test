@@ -879,6 +879,22 @@ function gate(id, label, status, evidence, nextAction) {
   return { id, label, status, evidence, nextAction };
 }
 
+function allowedDirtyPathPrefixes() {
+  return String(process.env.RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS || '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
+function porcelainPath(line) {
+  return line.slice(3).trim();
+}
+
+function isAllowedDirtyLine(line, allowedPrefixes) {
+  const changedPath = porcelainPath(line);
+  return allowedPrefixes.some((prefix) => changedPath === prefix || changedPath.startsWith(prefix));
+}
+
 function gitWorktreeGate() {
   const status = commandSucceeds('git', ['status', '--porcelain']);
   if (!status.ok) {
@@ -892,7 +908,20 @@ function gitWorktreeGate() {
   }
 
   if (status.stdout.length > 0) {
-    const changedFiles = status.stdout.split('\n').slice(0, 25).join('\n');
+    const changedLines = status.stdout.split('\n').filter(Boolean);
+    const allowedPrefixes = allowedDirtyPathPrefixes();
+    const blockingLines = changedLines.filter((line) => !isAllowedDirtyLine(line, allowedPrefixes));
+    if (blockingLines.length === 0) {
+      return gate(
+        'git-worktree-clean',
+        'Clean git worktree for release candidate',
+        'READY',
+        `Only ignored generated files were present:\n${changedLines.slice(0, 25).join('\n')}`,
+        'Run release preflight from the exact clean release commit.',
+      );
+    }
+
+    const changedFiles = blockingLines.slice(0, 25).join('\n');
     return gate(
       'git-worktree-clean',
       'Clean git worktree for release candidate',
