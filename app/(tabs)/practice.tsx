@@ -88,6 +88,7 @@ export default function Screen() {
           return (
             <AnswerOption
               key={option.id}
+              disabled={hasSelectedAnswer}
               option={option}
               onPress={() => handleSelectOption(option.id)}
               resultLabel={isSelected ? (selectedIsCorrect ? 'Rätt' : 'Fel') : undefined}
