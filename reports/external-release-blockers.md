@@ -18,6 +18,7 @@ npm run release:eas-access-check -- --out reports/eas-access-check-latest.md
 npm run release:preflight
 npm run release:blockers-snapshot
 npm run release:completion-audit
+npm run release:issue-update
 ```
 
 Use `scripts/update-release-gate.js` or `npm run release:gate` to update
