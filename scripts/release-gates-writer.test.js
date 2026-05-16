@@ -242,3 +242,34 @@ test('release evidence index command summarizes stub readiness for blocked manua
   assert.match(report, /npm run release:evidence-stub -- --gate eas-build-artifacts/);
   assert.doesNotMatch(report, /`public-urls`/);
 });
+
+test('release owner action packet lists only remaining external blockers', () => {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-owner-action-packet-'));
+  const reportPath = path.join(tmpRoot, 'owner-action-packet.md');
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/write-release-owner-action-packet.js', '--out', reportPath],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:owner-action-packet'],
+    'node scripts/write-release-owner-action-packet.js',
+  );
+
+  const report = fs.readFileSync(reportPath, 'utf8');
+  assert.match(report, /# Release owner action packet/);
+  assert.match(report, /Status \| BLOCKED/);
+  assert.match(report, /Remaining owner actions \| 10/);
+  assert.match(report, /`eas-auth`/);
+  assert.match(report, /EXPO_TOKEN/);
+  assert.match(report, /`store-records`/);
+  assert.match(report, /App Store Connect/);
+  assert.match(report, /Google Play Console/);
+  assert.match(report, /non-SzeChunYiu accounts\/remotes/);
+  assert.doesNotMatch(report, /`store-policy-questionnaires`/);
+  assert.match(report, /SzeChunYiu\/Swedish_Civic_Test/);
+});
