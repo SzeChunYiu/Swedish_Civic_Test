@@ -176,19 +176,34 @@ function timedOutMessage(timeoutMs) {
   return `Timed out after ${timeoutMs}ms`;
 }
 
-function skippedMissingExpoToken(step) {
+function truthyEnv(value) {
+  return /^(1|true|yes)$/i.test(String(value || '').trim());
+}
+
+function expoSkipReason() {
+  if (truthyEnv(process.env.EXTERNAL_RELEASE_LOOP_SKIP_EAS)) {
+    return 'Skipped because EXTERNAL_RELEASE_LOOP_SKIP_EAS is enabled';
+  }
+  if (!process.env.EXPO_TOKEN) {
+    return 'Skipped because EXPO_TOKEN is not configured';
+  }
+  return '';
+}
+
+function skippedExpoStep(step, reason) {
   return {
     ...step,
     exitCode: 1,
     status: 'BLOCKED',
     stdout: '',
-    stderr: 'Skipped because EXPO_TOKEN is not configured',
+    stderr: reason,
   };
 }
 
 function runStep(step) {
-  if (step.requiresExpoToken && !process.env.EXPO_TOKEN) {
-    return skippedMissingExpoToken(step);
+  const skipReason = step.requiresExpoToken ? expoSkipReason() : '';
+  if (skipReason) {
+    return skippedExpoStep(step, skipReason);
   }
 
   const timeoutMs = stepTimeoutMs(step);
