@@ -103,6 +103,11 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
             evidence:
               'App Store Connect and Google Play service-account submit credentials verified at https://example.com/store-credentials/evidence.',
           },
+          'store-policy-questionnaires': {
+            status: 'READY',
+            evidence:
+              'Apple age rating/export compliance and Google Play content rating/ads declarations reviewed at https://example.com/store-policy/evidence.',
+          },
           'privacy-review': {
             status: 'READY',
             evidence:
@@ -350,6 +355,45 @@ function createStoreCredentialEvidence(options = {}) {
   };
 }
 
+function createStorePolicyQuestionnaireEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'store-policy-questionnaires',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'reviewed',
+    reviewedAt: '2026-05-16T02:35:00Z',
+    reviewer: 'release-owner',
+    apple: {
+      ageRatingReviewed: true,
+      exportComplianceReviewed: true,
+      usesNonExemptEncryption: false,
+      contentRightsReviewed: true,
+      noOfficialAffiliationClaims: true,
+    },
+    google: {
+      contentRatingReviewed: true,
+      targetAudienceReviewed: true,
+      adsDeclarationReviewed: true,
+      containsRealMoneyGambling: false,
+      noGovernmentAffiliationClaims: true,
+    },
+    ...options.evidence,
+  };
+
+  const evidencePath = path.join(absoluteDir, 'store-policy-questionnaires.json');
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'store-policy-questionnaires.json'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 function createSubmissionEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -494,6 +538,7 @@ test('release preflight fails closed on external launch blockers', () => {
     'ios-device-audio',
     'store-records',
     'store-credentials',
+    'store-policy-questionnaires',
     'privacy-review',
     'public-urls',
     'device-screenshots',
@@ -504,6 +549,88 @@ test('release preflight fails closed on external launch blockers', () => {
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
   assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
+});
+
+test('release preflight blocks local store policy questionnaire evidence missing reviews', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-policy-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const policyEvidence = createStorePolicyQuestionnaireEvidence({
+    evidence: {
+      apple: {
+        ageRatingReviewed: false,
+        exportComplianceReviewed: true,
+        usesNonExemptEncryption: false,
+        contentRightsReviewed: true,
+        noOfficialAffiliationClaims: true,
+      },
+      google: {
+        contentRatingReviewed: true,
+        targetAudienceReviewed: true,
+        adsDeclarationReviewed: false,
+        containsRealMoneyGambling: false,
+        noGovernmentAffiliationClaims: true,
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-policy-questionnaires': {
+        status: 'READY',
+        evidence: `Apple age rating/export compliance and Google Play content rating/ads declarations reviewed in ${policyEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const policy = report.gates.find((gate) => gate.id === 'store-policy-questionnaires');
+    assert.equal(policy.status, 'BLOCKED');
+    assert.match(policy.evidence, /local artifact content/i);
+    assert.match(policy.evidence, /apple.ageRatingReviewed/i);
+    assert.match(policy.evidence, /google.adsDeclarationReviewed/i);
+  } finally {
+    policyEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local store policy questionnaire evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-policy-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const policyEvidence = createStorePolicyQuestionnaireEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-policy-questionnaires': {
+        status: 'READY',
+        evidence: `Apple age rating/export compliance and Google Play content rating/ads declarations reviewed in ${policyEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(
+      report.gates.find((gate) => gate.id === 'store-policy-questionnaires').status,
+      'READY',
+    );
+  } finally {
+    policyEvidence.cleanup();
+  }
 });
 
 test('release preflight blocks local store credential evidence with placeholders', () => {

@@ -45,6 +45,17 @@ const evidenceRequirements = {
       /\b(?:reports|publishing)\/[^\s,;:]+|https?:\/\//i,
     ],
   ],
+  'store-policy-questionnaires': [
+    ['Apple age rating or export compliance review', /Apple|age rating|export compliance/i],
+    [
+      'Google Play content rating or ads declaration review',
+      /Google Play|content rating|ads declaration/i,
+    ],
+    [
+      'local policy evidence path or URL reference',
+      /\b(?:reports|publishing)\/[^\s,;:]+|https?:\/\//i,
+    ],
+  ],
   'privacy-review': [
     ['Apple privacy labels review', /Apple privacy labels|App Store privacy/i],
     ['Google Play Data safety review', /Google Play Data safety|Data safety/i],
@@ -451,6 +462,58 @@ function validateStoreCredentialEvidence(evidencePath) {
   return errors;
 }
 
+function validateStorePolicyQuestionnaireEvidence(evidencePath) {
+  let evidence;
+  try {
+    evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (evidence.status !== 'reviewed') {
+    errors.push('status must be reviewed');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(evidence.reviewedAt || '')) {
+    errors.push('reviewedAt must be an ISO UTC timestamp');
+  }
+  if (!evidence.reviewer || !String(evidence.reviewer).trim()) {
+    errors.push('reviewer is required');
+  }
+
+  const apple = evidence.apple || {};
+  for (const field of [
+    'ageRatingReviewed',
+    'exportComplianceReviewed',
+    'contentRightsReviewed',
+    'noOfficialAffiliationClaims',
+  ]) {
+    if (apple[field] !== true) {
+      errors.push(`apple.${field} must be true`);
+    }
+  }
+  if (apple.usesNonExemptEncryption !== false) {
+    errors.push('apple.usesNonExemptEncryption must be false');
+  }
+
+  const google = evidence.google || {};
+  for (const field of [
+    'contentRatingReviewed',
+    'targetAudienceReviewed',
+    'adsDeclarationReviewed',
+    'noGovernmentAffiliationClaims',
+  ]) {
+    if (google[field] !== true) {
+      errors.push(`google.${field} must be true`);
+    }
+  }
+  if (google.containsRealMoneyGambling !== false) {
+    errors.push('google.containsRealMoneyGambling must be false');
+  }
+
+  return errors;
+}
+
 function validatePrivacyReviewEvidence(evidencePath) {
   let evidence;
   try {
@@ -675,6 +738,16 @@ function validateLocalArtifactContents(id, artifactPaths) {
 
     const errors = jsonPaths.flatMap((jsonPath) =>
       validateStoreCredentialEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
+  if (id === 'store-policy-questionnaires') {
+    const jsonPaths = artifactPaths.filter((artifactPath) => /\.json$/i.test(artifactPath));
+    if (jsonPaths.length === 0) return null;
+
+    const errors = jsonPaths.flatMap((jsonPath) =>
+      validateStorePolicyQuestionnaireEvidence(jsonPath).map((error) => `${jsonPath}: ${error}`),
     );
     return errors.length > 0 ? errors : null;
   }
@@ -1023,6 +1096,13 @@ function buildReport() {
       'Apple/Google submit credentials',
       'No App Store Connect or Google Play submit credential evidence is recorded.',
       'Verify App Store Connect submit identifiers and Google Play service-account credentials, then record credential evidence outside secrets.',
+    ),
+    evidenceGate(
+      manualEvidence,
+      'store-policy-questionnaires',
+      'Apple/Google policy questionnaires',
+      'No App Store age rating/export compliance or Google Play content rating/ads declaration evidence is recorded.',
+      'Review App Store and Google Play policy questionnaires for the generated binary, then record non-secret evidence.',
     ),
     evidenceGate(
       manualEvidence,
