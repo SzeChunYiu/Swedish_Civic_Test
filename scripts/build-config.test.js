@@ -365,6 +365,89 @@ test('Expo token bootstrap can read the local token from macOS Keychain fallback
   assert.doesNotMatch(result.stdout, /keychain-secret-token/);
 });
 
+test('Expo token Keychain writer blocks without a local token and does not call security', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'expo-token-keychain-blocked-'));
+  const reportPath = path.join(tmpDir, 'keychain.md');
+  const securityLog = path.join(tmpDir, 'security.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'security'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${securityLog}"`,
+      'echo "security should not be called without a token" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const env = { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` };
+  delete env.EXPO_TOKEN;
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/store-expo-token-keychain.js', '--out', reportPath],
+    { cwd: repoRoot, encoding: 'utf8', env },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 1);
+  assert.equal(
+    pkg.scripts['release:store-expo-token-keychain'],
+    'node scripts/store-expo-token-keychain.js',
+  );
+  assert.equal(fs.existsSync(securityLog), false);
+  assert.match(result.stdout, /Expo token Keychain storage BLOCKED/i);
+  assert.match(report, /Status \| BLOCKED/);
+  assert.match(report, /Token source \| none/);
+});
+
+test('Expo token Keychain writer stores a stdin token without printing it', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'expo-token-keychain-ready-'));
+  const reportPath = path.join(tmpDir, 'keychain.md');
+  const securityLog = path.join(tmpDir, 'security.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'security'),
+    [
+      '#!/bin/sh',
+      'if [ "$1" = "add-generic-password" ] && [ "$2" = "-U" ] && [ "$3" = "-a" ] && [ "$5" = "-s" ] && [ "$6" = "EXPO_TOKEN" ] && [ "$7" = "-w" ] && [ "$8" = "super-secret-token" ]; then',
+      `  echo "add-generic-password EXPO_TOKEN redacted" >> "${securityLog}"`,
+      '  exit 0',
+      'fi',
+      'echo "unexpected security command" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const env = { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` };
+  delete env.EXPO_TOKEN;
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/store-expo-token-keychain.js', '--token-stdin', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env,
+      input: 'super-secret-token\n',
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const securityCalls = fs.readFileSync(securityLog, 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /Expo token Keychain storage READY/i);
+  assert.match(report, /Status \| READY/);
+  assert.match(report, /Token source \| stdin/);
+  assert.match(report, /security add-generic-password -U -a/);
+  assert.match(securityCalls, /add-generic-password EXPO_TOKEN redacted/);
+  assert.doesNotMatch(report, /super-secret-token/);
+  assert.doesNotMatch(result.stdout, /super-secret-token/);
+});
+
 test('EAS preview dispatch command blocks without EXPO_TOKEN secret and does not start workflow', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'eas-preview-dispatch-blocked-'));
   const reportPath = path.join(tmpDir, 'dispatch.md');

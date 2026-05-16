@@ -18,6 +18,15 @@ the repository Actions secret without printing the value:
 npm run release:set-expo-token-secret -- --out reports/set-expo-token-secret-latest.md
 ```
 
+If you have a valid Expo token but do not want to keep it in shell history,
+paste or pipe it into the local macOS Keychain helper first. The report redacts
+the token and the follow-up bootstrap command can read the `EXPO_TOKEN`
+Keychain service:
+
+```bash
+printf '%s' "$EXPO_TOKEN" | npm run release:store-expo-token-keychain -- --token-stdin --out reports/store-expo-token-keychain-latest.md
+```
+
 To run the full secret-set, secret-verify, and external-loop dispatch sequence
 in one fail-closed command after exporting a local token or storing it in macOS
 Keychain service `EXPO_TOKEN`:
