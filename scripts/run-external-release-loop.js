@@ -290,6 +290,22 @@ function writeReport(outPath, results, artifactDir) {
   return overallStatus;
 }
 
+function copySelectedArtifacts(outPath, artifactDir) {
+  const outputDir = path.dirname(outPath);
+  const selectedArtifacts = [
+    {
+      from: path.join(artifactDir, 'release-owner-action-packet.md'),
+      to: path.join(outputDir, 'release-owner-action-packet-latest.md'),
+    },
+  ];
+
+  for (const artifact of selectedArtifacts) {
+    if (!fs.existsSync(artifact.from)) continue;
+    fs.mkdirSync(path.dirname(artifact.to), { recursive: true });
+    fs.copyFileSync(artifact.from, artifact.to);
+  }
+}
+
 function main() {
   let args;
   try {
@@ -306,6 +322,7 @@ function main() {
   const artifactDir = fs.mkdtempSync(path.join(os.tmpdir(), 'swedish-civic-test-release-loop-'));
   const results = buildSteps(artifactDir).map(runStep);
   const status = writeReport(path.resolve(args.out), results, artifactDir);
+  copySelectedArtifacts(path.resolve(args.out), artifactDir);
   process.stdout.write(`External release blocker loop ${status}; wrote ${args.out}\n`);
   process.exit(status === 'READY' ? 0 : 1);
 }

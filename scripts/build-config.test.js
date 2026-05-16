@@ -700,7 +700,7 @@ test('external release blocker loop runs every safe evidence command and records
       `echo "npm $@" >> "${commandLog}"`,
       'case "$*" in',
       '  *"release:evidence-index"*) echo "STUBS_READY"; exit 0 ;;',
-      '  *"release:owner-action-packet"*) echo "OWNER_PACKET_READY"; exit 1 ;;',
+      '  *"release:owner-action-packet"*) out=""; for arg in "$@"; do out="$arg"; done; echo "# Owner packet" > "$out"; echo "OWNER_PACKET_READY"; exit 1 ;;',
       '  *) echo "blocked by external evidence super-secret-token"; exit 1 ;;',
       'esac',
       '',
@@ -722,6 +722,10 @@ test('external release blocker loop runs every safe evidence command and records
     },
   );
   const report = fs.readFileSync(reportPath, 'utf8');
+  const ownerPacket = fs.readFileSync(
+    path.join(tmpDir, 'release-owner-action-packet-latest.md'),
+    'utf8',
+  );
   const calls = fs.readFileSync(commandLog, 'utf8');
   const pkg = readJson('package.json');
 
@@ -747,6 +751,7 @@ test('external release blocker loop runs every safe evidence command and records
   assert.match(calls, /node scripts\/write-release-issue-update\.js --out /);
   assert.match(calls, /npm run release:evidence-index/);
   assert.match(calls, /npm run release:owner-action-packet/);
+  assert.match(ownerPacket, /# Owner packet/);
   assert.doesNotMatch(calls, /--run-validate/);
   assert.doesNotMatch(report, /super-secret-token/);
 });
@@ -953,7 +958,7 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS:\s*true/);
   assert.match(
     workflow,
-    /RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:\s*reports\/external-release-loop-latest\.md,reports\/release-issue-update-latest\.md,reports\/release-issue-comment-latest\.md/,
+    /RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:\s*reports\/external-release-loop-latest\.md,reports\/release-owner-action-packet-latest\.md,reports\/release-issue-update-latest\.md,reports\/release-issue-comment-latest\.md/,
   );
   assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
   assert.match(workflow, /GH_TOKEN:\s*\$\{\{ github\.token \}\}/);
@@ -976,6 +981,7 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /RELEASE_ISSUE_COMMENT_EXIT=\$code/);
   assert.match(workflow, /exit 0/);
   assert.match(workflow, /reports\/external-release-loop-latest\.md/);
+  assert.match(workflow, /reports\/release-owner-action-packet-latest\.md/);
   assert.match(workflow, /reports\/release-issue-update-latest\.md/);
   assert.match(workflow, /reports\/release-issue-comment-latest\.md/);
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
