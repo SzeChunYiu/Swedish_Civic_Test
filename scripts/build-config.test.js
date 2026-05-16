@@ -958,7 +958,7 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS:\s*true/);
   assert.match(
     workflow,
-    /RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:\s*reports\/external-release-loop-latest\.md,reports\/release-owner-action-packet-latest\.md,reports\/release-issue-update-latest\.md,reports\/release-issue-comment-latest\.md/,
+    /RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:\s*reports\/external-release-loop-latest\.md,reports\/release-owner-action-packet-latest\.md,reports\/release-issue-update-latest\.md,reports\/release-issue-comment-latest\.md,reports\/release-owner-action-packet-comment-latest\.md/,
   );
   assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
   assert.match(workflow, /GH_TOKEN:\s*\$\{\{ github\.token \}\}/);
@@ -979,13 +979,73 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   );
   assert.doesNotMatch(workflow, /npm run release:issue-comment/);
   assert.match(workflow, /RELEASE_ISSUE_COMMENT_EXIT=\$code/);
+  assert.match(
+    workflow,
+    /node scripts\/post-release-owner-action-packet\.js --body-file reports\/release-owner-action-packet-latest\.md --out reports\/release-owner-action-packet-comment-latest\.md/,
+  );
+  assert.match(workflow, /OWNER_ACTION_PACKET_COMMENT_EXIT=\$code/);
   assert.match(workflow, /exit 0/);
   assert.match(workflow, /reports\/external-release-loop-latest\.md/);
   assert.match(workflow, /reports\/release-owner-action-packet-latest\.md/);
   assert.match(workflow, /reports\/release-issue-update-latest\.md/);
   assert.match(workflow, /reports\/release-issue-comment-latest\.md/);
+  assert.match(workflow, /reports\/release-owner-action-packet-comment-latest\.md/);
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+});
+
+test('owner action packet comment posts existing packet body and writes non-secret report', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'owner-action-packet-comment-'));
+  const bodyPath = path.join(tmpDir, 'owner-packet.md');
+  const reportPath = path.join(tmpDir, 'owner-packet-comment.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  const ghBody = path.join(tmpDir, 'gh-body.md');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'while [ "$#" -gt 0 ]; do',
+      '  if [ "$1" = "--body-file" ]; then shift; cp "$1" "' + ghBody + '"; fi',
+      '  shift',
+      'done',
+      'echo "https://github.com/SzeChunYiu/Swedish_Civic_Test/issues/11#issuecomment-1"',
+      'exit 0',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(bodyPath, '# Owner packet\n\nToken phrase should stay in body file only.\n');
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/post-release-owner-action-packet.js', '--body-file', bodyPath, '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+  const postedBody = fs.readFileSync(ghBody, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:owner-action-packet-comment'],
+    'node scripts/post-release-owner-action-packet.js',
+  );
+  assert.match(result.stdout, /Release owner action packet comment POSTED/i);
+  assert.match(report, /Status \| POSTED/);
+  assert.match(report, /Issue \| 11/);
+  assert.match(
+    report,
+    /Issue comment URL \| https:\/\/github\.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/11#issuecomment-1/,
+  );
+  assert.match(ghCalls, /issue comment 11 --repo SzeChunYiu\/Swedish_Civic_Test --body-file /);
+  assert.equal(postedBody, '# Owner packet\n\nToken phrase should stay in body file only.\n');
+  assert.doesNotMatch(report, /Token phrase should stay in body file only/);
 });
 
 test('external blocker loop dispatch command starts workflow and writes report', () => {
