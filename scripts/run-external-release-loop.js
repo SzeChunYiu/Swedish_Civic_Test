@@ -35,6 +35,17 @@ function buildSteps(artifactDir) {
       ],
     },
     {
+      name: 'release:expo-token-request',
+      command: 'npm',
+      args: [
+        'run',
+        'release:expo-token-request',
+        '--',
+        '--out',
+        path.join(artifactDir, 'expo-token-owner-request.md'),
+      ],
+    },
+    {
       name: 'release:eas-preview-dispatch',
       command: 'npm',
       args: [
