@@ -51,6 +51,8 @@ can still evaluate the repository clean-worktree gate.
 npx --yes eas-cli@18.13.0 whoami
 npm run release:eas-access-check -- --out reports/eas-access-check-latest.md
 npm run release:github-secrets-check -- --out reports/github-release-secrets-latest.md
+# In GitHub Actions this check uses the injected EXPO_TOKEN environment variable
+# instead of gh secret-list permissions.
 npm run release:eas-preview-dispatch -- --run-build false --out reports/eas-preview-dispatch-latest.md
 npm run release:preflight
 npm run release:blockers-snapshot

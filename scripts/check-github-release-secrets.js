@@ -54,7 +54,7 @@ function parseSecretNames(output) {
   );
 }
 
-function writeReport({ outPath, targetRepo, status, commandStatus, commandOutput, rows }) {
+function writeReport({ outPath, targetRepo, status, source, commandStatus, commandOutput, rows }) {
   const lines = [
     '# GitHub release secrets check',
     '',
@@ -63,6 +63,7 @@ function writeReport({ outPath, targetRepo, status, commandStatus, commandOutput
     `| Status | ${status} |`,
     `| Checked at UTC | ${new Date().toISOString()} |`,
     `| Repository | ${targetRepo} |`,
+    `| Source | ${tableCell(source)} |`,
     `| Command | \`gh secret list --repo ${targetRepo}\` |`,
     `| Command exit code | ${commandStatus} |`,
     '',
@@ -108,17 +109,40 @@ function main() {
   }
 
   const targetRepo = args.repo || repo;
-  const result = spawnSync('gh', ['secret', 'list', '--repo', targetRepo], { encoding: 'utf8' });
-  const output = result.status === 0 ? result.stdout : result.stderr || result.stdout;
-  const names = result.status === 0 ? parseSecretNames(result.stdout) : new Set();
-  const rows = requiredSecrets.map((name) => ({ name, present: names.has(name) }));
-  const status = result.status === 0 && rows.every((row) => row.present) ? 'READY' : 'BLOCKED';
+  const runningInActions = process.env.GITHUB_ACTIONS === 'true';
+
+  let result = { status: 0, stdout: '', stderr: '' };
+  let source = 'gh secret list';
+  let rows;
+
+  if (runningInActions) {
+    source = 'GitHub Actions injected environment';
+    rows = requiredSecrets.map((name) => ({
+      name,
+      present: String(process.env[name] || '').trim().length > 0,
+    }));
+  } else {
+    result = spawnSync('gh', ['secret', 'list', '--repo', targetRepo], { encoding: 'utf8' });
+    const names = result.status === 0 ? parseSecretNames(result.stdout) : new Set();
+    rows = requiredSecrets.map((name) => ({ name, present: names.has(name) }));
+  }
+
+  const output = runningInActions
+    ? 'Checked injected GitHub Actions environment secret presence only; values are never printed.'
+    : result.status === 0
+      ? result.stdout
+      : result.stderr || result.stdout;
+  const status =
+    (runningInActions || result.status === 0) && rows.every((row) => row.present)
+      ? 'READY'
+      : 'BLOCKED';
 
   writeReport({
     outPath: path.resolve(args.out),
     targetRepo,
     status,
-    commandStatus: result.status ?? 1,
+    source,
+    commandStatus: runningInActions ? 'not-run' : (result.status ?? 1),
     commandOutput: output,
     rows,
   });

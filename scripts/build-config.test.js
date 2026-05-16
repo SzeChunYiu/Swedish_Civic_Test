@@ -65,7 +65,11 @@ test('GitHub release secrets check reports whether EXPO_TOKEN is configured with
     {
       cwd: repoRoot,
       encoding: 'utf8',
-      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+      env: {
+        ...process.env,
+        GITHUB_ACTIONS: 'false',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
     },
   );
   const report = fs.readFileSync(reportPath, 'utf8');
@@ -80,6 +84,80 @@ test('GitHub release secrets check reports whether EXPO_TOKEN is configured with
   assert.match(report, /SzeChunYiu\/Swedish_Civic_Test/);
   assert.match(report, /EXPO_TOKEN \| present/);
   assert.doesNotMatch(report, /super-secret|token value/i);
+});
+
+test('GitHub release secrets check uses injected Actions env without gh secret-list auth', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-release-secrets-actions-env-'));
+  const reportPath = path.join(tmpDir, 'github-secrets.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'echo "gh should not be called when Actions injected EXPO_TOKEN is present" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/check-github-release-secrets.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        GITHUB_ACTIONS: 'true',
+        EXPO_TOKEN: 'super-secret-token',
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(fs.existsSync(ghLog), false);
+  assert.match(result.stdout, /GitHub release secrets check READY/i);
+  assert.match(report, /Status \| READY/);
+  assert.match(report, /Source \| GitHub Actions injected environment/);
+  assert.match(report, /EXPO_TOKEN \| present/);
+  assert.doesNotMatch(report, /super-secret-token/);
+  assert.doesNotMatch(result.stdout, /super-secret-token/);
+});
+
+test('GitHub release secrets check blocks in Actions when injected EXPO_TOKEN is empty', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-release-secrets-actions-empty-'));
+  const reportPath = path.join(tmpDir, 'github-secrets.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    ['#!/bin/sh', `echo "$@" >> "${ghLog}"`, 'exit 2', ''].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const env = {
+    ...process.env,
+    GITHUB_ACTIONS: 'true',
+    PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+  };
+  delete env.EXPO_TOKEN;
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/check-github-release-secrets.js', '--out', reportPath],
+    { cwd: repoRoot, encoding: 'utf8', env },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+
+  assert.equal(result.status, 1);
+  assert.equal(fs.existsSync(ghLog), false);
+  assert.match(result.stdout, /GitHub release secrets check BLOCKED/i);
+  assert.match(report, /Status \| BLOCKED/);
+  assert.match(report, /Source \| GitHub Actions injected environment/);
+  assert.match(report, /EXPO_TOKEN \| missing/);
 });
 
 test('GitHub EXPO_TOKEN secret setter reads token from env without leaking values', () => {
