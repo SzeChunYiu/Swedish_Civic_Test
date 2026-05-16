@@ -291,6 +291,53 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 
+test('external blocker loop dispatch command starts workflow and writes report', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'external-loop-dispatch-'));
+  const reportPath = path.join(tmpDir, 'external-loop-dispatch.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'if [ "$1 $2 $3" = "workflow run external-blocker-loop.yml" ]; then exit 0; fi',
+      'if [ "$1 $2 $3" = "run list --workflow" ]; then echo "[{\\"databaseId\\":456,\\"url\\":\\"https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/456\\",\\"status\\":\\"queued\\",\\"headSha\\":\\"abcdef1\\",\\"createdAt\\":\\"2026-05-16T00:00:00Z\\"}]"; exit 0; fi',
+      'echo "unexpected gh command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/dispatch-external-blocker-loop.js', '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:external-loop-dispatch'],
+    'node scripts/dispatch-external-blocker-loop.js',
+  );
+  assert.match(result.stdout, /External blocker loop dispatch DISPATCHED/i);
+  assert.match(report, /Status \| DISPATCHED/);
+  assert.match(report, /external-blocker-loop\.yml/);
+  assert.match(report, /actions\/runs\/456/);
+  assert.match(
+    ghCalls,
+    /workflow run external-blocker-loop\.yml --repo SzeChunYiu\/Swedish_Civic_Test --ref main/,
+  );
+  assert.doesNotMatch(report, /super-secret|token value/i);
+});
+
 test('EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.devDependencies['eas-cli'], undefined);
