@@ -51,3 +51,13 @@ A question may NOT be submitted to VALIDATOR if:
 - English translation is confusing,
 - UHR reference field is empty,
 - explanation overclaims official authority.
+
+## Ownership rule — enforced by pre-commit hook
+
+**Never write the strings `babbloo` or `babbloo-studio` anywhere in any file** — not in comments, strings, doc blocks, or prompts. The CI ownership gate runs a blunt regex scan and will fail even when the mention is negational (e.g. "do not use babbloo").
+
+Use `legacy-owner` or `non-SzeChunYiu` as substitutes when referring to the old account.
+
+This project pushes to `SzeChunYiu/Swedish_Civic_Test`. Every pane, every commit, every PR targets that repo.
+
+A pre-commit hook on both the local and LUNARC checkouts enforces this and will block the commit. Override only with `[allow-legacy-owner]` in the commit message when absolutely necessary (e.g. fixing the hook itself).
