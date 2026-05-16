@@ -330,6 +330,40 @@ If using local screenshot files, write
 for each final screenshot. `npm run release:preflight` validates referenced local
 final screenshot manifests and rejects browser/web-draft evidence.
 
+## 6b. Record release-owner approval before production submission
+
+After EAS build artifacts, physical-device audio, store records, submit
+credentials, store policy questionnaires, privacy review, public URLs, and final
+screenshots are all ready, record final release-owner approval in
+`reports/release-owner-approval/release-owner-approval.json`. Reference that path
+in the `release-owner-approval` release gate.
+
+Required local JSON shape:
+
+```json
+{
+  "status": "approved",
+  "approvedAt": "2026-05-16T03:05:00Z",
+  "approver": "release-owner",
+  "approvedCommit": "12ff3be",
+  "releaseDecision": "approved-for-store-submission",
+  "noKnownBlockers": true,
+  "evidenceReport": "reports/release-evidence-2026-05-15.md",
+  "checkedGates": [
+    "eas-auth",
+    "eas-build-artifacts",
+    "android-device-audio",
+    "ios-device-audio",
+    "store-records",
+    "store-credentials",
+    "store-policy-questionnaires",
+    "privacy-review",
+    "public-urls",
+    "device-screenshots"
+  ]
+}
+```
+
 ## 7. Upload internal test builds
 
 Apple:

@@ -123,6 +123,11 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
             evidence:
               'Final screenshots captured from accepted device tooling and recorded at https://example.com/final-store-screenshots/manifest.json.',
           },
+          'release-owner-approval': {
+            status: 'READY',
+            evidence:
+              'Release owner approved store submission at https://example.com/release-owner-approval/evidence.',
+          },
           submission: {
             status: 'READY',
             evidence:
@@ -394,6 +399,47 @@ function createStorePolicyQuestionnaireEvidence(options = {}) {
   };
 }
 
+function createReleaseOwnerApprovalEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'release-owner-approval',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const evidence = {
+    status: 'approved',
+    approvedAt: '2026-05-16T03:05:00Z',
+    approver: 'release-owner',
+    approvedCommit: '12ff3be',
+    releaseDecision: 'approved-for-store-submission',
+    noKnownBlockers: true,
+    evidenceReport: 'reports/release-evidence-2026-05-15.md',
+    checkedGates: [
+      'eas-auth',
+      'eas-build-artifacts',
+      'android-device-audio',
+      'ios-device-audio',
+      'store-records',
+      'store-credentials',
+      'store-policy-questionnaires',
+      'privacy-review',
+      'public-urls',
+      'device-screenshots',
+    ],
+    ...options.evidence,
+  };
+
+  const evidencePath = path.join(absoluteDir, 'release-owner-approval.json');
+  fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2));
+
+  return {
+    relativePath: path.join(relativeDir, 'release-owner-approval.json'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 function createSubmissionEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -540,6 +586,7 @@ test('release preflight fails closed on external launch blockers', () => {
     'store-credentials',
     'store-policy-questionnaires',
     'privacy-review',
+    'release-owner-approval',
     'public-urls',
     'device-screenshots',
   ]) {
@@ -549,6 +596,73 @@ test('release preflight fails closed on external launch blockers', () => {
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
   assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
+});
+
+test('release preflight blocks local release-owner approval evidence with unresolved blockers', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-owner-approval-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const approvalEvidence = createReleaseOwnerApprovalEvidence({
+    evidence: {
+      noKnownBlockers: false,
+      checkedGates: ['eas-auth'],
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'release-owner-approval': {
+        status: 'READY',
+        evidence: `Release owner approved store submission in ${approvalEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const approval = report.gates.find((gate) => gate.id === 'release-owner-approval');
+    assert.equal(approval.status, 'BLOCKED');
+    assert.match(approval.evidence, /local artifact content/i);
+    assert.match(approval.evidence, /noKnownBlockers/i);
+    assert.match(approval.evidence, /checkedGates/i);
+  } finally {
+    approvalEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local release-owner approval evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-owner-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const approvalEvidence = createReleaseOwnerApprovalEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'release-owner-approval': {
+        status: 'READY',
+        evidence: `Release owner approved store submission in ${approvalEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'release-owner-approval').status, 'READY');
+  } finally {
+    approvalEvidence.cleanup();
+  }
 });
 
 test('release preflight blocks local store policy questionnaire evidence missing reviews', () => {
