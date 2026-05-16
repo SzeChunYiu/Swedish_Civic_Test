@@ -110,6 +110,17 @@ function buildSteps(artifactDir) {
         path.join(artifactDir, 'release-evidence-index.md'),
       ],
     },
+    {
+      name: 'release:owner-action-packet',
+      command: 'npm',
+      args: [
+        'run',
+        'release:owner-action-packet',
+        '--',
+        '--out',
+        path.join(artifactDir, 'release-owner-action-packet.md'),
+      ],
+    },
   ];
 }
 

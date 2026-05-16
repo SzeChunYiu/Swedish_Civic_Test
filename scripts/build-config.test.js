@@ -700,6 +700,7 @@ test('external release blocker loop runs every safe evidence command and records
       `echo "npm $@" >> "${commandLog}"`,
       'case "$*" in',
       '  *"release:evidence-index"*) echo "STUBS_READY"; exit 0 ;;',
+      '  *"release:owner-action-packet"*) echo "OWNER_PACKET_READY"; exit 1 ;;',
       '  *) echo "blocked by external evidence super-secret-token"; exit 1 ;;',
       'esac',
       '',
@@ -736,6 +737,7 @@ test('external release blocker loop runs every safe evidence command and records
   assert.match(report, /release:eas-preview-dispatch/);
   assert.match(report, /release:preflight/);
   assert.match(report, /release:evidence-index/);
+  assert.match(report, /release:owner-action-packet/);
   assert.match(calls, /npx --yes eas-cli@18\.13\.0 whoami/);
   assert.match(calls, /npm run release:expo-token-request/);
   assert.match(calls, /npm run release:eas-preview-dispatch -- --run-build false/);
@@ -744,6 +746,7 @@ test('external release blocker loop runs every safe evidence command and records
   assert.match(calls, /node scripts\/write-release-completion-audit\.js --out /);
   assert.match(calls, /node scripts\/write-release-issue-update\.js --out /);
   assert.match(calls, /npm run release:evidence-index/);
+  assert.match(calls, /npm run release:owner-action-packet/);
   assert.doesNotMatch(calls, /--run-validate/);
   assert.doesNotMatch(report, /super-secret-token/);
 });
