@@ -85,3 +85,11 @@ Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/s
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
 Blocked? no — Practice still displays the question and options; audio runtime should be checked on a device/simulator.
 Next suggested validator action: open Practice, tap `Listen`, and confirm Swedish TTS plays; then select an answer to re-check A7 behavior.
+
+## Iteration 61 — 2026-05-16
+Task completed: Expo Router shell tooling guard — added special-route scaffold coverage for the root not-found fallback, Swedish web document, native deep-link intent fallback, and a package-wired router-shell test with escaped dynamic RegExp assertions.
+Artifacts changed: `app/_layout.tsx`, `app/+not-found.tsx`, `app/+html.tsx`, `app/+native-intent.ts`, `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` → 5/5 pass; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check app/_layout.tsx app/+not-found.tsx app/+html.tsx app/+native-intent.ts lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js package.json` → pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` → 1/1 pass; `git diff --check -- app/_layout.tsx app/+not-found.tsx app/+html.tsx app/+native-intent.ts lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js package.json docs/parallel-sessions/journals/setup.md` → pass.
+Blocked? no for this focused SETUP router-shell/tooling atom. Broad TypeScript, Expo start, export, and browser proof were not started under the current B8 single-owner/resource guard.
+Next suggested validator action: inspect the special Expo Router files and rerun the focused router-shell, Prettier, ownership, and diff checks.
+Verification addendum: `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npx --no-install tsc --noEmit --pretty false` → exit 0; Expo start smoke with `CI=1` reached `Waiting on http://localhost:8141` before cleanup.

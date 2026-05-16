@@ -17,7 +17,7 @@
     "test:learning": "node --test scripts/learning.test.js",
     "test:exam": "node --test scripts/exam.test.js",
     "test:answer-validation": "node --test scripts/answer-validation.test.js",
-    "test": "npm run test:learning && npm run test:practice && npm run test:exam && npm run test:answer-validation && npm run test:audio && npm run test:derived-content && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:ui-effects && npm run test:ux-simulation && npm run test:publishing && npm run test:ownership && npm run test:external-blockers && npm run test:public-urls && npm run test:build-config && npm run test:app-assets && npm run test:screenshot-manifest && npm run test:release-preflight && npm run test:release-gates-writer && npm run test:theme-discipline && npm run test:a11y-labels",
+    "test": "npm run test:learning && npm run test:practice && npm run test:exam && npm run test:answer-validation && npm run test:audio && npm run test:derived-content && npm run test:content && npm run test:compliance && npm run test:monetization && npm run test:ui-effects && npm run test:ux-simulation && npm run test:publishing && npm run test:ownership && npm run test:external-blockers && npm run test:public-urls && npm run test:build-config && npm run test:app-assets && npm run test:router-shell && npm run test:screenshot-manifest && npm run test:release-preflight && npm run test:release-gates-writer && npm run test:theme-discipline && npm run test:a11y-labels",
     "test:audio": "node --test scripts/audio.test.js",
     "test:content": "node --test scripts/content-production.test.js",
     "content:export": "node scripts/export-question-bank.js",
@@ -64,7 +64,8 @@
     "release:expo-token-request": "node scripts/write-expo-token-owner-request.js --out reports/expo-token-owner-request-latest.md",
     "test:practice": "node --test scripts/practice-flow.test.js",
     "release:owner-action-packet": "node scripts/write-release-owner-action-packet.js",
-    "release:owner-action-packet-comment": "node scripts/post-release-owner-action-packet.js"
+    "release:owner-action-packet-comment": "node scripts/post-release-owner-action-packet.js",
+    "test:router-shell": "node --test scripts/router-shell.test.js"
   },
   "dependencies": {
     "expo": "~54.0.33",
