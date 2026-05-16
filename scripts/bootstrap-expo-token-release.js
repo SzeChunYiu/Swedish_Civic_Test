@@ -52,7 +52,25 @@ function commandText(command) {
   return command.join(' ');
 }
 
-function writeReport({ outPath, status, tokenPresent, steps, note, secretValue }) {
+function readLocalToken() {
+  const envValue = String(process.env[envName] || '').trim();
+  if (envValue) {
+    return { value: envValue, source: `environment variable ${envName}` };
+  }
+
+  const keychainResult = spawnSync('security', ['find-generic-password', '-w', '-s', envName], {
+    encoding: 'utf8',
+  });
+  const keychainValue =
+    keychainResult.status === 0 ? String(keychainResult.stdout || '').trim() : '';
+  if (keychainValue) {
+    return { value: keychainValue, source: `macOS Keychain service ${envName}` };
+  }
+
+  return { value: '', source: 'none' };
+}
+
+function writeReport({ outPath, status, tokenPresent, tokenSource, steps, note, secretValue }) {
   const lines = [
     '# Expo token release bootstrap',
     '',
@@ -61,6 +79,7 @@ function writeReport({ outPath, status, tokenPresent, steps, note, secretValue }
     `| Status | ${status} |`,
     `| Checked at UTC | ${new Date().toISOString()} |`,
     `| Environment variable | ${envName} |`,
+    `| Token source | ${tableCell(tokenSource || 'none')} |`,
     `| Local token present | ${tokenPresent ? 'yes' : 'no'} |`,
     '',
     '## Command results',
@@ -133,7 +152,9 @@ function main() {
     return;
   }
 
-  const secretValue = String(process.env[envName] || '').trim();
+  const localToken = readLocalToken();
+  const secretValue = localToken.value;
+  const tokenSource = localToken.source;
   const outPath = path.resolve(args.out);
   const steps = [];
 
@@ -142,13 +163,16 @@ function main() {
       outPath,
       status: 'BLOCKED',
       tokenPresent: false,
+      tokenSource,
       steps,
-      note: `Environment variable ${envName} is empty. Export a valid Expo access token locally before running the bootstrap loop.`,
+      note: `No local Expo token was found. Export ${envName} or store the token in macOS Keychain service ${envName} before running the bootstrap loop.`,
       secretValue,
     });
     process.stdout.write(`Expo token release bootstrap BLOCKED; wrote ${args.out}\n`);
     process.exit(1);
   }
+
+  process.env[envName] = secretValue;
 
   const artifactDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'swedish-civic-test-expo-token-bootstrap-'),
@@ -206,6 +230,7 @@ function main() {
     outPath,
     status,
     tokenPresent: true,
+    tokenSource,
     steps,
     note:
       status === 'DISPATCHED'

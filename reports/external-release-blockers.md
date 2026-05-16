@@ -11,15 +11,16 @@ Tracker: https://github.com/SzeChunYiu/Swedish_Civic_Test/issues/11
 ## Required command loop
 
 If `release:github-secrets-check` reports a missing Expo token and you have a
-valid local token in `EXPO_TOKEN`, set the repository Actions secret without
-printing the value:
+valid local token in `EXPO_TOKEN` or macOS Keychain service `EXPO_TOKEN`, set
+the repository Actions secret without printing the value:
 
 ```bash
 npm run release:set-expo-token-secret -- --out reports/set-expo-token-secret-latest.md
 ```
 
 To run the full secret-set, secret-verify, and external-loop dispatch sequence
-in one fail-closed command after exporting a local token:
+in one fail-closed command after exporting a local token or storing it in macOS
+Keychain service `EXPO_TOKEN`:
 
 ```bash
 npm run release:expo-token-bootstrap -- --out reports/expo-token-bootstrap-latest.md
