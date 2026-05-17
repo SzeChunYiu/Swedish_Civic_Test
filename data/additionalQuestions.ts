@@ -1024,11 +1024,11 @@ export const additionalQuestions: PracticeQuestion[] = [
       pageApprox: 29,
     },
     'Vilken uppgift har Kronofogdemyndigheten enligt UHR-materialet?',
-    'According to the UHR material, what task does the Enforcement Authority have?',
+    'According to the UHR material, what task does the Swedish Enforcement Authority have?',
     [
       [
         'Att se till att skulder blir betalda och kunna hjälpa till med skuldsanering',
-        'To ensure debts are paid and be able to help with debt restructuring',
+        'To make sure debts are paid and help with debt restructuring',
       ],
       [
         'Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund',
@@ -1042,7 +1042,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'UHR-avsnittet Privatekonomi i Sverige säger att Kronofogdemyndigheten är en statlig myndighet som ser till att skulder blir betalda. Avsnittet säger också att myndigheten kan hjälpa personer med stora skulder att få ordning på ekonomin genom skuldsanering.',
-    'The UHR section Personal finance in Sweden says that the Enforcement Authority is a government agency that ensures debts are paid. It also says the agency can help people with large debts get their finances in order through debt restructuring.',
+    'The UHR section Personal finance in Sweden says that the Swedish Enforcement Authority is a government agency that makes sure debts are paid. It also says the agency can help people with large debts get their finances in order through debt restructuring.',
     ['private-finance', 'debt', 'debt-restructuring', 'kronofogden'],
   ),
   single(
