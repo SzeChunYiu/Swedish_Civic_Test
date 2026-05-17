@@ -113,6 +113,56 @@ function jsonEqual(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+function answerLabel(option) {
+  return `${option?.textSv ?? ''}`.replace(/[.!?]\s*$/, '');
+}
+
+function correctOption(question) {
+  return (
+    question.options?.find((option) => option.id === question.correctOptionId) ??
+    question.options?.[0]
+  );
+}
+
+function wrongOption(question) {
+  return (
+    question.options?.find((option) => option.id !== question.correctOptionId) ?? {
+      textSv: 'Det går inte att avgöra av materialet',
+      textEn: 'It cannot be determined from the material',
+    }
+  );
+}
+
+function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
+  if (variantIndex === 0) {
+    return {
+      questionSv: `Vilket svar stämmer bäst enligt UHR-avsnittet "${sourceQuestion.uhrReference?.section}"? ${sourceQuestion.questionSv}`,
+      questionEn: `Which answer best matches the UHR section "${sourceQuestion.uhrReference?.section}"? ${sourceQuestion.questionEn}`,
+    };
+  }
+
+  if (variantIndex === 1) {
+    const option = correctOption(sourceQuestion);
+    return {
+      questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
+      questionEn: `True or false: A correct answer to "${sourceQuestion.questionEn}" is "${option?.textEn}".`,
+    };
+  }
+
+  if (variantIndex === 2) {
+    const option = wrongOption(sourceQuestion);
+    return {
+      questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
+      questionEn: `True or false: A correct answer to "${sourceQuestion.questionEn}" is "${option?.textEn}".`,
+    };
+  }
+
+  return {
+    questionSv: `Vilket alternativ motsvarar rätt bedömning av påståendet? ${sourceQuestion.questionSv}`,
+    questionEn: `Which option gives the correct judgment of the statement? ${sourceQuestion.questionEn}`,
+  };
+}
+
 function isIsoDate(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00Z`);
@@ -247,6 +297,7 @@ let authoredSourceQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
 let generationParityValidated = false;
 let generatedSourceMetadataParityValidated = 0;
+let generatedPromptTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
@@ -455,6 +506,43 @@ function validateGeneratedSourceMetadataParity() {
 }
 
 validateGeneratedSourceMetadataParity();
+
+function validateGeneratedPromptTemplateParity() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return;
+  }
+
+  sourceQuestions.forEach((sourceQuestion, sourceIndex) => {
+    const variants = generatedPublishedQuestions.slice(
+      sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+      (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+    );
+
+    variants.forEach((variant, variantIndex) => {
+      const label = `${sourceQuestion.id} generated variant[${variantIndex}]`;
+      if (!variant) {
+        fail(`${label} is missing`);
+        return;
+      }
+
+      let variantIsValid = true;
+      const expected = expectedGeneratedPrompt(sourceQuestion, variantIndex);
+
+      if (variant.questionSv !== expected.questionSv) {
+        variantIsValid = false;
+        fail(`${label} questionSv does not match generated prompt template`);
+      }
+      if (variant.questionEn !== expected.questionEn) {
+        variantIsValid = false;
+        fail(`${label} questionEn does not match generated prompt template`);
+      }
+
+      if (variantIsValid) generatedPromptTemplateParityValidated += 1;
+    });
+  });
+}
+
+validateGeneratedPromptTemplateParity();
 
 function buildUhrReferenceChapters() {
   validateUhrSourceMetadata();
@@ -764,6 +852,7 @@ console.log(
       sourcePublicationParityValidated,
       generationParityValidated,
       generatedSourceMetadataParityValidated,
+      generatedPromptTemplateParityValidated,
       questionSchemasValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

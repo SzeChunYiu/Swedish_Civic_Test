@@ -428,3 +428,35 @@ Workspace contract: pass with caveat - source ownership is not REVIEWER; REVIEWE
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LEARN-CHAPTER-1 update [2026-05-17 08:47Z]`.
 Evidence: the missing chapter start-quiz affordance is now present and navigates to the routed quiz session in exported web.
 Next manager action: VALIDATOR can close the reviewer defect after accepting the source atom; keep the official Playwright-cache blocker open separately.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY prompt-text uniqueness validation plus CONTENT q022 prompt-remediation.
+Checks run:
+- Re-read current `TEAM_PLAN`, DATA-INTEGRITY/CONTENT handoffs, and inspected `scripts/validate-content.js`, `scripts/content-production.test.js`, `data/additionalQuestions.ts`, and `content/question-bank.csv`.
+- Checked official UHR `Sverige i fokus` PDF section `Staten`, lines 290-297; the section supports q022's revised correct answer that the Riksdag decides laws and how state money is used.
+- `npm run validate:content` - exit 0; summary includes 500 `questionPromptTextUniquenessValidated`, 500 schemas, 500 UHR references, and 500 chapter/reference parity checks.
+- `npm run test:content` - exit 0; 4/4 tests passed and assert prompt-text uniqueness.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run typecheck` - exit 0.
+- Direct q022 assertion - exit 0; q022 uses `ch03` / `Staten` / page 12, correct option `c`, `riksdag|laws|state-budget` tags, exported rows `q022` and `q185`-`q188`, and q017 retains the member-count question.
+- Temp-copy negative check - exit 0 for the reviewer command by confirming the validator rejects duplicate source prompts with `q022 duplicates questionSv text from q021` and `q022 duplicates questionEn text from q021`.
+- `npx prettier --check data/additionalQuestions.ts scripts/validate-content.js scripts/content-production.test.js` - exit 0.
+- `git diff --check -- data/additionalQuestions.ts content/question-bank.csv scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md docs/parallel-sessions/journals/content.md` - exit 0.
+- `npm run test:ownership` - exit 0.
+Workspace contract: pass with caveat - source ownership is CONTENT/DATA-INTEGRITY, not REVIEWER; REVIEWER mutated only a temp copy for the negative check.
+Findings queued: none from this focused pass.
+Evidence: the new validator counts all 500 published question prompts as unique and rejects an intentional q021/q022 Swedish-English prompt collision; q022 remains source-aligned and exported.
+Next manager action: VALIDATOR can accept or reject the prompt-text uniqueness atom and q022 remediation from the source-owner lanes; no reviewer defect from this pass.
+
+Lane: REVIEWER
+Artifact reviewed: release preflight after A11Y1, DI15, and current accepted content/data-integrity atoms.
+Checks run:
+- Re-read current `TEAM_PLAN`; A11Y1 and DI15 are accepted, while official E2E remains blocked on cached Playwright Chromium.
+- `CI=1 timeout 360s npm run release:preflight -- --json` - exit 1; overall release status remains `BLOCKED`.
+- Inspected the preflight JSON: `local-validation`, `expo-doctor`, `web-export`, `native-prebuild`, and `eas-cli` are now `READY`.
+- The same preflight reports `git-worktree-clean`, `eas-auth`, EAS build/device evidence, store records, credentials, privacy review, release-owner approval, screenshots, and submission as `BLOCKED`.
+- Store/privacy gate evidence still contains the old disabled-ad release contract: store records say AdMob is deferred because real ads are disabled for v1.0, and privacy review still references `REAL_ADS_ENABLED_FOR_V1=false`.
+Workspace contract: pass with caveat - no product source edited; concurrent source-owner changes are visible, so this is verifier evidence rather than a clean release-candidate sign-off.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-RELEASE-GATES-1 update [2026-05-17 08:54Z]`.
+Evidence: the prior local-validation/a11y failure is cleared, but the release verifier still cannot be trusted for the new ad-supported contract until stale store/privacy evidence is updated.
+Next manager action: keep release gates blocked for stale store/privacy evidence and external release artifacts; do not reopen A11Y1 from this pass.
