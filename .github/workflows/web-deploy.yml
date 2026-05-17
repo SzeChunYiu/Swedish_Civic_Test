@@ -1,0 +1,48 @@
+name: Web export artifact
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXPO_NO_TELEMETRY: true
+  CI: true
+
+jobs:
+  web-export:
+    name: Build Expo web export
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 26.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build deploy-ready web export
+        run: npm run build:web:export
+
+      - name: Verify SPA fallback artifact
+        run: test -f dist-web/index.html && test -f dist-web/404.html
+
+      - name: Upload web export artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: dist-web
+          path: dist-web
+          if-no-files-found: error

@@ -1278,11 +1278,24 @@ test('production submit guard blocks while release preflight is not ready', () =
 
 test('web export script is available for local production bundle smoke', () => {
   const pkg = readJson('package.json');
+  const appConfig = readJson('app.json').expo;
+  const vercelConfig = readJson('vercel.json');
+  const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
+  const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
+
+  assert.equal(appConfig.web.output, 'single');
+  assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
+  assert.equal(pkg.scripts['postbuild:web:export'], 'cp dist-web/index.html dist-web/404.html');
   assert.equal(
     pkg.scripts['release:web-export-smoke'],
     'rm -rf dist-web && npm run build:web:export',
   );
+  assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
+  assert.equal(redirects.trim(), '/* /index.html 200');
+  assert.match(workflow, /npm run build:web:export/);
+  assert.match(workflow, /actions\/upload-artifact@v6/);
+  assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
 });
 
