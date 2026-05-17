@@ -72,6 +72,26 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /<BannerAd/);
 });
 
+test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
+  const fallbackFiles = [
+    'components/learning/ChapterCard.tsx',
+    'components/monetization/NativeAdCard.tsx',
+    'components/quiz/ExplanationPanel.tsx',
+    'components/quiz/QuestionCard.tsx',
+    'components/quiz/UHRReferenceCard.tsx',
+  ];
+
+  for (const file of fallbackFiles) {
+    assert.doesNotMatch(read(file), /placeholder/i, `${file} should not render placeholder copy`);
+  }
+
+  assert.match(read('components/learning/ChapterCard.tsx'), /Chapter unavailable/);
+  assert.match(read('components/monetization/NativeAdCard.tsx'), /AdMob test placement preview/);
+  assert.match(read('components/quiz/ExplanationPanel.tsx'), /Explanation unavailable/);
+  assert.match(read('components/quiz/QuestionCard.tsx'), /Question unavailable/);
+  assert.match(read('components/quiz/UHRReferenceCard.tsx'), /Source reference unavailable/);
+});
+
 test('home screen surfaces the 10000-learner feedback loop and review action', () => {
   const source = read('app/(tabs)/home.tsx');
 

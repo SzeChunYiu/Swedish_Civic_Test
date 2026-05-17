@@ -37,8 +37,13 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Sverige i fokus/i);
   assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
   assert.match(sourcesRoute, /accessibilityLabel="Open UHR education material"/);
-  assert.match(read('app/support.tsx'), /support/i);
-  assert.match(read('app/support.tsx'), /content issue/i);
-  assert.match(read('app/support.tsx'), /no personal data/i);
+  const supportRoute = read('app/support.tsx');
+  assert.match(supportRoute, /support/i);
+  assert.match(supportRoute, /content issue/i);
+  assert.match(supportRoute, /no personal data/i);
+  assert.match(supportRoute, /szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/support/i);
+  assert.match(supportRoute, /<Link[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
+  assert.match(supportRoute, /accessibilityLabel="Open public support page"/);
+  assert.doesNotMatch(supportRoute, /release checklist items/i);
   assert.match(read('components/compliance/ComplianceLinks.tsx'), /Support/);
 });

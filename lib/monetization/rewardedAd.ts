@@ -24,9 +24,11 @@ export type RewardedExtraExamAdOptions = {
   timeoutMs?: number;
 };
 
-export async function showRewardedExtraExamAd(
-  _options: RewardedExtraExamAdOptions = {},
-): Promise<RewardedExtraExamAdResult> {
+export async function showRewardedExtraExamAd({
+  entitlements = { adsDisabled: false },
+}: RewardedExtraExamAdOptions = {}): Promise<RewardedExtraExamAdResult> {
+  if (entitlements.adsDisabled) return { status: 'unavailable' };
+
   return {
     reward: {
       amount: 1,

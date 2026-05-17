@@ -7,7 +7,7 @@ export function QuestionCard({ question }: { question?: PracticeQuestion }) {
   return (
     <Card>
       <Text style={styles.label}>{question?.difficulty ?? 'practice'}</Text>
-      <Text style={styles.question}>{question?.questionSv ?? 'Question placeholder'}</Text>
+      <Text style={styles.question}>{question?.questionSv ?? 'Question unavailable'}</Text>
       {question?.questionEn ? <Text style={styles.translation}>{question.questionEn}</Text> : null}
     </Card>
   );
