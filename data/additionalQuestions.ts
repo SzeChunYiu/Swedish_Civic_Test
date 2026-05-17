@@ -1084,8 +1084,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q071',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Statligt finansierad välfärd', pageApprox: 30 },
-    'Vilka exempel på välfärd finansierar staten enligt UHR-materialet?',
-    'Which examples of welfare does the state finance according to the UHR material?',
+    'Vilket svar listar exempel på statligt finansierad välfärd enligt UHR-materialet?',
+    'Which answer lists examples of state-financed welfare according to the UHR material?',
     [
       [
         'Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag',
