@@ -1303,8 +1303,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Att skapa public service', 'Creating public service'],
     ],
     0,
-    'Avtalet från 1938 lade grund för den svenska modellen på arbetsmarknaden.',
-    'The 1938 agreement laid a foundation for the Swedish labour-market model.',
+    'UHR-avsnittet Den svenska modellen säger att Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Avtalet blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om villkoren på arbetsmarknaden i kollektivavtal.',
+    'The UHR section The Swedish model says the Saltsjöbaden Agreement was made in 1938 between employers and trade unions. The agreement became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.',
     ['saltsjobaden', 'swedish-model', 'labour-market'],
   ),
   single(
