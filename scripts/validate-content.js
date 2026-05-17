@@ -54,6 +54,7 @@ const QUESTION_BANK_CSV_HEADER = [
   'tags',
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
+const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -590,6 +591,9 @@ const generateExam = examGeneratorModule.generateExam;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
+const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
+const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
+const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
@@ -601,6 +605,8 @@ let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
+let spacedRepetitionIntervalsValidated = 0;
+let spacedRepetitionRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -644,6 +650,10 @@ if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCata
   fail('badgeCatalog export is not an object');
 }
 if (typeof deriveBadges !== 'function') fail('deriveBadges export is not a function');
+if (!Array.isArray(spacedRepetitionSchedule)) {
+  fail('spacedRepetitionSchedule export is not an array');
+}
+if (typeof getNextReviewAt !== 'function') fail('getNextReviewAt export is not a function');
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -947,6 +957,77 @@ function validateBadgeCatalog() {
       badgeMilestoneParityValidated = true;
     }
   }
+}
+
+function isoDaysAfter(baseIso, days) {
+  const dayInMs = 24 * 60 * 60 * 1000;
+  return new Date(new Date(baseIso).getTime() + days * dayInMs).toISOString();
+}
+
+function validateSpacedRepetitionSchedule() {
+  if (!Array.isArray(spacedRepetitionSchedule)) return;
+
+  if (!jsonEqual(spacedRepetitionSchedule, EXPECTED_SPACED_REPETITION_SCHEDULE)) {
+    fail(
+      `spacedRepetitionSchedule is ${JSON.stringify(
+        spacedRepetitionSchedule,
+      )}, expected ${JSON.stringify(EXPECTED_SPACED_REPETITION_SCHEDULE)}`,
+    );
+  }
+
+  spacedRepetitionSchedule.forEach((days, index) => {
+    let valid = true;
+
+    if (!Number.isInteger(days) || days < 1) {
+      valid = false;
+      fail(`spacedRepetitionSchedule[${index}] must be a positive integer day interval`);
+    }
+    if (index > 0 && days <= spacedRepetitionSchedule[index - 1]) {
+      valid = false;
+      fail(`spacedRepetitionSchedule[${index}] must be greater than the previous interval`);
+    }
+
+    if (valid) spacedRepetitionIntervalsValidated += 1;
+  });
+
+  if (typeof getNextReviewAt !== 'function') return;
+
+  const answeredAt = '2026-05-15T10:00:00.000Z';
+  const cases = [
+    {
+      input: { isCorrect: false, correctStreak: 99, answeredAt },
+      expectedDays: 1,
+      label: 'wrong answer',
+    },
+    {
+      input: { isCorrect: true, correctStreak: 0, answeredAt },
+      expectedDays: EXPECTED_SPACED_REPETITION_SCHEDULE[0],
+      label: 'correct streak 0',
+    },
+    {
+      input: { isCorrect: true, correctStreak: 3, answeredAt },
+      expectedDays: EXPECTED_SPACED_REPETITION_SCHEDULE[3],
+      label: 'correct streak 3',
+    },
+    {
+      input: { isCorrect: true, correctStreak: 50, answeredAt },
+      expectedDays:
+        EXPECTED_SPACED_REPETITION_SCHEDULE[EXPECTED_SPACED_REPETITION_SCHEDULE.length - 1],
+      label: 'capped correct streak',
+    },
+  ];
+  let runtimeParityIsValid = true;
+
+  cases.forEach(({ input, expectedDays, label }) => {
+    const actual = getNextReviewAt(input);
+    const expected = isoDaysAfter(answeredAt, expectedDays);
+    if (actual !== expected) {
+      runtimeParityIsValid = false;
+      fail(`getNextReviewAt ${label} returned ${actual}, expected ${expected}`);
+    }
+  });
+
+  if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
 }
 
 function validateQuestionBankCsvContract() {
@@ -1664,6 +1745,7 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
+validateSpacedRepetitionSchedule();
 validateQuestionBankCsvContract();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
@@ -1701,6 +1783,8 @@ console.log(
       uxBenchmarksValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
+      spacedRepetitionIntervalsValidated,
+      spacedRepetitionRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
