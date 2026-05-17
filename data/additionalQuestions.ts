@@ -156,8 +156,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q026',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Kommunernas ansvar', pageApprox: 13 },
-    'Vilket exempel beskriver kommunernas ansvar enligt UHR-materialet?',
-    'Which example describes municipal responsibilities according to the UHR material?',
+    'Vilket exempel beskriver kommunernas ansvar?',
+    'Which example describes municipal responsibilities?',
     [
       [
         'Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning',
