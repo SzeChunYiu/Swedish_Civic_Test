@@ -1600,9 +1600,9 @@ export const additionalQuestions: PracticeQuestion[] = [
   single(
     'q096',
     'ch12',
-    { chapter: 'En sekulär stat och ett mångreligiöst land', section: 'Islam', pageApprox: 44 },
-    'Vilken religion beskrivs som den näst största i Sverige enligt materialet?',
-    'Which religion is described as the second largest in Sweden according to the material?',
+    { chapter: 'En sekulär stat och ett mångreligiöst land', section: 'Islam', pageApprox: 43 },
+    'Vilken religion beskrivs som den näst största i Sverige enligt UHR-materialet?',
+    'Which religion is described as the second largest in Sweden according to the UHR material?',
     [
       ['Judendom', 'Judaism'],
       ['Islam', 'Islam'],
@@ -1610,8 +1610,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Buddhism', 'Buddhism'],
     ],
     1,
-    'Materialet beskriver islam som den näst största religionen i landet.',
-    'The material describes Islam as the second largest religion in the country.',
+    'UHR-avsnittet Islam säger att islam numera är den näst största religionen i landet och att det finns moskéer och bönelokaler över hela Sverige. Avsnittet beskriver också att antalet muslimer ökade genom invandring efter andra världskriget och att svenska muslimska församlingar speglar flera riktningar och traditioner.',
+    'The UHR section Islam says that Islam is now the second-largest religion in the country and that there are mosques and prayer rooms throughout Sweden. It also describes how the number of Muslims increased through immigration after the Second World War and how Swedish Muslim congregations reflect several branches and traditions.',
     ['islam', 'religion', 'sweden'],
   ),
   single(
