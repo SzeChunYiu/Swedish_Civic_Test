@@ -1524,8 +1524,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Religionsfrihet',
       pageApprox: 42,
     },
-    'Vad betyder det att Sverige är en sekulär stat?',
-    'What does it mean that Sweden is a secular state?',
+    'Vad betyder det enligt UHR-materialet att Sverige är en sekulär stat?',
+    'According to the UHR material, what does it mean that Sweden is a secular state?',
     [
       [
         'Staten är religiöst neutral och tar inte ställning för någon religion',
@@ -1536,8 +1536,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Kommuner bestämmer varje persons tro', 'Municipalities decide each person’s faith'],
     ],
     0,
-    'En sekulär stat garanterar rätten att välja religion eller att inte tillhöra någon religion.',
-    'A secular state guarantees the right to choose religion or not belong to a religion.',
+    'UHR-avsnittet Religionsfrihet säger att Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också alla rätten att själva bestämma om de vill tillhöra en specifik religion eller inte.',
+    'The UHR section Religious freedom says Sweden is a secular state, meaning the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees everyone the right to decide for themselves whether they want to belong to a specific religion or not.',
     ['secular-state', 'religious-freedom', 'religion'],
   ),
   single(
