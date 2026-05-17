@@ -210,6 +210,29 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
     pattern: /paddingBottom:\s*space\[10\]/,
   },
 ];
+const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+  {
+    label: 'ScrollView import',
+    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  },
+  {
+    label: 'scroll root container',
+    pattern:
+      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+  },
+  {
+    label: 'scroll root closing tag',
+    pattern: /<\/ScrollView>/,
+  },
+  {
+    label: 'growing scroll content',
+    pattern: /content:\s*\{\s*flexGrow:\s*1,/,
+  },
+  {
+    label: 'bottom safe padding',
+    pattern: /paddingBottom:\s*space\[10\]/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -1828,6 +1851,8 @@ let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
+let onboardingRouteScrollRulesValidated = 0;
+let onboardingRouteScrollParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -3028,6 +3053,42 @@ function validateSettingsRouteScrollParity() {
 
   if (valid && settingsRouteScrollRulesValidated === EXPECTED_SETTINGS_ROUTE_SCROLL_RULES.length) {
     settingsRouteScrollParityValidated = true;
+  }
+}
+
+function validateOnboardingRouteScrollParity() {
+  let valid = true;
+  let onboardingRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/onboarding.tsx could not be read for scroll parity: ${error.message}`);
+    return;
+  }
+
+  if (/<View\s+style=\{styles\.container\}>/.test(onboardingRoute)) {
+    reject('onboarding route must keep its root content inside ScrollView for mobile scrolling');
+  }
+
+  EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(onboardingRoute)) {
+      reject(`onboarding route missing ${expectedRule.label} for mobile scroll parity`);
+      return;
+    }
+    onboardingRouteScrollRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    onboardingRouteScrollRulesValidated === EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES.length
+  ) {
+    onboardingRouteScrollParityValidated = true;
   }
 }
 
@@ -7026,6 +7087,7 @@ validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
 validateLearnRouteHeaderParity();
 validateSettingsRouteScrollParity();
+validateOnboardingRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -7107,6 +7169,8 @@ console.log(
       learnRouteHeaderParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
+      onboardingRouteScrollRulesValidated,
+      onboardingRouteScrollParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
