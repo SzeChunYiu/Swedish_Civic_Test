@@ -1382,8 +1382,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q085',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Nordiskt samarbete', pageApprox: 39 },
-    'Genom vilka två organ sker Sveriges nordiska samarbete främst enligt UHR-materialet?',
-    "Through which two bodies does Sweden's Nordic cooperation mainly take place according to the UHR material?",
+    'Genom vilka två organ samarbetar Sverige främst med de andra nordiska länderna?',
+    'Through which two bodies does Sweden mainly cooperate with the other Nordic countries?',
     [
       [
         'Nordiska rådet och Nordiska ministerrådet',
