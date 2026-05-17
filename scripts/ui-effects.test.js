@@ -484,11 +484,15 @@ test('chapter detail route exposes page and question section headings as headers
   const source = read('app/chapter/[chapterId].tsx');
   const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
 
+  assert.match(source, /Kapitlet hittades inte/);
+  assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
   assert.match(source, /Chapter not found/);
-  assert.match(source, /Practice questions/);
+  assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.equal(headerMatches?.length, 3);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.match(source, /\{copy\.missingTitle\}/);
+  assert.match(source, /\{copy\.practiceQuestionsTitle\(chapterQuestions\.length\)\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
