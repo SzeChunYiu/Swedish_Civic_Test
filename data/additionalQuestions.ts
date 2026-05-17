@@ -1214,8 +1214,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q077',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Befolkningsökning', pageApprox: 32 },
-    'Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
-    'Approximately how many Swedes emigrated to the United States between 1850 and 1920?',
+    'Enligt UHR-materialet, ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
+    'According to the UHR material, approximately how many Swedes emigrated to the United States between 1850 and 1920?',
     [
       ['Över en miljon', 'More than one million'],
       ['Cirka tio tusen', 'About ten thousand'],
@@ -1224,7 +1224,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'UHR-avsnittet Befolkningsökning säger att Sverige fortfarande var fattigt och att många hade svårt att få arbete. Därför valde många att lämna Sverige, och över en miljon svenskar utvandrade till USA mellan 1850 och 1920 i hopp om ett bättre liv.',
-    'The UHR section Population growth says Sweden was still poor and many people had difficulty finding work. Therefore many chose to leave Sweden, and more than one million Swedes emigrated to the United States between 1850 and 1920 in hope of a better life.',
+    'The UHR section Population growth says Sweden was still poor and many people had difficulty finding work. Therefore many chose to leave Sweden, and more than one million Swedes emigrated to the United States between 1850 and 1920 in the hope of a better life.',
     ['emigration', 'usa', 'history'],
   ),
   single(
