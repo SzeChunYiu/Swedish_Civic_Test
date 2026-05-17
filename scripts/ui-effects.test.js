@@ -351,6 +351,14 @@ test('exam results include per-question explanations and UHR sources', () => {
   assert.match(source, /<UHRReferenceCard/);
 });
 
+test('exam results are final after submission', () => {
+  const source = read('app/(tabs)/exam.tsx');
+
+  assert.match(source, /Submitted results are final/);
+  assert.doesNotMatch(source, /Back to exam answers/);
+  assert.doesNotMatch(source, /Back to answers/);
+});
+
 test('exam auto-submits at timeout and explains unanswered scoring', () => {
   const source = read('app/(tabs)/exam.tsx');
 

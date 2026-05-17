@@ -267,6 +267,9 @@ export default function Screen() {
           <Text style={styles.subtitle}>
             {result.correctCount}/{result.totalCount} correct
           </Text>
+          <Text style={styles.resultNote}>
+            Submitted results are final. Start another mock exam for a fresh attempt.
+          </Text>
         </View>
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
@@ -337,15 +340,6 @@ export default function Screen() {
             <UHRReferenceCard reference={item.uhrReference} />
           </View>
         ))}
-
-        <Pressable
-          accessibilityLabel="Back to exam answers"
-          accessibilityRole="button"
-          onPress={() => setSubmitted(false)}
-          style={styles.secondaryButton}
-        >
-          <Text style={styles.secondaryButtonText}>Back to answers</Text>
-        </Pressable>
       </ScrollView>
     );
   }
@@ -529,6 +523,12 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: typography.subHeadingLarge.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
+  },
+  resultNote: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+    marginTop: space[1],
   },
   breakdownRow: {
     alignItems: 'center',
