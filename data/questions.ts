@@ -507,8 +507,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q017',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Hur många ledamöter har riksdagen?',
-    questionEn: 'How many members does the Riksdag have?',
+    questionSv: 'Enligt UHR-materialet, hur många ledamöter har riksdagen?',
+    questionEn: 'According to the UHR material, how many members does the Riksdag have?',
     options: [
       { id: 'a', textSv: '21', textEn: '21' },
       { id: 'b', textSv: '290', textEn: '290' },
@@ -517,9 +517,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Riksdagen har 349 ledamöter som väljs vart fjärde år. Siffrorna 21 och 290 hör i materialet ihop med regioner och kommuner, inte riksdagens ledamöter.',
+      'UHR-avsnittet Staten säger att riksdagen har 349 ledamöter som väljs vart fjärde år. Siffrorna 21 och 290 hör i materialet ihop med regioner och kommuner, inte med riksdagens ledamöter.',
     explanationEn:
-      'The Riksdag has 349 members who are elected every four years. The numbers 21 and 290 are connected in the material to regions and municipalities, not members of the Riksdag.',
+      'The UHR section The state says the Riksdag has 349 members who are elected every four years. The numbers 21 and 290 are connected in the material to regions and municipalities, not to members of the Riksdag.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
