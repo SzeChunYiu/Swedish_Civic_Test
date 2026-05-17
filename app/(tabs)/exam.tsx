@@ -233,6 +233,7 @@ export default function Screen() {
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
           <Pressable
+            aria-disabled={!canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
             accessibilityRole="button"
             accessibilityState={{ disabled: !canStartAccessibleExam || startingAccessibleExam }}
@@ -295,6 +296,7 @@ export default function Screen() {
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
           <Pressable
+            aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
             accessibilityRole="button"
             accessibilityState={{
@@ -407,6 +409,7 @@ export default function Screen() {
               return (
                 <Pressable
                   key={option.id}
+                  aria-selected={isSelected}
                   accessibilityLabel={`Select answer ${optionText} for question ${index + 1}`}
                   accessibilityRole="button"
                   accessibilityState={{ selected: isSelected }}
@@ -426,6 +429,7 @@ export default function Screen() {
       ))}
 
       <Pressable
+        aria-disabled={!canSubmit}
         accessibilityLabel="Submit mock exam"
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSubmit }}

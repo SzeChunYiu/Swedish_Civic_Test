@@ -174,6 +174,7 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
 
   assert.match(source, /toggleBookmark/);
   assert.match(source, /bookmarked/);
+  assert.match(source, /aria-selected=\{isBookmarked\}/);
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
@@ -547,6 +548,21 @@ test('exam route exposes page and review section headings as headers', () => {
   assert.match(source, /Question review/);
   assert.match(source, /Progress/);
   assert.equal(headerMatches?.length, 8);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('exam controls mirror selected and disabled state to web aria attributes', () => {
+  const source = read('app/(tabs)/exam.tsx');
+
+  assert.match(source, /aria-disabled=\{!canStartAccessibleExam \|\| startingAccessibleExam\}/);
+  assert.match(
+    source,
+    /aria-disabled=\{!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam\}/,
+  );
+  assert.match(source, /aria-selected=\{isSelected\}/);
+  assert.match(source, /aria-disabled=\{!canSubmit\}/);
+  assert.match(source, /accessibilityState=\{\{ selected: isSelected \}\}/);
+  assert.match(source, /accessibilityState=\{\{ disabled: !canSubmit \}\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
