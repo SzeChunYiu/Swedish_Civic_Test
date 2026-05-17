@@ -1,3 +1,6 @@
+
+>>> READ codex-tasks/P0.md FIRST. While P0.md has open items, only P0-advancing
+>>> iterations are accepted; trivial product-path commits are reverted. <<<
 ADS-1 lib/monetization/premium.ts + ads.ts: decouple adsDisabled from isPremiumUser; shouldShowAd false when adsDisabled; unit tests (npm test -- monetization).
 ADS-2 lib/monetization/ads.ts: replace hardcoded REAL_ADS_ENABLED_FOR_V1=false with env/remote flag; keep Google test units default in dev; lib/monetization/ad-units.real.ts loader (gitignored) for operator real IDs.
 IAP-1 lib/monetization/purchases.ts: react-native-iap wrapper buy("removeads") + restorePurchases() + persisted adsDisabled (secure store) + product id constants; mock provider for web/dev/tests.
