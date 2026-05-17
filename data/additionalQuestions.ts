@@ -1133,8 +1133,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q073',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
-    'Vilka exempel på kommunalt styrd välfärd listar UHR-materialet?',
-    'Which examples of municipally governed welfare does the UHR material list?',
+    'Vilka exempel på kommunal välfärd listar UHR-materialet?',
+    'Which examples of municipal welfare does the UHR material list?',
     [
       [
         'Barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst',
@@ -1151,8 +1151,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Domstolar, åklagare, polis och fängelser', 'Courts, prosecutors, police, and prisons'],
     ],
     0,
-    'UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunerna ser till att det finns skolor och utbildning och ansvarar för hjälp till gamla och sjuka. Avsnittet listar barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst som exempel på kommunalt styrd välfärd.',
-    'The UHR section Municipalities have a large responsibility says municipalities ensure access to schools and education and are responsible for help for older and sick people. It lists childcare, schools and education, elderly care, and social services as examples of municipally governed welfare.',
+    'UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunerna ser till att det finns skolor och utbildning och ansvarar för hjälp till gamla och sjuka. Avsnittet listar barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst som exempel på kommunal välfärd.',
+    'The UHR section Municipalities have a large responsibility says municipalities ensure access to schools and education and are responsible for help for older and sick people. It lists childcare, schools and education, elderly care, and social services as examples of municipal welfare.',
     ['municipal-welfare', 'schools', 'social-services'],
   ),
   trueFalse(
