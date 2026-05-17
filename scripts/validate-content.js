@@ -400,22 +400,23 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
 const EXPECTED_MISTAKES_ROUTE_HEADERS = [
   {
     label: 'mistakes route title',
-    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Mistakes\s*<\/Text>/,
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
   {
     label: 'bookmarked questions section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Bookmarked questions\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.bookmarkedTitle\}\s*<\/Text>/,
   },
   {
     label: 'wrong answers section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Wrong answers to revisit\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.mistakeTitle\}\s*<\/Text>/,
   },
   {
     label: 'empty-state title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.emptyTitle\}>\s*No mistakes yet\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.emptyTitle\}>\s*\{copy\.emptyTitle\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_LEGAL_ROUTE_HEADERS = [

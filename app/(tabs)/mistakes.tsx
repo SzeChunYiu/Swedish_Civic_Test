@@ -9,11 +9,63 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+type MistakesCopy = {
+  badge: string;
+  bookmarkedBadge: string;
+  bookmarkedMeta: string;
+  bookmarkedTitle: string;
+  emptyPracticeAccessibilityLabel: string;
+  emptyPracticeLink: string;
+  emptyText: string;
+  emptyTitle: string;
+  mistakeBadge: string;
+  mistakeTitle: string;
+  subtitle: string;
+  title: string;
+  wrongAnswers: (count: number) => string;
+};
+
+const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
+  sv: {
+    badge: 'Smart repetition',
+    bookmarkedBadge: 'Sparat',
+    bookmarkedMeta: 'Sparad för fokuserad repetition',
+    bookmarkedTitle: 'Bokmärkta frågor',
+    emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
+    emptyPracticeLink: 'Starta övning',
+    emptyText: 'Svara fel på en övningsfråga så visas den här.',
+    emptyTitle: 'Inga misstag ännu',
+    mistakeBadge: 'Fellogg',
+    mistakeTitle: 'Fel svar att repetera',
+    subtitle:
+      'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+    title: 'Misstag',
+    wrongAnswers: (count) => `Fel svar: ${count}`,
+  },
+  en: {
+    badge: 'Smart review',
+    bookmarkedBadge: 'Saved list',
+    bookmarkedMeta: 'Saved for focused review',
+    bookmarkedTitle: 'Bookmarked questions',
+    emptyPracticeAccessibilityLabel: 'Practice weak questions',
+    emptyPracticeLink: 'Start practice',
+    emptyText: 'Answer a practice question incorrectly and it will appear here.',
+    emptyTitle: 'No mistakes yet',
+    mistakeBadge: 'Mistake log',
+    mistakeTitle: 'Wrong answers to revisit',
+    subtitle:
+      'Review wrong answers with the question, explanation, source reference, and repetition count in one place.',
+    title: 'Mistakes',
+    wrongAnswers: (count) => `Wrong answers: ${count}`,
+  },
+};
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
+  const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const mistakenQuestions = questions.filter(
     (question) => questionProgress[question.id]?.wrongCount > 0,
@@ -25,14 +77,11 @@ export default function Screen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Badge tone="orange">Smart review</Badge>
+        <Badge tone="orange">{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
-          Mistakes
+          {copy.title}
         </Text>
-        <Text style={styles.subtitle}>
-          Review wrong answers with the question, explanation, source reference, and repetition
-          count in one place.
-        </Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
       </View>
       <QuestionDisclaimer />
 
@@ -41,15 +90,15 @@ export default function Screen() {
       {bookmarkedQuestions.length > 0 ? (
         <View style={styles.list}>
           <View style={styles.sectionHeading}>
-            <Badge tone="blue">Saved list</Badge>
+            <Badge tone="blue">{copy.bookmarkedBadge}</Badge>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
-              Bookmarked questions
+              {copy.bookmarkedTitle}
             </Text>
           </View>
           {bookmarkedQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
               <QuestionCard question={question} />
-              <Text style={styles.bookmarkMeta}>Saved for focused review</Text>
+              <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
               <ExplanationPanel
                 explanationEn={question.explanationEn}
                 explanationSv={question.explanationSv}
@@ -64,16 +113,16 @@ export default function Screen() {
       {mistakenQuestions.length > 0 ? (
         <View style={styles.list}>
           <View style={styles.sectionHeading}>
-            <Badge tone="orange">Mistake log</Badge>
+            <Badge tone="orange">{copy.mistakeBadge}</Badge>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
-              Wrong answers to revisit
+              {copy.mistakeTitle}
             </Text>
           </View>
           {mistakenQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
               <QuestionCard question={question} />
               <Text style={styles.meta}>
-                Wrong answers: {questionProgress[question.id]?.wrongCount ?? 0}
+                {copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}
               </Text>
               <ExplanationPanel
                 explanationEn={question.explanationEn}
@@ -87,18 +136,16 @@ export default function Screen() {
       ) : bookmarkedQuestions.length === 0 ? (
         <View style={styles.emptyCard}>
           <Text accessibilityRole="header" style={styles.emptyTitle}>
-            No mistakes yet
+            {copy.emptyTitle}
           </Text>
-          <Text style={styles.emptyText}>
-            Answer a practice question incorrectly and it will appear here.
-          </Text>
+          <Text style={styles.emptyText}>{copy.emptyText}</Text>
           <Link
-            accessibilityLabel="Practice weak questions"
+            accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
             accessibilityRole="link"
             href="/practice"
             style={styles.practiceLink}
           >
-            Start practice
+            {copy.emptyPracticeLink}
           </Link>
         </View>
       ) : null}

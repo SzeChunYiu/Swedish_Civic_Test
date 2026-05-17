@@ -455,9 +455,15 @@ test('celebration burst keeps decorative particles out of the accessibility tree
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
+  assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
+  assert.match(source, /const copy = mistakesCopy\[language\];/);
   assert.match(source, /bookmarkedQuestions/);
+  assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
+  assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
+  assert.match(source, /\{copy\.bookmarkedTitle\}/);
+  assert.match(source, /\{copy\.bookmarkedMeta\}/);
 });
 
 test('mistakes screen exposes page and review section headings as headers', () => {
@@ -467,6 +473,9 @@ test('mistakes screen exposes page and review section headings as headers', () =
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.emptyTitle\}>/);
+  assert.match(source, /\{copy\.title\}/);
+  assert.match(source, /\{copy\.mistakeTitle\}/);
+  assert.match(source, /\{copy\.emptyTitle\}/);
   assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
