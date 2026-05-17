@@ -28,7 +28,24 @@ const expectedLegalRoutes = [
   },
   {
     file: 'app/privacy.tsx',
+    requiredSnippets: [
+      'const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = privacyCopy[language];',
+      'Integritetspolicy',
+      'Inget konto krävs',
+      'Privacy policy',
+      'No account required',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}>/,
+    ],
     title: 'Privacy policy',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: [
       'No account required',
       'Local progress storage',
