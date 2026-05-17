@@ -837,7 +837,22 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
   },
   {
     file: 'app/terms.tsx',
+    requiredSnippets: [
+      'const termsCopy: Record<AppLanguage, TermsRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = termsCopy[language];',
+      'Användarvillkor',
+      'Studieändamål',
+      'Terms of use',
+      'Study purpose',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+    ],
     title: 'Terms of use',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Study purpose', 'No guarantee', 'Respect source material'],
   },
   {

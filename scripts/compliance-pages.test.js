@@ -32,6 +32,8 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/privacy.tsx'), /Google UMP consent/i);
   assert.match(read('app/terms.tsx'), /study/i);
   assert.match(read('app/terms.tsx'), /no guarantee/i);
+  assert.match(read('app/terms.tsx'), /Användarvillkor/);
+  assert.match(read('app/terms.tsx'), /Studieändamål/);
   const legalPage = read('components/compliance/LegalPage.tsx');
   assert.match(legalPage, /← Tillbaka till profil/);
   assert.match(legalPage, /Tillbaka till profil/);
