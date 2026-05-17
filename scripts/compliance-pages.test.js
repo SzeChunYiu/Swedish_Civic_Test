@@ -32,8 +32,11 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/privacy.tsx'), /Google UMP consent/i);
   assert.match(read('app/terms.tsx'), /study/i);
   assert.match(read('app/terms.tsx'), /no guarantee/i);
-  assert.match(read('app/sources.tsx'), /uhr\.se\/medborgarskapsprovet\/utbildningsmaterial/i);
-  assert.match(read('app/sources.tsx'), /Sverige i fokus/i);
+  const sourcesRoute = read('app/sources.tsx');
+  assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/utbildningsmaterial/i);
+  assert.match(sourcesRoute, /Sverige i fokus/i);
+  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesRoute, /accessibilityLabel="Open UHR education material"/);
   assert.match(read('app/support.tsx'), /support/i);
   assert.match(read('app/support.tsx'), /content issue/i);
   assert.match(read('app/support.tsx'), /no personal data/i);
