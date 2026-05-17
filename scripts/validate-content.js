@@ -1378,6 +1378,13 @@ const EXPECTED_CONTENT_INTERFACES = [
     ],
   },
 ];
+function expectedContentInterfaceKeys(interfaceName) {
+  const interfaceSpec = EXPECTED_CONTENT_INTERFACES.find((spec) => spec.name === interfaceName);
+  return interfaceSpec ? interfaceSpec.fields.map((field) => field.name) : [];
+}
+const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference');
+const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
+const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'questionCount', type: 'number', optional: false },
   { name: 'durationMinutes', type: 'number', optional: false },
@@ -2091,6 +2098,52 @@ function isObjectRecord(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function unexpectedKeys(value, expectedKeys) {
+  if (!isObjectRecord(value)) return [];
+  const expectedKeySet = new Set(expectedKeys);
+  return Object.keys(value).filter((key) => !expectedKeySet.has(key));
+}
+
+function schemaKeyFailures(value, expectedKeys, label, schemaName) {
+  if (!isObjectRecord(value)) return [`${label} must be a ${schemaName} object`];
+  return unexpectedKeys(value, expectedKeys).map(
+    (key) => `${label}.${key} is not part of ${schemaName} schema`,
+  );
+}
+
+function questionExactSchemaKeyFailures(question, label) {
+  const failures = schemaKeyFailures(
+    question,
+    EXPECTED_PRACTICE_QUESTION_KEYS,
+    label,
+    'PracticeQuestion',
+  );
+
+  if (Array.isArray(question?.options)) {
+    question.options.forEach((option, optionIndex) => {
+      failures.push(
+        ...schemaKeyFailures(
+          option,
+          EXPECTED_QUESTION_OPTION_KEYS,
+          `${label} option[${optionIndex}]`,
+          'QuestionOption',
+        ),
+      );
+    });
+  }
+
+  failures.push(
+    ...schemaKeyFailures(
+      question?.uhrReference,
+      EXPECTED_UHR_REFERENCE_KEYS,
+      `${label} uhrReference`,
+      'UHRReference',
+    ),
+  );
+
+  return failures;
+}
+
 function isColorToken(value) {
   return (
     typeof value === 'string' && (/^#[0-9a-fA-F]{6}$/.test(value) || /^rgba?\(.+\)$/.test(value))
@@ -2460,13 +2513,20 @@ function chapterTextFieldsAreNormalized(chapter) {
 }
 
 function validateQuestionSchema(question, index) {
-  const label = hasText(question.id) ? question.id : `question[${index}]`;
+  const label = hasText(question?.id) ? question.id : `question[${index}]`;
   let valid = true;
 
   function reject(message) {
     valid = false;
     fail(message);
   }
+
+  if (!isObjectRecord(question)) {
+    reject(`${label} must be a PracticeQuestion object`);
+    return false;
+  }
+
+  questionExactSchemaKeyFailures(question, label).forEach(reject);
 
   function requireText(field) {
     if (!hasText(question[field])) {
@@ -2838,6 +2898,7 @@ let publishedQuestionTypesValidated = 0;
 let questionIdSequencesValidated = 0;
 let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
+let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
@@ -8956,6 +9017,9 @@ if (Array.isArray(questions)) {
       if (optionBilingualTextPairsAreValid(question)) {
         questionOptionBilingualTextPairsValidated += 1;
       }
+      if (questionExactSchemaKeyFailures(question, label).length === 0) {
+        questionExactSchemaKeysValidated += 1;
+      }
       if (questionTextFieldsAreNormalized(question)) {
         questionTextFieldsNormalizedValidated += 1;
       }
@@ -9321,6 +9385,7 @@ console.log(
       questionIdSequencesValidated,
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
+      questionExactSchemaKeysValidated,
       questionTextFieldsNormalizedValidated,
       questionAuthorityBoundaryTextValidated,
       questionPromptTextUniquenessValidated,

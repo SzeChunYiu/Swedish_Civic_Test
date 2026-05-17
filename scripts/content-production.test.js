@@ -191,6 +191,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.questionIdSequencesValidated, 500);
   assert.equal(summary.questionBilingualTextPairsValidated, 500);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, 500);
+  assert.equal(summary.questionExactSchemaKeysValidated, 500);
   assert.equal(summary.questionTextFieldsNormalizedValidated, 500);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, 500);
   assert.equal(summary.questionPromptTextUniquenessValidated, 500);
