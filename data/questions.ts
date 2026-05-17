@@ -170,8 +170,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q007',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vad heter Sveriges högsta berg?',
-    questionEn: "What is the name of Sweden's highest mountain?",
+    questionSv: 'Enligt UHR-materialet, vad heter Sveriges högsta berg?',
+    questionEn: "According to the UHR material, what is the name of Sweden's highest mountain?",
     options: [
       { id: 'a', textSv: 'Kebnekaise', textEn: 'Kebnekaise' },
       { id: 'b', textSv: 'Smygehuk', textEn: 'Smygehuk' },
@@ -180,9 +180,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Kebnekaise anges som Sveriges högsta berg, cirka 2 000 meter högt. Smygehuk, Treriksröset och Mälaren är andra geografiska namn men inte Sveriges högsta berg.',
+      'UHR-avsnittet Fjäll säger att bergskedjan Skanderna ligger längs gränsen mot Norge och kallas fjällen. Där finns Sveriges högsta berg Kebnekaise, som är cirka 2 000 meter högt.',
     explanationEn:
-      "Kebnekaise is given as Sweden's highest mountain, about 2,000 metres high. Smygehuk, Treriksröset, and Mälaren are other geographical names but not Sweden's highest mountain.",
+      "The UHR section Mountains says the Scandinavian Mountains lie along the border with Norway and are called the Swedish mountains. Sweden's highest mountain, Kebnekaise, is there and is about 2,000 metres high.",
     uhrReference: { chapter: 'Landet Sverige', section: 'Fjäll', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
