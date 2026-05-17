@@ -165,6 +165,17 @@ test('question disclaimer exposes the non-official warning as an accessible summ
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('celebration burst keeps decorative particles out of the accessibility tree', () => {
+  const source = read('components/quiz/CelebrationBurst.tsx');
+
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(source, /pointerEvents="none"/);
+  assert.match(source, /Animated\.timing/);
+  assert.match(source, /motion\.duration\.slow \* 2/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
