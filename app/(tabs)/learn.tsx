@@ -7,7 +7,39 @@ import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+type ChapterLinkCopy = {
+  contentQueued: string;
+  progressLabel: (completedCount: number, questionCount: number) => string;
+  accessibilityLabel: ({
+    nameSv,
+    nameEn,
+    progressLabel,
+  }: {
+    nameSv: string;
+    nameEn: string;
+    progressLabel: string;
+  }) => string;
+};
+
+const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
+  sv: {
+    contentQueued: 'innehåll planerat',
+    progressLabel: (completedCount, questionCount) =>
+      `${completedCount} av ${questionCount} frågor besvarade`,
+    accessibilityLabel: ({ nameSv, nameEn, progressLabel }) =>
+      `Öppna kapitel ${nameSv}. Engelskt namn: ${nameEn}. Framsteg: ${progressLabel}.`,
+  },
+  en: {
+    contentQueued: 'content queued',
+    progressLabel: (completedCount, questionCount) =>
+      `${completedCount} of ${questionCount} questions practiced`,
+    accessibilityLabel: ({ nameSv, nameEn, progressLabel }) =>
+      `Open chapter ${nameSv}. English name: ${nameEn}. Progress: ${progressLabel}.`,
+  },
+};
 
 function questionCountForChapter(chapterId: string) {
   return questions.filter((question) => question.chapterId === chapterId).length;
@@ -25,22 +57,24 @@ function getChapterLinkAccessibilityLabel({
   nameEn,
   completedCount,
   questionCount,
+  copy,
 }: {
   nameSv: string;
   nameEn: string;
   completedCount: number;
   questionCount: number;
+  copy: ChapterLinkCopy;
 }) {
   const progressLabel =
-    questionCount > 0
-      ? `${completedCount} of ${questionCount} questions practiced`
-      : 'content queued';
+    questionCount > 0 ? copy.progressLabel(completedCount, questionCount) : copy.contentQueued;
 
-  return `Open chapter ${nameSv}. English name: ${nameEn}. Progress: ${progressLabel}.`;
+  return copy.accessibilityLabel({ nameSv, nameEn, progressLabel });
 }
 
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
+  const language = useSettingsStore((state) => state.language);
+  const copy = chapterLinkCopy[language];
 
   return (
     <ScreenShell
@@ -64,6 +98,7 @@ export default function Screen() {
                 nameEn: chapter.nameEn,
                 completedCount,
                 questionCount,
+                copy,
               })}
               accessibilityRole="link"
               href={`/chapter/${chapter.id}`}

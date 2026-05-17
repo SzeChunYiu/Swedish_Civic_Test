@@ -340,11 +340,21 @@ test('chapter card groups title, translation, status, and description into an ac
 test('learn route chapter links announce chapter progress', () => {
   const source = read('app/(tabs)/learn.tsx');
 
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy>/);
+  assert.match(source, /const copy = chapterLinkCopy\[language\]/);
   assert.match(source, /function getChapterLinkAccessibilityLabel/);
+  assert.match(source, /Öppna kapitel \$\{nameSv\}/);
+  assert.match(source, /Engelskt namn: \$\{nameEn\}/);
+  assert.match(source, /Framsteg: \$\{progressLabel\}/);
+  assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
   assert.match(source, /Open chapter \$\{nameSv\}/);
   assert.match(source, /English name: \$\{nameEn\}/);
   assert.match(source, /Progress: \$\{progressLabel\}/);
   assert.match(source, /\$\{completedCount\} of \$\{questionCount\} questions practiced/);
+  assert.match(source, /copy: ChapterLinkCopy/);
+  assert.match(source, /copy\.progressLabel\(completedCount, questionCount\)/);
+  assert.match(source, /copy\.accessibilityLabel\(\{ nameSv, nameEn, progressLabel \}\)/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
