@@ -701,6 +701,54 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /textTransform:\s*'uppercase'/,
   },
 ];
+const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'optional Chapter prop contract',
+    pattern: /chapter\?: Chapter;/,
+  },
+  {
+    label: 'content-queued status fallback',
+    pattern:
+      /const status =[\s\S]*questionCount > 0 \? `\$\{completedCount\}\/\$\{questionCount\} practiced` : 'Content queued';/,
+  },
+  {
+    label: 'chapter title fallback',
+    pattern: /const title = chapter\?\.nameSv \?\? 'Chapter unavailable';/,
+  },
+  {
+    label: 'chapter accessibility summary variable',
+    pattern: /const chapterAccessibilityLabel =/,
+  },
+  {
+    label: 'Swedish title in accessibility summary',
+    pattern: /`Chapter: \$\{title\}`/,
+  },
+  {
+    label: 'English title in accessibility summary',
+    pattern: /chapter\?\.nameEn \? `English name: \$\{chapter\.nameEn\}` : null/,
+  },
+  {
+    label: 'progress status in accessibility summary',
+    pattern: /`Status: \$\{status\}`/,
+  },
+  {
+    label: 'description in accessibility summary',
+    pattern: /chapter\?\.descriptionSv \? `Description: \$\{chapter\.descriptionSv\}` : null/,
+  },
+  {
+    label: 'Card receives chapter accessibility summary',
+    pattern:
+      /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated style=\{styles\.card\}>/,
+  },
+  {
+    label: 'visible chapter title',
+    pattern: /<Text style=\{styles\.title\}>\{title\}<\/Text>/,
+  },
+  {
+    label: 'visible progress bar',
+    pattern: /<ProgressBar progress=\{progress\} \/>/,
+  },
+];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'PracticeQuestion prop contract',
@@ -2529,6 +2577,8 @@ let metricCardAccessibilityRulesValidated = 0;
 let metricCardAccessibilityParityValidated = false;
 let badgeAccessibilityRulesValidated = 0;
 let badgeAccessibilityParityValidated = false;
+let chapterCardAccessibilityRulesValidated = 0;
+let chapterCardAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
 let questionCardAccessibilityParityValidated = false;
 let answerOptionAccessibilityRulesValidated = 0;
@@ -4467,6 +4517,43 @@ function validateBadgeAccessibilityParity() {
 
   if (valid && badgeAccessibilityRulesValidated === EXPECTED_BADGE_ACCESSIBILITY_RULES.length) {
     badgeAccessibilityParityValidated = true;
+  }
+}
+
+function validateChapterCardAccessibilityParity() {
+  let valid = true;
+  let chapterCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    chapterCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/ChapterCard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/learning/ChapterCard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(chapterCardSource)) {
+      reject(`ChapterCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    chapterCardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    chapterCardAccessibilityRulesValidated === EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES.length
+  ) {
+    chapterCardAccessibilityParityValidated = true;
   }
 }
 
@@ -8710,6 +8797,7 @@ validateCardAccessibilityParity();
 validateProgressBarAccessibilityParity();
 validateMetricCardAccessibilityParity();
 validateBadgeAccessibilityParity();
+validateChapterCardAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
@@ -8831,6 +8919,8 @@ console.log(
       metricCardAccessibilityParityValidated,
       badgeAccessibilityRulesValidated,
       badgeAccessibilityParityValidated,
+      chapterCardAccessibilityRulesValidated,
+      chapterCardAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
       questionCardAccessibilityParityValidated,
       answerOptionAccessibilityRulesValidated,
