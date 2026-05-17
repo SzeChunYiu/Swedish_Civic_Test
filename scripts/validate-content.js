@@ -577,6 +577,7 @@ const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const uhrSectionMap = JSON.parse(
@@ -585,6 +586,7 @@ const uhrSectionMap = JSON.parse(
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
+let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
@@ -617,6 +619,7 @@ let generatedTagTemplateParityValidated = 0;
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
+if (!Array.isArray(glossaryTerms)) fail('glossaryTerms export is not an array');
 if (!Array.isArray(questions)) fail('questions export is not an array');
 if (!Array.isArray(sourceQuestions)) fail('sourceQuestions export is not an array');
 if (!Array.isArray(generatedPublishedQuestions)) {
@@ -708,6 +711,78 @@ function validateUxBenchmarks() {
     }
 
     if (valid) uxBenchmarksValidated += 1;
+  });
+}
+
+function validateGlossaryTerms() {
+  if (!Array.isArray(glossaryTerms)) return;
+
+  const seenIds = new Set();
+  const seenTermsSv = new Set();
+  const seenTermsEn = new Set();
+  const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
+
+  glossaryTerms.forEach((term, index) => {
+    const label = hasText(term?.id) ? term.id : `glossary term[${index}]`;
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (!term || typeof term !== 'object') {
+      reject(`glossary term[${index}] is not an object`);
+    } else {
+      for (const field of ['id', 'termSv', 'termEn', 'explanationSv', 'explanationEn']) {
+        if (!hasText(term[field])) {
+          reject(`${label} missing ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(term[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      if (hasText(term.id) && !isSlugTag(term.id)) {
+        reject(`${label} id must use lowercase kebab-case`);
+      }
+      if (hasText(term.id) && seenIds.has(term.id)) {
+        reject(`${label} duplicates glossary term id`);
+      }
+      if (hasText(term.id)) seenIds.add(term.id);
+
+      const normalizedTermSv = normalizeComparableText(term.termSv);
+      if (normalizedTermSv && seenTermsSv.has(normalizedTermSv)) {
+        reject(`${label} duplicates Swedish glossary term`);
+      }
+      if (normalizedTermSv) seenTermsSv.add(normalizedTermSv);
+
+      const normalizedTermEn = normalizeComparableText(term.termEn);
+      if (normalizedTermEn && seenTermsEn.has(normalizedTermEn)) {
+        reject(`${label} duplicates English glossary term`);
+      }
+      if (normalizedTermEn) seenTermsEn.add(normalizedTermEn);
+
+      if (!optionTextPairIsTranslatedOrInvariant({ textSv: term.termSv, textEn: term.termEn })) {
+        reject(`${label} termSv and termEn must be translated or a short invariant term`);
+      }
+      if (
+        normalizeComparableText(term.explanationSv) === normalizeComparableText(term.explanationEn)
+      ) {
+        reject(`${label} explanationSv and explanationEn must be distinct bilingual text`);
+      }
+
+      if (term.chapterId !== undefined) {
+        if (!hasText(term.chapterId)) {
+          reject(`${label} chapterId must be non-empty when present`);
+        } else if (!textIsTrimmedSingleSpaced(term.chapterId)) {
+          reject(`${label} chapterId must be trimmed and single-spaced`);
+        } else if (chapterIds.size && !chapterIds.has(term.chapterId)) {
+          reject(`${label} references unknown chapter ${term.chapterId}`);
+        }
+      }
+    }
+
+    if (valid) glossaryTermsValidated += 1;
   });
 }
 
@@ -1422,6 +1497,7 @@ validateMockExamConfig(
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0,
 );
+validateGlossaryTerms();
 validateUxBenchmarks();
 validateQuestionBankCsvContract();
 
@@ -1454,6 +1530,8 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       mockExamConfigValidated,
+      glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+      glossaryTermsValidated,
       uxBenchmarksValidated,
       questions: questions.length,
       publishedQuestions,
