@@ -87,8 +87,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q022',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
-    'Vilken uppgift har riksdagen enligt UHR-avsnittet Staten?',
-    'What task does the Riksdag have according to the UHR section The state?',
+    'Vilken av följande uppgifter har riksdagen?',
+    'Which of the following tasks belongs to the Riksdag?',
     [
       ['Att sköta regionernas kollektivtrafik', 'To manage regional public transport'],
       ['Att vara Sveriges statschef', "To be Sweden's head of state"],
