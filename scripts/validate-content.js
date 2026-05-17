@@ -39,6 +39,8 @@ const EXPECTED_UHR_SOURCE = {
   publisher: 'Universitets- och högskolerådet (UHR)',
   url: 'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
 };
+const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const QUESTION_BANK_CSV_HEADER = [
   'id',
   'chapterId',
@@ -320,6 +322,28 @@ function isHttpsUrl(value) {
   } catch {
     return false;
   }
+}
+
+function extractStringConstantFromTs(source, constantName) {
+  const sourceFile = ts.createSourceFile('source.tsx', source, ts.ScriptTarget.Latest, true);
+  let value;
+
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === constantName &&
+      node.initializer &&
+      ts.isStringLiteralLike(node.initializer)
+    ) {
+      value = node.initializer.text;
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return value;
 }
 
 function parseCsvRows(csv) {
@@ -649,6 +673,7 @@ let uhrMapSectionsValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
 let uhrMapPageRangesValidated = 0;
 let uhrSourceMetadataValidated = false;
+let uhrSourceMaterialLinkParityValidated = false;
 let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
@@ -1882,6 +1907,63 @@ function validateUhrSourceMetadata() {
   if (valid) uhrSourceMetadataValidated = true;
 }
 
+function validateUhrSourceMaterialLinkParity() {
+  let valid = true;
+  let sourcesRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    sourcesRoute = fs.readFileSync(path.join(repoRoot, 'app/sources.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/sources.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  const routeMaterialUrl = extractStringConstantFromTs(sourcesRoute, 'UHR_EDUCATION_MATERIAL_URL');
+  if (routeMaterialUrl !== EXPECTED_UHR_EDUCATION_MATERIAL_URL) {
+    reject(
+      `app/sources.tsx UHR_EDUCATION_MATERIAL_URL must be ${EXPECTED_UHR_EDUCATION_MATERIAL_URL}`,
+    );
+  }
+
+  if (!isHttpsUrl(routeMaterialUrl)) {
+    reject('app/sources.tsx UHR education material URL must be HTTPS');
+  }
+
+  const mapSourceUrl = uhrSectionMap?.source?.url;
+  if (!isHttpsUrl(mapSourceUrl)) {
+    reject('UHR section map source URL must be HTTPS');
+  } else {
+    const mapSource = new URL(mapSourceUrl);
+    const expectedMaterialPath = new URL(EXPECTED_UHR_EDUCATION_MATERIAL_URL).pathname;
+    if (mapSource.hostname !== 'www.uhr.se' || !mapSource.pathname.includes(expectedMaterialPath)) {
+      reject('UHR section map source URL must be under the UHR education material path');
+    }
+  }
+
+  if (!sourcesRoute.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
+    reject(`app/sources.tsx must mention ${EXPECTED_UHR_SOURCE.titleKeyword}`);
+  }
+  if (!sourcesRoute.includes('content/uhr-section-map.json')) {
+    reject('app/sources.tsx must mention content/uhr-section-map.json');
+  }
+  if (!sourcesRoute.includes('content/question-bank.csv')) {
+    reject('app/sources.tsx must mention content/question-bank.csv');
+  }
+  if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR material URL through an Expo Link');
+  }
+  if (!sourcesRoute.includes('accessibilityLabel="Open UHR education material"')) {
+    reject('app/sources.tsx UHR material link needs the expected accessibility label');
+  }
+
+  if (valid) uhrSourceMaterialLinkParityValidated = true;
+}
+
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
 if (Array.isArray(chapters)) {
@@ -2074,6 +2156,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
+validateUhrSourceMaterialLinkParity();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 const disclaimer = fs.readFileSync(
@@ -2151,6 +2234,7 @@ console.log(
       uhrMapSectionsValidated,
       uhrMapTextFieldsNormalizedValidated,
       uhrMapPageRangesValidated,
+      uhrSourceMaterialLinkParityValidated,
       questionChapterReferenceParityValidated,
       uhrReferencesValidated,
     },
