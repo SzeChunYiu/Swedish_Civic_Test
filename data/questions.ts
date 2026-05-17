@@ -312,13 +312,13 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q012',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vad är ett kännetecken på fria val i en demokrati?',
-    questionEn: 'What is a feature of free elections in a democracy?',
+    questionSv: 'Vad beskriver UHR-materialet som en del av fria val i en demokrati?',
+    questionEn: 'What does the UHR material describe as part of free elections in a democracy?',
     options: [
       {
         id: 'a',
-        textSv: 'Alla med rösträtt har en röst var',
-        textEn: 'Everyone with the right to vote has one vote each',
+        textSv: 'Alla som har rätt att rösta har en röst var',
+        textEn: 'Everyone who has the right to vote has one vote each',
       },
       {
         id: 'b',
@@ -327,20 +327,20 @@ export const baseQuestions: PracticeQuestion[] = [
       },
       {
         id: 'c',
-        textSv: 'Man måste visa offentligt hur man röstar',
-        textEn: 'You must publicly show how you vote',
+        textSv: 'Väljare måste visa offentligt hur de röstar',
+        textEn: 'Voters must publicly show how they vote',
       },
       {
         id: 'd',
-        textSv: 'Man måste rösta på regeringen',
-        textEn: 'You must vote for the government',
+        textSv: 'Regeringen bestämmer hur alla röster ska användas',
+        textEn: 'The government decides how all votes must be used',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'I fria val har alla med rösträtt en röst var och valet ska vara hemligt. Det ska också finnas flera partier att rösta på.',
+      'UHR-avsnittet Demokrati betyder folkstyre säger att fria val innebär att alla som har rätt att rösta har en röst var. Avsnittet säger också att väljare ska kunna uttrycka åsikter utan hot eller tvång, att det ska finnas flera partier och att valet ska vara hemligt.',
     explanationEn:
-      'In free elections, everyone with the right to vote has one vote each and the vote should be secret. There should also be several parties to choose from.',
+      'The UHR section Democracy means rule by the people says that free elections mean everyone who has the right to vote has one vote each. It also says voters should be able to express opinions without threats or coercion, that there should be several parties, and that the vote should be secret.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
