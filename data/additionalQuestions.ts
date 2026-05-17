@@ -1249,8 +1249,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q079',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Folkrörelserna', pageApprox: 33 },
-    'Vilka nämner UHR-materialet som fyra av de största svenska folkrörelserna?',
-    "Which movements does the UHR material mention as four of Sweden's largest popular movements?",
+    'Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?',
+    'Which four popular movements were among the largest in Sweden during the 19th century?',
     [
       [
         'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen',
