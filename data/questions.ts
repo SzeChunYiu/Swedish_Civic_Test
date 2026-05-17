@@ -397,35 +397,37 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q014',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vad betyder rättssäkerhet i materialets beskrivning?',
-    questionEn: "What does rule of law mean in the material's description?",
+    questionSv:
+      'Vad kallar UHR-materialet att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång?',
+    questionEn:
+      'What does the UHR material call it when laws apply to everyone and no one may be sentenced without a fair trial?',
     options: [
       {
         id: 'a',
-        textSv: 'Att lagarna gäller för alla och att ingen döms utan en rättvis rättegång',
-        textEn: 'That laws apply to everyone and no one is sentenced without a fair trial',
+        textSv: 'Rättssäkerhet',
+        textEn: 'Rule of law',
       },
       {
         id: 'b',
-        textSv: 'Att myndigheter får döma utan lagar',
-        textEn: 'That authorities may sentence people without laws',
+        textSv: 'Censur',
+        textEn: 'Censorship',
       },
       {
         id: 'c',
-        textSv: 'Att bara vissa grupper skyddas av lagen',
-        textEn: 'That only some groups are protected by law',
+        textSv: 'Segregation',
+        textEn: 'Segregation',
       },
       {
         id: 'd',
-        textSv: 'Att politiker kan ändra domar själva',
-        textEn: 'That politicians can change court judgments themselves',
+        textSv: 'Monarki',
+        textEn: 'Monarchy',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Rättssäkerhet innebär att lagarna gäller för alla och att människor har rätt till en rättvis rättegång. Det stärker demokratin eftersom makt inte ska användas godtyckligt.',
+      'UHR-avsnittet Demokrati betyder folkstyre säger att en viktig förutsättning för demokrati är att lagarna gäller för alla i Sverige och att ingen får dömas utan en rättvis rättegång. Materialet kallar detta rättssäkerhet; de andra alternativen beskriver andra begrepp.',
     explanationEn:
-      'Rule of law means that laws apply to everyone and that people have the right to a fair trial. It strengthens democracy because power should not be used arbitrarily.',
+      'The UHR section Democracy means rule by the people says an important condition for democracy is that laws apply to everyone in Sweden and that no one may be sentenced without a fair trial. The material calls this rule of law; the other alternatives describe different concepts.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
