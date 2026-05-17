@@ -70,8 +70,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q021',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Landet styrs på olika nivåer', pageApprox: 12 },
-    'Vilka tre politiska nivåer delas ansvaret i Sverige mellan?',
-    'Which three political levels share responsibility in Sweden?',
+    'Vilka tre nivåer delar enligt UHR-materialet det politiska ansvaret i Sverige?',
+    'According to the UHR material, which three levels share political responsibility in Sweden?',
     [
       ['Stat, regioner och kommuner', 'The state, regions, and municipalities'],
       ['Kung, kyrka och adel', 'The king, church, and nobility'],
@@ -79,8 +79,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Banker, företag och hushåll', 'Banks, companies, and households'],
     ],
     0,
-    'Materialet beskriver att politiskt ansvar finns på nationell nivå, regional nivå och kommunal nivå.',
-    'The material says political responsibility exists at national, regional, and municipal levels.',
+    'UHR-avsnittet Landet styrs på olika nivåer säger att det politiska ansvaret i Sverige delas mellan nationell nivå, regional nivå och kommunal nivå. Det förklarar dessa nivåer som staten, regionerna och kommunerna.',
+    'The UHR section The country is governed at different levels says political responsibility in Sweden is divided between national, regional, and municipal levels. It explains these levels as the state, regions, and municipalities.',
     ['government', 'levels', 'state-region-municipality'],
   ),
   single(
