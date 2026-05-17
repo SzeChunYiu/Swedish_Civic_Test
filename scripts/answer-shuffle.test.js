@@ -55,7 +55,11 @@ function optionTexts(question) {
 }
 
 test('seeded answer shuffle spreads correct display positions across the published bank', () => {
-  const { shuffleQuestionOptionsForSession } = loadTs('lib/quiz/answerOptionShuffle.ts');
+  const {
+    answerShuffleDistributionIsBalanced,
+    shuffleQuestionOptionsForSession,
+    summarizeAnswerShuffleDistribution,
+  } = loadTs('lib/quiz/answerOptionShuffle.ts');
   const { isCorrectAnswer } = loadTs('lib/quiz/answerValidation.ts');
   const questions = singleChoiceQuestions();
   const correctPositionCounts = Object.fromEntries(displayOptionIds.map((id) => [id, 0]));
@@ -88,6 +92,33 @@ test('seeded answer shuffle spreads correct display positions across the publish
       correctPositionCounts,
     )}`,
   );
+
+  const distribution = summarizeAnswerShuffleDistribution(questions, 'p0-answer-shuffle');
+  assert.equal(distribution.totalQuestions, questions.length);
+  assert.deepEqual(distribution.correctPositionCounts, correctPositionCounts);
+  assert.equal(answerShuffleDistributionIsBalanced(distribution), true);
+});
+
+test('seeded answer shuffle audit stays balanced across routed session seeds', () => {
+  const { answerShuffleDistributionIsBalanced, summarizeAnswerShuffleDistribution } = loadTs(
+    'lib/quiz/answerOptionShuffle.ts',
+  );
+  const questions = singleChoiceQuestions();
+
+  assert.ok(questions.length > 100, 'published bank should contain enough single-choice questions');
+
+  for (let index = 0; index < 50; index += 1) {
+    const distribution = summarizeAnswerShuffleDistribution(questions, `p0-session-${index}`);
+
+    assert.equal(distribution.totalQuestions, questions.length);
+    assert.equal(
+      answerShuffleDistributionIsBalanced(distribution),
+      true,
+      `correct-answer display positions are too concentrated for ${
+        distribution.sessionId
+      }: ${JSON.stringify(distribution.correctPositionCounts)}`,
+    );
+  }
 });
 
 test('seeded answer shuffle is stable per question and session without mutating source options', () => {
