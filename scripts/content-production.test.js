@@ -79,6 +79,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.equal(summary.flashcardAccessibilityRulesValidated, 11);
   assert.equal(summary.flashcardAccessibilityParityValidated, true);
+  assert.equal(summary.audioButtonAccessibilityRulesValidated, 13);
+  assert.equal(summary.audioButtonAccessibilityParityValidated, true);
   assert.equal(summary.questionCardAccessibilityRulesValidated, 10);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.equal(summary.answerOptionAccessibilityRulesValidated, 12);
@@ -87,6 +89,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
   assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 8);
   assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
+  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 11);
+  assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
   assert.equal(summary.examReviewItemsValidated, 20);
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);

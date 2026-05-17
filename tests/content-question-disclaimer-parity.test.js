@@ -29,6 +29,9 @@ test('question disclaimer coverage stays aligned across study surfaces', () => {
 
   assert.equal(summary.questionDisclaimerRoutesValidated, expectedDisclaimerRoutes.length);
   assert.equal(summary.questionDisclaimerCopyValidated, true);
+  assert.match(disclaimerSource, /useSettingsStore/);
+  assert.match(disclaimerSource, /Oberoende studieverktyg/);
+  assert.match(disclaimerSource, /inte riktiga provfrågor/);
   assert.match(disclaimerSource, /Independent study tool/);
   assert.match(disclaimerSource, /Not official/);
   assert.match(disclaimerSource, /not real exam questions/);

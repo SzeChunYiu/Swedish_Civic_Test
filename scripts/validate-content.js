@@ -799,6 +799,64 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
       /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>[\s\S]*<Text style=\{styles\.answer\}>\{answer\}<\/Text>/,
   },
 ];
+const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
+  {
+    label: 'shared Button import',
+    pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
+  },
+  {
+    label: 'speech runtime imports',
+    pattern: /import \{ speakSwedish, stopSpeech \} from '\.\.\/\.\.\/lib\/audio\/speak';/,
+  },
+  {
+    label: 'optional text and enabled prop contract',
+    pattern: /text = '', enabled = true[\s\S]*text\?: string; enabled\?: boolean/,
+  },
+  {
+    label: 'trimmed speech text source',
+    pattern: /const speechText = text\.trim\(\);/,
+  },
+  {
+    label: 'nonblank speech text guard',
+    pattern: /const hasSpeechText = speechText\.length > 0;/,
+  },
+  {
+    label: 'enabled plus text playback guard',
+    pattern: /const canPlayAudio = enabled && hasSpeechText;/,
+  },
+  {
+    label: 'state-specific visible label',
+    pattern:
+      /const label = !enabled \? 'Audio disabled' : hasSpeechText \? 'Listen' : 'Audio unavailable';/,
+  },
+  {
+    label: 'state-specific accessibility label',
+    pattern:
+      /const accessibilityLabel = !enabled[\s\S]*\? 'Audio is disabled'[\s\S]*\? 'Listen to the Swedish question and answers'[\s\S]*: 'Audio is unavailable for this question';/,
+  },
+  {
+    label: 'state-specific accessibility hint',
+    pattern:
+      /const accessibilityHint = !enabled[\s\S]*Enable audio in Settings[\s\S]*Plays the Swedish question and answer options aloud[\s\S]*Audio needs Swedish question text/,
+  },
+  {
+    label: 'native button accessibility wiring',
+    pattern:
+      /<Button[\s\S]*accessibilityHint=\{accessibilityHint\}[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*accessibilityRole="button"/,
+  },
+  {
+    label: 'disabled accessibility state follows playback guard',
+    pattern: /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/,
+  },
+  {
+    label: 'disabled interaction follows playback guard',
+    pattern: /disabled=\{!canPlayAudio\}/,
+  },
+  {
+    label: 'trimmed speech playback',
+    pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
+  },
+];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'PracticeQuestion prop contract',
@@ -965,6 +1023,52 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'visible approximate page label',
     pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
+  },
+];
+const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
+  {
+    label: 'active prop contract',
+    pattern: /active: boolean;/,
+  },
+  {
+    label: 'inactive animation reset',
+    pattern: /if \(!active\) \{\s*progress\.setValue\(0\);\s*return;\s*\}/,
+  },
+  {
+    label: 'active animation restarts from zero',
+    pattern: /progress\.setValue\(0\);\s*Animated\.timing\(progress,/,
+  },
+  {
+    label: 'tokenized animation duration',
+    pattern: /duration:\s*motion\.duration\.slow \* 2,/,
+  },
+  {
+    label: 'standard easing path',
+    pattern: /easing:\s*Easing\.out\(Easing\.cubic\),/,
+  },
+  {
+    label: 'native-driver animation',
+    pattern: /useNativeDriver:\s*true,/,
+  },
+  {
+    label: 'inactive render returns null',
+    pattern: /if \(!active\) return null;/,
+  },
+  {
+    label: 'decorative animation hidden from accessibility tree',
+    pattern: /accessibilityElementsHidden/,
+  },
+  {
+    label: 'descendant accessibility hidden',
+    pattern: /importantForAccessibility="no-hide-descendants"/,
+  },
+  {
+    label: 'non-interactive pointer behavior',
+    pattern: /pointerEvents="none"/,
+  },
+  {
+    label: 'result pill remains visible',
+    pattern: /<View style=\{styles\.pill\}>[\s\S]*<Text style=\{styles\.pillText\}>/,
   },
 ];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
@@ -2631,6 +2735,8 @@ let chapterCardAccessibilityRulesValidated = 0;
 let chapterCardAccessibilityParityValidated = false;
 let flashcardAccessibilityRulesValidated = 0;
 let flashcardAccessibilityParityValidated = false;
+let audioButtonAccessibilityRulesValidated = 0;
+let audioButtonAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
 let questionCardAccessibilityParityValidated = false;
 let answerOptionAccessibilityRulesValidated = 0;
@@ -2639,6 +2745,8 @@ let explanationPanelAccessibilityRulesValidated = 0;
 let explanationPanelAccessibilityParityValidated = false;
 let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
+let celebrationBurstAccessibilityRulesValidated = 0;
+let celebrationBurstAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4646,6 +4754,43 @@ function validateFlashcardAccessibilityParity() {
   }
 }
 
+function validateAudioButtonAccessibilityParity() {
+  let valid = true;
+  let audioButtonSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    audioButtonSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/AudioButton.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/learning/AudioButton.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(audioButtonSource)) {
+      reject(`AudioButton missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    audioButtonAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    audioButtonAccessibilityRulesValidated === EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.length
+  ) {
+    audioButtonAccessibilityParityValidated = true;
+  }
+}
+
 function validateQuestionCardAccessibilityParity() {
   let valid = true;
   let questionCardSource = '';
@@ -4793,6 +4938,44 @@ function validateUhrReferenceCardAccessibilityParity() {
       EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length
   ) {
     uhrReferenceCardAccessibilityParityValidated = true;
+  }
+}
+
+function validateCelebrationBurstAccessibilityParity() {
+  let valid = true;
+  let celebrationBurstSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    celebrationBurstSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/CelebrationBurst.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/CelebrationBurst.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(celebrationBurstSource)) {
+      reject(`CelebrationBurst missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    celebrationBurstAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    celebrationBurstAccessibilityRulesValidated ===
+      EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES.length
+  ) {
+    celebrationBurstAccessibilityParityValidated = true;
   }
 }
 
@@ -8888,10 +9071,12 @@ validateMetricCardAccessibilityParity();
 validateBadgeAccessibilityParity();
 validateChapterCardAccessibilityParity();
 validateFlashcardAccessibilityParity();
+validateAudioButtonAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
+validateCelebrationBurstAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -9013,6 +9198,8 @@ console.log(
       chapterCardAccessibilityParityValidated,
       flashcardAccessibilityRulesValidated,
       flashcardAccessibilityParityValidated,
+      audioButtonAccessibilityRulesValidated,
+      audioButtonAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
       questionCardAccessibilityParityValidated,
       answerOptionAccessibilityRulesValidated,
@@ -9021,6 +9208,8 @@ console.log(
       explanationPanelAccessibilityParityValidated,
       uhrReferenceCardAccessibilityRulesValidated,
       uhrReferenceCardAccessibilityParityValidated,
+      celebrationBurstAccessibilityRulesValidated,
+      celebrationBurstAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,

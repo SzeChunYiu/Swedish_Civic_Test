@@ -70,8 +70,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q021',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Landet styrs på olika nivåer', pageApprox: 12 },
-    'Vilka tre nivåer delar enligt UHR-materialet det politiska ansvaret i Sverige?',
-    'According to the UHR material, which three levels share political responsibility in Sweden?',
+    'Vilka tre nivåer delar det politiska ansvaret i Sverige?',
+    'Which three levels share political responsibility in Sweden?',
     [
       ['Stat, regioner och kommuner', 'The state, regions, and municipalities'],
       ['Kung, kyrka och adel', 'The king, church, and nobility'],
@@ -1314,8 +1314,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q082',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Rekordåren', pageApprox: 36 },
-    'Varför kallas tiden efter andra världskriget enligt UHR-materialet ofta de svenska rekordåren?',
-    'According to the UHR material, why is the period after the Second World War often called the Swedish record years?',
+    'Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?',
+    'Why is the period after the Second World War often called the Swedish record years?',
     [
       [
         'Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer',
@@ -1679,8 +1679,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q099',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Midsommar', pageApprox: 46 },
-    'Vilket svar stämmer enligt UHR-materialet om midsommar?',
-    'Which answer matches the UHR material about Midsummer?',
+    'Vilket påstående om midsommar i Sverige är korrekt?',
+    'Which statement about Midsummer in Sweden is correct?',
     [
       [
         'Midsommar välkomnar sommaren och ljuset, och midsommarafton firas på en fredag mellan 19 och 25 juni',
@@ -1708,8 +1708,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q100',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Lucia', pageApprox: 47 },
-    'När säger UHR-materialet att Lucia firas?',
-    'What date does the UHR material give for Lucia?',
+    'När firas Lucia i Sverige?',
+    'When is Lucia celebrated in Sweden?',
     [
       ['13 december', '13 December'],
       ['30 april', '30 April'],
