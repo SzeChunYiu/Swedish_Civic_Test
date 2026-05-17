@@ -94,6 +94,7 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   const disclaimerSource = read('app/disclaimer.tsx');
   const privacySource = read('app/privacy.tsx');
   const sourcesSource = read('app/sources.tsx');
+  const supportSource = read('app/support.tsx');
   const termsSource = read('app/terms.tsx');
 
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
@@ -154,6 +155,14 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(sourcesSource, /Primärt studiematerial/);
   assert.match(sourcesSource, /Sources/);
   assert.match(sourcesSource, /Primary study material/);
+  assert.match(supportSource, /const supportCopy: Record<AppLanguage, SupportRouteCopy>/);
+  assert.match(supportSource, /const copy = supportCopy\[language\];/);
+  assert.match(supportSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(supportSource, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
+  assert.match(supportSource, /Support och återkoppling/);
+  assert.match(supportSource, /Vad du kan rapportera/);
+  assert.match(supportSource, /Support and feedback/);
+  assert.match(supportSource, /What to report/);
   assert.match(termsSource, /const termsCopy: Record<AppLanguage, TermsRouteCopy>/);
   assert.match(termsSource, /const copy = termsCopy\[language\];/);
   assert.match(termsSource, /<LegalPage title=\{copy\.title\}>/);

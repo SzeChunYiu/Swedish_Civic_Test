@@ -877,7 +877,25 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
   },
   {
     file: 'app/support.tsx',
+    requiredSnippets: [
+      'const supportCopy: Record<AppLanguage, SupportRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = supportCopy[language];',
+      'Support och återkoppling',
+      'Vad du kan rapportera',
+      'Support and feedback',
+      'What to report',
+      'Öppna den offentliga supportsidan',
+      'Open public support page',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>/,
+    ],
     title: 'Support and feedback',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: [
       'What to report',
       'No personal data',
