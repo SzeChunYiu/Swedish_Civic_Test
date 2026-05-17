@@ -22,14 +22,19 @@ test('quiz UHRReferenceCard keeps source metadata in visible and accessibility p
     'utf8',
   );
 
-  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 8);
+  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 10);
   assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
   assert.match(source, /reference\?: UHRReference/);
+  assert.match(source, /language\?: AppLanguage;/);
+  assert.match(source, /const uhrReferenceCardCopy: Record<AppLanguage, UHRReferenceCardCopy>/);
+  assert.match(source, /UHR-källa/);
+  assert.match(source, /Ungefär sida/);
   assert.match(source, /`\$\{reference\.chapter\} · \$\{reference\.section\}`/);
-  assert.match(source, /`Approx\. page \$\{reference\.pageApprox\}`/);
+  assert.match(source, /`\$\{copy\.approximatePage\} \$\{reference\.pageApprox\}`/);
   assert.match(source, /const referenceAccessibilityLabel = pageLabel/);
   assert.match(source, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /\{copy\.title\}/);
   assert.match(source, /<Text style=\{styles\.body\}>\{label\}<\/Text>/);
   assert.match(
     source,

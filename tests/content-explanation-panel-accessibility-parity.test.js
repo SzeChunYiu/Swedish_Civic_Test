@@ -22,15 +22,22 @@ test('quiz ExplanationPanel keeps selected explanation text in accessibility par
     'utf8',
   );
 
-  assert.equal(summary.explanationPanelAccessibilityRulesValidated, 8);
+  assert.equal(summary.explanationPanelAccessibilityRulesValidated, 10);
   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
   assert.match(
     source,
-    /const explanation = language === 'en' && explanationEn \? explanationEn : explanationSv;/,
+    /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
   );
-  assert.match(source, /const panelAccessibilityLabel = `Explanation: \$\{explanation\}`;/);
+  assert.match(source, /const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy>/);
+  assert.match(source, /Förklaring saknas för den här frågan\./);
+  assert.match(source, /Explanation unavailable for this question\./);
+  assert.match(
+    source,
+    /const panelAccessibilityLabel = `\$\{copy\.accessibilityLabelPrefix\}: \$\{explanation\}`;/,
+  );
   assert.match(source, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /\{copy\.title\}/);
   assert.match(source, /<Text style=\{styles\.body\}>\{explanation\}<\/Text>/);
 });
 
@@ -60,6 +67,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /ExplanationPanel missing explanation header text for accessibility parity/,
+    /ExplanationPanel missing localized explanation header text for accessibility parity/,
   );
 });

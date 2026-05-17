@@ -9,9 +9,11 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
+  const language = useSettingsStore((state) => state.language);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const mistakenQuestions = questions.filter(
     (question) => questionProgress[question.id]?.wrongCount > 0,
@@ -48,8 +50,12 @@ export default function Screen() {
             <View key={question.id} style={styles.questionBlock}>
               <QuestionCard question={question} />
               <Text style={styles.bookmarkMeta}>Saved for focused review</Text>
-              <ExplanationPanel explanationSv={question.explanationSv} />
-              <UHRReferenceCard reference={question.uhrReference} />
+              <ExplanationPanel
+                explanationEn={question.explanationEn}
+                explanationSv={question.explanationSv}
+                language={language}
+              />
+              <UHRReferenceCard language={language} reference={question.uhrReference} />
             </View>
           ))}
         </View>
@@ -69,8 +75,12 @@ export default function Screen() {
               <Text style={styles.meta}>
                 Wrong answers: {questionProgress[question.id]?.wrongCount ?? 0}
               </Text>
-              <ExplanationPanel explanationSv={question.explanationSv} />
-              <UHRReferenceCard reference={question.uhrReference} />
+              <ExplanationPanel
+                explanationEn={question.explanationEn}
+                explanationSv={question.explanationSv}
+                language={language}
+              />
+              <UHRReferenceCard language={language} reference={question.uhrReference} />
             </View>
           ))}
         </View>

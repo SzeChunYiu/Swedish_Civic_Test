@@ -1115,28 +1115,38 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
   },
   {
     label: 'language prop contract',
-    pattern: /language\?: 'sv' \| 'en';/,
+    pattern: /language\?: AppLanguage;/,
+  },
+  {
+    label: 'localized copy map',
+    pattern: /const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy>/,
   },
   {
     label: 'release-safe Swedish fallback',
-    pattern: /explanationSv = 'Explanation unavailable for this question\.'/,
+    pattern: /Förklaring saknas för den här frågan\./,
+  },
+  {
+    label: 'release-safe English fallback',
+    pattern: /Explanation unavailable for this question\./,
   },
   {
     label: 'language-specific explanation selection',
     pattern:
-      /const explanation = language === 'en' && explanationEn \? explanationEn : explanationSv;/,
+      /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
   },
   {
-    label: 'explanation in accessibility summary',
-    pattern: /const panelAccessibilityLabel = `Explanation: \$\{explanation\}`;/,
+    label: 'localized explanation in accessibility summary',
+    pattern:
+      /const panelAccessibilityLabel = `\$\{copy\.accessibilityLabelPrefix\}: \$\{explanation\}`;/,
   },
   {
     label: 'Card receives accessibility summary',
     pattern: /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/,
   },
   {
-    label: 'explanation header text',
-    pattern: /<Text accessibilityRole="header" style=\{styles\.title\}>/,
+    label: 'localized explanation header text',
+    pattern:
+      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*\{copy\.title\}[\s\S]*<\/Text>/,
   },
   {
     label: 'visible selected explanation',
@@ -1149,28 +1159,36 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /reference\?: UHRReference/,
   },
   {
+    label: 'language prop contract',
+    pattern: /language\?: AppLanguage;/,
+  },
+  {
+    label: 'localized copy map',
+    pattern: /const uhrReferenceCardCopy: Record<AppLanguage, UHRReferenceCardCopy>/,
+  },
+  {
     label: 'chapter and section source label',
     pattern:
-      /const label = reference\s*\?\s*`\$\{reference\.chapter\} · \$\{reference\.section\}`\s*:\s*'Source reference unavailable';/,
+      /const label = reference\s*\?\s*`\$\{reference\.chapter\} · \$\{reference\.section\}`\s*:\s*copy\.unavailable;/,
   },
   {
-    label: 'approximate page source label',
+    label: 'localized approximate page source label',
     pattern:
-      /const pageLabel = reference\?\.pageApprox \? `Approx\. page \$\{reference\.pageApprox\}` : null;/,
+      /const pageLabel = reference\?\.pageApprox[\s\S]*\? `\$\{copy\.approximatePage\} \$\{reference\.pageApprox\}`[\s\S]*: null;/,
   },
   {
-    label: 'page-aware accessibility label',
+    label: 'localized page-aware accessibility label',
     pattern:
-      /const referenceAccessibilityLabel = pageLabel[\s\S]*\? `UHR reference: \$\{label\}\. \$\{pageLabel\}`[\s\S]*: `UHR reference: \$\{label\}`;/,
+      /const referenceAccessibilityLabel = pageLabel[\s\S]*\? `\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{pageLabel\}`[\s\S]*: `\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}`;/,
   },
   {
     label: 'Card receives UHR accessibility label',
     pattern: /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/,
   },
   {
-    label: 'UHR title header text',
+    label: 'localized UHR title header text',
     pattern:
-      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*UHR reference[\s\S]*<\/Text>/,
+      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*\{copy\.title\}[\s\S]*<\/Text>/,
   },
   {
     label: 'visible chapter-section source label',
