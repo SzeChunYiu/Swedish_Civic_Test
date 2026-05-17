@@ -448,9 +448,10 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
   assert.match(webSource, /launchPopupShownThisRuntime/);
   assert.match(webSource, /Modal/);
+  assert.match(webSource, /accessibilityLabel=\{LAUNCH_SPONSOR_DIALOG_LABEL\}/);
   assert.match(webSource, /accessibilityViewIsModal/);
-  assert.match(webSource, /aria-modal=\{true\}/);
-  assert.match(webSource, /role="dialog"/);
+  assert.doesNotMatch(webSource, /aria-modal=\{true\}/);
+  assert.doesNotMatch(webSource, /role="dialog"/);
   assert.match(webSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /AppOpenAd/);
