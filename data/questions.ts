@@ -578,17 +578,18 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q020',
     chapterId: 'ch04',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Folkomröstningar i Sverige är rådgivande enligt materialet.',
-    questionEn: 'True or false: Referendums in Sweden are advisory according to the material.',
+    questionSv:
+      'Sant eller falskt enligt UHR-materialet: Folkomröstningar i Sverige är rådgivande.',
+    questionEn: 'True or false according to the UHR material: Referendums in Sweden are advisory.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Materialet beskriver folkomröstningar som rådgivande. Det betyder att politikerna inte måste följa resultatet, även om resultatet kan få politisk betydelse.',
+      'UHR-avsnittet Folkomröstningar säger att folkomröstningar kan hållas nationellt, i en region eller i en kommun. Avsnittet säger också att de är rådgivande, vilket betyder att politikerna inte måste följa resultatet.',
     explanationEn:
-      'The material describes referendums as advisory. This means politicians do not have to follow the result, even though the result may have political importance.',
+      'The UHR section Referendums says referendums can be held nationally, in a region, or in a municipality. It also says they are advisory, which means politicians do not have to follow the result.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Folkomröstningar',
