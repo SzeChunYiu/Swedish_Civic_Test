@@ -1492,8 +1492,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q090',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Försvars- och säkerhetspolitik', pageApprox: 40 },
-    'Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022 enligt UHR-materialet?',
-    "According to the UHR material, what did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
+    'Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?',
+    "What did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
     [
       [
         'Nästan samtidigt ansöka om medlemskap i Nato',
