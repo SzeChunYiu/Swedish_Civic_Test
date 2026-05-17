@@ -458,7 +458,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättssäkerhet', pageApprox: 17 },
     'Vilket påstående om rättssäkerhet stämmer enligt materialet?',
-    'Which statement about rule of law is correct according to the material?',
+    'Which statement about legal certainty is correct according to the material?',
     [
       [
         'Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom',
@@ -474,13 +474,13 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
       [
         'Rättssäkerhet betyder att vissa personer står över lagen',
-        'Rule of law means that some people are above the law',
+        'Legal certainty means that some people are above the law',
       ],
     ],
     0,
     'Materialet beskriver rättssäkerhet som lika behandling inför lagen, rättvis rättegång och noggrann granskning av bevis och fakta. Det betonar också att domstolarna är oberoende och att alla har rätt att försvara sig med advokat och kan överklaga en dom.',
-    'The material describes rule of law as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
-    ['rule-of-law', 'independent-courts', 'appeal'],
+    'The material describes legal certainty as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
+    ['legal-certainty', 'independent-courts', 'appeal'],
   ),
   single(
     'q042',
