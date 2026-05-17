@@ -1,25 +1,31 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { shouldShowAd } from '../../lib/monetization/ads';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 import { colors, space, typography } from '../../lib/theme';
 
+const REMOVE_ADS_ACCESSIBILITY_HINT = 'Hidden after Remove Ads is active.';
+
 export function NativeAdCard({
-  entitlements = FREE_ENTITLEMENTS,
+  entitlements,
 }: {
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
-  if (!shouldShowAd('results_native', entitlements)) return null;
+  const { entitlements: resolvedEntitlements, entitlementsReady } =
+    useResolvedAdEntitlements(entitlements);
+
+  if (!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)) return null;
 
   return (
-    <Card>
+    <Card
+      accessibilityHint={`Sponsored ad preview. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
+      accessibilityLabel={`Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
+    >
       <Text style={styles.eyebrow}>Test native ad</Text>
       <Text style={styles.title}>Sponsored study placement</Text>
-      <Text style={styles.meta}>
-        Native ad placeholder using AdMob test placement. Keep out of timed exams.
-      </Text>
+      <Text style={styles.meta}>AdMob test placement preview. Keep out of timed exams.</Text>
     </Card>
   );
 }

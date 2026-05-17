@@ -18,6 +18,14 @@
           "delayAppMeasurementInit": true,
           "userTrackingUsageDescription": "This identifier may be used to deliver relevant study app ads after consent."
         }
+      ],
+      "expo-secure-store",
+      "react-native-iap",
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "This identifier may be used to deliver relevant study app ads after consent."
+        }
       ]
     ],
     "splash": {
@@ -37,6 +45,9 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.billyyiu.swedishcivictest"
+    },
+    "web": {
+      "output": "single"
     }
   }
 }

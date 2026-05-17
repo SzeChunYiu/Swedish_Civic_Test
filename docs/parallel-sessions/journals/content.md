@@ -33,3 +33,139 @@ Question count (if applicable): 20 total; `ch01`: 10; `ch02`: 10
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK; prescribed node require check returned `compile check only` for TypeScript source; custom TypeScript-transpile validation confirmed 13 chapters, sequential `ch01`–`ch13` ids, 20 questions, 10/10 ch01/ch02 split, valid option counts, `correctOptionId` membership, filled UHR references, nonempty tags, and all `reviewStatus: "reviewed"`. UHR PDF spot-check matched table of contents and sampled facts for geography, population, democracy, riksdag, prime minister, voting age, and referendums.
 Blocked? no — CONTENT lane Batch 0 deliverables are complete; `codex-tasks/content.txt` is empty.
 Next suggested validator action: accept A4/A5/A6 if validator quality review agrees.
+
+## Iteration 5 — 2026-05-17
+Task completed: Verified question atom — replaced `q010` with a Swedish-English Chapter 1 natural-resources question traced to UHR `Landet Sverige` / `Naturresurser`.
+Artifacts changed: `data/questions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 2/2 passing; `npm run typecheck` → exit 0; `git diff --check` → exit 0.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q010` source wording against UHR `Sverige i fokus`, Chapter 1, section `Naturresurser`, approximate PDF page 7.
+
+## Iteration 6 — 2026-05-17
+Task completed: Verified question atom — tightened `q032` into a Swedish-English secret-ballot question traced to UHR `Politiska val och partier` / `Så här går det till att rösta`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 2/2 passing; `npm run typecheck` → exit 0; `git diff --check` → exit 0; `npm run test:ownership` → 1/1 passing.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q032` source wording against UHR `Sverige i fokus`, Chapter 4, section `Så här går det till att rösta`, approximate PDF page 14.
+
+## Iteration 7 — 2026-05-17
+Task completed: Verified question atom — tightened `q033` into a Swedish-English political-parties question traced to UHR `Politiska val och partier` / `Politiska partier`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 2/2 passing; `npm run typecheck` → exit 0; `git diff --check` → exit 0; `npm run test:ownership` → 1/1 passing; `npx prettier --check data/additionalQuestions.ts` → passed; custom q033/source-count assertion → `sourceQuestions=100 questions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q033` source wording against UHR `Sverige i fokus`, Chapter 4, section `Politiska partier`, approximate PDF page 15.
+
+## Iteration 8 — 2026-05-17
+Task completed: Verified question atom — tightened `q034` into a Swedish-English proportional-elections example traced to UHR `Politiska val och partier` / `Proportionella val`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 2/2 passing; `npm run typecheck` → exit 0; `git diff --check` → exit 0; `npm run test:ownership` → 1/1 passing; `npx prettier --check data/additionalQuestions.ts` → passed; `node scripts/export-question-bank.js --check` → parity OK; custom q034/source-count assertion → `q034 OK; sourceQuestions=100; questions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q034` source wording against UHR `Sverige i fokus`, Chapter 4, section `Proportionella val`, approximate PDF page 15.
+
+## Iteration 9 — 2026-05-17
+Task completed: Verified question atom — tightened `q035` into a Swedish-English Riksdag four-percent threshold question traced to UHR `Politiska val och partier` / `Proportionella val`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 3/3 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `npx prettier --check data/additionalQuestions.ts` → passed; `node scripts/export-question-bank.js --check` → parity OK; `git diff --check` → exit 0; custom q035/source-count assertion → `q035 OK; sourceQuestions=100; questions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q035` source wording against UHR `Sverige i fokus`, Chapter 4, section `Proportionella val`, approximate PDF page 15.
+
+## Iteration 10 — 2026-05-17
+Task completed: Verified question atom — tightened `q036` into a Swedish-English four-constitutional-laws question traced to UHR `Lag och rätt` / `Grundlagarna`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `npx prettier --check data/additionalQuestions.ts` → passed; `node scripts/export-question-bank.js --check` → parity OK; `git diff --check` → exit 0; custom q036/source-count assertion → `q036 OK; sourceQuestions=100; questions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q036` source wording against UHR `Sverige i fokus`, Chapter 5, section `Grundlagarna`, approximate PDF page 16.
+
+## Iteration 11 — 2026-05-17
+Task completed: Verified question atom — tightened `q037` into a Swedish-English regeringsformen/public-power question traced to UHR `Lag och rätt` / `Regeringsformen`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `npx prettier --check data/additionalQuestions.ts` → passed; `node scripts/export-question-bank.js --check` → parity OK; `git diff --check` → exit 0; custom q037/export assertion → `q037 OK; exportedQuestions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q037` source wording against UHR `Sverige i fokus`, Chapter 5, section `Regeringsformen`, approximate PDF page 16.
+
+## Iteration 12 — 2026-05-17
+Task completed: Verified question atom — tightened `q038` into a Swedish-English successionsordningen question traced to UHR `Lag och rätt` / `Successionsordningen`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `node scripts/export-question-bank.js --check` → parity OK; `npx prettier --check data/additionalQuestions.ts` → passed; `git diff --check` → exit 0; custom q038/export assertion → `q038 OK; sourceQuestions=100; exportedQuestions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q038` source wording against UHR `Sverige i fokus`, Chapter 5, section `Successionsordningen`, approximate PDF page 16.
+
+## Iteration 13 — 2026-05-17
+Task completed: Verified question atom — tightened `q039` into a Swedish-English allemansrätten question traced to UHR `Lag och rätt` / `Allemansrätten`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `node scripts/export-question-bank.js --check` → parity OK; `npx prettier --check data/additionalQuestions.ts` → passed; `git diff --check` → exit 0; direct `q039` export check found the updated source and CSV rows.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q039` source wording against UHR `Sverige i fokus`, Chapter 5, section `Allemansrätten`, approximate PDF page 17.
+
+## Iteration 14 — 2026-05-17
+Task completed: Verified question atom — tightened `q040` into a Swedish-English rättsväsendet-authorities question traced to UHR `Lag och rätt` / `Rättsväsendet`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `node scripts/export-question-bank.js --check` → parity OK; `npx prettier --check data/additionalQuestions.ts` → passed; `git diff --check` → exit 0; direct `q040` source/export assertion → `q040 OK; sourceQuestions=100; exportedQuestions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q040` source wording against UHR `Sverige i fokus`, Chapter 5, section `Rättsväsendet`, approximate PDF page 17.
+## Iteration 15 — 2026-05-17
+Task completed: Verified question atom — tightened `q041` into a Swedish-English rättssäkerhet question traced to UHR `Lag och rätt` / `Rättssäkerhet`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q041` source/export assertion all passed.
+Blocked / next validator action: no — review `q041` against UHR `Sverige i fokus`, Chapter 5, section `Rättssäkerhet`, approximate PDF page 17.
+## Iteration 16 — 2026-05-17
+Task completed: Verified question atom — tightened `q042` into a Swedish-English domstolar/presumption-of-innocence question traced to UHR `Lag och rätt` / `Domstolar`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q042` source/export assertion all passed.
+Blocked / next validator action: no — review `q042` against UHR `Sverige i fokus`, Chapter 5, section `Domstolar`, approximate PDF page 18.
+## Iteration 17 — 2026-05-17
+Task completed: Verified question atom — tightened `q043` into a Swedish-English police-role question traced to UHR `Lag och rätt` / `Polisen`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 5, section `Polisen`, approximate PDF page 18: police maintain law and order, prevent and investigate crimes, cooperate for safety, and help people exposed to crime or needing protection. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q043` source/export assertion all passed.
+Blocked / next validator action: no — review `q043` against UHR `Sverige i fokus`, Chapter 5, section `Polisen`, approximate PDF page 18.
+## Iteration 18 — 2026-05-17
+Task completed: Verified question atom — tightened `q044` into a Swedish-English criminal-responsibility-age question traced to UHR `Lag och rätt` / `Straffmyndighet och belastningsregister`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 5, section `Straffmyndighet och belastningsregister`, approximate PDF page 19: a person in Sweden is criminally responsible and can be prosecuted from age 15, with a separate 2026 proposal mentioned for serious crimes. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q044` source/export assertion all passed.
+Blocked / next validator action: no — review `q044` against UHR `Sverige i fokus`, Chapter 5, section `Straffmyndighet och belastningsregister`, approximate PDF page 19.
+## Iteration 19 — 2026-05-17
+Task completed: Verified question atom — tightened `q045` into a Swedish-English free-media role question traced to UHR `Mediernas roll` / `Fria medier`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 6, section `Fria medier`, approximate PDF page 20: media in a democracy are free, the state cannot decide what is said in them, media inform about news and provide space for public discussion, and journalists should be able to scrutinize politicians and other people with power. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q045` source/export assertion all passed.
+Blocked / next validator action: no — review `q045` against UHR `Sverige i fokus`, Chapter 6, section `Fria medier`, approximate PDF page 20.
+## Iteration 20 — 2026-05-17
+Task completed: Verified question atom — tightened `q046` into a Swedish-English offentlighetsprincipen question traced to UHR `Mediernas roll` / `Fria medier`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 6, section `Fria medier`, approximate PDF page 20: offentlighetsprincipen supports scrutiny because public authority documents are public and may be requested unless covered by secrecy rules. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q046` source/export assertion all passed.
+Blocked / next validator action: no — review `q046` against UHR `Sverige i fokus`, Chapter 6, section `Fria medier`, approximate PDF page 20.
+## Iteration 21 — 2026-05-17
+Task completed: Verified question atom — tightened `q047` into a Swedish-English media-source anonymity question traced to UHR `Mediernas roll` / `Fria medier`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 6, section `Fria medier`, approximate PDF page 20: people may provide information to newspapers, radio, and TV without punishment, and the person giving information has the right to anonymity. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q047` source/export assertion all passed.
+Blocked / next validator action: no — review `q047` against UHR `Sverige i fokus`, Chapter 6, section `Fria medier`, approximate PDF page 20.
+## Iteration 22 — 2026-05-17
+Task completed: Verified question atom — tightened `q048` into a Swedish-English public-service companies question traced to UHR `Mediernas roll` / `Public service`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 6, section `Public service`, approximate PDF page 21: the section identifies Sveriges Radio, Sveriges Television, and Utbildningsradion as the three public-service media companies and describes their special mission, program breadth, and tax-fee financing. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `node scripts/export-question-bank.js --check`, `npm run typecheck`, `npm run test:ownership`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q048` source/export assertion all passed.
+Blocked / next validator action: no — review `q048` against UHR `Sverige i fokus`, Chapter 6, section `Public service`, approximate PDF page 21.
+## Iteration 23 — 2026-05-17
+Task completed: Verified question atom — tightened `q049` into a Swedish-English public-service independence question traced to UHR `Mediernas roll` / `Public service`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 6, section `Public service`, approximate PDF page 21: public service companies should be independent of political and other interests, report on society, and let different views be heard without choosing sides. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `node scripts/export-question-bank.js --check`, `npm run typecheck`, `npm run test:ownership`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q049` source/export assertion all passed.
+Blocked / next validator action: no — review `q049` against UHR `Sverige i fokus`, Chapter 6, section `Public service`, approximate PDF page 21.
+## Iteration 24 — 2026-05-17
+Task completed: Verified question atom — tightened `q050` into a Swedish-English source-criticism question traced to UHR `Mediernas roll` / `Källkritik`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 6, section `Källkritik`, approximate PDF page 21, source lines 597-602: information can come from many sources, not everything published is always correct, and being source-critical means questioning and checking whether what one reads, sees, or hears is correct. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `node scripts/export-question-bank.js --check`, `npm run typecheck`, `npm run test:ownership`, `npx prettier --check data/additionalQuestions.ts`, scoped `git diff --check`, and direct `q050` source/export assertion all passed.
+Blocked / next validator action: no — review `q050` against UHR `Sverige i fokus`, Chapter 6, section `Källkritik`, approximate PDF page 21.
+## Iteration 25 — 2026-05-17
+Task completed: Verified question atom — tightened `q051` into a Swedish-English UN/human-rights question traced to UHR `Mänskliga rättigheter` / `Mänskliga rättigheter gäller alla`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Commit: `4ccba49` (`content: tighten media and rights questions`).
+Question count / verification: 500 published questions total; source-question count unchanged at 100. UHR source checked in `Sverige i fokus`, Chapter 7, section `Mänskliga rättigheter gäller alla`, approximate PDF page 22, source lines 620-627: human rights are equal for all, and after the Second World War in 1945, 51 countries created the UN to prevent future wars and protect every person's rights. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `node scripts/export-question-bank.js --check`, `npm run typecheck`, `npm run test:ownership`, `npx prettier --check data/additionalQuestions.ts`, scoped `git diff --check`, and direct `q051` source/export assertion all passed.
+Blocked / next validator action: no — review `q051` against UHR `Sverige i fokus`, Chapter 7, section `Mänskliga rättigheter gäller alla`, approximate PDF page 22.

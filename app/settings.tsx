@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
@@ -17,6 +17,7 @@ export default function Screen() {
   const renderLanguageButton = (value: AppLanguage, label: string) => (
     <Pressable
       key={value}
+      aria-selected={language === value}
       accessibilityLabel={`Set question language to ${label}`}
       accessibilityRole="button"
       accessibilityState={{ selected: language === value }}
@@ -30,7 +31,7 @@ export default function Screen() {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Link
         accessibilityLabel="Back to profile"
         accessibilityRole="link"
@@ -39,19 +40,26 @@ export default function Screen() {
       >
         ← Back to Profile
       </Link>
-      <Text style={styles.title}>Settings</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        Settings
+      </Text>
       <Text style={styles.subtitle}>Control study language, audio, and your daily goal.</Text>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Question language</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          Question language
+        </Text>
         <View style={styles.row}>
           {[renderLanguageButton('sv', 'Swedish'), renderLanguageButton('en', 'English support')]}
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Audio</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          Audio
+        </Text>
         <Pressable
+          aria-checked={audioEnabled}
           accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
@@ -65,12 +73,15 @@ export default function Screen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Daily goal</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          Daily goal
+        </Text>
         <Text style={styles.subtitle}>{dailyGoalAnswers} answers per day</Text>
         <View style={styles.row}>
           {[5, 10, 20].map((goal) => (
             <Pressable
               key={goal}
+              aria-selected={dailyGoalAnswers === goal}
               accessibilityLabel={`Set daily goal to ${goal} answers`}
               accessibilityRole="button"
               accessibilityState={{ selected: dailyGoalAnswers === goal }}
@@ -88,7 +99,7 @@ export default function Screen() {
       </View>
 
       <ComplianceLinks />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -96,6 +107,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface,
     flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     gap: space[2.25],
     padding: space[3],
     paddingBottom: space[10],

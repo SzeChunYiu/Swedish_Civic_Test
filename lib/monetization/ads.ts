@@ -1,10 +1,63 @@
 import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types/monetization';
+import type { AdConsentDecision } from './consent';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
-export const REAL_ADS_ENABLED_FOR_V1 = false;
+type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
+type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
-const GOOGLE_ADS_ENABLED = process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED !== 'false';
+export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
+  '/exam',
+  '/disclaimer',
+  '/privacy',
+  '/sources',
+  '/support',
+  '/terms',
+] as const;
+
+function readBooleanFlag(value: string | undefined, defaultValue: boolean): boolean {
+  const normalized = value?.trim().toLowerCase();
+  if (!normalized) return defaultValue;
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;
+  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;
+  return defaultValue;
+}
+
+function readEnvString(key: string): string | undefined {
+  const value = process.env[key]?.trim();
+  return value ? value : undefined;
+}
+
+export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
+
+const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
+
+const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
+  app_open_launch: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID',
+  },
+  chapter_list_banner: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID',
+  },
+  home_banner: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID',
+  },
+  quiz_completed_interstitial: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
+  },
+  results_native: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID',
+  },
+  rewarded_extra_exam: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
+  },
+};
 
 export const TEST_AD_UNITS: AdUnitConfig[] = [
   {
@@ -36,6 +89,13 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
     testOnly: true,
   },
   {
+    placement: 'rewarded_extra_exam',
+    iosUnitId: 'ca-app-pub-3940256099942544/1712485313',
+    androidUnitId: 'ca-app-pub-3940256099942544/5224354917',
+    enabled: true,
+    testOnly: true,
+  },
+  {
     placement: 'app_open_launch',
     iosUnitId: 'ca-app-pub-3940256099942544/5575463023',
     androidUnitId: 'ca-app-pub-3940256099942544/9257395921',
@@ -44,29 +104,60 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
   },
 ];
 
+export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
+  const envKeys = REAL_AD_UNIT_ENV_KEYS[unit.placement];
+  const androidUnitId = readEnvString(envKeys.android);
+  const iosUnitId = readEnvString(envKeys.ios);
+
+  return {
+    ...unit,
+    androidUnitId,
+    enabled: Boolean(androidUnitId || iosUnitId),
+    iosUnitId,
+    testOnly: false,
+  };
+});
+
+export function getConfiguredAdUnits(): AdUnitConfig[] {
+  return REAL_ADS_ENABLED ? REAL_AD_UNITS : TEST_AD_UNITS;
+}
+
 export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
-  return TEST_AD_UNITS.find((unit) => unit.placement === placement);
+  return getConfiguredAdUnits().find((unit) => unit.placement === placement);
 }
 
 export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
+  consentDecision?: AdConsentGate,
 ): boolean {
-  if (!REAL_ADS_ENABLED_FOR_V1 || !GOOGLE_ADS_ENABLED) return false;
+  if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
+  if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
   const unit = getAdUnit(placement);
   return Boolean(unit?.enabled);
 }
 
 export function shouldShowLaunchPopupAd({
   alreadyShownThisLaunch,
+  consentDecision,
   entitlements,
 }: {
   alreadyShownThisLaunch: boolean;
+  consentDecision?: AdConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
 }): boolean {
-  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements);
+  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
+}
+
+function pathMatchesRoute(pathname: string, route: string): boolean {
+  const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  return normalizedPath === route || normalizedPath.startsWith(`${route}/`);
+}
+
+export function shouldSuppressLaunchPopupAdForPath(pathname: string): boolean {
+  return LAUNCH_POPUP_AD_SUPPRESSED_ROUTES.some((route) => pathMatchesRoute(pathname, route));
 }
 
 export function getPlatformAdUnitId(
@@ -82,14 +173,20 @@ export function getPlatformAdUnitId(
 
 export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
-  realAdsEnabled: REAL_ADS_ENABLED_FOR_V1,
-  units: TEST_AD_UNITS,
+  realAdsEnabled: REAL_ADS_ENABLED,
+  realAdsRequireConsentDecision: true,
+  realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
+  realUnits: REAL_AD_UNITS,
+  testUnits: TEST_AD_UNITS,
+  units: getConfiguredAdUnits(),
   safePlacements: [
     'home_banner',
     'chapter_list_banner',
     'quiz_completed_interstitial',
     'results_native',
+    'rewarded_extra_exam',
     'app_open_launch',
   ],
   blockedPlacements: ['exam_screen'],
+  suppressedLaunchPopupRoutes: LAUNCH_POPUP_AD_SUPPRESSED_ROUTES,
 };

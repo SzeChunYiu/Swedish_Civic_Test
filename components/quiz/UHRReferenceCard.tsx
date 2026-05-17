@@ -1,17 +1,52 @@
 import { StyleSheet, Text } from 'react-native';
 import type { UHRReference } from '../../types/content';
 import { Card } from '../ui/Card';
+import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
 
-export function UHRReferenceCard({ reference }: { reference?: UHRReference }) {
-  const label = reference
-    ? `${reference.chapter} · ${reference.section}`
-    : 'UHR reference placeholder';
-  const pageLabel = reference?.pageApprox ? `Approx. page ${reference.pageApprox}` : null;
+type UHRReferenceCardCopy = {
+  accessibilityLabelPrefix: string;
+  approximatePage: string;
+  title: string;
+  unavailable: string;
+};
+
+const uhrReferenceCardCopy: Record<AppLanguage, UHRReferenceCardCopy> = {
+  sv: {
+    accessibilityLabelPrefix: 'UHR-källa',
+    approximatePage: 'Ungefär sida',
+    title: 'UHR-källa',
+    unavailable: 'Källreferens saknas',
+  },
+  en: {
+    accessibilityLabelPrefix: 'UHR reference',
+    approximatePage: 'Approx. page',
+    title: 'UHR reference',
+    unavailable: 'Source reference unavailable',
+  },
+};
+
+export function UHRReferenceCard({
+  language = 'sv',
+  reference,
+}: {
+  language?: AppLanguage;
+  reference?: UHRReference;
+}) {
+  const copy = uhrReferenceCardCopy[language];
+  const label = reference ? `${reference.chapter} · ${reference.section}` : copy.unavailable;
+  const pageLabel = reference?.pageApprox
+    ? `${copy.approximatePage} ${reference.pageApprox}`
+    : null;
+  const referenceAccessibilityLabel = pageLabel
+    ? `${copy.accessibilityLabelPrefix}: ${label}. ${pageLabel}`
+    : `${copy.accessibilityLabelPrefix}: ${label}`;
 
   return (
-    <Card>
-      <Text style={styles.title}>UHR reference</Text>
+    <Card accessibilityLabel={referenceAccessibilityLabel}>
+      <Text accessibilityRole="header" style={styles.title}>
+        {copy.title}
+      </Text>
       <Text style={styles.body}>{label}</Text>
       {pageLabel ? <Text style={styles.meta}>{pageLabel}</Text> : null}
     </Card>

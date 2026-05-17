@@ -1,0 +1,521 @@
+Lane: REVIEWER
+Artifact reviewed: current `main` exported web bundle plus monetization code/tests for the ads-supported v1.0 target.
+Checks run:
+- Read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Inspected current dirty queue state before writing: only operator queue seeds in `codex-tasks/ceo-inbox.txt` and `codex-tasks/open.txt`; no product source dirty state observed.
+- `grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts && ! grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts` — exit 1.
+- `test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib` — exit 1.
+- `npm run test:monetization` — exit 0, but the tests still assert the old fail-closed ads posture.
+- `CI=1 timeout 360s npx expo export --platform web --output-dir dist-web --max-workers 2` — exit 0.
+- Inline Playwright exported-route check using `/usr/bin/google-chrome` — exit 1. `/home` had no ad placement copy; `/profile` had no Remove Ads, no 29 SEK, and no Restore; `/exam` stayed ad-free; console errors 0.
+Workspace contract: pass — no product source edited; findings queued instead of patched.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ADS-IAP-1`.
+Evidence: exported route check observed profile copy: "Premium and ads are deferred for v1.0" plus no current purchase/restore UI. Static gates also show `REAL_ADS_ENABLED_FOR_V1 = false` and missing `lib/monetization/purchases.ts`.
+Next manager action: assign source-touching ADS/IAP atoms from `codex-tasks/open.txt`; reject any docs-only acceptance for this defect.
+
+Lane: REVIEWER
+Artifact reviewed: exported `/privacy` route plus consent/compliance files for the ad-supported v1.0 target.
+Checks run:
+- `test -f publishing/public-site/app-ads.txt && grep -rqiE "tracking-transparency|ATT|UMP|consent" lib app && test -f publishing/admob-iap-setup-runbook.md` — exit 1.
+- `test -f publishing/public-site/app-ads.txt` — exit 1.
+- `rg -n "expo-tracking-transparency|UserMessagingPlatform|UMP|tracking-transparency|consent" package.json app.json app lib` — only found the `app.json` usage-description string, not an app/lib consent implementation.
+- Inline Playwright `/privacy` route check using `/usr/bin/google-chrome` — exit 1. Stale copy still says real ad rendering is disabled for v1.0; no Remove Ads, no 29 SEK, no tracking/consent disclosure; console errors 0.
+Workspace contract: pass — no product source edited; finding queued.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1`.
+Evidence: exported privacy route observed "The native build includes Google Mobile Ads test configuration, but real ad rendering is disabled for the v1.0 release candidate..."
+Next manager action: assign CONSENT-1/COMPLY-1 source-touching atoms and reject stale disclosure-only acceptance that does not match the new app behavior.
+
+Lane: REVIEWER
+Artifact reviewed: release verifier layer after the goal changed from disabled ads to ad-supported v1.0 with Remove Ads IAP.
+Checks run:
+- `rg -n 'REAL_ADS_ENABLED_FOR_V1=false|real ads disabled|real ads are disabled|fail-closed|no analytics, crash reporting, purchases, or real ads enabled|deferred AdMob decision|Google Mobile Ads SDK test configuration' scripts publishing reports app lib components tests` — exit 0 with stale old-contract matches in tests, preflight logic, publishing docs, and release gate evidence.
+- `npm run test:publishing` — exit 0 while still asserting real ads disabled.
+- `npm run test:release-gates-writer` — exit 0.
+- `node --test scripts/release-preflight.test.js --test-name-pattern 'privacy|AdMob|Google Mobile Ads|real ads'` — exit 0; passing subset includes old-contract privacy/ad SDK posture checks.
+Workspace contract: pass — no product source edited; finding queued.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-RELEASE-GATES-1`.
+Evidence: release preflight and publishing tests can remain green while checking for disabled real ads, which conflicts with the current `GOAL.md`.
+Next manager action: assign TEST/release-gate source work so green tests mean ads-enabled free tier, no ads when `adsDisabled`, no ads on exam, Remove Ads 29 SEK purchase/restore, and consent/store disclosures are all covered.
+
+Lane: REVIEWER
+Artifact reviewed: current `main` dirty DATA-INTEGRITY product changes plus exported web learning path.
+Checks run:
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Inspected existing reviewer queue first; did not duplicate `REVIEWER-ADS-IAP-1`, `REVIEWER-CONSENT-COMPLY-1`, or `REVIEWER-RELEASE-GATES-1`.
+- `npm run validate:content` — exit 0, 13 chapters, 500 questions, 500 published questions.
+- `npm run test:content` — exit 0, 2/2 tests passed including question-bank export parity.
+- `npm run build:web:export` — exit 0.
+- `npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts` — exit 1; missing accessible `Start quiz for Landet Sverige` control on `/chapter/ch01`.
+- `npm run test:e2e -- tests/e2e/practice-feedback.spec.ts` — exit 0, practice answer/feedback/advance flow passed.
+Workspace contract: pass — no product source edited; product defect queued instead of patched.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LEARN-CHAPTER-1`.
+Evidence: Playwright failure context shows `/chapter/ch01` renders the chapter and 50 questions, but no start-quiz action; code inspection confirms `app/chapter/[chapterId].tsx` currently has only back navigation plus read-only question/reference rendering. Separate practice-feedback pass remained green. A concurrent dirty edit now exists in `app/quiz/[sessionId].tsx`, so manager should coordinate rather than overwrite it.
+Next manager action: assign or finish a source-touching learn/chapter quiz-entry atom and rerun `npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts` after implementation.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after reviewer passes.
+Checks run:
+- `git status --short --branch` — product-source dirty state appeared outside this lane.
+- `git diff --name-status` — source changes present in `app/quiz/[sessionId].tsx`, `data/chapters.ts`, `package.json`, `scripts/export-question-bank.js`, and `scripts/validate-content.js`.
+Workspace contract: blocked — dirty product-source ownership is ambiguous for additional REVIEWER passes.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1`.
+Evidence: this lane did not edit product source; it only queued findings and this journal. Continuing would test a mixed artifact without an explicit owner/commit boundary.
+Next manager action: resolve or accept/reject the other lane's source edits, then hand REVIEWER a known state for the next functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web mock-exam submit/review flow on `/exam`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `CI=1 timeout 360s npm run build:web:export` — exit 0; `dist-web` rebuilt from the current dirty checkout.
+- `CI=1 timeout 120s npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts` — exit 1 before app interaction because the bundled Playwright Chromium executable is missing from the local cache.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` — exit 0; `/exam` rendered 20 UHR-based questions, kept submit disabled until all answers were selected, showed result/review/source sections after submit, and reported no console/page errors.
+Workspace contract: pass with caveat — no product source edited; the checked route passed, but the dirty-worktree ownership blocker remains for broader acceptance.
+Findings queued: none from this focused pass.
+Evidence: inline pass returned `{"route":"/exam","totalQuestions":20,"result":"pass","consoleErrors":[]}`. The local stock Playwright command is verifier-environment limited by the missing cached browser, so reviewer used system Chrome only as a functional evidence fallback.
+Next manager action: keep `REVIEWER-BLOCKED-DIRTY-WORKTREE-1` active until source-owner changes are accepted/rejected; separately ensure the acceptance environment can run the official `npm run test:e2e` command without relying on ad hoc browser overrides.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web practice wrong-answer feedback and mistake-review loop.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queues first; did not duplicate ads/IAP, consent/compliance, release-gate, learn-chapter, dirty-worktree, or Playwright-cache findings.
+- `CI=1 timeout 360s npm run build:web:export` — exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` — exit 1 because wrong-answer feedback did not reveal the correct answer option.
+Workspace contract: pass with caveats — no product source edited; the dirty-worktree ownership blocker and official Playwright cache blocker both remain active.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-PRACTICE-WRONG-FEEDBACK-1`.
+Evidence: selecting `I södra Europa` on `/practice` showed `I södra Europa — Fel`, `Score: 0/1`, explanation text, and no console errors; `/mistakes` showed `Wrong answers: 1` and `Saved for focused review`; the expected correct-answer reveal `I Norden i norra Europa — Rätt` was absent (`correctRevealedCount:0`, plain correct option still present once).
+Next manager action: assign a source-touching practice feedback atom and extend e2e coverage for wrong-answer feedback; keep broader acceptance blocked on known dirty-worktree and official Playwright-cache issues.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web direct `/exam` entry with the dirty monetization launch-ad changes.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queues first; did not duplicate ads/IAP, consent/compliance, release-gate, learn-chapter, dirty-worktree, Playwright-cache, or practice feedback findings.
+- `npm run test:monetization` — exit 0; coverage still misses global route-level ad overlays because it checks only direct imports in `app/(tabs)/exam.tsx`.
+- `CI=1 timeout 360s npm run build:web:export` — exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` at `/exam` — exit 1 because the global launch ad modal rendered over the mock exam.
+Workspace contract: pass with caveats — no product source edited; the dirty-worktree ownership blocker and official Playwright cache blocker both remain active.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-EXAM-LAUNCH-AD-1`.
+Evidence: `/exam` showed `Mock exam`, `Launch sponsor`, `Google AdMob`, and `Close launch sponsor ad` at the same time, while the page also displayed `no ads during exam`; console/page errors were empty.
+Next manager action: assign a source-touching monetization/routing atom to suppress `LaunchPopupAd` on exam routes and add route-level coverage for global ad overlays.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web settings-to-practice English support path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queues first; did not duplicate ads/IAP, consent/compliance, release-gate, learn-chapter, dirty-worktree, Playwright-cache, practice feedback, or exam launch-ad findings.
+- `CI=1 timeout 360s npm run build:web:export` — exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` on port 4174 — exit 1 because English support did not apply to answer options or explanations.
+Workspace contract: pass with caveats — no product source edited; the dirty-worktree ownership blocker and official Playwright cache blocker both remain active.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1`.
+Evidence: after selecting English support in `/settings`, `/profile` showed `English support` and `/practice` showed `Where is Sweden located?`, but answer labels remained `I Norden i norra Europa`, `I södra Europa`, `I västra Asien`, `I Nordamerika`; `hasEnglishOptionBefore:false`, `hasEnglishExplanationAfter:false`, `hasSwedishExplanationAfter:true`, console/page errors 0.
+Next manager action: assign a source-touching language-rendering atom across practice/quiz/exam review components and add coverage; do not accept settings-copy-only or docs-only changes for this defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web settings screen on a 320x568 mobile viewport.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queues first; did not duplicate prior monetization, learning, feedback, language, dirty-worktree, or Playwright-cache findings.
+- Reused the current `dist-web` from the preceding `CI=1 timeout 360s npm run build:web:export` run.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` on port 4174 — exit 1 because the settings page overflowed below the viewport but did not scroll.
+Workspace contract: pass with caveats — no product source edited; the dirty-worktree ownership blocker and official Playwright cache blocker both remain active.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SETTINGS-MOBILE-SCROLL-1`.
+Evidence: on a 320x568 viewport, `/settings` returned `scrollHeight:734`, `innerHeight:568`, `afterWheel.scrollY:0`, `supportBox.y:701`, `supportInViewport:false`, console/page errors 0.
+Next manager action: assign a source-touching settings layout atom, likely making settings scrollable, and add a mobile viewport regression check.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web onboarding screen on a 320x568 mobile viewport.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queues first; did not duplicate prior monetization, learning, feedback, language, dirty-worktree, Playwright-cache, settings, or release-gate findings.
+- `CI=1 timeout 360s npm run build:web:export` — exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` on port 4181 — exit 1 because the onboarding page overflowed below the viewport but did not scroll.
+Workspace contract: pass with caveats — no product source edited; the dirty-worktree ownership blocker and official Playwright cache blocker both remain active.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ONBOARDING-MOBILE-SCROLL-1`.
+Evidence: on a 320x568 viewport, `/onboarding` returned `scrollHeight:739`, `innerHeight:568`, `afterWheelScrollY:0`, `startBox.y:661`, `settingsBox.y:706`, `supportBox.y:610`, `textHasWelcome:true`, and console/page errors 0.
+Next manager action: assign a source-touching onboarding layout atom, likely making onboarding scrollable, and add a narrow-mobile regression check.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web in-app support screen.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queues first; did not duplicate prior monetization, learning, feedback, language, dirty-worktree, Playwright-cache, settings, onboarding, or release-gate findings.
+- Reused the current `dist-web` from the preceding `CI=1 timeout 360s npm run build:web:export` run.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` on port 4182 — exit 1 because `/support` still renders a pre-launch placeholder with no support contact action.
+Workspace contract: pass with caveats — no product source edited; the dirty-worktree ownership blocker and official Playwright cache blocker both remain active.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SUPPORT-CONTACT-1`.
+Evidence: `/support` returned `titleVisible:true`, `placeholderCopyVisible:true`, `linkCount:1`, only `Back to Profile`, `hasMailto:false`, `hasExternalSupportLink:false`, and console/page errors 0.
+Next manager action: assign a source-touching support-surface atom so the app exposes the verified support destination or contact path and removes the pre-launch placeholder copy.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web sources screen.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queues first; did not duplicate prior monetization, learning, feedback, language, dirty-worktree, Playwright-cache, settings, onboarding, support, or release-gate findings.
+- Reused the current `dist-web` from the preceding `CI=1 timeout 360s npm run build:web:export` run.
+- First inline Playwright attempt on port 4183 hit a strict-locator ambiguity on the page title before product evaluation.
+- Heading-specific inline Playwright rerun against `dist-web` using `/usr/bin/google-chrome` on port 4184 — exit 1 because the UHR URL is visible text but not an actionable link.
+Workspace contract: pass with caveats — no product source edited; the dirty-worktree ownership blocker and official Playwright cache blocker both remain active.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCES-LINK-1`.
+Evidence: `/sources` returned `headingVisible:true`, `showsUhrUrlText:true`, `linkCount:1`, only `Back to Profile`, `hasExternalUhrLink:false`, and console/page errors 0.
+Next manager action: assign a source-touching legal/source page atom so primary source URLs are accessible external links, not plain text only.
+
+Lane: REVIEWER
+Artifact reviewed: current dirty-checkout monetization surface after ads/IAP source changes.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Rechecked existing `REVIEWER-ADS-IAP-1` instead of creating a duplicate because app/monetization source changed after the original finding.
+- `grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts && ! grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts` — exit 0.
+- `test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib` — exit 1.
+- `npm run test:monetization` — exit 0, 10/10 tests passed.
+- `CI=1 timeout 360s npm run build:web:export` — exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright route pass against `/home`, `/profile`, and `/exam` using `/usr/bin/google-chrome` on port 4185 — exit 1 because `/profile` still lacks Remove Ads, 29 SEK, and Restore UI.
+Workspace contract: pass with caveats — no product source edited; source changed during the reviewer loop, so acceptance still needs a manager-owned artifact boundary.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ADS-IAP-1 update`.
+Evidence: `/home` now shows AdMob test placement (`googleAdMobCount:2`, `homeBannerVisible:1`), `/exam` no longer shows global launch ads (`launchSponsorVisible:0`, `googleAdMobVisible:0`), but `/profile` returned `removeAdsVisible:false`, `priceVisible:false`, `restoreVisible:false`, and stale deferred copy still visible; console/page errors 0.
+Next manager action: keep ADS/IAP open for a source-touching paywall UI/entitlement atom; do not accept monetization solely on green unit tests or fixed home/exam ad rendering.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web free-tier ad placements after monetization route changes.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queue first; did not duplicate open IAP/paywall, consent/compliance, release-gate, learn-chapter, language, mobile-scroll, support, sources, dirty-worktree, or Playwright-cache findings.
+- `npm run test:monetization` - exit 0, 10/10 tests passed.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export` - exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright route pass against `/home`, `/learn`, `/practice`, `/mistakes`, and `/exam` using `/usr/bin/google-chrome` on port 4190 - exit 0.
+Workspace contract: pass with caveats - no product source edited; current dirty product files are outside this lane, and official Playwright cache remains blocked, so this is reviewer functional evidence rather than acceptance-grade e2e evidence.
+Findings queued: none from this focused pass.
+Evidence: `/home` showed and closed the launch sponsor, then showed `home banner`; `/learn` showed 13 chapter links plus `chapter list banner`; `/practice` did not show the completion interstitial before answering, then showed `quiz completed interstitial` with the next-question action after answering; `/mistakes` showed the native ad and empty-state practice action; direct `/exam` showed `Mock exam`, 20 questions, no `Launch sponsor`, no `Google AdMob`, and no console/page errors.
+Next manager action: keep existing IAP/paywall, consent/compliance, and official Playwright-cache blockers open; this pass does not clear them.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web routed quiz session at `/quiz/daily`.
+Checks run:
+- Checked existing reviewer queue first; did not duplicate the learn-chapter missing-entry defect or the practice wrong-answer feedback defect.
+- Reused the current `dist-web` export from the previous reviewer pass.
+- Inline Playwright route pass against `/quiz/daily` using `/usr/bin/google-chrome` on port 4192 - exit 0 after correcting the expected disclaimer locator to the actual independent-study copy.
+Workspace contract: pass with caveats - no product source edited; current dirty product files are outside this lane, and official Playwright cache remains blocked, so this is reviewer functional evidence rather than acceptance-grade e2e evidence.
+Findings queued: none from this focused pass.
+Evidence: direct `/quiz/daily` showed a closable launch sponsor, `Session daily`, the independent-study disclaimer, 4 answer options, score after answering, explanation, UHR reference, `Try this quiz question again`, and `Back to practice`; retry cleared score feedback and restored 4 selectable options; console/page errors 0.
+Next manager action: keep `REVIEWER-LEARN-CHAPTER-1` and `REVIEWER-PRACTICE-WRONG-FEEDBACK-1` open; this direct-route smoke does not clear those broader navigation/feedback defects.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the latest reviewer passes.
+Checks run:
+- `git status --short --branch` - source changes changed during the reviewer loop.
+Workspace contract: blocked - dirty product-source ownership is ambiguous for additional reviewer passes.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update`.
+Evidence: current status includes product/content/test changes in `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `scripts/monetization.test.js`, `scripts/validate-content.js`, plus untracked `lib/monetization/consent.ts`; this lane did not edit those files.
+Next manager action: provide a clean branch/commit target or accept/reject the active source-owner changes before more reviewer functional passes.
+
+Lane: REVIEWER
+Artifact reviewed: accepted `CONSENT1` helper against the ad-supported v1.0 consent/compliance requirement.
+Checks run:
+- Re-read updated `docs/parallel-sessions/TEAM_PLAN.md`; `CONSENT1` is accepted as a consent decision helper, with native prompt wiring still separate.
+- `rg -n "getAdConsentDecision|consentConfig|AdConsent|ump_consent_form|app_tracking_transparency" app components lib/monetization -S` - only `lib/monetization/consent.ts` references the helper.
+- `rg -n "shouldShowAd|shouldShowLaunchPopupAd|getAdUnit" components/monetization lib/monetization/ads.ts app/_layout.tsx -S` - ad components still call the ad gate directly.
+- `npm run test:monetization` - exit 0, 11/11 tests passed.
+- `test -f publishing/public-site/app-ads.txt && grep -rqiE "tracking-transparency|ATT|UMP|consent" lib app && test -f publishing/admob-iap-setup-runbook.md` - exit 1; `publishing/public-site/app-ads.txt` is missing.
+Workspace contract: pass - no product source edited; existing consent/compliance finding updated instead of creating a duplicate.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1 update`.
+Evidence: `CONSENT1` added decision logic, but no app/component ad path calls `getAdConsentDecision`, so helper-only work does not enforce the goal's "consent gate before ad SDK init" requirement. The public-site `app-ads.txt` file is still absent.
+Next manager action: assign source-touching ad-consent wiring and `app-ads.txt` compliance work; keep helper-only consent acceptance from clearing the release blocker.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the consent recheck.
+Checks run:
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope reappeared while reviewer was recording findings.
+Workspace contract: blocked - dirty product-source ownership is ambiguous for additional reviewer passes.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update`.
+Evidence: current status includes `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, and `scripts/validate-content.js`; this lane did not edit those files.
+Next manager action: bound the current source changes with a commit or explicit accept/reject decision before handing REVIEWER another pass.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state on resume.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope remains ambiguous.
+Workspace contract: blocked - no new functional pass run because source ownership is unclear.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:28Z]`.
+Evidence: current dirty product/source files include `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `lib/monetization/ads.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `scripts/monetization.test.js`, and `scripts/validate-content.js`; this lane did not edit product source.
+Next manager action: commit, accept/reject, or explicitly bound the active source-owner changes before handing REVIEWER another functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: current workspace contract state after rechecking instructions and TEAM_PLAN.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope remains outside this lane.
+Workspace contract: blocked - no new functional pass run because the current artifact boundary is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:29Z]`.
+Evidence: dirty product/source files include `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `lib/monetization/ads.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `scripts/monetization.test.js`, and `scripts/validate-content.js`, plus `TEAM_PLAN` and worker journals; this lane did not edit product source.
+Next manager action: bound or clear the source-owner changes before handing REVIEWER another functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: accepted `CONSENT2` real-ad consent gate.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `rg -n "getAdConsentDecision|AdConsentDecision|consent|canRequestPersonalizedAds|consentDecision|adServingAllowed|requiresConsentDecision" lib/monetization/ads.ts scripts/monetization.test.js app components lib -S` - `lib/monetization/ads.ts` now takes a consent decision and blocks real ads unless `adServingAllowed` is true.
+- `npm run test:monetization` - exit 0, 11/11 tests passed.
+- Direct real-ad env check with home-banner and app-open unit IDs - exit 0; real ads were blocked without consent, blocked when consent denied, allowed when consent allowed, still blocked when `adsDisabled`, and still blocked on `exam_screen`.
+- `test -f publishing/public-site/app-ads.txt` - exit 1; `publishing/admob-iap-setup-runbook.md` exists; consent text grep in `lib app` exits 0.
+Workspace contract: pass - no product source edited; only existing reviewer finding updated.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1 update [2026-05-17 08:33Z]`.
+Evidence: `CONSENT2` clears the real-ad gate portion of the prior reviewer defect, but `publishing/public-site/app-ads.txt` is still absent and app/component native prompt wiring remains explicitly separate in TEAM_PLAN.
+Next manager action: assign the remaining compliance/prompt surface work without re-opening the already verified real-ad consent gate.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the `CONSENT2` review pass.
+Checks run:
+- `git diff --name-status` - product-source dirty scope reappeared after the pass.
+Workspace contract: blocked for further passes - current content-source changes are outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:32Z]`.
+Evidence: current dirty product/source files are `content/question-bank.csv` and `data/additionalQuestions.ts`, plus `TEAM_PLAN` and reviewer/validator notes; this lane did not edit product source.
+Next manager action: have CONTENT/VALIDATOR bound or clear the content-source changes before another reviewer pass.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT Iteration 14 q040 rättsväsendet-authorities question and exported CSV rows.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and the latest CONTENT journal handoff.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for `q040` plus generated rows `q257`-`q260`.
+- `npm run validate:content` - exit 0; 13 chapters, 500 questions, 500 published questions, 500 UHR references, and 500 option-id conventions validated.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run test:content` - exit 0; 4/4 content tests passed.
+- Direct q040 assertion - exit 0; `q040` is `ch05`, section `Rättsväsendet`, `pageApprox:17`, has 4 options, correct option lists Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten, and Kriminalvården, and CSV tags are `justice-system|authorities|law`.
+- UHR source check: official `Sverige i fokus` PDF section `Rättsväsendet` lists those same five justice-system authorities on PDF page 17 / extracted lines 465-476.
+Workspace contract: pass with caveat - source ownership is CONTENT, not REVIEWER; REVIEWER did not edit product source and treated this as a focused verifier pass on the latest handoff.
+Findings queued: none from this focused pass.
+Evidence: q040 is source-aligned, has non-debatable Swedish/English wording, exports to CSV, and keeps content validators green.
+Next manager action: VALIDATOR can review/accept or reject CONTENT Iteration 14 from the existing dirty content scope; keep broader reviewer passes paused until that source-owner boundary is settled.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the q040 review pass.
+Checks run:
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope expanded again while reviewer was recording the pass.
+Workspace contract: blocked for further passes - current content, data-integrity, monetization, and release-preflight source changes are outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:34Z]`.
+Evidence: current dirty source includes `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/content-production.test.js`, `scripts/monetization.test.js`, `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `scripts/validate-content.js`, and untracked `lib/monetization/releasePolicy.ts`; this lane did not edit product source.
+Next manager action: bound or commit the active source-owner changes before another reviewer pass.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY UHR section-map source metadata validation atom.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and the latest DATA-INTEGRITY handoff.
+- Inspected `scripts/validate-content.js`, `scripts/content-production.test.js`, and `content/uhr-section-map.json` for `uhrSourceMetadataValidated`, expected `Sverige i fokus` title keyword, UHR publisher, source URL, and ISO retrieved date checks.
+- `npm run validate:content` - exit 0; summary includes `uhrSourceMetadataValidated:true`, 500 published questions, and 500 UHR references.
+- `npm run test:content` - exit 0; 4/4 tests passed and assert `uhrSourceMetadataValidated:true`.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- Temp-copy negative check - exit 0; changing `content/uhr-section-map.json` publisher to `Wrong publisher` made `scripts/validate-content.js` exit 1 with `UHR section map source publisher must be Universitets- och högskolerådet (UHR)`.
+Workspace contract: pass with caveat - source ownership is DATA-INTEGRITY, not REVIEWER; REVIEWER did not edit product source and used a temp copy for the negative mutation.
+Findings queued: none from this focused pass.
+Evidence: source metadata validation is covered by a green production summary assertion and a real negative rejection for bad publisher metadata.
+Next manager action: VALIDATOR can review/accept or reject the DATA-INTEGRITY source-metadata atom; broader reviewer passes remain sensitive to concurrent dirty source scope.
+
+Lane: REVIEWER
+Artifact reviewed: current release-policy / release-preflight monetization gate patch.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current release/monetization diffs.
+- Inspected `lib/monetization/releasePolicy.ts`, `scripts/monetization.test.js`, `scripts/release-preflight.js`, and `scripts/release-preflight.test.js` for ad-supported v1.0, AdMob app, app-ads.txt, privacy binary review, Remove Ads 29 SEK, and ATT/UMP evidence expectations.
+- `npm run test:monetization` - exit 0, 12/12 tests passed.
+- `node --test scripts/release-preflight.test.js --test-name-pattern 'AdMob|privacy review|ad-supported|disabled-ad|valid local store record|valid local privacy'` - exit 0, 44/44 tests reported passed.
+- Stale disabled-ads grep across `scripts publishing reports app lib components tests` - exit 0; remaining old-contract hits are in publishing/report artifacts and `scripts/publishing.test.js`, plus one negative release-preflight fixture.
+- `npm run release:preflight -- --json` - exit 1; `local-validation` is blocked by `npm run test:a11y-labels`, and store/privacy gate evidence still mentions disabled real ads.
+- `npm run test:a11y-labels` - exit 1; `app/quiz/[sessionId].tsx:111` is missing `accessibilityState` on the Try again `Pressable`.
+Workspace contract: pass for this bounded verifier pass, then blocked for further passes because dirty source scope expanded outside REVIEWER ownership.
+Findings queued: `REVIEWER-RELEASE-GATES-1 update`, `REVIEWER-A11Y-QUIZ-STATE-1`, and `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update`.
+Evidence: release-preflight unit coverage is green for the updated policy checks, but release publishing/report gates still contain disabled-ad wording and full preflight local validation is red on the routed quiz a11y check.
+Next manager action: finish the release-gate publishing/report cleanup, assign the quiz a11y source fix, and bound or commit the active source-owner changes before the next reviewer functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT CNT11 q041 rättssäkerhet question and exported CSV rows.
+Checks run:
+- Re-read current `TEAM_PLAN` CNT11 acceptance row and CONTENT journal handoff.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for `q041` plus generated rows `q261`-`q264`.
+- Checked official UHR `Sverige i fokus` PDF section `Rättssäkerhet`; lines 478-483 state equal treatment before law, fair trial, evidence/fact review, independent courts, no government/Riksdag control over judgments, defense with lawyer, and appeal rights.
+- `npm run validate:content` - exit 0; 13 chapters, 500 questions, 500 published questions, 500 UHR references, and `uhrSourceMetadataValidated:true`.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run test:content` - exit 0; 4/4 tests passed.
+- Direct q041 assertion - first run exit 1 due an over-strict reviewer regex on the English distractor, corrected rerun exit 0 with `q041 OK; exported rows q041/q261-q264 present`.
+Workspace contract: pass - no product source edited; only reviewer journal was updated.
+Findings queued: none from this focused pass.
+Evidence: q041 is source-aligned, has a non-debatable correct answer, keeps Swedish/English wording coherent, exports generated variants, and content validators remain green.
+Next manager action: no q041 defect; continue with the next bounded product atom after current queue/doc updates are settled.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the q041 content pass.
+Checks run:
+- `git status --short --branch` and `git diff --name-status` - source dirty scope changed again.
+- Inspected current `scripts/validate-content.js` / `scripts/content-production.test.js` diff and TEAM_PLAN/Data-Integrity handoff context.
+Workspace contract: blocked - no further functional pass run because current DATA-INTEGRITY source edits are outside REVIEWER ownership and not yet bounded by a matching handoff row.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:41Z]`.
+Evidence: dirty source files are `scripts/content-production.test.js` and `scripts/validate-content.js`; their diff adds `generatedSourceMetadataParityValidated`, while TEAM_PLAN currently records accepted DI13 tag-slug work rather than this new generated-source-metadata atom.
+Next manager action: GM/VALIDATOR should bound, accept/reject, or commit the new DATA-INTEGRITY source changes before another reviewer pass.
+
+Lane: REVIEWER
+Artifact reviewed: moving workspace contract state after blocker recording.
+Checks run:
+- `git diff --name-status` - current dirty source now includes `app/quiz/[sessionId].tsx`, `scripts/content-production.test.js`, and `scripts/validate-content.js`.
+- Inspected the latest diff enough to identify an a11y-state change in the quiz route and a DATA-INTEGRITY generated source-metadata parity handoff.
+Workspace contract: blocked - no further functional pass run because source-owner changes are actively moving.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:42Z]`.
+Evidence: app quiz a11y source and data-integrity validation source are dirty outside REVIEWER ownership; REVIEWER has not edited product source.
+Next manager action: accept/reject or commit the setup/a11y fix and DATA-INTEGRITY atom, then hand REVIEWER a stable artifact boundary.
+
+Lane: REVIEWER
+Artifact reviewed: final moving-worktree snapshot before stopping.
+Checks run:
+- `git diff --name-status` - source dirty scope now includes `app/quiz/[sessionId].tsx`, `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/content-production.test.js`, and `scripts/validate-content.js`.
+Workspace contract: blocked - current source-owner changes are actively moving and include app, content, and data-integrity surfaces outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:42Z-current]`.
+Evidence: REVIEWER did not edit product source; queue/journal updates only.
+Next manager action: provide a stable accepted/committed artifact boundary before resuming REVIEWER.
+
+Lane: REVIEWER
+Artifact reviewed: SETUP Iteration 22 routed quiz a11y-state fix.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and the SETUP handoff.
+- Inspected `app/quiz/[sessionId].tsx:111-115`; the `Try again` `Pressable` now has `accessibilityLabel`, `accessibilityRole`, and `accessibilityState`.
+- `npm run test:a11y-labels` - exit 0.
+- `npm run typecheck` - exit 0.
+- `npm run lint` - exit 0.
+- `npm run test:ownership` - exit 0.
+- `npx prettier --check app/quiz/[sessionId].tsx` - exit 0.
+- `git diff --check -- app/quiz/[sessionId].tsx docs/parallel-sessions/journals/setup.md` - exit 0.
+Workspace contract: pass with caveat - source ownership is SETUP, not REVIEWER; REVIEWER did not edit product source.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-A11Y-QUIZ-STATE-1 update [2026-05-17 08:43Z]`.
+Evidence: the previously failing a11y verifier now passes against the changed routed quiz control.
+Next manager action: VALIDATOR can accept or reject the SETUP a11y atom; release preflight should be rerun separately after unrelated release/content gates settle.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT Iteration 17 q043 police-role question and exported CSV rows.
+Checks run:
+- Re-read current CONTENT handoff for q043 and inspected `data/additionalQuestions.ts` / `content/question-bank.csv`.
+- Checked official UHR `Sverige i fokus` PDF section `Polisen`; lines 500-507 state that police maintain law and order, prevent and investigate crimes, cooperate with schools/municipalities/companies/associations/other authorities for safety, help people exposed to crime or needing protection, and issue passports/national ID cards/permits.
+- `npm run validate:content` - exit 0; summary includes 500 questions, 500 UHR references, and 400 `generatedSourceMetadataParityValidated`.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run test:content` - exit 0; 4/4 tests passed.
+- Direct q043 assertion - exit 0 with `q043 OK; exported rows q043/q269-q272 present`.
+Workspace contract: pass with caveat - source ownership is CONTENT, not REVIEWER; REVIEWER did not edit product source.
+Findings queued: none from this focused pass.
+Evidence: q043 has a non-debatable correct answer aligned to the UHR `Polisen` section, coherent Swedish/English wording, expected source tags, and exported generated rows.
+Next manager action: VALIDATOR can review/accept or reject the CONTENT q043 atom; no reviewer defect from this pass.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY generated question source-metadata parity atom.
+Checks run:
+- Re-read the DATA-INTEGRITY handoff and inspected `scripts/validate-content.js` / `scripts/content-production.test.js` for `generatedSourceMetadataParityValidated`.
+- `npm run validate:content` - exit 0; summary includes `generatedSourceMetadataParityValidated:400`.
+- `npm run test:content` - exit 0; 4/4 tests passed and assert the generated-source metadata count.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` - exit 0.
+- Temp-copy negative check - first attempt failed for the wrong reason because the copied temp repo lacked `app/`; rerun with `app/`, `components/`, `content/`, `data/`, `lib/`, `scripts/`, and `types/` copied exited 0 for the reviewer command by confirming `scripts/validate-content.js` rejected generated variant difficulty drift with status 1 and messages like `q001 generated variant[0] difficulty does not match source question`.
+Workspace contract: pass with caveat - source ownership is DATA-INTEGRITY, not REVIEWER; REVIEWER did not edit product source and mutated only a temp copy.
+Findings queued: none from this focused pass.
+Evidence: the validator now counts all 400 generated variants and rejects generated metadata drift against source questions.
+Next manager action: VALIDATOR can review/accept or reject the DATA-INTEGRITY generated-source metadata parity atom.
+
+Lane: REVIEWER
+Artifact reviewed: current `app/chapter/[chapterId].tsx` quiz-entry control for the learn-chapter defect.
+Checks run:
+- Inspected the diff adding `getChapterQuizSessionId`, `Start quiz for ${chapter.nameSv}`, and the `/quiz/${quizSessionId}` link in `app/chapter/[chapterId].tsx`.
+- `npm run typecheck` - exit 0.
+- `npm run lint` - exit 0.
+- `npm run test:practice` - exit 0; 3/3 tests passed including chapter quiz session id resolution.
+- `git diff --check -- app/chapter/[chapterId].tsx` - exit 0.
+- `CI=1 timeout 120s npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts --workers=1` - exit 1 before app interaction due missing cached Chromium at the known Playwright path.
+- `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` - exit 0.
+- Exported-web system-Chrome smoke - exit 0 after closing the launch sponsor ad; `/chapter/ch01` showed `Start quiz for Landet Sverige`, link `href` was `/quiz/q001`, clicking it opened `/quiz/q001`, and `Session q001` plus `Var ligger Sverige?` were visible with no console errors.
+Workspace contract: pass with caveat - source ownership is not REVIEWER; REVIEWER did not edit product source and used system Chrome because official Playwright cache is still missing.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LEARN-CHAPTER-1 update [2026-05-17 08:47Z]`.
+Evidence: the missing chapter start-quiz affordance is now present and navigates to the routed quiz session in exported web.
+Next manager action: VALIDATOR can close the reviewer defect after accepting the source atom; keep the official Playwright-cache blocker open separately.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY prompt-text uniqueness validation plus CONTENT q022 prompt-remediation.
+Checks run:
+- Re-read current `TEAM_PLAN`, DATA-INTEGRITY/CONTENT handoffs, and inspected `scripts/validate-content.js`, `scripts/content-production.test.js`, `data/additionalQuestions.ts`, and `content/question-bank.csv`.
+- Checked official UHR `Sverige i fokus` PDF section `Staten`, lines 290-297; the section supports q022's revised correct answer that the Riksdag decides laws and how state money is used.
+- `npm run validate:content` - exit 0; summary includes 500 `questionPromptTextUniquenessValidated`, 500 schemas, 500 UHR references, and 500 chapter/reference parity checks.
+- `npm run test:content` - exit 0; 4/4 tests passed and assert prompt-text uniqueness.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run typecheck` - exit 0.
+- Direct q022 assertion - exit 0; q022 uses `ch03` / `Staten` / page 12, correct option `c`, `riksdag|laws|state-budget` tags, exported rows `q022` and `q185`-`q188`, and q017 retains the member-count question.
+- Temp-copy negative check - exit 0 for the reviewer command by confirming the validator rejects duplicate source prompts with `q022 duplicates questionSv text from q021` and `q022 duplicates questionEn text from q021`.
+- `npx prettier --check data/additionalQuestions.ts scripts/validate-content.js scripts/content-production.test.js` - exit 0.
+- `git diff --check -- data/additionalQuestions.ts content/question-bank.csv scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md docs/parallel-sessions/journals/content.md` - exit 0.
+- `npm run test:ownership` - exit 0.
+Workspace contract: pass with caveat - source ownership is CONTENT/DATA-INTEGRITY, not REVIEWER; REVIEWER mutated only a temp copy for the negative check.
+Findings queued: none from this focused pass.
+Evidence: the new validator counts all 500 published question prompts as unique and rejects an intentional q021/q022 Swedish-English prompt collision; q022 remains source-aligned and exported.
+Next manager action: VALIDATOR can accept or reject the prompt-text uniqueness atom and q022 remediation from the source-owner lanes; no reviewer defect from this pass.
+
+Lane: REVIEWER
+Artifact reviewed: release preflight after A11Y1, DI15, and current accepted content/data-integrity atoms.
+Checks run:
+- Re-read current `TEAM_PLAN`; A11Y1 and DI15 are accepted, while official E2E remains blocked on cached Playwright Chromium.
+- `CI=1 timeout 360s npm run release:preflight -- --json` - exit 1; overall release status remains `BLOCKED`.
+- Inspected the preflight JSON: `local-validation`, `expo-doctor`, `web-export`, `native-prebuild`, and `eas-cli` are now `READY`.
+- The same preflight reports `git-worktree-clean`, `eas-auth`, EAS build/device evidence, store records, credentials, privacy review, release-owner approval, screenshots, and submission as `BLOCKED`.
+- Store/privacy gate evidence still contains the old disabled-ad release contract: store records say AdMob is deferred because real ads are disabled for v1.0, and privacy review still references `REAL_ADS_ENABLED_FOR_V1=false`.
+Workspace contract: pass with caveat - no product source edited; concurrent source-owner changes are visible, so this is verifier evidence rather than a clean release-candidate sign-off.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-RELEASE-GATES-1 update [2026-05-17 08:54Z]`.
+Evidence: the prior local-validation/a11y failure is cleared, but the release verifier still cannot be trusted for the new ad-supported contract until stale store/privacy evidence is updated.
+Next manager action: keep release gates blocked for stale store/privacy evidence and external release artifacts; do not reopen A11Y1 from this pass.
+
+Lane: REVIEWER
+Artifact reviewed: SETUP Iteration 24 Google Mobile Ads SDK initialization decision helper.
+Checks run:
+- Inspected `lib/monetization/consent.ts` and `scripts/monetization.test.js` for `getAdSdkInitializationDecision`, `canInitializeGoogleMobileAds`, and `sdkInitRequiresConsentDecision`.
+- `rg -n "getAdSdkInitializationDecision|canInitializeGoogleMobileAds|sdkInitRequiresConsentDecision|getAdConsentDecision|shouldShowAd|LaunchPopupAd|AdBanner|NativeAdCard" lib/monetization app components scripts/monetization.test.js -S` - helper/test references found; app/components still call `shouldShowAd`/`shouldShowLaunchPopupAd` directly.
+- `npm run test:monetization` - exit 0; 12/12 tests passed.
+- `npm run typecheck` - exit 0.
+- `npm run lint` - exit 0.
+- Direct SDK-init helper assertion - exit 0; helper blocks disabled config, Remove Ads, pending prompts, and missing consent, while allowing satisfied consent and test-unit preview init.
+- `npx prettier --check lib/monetization/consent.ts scripts/monetization.test.js` - exit 0.
+- `npm run test:ownership` - exit 0.
+- `git diff --check -- lib/monetization/consent.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` - exit 0.
+Workspace contract: pass with caveat - source ownership is SETUP, not REVIEWER; no product source edited by REVIEWER.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1 update [2026-05-17 08:55Z]`.
+Evidence: the pure helper is verified, but the app still lacks integration that actually runs ATT/UMP prompts and gates native SDK initialization through this helper.
+Next manager action: VALIDATOR can assess SETUP Iteration 24 as a plumbing atom; keep consent/compliance open for app/native prompt integration, `app-ads.txt`, and public/privacy copy.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT CNT15 q045 free-media role question and exported CSV rows.
+Checks run:
+- Checked official UHR `Sverige i fokus` PDF section `Fria medier`, lines 546-557; it supports the answer about free media informing, enabling public discussion, and scrutinizing people with power.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for `q045` plus generated rows `q277`-`q280`.
+- `npm run validate:content` - exit 0; 500 questions, 500 UHR references, 500 prompt-unique questions, and 400 generated prompt-template parity checks.
+- `npm run test:content` - exit 0; 4/4 tests passed.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- Direct q045 assertion - exit 0 with `q045 OK; exported rows q045/q277-q280 present`.
+- `npm run typecheck` - exit 0.
+- `npm run test:ownership` - exit 0.
+- `npx prettier --check data/additionalQuestions.ts` - exit 0.
+- `git diff --check -- data/additionalQuestions.ts content/question-bank.csv docs/parallel-sessions/journals/content.md` - exit 0.
+Workspace contract: pass with caveat - source ownership is CONTENT, not REVIEWER; REVIEWER did not edit product source.
+Findings queued: none from this focused pass.
+Evidence: q045 has a non-debatable correct answer aligned to the UHR `Fria medier` section, coherent Swedish/English wording, expected source tags, and exported generated rows.
+Next manager action: no q045 defect; continue with the next bounded product or release-gate review atom.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY DI16 generated prompt-template parity validation.
+Checks run:
+- Inspected `scripts/validate-content.js` and `scripts/content-production.test.js` for `expectedGeneratedPrompt` and `generatedPromptTemplateParityValidated`.
+- `npm run validate:content` - exit 0 in the preceding content pass; summary reports 400 `generatedPromptTemplateParityValidated`.
+- `npm run test:content` - exit 0 in the preceding content pass; 4/4 tests passed and assert generated prompt-template parity.
+- `node scripts/export-question-bank.js --check` - exit 0 in the preceding content pass; 500-question export parity OK.
+- Temp-copy negative check - exit 0 for the reviewer command by confirming the validator rejects a mutated generated section-practice prompt template with `generated variant[0] questionSv does not match generated prompt template`.
+Workspace contract: pass with caveat - source ownership is DATA-INTEGRITY, not REVIEWER; REVIEWER mutated only a temp copy.
+Findings queued: none from this focused pass.
+Evidence: the validator now counts all 400 generated variants and rejects template drift between generated prompts and the source-derived Swedish/English prompt shapes.
+Next manager action: no DI16 reviewer defect; keep `npm run validate:content` and `npm run test:content` as the nearest regression gates.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after DI16 review.
+Checks run:
+- `git status --short --branch` - product-source dirty scope reappeared outside REVIEWER.
+- `git diff --name-status` - current source diff includes `app/(tabs)/home.tsx`, `components/monetization/PremiumBanner.tsx`, `scripts/monetization.test.js`, `scripts/content-production.test.js`, and `scripts/validate-content.js`.
+- Checked latest SETUP and DATA-INTEGRITY journals; no completed handoff row yet for the paywall UI or generated-answer-template parity diffs.
+Workspace contract: blocked - current product-source changes are ambiguous for REVIEWER acceptance-grade passes.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:58Z]`.
+Evidence: REVIEWER did not edit product source; queue/journal updates only.
+Next manager action: provide source-owner handoffs or a clean commit/boundary for the current paywall and data-integrity diffs before the next reviewer pass.

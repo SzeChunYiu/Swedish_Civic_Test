@@ -1,0 +1,91 @@
+const assert = require('node:assert/strict');
+const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
+
+function parseValidationSummary() {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
+test('mistakes route shell copy follows the persisted settings language', () => {
+  const summary = parseValidationSummary();
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+
+  assert.equal(summary.mistakesRouteCopyLabelsValidated, 26);
+  assert.equal(summary.mistakesRouteCopyParityValidated, true);
+  assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(source, /const copy = mistakesCopy\[language\];/);
+  assert.match(source, /Gå igenom fel svar med fråga, förklaring, källreferens/);
+  assert.match(source, /Review wrong answers with the question, explanation, source reference/);
+  assert.match(source, /accessibilityLabel=\{copy\.emptyPracticeAccessibilityLabel\}/);
+  assert.match(
+    source,
+    /\{copy\.wrongAnswers\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\)\}/,
+  );
+});
+
+test('mistakes route copy parity rejects bypassing the settings language', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const copy = mistakesCopy[language];', 'const copy = mistakesCopy.en;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /mistakes route must select copy from settings language/,
+  );
+});
+
+test('mistakes route copy parity rejects missing Swedish shell copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("'Svara fel på en övningsfråga så visas den här.'", "'No mistakes yet'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /mistakes route is missing sv copy/);
+});

@@ -15,3 +15,17 @@ export function getPracticeQuestionForSession<TQuestion extends Pick<PracticeQue
   const nextQuestionIndex = completedQuestionIds.length % questions.length;
   return questions[nextQuestionIndex] ?? questions[0];
 }
+
+export function getFirstQuestionForChapter<
+  TQuestion extends Pick<PracticeQuestion, 'id' | 'chapterId'>,
+>(questions: TQuestion[], chapterId: string | null | undefined): TQuestion | undefined {
+  if (!chapterId) return undefined;
+
+  return questions.find((question) => question.chapterId === chapterId);
+}
+
+export function getChapterQuizSessionId<
+  TQuestion extends Pick<PracticeQuestion, 'id' | 'chapterId'>,
+>(questions: TQuestion[], chapterId: string | null | undefined): string | null {
+  return getFirstQuestionForChapter(questions, chapterId)?.id ?? null;
+}

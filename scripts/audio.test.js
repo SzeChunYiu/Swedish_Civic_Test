@@ -58,3 +58,24 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.match(warnings[0], /Speech unavailable/i);
   assert.match(warnings[1], /Speech stop unavailable/i);
 });
+
+test('practice and routed quiz screens honor the persisted audio setting', () => {
+  const routeFiles = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
+
+  for (const routeFile of routeFiles) {
+    const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
+    assert.match(source, /import\s+\{\s*AudioButton\s*\}\s+from ['"][^'"]+AudioButton['"]/);
+    assert.match(
+      source,
+      /import\s+\{\s*buildQuestionSpeechText\s*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
+    );
+    assert.match(
+      source,
+      /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
+    );
+    assert.match(
+      source,
+      /<AudioButton\s+text=\{buildQuestionSpeechText\(question\)\}\s+enabled=\{audioEnabled\}\s+\/>/,
+    );
+  }
+});

@@ -4,6 +4,8 @@ import { colors, motion, radius, space } from '../../lib/theme';
 
 export function ProgressBar({ progress = 0 }: { progress?: number }) {
   const clampedProgress = Math.max(0, Math.min(1, progress));
+  const progressPercent = Math.round(clampedProgress * 100);
+  const progressAccessibilityLabel = `${progressPercent} percent complete`;
   const animatedProgress = useRef(new Animated.Value(clampedProgress)).current;
 
   useEffect(() => {
@@ -22,7 +24,13 @@ export function ProgressBar({ progress = 0 }: { progress?: number }) {
 
   return (
     <View
-      accessibilityLabel={`${Math.round(clampedProgress * 100)} percent complete`}
+      aria-label={progressAccessibilityLabel}
+      aria-valuemax={100}
+      aria-valuemin={0}
+      aria-valuenow={progressPercent}
+      accessibilityLabel={progressAccessibilityLabel}
+      accessibilityRole="progressbar"
+      accessibilityValue={{ min: 0, max: 100, now: progressPercent }}
       style={styles.track}
     >
       <Animated.View style={[styles.fill, { width: fillWidth }]} />

@@ -7,7 +7,65 @@ import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+type ChapterLinkCopy = {
+  contentQueued: string;
+  progressLabel: (completedCount: number, questionCount: number) => string;
+  accessibilityLabel: ({
+    nameSv,
+    nameEn,
+    progressLabel,
+  }: {
+    nameSv: string;
+    nameEn: string;
+    progressLabel: string;
+  }) => string;
+};
+
+type LearnRouteCopy = {
+  eyebrow: string;
+  sectionSubtitle: string;
+  sectionTitle: string;
+  subtitle: string;
+  title: string;
+};
+
+const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
+  sv: {
+    eyebrow: 'Studieväg',
+    sectionSubtitle: 'Studera med källnära kapitel och öva sedan på samma material.',
+    sectionTitle: '13 samhällsområden',
+    subtitle: 'Varje kapitel visar omfång och lokal progression så att du kan fokusera studierna.',
+    title: 'Bläddra bland kapitel med tydliga nästa steg',
+  },
+  en: {
+    eyebrow: 'Learning path',
+    sectionSubtitle: 'Study in source-aligned chapters, then practice from the same material.',
+    sectionTitle: '13 civic areas',
+    subtitle:
+      'Each chapter shows scope and local completion so you can focus study instead of guessing what to open next.',
+    title: 'Browse chapters with a clear next step',
+  },
+};
+
+const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
+  sv: {
+    contentQueued: 'innehåll planerat',
+    progressLabel: (completedCount, questionCount) =>
+      `${completedCount} av ${questionCount} frågor besvarade`,
+    accessibilityLabel: ({ nameSv, nameEn, progressLabel }) =>
+      `Öppna kapitel ${nameSv}. Engelskt namn: ${nameEn}. Framsteg: ${progressLabel}.`,
+  },
+  en: {
+    contentQueued: 'content queued',
+    progressLabel: (completedCount, questionCount) =>
+      `${completedCount} of ${questionCount} questions practiced`,
+    accessibilityLabel: ({ nameSv, nameEn, progressLabel }) =>
+      `Open chapter ${nameSv}. English name: ${nameEn}. Progress: ${progressLabel}.`,
+  },
+};
 
 function questionCountForChapter(chapterId: string) {
   return questions.filter((question) => question.chapterId === chapterId).length;
@@ -20,19 +78,34 @@ function completedCountForChapter(chapterId: string, completedQuestionIds: strin
   ).length;
 }
 
+function getChapterLinkAccessibilityLabel({
+  nameSv,
+  nameEn,
+  completedCount,
+  questionCount,
+  copy,
+}: {
+  nameSv: string;
+  nameEn: string;
+  completedCount: number;
+  questionCount: number;
+  copy: ChapterLinkCopy;
+}) {
+  const progressLabel =
+    questionCount > 0 ? copy.progressLabel(completedCount, questionCount) : copy.contentQueued;
+
+  return copy.accessibilityLabel({ nameSv, nameEn, progressLabel });
+}
+
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
+  const language = useSettingsStore((state) => state.language);
+  const routeCopy = learnRouteCopy[language];
+  const copy = chapterLinkCopy[language];
 
   return (
-    <ScreenShell
-      eyebrow="Learning path"
-      title="Browse chapters with a clear next step"
-      subtitle="Each chapter shows scope and local completion so you can focus study instead of guessing what to open next."
-    >
-      <SectionHeader
-        title="13 civic areas"
-        subtitle="Study in source-aligned chapters, then practice from the same material."
-      />
+    <ScreenShell eyebrow={routeCopy.eyebrow} title={routeCopy.title} subtitle={routeCopy.subtitle}>
+      <SectionHeader title={routeCopy.sectionTitle} subtitle={routeCopy.sectionSubtitle} />
       <View style={styles.list}>
         {chapters.map((chapter) => {
           const questionCount = questionCountForChapter(chapter.id);
@@ -40,7 +113,13 @@ export default function Screen() {
           return (
             <Link
               key={chapter.id}
-              accessibilityLabel={`Open chapter ${chapter.nameSv}`}
+              accessibilityLabel={getChapterLinkAccessibilityLabel({
+                nameSv: chapter.nameSv,
+                nameEn: chapter.nameEn,
+                completedCount,
+                questionCount,
+                copy,
+              })}
               accessibilityRole="link"
               href={`/chapter/${chapter.id}`}
               style={styles.link}
@@ -48,6 +127,7 @@ export default function Screen() {
               <ChapterCard
                 chapter={chapter}
                 completedCount={completedCount}
+                language={language}
                 questionCount={questionCount}
               />
             </Link>

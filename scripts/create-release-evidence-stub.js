@@ -192,6 +192,7 @@ function parseArgs(argv) {
     const arg = argv[index];
     if (arg === '--root') parsed.root = argv[++index];
     else if (arg === '--gate') parsed.gate = argv[++index];
+    else if (arg === '--all') parsed.all = true;
     else if (arg === '--force') parsed.force = true;
     else if (arg === '--list') parsed.list = true;
     else if (arg === '--help' || arg === '-h') parsed.help = true;
@@ -204,6 +205,7 @@ function parseArgs(argv) {
 function usage() {
   return [
     'Usage: node scripts/create-release-evidence-stub.js --gate <gate> [--root <repo>] [--force]',
+    '   or: node scripts/create-release-evidence-stub.js --all [--root <repo>] [--force]',
     '   or: node scripts/create-release-evidence-stub.js --list',
     '',
     `Known gates: ${Object.keys(templates).join(', ')}`,
@@ -247,6 +249,23 @@ function main() {
         status: templates[gate].content.status,
       }));
     process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
+    return;
+  }
+
+  if (args.all) {
+    const gates = blockedManualGates(args.root).filter((gate) => templates[gate]);
+    for (const gate of gates) {
+      const template = templates[gate];
+      const outputPath = path.join(args.root, template.path);
+      if (fs.existsSync(outputPath) && !args.force) {
+        process.stdout.write(`Skipped ${gate} evidence stub at ${outputPath}; already exists\n`);
+        continue;
+      }
+
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, `${JSON.stringify(template.content, null, 2)}\n`);
+      process.stdout.write(`Created ${gate} evidence stub at ${outputPath}\n`);
+    }
     return;
   }
 

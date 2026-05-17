@@ -11,7 +11,7 @@ type BadgeInput = {
   wrongAnswerCount: number;
 };
 
-const badgeCatalog: Record<string, Badge> = {
+export const badgeCatalog: Record<string, Badge> = {
   first_practice: {
     id: 'first_practice',
     title: 'First practice',

@@ -2,6 +2,7 @@ import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
+import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
@@ -11,19 +12,25 @@ import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
-import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
+import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
-  const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
+  const {
+    entitlements: monetizationEntitlements,
+    purchaseRuntime,
+    setEntitlements: setMonetizationEntitlements,
+  } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
-  const completedToday = Math.min(completedQuestionIds.length, dailyGoalAnswers);
+  const language = useSettingsStore((state) => state.language);
+  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const currentStreak = calculateStreak(answerDates);
   const level = calculateLevel(totalXp);
@@ -38,7 +45,9 @@ export default function Screen() {
       subtitle="A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations."
       rightSlot={
         <View style={styles.goalCard}>
-          <Text style={styles.goalLabel}>Today&apos;s goal</Text>
+          <Text accessibilityRole="header" style={styles.goalLabel}>
+            Today&apos;s goal
+          </Text>
           <Text style={styles.goalMetric}>
             {completedToday}/{dailyGoalAnswers}
           </Text>
@@ -81,7 +90,9 @@ export default function Screen() {
 
       <Card style={styles.feedbackCard}>
         <Badge tone="blue">10,000-learner feedback pass</Badge>
-        <Text style={styles.feedbackTitle}>UX updates from simulated study sessions</Text>
+        <Text accessibilityRole="header" style={styles.feedbackTitle}>
+          UX updates from simulated study sessions
+        </Text>
         <Text style={styles.feedbackText}>
           10,000 simulated learners asked for clearer progress, saved hard questions, source-backed
           review, and ads that stay out of exams. Those fixes are now built into the study loop.
@@ -109,7 +120,13 @@ export default function Screen() {
         ))}
       </View>
 
-      <AdBanner placement="home_banner" />
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
+      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
     </ScreenShell>
   );
 }
