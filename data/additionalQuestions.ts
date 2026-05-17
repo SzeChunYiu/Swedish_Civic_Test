@@ -656,7 +656,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'UHR-avsnittet Källkritik säger att information kan komma från många olika källor och att allt som publiceras inte alltid är korrekt. Att vara källkritisk betyder därför att ifrågasätta och kontrollera om det man läser, ser eller hör är korrekt.',
-    'The UHR Source criticism section says information can come from many different sources and that not everything published is always correct. Being source-critical therefore means questioning and checking whether what you read, see, or hear is correct.',
+    'The UHR section Source criticism says information can come from many different sources and that not everything published is always correct. Being source-critical therefore means questioning and checking whether what you read, see, or hear is correct.',
     ['source-criticism', 'media-literacy', 'information'],
     'easy',
   ),
