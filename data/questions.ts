@@ -145,18 +145,18 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'true_false',
     questionSv:
-      'Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
+      'Sant eller falskt enligt UHR-materialet: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
     questionEn:
-      "True or false: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
+      "True or false according to the UHR material: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Sverige har ett mildare klimat än många andra områden på samma breddgrad. En förklaring är att varmare havsvatten och vindar påverkar luften över Sverige.',
+      'UHR-avsnittet Geografi, klimat och natur säger att Sverige har ett milt klimat jämfört med många områden på samma breddgrad. Det förklaras med att Golfströmmen och den Nordatlantiska strömmen för varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
     explanationEn:
-      'Sweden has a milder climate than many other areas at the same latitude. One explanation is that warmer ocean water and winds affect the air over Sweden.',
+      'The UHR section Geography, climate, and nature says Sweden has a mild climate compared with many areas at the same latitude. It explains this with the Gulf Stream and the North Atlantic Current carrying warm water toward Europe, warming the air that winds bring over Sweden.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
