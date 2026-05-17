@@ -11,7 +11,11 @@ export function Badge({ accessibilityLabel, children, tone = 'blue' }: BadgeProp
     (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
 
   return (
-    <Text accessibilityLabel={badgeAccessibilityLabel} style={[styles.badge, styles[tone]]}>
+    <Text
+      aria-label={badgeAccessibilityLabel}
+      accessibilityLabel={badgeAccessibilityLabel}
+      style={[styles.badge, styles[tone]]}
+    >
       {children}
     </Text>
   );

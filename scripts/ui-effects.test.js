@@ -14,9 +14,18 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
 
   assert.match(source, /Animated\.timing/);
   assert.match(source, /motion\.duration\.slow/);
-  assert.match(source, /accessibilityLabel/);
+  assert.match(source, /const progressPercent = Math\.round\(clampedProgress \* 100\);/);
+  assert.match(
+    source,
+    /const progressAccessibilityLabel = `\$\{progressPercent\} percent complete`;/,
+  );
+  assert.match(source, /aria-label=\{progressAccessibilityLabel\}/);
+  assert.match(source, /aria-valuemax=\{100\}/);
+  assert.match(source, /aria-valuemin=\{0\}/);
+  assert.match(source, /aria-valuenow=\{progressPercent\}/);
+  assert.match(source, /accessibilityLabel=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole="progressbar"/);
-  assert.match(source, /accessibilityValue=\{\{ min: 0, max: 100, now: Math\.round/);
+  assert.match(source, /accessibilityValue=\{\{ min: 0, max: 100, now: progressPercent \}\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -39,6 +48,7 @@ test('badge preserves a readable accessibility label when visual text is upperca
   assert.match(source, /const badgeAccessibilityLabel =/);
   assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
   assert.match(source, /String\(children\)/);
+  assert.match(source, /aria-label=\{badgeAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{badgeAccessibilityLabel\}/);
   assert.match(source, /textTransform: 'uppercase'/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
