@@ -69,6 +69,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
+  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
+  assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.equal(summary.screenShellLayoutRulesValidated, 7);
   assert.equal(summary.screenShellLayoutParityValidated, true);
   assert.equal(summary.settingsRouteScrollRulesValidated, 5);
