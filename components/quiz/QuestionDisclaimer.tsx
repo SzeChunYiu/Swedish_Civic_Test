@@ -6,10 +6,15 @@ import { colors, typography } from '../../lib/theme';
 const disclaimerText =
   'Independent study tool. Not official or affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Practice questions are created for learning and are not real exam questions.';
 const disclaimerAccessibilityLabel = `Study disclaimer: ${disclaimerText}`;
+const disclaimerAccessibilityHint =
+  'Use this warning to distinguish practice content from official civic test material.';
 
 export function QuestionDisclaimer() {
   return (
-    <Card accessibilityLabel={disclaimerAccessibilityLabel}>
+    <Card
+      accessibilityHint={disclaimerAccessibilityHint}
+      accessibilityLabel={disclaimerAccessibilityLabel}
+    >
       <Text style={styles.text}>{disclaimerText}</Text>
     </Card>
   );

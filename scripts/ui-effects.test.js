@@ -328,8 +328,10 @@ test('question disclaimer exposes the non-official warning as an accessible summ
   const source = read('components/quiz/QuestionDisclaimer.tsx');
 
   assert.match(source, /const disclaimerAccessibilityLabel =/);
+  assert.match(source, /const disclaimerAccessibilityHint =/);
   assert.match(source, /`Study disclaimer: \$\{disclaimerText\}`/);
-  assert.match(source, /<Card accessibilityLabel=\{disclaimerAccessibilityLabel\}>/);
+  assert.match(source, /accessibilityHint=\{disclaimerAccessibilityHint\}/);
+  assert.match(source, /accessibilityLabel=\{disclaimerAccessibilityLabel\}/);
   assert.match(source, /Independent study tool/);
   assert.match(source, /Not official/);
   assert.match(source, /not real exam questions/);
