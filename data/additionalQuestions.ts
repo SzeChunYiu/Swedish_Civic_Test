@@ -1211,8 +1211,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q077',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Befolkningsökning', pageApprox: 32 },
-    'Enligt UHR-materialet, ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
-    'According to the UHR material, approximately how many Swedes emigrated to the United States between 1850 and 1920?',
+    'Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
+    'Approximately how many Swedes emigrated to the United States between 1850 and 1920?',
     [
       ['Över en miljon', 'More than one million'],
       ['Cirka tio tusen', 'About ten thousand'],
