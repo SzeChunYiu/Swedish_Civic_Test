@@ -1708,8 +1708,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q100',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Lucia', pageApprox: 47 },
-    'När säger UHR-materialet att Lucia firas?',
-    'What date does the UHR material give for Lucia?',
+    'När firas Lucia i Sverige?',
+    'When is Lucia celebrated in Sweden?',
     [
       ['13 december', '13 December'],
       ['30 april', '30 April'],
