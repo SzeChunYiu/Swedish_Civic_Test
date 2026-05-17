@@ -317,6 +317,7 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
 
 test('mock exam access persistence stores daily completions and rewarded credits', async () => {
   const {
+    FREE_MOCK_EXAM_DAILY_LIMIT,
     MOCK_EXAM_ACCESS_STORAGE_KEY,
     clearStoredMockExamAccess,
     consumeStoredRewardedExtraExamCredit,
@@ -329,6 +330,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
   } = loadTs('lib/monetization/rewardedExam.ts');
   const storage = createMemoryMockExamAccessStorage();
 
+  assert.equal(FREE_MOCK_EXAM_DAILY_LIMIT, 1);
   assert.equal(MOCK_EXAM_ACCESS_STORAGE_KEY, 'monetization.mockExamAccess.v1');
 
   assert.deepEqual(await getStoredMockExamAccess({ date: '2026-05-17T09:30:00.000Z', storage }), {
@@ -1016,7 +1018,22 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
 
 test('exam screen does not import ad components', () => {
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const accessHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
+  assert.match(examSource, /useMockExamAccess/);
+  assert.match(examSource, /recordExamCompletion/);
+  assert.match(examSource, /handleStartAccessibleExam/);
+  assert.match(examSource, /Unlock extra exam/);
+  assert.match(accessHookSource, /getMockExamAccessDecision/);
+  assert.match(accessHookSource, /recordStoredMockExamCompletion/);
+  assert.match(accessHookSource, /grantStoredRewardedExtraExamCredit/);
+  assert.match(accessHookSource, /consumeStoredRewardedExtraExamCredit/);
+  assert.match(accessHookSource, /createWebMockExamAccessStorage/);
+  assert.match(accessHookSource, /createSecureStoreMockExamAccessStorage/);
 });
 
 test('global launch popup ad is suppressed on exam and compliance routes', () => {

@@ -4,6 +4,7 @@ import type { AdConsentDecision } from './consent';
 
 export const REWARDED_EXTRA_EXAM_PLACEMENT = 'rewarded_extra_exam' as const;
 export const MOCK_EXAM_ACCESS_STORAGE_KEY = 'monetization.mockExamAccess.v1';
+export const FREE_MOCK_EXAM_DAILY_LIMIT = 1;
 
 export type MockExamAccessReason =
   | 'free_exam_available'

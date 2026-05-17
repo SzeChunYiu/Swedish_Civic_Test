@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
@@ -17,7 +17,28 @@ import {
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
+import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
+import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+function getAccessStatusText(reason: MockExamAccessReason): string {
+  switch (reason) {
+    case 'free_exam_available':
+      return 'Daily free mock exam available.';
+    case 'premium_unlimited_mock_exams':
+      return 'Unlimited mock exams active.';
+    case 'rewarded_exam_credit':
+      return 'Extra mock exam unlocked.';
+    case 'rewarded_ad_available':
+      return 'Daily free mock exam used. Extra exam available.';
+    case 'remove_ads_active':
+      return 'Daily free mock exam used. Rewarded ads are hidden.';
+    case 'consent_required':
+      return 'Ad consent is needed before an extra exam can be unlocked.';
+    case 'ads_unavailable':
+      return 'Extra mock exams are unavailable right now.';
+  }
+}
 
 export default function Screen() {
   const examQuestions = useMemo(
@@ -26,9 +47,22 @@ export default function Screen() {
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [examUnlocked, setExamUnlocked] = useState(false);
+  const [completionRecorded, setCompletionRecorded] = useState(false);
+  const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
+  const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
+  const {
+    accessDecision,
+    accessReady,
+    consumeRewardedExamCredit,
+    entitlementsReady,
+    grantRewardedExamCredit,
+    recordExamCompletion,
+  } = useMockExamAccess();
+  const accessLoading = !accessReady || !entitlementsReady;
 
   useEffect(() => {
     if (submitted || remainingSeconds <= 0) return undefined;
@@ -52,6 +86,13 @@ export default function Screen() {
     }
   }, [examQuestions.length, remainingSeconds, submitted]);
 
+  useEffect(() => {
+    if (examUnlocked || submitted || accessLoading) return;
+    if (accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit') {
+      setExamUnlocked(true);
+    }
+  }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
+
   const result = submitted ? scoreExam(examQuestions, answers) : null;
   const chapterBreakdown = result
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
@@ -60,6 +101,118 @@ export default function Screen() {
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
+  const startAccessibleExamLabel = accessDecision.canOfferRewardedAd
+    ? 'Unlock extra exam'
+    : accessDecision.reason === 'rewarded_exam_credit'
+      ? 'Start unlocked extra exam'
+      : 'Start mock exam';
+  const canStartAccessibleExam =
+    !accessLoading &&
+    (accessDecision.canStartExam ||
+      accessDecision.canOfferRewardedAd ||
+      accessDecision.reason === 'rewarded_exam_credit');
+  const accessStatusText = accessLoading
+    ? 'Checking mock exam access.'
+    : getAccessStatusText(accessDecision.reason);
+
+  const resetExamAttempt = useCallback(() => {
+    setAnswers({});
+    setSubmitted(false);
+    setCompletionRecorded(false);
+    setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
+    setExamUnlocked(true);
+  }, []);
+
+  const handleStartAccessibleExam = useCallback(async () => {
+    if (!canStartAccessibleExam || startingAccessibleExam) return;
+
+    setAccessStatusMessage(null);
+    setStartingAccessibleExam(true);
+
+    try {
+      if (accessDecision.reason === 'rewarded_exam_credit') {
+        await consumeRewardedExamCredit();
+      } else if (accessDecision.canOfferRewardedAd) {
+        await grantRewardedExamCredit();
+        await consumeRewardedExamCredit();
+      } else if (!accessDecision.canStartExam) {
+        setAccessStatusMessage('Extra mock exams are unavailable right now.');
+        return;
+      }
+
+      resetExamAttempt();
+    } catch {
+      setAccessStatusMessage('Extra mock exam could not be unlocked right now.');
+    } finally {
+      setStartingAccessibleExam(false);
+    }
+  }, [
+    accessDecision.canOfferRewardedAd,
+    accessDecision.canStartExam,
+    accessDecision.reason,
+    canStartAccessibleExam,
+    consumeRewardedExamCredit,
+    grantRewardedExamCredit,
+    resetExamAttempt,
+    startingAccessibleExam,
+  ]);
+
+  useEffect(() => {
+    if (!submitted || completionRecorded) return undefined;
+
+    let isMounted = true;
+    void recordExamCompletion()
+      .then(() => {
+        if (isMounted) setCompletionRecorded(true);
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setCompletionRecorded(true);
+        setAccessStatusMessage('Mock exam completion could not be stored on this device.');
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [completionRecorded, recordExamCompletion, submitted]);
+
+  if (!result && !examUnlocked) {
+    return (
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <View style={styles.hero}>
+          <Badge tone="orange">Timed simulation</Badge>
+          <Text style={styles.title}>Mock exam</Text>
+          <Text style={styles.subtitle}>
+            Time limit {defaultMockExamConfig.durationMinutes} minutes · {examQuestions.length}{' '}
+            UHR-based questions · no ads during exam
+          </Text>
+        </View>
+        <QuestionDisclaimer />
+        <View style={styles.accessCard}>
+          <Text style={styles.sectionTitle}>Exam access</Text>
+          <Text style={styles.subtitle}>{accessStatusText}</Text>
+          {accessStatusMessage ? (
+            <Text style={styles.statusText}>{accessStatusMessage}</Text>
+          ) : null}
+          <Pressable
+            accessibilityLabel={startAccessibleExamLabel}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !canStartAccessibleExam || startingAccessibleExam }}
+            disabled={!canStartAccessibleExam || startingAccessibleExam}
+            onPress={handleStartAccessibleExam}
+            style={[
+              styles.primaryButton,
+              !canStartAccessibleExam || startingAccessibleExam
+                ? styles.primaryButtonDisabled
+                : null,
+            ]}
+          >
+            <Text style={styles.primaryButtonText}>{startAccessibleExamLabel}</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    );
+  }
 
   if (result) {
     return (
@@ -82,6 +235,37 @@ export default function Screen() {
           <Text style={styles.subtitle}>
             {result.correctCount}/{result.totalCount} correct
           </Text>
+        </View>
+        <View style={styles.accessCard}>
+          <View style={styles.reviewHeader}>
+            <Text style={styles.sectionTitle}>Next exam</Text>
+            <Badge tone={accessDecision.canStartExam ? 'green' : 'warm'}>
+              {completionRecorded ? 'Saved' : 'Saving'}
+            </Badge>
+          </View>
+          <Text style={styles.subtitle}>
+            {completionRecorded ? accessStatusText : "Saving today's mock exam completion."}
+          </Text>
+          {accessStatusMessage ? (
+            <Text style={styles.statusText}>{accessStatusMessage}</Text>
+          ) : null}
+          <Pressable
+            accessibilityLabel={startAccessibleExamLabel}
+            accessibilityRole="button"
+            accessibilityState={{
+              disabled: !completionRecorded || !canStartAccessibleExam || startingAccessibleExam,
+            }}
+            disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
+            onPress={handleStartAccessibleExam}
+            style={[
+              styles.secondaryButton,
+              !completionRecorded || !canStartAccessibleExam || startingAccessibleExam
+                ? styles.primaryButtonDisabled
+                : null,
+            ]}
+          >
+            <Text style={styles.secondaryButtonText}>{startAccessibleExamLabel}</Text>
+          </Pressable>
         </View>
 
         <Text style={styles.sectionTitle}>Chapter breakdown</Text>
@@ -237,6 +421,17 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     gap: space[0.5],
     padding: space[2],
+  },
+  accessCard: {
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    gap: space[1.25],
+    padding: space[2],
+  },
+  statusText: {
+    color: colors.warning,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   questionCard: {
     borderColor: colors.border,
