@@ -5,20 +5,24 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-test('chapter metadata text fields are trimmed and single-spaced', () => {
+function readValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
 
-  const summary = JSON.parse(match[0]);
-  assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
-  assert.equal(summary.chapterTextFieldsNormalizedValidated, summary.chapterSchemasValidated);
+test('UHR section-map section titles stay unique within each chapter', () => {
+  const summary = readValidationSummary();
+
+  assert.equal(summary.uhrMapSectionsValidated, 110);
+  assert.ok(summary.uhrMapSectionsValidated > summary.uhrMapChaptersValidated);
 });
 
-test('chapter metadata text normalization rejects whitespace drift', () => {
+test('UHR section-map section uniqueness rejects duplicate chapter sections', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -29,13 +33,10 @@ const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/chapters.ts')) {
-    return String(contents)
-      .replace("nameSv: 'Landet Sverige',", "nameSv: ' Landet  Sverige',")
-      .replace(
-        "descriptionEn: 'Geography, climate, nature, population, natural resources, and climate change.',",
-        "descriptionEn: 'Geography,  climate, nature, population, natural resources, and climate change. ',",
-      );
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    const map = JSON.parse(String(contents));
+    map.chapters[0].sections[1] = map.chapters[0].sections[0];
+    return JSON.stringify(map);
   }
   return contents;
 };
@@ -46,7 +47,8 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.match(output, /ch01 nameSv must be trimmed and single-spaced/);
-  assert.match(output, /ch01 descriptionEn must be trimmed and single-spaced/);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /ch01 has duplicate section "Geografi, klimat och natur"/,
+  );
 });

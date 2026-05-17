@@ -1,11 +1,34 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const expectedUhrMaterialUrl = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
+
+function runValidationWithUhrMapPatch(patchExpression) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    return String(contents).${patchExpression};
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
 
 test('sources route stays in parity with UHR source material metadata', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -33,4 +56,19 @@ test('sources route stays in parity with UHR source material metadata', () => {
   assert.match(sourcesRoute, /content\/question-bank\.csv/);
   assert.ok(uhrSectionMap.source.url.includes('/medborgarskapsprovet/utbildningsmaterial/'));
   assert.ok(sourcesRoute.includes(expectedUhrMaterialUrl));
+});
+
+test('sources parity rejects UHR map source URLs outside the education material path', () => {
+  const result = runValidationWithUhrMapPatch(
+    `replace(
+      '"url": "https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf"',
+      '"url": "https://www.uhr.se/globalassets/_uhr.se/other/sverige-i-fokus.pdf"',
+    )`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /UHR section map source URL must be under the UHR education material path/,
+  );
 });

@@ -146,6 +146,15 @@ const architectureExpectedExports = {
   'lib/theme/shadows.ts': ['shadows'],
   'lib/theme/spacing.ts': ['space'],
   'lib/theme/typography.ts': ['typography'],
+  'lib/scaffold/architectureManifest.ts': [
+    'ArchitectureScaffoldArea',
+    'ArchitectureScaffoldDirectory',
+    'ArchitectureScaffoldFile',
+    'ArchitectureScaffoldFilePath',
+    'architectureScaffoldDirectories',
+    'architectureScaffoldFiles',
+    'architectureTabRouteFiles',
+  ],
   'types/content.ts': ['Chapter', 'PracticeQuestion', 'UHRReference'],
   'types/progress.ts': ['QuizSession', 'UserProgress'],
   'types/monetization.ts': [
