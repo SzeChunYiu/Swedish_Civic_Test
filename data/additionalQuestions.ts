@@ -1685,7 +1685,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Lucia', pageApprox: 47 },
     'När säger UHR-materialet att Lucia firas?',
-    'When does the UHR material say Lucia is celebrated?',
+    'What date does the UHR material give for Lucia?',
     [
       ['13 december', '13 December'],
       ['30 april', '30 April'],
@@ -1694,7 +1694,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'UHR-avsnittet Lucia säger att helgonet Lucia firades den 13 december under katolsk tid. Avsnittet beskriver också att luciafirandet fick sin nuvarande form under 1800-talet och handlar mycket om att sprida ljus när det är som mörkast på året.',
-    'The UHR section Lucia says the saint Lucia was celebrated on 13 December during the Catholic period. It also describes how the Lucia celebration took its present form during the 19th century and is largely about spreading light at the darkest time of year.',
+    'The UHR section Lucia says Saint Lucia was celebrated on 13 December during the Catholic period. It also describes how the Lucia celebration took its current form during the 19th century and is largely about spreading light at the darkest time of year.',
     ['lucia', 'december-13', 'light', 'traditions'],
     'easy',
   ),
