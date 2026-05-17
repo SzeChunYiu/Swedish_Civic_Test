@@ -30,6 +30,7 @@ export function AdBanner({
   return (
     <View
       accessible
+      accessibilityHint="Sponsored ad banner. Hidden after Remove Ads is active."
       accessibilityLabel={`Google AdMob banner: ${placementLabel}`}
       style={styles.nativeSlot}
     >
