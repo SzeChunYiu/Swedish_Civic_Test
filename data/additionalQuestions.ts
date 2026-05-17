@@ -1350,8 +1350,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Miljonprogrammet startades för att lösa bostadsbrist när städerna växte.',
-    'The Million Programme began to solve housing shortages as cities grew.',
+    'UHR-avsnittet Sverige blir ett invandrarland säger att den snabba inflyttningen till städerna skapade brist på bostäder. För att lösa problemet startade staten miljonprogrammet under 1960-talet med målet att bygga en miljon bostäder på tio år.',
+    'The UHR section Sweden becomes an immigration country says rapid movement into cities created a housing shortage. To solve the problem, the state started the Million Programme during the 1960s with the goal of building one million homes in ten years.',
     ['million-programme', 'housing', '1960s'],
   ),
   single(
