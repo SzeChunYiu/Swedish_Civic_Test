@@ -934,12 +934,12 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Arbetsmarknadens parter',
       pageApprox: 28,
     },
-    'Vad gör fackförbund?',
-    'What do trade unions do?',
+    'Vad gör fackförbund enligt materialet?',
+    'According to the material, what do trade unions do?',
     [
       [
-        'De arbetar för anställdas villkor och förhandlar med arbetsgivare',
-        'They work for employees’ conditions and negotiate with employers',
+        'De företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar',
+        'They represent employees, negotiate wages, and can help members',
       ],
       [
         'De bestämmer vilka som får rösta i riksdagsval',
@@ -949,8 +949,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['De driver Sveriges ambassader', 'They run Sweden’s embassies'],
     ],
     0,
-    'Fackförbund företräder arbetstagare och kan förhandla om löner och villkor.',
-    'Trade unions represent employees and can negotiate wages and conditions.',
+    'UHR-avsnittet Arbetsmarknadens parter säger att fackliga organisationer representerar arbetstagarna. Fackförbunden arbetar för att de anställda ska få det bättre, förhandlar om löner med arbetsgivaren och kan hjälpa medlemmar som får problem på arbetet.',
+    'The UHR section Labour-market parties says that union organizations represent employees. Trade unions work to improve employees’ conditions, negotiate wages with employers, and can help members who have problems at work.',
     ['unions', 'labour-market', 'collective-agreement'],
   ),
   trueFalse(
