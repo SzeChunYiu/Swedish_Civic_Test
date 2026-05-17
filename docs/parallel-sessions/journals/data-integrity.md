@@ -61,3 +61,11 @@ Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.te
 Verification: `npm run validate:content` passed and reported 100 `authoredSourceQuestionsValidated` plus 100 `sourcePublicationParityValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed and reported 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check package.json scripts/validate-content.js scripts/content-production.test.js tests/content-authored-source-parity.test.js` passed; `git diff --check -- package.json scripts/validate-content.js scripts/content-production.test.js tests/content-authored-source-parity.test.js` passed.
 Blocked? no - the validator now rejects authored source questions that are not reviewed/sequential before publication and rejects any published source row that drifts from its authored source fields beyond the intended `reviewStatus` change.
 Next suggested validator action: review and accept this DATA-INTEGRITY parity atom, then keep `npm run validate:content` and `npm run test:content` as the nearest authored-source publication drift gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Published question option-label uniqueness schema atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`.
+Verification: `npm run validate:content` passed and reported 500 `questionOptionTextLabelsValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed and reported 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js` passed.
+Blocked? no - the content validator now rejects duplicate visible answer-option labels in either Swedish or English before a question can count as schema-valid.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest option-label regression gates.

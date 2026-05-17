@@ -159,3 +159,18 @@ Workspace contract: pass with caveats — no product source edited; the dirty-wo
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCES-LINK-1`.
 Evidence: `/sources` returned `headingVisible:true`, `showsUhrUrlText:true`, `linkCount:1`, only `Back to Profile`, `hasExternalUhrLink:false`, and console/page errors 0.
 Next manager action: assign a source-touching legal/source page atom so primary source URLs are accessible external links, not plain text only.
+
+Lane: REVIEWER
+Artifact reviewed: current dirty-checkout monetization surface after ads/IAP source changes.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Rechecked existing `REVIEWER-ADS-IAP-1` instead of creating a duplicate because app/monetization source changed after the original finding.
+- `grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts && ! grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts` — exit 0.
+- `test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib` — exit 1.
+- `npm run test:monetization` — exit 0, 10/10 tests passed.
+- `CI=1 timeout 360s npm run build:web:export` — exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright route pass against `/home`, `/profile`, and `/exam` using `/usr/bin/google-chrome` on port 4185 — exit 1 because `/profile` still lacks Remove Ads, 29 SEK, and Restore UI.
+Workspace contract: pass with caveats — no product source edited; source changed during the reviewer loop, so acceptance still needs a manager-owned artifact boundary.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ADS-IAP-1 update`.
+Evidence: `/home` now shows AdMob test placement (`googleAdMobCount:2`, `homeBannerVisible:1`), `/exam` no longer shows global launch ads (`launchSponsorVisible:0`, `googleAdMobVisible:0`), but `/profile` returned `removeAdsVisible:false`, `priceVisible:false`, `restoreVisible:false`, and stale deferred copy still visible; console/page errors 0.
+Next manager action: keep ADS/IAP open for a source-touching paywall UI/entitlement atom; do not accept monetization solely on green unit tests or fixed home/exam ad rendering.

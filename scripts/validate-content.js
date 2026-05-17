@@ -61,6 +61,26 @@ function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+function normalizeOptionText(value) {
+  return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
+}
+
+function findDuplicateOptionTextLabels(question) {
+  if (!Array.isArray(question.options)) return [];
+
+  const duplicates = [];
+  for (const field of ['textSv', 'textEn']) {
+    const labels = new Set();
+    question.options.forEach((option) => {
+      const label = normalizeOptionText(option?.[field]);
+      if (!label) return;
+      if (labels.has(label)) duplicates.push({ field, label });
+      labels.add(label);
+    });
+  }
+  return duplicates;
+}
+
 function validateQuestionSchema(question, index) {
   const label = hasText(question.id) ? question.id : `question[${index}]`;
   let valid = true;
@@ -112,6 +132,9 @@ function validateQuestionSchema(question, index) {
       if (!hasText(option.textSv)) reject(`${optionLabel} missing textSv`);
       if (!hasText(option.textEn)) reject(`${optionLabel} missing textEn`);
     });
+    findDuplicateOptionTextLabels(question).forEach((duplicate) => {
+      reject(`${label} has duplicate ${duplicate.field} option text "${duplicate.label}"`);
+    });
 
     if (!optionIds.has(question.correctOptionId)) {
       reject(`${label} correctOptionId does not match an option`);
@@ -153,6 +176,7 @@ const uhrSectionMap = JSON.parse(
 );
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
+let questionOptionTextLabelsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let questionChapterReferenceParityValidated = 0;
@@ -440,7 +464,13 @@ if (Array.isArray(questions)) {
       fail(`${label} references unknown chapter ${question.chapterId}`);
     }
 
-    if (validateQuestionSchema(question, index)) questionSchemasValidated += 1;
+    const questionSchemaIsValid = validateQuestionSchema(question, index);
+    if (questionSchemaIsValid) {
+      questionSchemasValidated += 1;
+      if (findDuplicateOptionTextLabels(question).length === 0) {
+        questionOptionTextLabelsValidated += 1;
+      }
+    }
 
     if (
       !question.uhrReference?.chapter ||
@@ -536,6 +566,7 @@ console.log(
       sourcePublicationParityValidated,
       generationParityValidated,
       questionSchemasValidated,
+      questionOptionTextLabelsValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
       questionChapterReferenceParityValidated,

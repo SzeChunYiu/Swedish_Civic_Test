@@ -81,3 +81,11 @@ Question count (if applicable): 500 published questions total; source-question c
 Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `npx prettier --check data/additionalQuestions.ts` → passed; `node scripts/export-question-bank.js --check` → parity OK; `git diff --check` → exit 0; custom q036/source-count assertion → `q036 OK; sourceQuestions=100; questions=500`.
 Blocked? no — atom shipped without changing the 500-question production contract.
 Next suggested validator action: review `q036` source wording against UHR `Sverige i fokus`, Chapter 5, section `Grundlagarna`, approximate PDF page 16.
+
+## Iteration 11 — 2026-05-17
+Task completed: Verified question atom — tightened `q037` into a Swedish-English regeringsformen/public-power question traced to UHR `Lag och rätt` / `Regeringsformen`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count (if applicable): 500 published questions total; source-question count unchanged at 100.
+Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `npx prettier --check data/additionalQuestions.ts` → passed; `node scripts/export-question-bank.js --check` → parity OK; `git diff --check` → exit 0; custom q037/export assertion → `q037 OK; exportedQuestions=500`.
+Blocked? no — atom shipped without changing the 500-question production contract.
+Next suggested validator action: review `q037` source wording against UHR `Sverige i fokus`, Chapter 5, section `Regeringsformen`, approximate PDF page 16.
