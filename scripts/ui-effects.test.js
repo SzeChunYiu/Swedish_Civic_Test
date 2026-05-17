@@ -101,6 +101,21 @@ test('settings controls mirror selected and checked state to web aria attributes
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('settings route remains scrollable on narrow mobile viewports', () => {
+  const source = read('app/settings.tsx');
+
+  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
+  assert.match(
+    source,
+    /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
+  );
+  assert.match(source, /<\/ScrollView>/);
+  assert.match(source, /content: \{\n\s+flexGrow: 1,/);
+  assert.match(source, /paddingBottom: space\[10\]/);
+  assert.doesNotMatch(source, /<View style=\{styles\.container\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('onboarding route exposes its primary title as a header', () => {
   const source = read('app/onboarding.tsx');
 
@@ -108,6 +123,21 @@ test('onboarding route exposes its primary title as a header', () => {
   assert.match(source, /Prepare calmly for the civic test/);
   assert.match(source, /Start studying/);
   assert.match(source, /Adjust settings/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('onboarding route remains scrollable on narrow mobile viewports', () => {
+  const source = read('app/onboarding.tsx');
+
+  assert.match(source, /import \{ ScrollView, StyleSheet, Text, View \}/);
+  assert.match(
+    source,
+    /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
+  );
+  assert.match(source, /<\/ScrollView>/);
+  assert.match(source, /content: \{\n\s+flexGrow: 1,/);
+  assert.match(source, /paddingBottom: space\[10\]/);
+  assert.doesNotMatch(source, /<View style=\{styles\.container\}>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

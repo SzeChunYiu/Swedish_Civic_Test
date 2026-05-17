@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
@@ -13,7 +13,7 @@ const steps = [
 
 export default function Screen() {
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Text style={styles.eyebrow}>Welcome</Text>
         <Text accessibilityRole="header" style={styles.title}>
@@ -54,7 +54,7 @@ export default function Screen() {
           Adjust settings
         </Link>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -62,9 +62,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface,
     flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     gap: space[2.25],
     justifyContent: 'center',
     padding: space[3],
+    paddingBottom: space[10],
   },
   hero: {
     backgroundColor: colors.surface,

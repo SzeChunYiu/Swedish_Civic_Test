@@ -1133,8 +1133,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q073',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
-    'Vilka exempel på kommunalt styrd välfärd listar UHR-materialet?',
-    'Which examples of municipally governed welfare does the UHR material list?',
+    'Vilka exempel på kommunal välfärd listar UHR-materialet?',
+    'Which examples of municipal welfare does the UHR material list?',
     [
       [
         'Barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst',
@@ -1151,8 +1151,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Domstolar, åklagare, polis och fängelser', 'Courts, prosecutors, police, and prisons'],
     ],
     0,
-    'UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunerna ser till att det finns skolor och utbildning och ansvarar för hjälp till gamla och sjuka. Avsnittet listar barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst som exempel på kommunalt styrd välfärd.',
-    'The UHR section Municipalities have a large responsibility says municipalities ensure access to schools and education and are responsible for help for older and sick people. It lists childcare, schools and education, elderly care, and social services as examples of municipally governed welfare.',
+    'UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunerna ser till att det finns skolor och utbildning och ansvarar för hjälp till gamla och sjuka. Avsnittet listar barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst som exempel på kommunal välfärd.',
+    'The UHR section Municipalities have a large responsibility says municipalities ensure access to schools and education and are responsible for help for older and sick people. It lists childcare, schools and education, elderly care, and social services as examples of municipal welfare.',
     ['municipal-welfare', 'schools', 'social-services'],
   ),
   trueFalse(
@@ -1174,25 +1174,28 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Från jordbrukssamhälle till industrisamhälle',
       pageApprox: 32,
     },
-    'Enligt UHR-materialet, hur beskrivs Sverige för ungefär tvåhundra år sedan?',
-    'According to the UHR material, how is Sweden described about two hundred years ago?',
+    'Hur beskriver UHR-materialet Sverige för tvåhundra år sedan?',
+    'How does the UHR material describe Sweden two hundred years ago?',
     [
-      ['Som ett fattigt jordbruksland', 'As a poor agricultural country'],
+      [
+        'Som ett typiskt jordbruksland där nästan alla bodde på landet',
+        'As a typical agricultural country where almost everyone lived in the countryside',
+      ],
       ['Som ett högteknologiskt informationssamhälle', 'As a high-tech information society'],
       ['Som ett land utan landsbygd', 'As a country without countryside'],
       ['Som ett land utan städer', 'As a country without cities'],
     ],
     0,
-    'UHR-avsnittet Från jordbrukssamhälle till industrisamhälle säger att Sverige för tvåhundra år sedan var ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet, och Sverige var då fattigt jämfört med andra länder i Europa.',
-    'The UHR section From agricultural society to industrial society says Sweden was a typical agricultural country two hundred years ago. Almost the whole population lived in the countryside, and Sweden was poor at that time compared with other countries in Europe.',
+    'UHR-avsnittet Från jordbrukssamhälle till industrisamhälle säger att Sverige för tvåhundra år sedan var ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, och Sverige var fattigt jämfört med andra länder i Europa.',
+    'The UHR section From agricultural society to industrial society says Sweden was a typical agricultural country two hundred years ago. Almost the whole population lived in the countryside and worked by farming and caring for animals, and Sweden was poor compared with other European countries.',
     ['modern-history', 'agriculture', 'industrialization'],
   ),
   single(
     'q076',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Befolkningsökning', pageApprox: 32 },
-    'Varför ökade Sveriges befolkning under 1800-talet enligt materialet?',
-    'Why did Sweden’s population grow during the 19th century according to the material?',
+    'Enligt UHR-materialet, varför ökade Sveriges befolkning under 1800-talet?',
+    'According to the UHR material, why did Sweden’s population grow during the 19th century?',
     [
       [
         'Bättre jordbruksmetoder och medicinska framsteg',

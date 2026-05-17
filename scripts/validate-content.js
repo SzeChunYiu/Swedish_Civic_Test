@@ -177,6 +177,62 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Session\s*\{normalizedSessionId\}\s*<\/Text>/,
   },
 ];
+const EXPECTED_LEARN_ROUTE_HEADERS = [
+  {
+    label: 'learn route title',
+    pattern: /<ScreenShell[\s\S]*\btitle="Browse chapters with a clear next step"/,
+  },
+  {
+    label: 'chapter-list section title',
+    pattern: /<SectionHeader[\s\S]*\btitle="13 civic areas"/,
+  },
+];
+const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
+  {
+    label: 'ScrollView import',
+    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  },
+  {
+    label: 'scroll root container',
+    pattern:
+      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+  },
+  {
+    label: 'scroll root closing tag',
+    pattern: /<\/ScrollView>/,
+  },
+  {
+    label: 'growing scroll content',
+    pattern: /content:\s*\{\s*flexGrow:\s*1,/,
+  },
+  {
+    label: 'bottom safe padding',
+    pattern: /paddingBottom:\s*space\[10\]/,
+  },
+];
+const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+  {
+    label: 'ScrollView import',
+    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  },
+  {
+    label: 'scroll root container',
+    pattern:
+      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+  },
+  {
+    label: 'scroll root closing tag',
+    pattern: /<\/ScrollView>/,
+  },
+  {
+    label: 'growing scroll content',
+    pattern: /content:\s*\{\s*flexGrow:\s*1,/,
+  },
+  {
+    label: 'bottom safe padding',
+    pattern: /paddingBottom:\s*space\[10\]/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -1791,6 +1847,12 @@ let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
+let learnRouteHeadersValidated = 0;
+let learnRouteHeaderParityValidated = false;
+let settingsRouteScrollRulesValidated = 0;
+let settingsRouteScrollParityValidated = false;
+let onboardingRouteScrollRulesValidated = 0;
+let onboardingRouteScrollParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2904,6 +2966,129 @@ function validateQuizRouteHeaderParity() {
 
   if (valid && quizRouteHeadersValidated === EXPECTED_QUIZ_ROUTE_HEADERS.length) {
     quizRouteHeaderParityValidated = true;
+  }
+}
+
+function validateLearnRouteHeaderParity() {
+  let valid = true;
+  let learnRoute = '';
+  let screenShell = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    learnRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+    screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
+  } catch (error) {
+    reject(`learn route header files could not be read: ${error.message}`);
+    return;
+  }
+
+  if (
+    !learnRoute.includes(
+      "import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';",
+    )
+  ) {
+    reject('learn route must use the shared ScreenShell and SectionHeader header components');
+  }
+
+  const directRouteHeadings =
+    learnRoute.match(
+      /<Text\s+(?:accessibilityRole="header"\s+)?style=\{styles\.(?:title|sectionTitle)\}>/g,
+    ) || [];
+  if (directRouteHeadings.length > 0) {
+    reject('learn route headings must stay on the shared ScreenShell/SectionHeader path');
+  }
+
+  if (
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>/.test(screenShell) ||
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(screenShell)
+  ) {
+    reject('learn route shared heading components must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_LEARN_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(learnRoute)) {
+      reject(`learn route missing ${expectedHeader.label} on the shared header path`);
+      return;
+    }
+    learnRouteHeadersValidated += 1;
+  });
+
+  if (valid && learnRouteHeadersValidated === EXPECTED_LEARN_ROUTE_HEADERS.length) {
+    learnRouteHeaderParityValidated = true;
+  }
+}
+
+function validateSettingsRouteScrollParity() {
+  let valid = true;
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/settings.tsx could not be read for scroll parity: ${error.message}`);
+    return;
+  }
+
+  if (/<View\s+style=\{styles\.container\}>/.test(settingsRoute)) {
+    reject('settings route must keep its root content inside ScrollView for mobile scrolling');
+  }
+
+  EXPECTED_SETTINGS_ROUTE_SCROLL_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(settingsRoute)) {
+      reject(`settings route missing ${expectedRule.label} for mobile scroll parity`);
+      return;
+    }
+    settingsRouteScrollRulesValidated += 1;
+  });
+
+  if (valid && settingsRouteScrollRulesValidated === EXPECTED_SETTINGS_ROUTE_SCROLL_RULES.length) {
+    settingsRouteScrollParityValidated = true;
+  }
+}
+
+function validateOnboardingRouteScrollParity() {
+  let valid = true;
+  let onboardingRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/onboarding.tsx could not be read for scroll parity: ${error.message}`);
+    return;
+  }
+
+  if (/<View\s+style=\{styles\.container\}>/.test(onboardingRoute)) {
+    reject('onboarding route must keep its root content inside ScrollView for mobile scrolling');
+  }
+
+  EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(onboardingRoute)) {
+      reject(`onboarding route missing ${expectedRule.label} for mobile scroll parity`);
+      return;
+    }
+    onboardingRouteScrollRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    onboardingRouteScrollRulesValidated === EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES.length
+  ) {
+    onboardingRouteScrollParityValidated = true;
   }
 }
 
@@ -6900,6 +7085,9 @@ validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
+validateLearnRouteHeaderParity();
+validateSettingsRouteScrollParity();
+validateOnboardingRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -6977,6 +7165,12 @@ console.log(
       examRouteHeaderParityValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
+      learnRouteHeadersValidated,
+      learnRouteHeaderParityValidated,
+      settingsRouteScrollRulesValidated,
+      settingsRouteScrollParityValidated,
+      onboardingRouteScrollRulesValidated,
+      onboardingRouteScrollParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
