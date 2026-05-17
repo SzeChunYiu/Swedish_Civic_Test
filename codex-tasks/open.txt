@@ -122,3 +122,23 @@ TESTS (add, must pass): over the full published bank, correct-answer display
   session; isCorrectAnswer correct post-shuffle. Keep all 7 acceptance steps
   green. This is the highest-priority item in this file.
 === END P0 ===
+
+=== PRIORITY: ONLINE STUDY EBOOK (operator 2026-05-17) ===
+EBOOK [feature+content, v1.0 = SV+EN; more langs tracked in v1.1 spec]:
+Add a "Study / Läs" section readable ONLINE on the web build (and in-app),
+a structured study ebook covering the Swedish citizenship knowledge domains
+(geography & nature, history, society & democracy, working life, laws & rights,
+everyday life, culture, etc.) — chapters + table of contents + in-chapter
+navigation, comfortable reading layout per DESIGN.md (serif headings, 1.6
+line-height, parchment), works great on the live web URL.
+HARD CONTENT RULES:
+- ORIGINAL, PARAPHRASED prose — do NOT copy UHR (or any source) text
+  verbatim or near-verbatim. Rewrite naturally in our own words.
+- Natural, fluent language (not machine/literal). SV + EN parity now; the
+  SAME translated language set as the app (full multi-language = v1.1).
+- Each chapter cites its verifiable public source(s) at the end.
+- Keep legal-safety: no claimed official affiliation, not an official text,
+  disclaimer present. Factually accurate & current; wrong = P0.
+- Cross-link: questions can reference the relevant ebook chapter.
+Ship SV+EN chapters incrementally (repeatable atoms), web reading UX first.
+=== END EBOOK ===
