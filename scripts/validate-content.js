@@ -202,6 +202,46 @@ const EXPECTED_CONTENT_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_MONETIZATION_TYPE_UNIONS = [
+  {
+    typeName: 'AdPlacement',
+    values: [
+      'home_banner',
+      'chapter_list_banner',
+      'quiz_completed_interstitial',
+      'results_native',
+      'rewarded_extra_exam',
+      'app_open_launch',
+    ],
+  },
+];
+const EXPECTED_MONETIZATION_INTERFACES = [
+  {
+    name: 'AdUnitConfig',
+    fields: [
+      { name: 'placement', type: 'AdPlacement', optional: false },
+      { name: 'iosUnitId', type: 'string', optional: true },
+      { name: 'androidUnitId', type: 'string', optional: true },
+      { name: 'enabled', type: 'boolean', optional: false },
+      { name: 'testOnly', type: 'boolean', optional: false },
+    ],
+  },
+  {
+    name: 'PremiumEntitlements',
+    fields: [
+      { name: 'adsDisabled', type: 'boolean', optional: false },
+      { name: 'unlimitedMockExams', type: 'boolean', optional: false },
+      { name: 'fullMistakeReview', type: 'boolean', optional: false },
+    ],
+  },
+  {
+    name: 'MonetizationState',
+    fields: [
+      { name: 'premium', type: 'PremiumEntitlements', optional: false },
+      { name: 'adUnits', type: 'AdUnitConfig[]', optional: false },
+    ],
+  },
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -980,6 +1020,9 @@ let progressQuestionSchemaParityValidated = false;
 let progressTypeUnionsValidated = 0;
 let progressTypeInterfacesValidated = 0;
 let progressTypeSchemaParityValidated = false;
+let monetizationTypeUnionsValidated = 0;
+let monetizationTypeInterfacesValidated = 0;
+let monetizationTypeSchemaParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -2155,6 +2198,101 @@ function validateContentTypeSchemaParity() {
     contentTypeInterfacesValidated === EXPECTED_CONTENT_INTERFACES.length
   ) {
     contentTypeSchemaParityValidated = true;
+  }
+}
+
+function validateMonetizationTypeSchemaParity() {
+  let valid = true;
+  let monetizationTypesSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    monetizationTypesSource = fs.readFileSync(path.join(repoRoot, 'types/monetization.ts'), 'utf8');
+  } catch (error) {
+    reject(`types/monetization.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_MONETIZATION_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(monetizationTypesSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`types/monetization.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `types/monetization.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    monetizationTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_MONETIZATION_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      monetizationTypesSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `types/monetization.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `types/monetization.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `types/monetization.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `types/monetization.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `types/monetization.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) monetizationTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    monetizationTypeUnionsValidated === EXPECTED_MONETIZATION_TYPE_UNIONS.length &&
+    monetizationTypeInterfacesValidated === EXPECTED_MONETIZATION_INTERFACES.length
+  ) {
+    monetizationTypeSchemaParityValidated = true;
   }
 }
 
@@ -3743,6 +3881,7 @@ validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateContentTypeSchemaParity();
+validateMonetizationTypeSchemaParity();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
@@ -3801,6 +3940,9 @@ console.log(
       contentTypeUnionsValidated,
       contentTypeInterfacesValidated,
       contentTypeSchemaParityValidated,
+      monetizationTypeUnionsValidated,
+      monetizationTypeInterfacesValidated,
+      monetizationTypeSchemaParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
