@@ -91,8 +91,9 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q004',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vad heter havet vid Sveriges östra kust?',
-    questionEn: "What is the sea along Sweden's eastern coast called?",
+    questionSv: 'Enligt UHR-materialet, vad heter havet vid Sveriges östra kust?',
+    questionEn:
+      "According to the UHR material, what is the sea along Sweden's eastern coast called?",
     options: [
       { id: 'a', textSv: 'Nordsjön', textEn: 'The North Sea' },
       { id: 'b', textSv: 'Medelhavet', textEn: 'The Mediterranean Sea' },
@@ -101,9 +102,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Havet vid Sveriges östra kust heter Östersjön. Skagerrak och Kattegatt ligger däremot vid västkusten.',
+      'UHR-avsnittet Geografi, klimat och natur säger att havet vid Sveriges östra kust heter Östersjön. Samma avsnitt säger att Skagerrak och Kattegatt ligger vid västkusten, vilket gör de andra alternativen fel.',
     explanationEn:
-      "The sea along Sweden's eastern coast is the Baltic Sea. Skagerrak and Kattegat are instead on the west coast.",
+      'The UHR section Geography, climate, and nature says that the sea along Sweden’s eastern coast is the Baltic Sea. The same section says Skagerrak and Kattegat are on the west coast, which makes the other options incorrect.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
