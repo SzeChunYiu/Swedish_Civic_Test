@@ -25,26 +25,39 @@ const BANNED = [
 function parseCsv(text) {
   // RFC4180-ish: every field quoted (QUOTE_ALL export).
   const rows = [];
-  let row = [], field = '', inQ = false;
+  let row = [],
+    field = '',
+    inQ = false;
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (inQ) {
-      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
-      else if (c === '"') inQ = false;
+      if (c === '"' && text[i + 1] === '"') {
+        field += '"';
+        i++;
+      } else if (c === '"') inQ = false;
       else field += c;
     } else if (c === '"') inQ = true;
-    else if (c === ',') { row.push(field); field = ''; }
-    else if (c === '\n' || c === '\r') {
-      if (field !== '' || row.length) { row.push(field); rows.push(row); row = []; field = ''; }
+    else if (c === ',') {
+      row.push(field);
+      field = '';
+    } else if (c === '\n' || c === '\r') {
+      if (field !== '' || row.length) {
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = '';
+      }
       if (c === '\r' && text[i + 1] === '\n') i++;
     } else field += c;
   }
-  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  if (field !== '' || row.length) {
+    row.push(field);
+    rows.push(row);
+  }
   return rows;
 }
 
-test('question stems carry no connective UHR-source phrase', () => {
-  const text = fs.readFileSync(CSV, 'utf8');
+function collectStemAuthorityConnectiveOffenders(text) {
   const rows = parseCsv(text);
   const header = rows[0];
   const idIdx = header.indexOf('id');
@@ -62,9 +75,33 @@ test('question stems carry no connective UHR-source phrase', () => {
       }
     }
   }
+  return offenders;
+}
+
+test('question stems carry no connective UHR-source phrase', () => {
+  const text = fs.readFileSync(CSV, 'utf8');
+  const offenders = collectStemAuthorityConnectiveOffenders(text);
+
   assert.equal(
-    offenders.length, 0,
+    offenders.length,
+    0,
     `Found ${offenders.length} stem(s) with the UHR-source connective phrase ` +
-    `(must live only in the Källa/Source line):\n` + offenders.slice(0, 20).join('\n'),
+      `(must live only in the Källa/Source line):\n` +
+      offenders.slice(0, 20).join('\n'),
   );
+});
+
+test('source-citation stem gate rejects connective phrase drift in exported CSV', () => {
+  const dirtyExport = fs
+    .readFileSync(CSV, 'utf8')
+    .replace(
+      '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
+      '"q001","ch01","single_choice","Enligt UHR-materialet, var ligger Sverige?","According to the UHR material, where is Sweden located?",',
+    );
+
+  const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);
+
+  assert.equal(offenders.length, 2);
+  assert.match(offenders.join('\n'), /q001 \[questionSv\]/);
+  assert.match(offenders.join('\n'), /q001 \[questionEn\]/);
 });
