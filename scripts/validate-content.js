@@ -304,6 +304,27 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     ],
   },
 ];
+const EXPECTED_SETTINGS_ROUTE_HEADERS = [
+  {
+    label: 'settings route title',
+    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Settings\s*<\/Text>/,
+  },
+  {
+    label: 'question language section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Question language\s*<\/Text>/,
+  },
+  {
+    label: 'audio section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Audio\s*<\/Text>/,
+  },
+  {
+    label: 'daily goal section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Daily goal\s*<\/Text>/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
@@ -1982,6 +2003,8 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
+let settingsRouteHeadersValidated = 0;
+let settingsRouteHeaderParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
@@ -3446,6 +3469,41 @@ function validateLegalRouteHeaderParity() {
   );
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
+  }
+}
+
+function validateSettingsRouteHeaderParity() {
+  let valid = true;
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/settings.tsx could not be read for header parity: ${error.message}`);
+    return;
+  }
+
+  const unheaderedRouteHeadings =
+    settingsRoute.match(/<Text\s+style=\{styles\.(?:title|sectionTitle)\}>/g) || [];
+  if (unheaderedRouteHeadings.length > 0) {
+    reject('settings route title and section text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_SETTINGS_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(settingsRoute)) {
+      reject(`settings route missing ${expectedHeader.label} as a header`);
+      return;
+    }
+    settingsRouteHeadersValidated += 1;
+  });
+
+  if (valid && settingsRouteHeadersValidated === EXPECTED_SETTINGS_ROUTE_HEADERS.length) {
+    settingsRouteHeaderParityValidated = true;
   }
 }
 
@@ -7518,6 +7576,7 @@ validateProfileRouteHeaderParity();
 validateHomeRouteHeaderParity();
 validateMistakesRouteHeaderParity();
 validateLegalRouteHeaderParity();
+validateSettingsRouteHeaderParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -7611,6 +7670,8 @@ console.log(
       mistakesRouteHeaderParityValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
+      settingsRouteHeadersValidated,
+      settingsRouteHeaderParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,
