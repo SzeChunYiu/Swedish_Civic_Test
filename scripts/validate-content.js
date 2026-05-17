@@ -425,6 +425,65 @@ const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
     pattern: /<\/ScrollView>/,
   },
 ];
+const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
+  {
+    label: 'native Pressable root',
+    pattern: /<Pressable[\s\S]*>/,
+  },
+  {
+    label: 'default button role',
+    pattern: /accessibilityRole\s*=\s*'button'/,
+  },
+  {
+    label: 'explicit state merge',
+    pattern: /const mergedAccessibilityState = \{\s*\.\.\.accessibilityState,/,
+  },
+  {
+    label: 'disabled prop merged into accessibility state',
+    pattern: /\.\.\.\(disabled == null \? \{\} : \{ disabled \}\),/,
+  },
+  {
+    label: 'plain child label fallback',
+    pattern:
+      /typeof children === 'string' \|\| typeof children === 'number' \? String\(children\) : undefined/,
+  },
+  {
+    label: 'busy state mirrored to web aria',
+    pattern: /aria-busy=\{mergedAccessibilityState\.busy === true\}/,
+  },
+  {
+    label: 'checked state mirrored to web aria',
+    pattern: /aria-checked=\{mergedAccessibilityState\.checked\}/,
+  },
+  {
+    label: 'disabled state mirrored to web aria',
+    pattern: /aria-disabled=\{mergedAccessibilityState\.disabled === true\}/,
+  },
+  {
+    label: 'expanded state mirrored to web aria',
+    pattern: /aria-expanded=\{mergedAccessibilityState\.expanded\}/,
+  },
+  {
+    label: 'selected state mirrored to web aria',
+    pattern: /aria-selected=\{mergedAccessibilityState\.selected\}/,
+  },
+  {
+    label: 'label mirrored to web aria',
+    pattern: /aria-label=\{buttonAccessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{buttonAccessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
+  },
+  {
+    label: 'native accessibility state',
+    pattern: /accessibilityState=\{mergedAccessibilityState\}/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2069,6 +2128,8 @@ let onboardingRouteScrollRulesValidated = 0;
 let onboardingRouteScrollParityValidated = false;
 let legalRouteScrollRulesValidated = 0;
 let legalRouteScrollParityValidated = false;
+let buttonAccessibilityRulesValidated = 0;
+let buttonAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -3739,6 +3800,35 @@ function validateLegalRouteScrollParity() {
 
   if (valid && legalRouteScrollRulesValidated === EXPECTED_LEGAL_ROUTE_SCROLL_RULES.length) {
     legalRouteScrollParityValidated = true;
+  }
+}
+
+function validateButtonAccessibilityParity() {
+  let valid = true;
+  let buttonSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    buttonSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/Button.tsx could not be read for accessibility parity: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_BUTTON_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(buttonSource)) {
+      reject(`Button missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    buttonAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && buttonAccessibilityRulesValidated === EXPECTED_BUTTON_ACCESSIBILITY_RULES.length) {
+    buttonAccessibilityParityValidated = true;
   }
 }
 
@@ -7826,6 +7916,7 @@ validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateLegalRouteScrollParity();
+validateButtonAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -7930,6 +8021,8 @@ console.log(
       onboardingRouteScrollParityValidated,
       legalRouteScrollRulesValidated,
       legalRouteScrollParityValidated,
+      buttonAccessibilityRulesValidated,
+      buttonAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
