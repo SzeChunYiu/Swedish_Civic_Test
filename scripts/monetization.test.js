@@ -181,6 +181,284 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   );
 });
 
+test('rewarded extra exam access uses free limits before offering ads', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: undefined,
+    },
+    () => {
+      const {
+        REWARDED_EXTRA_EXAM_PLACEMENT,
+        consumeRewardedExtraExamCredit,
+        getMockExamAccessDecision,
+        grantRewardedExtraExamCredit,
+      } = loadTs('lib/monetization/rewardedExam.ts');
+      const { shouldShowAd } = loadTs('lib/monetization/ads.ts');
+      const freeEntitlements = { adsDisabled: false, unlimitedMockExams: false };
+
+      assert.equal(REWARDED_EXTRA_EXAM_PLACEMENT, 'rewarded_extra_exam');
+      assert.equal(shouldShowAd('exam_screen', { adsDisabled: false }), false);
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 0,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }),
+        {
+          canOfferRewardedAd: false,
+          canStartExam: true,
+          freeExamsRemaining: 1,
+          placement: 'rewarded_extra_exam',
+          reason: 'free_exam_available',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }),
+        {
+          canOfferRewardedAd: true,
+          canStartExam: false,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'rewarded_ad_available',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+
+      const grantedCredit = grantRewardedExtraExamCredit(0);
+      assert.equal(grantedCredit, 1);
+      assert.equal(consumeRewardedExtraExamCredit(grantedCredit), 0);
+      assert.equal(consumeRewardedExtraExamCredit(0), 0);
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+          rewardedExtraExamCredits: grantedCredit,
+        }),
+        {
+          canOfferRewardedAd: false,
+          canStartExam: true,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'rewarded_exam_credit',
+          rewardedExtraExamCredits: 1,
+        },
+      );
+
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: { adsDisabled: true, unlimitedMockExams: false },
+          freeMockExamLimit: 1,
+        }).reason,
+        'remove_ads_active',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 9,
+          entitlements: { adsDisabled: true, unlimitedMockExams: true },
+          freeMockExamLimit: 1,
+        }).reason,
+        'premium_unlimited_mock_exams',
+      );
+    },
+  );
+});
+
+test('rewarded extra exam access honors real-ad consent readiness', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
+        'ca-app-pub-1234567890123456/3333333333',
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const { getMockExamAccessDecision } = loadTs('lib/monetization/rewardedExam.ts');
+      const freeEntitlements = { adsDisabled: false, unlimitedMockExams: false };
+
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }).reason,
+        'consent_required',
+      );
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          consentDecision: { adServingAllowed: true },
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }),
+        {
+          canOfferRewardedAd: true,
+          canStartExam: false,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'rewarded_ad_available',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+    },
+  );
+});
+
+test('mock exam access persistence stores daily completions and rewarded credits', async () => {
+  const {
+    MOCK_EXAM_ACCESS_STORAGE_KEY,
+    clearStoredMockExamAccess,
+    consumeStoredRewardedExtraExamCredit,
+    createMemoryMockExamAccessStorage,
+    createSecureStoreMockExamAccessStorage,
+    createWebMockExamAccessStorage,
+    getStoredMockExamAccess,
+    grantStoredRewardedExtraExamCredit,
+    recordStoredMockExamCompletion,
+  } = loadTs('lib/monetization/rewardedExam.ts');
+  const storage = createMemoryMockExamAccessStorage();
+
+  assert.equal(MOCK_EXAM_ACCESS_STORAGE_KEY, 'monetization.mockExamAccess.v1');
+
+  assert.deepEqual(await getStoredMockExamAccess({ date: '2026-05-17T09:30:00.000Z', storage }), {
+    completedMockExamsByDate: {},
+    completedMockExamsToday: 0,
+    dateKey: '2026-05-17',
+    rewardedExtraExamCredits: 0,
+  });
+
+  await recordStoredMockExamCompletion({ date: '2026-05-17T10:00:00.000Z', storage });
+  const todaySnapshot = await recordStoredMockExamCompletion({
+    date: '2026-05-17T11:00:00.000Z',
+    storage,
+  });
+
+  assert.equal(todaySnapshot.completedMockExamsToday, 2);
+  assert.equal(todaySnapshot.completedMockExamsByDate['2026-05-17'], 2);
+
+  const tomorrowSnapshot = await getStoredMockExamAccess({
+    date: '2026-05-18T08:00:00.000Z',
+    storage,
+  });
+
+  assert.equal(tomorrowSnapshot.completedMockExamsToday, 0);
+  assert.equal(tomorrowSnapshot.completedMockExamsByDate['2026-05-17'], 2);
+
+  assert.equal(
+    (
+      await grantStoredRewardedExtraExamCredit({
+        date: '2026-05-17T12:00:00.000Z',
+        storage,
+      })
+    ).rewardedExtraExamCredits,
+    1,
+  );
+  assert.equal(
+    (
+      await consumeStoredRewardedExtraExamCredit({
+        date: '2026-05-17T12:05:00.000Z',
+        storage,
+      })
+    ).rewardedExtraExamCredits,
+    0,
+  );
+  assert.equal(
+    (
+      await consumeStoredRewardedExtraExamCredit({
+        date: '2026-05-17T12:10:00.000Z',
+        storage,
+      })
+    ).rewardedExtraExamCredits,
+    0,
+  );
+
+  const seededStorage = createMemoryMockExamAccessStorage({
+    completedMockExamsByDate: {
+      '2026-05-17': 2.8,
+      invalid: 9,
+    },
+    rewardedExtraExamCredits: 1.9,
+  });
+  const seededSnapshot = await getStoredMockExamAccess({
+    date: '2026-05-17T09:00:00.000Z',
+    storage: seededStorage,
+  });
+
+  assert.deepEqual(seededSnapshot.completedMockExamsByDate, { '2026-05-17': 2 });
+  assert.equal(seededSnapshot.rewardedExtraExamCredits, 1);
+
+  assert.equal(typeof createSecureStoreMockExamAccessStorage().getItemAsync, 'function');
+
+  const previousLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const localStorageValues = new Map();
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: {
+      getItem(key) {
+        return localStorageValues.get(key) ?? null;
+      },
+      removeItem(key) {
+        localStorageValues.delete(key);
+      },
+      setItem(key, value) {
+        localStorageValues.set(key, String(value));
+      },
+    },
+  });
+
+  try {
+    const webStorage = createWebMockExamAccessStorage();
+
+    await recordStoredMockExamCompletion({
+      date: '2026-05-18T09:00:00.000Z',
+      storage: webStorage,
+    });
+
+    const webStorageAfterReload = createWebMockExamAccessStorage();
+
+    assert.equal(
+      (
+        await getStoredMockExamAccess({
+          date: '2026-05-18T10:00:00.000Z',
+          storage: webStorageAfterReload,
+        })
+      ).completedMockExamsToday,
+      1,
+    );
+  } finally {
+    if (previousLocalStorage) {
+      Object.defineProperty(globalThis, 'localStorage', previousLocalStorage);
+    } else {
+      delete globalThis.localStorage;
+    }
+  }
+
+  assert.deepEqual(
+    await clearStoredMockExamAccess({
+      date: '2026-05-17T09:00:00.000Z',
+      storage: seededStorage,
+    }),
+    {
+      completedMockExamsByDate: {},
+      completedMockExamsToday: 0,
+      dateKey: '2026-05-17',
+      rewardedExtraExamCredits: 0,
+    },
+  );
+});
+
 test('ad rendering flag disables all placements even for free users', () => {
   withEnv(
     {
