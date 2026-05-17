@@ -583,6 +583,31 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('profile shell copy follows Swedish and English settings language', () => {
+  const source = read('app/(tabs)/profile.tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /type ProfileCopy =/);
+  assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
+  assert.match(source, /const copy = profileCopy\[language\]/);
+  assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
+  assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
+  assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /Lokal profil/);
+  assert.match(source, /Framsteg utan konto/);
+  assert.match(source, /Studieinställningar/);
+  assert.match(source, /Märken/);
+  assert.match(source, /Inga märken ännu/);
+  assert.match(source, /Öppna inställningar/);
+  assert.match(source, /Första övningen/);
+  assert.match(source, /Progress without an account/);
+  assert.match(source, /Study setup/);
+  assert.match(source, /No badges yet/);
+  assert.match(source, /Open settings/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   const fallbackFiles = [
     'components/learning/ChapterCard.tsx',

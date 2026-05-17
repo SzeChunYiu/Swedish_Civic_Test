@@ -443,15 +443,15 @@ const EXPECTED_LEARN_ROUTE_HEADERS = [
 const EXPECTED_PROFILE_ROUTE_HEADERS = [
   {
     label: 'profile route title',
-    pattern: /<ScreenShell[\s\S]*\btitle="Progress without an account"/,
+    pattern: /<ScreenShell[\s\S]*\btitle=\{copy\.title\}/,
   },
   {
     label: 'study setup section title',
-    pattern: /<SectionHeader[\s\S]*\btitle="Study setup"/,
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.studySetupTitle\}/,
   },
   {
     label: 'badges section title',
-    pattern: /<SectionHeader[\s\S]*\btitle="Badges"/,
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.badgesTitle\}/,
   },
 ];
 const EXPECTED_HOME_ROUTE_HEADERS = [

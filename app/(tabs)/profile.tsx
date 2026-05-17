@@ -12,8 +12,91 @@ import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+type ProfileCopy = {
+  answersPerDay: string;
+  badgesSubtitle: string;
+  badgesTitle: string;
+  completedMetric: string;
+  dayStreakMetric: string;
+  eyebrow: string;
+  languageBadge: string;
+  levelMetric: string;
+  noBadges: string;
+  openSettings: string;
+  openSettingsAccessibilityLabel: string;
+  questionsHelper: string;
+  studySetupSubtitle: string;
+  studySetupTitle: string;
+  subtitle: string;
+  title: string;
+  xpMetric: string;
+};
+
+const profileCopy: Record<AppLanguage, ProfileCopy> = {
+  sv: {
+    answersPerDay: 'svar/dag',
+    badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
+    badgesTitle: 'Märken',
+    completedMetric: 'klara',
+    dayStreakMetric: 'dagars svit',
+    eyebrow: 'Lokal profil',
+    languageBadge: 'Svenska',
+    levelMetric: 'nivå',
+    noBadges: 'Inga märken ännu',
+    openSettings: 'Öppna inställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar',
+    questionsHelper: 'frågor',
+    studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
+    studySetupTitle: 'Studieinställningar',
+    subtitle:
+      'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
+    title: 'Framsteg utan konto',
+    xpMetric: 'XP',
+  },
+  en: {
+    answersPerDay: 'answers/day',
+    badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
+    badgesTitle: 'Badges',
+    completedMetric: 'completed',
+    dayStreakMetric: 'day streak',
+    eyebrow: 'Local profile',
+    languageBadge: 'English support',
+    levelMetric: 'level',
+    noBadges: 'No badges yet',
+    openSettings: 'Open settings',
+    openSettingsAccessibilityLabel: 'Open settings',
+    questionsHelper: 'questions',
+    studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
+    studySetupTitle: 'Study setup',
+    subtitle:
+      'Your goals, language mode, streaks, and badges stay on this device for a private study experience.',
+    title: 'Progress without an account',
+    xpMetric: 'XP',
+  },
+};
+
+const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
+  sv: {
+    first_practice: 'Första övningen',
+    level_2: 'Nivå 2',
+    mistake_reviewer: 'Misstagsrepetition',
+    streak_3: 'Tre dagars svit',
+  },
+  en: {},
+};
+
+function formatBadges(
+  badges: ReturnType<typeof deriveBadges>,
+  language: AppLanguage,
+  emptyLabel: string,
+): string {
+  if (badges.length === 0) return emptyLabel;
+
+  return badges.map((badge) => localizedBadgeTitles[language][badge.id] ?? badge.title).join(', ');
+}
 
 export default function Screen() {
   const {
@@ -27,6 +110,7 @@ export default function Screen() {
   const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
+  const copy = profileCopy[language];
   const level = calculateLevel(totalXp);
   const currentStreak = calculateStreak(answerDates);
   const wrongAnswerCount = Object.values(questionProgress).reduce(
@@ -41,39 +125,33 @@ export default function Screen() {
   });
 
   return (
-    <ScreenShell
-      eyebrow="Local profile"
-      title="Progress without an account"
-      subtitle="Your goals, language mode, streaks, and badges stay on this device for a private study experience."
-    >
+    <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
       <View style={styles.statsRow}>
-        <MetricCard label="level" value={level} tone="blue" />
-        <MetricCard label="XP" value={totalXp} />
+        <MetricCard label={copy.levelMetric} value={level} tone="blue" />
+        <MetricCard label={copy.xpMetric} value={totalXp} />
       </View>
       <View style={styles.statsRow}>
-        <MetricCard label="day streak" value={currentStreak} />
-        <MetricCard label="completed" value={completedQuestionIds.length} helper="questions" />
+        <MetricCard label={copy.dayStreakMetric} value={currentStreak} />
+        <MetricCard
+          label={copy.completedMetric}
+          value={completedQuestionIds.length}
+          helper={copy.questionsHelper}
+        />
       </View>
 
       <Card style={styles.cardWide}>
-        <SectionHeader
-          title="Study setup"
-          subtitle="Small daily goals are easier to keep than long cram sessions."
-        />
+        <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
         <View style={styles.pillRow}>
-          <Badge tone="blue">{dailyGoalAnswers} answers/day</Badge>
-          <Badge tone="warm">{language === 'sv' ? 'Swedish' : 'English support'}</Badge>
+          <Badge tone="blue">
+            {dailyGoalAnswers} {copy.answersPerDay}
+          </Badge>
+          <Badge tone="warm">{copy.languageBadge}</Badge>
         </View>
       </Card>
 
       <Card style={styles.cardWide}>
-        <SectionHeader
-          title="Badges"
-          subtitle="Achievement cues make progress visible without distracting from learning."
-        />
-        <Text style={styles.value}>
-          {badges.length > 0 ? badges.map((badge) => badge.title).join(', ') : 'No badges yet'}
-        </Text>
+        <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
+        <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
       <PremiumBanner
@@ -85,12 +163,12 @@ export default function Screen() {
       <ComplianceLinks />
 
       <Link
-        accessibilityLabel="Open settings"
+        accessibilityLabel={copy.openSettingsAccessibilityLabel}
         accessibilityRole="link"
         href="/settings"
         style={styles.settingsLink}
       >
-        Open settings
+        {copy.openSettings}
       </Link>
     </ScreenShell>
   );
