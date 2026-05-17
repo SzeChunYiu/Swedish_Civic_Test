@@ -1046,8 +1046,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q069',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Skatter för Sveriges välfärd', pageApprox: 30 },
-    'Hur finansieras många viktiga välfärdstjänster enligt UHR-materialet?',
-    'According to the UHR material, how are many important welfare services financed?',
+    'Hur finansieras många viktiga välfärdstjänster i Sverige?',
+    'How are many important welfare services in Sweden financed?',
     [
       [
         'Genom skatter som finansierar tjänster gemensamt',
