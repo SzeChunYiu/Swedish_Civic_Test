@@ -325,6 +325,13 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Daily goal\s*<\/Text>/,
   },
 ];
+const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
+  {
+    label: 'onboarding route title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Prepare calmly for the civic test\s*<\/Text>/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
@@ -2005,6 +2012,8 @@ let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
+let onboardingRouteHeadersValidated = 0;
+let onboardingRouteHeaderParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
@@ -3504,6 +3513,40 @@ function validateSettingsRouteHeaderParity() {
 
   if (valid && settingsRouteHeadersValidated === EXPECTED_SETTINGS_ROUTE_HEADERS.length) {
     settingsRouteHeaderParityValidated = true;
+  }
+}
+
+function validateOnboardingRouteHeaderParity() {
+  let valid = true;
+  let onboardingRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/onboarding.tsx could not be read for header parity: ${error.message}`);
+    return;
+  }
+
+  const unheaderedRouteHeadings = onboardingRoute.match(/<Text\s+style=\{styles\.title\}>/g) || [];
+  if (unheaderedRouteHeadings.length > 0) {
+    reject('onboarding route title text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_ONBOARDING_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(onboardingRoute)) {
+      reject(`onboarding route missing ${expectedHeader.label} as a header`);
+      return;
+    }
+    onboardingRouteHeadersValidated += 1;
+  });
+
+  if (valid && onboardingRouteHeadersValidated === EXPECTED_ONBOARDING_ROUTE_HEADERS.length) {
+    onboardingRouteHeaderParityValidated = true;
   }
 }
 
@@ -7577,6 +7620,7 @@ validateHomeRouteHeaderParity();
 validateMistakesRouteHeaderParity();
 validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
+validateOnboardingRouteHeaderParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -7672,6 +7716,8 @@ console.log(
       legalRouteHeaderParityValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
+      onboardingRouteHeadersValidated,
+      onboardingRouteHeaderParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,
