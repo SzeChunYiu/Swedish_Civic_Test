@@ -642,6 +642,7 @@ let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
+let mockExamChapterBalanceParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
@@ -787,6 +788,7 @@ function validateMockExamRuntimeParity(config) {
     config.questionCount,
   );
   const coveredChapters = new Set();
+  const chapterCounts = new Map();
   examQuestions.forEach((question, index) => {
     const label = question?.id || `mock exam question[${index}]`;
 
@@ -804,7 +806,10 @@ function validateMockExamRuntimeParity(config) {
     if (!question.uhrReference?.chapter || !question.uhrReference?.section) {
       reject(`${label} mock exam question is missing a UHR reference`);
     }
-    if (hasText(question.chapterId)) coveredChapters.add(question.chapterId);
+    if (hasText(question.chapterId)) {
+      coveredChapters.add(question.chapterId);
+      chapterCounts.set(question.chapterId, (chapterCounts.get(question.chapterId) || 0) + 1);
+    }
   });
 
   if (expectedChapterCoverage > 0 && coveredChapters.size !== expectedChapterCoverage) {
@@ -813,7 +818,28 @@ function validateMockExamRuntimeParity(config) {
     );
   }
 
+  const chapterCountValues = [...chapterCounts.values()];
+  if (config.questionCount > 0 && chapterCountValues.length === 0) {
+    reject('default mock exam did not count any chapter buckets');
+  } else if (chapterCountValues.length > 0) {
+    const minChapterCount = Math.min(...chapterCountValues);
+    const maxChapterCount = Math.max(...chapterCountValues);
+    const countedQuestions = chapterCountValues.reduce((sum, count) => sum + count, 0);
+
+    if (countedQuestions !== examQuestions.length) {
+      reject(
+        `default mock exam counted ${countedQuestions} chapter assignments for ${examQuestions.length} questions`,
+      );
+    }
+    if (maxChapterCount - minChapterCount > 1) {
+      reject(
+        `default mock exam chapter counts are unbalanced: ${JSON.stringify(Object.fromEntries(chapterCounts))}`,
+      );
+    }
+  }
+
   if (valid) mockExamRuntimeParityValidated = true;
+  if (valid) mockExamChapterBalanceParityValidated = true;
 }
 
 function validateUxBenchmarks() {
@@ -2303,6 +2329,7 @@ console.log(
       chapterTextFieldsNormalizedValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
+      mockExamChapterBalanceParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
