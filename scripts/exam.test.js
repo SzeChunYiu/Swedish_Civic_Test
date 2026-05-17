@@ -140,8 +140,11 @@ test('buildExamReviewItems returns selected answer, correct answer, source, and 
   assert.equal(review.questionId, 'q1');
   assert.equal(review.isCorrect, false);
   assert.equal(review.selectedOptionTextSv, 'Fel svar');
+  assert.equal(review.selectedOptionTextEn, 'Wrong answer');
   assert.equal(review.correctOptionTextSv, 'Rätt svar');
+  assert.equal(review.correctOptionTextEn, 'Correct answer');
   assert.equal(review.explanationSv, 'Förklaring');
+  assert.equal(review.explanationEn, 'Explanation');
   assert.deepEqual(review.uhrReference, baseQuestion.uhrReference);
 });
 

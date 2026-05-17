@@ -26,6 +26,10 @@ test('exam generator TypeScript schema stays in parity with validator expectatio
   assert.match(examGeneratorSource, /export type ExamResult = \{/);
   assert.match(examGeneratorSource, /chapterBreakdown: ExamChapterResult\[\];/);
   assert.match(examGeneratorSource, /export type ExamReviewItem = \{/);
+  assert.match(examGeneratorSource, /questionEn: string;/);
+  assert.match(examGeneratorSource, /selectedOptionTextEn: string;/);
+  assert.match(examGeneratorSource, /correctOptionTextEn: string;/);
+  assert.match(examGeneratorSource, /explanationEn: string;/);
   assert.match(examGeneratorSource, /uhrReference: PracticeQuestion\['uhrReference'\];/);
   assert.match(examGeneratorSource, /export type ExamAutoSubmitState = \{/);
 });
@@ -57,5 +61,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /lib\/quiz\/examGenerator\.ts ExamReviewItem\.selectedOptionTextSv optional=true, expected false/,
+  );
+});
+
+test('exam generator schema parity rejects missing bilingual review fields', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/quiz/examGenerator.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('  questionEn: string;\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /lib\/quiz\/examGenerator\.ts ExamReviewItem fields are .*questionEn/,
   );
 });

@@ -39,9 +39,17 @@ export function LaunchPopupAd({
       onRequestClose={() => setVisible(false)}
     >
       <View style={styles.backdrop}>
-        <View style={styles.card}>
+        <View
+          accessibilityLabel="Launch sponsor ad"
+          accessibilityViewIsModal
+          aria-modal={true}
+          role="dialog"
+          style={styles.card}
+        >
           <Text style={styles.eyebrow}>Google AdMob</Text>
-          <Text style={styles.title}>Launch sponsor</Text>
+          <Text accessibilityRole="header" style={styles.title}>
+            Launch sponsor
+          </Text>
           <Text style={styles.body}>
             {unit?.testOnly
               ? 'App-open test ad preview shown once per app launch.'

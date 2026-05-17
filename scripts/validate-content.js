@@ -187,6 +187,40 @@ const EXPECTED_LEARN_ROUTE_HEADERS = [
     pattern: /<SectionHeader[\s\S]*\btitle="13 civic areas"/,
   },
 ];
+const EXPECTED_PROFILE_ROUTE_HEADERS = [
+  {
+    label: 'profile route title',
+    pattern: /<ScreenShell[\s\S]*\btitle="Progress without an account"/,
+  },
+  {
+    label: 'study setup section title',
+    pattern: /<SectionHeader[\s\S]*\btitle="Study setup"/,
+  },
+  {
+    label: 'badges section title',
+    pattern: /<SectionHeader[\s\S]*\btitle="Badges"/,
+  },
+];
+const EXPECTED_HOME_ROUTE_HEADERS = [
+  {
+    label: 'home route title',
+    pattern: /<ScreenShell[\s\S]*\btitle="Prepare calmly, one civic concept at a time"/,
+  },
+  {
+    label: 'daily goal card title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.goalLabel\}>\s*Today&apos;s goal\s*<\/Text>/,
+  },
+  {
+    label: 'feedback card title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.feedbackTitle\}>\s*UX updates from simulated study sessions\s*<\/Text>/,
+  },
+  {
+    label: 'study-loop section title',
+    pattern: /<SectionHeader[\s\S]*\btitle="Optimized study loop"/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
@@ -587,11 +621,15 @@ const EXPECTED_EXAM_GENERATOR_INTERFACES = [
     fields: [
       { name: 'questionId', type: 'string', optional: false },
       { name: 'questionSv', type: 'string', optional: false },
+      { name: 'questionEn', type: 'string', optional: false },
       { name: 'chapterId', type: 'string', optional: false },
       { name: 'selectedOptionTextSv', type: 'string', optional: false },
+      { name: 'selectedOptionTextEn', type: 'string', optional: false },
       { name: 'correctOptionTextSv', type: 'string', optional: false },
+      { name: 'correctOptionTextEn', type: 'string', optional: false },
       { name: 'isCorrect', type: 'boolean', optional: false },
       { name: 'explanationSv', type: 'string', optional: false },
+      { name: 'explanationEn', type: 'string', optional: false },
       { name: 'uhrReference', type: "PracticeQuestion['uhrReference']", optional: false },
     ],
   },
@@ -1849,6 +1887,10 @@ let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
+let profileRouteHeadersValidated = 0;
+let profileRouteHeaderParityValidated = false;
+let homeRouteHeadersValidated = 0;
+let homeRouteHeaderParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
@@ -3020,6 +3062,112 @@ function validateLearnRouteHeaderParity() {
 
   if (valid && learnRouteHeadersValidated === EXPECTED_LEARN_ROUTE_HEADERS.length) {
     learnRouteHeaderParityValidated = true;
+  }
+}
+
+function validateProfileRouteHeaderParity() {
+  let valid = true;
+  let profileRoute = '';
+  let screenShell = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+    screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
+  } catch (error) {
+    reject(`profile route header files could not be read: ${error.message}`);
+    return;
+  }
+
+  if (
+    !profileRoute.includes(
+      "import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';",
+    )
+  ) {
+    reject('profile route must use the shared ScreenShell and SectionHeader header components');
+  }
+
+  const directRouteHeadings =
+    profileRoute.match(
+      /<Text\s+(?:accessibilityRole="header"\s+)?style=\{styles\.(?:title|sectionTitle)\}>/g,
+    ) || [];
+  if (directRouteHeadings.length > 0) {
+    reject('profile route headings must stay on the shared ScreenShell/SectionHeader path');
+  }
+
+  if (
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>/.test(screenShell) ||
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(screenShell)
+  ) {
+    reject('profile route shared heading components must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_PROFILE_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(profileRoute)) {
+      reject(`profile route missing ${expectedHeader.label} on the shared header path`);
+      return;
+    }
+    profileRouteHeadersValidated += 1;
+  });
+
+  if (valid && profileRouteHeadersValidated === EXPECTED_PROFILE_ROUTE_HEADERS.length) {
+    profileRouteHeaderParityValidated = true;
+  }
+}
+
+function validateHomeRouteHeaderParity() {
+  let valid = true;
+  let homeRoute = '';
+  let screenShell = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+    screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
+  } catch (error) {
+    reject(`home route header files could not be read: ${error.message}`);
+    return;
+  }
+
+  if (
+    !homeRoute.includes(
+      "import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';",
+    )
+  ) {
+    reject('home route must use the shared ScreenShell and SectionHeader header components');
+  }
+
+  const unheaderedCardHeadings =
+    homeRoute.match(/<Text\s+style=\{styles\.(?:goalLabel|feedbackTitle)\}>/g) || [];
+  if (unheaderedCardHeadings.length > 0) {
+    reject('home route card headings must expose accessibilityRole="header"');
+  }
+
+  if (
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>/.test(screenShell) ||
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(screenShell)
+  ) {
+    reject('home route shared heading components must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_HOME_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(homeRoute)) {
+      reject(`home route missing ${expectedHeader.label} on the header path`);
+      return;
+    }
+    homeRouteHeadersValidated += 1;
+  });
+
+  if (valid && homeRouteHeadersValidated === EXPECTED_HOME_ROUTE_HEADERS.length) {
+    homeRouteHeaderParityValidated = true;
   }
 }
 
@@ -7086,6 +7234,8 @@ validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
 validateLearnRouteHeaderParity();
+validateProfileRouteHeaderParity();
+validateHomeRouteHeaderParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -7167,6 +7317,10 @@ console.log(
       quizRouteHeaderParityValidated,
       learnRouteHeadersValidated,
       learnRouteHeaderParityValidated,
+      profileRouteHeadersValidated,
+      profileRouteHeaderParityValidated,
+      homeRouteHeadersValidated,
+      homeRouteHeaderParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,

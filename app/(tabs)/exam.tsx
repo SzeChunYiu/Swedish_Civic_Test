@@ -23,6 +23,7 @@ import {
 } from '../../lib/quiz/examGenerator';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 function getAccessStatusText(reason: MockExamAccessReason): string {
@@ -75,6 +76,7 @@ export default function Screen() {
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
+  const language = useSettingsStore((state) => state.language);
   const {
     accessDecision,
     accessReady,
@@ -337,18 +339,28 @@ export default function Screen() {
                 {item.isCorrect ? 'Correct' : 'Review'}
               </Badge>
             </View>
-            <Text style={styles.questionText}>{item.questionSv}</Text>
+            <Text style={styles.questionText}>
+              {language === 'en' ? item.questionEn : item.questionSv}
+            </Text>
             <View style={styles.answerGrid}>
               <View style={styles.answerCard}>
                 <Text style={styles.answerLabel}>Selected answer</Text>
-                <Text style={styles.answerText}>{item.selectedOptionTextSv}</Text>
+                <Text style={styles.answerText}>
+                  {language === 'en' ? item.selectedOptionTextEn : item.selectedOptionTextSv}
+                </Text>
               </View>
               <View style={styles.answerCard}>
                 <Text style={styles.answerLabel}>Correct answer</Text>
-                <Text style={styles.answerText}>{item.correctOptionTextSv}</Text>
+                <Text style={styles.answerText}>
+                  {language === 'en' ? item.correctOptionTextEn : item.correctOptionTextSv}
+                </Text>
               </View>
             </View>
-            <ExplanationPanel explanationSv={item.explanationSv} />
+            <ExplanationPanel
+              explanationEn={item.explanationEn}
+              explanationSv={item.explanationSv}
+              language={language}
+            />
             <UHRReferenceCard reference={item.uhrReference} />
           </View>
         ))}
@@ -385,14 +397,17 @@ export default function Screen() {
       {examQuestions.map((question, index) => (
         <View key={question.id} style={styles.questionCard}>
           <Text style={styles.questionMeta}>Question {index + 1}</Text>
-          <Text style={styles.questionText}>{question.questionSv}</Text>
+          <Text style={styles.questionText}>
+            {language === 'en' ? question.questionEn : question.questionSv}
+          </Text>
           <View style={styles.options}>
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
+              const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
                 <Pressable
                   key={option.id}
-                  accessibilityLabel={`Select answer ${option.textSv} for question ${index + 1}`}
+                  accessibilityLabel={`Select answer ${optionText} for question ${index + 1}`}
                   accessibilityRole="button"
                   accessibilityState={{ selected: isSelected }}
                   onPress={() =>
@@ -401,7 +416,7 @@ export default function Screen() {
                   style={[styles.option, isSelected ? styles.optionSelected : null]}
                 >
                   <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
-                    {option.textSv}
+                    {optionText}
                   </Text>
                 </Pressable>
               );

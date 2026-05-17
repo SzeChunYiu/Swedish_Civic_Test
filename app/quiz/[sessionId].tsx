@@ -41,6 +41,7 @@ export default function QuizSessionScreen() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+  const language = useSettingsStore((state) => state.language);
 
   useEffect(() => {
     setSelectedOptionId(null);
@@ -102,6 +103,7 @@ export default function QuizSessionScreen() {
             <AnswerOption
               key={option.id}
               disabled={hasSelectedAnswer}
+              language={language}
               option={option}
               onPress={() => handleSelectOption(option.id)}
               resultLabel={feedback.resultLabel}
@@ -118,7 +120,11 @@ export default function QuizSessionScreen() {
               Score: {score.correct}/{score.total}
             </Text>
           ) : null}
-          <ExplanationPanel explanationSv={question.explanationSv} />
+          <ExplanationPanel
+            explanationEn={question.explanationEn}
+            explanationSv={question.explanationSv}
+            language={language}
+          />
           <UHRReferenceCard reference={question.uhrReference} />
           <View style={styles.actions}>
             <Pressable
