@@ -1215,6 +1215,7 @@ let uhrMapSectionsValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
 let uhrMapPageRangesValidated = 0;
 let uhrSourceMetadataValidated = false;
+let uhrSourceRetrievedDateValidated = false;
 let uhrSourceMaterialLinkParityValidated = false;
 let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
@@ -4160,6 +4161,15 @@ function validateUhrSourceMetadata() {
     }
     if (!isIsoDate(source.retrievedDate)) {
       reject('UHR section map source retrievedDate must use YYYY-MM-DD');
+    } else {
+      const retrievedDate = new Date(`${source.retrievedDate}T00:00:00Z`);
+      const now = new Date();
+      const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      if (retrievedDate > today) {
+        reject('UHR section map source retrievedDate must not be in the future');
+      } else {
+        uhrSourceRetrievedDateValidated = true;
+      }
     }
     for (const field of ['title', 'publisher', 'url', 'retrievedDate']) {
       if (hasText(source[field])) {
@@ -4575,6 +4585,7 @@ console.log(
       uhrMapPageRangesValidated,
       uhrSourceMaterialLinkParityValidated,
       questionChapterReferenceParityValidated,
+      uhrSourceRetrievedDateValidated,
       uhrReferencesValidated,
     },
     null,
