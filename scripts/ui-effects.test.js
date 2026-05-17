@@ -331,10 +331,15 @@ test('quiz feedback cards expose accessible summaries', () => {
 test('question disclaimer exposes the non-official warning as an accessible summary', () => {
   const source = read('components/quiz/QuestionDisclaimer.tsx');
 
+  assert.match(source, /useSettingsStore/);
+  assert.match(source, /type AppLanguage/);
+  assert.match(source, /const disclaimerCopy: Record<AppLanguage, QuestionDisclaimerCopy>/);
+  assert.match(source, /Oberoende studieverktyg/);
+  assert.match(source, /inte riktiga provfrågor/);
+  assert.match(source, /Study disclaimer/);
   assert.match(source, /const disclaimerAccessibilityLabel =/);
-  assert.match(source, /const disclaimerAccessibilityHint =/);
-  assert.match(source, /`Study disclaimer: \$\{disclaimerText\}`/);
-  assert.match(source, /accessibilityHint=\{disclaimerAccessibilityHint\}/);
+  assert.match(source, /\$\{copy\.accessibilityLabelPrefix\}: \$\{copy\.text\}/);
+  assert.match(source, /accessibilityHint=\{copy\.accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{disclaimerAccessibilityLabel\}/);
   assert.match(source, /Independent study tool/);
   assert.match(source, /Not official/);
