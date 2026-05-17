@@ -102,6 +102,22 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/support': 'app/support.tsx',
   '/terms': 'app/terms.tsx',
 };
+const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
+  { route: '/onboarding', file: 'app/onboarding.tsx' },
+  { route: '/practice', file: 'app/(tabs)/practice.tsx' },
+  { route: '/exam', file: 'app/(tabs)/exam.tsx' },
+  { route: '/mistakes', file: 'app/(tabs)/mistakes.tsx' },
+  { route: '/chapter/[chapterId]', file: 'app/chapter/[chapterId].tsx' },
+  { route: '/quiz/[sessionId]', file: 'app/quiz/[sessionId].tsx' },
+];
+const REQUIRED_QUESTION_DISCLAIMER_PHRASES = [
+  'independent study tool',
+  'not official',
+  'affiliated with UHR',
+  'UHR',
+  'Swedish government',
+  'not real exam questions',
+];
 const EXPECTED_THEME_COLOR_TOKENS = [
   'canvas',
   'surface',
@@ -1141,6 +1157,8 @@ let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
+let questionDisclaimerRoutesValidated = 0;
+let questionDisclaimerCopyValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -1474,6 +1492,75 @@ function validateLaunchAdRouteSuppressionParity() {
   ) {
     launchAdRouteSuppressionParityValidated = true;
   }
+}
+
+function validateQuestionDisclaimerParity() {
+  let copyIsValid = true;
+
+  function rejectCopy(message) {
+    copyIsValid = false;
+    fail(message);
+  }
+
+  let componentSource = '';
+  let disclaimerRouteSource = '';
+  try {
+    componentSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    rejectCopy(`components/quiz/QuestionDisclaimer.tsx could not be read: ${error.message}`);
+  }
+  try {
+    disclaimerRouteSource = fs.readFileSync(path.join(repoRoot, 'app/disclaimer.tsx'), 'utf8');
+  } catch (error) {
+    rejectCopy(`app/disclaimer.tsx could not be read: ${error.message}`);
+  }
+
+  const componentLower = componentSource.toLocaleLowerCase('en-US');
+  const routeLower = disclaimerRouteSource.toLocaleLowerCase('en-US');
+  REQUIRED_QUESTION_DISCLAIMER_PHRASES.forEach((phrase) => {
+    const normalizedPhrase = phrase.toLocaleLowerCase('en-US');
+    if (!componentLower.includes(normalizedPhrase)) {
+      rejectCopy(`QuestionDisclaimer missing required "${phrase}" wording`);
+    }
+    if (!routeLower.includes(normalizedPhrase)) {
+      rejectCopy(`app/disclaimer.tsx missing required "${phrase}" wording`);
+    }
+  });
+
+  if (!/export function QuestionDisclaimer/.test(componentSource)) {
+    rejectCopy('QuestionDisclaimer component must keep its named export');
+  }
+  if (/guaranteed|guarantee/i.test(componentSource)) {
+    rejectCopy('QuestionDisclaimer must not imply guaranteed exam outcomes');
+  }
+
+  if (copyIsValid) questionDisclaimerCopyValidated = true;
+
+  EXPECTED_QUESTION_DISCLAIMER_ROUTES.forEach(({ route, file }) => {
+    let routeIsValid = true;
+    let source = '';
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      routeIsValid = false;
+      fail(`${file} could not be read for ${route} disclaimer coverage: ${error.message}`);
+    }
+
+    if (!/import\s+\{\s*QuestionDisclaimer\s*\}/.test(source)) {
+      routeIsValid = false;
+      fail(`${file} must import QuestionDisclaimer for ${route}`);
+    }
+    if (!source.includes('<QuestionDisclaimer />')) {
+      routeIsValid = false;
+      fail(`${file} is missing QuestionDisclaimer for ${route}`);
+    }
+
+    if (routeIsValid) questionDisclaimerRoutesValidated += 1;
+  });
 }
 
 function validateMockExamConfig(config, publishedQuestionCount) {
@@ -4431,6 +4518,7 @@ validateMockExamConfig(
 );
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateQuestionDisclaimerParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -4457,17 +4545,6 @@ validateMasteryRules();
 validateQuestionBankCsvContract();
 validateUhrSourceMaterialLinkParity();
 
-const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-const disclaimer = fs.readFileSync(
-  path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
-  'utf8',
-);
-if (!practiceScreen.includes('<QuestionDisclaimer />'))
-  fail('practice screen is missing QuestionDisclaimer');
-if (!/not official/i.test(disclaimer) || !/not real exam questions/i.test(disclaimer)) {
-  fail('QuestionDisclaimer missing required independent/not-real-exam wording');
-}
-
 if (failures.length) {
   console.error('Content validation failed:');
   for (const failure of failures) console.error(`- ${failure}`);
@@ -4489,6 +4566,8 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      questionDisclaimerRoutesValidated,
+      questionDisclaimerCopyValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
