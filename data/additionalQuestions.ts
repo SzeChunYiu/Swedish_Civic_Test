@@ -1232,8 +1232,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Sveriges väg till demokrati',
       pageApprox: 33,
     },
-    'Enligt UHR-materialet, vad innebar 1809 års nya grundlag?',
-    'According to the UHR material, what did the new constitution of 1809 mean?',
+    'Vad förändrades genom den nya grundlagen år 1809?',
+    'What changed through the new constitution in 1809?',
     [
       ['Kungens makt begränsades', 'The king’s power was limited'],
       ['Sverige gick med i EU', 'Sweden joined the EU'],
