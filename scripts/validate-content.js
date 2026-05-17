@@ -512,6 +512,67 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /accessibilityState=\{mergedAccessibilityState\}/,
   },
 ];
+const EXPECTED_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'native View root',
+    pattern: /<View[\s\S]*>/,
+  },
+  {
+    label: 'explicit accessibility grouping prop',
+    pattern: /accessible,/,
+  },
+  {
+    label: 'label-or-role grouping fallback',
+    pattern:
+      /const groupedForAccessibility =\s*accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\);/,
+  },
+  {
+    label: 'stable hint id',
+    pattern: /const hintId = useId\(\);/,
+  },
+  {
+    label: 'web-only hint id',
+    pattern: /accessibilityHint && Platform\.OS === 'web'/,
+  },
+  {
+    label: 'hint id prefix',
+    pattern: /`card-hint-\$\{hintId\.replace\(\/:\/g, ''\)\}`/,
+  },
+  {
+    label: 'hint mirrored to web aria-describedby',
+    pattern: /aria-describedby=\{cardAccessibilityHintId\}/,
+  },
+  {
+    label: 'label mirrored to web aria',
+    pattern: /aria-label=\{accessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility grouping',
+    pattern: /accessible=\{groupedForAccessibility\}/,
+  },
+  {
+    label: 'native accessibility hint',
+    pattern: /accessibilityHint=\{accessibilityHint\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{accessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
+  },
+  {
+    label: 'hidden hint text node',
+    pattern:
+      /<Text\s+nativeID=\{cardAccessibilityHintId\}\s+style=\{styles\.accessibilityHintText\}>/,
+  },
+  {
+    label: 'visually hidden hint style',
+    pattern:
+      /accessibilityHintText:\s*\{\s*height:\s*1,[\s\S]*position:\s*'absolute',[\s\S]*width:\s*1,/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2161,6 +2222,8 @@ let legalRouteScrollRulesValidated = 0;
 let legalRouteScrollParityValidated = false;
 let buttonAccessibilityRulesValidated = 0;
 let buttonAccessibilityParityValidated = false;
+let cardAccessibilityRulesValidated = 0;
+let cardAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -3962,6 +4025,35 @@ function validateButtonAccessibilityParity() {
 
   if (valid && buttonAccessibilityRulesValidated === EXPECTED_BUTTON_ACCESSIBILITY_RULES.length) {
     buttonAccessibilityParityValidated = true;
+  }
+}
+
+function validateCardAccessibilityParity() {
+  let valid = true;
+  let cardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    cardSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Card.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/Card.tsx could not be read for accessibility parity: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(cardSource)) {
+      reject(`Card missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    cardAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && cardAccessibilityRulesValidated === EXPECTED_CARD_ACCESSIBILITY_RULES.length) {
+    cardAccessibilityParityValidated = true;
   }
 }
 
@@ -8051,6 +8143,7 @@ validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateLegalRouteScrollParity();
 validateButtonAccessibilityParity();
+validateCardAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8160,6 +8253,8 @@ console.log(
       legalRouteScrollParityValidated,
       buttonAccessibilityRulesValidated,
       buttonAccessibilityParityValidated,
+      cardAccessibilityRulesValidated,
+      cardAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
