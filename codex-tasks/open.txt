@@ -143,8 +143,18 @@ line-height, parchment), works great on the live web URL.
 HARD CONTENT RULES:
 - ORIGINAL, PARAPHRASED prose — do NOT copy UHR (or any source) text
   verbatim or near-verbatim. Rewrite naturally in our own words.
-- Natural, fluent language (not machine/literal). SV + EN parity now; the
-  SAME translated language set as the app (full multi-language = v1.1).
+- Natural, fluent language (not machine/literal). SV + EN parity now, then
+  EXPAND to the major languages spoken by immigrants in Sweden:
+  Arabic, Persian (Farsi/Dari), Somali, Tigrinya, Kurdish (Sorani +
+  Kurmanji), Bosnian/Croatian/Serbian, Polish, Turkish, Spanish, Russian,
+  Ukrainian, Thai, Mandarin, Finnish (prioritise by community size;
+  confirm/extend the set with quick public-data research).
+  NATIVE-QUALITY GATE (hard, per language): each translation must read as
+  if written by an educated NATIVE speaker — idiomatic, grammatically
+  perfect, culturally natural register, NOT machine/literal. A stilted or
+  MT-flavoured translation is a DEFECT, not shippable. Add a per-language
+  native-quality review lane/checklist; mark a language done only when it
+  passes that review. One language chapter-set per atom.
 - Each chapter cites its verifiable public source(s) at the end.
 - Keep legal-safety: no claimed official affiliation, not an official text,
   disclaimer present. Factually accurate & current; wrong = P0.
@@ -222,3 +232,35 @@ MASCOT-UPDATE (operator 2026-05-17): add "Skoglimpa" (Swedish dark rye/forest
 loaf) to the mascot set. FEATURE Kanelbulle + Skoglimpa as the highlighted
 "favourites" in the picker (top row / pre-selected default = Kanelbulle).
 Same Jellycat-inspired original SVG style + reactive animation rules.
+
+
+=== PRIORITY: UI-OVERHAUL (operator 2026-05-17, user directive) ===
+UI-OVERHAUL [P0, feature+design, repeatable atoms]: the app is functionally
+mostly there but "doesn't look like an app yet" — it feels thin. Make it
+feel like a rich, real, polished mobile/web app. ADDITIVE ambition: MORE
+buttons, MORE functions, more interactive surfaces and affordances, stronger
+app-like navigation (tab bar / clear primary actions / quick actions / empty
+states with CTAs / progress + streak surfaces / settings depth). This is
+DISTINCT from PANEL-OPT (declutter): screens should be dense and capable
+where it helps, not sparse — but still strong hierarchy, DESIGN.md tokens
+only, reduced-motion respected, mobile + web parity, SV+EN parity. Distil
+concretely from comparable best-in-class test-prep / language apps (ties to
+the competitive-distillation directive): identify specific patterns/screens
+they have that we lack, then build them. One screen/feature per atom; name
+it in the commit; keep all content/test gates green. Acceptance per atom:
+the screen gains a real, usable, app-grade capability (not decoration).
+=== END UI-OVERHAUL ===
+
+=== PRIORITY: MONETIZATION-OPT (operator 2026-05-17, user directive) ===
+MONETIZATION-OPT [P1, research+feature]: optimise monetisation WITHOUT
+hurting the learner. (a) RESEARCH (write findings to docs/, cite sources):
+how comparable test-prep / language / civic apps place ads and price
+upgrades; where ads are least disturbing. (b) AD-PLACEMENT POLICY: ads ONLY
+at natural breakpoints — results screen, between question sets, ebook
+chapter ends, home — and a hard rule + executable test asserting NO ad ever
+renders on the active exam/question screen. (c) OPTIMISE: Remove-Ads paywall
+placement & copy near (not on) ad surfaces, rewarded-ad value exchange,
+upgrade conversion. Reuse existing lib/monetization (ADS-*/IAP-*); keep
+adsDisabled/entitlement gating intact; tsc + npm test -- monetization clean.
+One atom per change; research atom first, then policy test, then tuning.
+=== END MONETIZATION-OPT ===
