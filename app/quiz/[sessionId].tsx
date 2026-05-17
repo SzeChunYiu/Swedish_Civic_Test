@@ -2,6 +2,7 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { AudioButton } from '../../components/learning/AudioButton';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
@@ -10,9 +11,11 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
+import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 function normalizeSessionId(sessionId: string | string[] | undefined): string {
@@ -37,6 +40,7 @@ export default function QuizSessionScreen() {
   const question = useMemo(() => pickSessionQuestion(normalizedSessionId), [normalizedSessionId]);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
 
   useEffect(() => {
     setSelectedOptionId(null);
@@ -80,6 +84,7 @@ export default function QuizSessionScreen() {
 
       <QuestionDisclaimer />
       <QuestionCard question={question} />
+      <AudioButton text={buildQuestionSpeechText(question)} enabled={audioEnabled} />
 
       <View style={styles.options}>
         {question.options.map((option) => {
