@@ -43,3 +43,24 @@ DESIGN-2..N [repeat atoms]: align components/ and app/ to DESIGN.md sections 3-5
   all 7 acceptance steps green, honor the DESIGN.md do and dont lists. This
   folds into the existing UIUX-POLISH priority — the Claude look is the target.
 === END CLAUDE DESIGN PRIORITY ===
+
+=== PRIORITY: MOTION + GRAPHICS RICHNESS (operator 2026-05-17) ===
+Make the app feel alive and delightful — generous, polished motion and graphics
+throughout, WITHOUT breaking the calm Claude aesthetic, a11y, or 60fps.
+Repeatable atoms in app/ + components/ (token-driven via lib/theme/motion.ts —
+add motion tokens for durations/easings, no hardcoded timings/colors):
+- Entrance/stagger animations for lists, cards, screens (Reanimated/Moti).
+- Route/screen transitions (shared-element where natural).
+- Micro-interactions: button press/scale, ripple, focus, toggles, tab switches.
+- Celebratory moments: correct answer, quiz complete, streak/XP, badge unlock
+  (confetti/Lottie, spring pop, count-up numbers) — tasteful, ~1s, skippable.
+- Skeleton/shimmer loaders, animated empty states, progress ring animations.
+- Subtle ambient: parallax/illustration motion on hero/results, gentle.
+- Add richer graphics: Lottie animations + organic illustrations matching
+  DESIGN.md (terracotta/warm, hand-drawn feel), not generic stock.
+HARD RULES: honor prefers-reduced-motion (respect Accessibility reduce-motion —
+provide reduced/no-motion variants); keep 60fps (use native driver/Reanimated
+worklets, no JS-thread jank); colors via tokens only; all 7 acceptance steps
+stay green; NO motion on the exam screen that distracts; nothing janky on the
+web export. Folds into UIUX-POLISH. Tasteful-but-abundant, premium not noisy.
+=== END MOTION PRIORITY ===
