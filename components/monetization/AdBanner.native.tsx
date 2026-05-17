@@ -3,6 +3,7 @@ import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { colors, radius, space } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 
@@ -13,15 +14,20 @@ export function AdBanner({
   placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
+  const mobileAdsConsent = useMobileAdsConsent(entitlements);
   const unitId = getPlatformAdUnitId(placement, Platform.OS);
-  const visible = shouldShowAd(placement, entitlements);
+  const visible =
+    mobileAdsConsent.initialized &&
+    shouldShowAd(placement, entitlements, mobileAdsConsent.decision.consentDecision);
 
   if (!visible || !unitId) return null;
 
   return (
     <View accessibilityLabel={`Google AdMob banner for ${placement}`} style={styles.nativeSlot}>
       <BannerAd
-        requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
+        }}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         unitId={unitId}
       />

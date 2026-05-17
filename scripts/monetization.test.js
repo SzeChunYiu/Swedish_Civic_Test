@@ -6,14 +6,39 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName) {
+function loadTs(relativePath, exportName, moduleCache = new Map()) {
   const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) {
+    const cached = moduleCache.get(filePath);
+    return exportName ? cached[exportName] : cached;
+  }
+
   const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  moduleCache.set(filePath, mod.exports);
+
+  function localRequire(specifier) {
+    if (specifier.startsWith('.')) {
+      const resolvedPath = path.resolve(path.dirname(filePath), specifier);
+      const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
+      const tsxPath = fs.existsSync(`${resolvedPath}.tsx`) ? `${resolvedPath}.tsx` : undefined;
+      const indexTsPath = fs.existsSync(path.join(resolvedPath, 'index.ts'))
+        ? path.join(resolvedPath, 'index.ts')
+        : undefined;
+      const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
+
+      if (resolvedTsPath?.startsWith(repoRoot)) {
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
+      }
+    }
+
+    return require(specifier);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
@@ -436,6 +461,110 @@ test('ad consent decision covers ATT and UMP prompts before real ad serving', ()
   });
   assert.equal(testUnitInit.canInitializeGoogleMobileAds, true);
   assert.equal(testUnitInit.blockReason, undefined);
+});
+
+test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', async () => {
+  const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
+  const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+  const launchSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+    'utf8',
+  );
+  const mobileConsentSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
+    'utf8',
+  );
+  const hookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMobileAdsConsent.ts'),
+    'utf8',
+  );
+  const trackingPlugin = appJson.expo.plugins.find(
+    (entry) => Array.isArray(entry) && entry[0] === 'expo-tracking-transparency',
+  );
+  const {
+    collectMobileAdsConsentState,
+    initializeGoogleMobileAdsAfterConsent,
+    mapTrackingTransparencyStatus,
+    mapUmpConsentStatus,
+  } = loadTs('lib/monetization/mobileAdsConsent.ts');
+
+  assert.equal(packageJson.dependencies['expo-tracking-transparency'], '~6.0.8');
+  assert.ok(trackingPlugin, 'expo-tracking-transparency plugin should be configured');
+  assert.match(trackingPlugin[1].userTrackingPermission, /ads after consent/);
+  assert.match(mobileConsentSource, /expo-tracking-transparency/);
+  assert.match(mobileConsentSource, /AdsConsent\.gatherConsent/);
+  assert.match(mobileConsentSource, /mobileAds\(\)\.initialize/);
+  assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
+  assert.match(nativeBannerSource, /useMobileAdsConsent/);
+  assert.match(nativeBannerSource, /consentDecision/);
+  assert.match(launchSource, /useMobileAdsConsent/);
+  assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*consentDecision/);
+  assert.equal(mapTrackingTransparencyStatus({ status: 'granted' }, 'ios'), 'authorized');
+  assert.equal(mapTrackingTransparencyStatus({ status: 'undetermined' }, 'ios'), 'not_determined');
+  assert.equal(mapUmpConsentStatus({ status: 'OBTAINED' }), 'obtained');
+  assert.equal(mapUmpConsentStatus({ status: 'NOT_REQUIRED' }), 'not_required');
+
+  const calls = [];
+  const initializedResult = await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    runtime: {
+      async gatherUmpConsent() {
+        calls.push('ump');
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      async getTrackingPermissionsAsync() {
+        calls.push('att:get');
+        return { status: 'undetermined' };
+      },
+      async initializeGoogleMobileAds() {
+        calls.push('ads:init');
+      },
+      platform: 'ios',
+      async requestTrackingPermissionsAsync() {
+        calls.push('att:request');
+        return { status: 'denied' };
+      },
+    },
+  });
+
+  assert.equal(initializedResult.initialized, true);
+  assert.equal(initializedResult.state.trackingTransparencyStatus, 'denied');
+  assert.equal(initializedResult.state.umpConsentStatus, 'obtained');
+  assert.equal(initializedResult.decision.canInitializeGoogleMobileAds, true);
+  assert.equal(initializedResult.decision.requestNonPersonalizedAdsOnly, true);
+  assert.deepEqual(calls, ['att:get', 'ump', 'att:request', 'ads:init']);
+
+  const disabledCalls = [];
+  const disabledState = await collectMobileAdsConsentState({
+    entitlements: { adsDisabled: true },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    runtime: {
+      async gatherUmpConsent() {
+        disabledCalls.push('ump');
+        return { status: 'REQUIRED' };
+      },
+      async getTrackingPermissionsAsync() {
+        disabledCalls.push('att:get');
+        return { status: 'undetermined' };
+      },
+      platform: 'ios',
+      async requestTrackingPermissionsAsync() {
+        disabledCalls.push('att:request');
+        return { status: 'denied' };
+      },
+    },
+  });
+
+  assert.deepEqual(disabledCalls, []);
+  assert.equal(disabledState.trackingTransparencyStatus, 'unavailable');
+  assert.equal(disabledState.umpConsentStatus, 'not_required');
 });
 
 test('exam screen does not import ad components', () => {

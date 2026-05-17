@@ -4,6 +4,7 @@ import { AdEventType, AppOpenAd } from 'react-native-google-mobile-ads';
 
 import { getPlatformAdUnitId, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let launchPopupShownThisRuntime = false;
@@ -13,10 +14,14 @@ export function LaunchPopupAd({
 }: {
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
+  const mobileAdsConsent = useMobileAdsConsent(entitlements);
+
   useEffect(() => {
     if (
+      !mobileAdsConsent.initialized ||
       !shouldShowLaunchPopupAd({
         alreadyShownThisLaunch: launchPopupShownThisRuntime,
+        consentDecision: mobileAdsConsent.decision.consentDecision,
         entitlements,
       })
     ) {
@@ -28,7 +33,7 @@ export function LaunchPopupAd({
 
     launchPopupShownThisRuntime = true;
     const appOpenAd = AppOpenAd.createForAdRequest(unitId, {
-      requestNonPersonalizedAdsOnly: true,
+      requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
     });
     const unsubscribe = appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
       appOpenAd.show();
@@ -36,7 +41,7 @@ export function LaunchPopupAd({
 
     appOpenAd.load();
     return unsubscribe;
-  }, [entitlements]);
+  }, [entitlements, mobileAdsConsent]);
 
   return null;
 }
