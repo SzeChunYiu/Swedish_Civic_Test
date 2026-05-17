@@ -86,6 +86,14 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
+test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /countAnswersForLocalDate/);
+  assert.match(source, /countAnswersForLocalDate\(questionProgress\)/);
+  assert.doesNotMatch(source, /completedQuestionIds\.length,\s*dailyGoalAnswers/);
+});
+
 test('practice answer flow requires explicit next question after feedback', () => {
   const source = read('app/(tabs)/practice.tsx');
 
