@@ -27,3 +27,19 @@ factually correct, (e) disclaimer present on every question screen. Fix defects 
 file via review-to-queue.sh. A wrong answer or mistranslation is a P0. Do NOT mass-rewrite;
 verify, correct, cite the UHR page.
 === END PRIORITY FOCUS ===
+
+=== PRIORITY: APPLY CLAUDE DESIGN SYSTEM (operator 2026-05-17) ===
+DESIGN.md is now the Claude (Anthropic) warm-parchment system. Execute in order:
+DESIGN-1 [P0, one atom]: rewrite lib/theme/colors.ts token VALUES to exactly the
+  table in DESIGN.md section 2 (same KEYS, new values). Update the DESIGN.md
+  line-ref comments to point at the new file. tsc must pass (values must satisfy
+  the HexColor/RgbaColor types). This single change restyles the whole app via
+  the token system; acceptance step 6 (zero hardcoded colors) MUST stay green.
+  Verify: npx tsc --noEmit and npm test -- monetization.
+DESIGN-2..N [repeat atoms]: align components/ and app/ to DESIGN.md sections 3-5
+  — serif headings (load a serif via expo-font, weight 500, never 700), radius
+  scale (cards 8-12, primary button 12, pills 9999), warm ring + whisper
+  shadows, body line-height 1.6, tap targets >= 44px. Token-only colors, keep
+  all 7 acceptance steps green, honor the DESIGN.md do and dont lists. This
+  folds into the existing UIUX-POLISH priority — the Claude look is the target.
+=== END CLAUDE DESIGN PRIORITY ===
