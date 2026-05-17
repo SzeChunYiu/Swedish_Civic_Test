@@ -40,11 +40,6 @@ export async function showRewardedExtraExamAd({
   if (!unitId) return { status: 'unavailable' };
 
   return new Promise((resolve) => {
-    const rewardedAd = RewardedAd.createForAdRequest(unitId, {
-      requestNonPersonalizedAdsOnly:
-        requestNonPersonalizedAdsOnly ||
-        consentInitialization.decision.requestNonPersonalizedAdsOnly,
-    });
     const cleanups: Array<() => void> = [];
     let earnedReward: RewardedAdReward | undefined;
     let hasShown = false;
@@ -63,31 +58,41 @@ export async function showRewardedExtraExamAd({
       finish({ status: 'timed_out' });
     }, timeoutMs);
 
-    cleanups.push(
-      rewardedAd.addAdEventListener(RewardedAdEventType.LOADED, () => {
-        hasShown = true;
-        void rewardedAd.show().catch(() => {
-          finish({ status: 'show_failed' });
-        });
-      }),
-      rewardedAd.addAdEventListener(RewardedAdEventType.EARNED_REWARD, (reward) => {
-        earnedReward = reward;
-      }),
-      rewardedAd.addAdEventListener(AdEventType.CLOSED, () => {
-        finish(
-          earnedReward
-            ? {
-                reward: toReward(earnedReward),
-                status: 'earned_reward',
-              }
-            : { status: 'closed_without_reward' },
-        );
-      }),
-      rewardedAd.addAdEventListener(AdEventType.ERROR, () => {
-        finish({ status: hasShown ? 'show_failed' : 'failed_to_load' });
-      }),
-    );
+    try {
+      const rewardedAd = RewardedAd.createForAdRequest(unitId, {
+        requestNonPersonalizedAdsOnly:
+          requestNonPersonalizedAdsOnly ||
+          consentInitialization.decision.requestNonPersonalizedAdsOnly,
+      });
 
-    rewardedAd.load();
+      cleanups.push(
+        rewardedAd.addAdEventListener(RewardedAdEventType.LOADED, () => {
+          hasShown = true;
+          void rewardedAd.show().catch(() => {
+            finish({ status: 'show_failed' });
+          });
+        }),
+        rewardedAd.addAdEventListener(RewardedAdEventType.EARNED_REWARD, (reward) => {
+          earnedReward = reward;
+        }),
+        rewardedAd.addAdEventListener(AdEventType.CLOSED, () => {
+          finish(
+            earnedReward
+              ? {
+                  reward: toReward(earnedReward),
+                  status: 'earned_reward',
+                }
+              : { status: 'closed_without_reward' },
+          );
+        }),
+        rewardedAd.addAdEventListener(AdEventType.ERROR, () => {
+          finish({ status: hasShown ? 'show_failed' : 'failed_to_load' });
+        }),
+      );
+
+      rewardedAd.load();
+    } catch {
+      finish({ status: hasShown ? 'show_failed' : 'failed_to_load' });
+    }
   });
 }

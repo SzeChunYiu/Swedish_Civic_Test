@@ -408,6 +408,9 @@ export function getMockExamAccessDecision({
     };
   }
 
+  const placementAvailableAfterConsent = shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, {
+    adServingAllowed: true,
+  });
   const canOfferRewardedAd = shouldShowAd(
     REWARDED_EXTRA_EXAM_PLACEMENT,
     entitlements,
@@ -415,7 +418,9 @@ export function getMockExamAccessDecision({
   );
   const reason: MockExamAccessReason = canOfferRewardedAd
     ? 'rewarded_ad_available'
-    : REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true
+    : placementAvailableAfterConsent &&
+        REAL_ADS_ENABLED &&
+        consentDecision?.adServingAllowed !== true
       ? 'consent_required'
       : 'ads_unavailable';
 

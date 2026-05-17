@@ -15,12 +15,18 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.equal(summary.mockExamRuntimeParityValidated, true);
+  assert.equal(summary.mockExamChapterBalanceParityValidated, true);
+  assert.equal(summary.examReviewItemsValidated, 20);
+  assert.equal(summary.examReviewSourceParityValidated, true);
+  assert.equal(summary.examChapterBreakdownItemsValidated, 13);
+  assert.equal(summary.examChapterBreakdownParityValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
+  assert.equal(summary.chapterQuizSessionParityValidated, 13);
   assert.equal(summary.spacedRepetitionIntervalsValidated, 5);
   assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
   assert.equal(summary.streakRulesValidated, 6);

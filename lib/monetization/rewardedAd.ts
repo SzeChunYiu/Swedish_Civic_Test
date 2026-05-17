@@ -1,4 +1,6 @@
 import type { PremiumEntitlements } from '../../types/monetization';
+import { shouldShowAd } from './ads';
+import { REWARDED_EXTRA_EXAM_PLACEMENT } from './rewardedExam';
 
 export type RewardedExtraExamAdStatus =
   | 'closed_without_reward'
@@ -27,7 +29,9 @@ export type RewardedExtraExamAdOptions = {
 export async function showRewardedExtraExamAd({
   entitlements = { adsDisabled: false },
 }: RewardedExtraExamAdOptions = {}): Promise<RewardedExtraExamAdResult> {
-  if (entitlements.adsDisabled) return { status: 'unavailable' };
+  if (!shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements)) {
+    return { status: 'unavailable' };
+  }
 
   return {
     reward: {

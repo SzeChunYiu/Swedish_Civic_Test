@@ -615,8 +615,13 @@ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
 const generateExam = examGeneratorModule.generateExam;
+const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
+const scoreExam = examGeneratorModule.scoreExam;
+const buildExamChapterBreakdownItems = examGeneratorModule.buildExamChapterBreakdownItems;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
+const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
+const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -640,12 +645,18 @@ let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
+let mockExamChapterBalanceParityValidated = false;
+let examReviewItemsValidated = 0;
+let examReviewSourceParityValidated = false;
+let examChapterBreakdownItemsValidated = 0;
+let examChapterBreakdownParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
 let streakRulesValidated = 0;
@@ -695,7 +706,17 @@ if (!Array.isArray(generatedPublishedQuestions)) {
 }
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
+if (typeof buildExamReviewItems !== 'function') {
+  fail('buildExamReviewItems export is not a function');
+}
+if (typeof scoreExam !== 'function') fail('scoreExam export is not a function');
+if (typeof buildExamChapterBreakdownItems !== 'function') {
+  fail('buildExamChapterBreakdownItems export is not a function');
+}
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
+if (typeof getChapterQuizSessionId !== 'function') {
+  fail('getChapterQuizSessionId export is not a function');
+}
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
 }
@@ -781,6 +802,7 @@ function validateMockExamRuntimeParity(config) {
     config.questionCount,
   );
   const coveredChapters = new Set();
+  const chapterCounts = new Map();
   examQuestions.forEach((question, index) => {
     const label = question?.id || `mock exam question[${index}]`;
 
@@ -798,7 +820,10 @@ function validateMockExamRuntimeParity(config) {
     if (!question.uhrReference?.chapter || !question.uhrReference?.section) {
       reject(`${label} mock exam question is missing a UHR reference`);
     }
-    if (hasText(question.chapterId)) coveredChapters.add(question.chapterId);
+    if (hasText(question.chapterId)) {
+      coveredChapters.add(question.chapterId);
+      chapterCounts.set(question.chapterId, (chapterCounts.get(question.chapterId) || 0) + 1);
+    }
   });
 
   if (expectedChapterCoverage > 0 && coveredChapters.size !== expectedChapterCoverage) {
@@ -807,7 +832,230 @@ function validateMockExamRuntimeParity(config) {
     );
   }
 
+  const chapterCountValues = [...chapterCounts.values()];
+  if (config.questionCount > 0 && chapterCountValues.length === 0) {
+    reject('default mock exam did not count any chapter buckets');
+  } else if (chapterCountValues.length > 0) {
+    const minChapterCount = Math.min(...chapterCountValues);
+    const maxChapterCount = Math.max(...chapterCountValues);
+    const countedQuestions = chapterCountValues.reduce((sum, count) => sum + count, 0);
+
+    if (countedQuestions !== examQuestions.length) {
+      reject(
+        `default mock exam counted ${countedQuestions} chapter assignments for ${examQuestions.length} questions`,
+      );
+    }
+    if (maxChapterCount - minChapterCount > 1) {
+      reject(
+        `default mock exam chapter counts are unbalanced: ${JSON.stringify(Object.fromEntries(chapterCounts))}`,
+      );
+    }
+  }
+
   if (valid) mockExamRuntimeParityValidated = true;
+  if (valid) mockExamChapterBalanceParityValidated = true;
+}
+
+function firstWrongOptionId(question) {
+  return question.options?.find((option) => option.id !== question.correctOptionId)?.id;
+}
+
+function validateExamReviewSourceParity(config) {
+  if (!config || typeof config !== 'object' || !Array.isArray(questions)) return;
+  if (typeof generateExam !== 'function' || typeof buildExamReviewItems !== 'function') return;
+
+  const examQuestions = generateExam(questions, { questionCount: config.questionCount });
+  const answers = Object.fromEntries(
+    examQuestions.map((question, index) => [
+      question.id,
+      index % 2 === 0 ? question.correctOptionId : firstWrongOptionId(question),
+    ]),
+  );
+  const reviewItems = buildExamReviewItems(examQuestions, answers);
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Array.isArray(reviewItems)) {
+    reject('buildExamReviewItems did not return an array for the default mock exam');
+    return;
+  }
+  if (reviewItems.length !== examQuestions.length) {
+    reject(
+      `buildExamReviewItems returned ${reviewItems.length} items for ${examQuestions.length} default exam questions`,
+    );
+  }
+
+  reviewItems.forEach((item, index) => {
+    const question = examQuestions[index];
+    const label = question?.id || `exam review item[${index}]`;
+    let itemIsValid = true;
+
+    function rejectItem(message) {
+      itemIsValid = false;
+      reject(message);
+    }
+
+    if (!question) {
+      rejectItem(`${label} has no matching default exam question`);
+      return;
+    }
+
+    const selectedOption = question.options.find((option) => option.id === answers[question.id]);
+    const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+
+    if (item.questionId !== question.id) rejectItem(`${label} review questionId drifted`);
+    if (item.questionSv !== question.questionSv)
+      rejectItem(`${label} review question text drifted`);
+    if (item.chapterId !== question.chapterId) rejectItem(`${label} review chapter drifted`);
+    if (item.explanationSv !== question.explanationSv) {
+      rejectItem(`${label} review explanation drifted`);
+    }
+    if (!jsonEqual(item.uhrReference, question.uhrReference)) {
+      rejectItem(`${label} review UHR reference drifted`);
+    }
+    if (item.selectedOptionTextSv !== selectedOption?.textSv) {
+      rejectItem(`${label} review selected answer text drifted`);
+    }
+    if (item.correctOptionTextSv !== correctOption?.textSv) {
+      rejectItem(`${label} review correct answer text drifted`);
+    }
+    if (item.isCorrect !== (answers[question.id] === question.correctOptionId)) {
+      rejectItem(`${label} review correctness drifted`);
+    }
+    if (item.selectedOptionTextSv === 'Not answered') {
+      rejectItem(`${label} review did not resolve the selected answer`);
+    }
+    if (item.correctOptionTextSv === 'Correct answer missing') {
+      rejectItem(`${label} review did not resolve the correct answer`);
+    }
+
+    if (itemIsValid) examReviewItemsValidated += 1;
+  });
+
+  if (
+    valid &&
+    examReviewItemsValidated === examQuestions.length &&
+    reviewItems.some((item) => item.isCorrect) &&
+    reviewItems.some((item) => !item.isCorrect)
+  ) {
+    examReviewSourceParityValidated = true;
+  }
+}
+
+function buildAlternatingExamAnswers(examQuestions) {
+  return Object.fromEntries(
+    examQuestions.map((question, index) => [
+      question.id,
+      index % 2 === 0 ? question.correctOptionId : firstWrongOptionId(question),
+    ]),
+  );
+}
+
+function validateExamChapterBreakdownParity(config) {
+  if (!config || typeof config !== 'object' || !Array.isArray(questions)) return;
+  if (
+    !Array.isArray(chapters) ||
+    typeof generateExam !== 'function' ||
+    typeof scoreExam !== 'function' ||
+    typeof buildExamChapterBreakdownItems !== 'function'
+  ) {
+    return;
+  }
+
+  const examQuestions = generateExam(questions, { questionCount: config.questionCount });
+  const answers = buildAlternatingExamAnswers(examQuestions);
+  const result = scoreExam(examQuestions, answers);
+  const breakdownItems = buildExamChapterBreakdownItems(result.chapterBreakdown, chapters);
+  const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+  const expectedByChapter = new Map();
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  examQuestions.forEach((question) => {
+    const previous = expectedByChapter.get(question.chapterId) ?? {
+      correctCount: 0,
+      totalCount: 0,
+    };
+    expectedByChapter.set(question.chapterId, {
+      correctCount:
+        previous.correctCount + (answers[question.id] === question.correctOptionId ? 1 : 0),
+      totalCount: previous.totalCount + 1,
+    });
+  });
+
+  if (result.totalCount !== examQuestions.length) {
+    reject(`scoreExam totalCount is ${result.totalCount}, expected ${examQuestions.length}`);
+  }
+  const expectedCorrectCount = [...expectedByChapter.values()].reduce(
+    (sum, chapterResult) => sum + chapterResult.correctCount,
+    0,
+  );
+  if (result.correctCount !== expectedCorrectCount) {
+    reject(`scoreExam correctCount is ${result.correctCount}, expected ${expectedCorrectCount}`);
+  }
+  if (breakdownItems.length !== expectedByChapter.size) {
+    reject(
+      `exam chapter breakdown has ${breakdownItems.length} rows, expected ${expectedByChapter.size}`,
+    );
+  }
+
+  breakdownItems.forEach((item) => {
+    const chapter = chapterById.get(item.chapterId);
+    const expected = expectedByChapter.get(item.chapterId);
+    let itemIsValid = true;
+
+    function rejectItem(message) {
+      itemIsValid = false;
+      reject(message);
+    }
+
+    if (!chapter) {
+      rejectItem(`${item.chapterId} breakdown row references an unknown chapter`);
+    } else {
+      if (item.chapterNameSv !== chapter.nameSv) {
+        rejectItem(`${item.chapterId} breakdown Swedish chapter name drifted`);
+      }
+      if (item.chapterNameEn !== chapter.nameEn) {
+        rejectItem(`${item.chapterId} breakdown English chapter name drifted`);
+      }
+    }
+
+    if (!expected) {
+      rejectItem(`${item.chapterId} breakdown row is not present in the default exam`);
+    } else {
+      if (item.correctCount !== expected.correctCount) {
+        rejectItem(`${item.chapterId} breakdown correctCount drifted`);
+      }
+      if (item.totalCount !== expected.totalCount) {
+        rejectItem(`${item.chapterId} breakdown totalCount drifted`);
+      }
+    }
+
+    if (itemIsValid) examChapterBreakdownItemsValidated += 1;
+  });
+
+  const countedTotal = breakdownItems.reduce((sum, item) => sum + item.totalCount, 0);
+  if (countedTotal !== examQuestions.length) {
+    reject(
+      `exam chapter breakdown counted ${countedTotal} questions, expected ${examQuestions.length}`,
+    );
+  }
+
+  if (
+    valid &&
+    examChapterBreakdownItemsValidated === breakdownItems.length &&
+    breakdownItems.length === expectedByChapter.size
+  ) {
+    examChapterBreakdownParityValidated = true;
+  }
 }
 
 function validateUxBenchmarks() {
@@ -1054,6 +1302,55 @@ function validatePracticeScoringRules() {
 
   if (rulesAreValid && practiceScoringRulesValidated === cases.length) {
     practiceScoringRulesParityValidated = true;
+  }
+}
+
+function validateChapterQuizSessionParity() {
+  if (
+    !Array.isArray(chapters) ||
+    !Array.isArray(questions) ||
+    typeof getChapterQuizSessionId !== 'function'
+  ) {
+    return;
+  }
+
+  chapters.forEach((chapter) => {
+    const expectedQuestion = questions.find((question) => question.chapterId === chapter.id);
+    const sessionId = getChapterQuizSessionId(questions, chapter.id);
+    const sessionQuestion = questions.find((question) => question.id === sessionId);
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (!expectedQuestion) {
+      reject(`${chapter.id} has no question for chapter quiz session`);
+    } else if (sessionId !== expectedQuestion.id) {
+      reject(
+        `${chapter.id} chapter quiz session resolves to ${sessionId}, expected ${expectedQuestion.id}`,
+      );
+    }
+
+    if (!sessionQuestion) {
+      reject(`${chapter.id} chapter quiz session id ${sessionId} does not match a question`);
+    } else if (sessionQuestion.chapterId !== chapter.id) {
+      reject(
+        `${chapter.id} chapter quiz session id ${sessionId} belongs to ${sessionQuestion.chapterId}`,
+      );
+    } else if (sessionQuestion.reviewStatus !== 'published') {
+      reject(`${chapter.id} chapter quiz session id ${sessionId} is not published`);
+    }
+
+    if (valid) chapterQuizSessionParityValidated += 1;
+  });
+
+  if (getChapterQuizSessionId(questions, 'missing-chapter') !== null) {
+    fail('missing chapter quiz session should resolve to null');
+  }
+  if (getChapterQuizSessionId(questions, null) !== null) {
+    fail('null chapter quiz session should resolve to null');
   }
 }
 
@@ -2206,10 +2503,13 @@ validateMockExamConfig(
     : 0,
 );
 validateMockExamRuntimeParity(defaultMockExamConfig);
+validateExamReviewSourceParity(defaultMockExamConfig);
+validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
@@ -2247,6 +2547,11 @@ console.log(
       chapterTextFieldsNormalizedValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
+      mockExamChapterBalanceParityValidated,
+      examReviewItemsValidated,
+      examReviewSourceParityValidated,
+      examChapterBreakdownItemsValidated,
+      examChapterBreakdownParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
@@ -2254,6 +2559,7 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
       streakRulesValidated,
