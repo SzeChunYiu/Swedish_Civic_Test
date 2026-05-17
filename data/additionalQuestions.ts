@@ -1252,8 +1252,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q079',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Folkrörelserna', pageApprox: 33 },
-    'Vilka nämns som stora svenska folkrörelser?',
-    'Which are mentioned as major Swedish popular movements?',
+    'Vilka nämner UHR-materialet som fyra av de största svenska folkrörelserna?',
+    "Which movements does the UHR material mention as four of Sweden's largest popular movements?",
     [
       [
         'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen',
@@ -1267,8 +1267,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Endast politiska partier i EU', 'Only political parties in the EU'],
     ],
     0,
-    'UHR-avsnittet Folkrörelserna säger att folkrörelserna var en viktig faktor i övergången till verklig demokrati. Människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet, och fyra av de största var arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen.',
-    'The UHR section Popular movements says popular movements were an important factor in the transition to real democracy. People organized for rights such as an eight-hour workday, suffrage, and freedom of religion, and four of the largest were the labour movement, free church movement, women’s movement, and temperance movement.',
+    'UHR-avsnittet Folkrörelserna beskriver folkrörelserna som en viktig faktor i övergången till verklig demokrati. Människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet, och materialet nämner arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen som fyra av de största.',
+    "The UHR section Popular movements describes popular movements as an important factor in the transition to real democracy. People organized for rights such as an eight-hour workday, suffrage, and freedom of religion, and the material mentions the labour movement, free church movement, women's movement, and temperance movement as four of the largest.",
     ['popular-movements', 'democracy', 'history'],
     'hard',
   ),
