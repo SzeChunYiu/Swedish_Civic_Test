@@ -139,8 +139,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q025',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Regioner och kommuner', pageApprox: 13 },
-    'Vilken är regionernas främsta uppgift enligt materialet?',
-    'What is the main task of the regions according to the material?',
+    'Vilken är regionernas främsta uppgift enligt UHR-materialet?',
+    'What is the main task of the regions according to the UHR material?',
     [
       ['Att ansvara för hälso- och sjukvården', 'To be responsible for health care'],
       ['Att döma i brottmål', 'To judge criminal cases'],
@@ -148,8 +148,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Att utse statsminister', 'To appoint the prime minister'],
     ],
     0,
-    'Regionernas främsta uppgift är hälso- och sjukvård. De har också ansvar för kollektivtrafik och länsmuseer.',
-    'The regions’ main task is health care. They also handle public transport and county museums.',
+    'UHR-avsnittet Regioner och kommuner säger att Sverige är indelat i 21 regioner. Regionernas främsta uppgift är att ansvara för hälso- och sjukvården, och de ser också till att det finns kollektivtrafik och ansvarar för länsmuseerna.',
+    'The UHR section Regions and municipalities says Sweden is divided into 21 regions. The regions’ foremost task is responsibility for health care, and they also ensure public transport exists and are responsible for county museums.',
     ['regions', 'healthcare', 'public-service'],
   ),
   single(
