@@ -1,4 +1,5 @@
 import type { PremiumEntitlements } from '../../types/monetization';
+import { getLocalDateKey } from '../learning/streaks';
 import { REAL_ADS_ENABLED, shouldShowAd } from './ads';
 import type { AdConsentDecision } from './consent';
 
@@ -66,14 +67,6 @@ const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 function toNonNegativeInteger(value: number | undefined): number {
   if (!Number.isFinite(value)) return 0;
   return Math.max(0, Math.floor(value ?? 0));
-}
-
-function formatLocalDateKey(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
 }
 
 function createEmptyPersistedMockExamAccess(): PersistedMockExamAccess {
@@ -178,11 +171,11 @@ export function getMockExamAccessDateKey(date: Date | string = new Date()): stri
     if (trimmedDate === directDateKey) return directDateKey;
 
     const parsedDate = new Date(date);
-    if (!Number.isNaN(parsedDate.getTime())) return formatLocalDateKey(parsedDate);
-    return formatLocalDateKey(new Date());
+    if (!Number.isNaN(parsedDate.getTime())) return getLocalDateKey(parsedDate);
+    return getLocalDateKey(new Date());
   }
 
-  return Number.isNaN(date.getTime()) ? formatLocalDateKey(new Date()) : formatLocalDateKey(date);
+  return Number.isNaN(date.getTime()) ? getLocalDateKey(new Date()) : getLocalDateKey(date);
 }
 
 export function createMemoryMockExamAccessStorage(

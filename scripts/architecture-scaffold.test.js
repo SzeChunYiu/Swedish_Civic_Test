@@ -65,6 +65,14 @@ const architectureRouteFiles = architectureTargetFiles.filter(
   (relativePath) => relativePath.startsWith('app/') && relativePath.endsWith('.tsx'),
 );
 
+const releaseComplianceRouteFiles = [
+  'app/disclaimer.tsx',
+  'app/privacy.tsx',
+  'app/sources.tsx',
+  'app/support.tsx',
+  'app/terms.tsx',
+];
+
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
@@ -77,9 +85,26 @@ function exists(relativePath) {
   return fs.existsSync(path.join(repoRoot, relativePath));
 }
 
+function listFiles(relativePath) {
+  return fs
+    .readdirSync(path.join(repoRoot, relativePath), { withFileTypes: true })
+    .flatMap((entry) => {
+      const entryPath = path.join(relativePath, entry.name);
+      if (entry.isDirectory()) return listFiles(entryPath);
+      return entryPath;
+    });
+}
+
 function extractTabScreenNames(tabLayoutSource) {
   return Array.from(
     tabLayoutSource.matchAll(/<Tabs\.Screen\s+name=(["'])([^"']+)\1/g),
+    (match) => match[2],
+  );
+}
+
+function extractStackScreenNames(rootLayoutSource) {
+  return Array.from(
+    rootLayoutSource.matchAll(/<Stack\.Screen\s+name=(["'])([^"']+)\1/g),
     (match) => match[2],
   );
 }
@@ -96,6 +121,21 @@ test('Expo Router route scaffold files expose default component exports', () => 
     architectureRouteFiles.filter(
       (relativePath) => !/export\s+default\s+/.test(readText(relativePath)),
     ),
+    [],
+  );
+});
+
+test('current Expo Router route files expose default component exports', () => {
+  const currentRouteFiles = listFiles('app')
+    .filter((relativePath) => relativePath.endsWith('.tsx'))
+    .sort();
+
+  assert.deepEqual(
+    releaseComplianceRouteFiles.filter((relativePath) => !currentRouteFiles.includes(relativePath)),
+    [],
+  );
+  assert.deepEqual(
+    currentRouteFiles.filter((relativePath) => !/export\s+default\s+/.test(readText(relativePath))),
     [],
   );
 });
@@ -126,4 +166,22 @@ test('Expo Router tab scaffold exposes the architecture tab routes', () => {
 
   assert.match(tabLayout, /import\s+\{\s*Tabs\s*\}\s+from ['"]expo-router['"]/);
   assert.deepEqual(extractTabScreenNames(tabLayout).sort(), [...architectureTabRouteNames].sort());
+});
+
+test('Expo Router root scaffold redirects into the tab shell', () => {
+  const rootLayout = readText('app/_layout.tsx');
+  const indexRoute = readText('app/index.tsx');
+
+  assert.match(rootLayout, /import\s+\{\s*Stack\s*,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
+  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), ['(tabs)', 'index']);
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']index["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
+  );
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
+  );
+  assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
+  assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);
 });

@@ -66,6 +66,31 @@ const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
 };
+const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
+const EXPECTED_DAILY_GOAL_DEFAULT = 10;
+const EXPECTED_DAILY_GOAL_MIN = 1;
+const EXPECTED_DAILY_GOAL_MAX = 50;
+const EXPECTED_PROGRESS_QUESTION_FIELDS = [
+  'questionId',
+  'seenCount',
+  'correctCount',
+  'wrongCount',
+  'correctStreak',
+  'lastAnsweredAt',
+  'nextReviewAt',
+  'bookmarked',
+];
+const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set(['lastAnsweredAt', 'nextReviewAt', 'bookmarked']);
+const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
+  questionId: 'string',
+  seenCount: 'number',
+  correctCount: 'number',
+  wrongCount: 'number',
+  correctStreak: 'number',
+  lastAnsweredAt: 'string',
+  nextReviewAt: 'string',
+  bookmarked: 'boolean',
+};
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -385,6 +410,57 @@ function extractStringUnionTypeFromTs(source, typeName) {
   return values;
 }
 
+function propertyNameText(name) {
+  if (ts.isIdentifier(name) || ts.isStringLiteralLike(name) || ts.isNumericLiteral(name)) {
+    return name.text;
+  }
+  return undefined;
+}
+
+function extractObjectTypePropertiesFromTs(source, declarationName) {
+  const sourceFile = ts.createSourceFile('source.ts', source, ts.ScriptTarget.Latest, true);
+  let properties;
+
+  function readMembers(members) {
+    return members
+      .map((member) => {
+        if (!ts.isPropertySignature(member)) return undefined;
+        const name = propertyNameText(member.name);
+        if (!name) return undefined;
+        return {
+          name,
+          optional: Boolean(member.questionToken),
+          type: member.type?.getText(sourceFile) ?? '',
+        };
+      })
+      .filter(Boolean);
+  }
+
+  function visit(node) {
+    if (
+      ts.isInterfaceDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === declarationName
+    ) {
+      properties = readMembers(node.members);
+      return;
+    }
+    if (
+      ts.isTypeAliasDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === declarationName &&
+      ts.isTypeLiteralNode(node.type)
+    ) {
+      properties = readMembers(node.type.members);
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return properties;
+}
+
 function extractCallStringArgumentsFromTs(source, functionName) {
   const sourceFile = ts.createSourceFile(
     'source.tsx',
@@ -412,6 +488,54 @@ function extractCallStringArgumentsFromTs(source, functionName) {
 
   visit(sourceFile);
   return calls;
+}
+
+function numericLiteralValue(node) {
+  if (ts.isNumericLiteral(node)) return Number(node.text);
+  if (
+    ts.isPrefixUnaryExpression(node) &&
+    node.operator === ts.SyntaxKind.MinusToken &&
+    ts.isNumericLiteral(node.operand)
+  ) {
+    return -Number(node.operand.text);
+  }
+  return undefined;
+}
+
+function extractMappedNumericArraysFromTs(source, parameterName) {
+  const sourceFile = ts.createSourceFile(
+    'source.tsx',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const arrays = [];
+
+  function visit(node) {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.name.text === 'map' &&
+      ts.isArrayLiteralExpression(node.expression.expression)
+    ) {
+      const callback = node.arguments[0];
+      const callbackParameter = callback?.parameters?.[0]?.name;
+      if (
+        callbackParameter &&
+        ts.isIdentifier(callbackParameter) &&
+        callbackParameter.text === parameterName
+      ) {
+        arrays.push(
+          node.expression.expression.elements.map((element) => numericLiteralValue(element)),
+        );
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return arrays;
 }
 
 function parseCsvRows(csv) {
@@ -733,6 +857,10 @@ let uxBenchmarksValidated = 0;
 let supportedLanguagesValidated = 0;
 let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
+let settingsDailyGoalOptionsValidated = 0;
+let settingsDailyGoalParityValidated = false;
+let progressQuestionFieldsValidated = 0;
+let progressQuestionSchemaParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -1419,6 +1547,191 @@ function validateLocalizationLanguageContract() {
   }
 
   if (valid) languageSettingsParityValidated = true;
+}
+
+function validateSettingsDailyGoalParity() {
+  let valid = true;
+  let settingsStore = '';
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings daily-goal parity source could not be read: ${error.message}`);
+    return;
+  }
+
+  const dailyGoalKey = extractStringConstantFromTs(settingsStore, 'dailyGoalKey');
+  if (dailyGoalKey !== 'dailyGoalAnswers') {
+    reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
+  }
+
+  if (!settingsStore.includes(`: ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
+    reject(`readDailyGoalAnswers must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
+  }
+
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  const expectedClamp = `Math.max(${EXPECTED_DAILY_GOAL_MIN}, Math.min(${EXPECTED_DAILY_GOAL_MAX}, Math.round(dailyGoalAnswers)))`;
+  if (!normalizedSettingsStore.includes(expectedClamp)) {
+    reject(
+      `setDailyGoalAnswers must clamp between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
+    );
+  }
+
+  const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
+  const goalOptions = goalOptionArrays[0] || [];
+  if (!arrayEquals(goalOptions, EXPECTED_DAILY_GOAL_OPTIONS)) {
+    reject(
+      `app/settings.tsx daily goal options are ${JSON.stringify(
+        goalOptionArrays,
+      )}, expected ${JSON.stringify(EXPECTED_DAILY_GOAL_OPTIONS)}`,
+    );
+  }
+
+  const seenGoals = new Set();
+  goalOptions.forEach((goal, index) => {
+    let optionIsValid = true;
+    if (!Number.isInteger(goal)) {
+      optionIsValid = false;
+      reject(`daily goal option[${index}] must be an integer`);
+    } else {
+      if (goal < EXPECTED_DAILY_GOAL_MIN || goal > EXPECTED_DAILY_GOAL_MAX) {
+        optionIsValid = false;
+        reject(
+          `daily goal option ${goal} must be between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
+        );
+      }
+      if (seenGoals.has(goal)) {
+        optionIsValid = false;
+        reject(`daily goal option ${goal} is duplicated`);
+      }
+      seenGoals.add(goal);
+    }
+
+    if (optionIsValid) settingsDailyGoalOptionsValidated += 1;
+  });
+
+  if (!seenGoals.has(EXPECTED_DAILY_GOAL_DEFAULT)) {
+    reject(`daily goal options must include the default ${EXPECTED_DAILY_GOAL_DEFAULT}`);
+  }
+  if (!settingsRoute.includes('Set daily goal to ${goal} answers')) {
+    reject('app/settings.tsx daily goal buttons must expose goal-derived accessibility text');
+  }
+  if (!settingsRoute.includes('{dailyGoalAnswers} answers per day')) {
+    reject('app/settings.tsx must render the persisted daily-goal count');
+  }
+
+  if (valid && settingsDailyGoalOptionsValidated === EXPECTED_DAILY_GOAL_OPTIONS.length) {
+    settingsDailyGoalParityValidated = true;
+  }
+}
+
+function validateProgressQuestionSchemaParity() {
+  let valid = true;
+  let progressTypesSource = '';
+  let progressStoreSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    progressTypesSource = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
+    progressStoreSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/storage/progressStore.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`progress schema parity source could not be read: ${error.message}`);
+    return;
+  }
+
+  const publicFields = extractObjectTypePropertiesFromTs(
+    progressTypesSource,
+    'UserQuestionProgress',
+  );
+  const storeFields = extractObjectTypePropertiesFromTs(progressStoreSource, 'QuestionProgress');
+  if (!Array.isArray(publicFields)) {
+    reject('types/progress.ts UserQuestionProgress interface could not be read');
+    return;
+  }
+  if (!Array.isArray(storeFields)) {
+    reject('lib/storage/progressStore.ts QuestionProgress type could not be read');
+    return;
+  }
+
+  const publicFieldsByName = new Map(publicFields.map((field) => [field.name, field]));
+  const storeFieldsByName = new Map(storeFields.map((field) => [field.name, field]));
+  const storeFieldNames = storeFields.map((field) => field.name);
+  if (!arrayEquals(storeFieldNames, EXPECTED_PROGRESS_QUESTION_FIELDS)) {
+    reject(
+      `QuestionProgress fields are ${JSON.stringify(
+        storeFieldNames,
+      )}, expected ${JSON.stringify(EXPECTED_PROGRESS_QUESTION_FIELDS)}`,
+    );
+  }
+
+  publicFields.forEach((field) => {
+    if (!EXPECTED_PROGRESS_QUESTION_FIELDS.includes(field.name) && !field.optional) {
+      reject(`UserQuestionProgress ${field.name} must be optional unless persisted by the store`);
+    }
+  });
+
+  EXPECTED_PROGRESS_QUESTION_FIELDS.forEach((fieldName) => {
+    let fieldIsValid = true;
+    const expectedOptional = EXPECTED_PROGRESS_OPTIONAL_FIELDS.has(fieldName);
+    const expectedType = EXPECTED_PROGRESS_QUESTION_FIELD_TYPES[fieldName];
+    const publicField = publicFieldsByName.get(fieldName);
+    const storeField = storeFieldsByName.get(fieldName);
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!publicField) {
+      rejectField(`UserQuestionProgress missing ${fieldName}`);
+    } else {
+      if (publicField.optional !== expectedOptional) {
+        rejectField(
+          `UserQuestionProgress ${fieldName} optional=${publicField.optional}, expected ${expectedOptional}`,
+        );
+      }
+      if (publicField.type !== expectedType) {
+        rejectField(
+          `UserQuestionProgress ${fieldName} type is ${publicField.type}, expected ${expectedType}`,
+        );
+      }
+    }
+
+    if (!storeField) {
+      rejectField(`QuestionProgress missing ${fieldName}`);
+    } else {
+      if (storeField.optional !== expectedOptional) {
+        rejectField(
+          `QuestionProgress ${fieldName} optional=${storeField.optional}, expected ${expectedOptional}`,
+        );
+      }
+      if (storeField.type !== expectedType) {
+        rejectField(
+          `QuestionProgress ${fieldName} type is ${storeField.type}, expected ${expectedType}`,
+        );
+      }
+    }
+
+    if (fieldIsValid) progressQuestionFieldsValidated += 1;
+  });
+
+  if (valid && progressQuestionFieldsValidated === EXPECTED_PROGRESS_QUESTION_FIELDS.length) {
+    progressQuestionSchemaParityValidated = true;
+  }
 }
 
 function validateGlossaryTerms() {
@@ -3008,6 +3321,8 @@ validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
+validateSettingsDailyGoalParity();
+validateProgressQuestionSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
@@ -3068,6 +3383,10 @@ console.log(
           : 0,
       localizationStringsValidated,
       languageSettingsParityValidated,
+      settingsDailyGoalOptionsValidated,
+      settingsDailyGoalParityValidated,
+      progressQuestionFieldsValidated,
+      progressQuestionSchemaParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
