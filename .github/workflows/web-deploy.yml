@@ -38,7 +38,7 @@ jobs:
         run: npm run build:web:export
 
       - name: Verify SPA fallback artifact
-        run: test -f dist-web/index.html && test -f dist-web/404.html
+        run: node scripts/prepare-web-export.js --check dist-web
 
       - name: Upload web export artifact
         uses: actions/upload-artifact@v6

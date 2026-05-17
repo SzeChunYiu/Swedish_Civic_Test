@@ -50,6 +50,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.rewardedAdTypeUnionsValidated, 1);
   assert.equal(summary.rewardedAdTypeInterfacesValidated, 3);
   assert.equal(summary.rewardedAdTypeSchemaParityValidated, true);
+  assert.equal(summary.mockExamAccessTypeUnionsValidated, 1);
+  assert.equal(summary.mockExamAccessTypeInterfacesValidated, 6);
+  assert.equal(summary.mockExamAccessTypeSchemaParityValidated, true);
   assert.equal(summary.themeColorTokensValidated, 29);
   assert.equal(summary.themeSpaceTokensValidated, 19);
   assert.equal(summary.themeRadiusTokensValidated, 7);
@@ -73,6 +76,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
+  assert.equal(summary.progressStoreFieldsValidated, 8);
+  assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);

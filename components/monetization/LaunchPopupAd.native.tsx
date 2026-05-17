@@ -31,16 +31,28 @@ export function LaunchPopupAd({
     const unitId = getPlatformAdUnitId('app_open_launch', Platform.OS);
     if (!unitId) return undefined;
 
-    launchPopupShownThisRuntime = true;
-    const appOpenAd = AppOpenAd.createForAdRequest(unitId, {
-      requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
-    });
-    const unsubscribe = appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
-      appOpenAd.show();
-    });
+    let unsubscribe: (() => void) | undefined;
 
-    appOpenAd.load();
-    return unsubscribe;
+    try {
+      const appOpenAd = AppOpenAd.createForAdRequest(unitId, {
+        requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
+      });
+
+      unsubscribe = appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
+        try {
+          void Promise.resolve(appOpenAd.show()).catch(() => undefined);
+        } catch {
+          // App-open ads are optional; a failed show must not block launch.
+        }
+      });
+
+      appOpenAd.load();
+      launchPopupShownThisRuntime = true;
+      return unsubscribe;
+    } catch {
+      unsubscribe?.();
+      return undefined;
+    }
   }, [entitlements, mobileAdsConsent]);
 
   return null;

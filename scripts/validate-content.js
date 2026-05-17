@@ -354,6 +354,20 @@ const EXPECTED_PROGRESS_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_PROGRESS_STORE_FIELDS = [
+  { name: 'completedQuestionIds', type: 'string[]', optional: false },
+  { name: 'questionProgress', type: 'Record<string, QuestionProgress>', optional: false },
+  { name: 'totalXp', type: 'number', optional: false },
+  { name: 'answerDates', type: 'string[]', optional: false },
+  { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
+  {
+    name: 'recordAnswer',
+    type: '(questionId: string, isCorrect: boolean) => void',
+    optional: false,
+  },
+  { name: 'toggleBookmark', type: '(questionId: string) => void', optional: false },
+  { name: 'resetProgress', type: '() => void', optional: false },
+];
 const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
@@ -692,6 +706,86 @@ const EXPECTED_REWARDED_AD_INTERFACES = [
       { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: true },
       { name: 'requestNonPersonalizedAdsOnly', type: 'boolean', optional: true },
       { name: 'timeoutMs', type: 'number', optional: true },
+    ],
+  },
+];
+const EXPECTED_MOCK_EXAM_ACCESS_TYPE_UNIONS = [
+  {
+    typeName: 'MockExamAccessReason',
+    values: [
+      'free_exam_available',
+      'premium_unlimited_mock_exams',
+      'rewarded_exam_credit',
+      'rewarded_ad_available',
+      'remove_ads_active',
+      'consent_required',
+      'ads_unavailable',
+    ],
+  },
+];
+const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
+  {
+    name: 'MockExamAccessState',
+    fields: [
+      { name: 'completedMockExamsToday', type: 'number', optional: false },
+      {
+        name: 'consentDecision',
+        type: "Pick<AdConsentDecision, 'adServingAllowed'>",
+        optional: true,
+      },
+      {
+        name: 'entitlements',
+        type: "Pick<PremiumEntitlements, 'adsDisabled' | 'unlimitedMockExams'>",
+        optional: false,
+      },
+      { name: 'freeMockExamLimit', type: 'number', optional: false },
+      { name: 'rewardedExtraExamCredits', type: 'number', optional: true },
+    ],
+  },
+  {
+    name: 'MockExamAccessDecision',
+    fields: [
+      { name: 'canOfferRewardedAd', type: 'boolean', optional: false },
+      { name: 'canStartExam', type: 'boolean', optional: false },
+      { name: 'freeExamsRemaining', type: 'number', optional: false },
+      { name: 'placement', type: 'typeof REWARDED_EXTRA_EXAM_PLACEMENT', optional: false },
+      { name: 'reason', type: 'MockExamAccessReason', optional: false },
+      { name: 'rewardedExtraExamCredits', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'PersistedMockExamAccess',
+    fields: [
+      { name: 'completedMockExamsByDate', type: 'Record<string, number>', optional: false },
+      { name: 'rewardedExtraExamCredits', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'StoredMockExamAccessSnapshot',
+    fields: [
+      { name: 'completedMockExamsByDate', type: 'Record<string, number>', optional: false },
+      { name: 'rewardedExtraExamCredits', type: 'number', optional: false },
+      { name: 'completedMockExamsToday', type: 'number', optional: false },
+      { name: 'dateKey', type: 'string', optional: false },
+    ],
+  },
+  {
+    name: 'MockExamAccessStorage',
+    fields: [
+      { name: 'deleteItemAsync', type: '(key: string) => Promise<void>', optional: true },
+      { name: 'getItemAsync', type: '(key: string) => Promise<string | null>', optional: false },
+      {
+        name: 'setItemAsync',
+        type: '(key: string, value: string) => Promise<void>',
+        optional: false,
+      },
+    ],
+  },
+  {
+    name: 'MockExamAccessStorageOptions',
+    fields: [
+      { name: 'date', type: 'Date | string', optional: true },
+      { name: 'storage', type: 'MockExamAccessStorage', optional: false },
     ],
   },
 ];
@@ -1092,6 +1186,31 @@ function extractObjectTypePropertiesFromTs(source, declarationName) {
       ts.isTypeLiteralNode(node.type)
     ) {
       properties = readMembers(node.type.members);
+      return;
+    }
+    if (
+      ts.isTypeAliasDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === declarationName &&
+      ts.isIntersectionTypeNode(node.type)
+    ) {
+      const mergedProperties = [];
+      for (const typeNode of node.type.types) {
+        if (ts.isTypeLiteralNode(typeNode)) {
+          mergedProperties.push(...readMembers(typeNode.members));
+          continue;
+        }
+        if (ts.isTypeReferenceNode(typeNode) && ts.isIdentifier(typeNode.typeName)) {
+          const referencedProperties = extractObjectTypePropertiesFromTs(
+            source,
+            typeNode.typeName.text,
+          );
+          if (Array.isArray(referencedProperties)) {
+            mergedProperties.push(...referencedProperties);
+          }
+        }
+      }
+      properties = mergedProperties;
       return;
     }
     ts.forEachChild(node, visit);
@@ -1549,6 +1668,8 @@ let progressQuestionSchemaParityValidated = false;
 let progressTypeUnionsValidated = 0;
 let progressTypeInterfacesValidated = 0;
 let progressTypeSchemaParityValidated = false;
+let progressStoreFieldsValidated = 0;
+let progressStoreSchemaParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -1563,6 +1684,9 @@ let mobileAdsConsentTypeSchemaParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
 let rewardedAdTypeInterfacesValidated = 0;
 let rewardedAdTypeSchemaParityValidated = false;
+let mockExamAccessTypeUnionsValidated = 0;
+let mockExamAccessTypeInterfacesValidated = 0;
+let mockExamAccessTypeSchemaParityValidated = false;
 let themeColorTokensValidated = 0;
 let themeSpaceTokensValidated = 0;
 let themeRadiusTokensValidated = 0;
@@ -3318,6 +3442,106 @@ function validateProgressTypeSchemaParity() {
   }
 }
 
+function validateProgressStoreSchemaParity() {
+  let valid = true;
+  let progressStoreSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    progressStoreSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/storage/progressStore.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`progress store schema source could not be read: ${error.message}`);
+    return;
+  }
+
+  const actualFields = extractObjectTypePropertiesFromTs(progressStoreSource, 'ProgressState');
+  if (!Array.isArray(actualFields)) {
+    reject('lib/storage/progressStore.ts ProgressState type could not be read');
+    return;
+  }
+
+  const actualNames = actualFields.map((field) => field.name);
+  const expectedNames = EXPECTED_PROGRESS_STORE_FIELDS.map((field) => field.name);
+  if (!arrayEquals(actualNames, expectedNames)) {
+    reject(
+      `ProgressState fields are ${JSON.stringify(actualNames)}, expected ${JSON.stringify(
+        expectedNames,
+      )}`,
+    );
+  }
+
+  const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+  EXPECTED_PROGRESS_STORE_FIELDS.forEach((expectedField) => {
+    let fieldIsValid = true;
+    const actualField = actualFieldsByName.get(expectedField.name);
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!actualField) {
+      rejectField(`ProgressState missing ${expectedField.name}`);
+      return;
+    }
+    if (actualField.type !== expectedField.type) {
+      rejectField(
+        `ProgressState.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+      );
+    }
+    if (actualField.optional !== expectedField.optional) {
+      rejectField(
+        `ProgressState.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+      );
+    }
+
+    if (fieldIsValid) progressStoreFieldsValidated += 1;
+  });
+
+  const progressStateKey = extractStringConstantFromTs(progressStoreSource, 'progressStateKey');
+  if (progressStateKey !== 'progressState') {
+    reject(`progressStateKey is ${JSON.stringify(progressStateKey)}, expected "progressState"`);
+  }
+
+  const normalizedProgressStore = progressStoreSource.replace(/\s+/g, ' ');
+  const requiredSnippets = [
+    ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
+    [
+      'const rawProgress = progressStorage?.getString(progressStateKey);',
+      'readProgress must read persisted JSON through progressStateKey',
+    ],
+    [
+      'return normalizeProgress(JSON.parse(rawProgress));',
+      'readProgress must normalize parsed persisted JSON',
+    ],
+    [
+      'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
+      'writeProgress must persist JSON through progressStateKey',
+    ],
+    ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
+    ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
+    ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
+    ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
+  ];
+
+  requiredSnippets.forEach(([snippet, message]) => {
+    if (!normalizedProgressStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  if (valid && progressStoreFieldsValidated === EXPECTED_PROGRESS_STORE_FIELDS.length) {
+    progressStoreSchemaParityValidated = true;
+  }
+}
+
 function validateContentTypeSchemaParity() {
   let valid = true;
   let contentTypesSource = '';
@@ -3863,6 +4087,104 @@ function validateRewardedAdTypeSchemaParity() {
     rewardedAdTypeInterfacesValidated === EXPECTED_REWARDED_AD_INTERFACES.length
   ) {
     rewardedAdTypeSchemaParityValidated = true;
+  }
+}
+
+function validateMockExamAccessTypeSchemaParity() {
+  let valid = true;
+  let mockExamAccessSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mockExamAccessSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/rewardedExam.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_MOCK_EXAM_ACCESS_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(mockExamAccessSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`lib/monetization/rewardedExam.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `lib/monetization/rewardedExam.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    mockExamAccessTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_MOCK_EXAM_ACCESS_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      mockExamAccessSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `lib/monetization/rewardedExam.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `lib/monetization/rewardedExam.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `lib/monetization/rewardedExam.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `lib/monetization/rewardedExam.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `lib/monetization/rewardedExam.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) mockExamAccessTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    mockExamAccessTypeUnionsValidated === EXPECTED_MOCK_EXAM_ACCESS_TYPE_UNIONS.length &&
+    mockExamAccessTypeInterfacesValidated === EXPECTED_MOCK_EXAM_ACCESS_INTERFACES.length
+  ) {
+    mockExamAccessTypeSchemaParityValidated = true;
   }
 }
 
@@ -5668,6 +5990,7 @@ validatePurchaseTypeSchemaParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateRewardedAdTypeSchemaParity();
+validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
@@ -5677,6 +6000,7 @@ validateSettingsDailyGoalParity();
 validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
+validateProgressStoreSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
@@ -5743,6 +6067,9 @@ console.log(
       rewardedAdTypeUnionsValidated,
       rewardedAdTypeInterfacesValidated,
       rewardedAdTypeSchemaParityValidated,
+      mockExamAccessTypeUnionsValidated,
+      mockExamAccessTypeInterfacesValidated,
+      mockExamAccessTypeSchemaParityValidated,
       themeColorTokensValidated,
       themeSpaceTokensValidated,
       themeRadiusTokensValidated,
@@ -5773,6 +6100,8 @@ console.log(
       progressTypeUnionsValidated,
       progressTypeInterfacesValidated,
       progressTypeSchemaParityValidated,
+      progressStoreFieldsValidated,
+      progressStoreSchemaParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
