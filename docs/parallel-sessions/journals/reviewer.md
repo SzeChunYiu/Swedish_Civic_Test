@@ -519,3 +519,791 @@ Workspace contract: blocked - current product-source changes are ambiguous for R
 Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:58Z]`.
 Evidence: REVIEWER did not edit product source; queue/journal updates only.
 Next manager action: provide source-owner handoffs or a clean commit/boundary for the current paywall and data-integrity diffs before the next reviewer pass.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: P0 source-citation behavior on exported `/quiz/q001` plus static published question stems.
+Checks run:
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, and existing reviewer queue entries.
+- Checked queue/script setup: `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent in this checkout.
+- `npm run test:answer-shuffle` - exit 0; 3/3 tests passed, so this pass did not reopen the answer-shuffle P0.
+- Static content scan - found 272 published question stems still containing UHR/source phrasing, including 43 authored stems; `q001` still says `Enligt UHR-materialet, var ligger Sverige?` / `According to the UHR material, where is Sweden located?`.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export` - exit 0.
+- Inline Playwright with `/usr/bin/google-chrome` against `/quiz/q001` - exit 1 by design because the route showed both old stem phrasing and the separate source citation.
+Workspace contract: pass with caveats - REVIEWER edited only queue/journal files; product source is dirty outside this lane, so this is defect evidence for manager assignment rather than acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1` (queued directly because the configured `review-to-queue.sh` helper is missing).
+Evidence: route result was `hasOldStemSv:true`, `hasOldStemEn:true`, `hasSeparateCitation:true`, `hasDisclaimer:true`, and console/page errors 0.
+Next manager action: assign a source-touching SOURCE-CITATION atom for authored `data/` stems and generated prompt templates, then add validation that rejects source-authority phrasing in question stems while preserving the separate citation line and not-a-real-exam disclaimer.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: workspace contract state after source-citation pass.
+Checks run:
+- `git status --short --branch` - source/test/docs dirty state remains outside REVIEWER ownership.
+- `git diff --check -- codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md` - exit 0 for REVIEWER-touched files.
+Workspace contract: blocked for further passes - current source-owner changes are not bounded to REVIEWER.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T20:08Z]`.
+Evidence: current dirty scope includes `scripts/content-production.test.js`, `tests/content-source-material-link-parity.test.js`, `tests/content-theme-token-schema.test.js`, multiple manager/worker docs/journals, prompts, verifier log, screenshot artifacts, and untracked prompt backup files; REVIEWER edited only queue/journal files.
+Next manager action: commit, accept/reject, or otherwise bound active source-owner changes before handing REVIEWER another functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: workspace contract state on HEAD `c7b49c0` before starting another focused functional pass.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, current reviewer journal, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, and `codex-tasks/blockers.txt`.
+- Checked queue helper availability: `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so queue/blocker fallback remains direct file entries.
+- `git status --short --branch` and `git diff --name-only` show unbounded source/test changes outside REVIEWER, including `app/support.tsx`, compliance/content validator scripts, and content parity tests, plus queues/journals/prompts/screenshots.
+- Checked current SETUP/DATA-INTEGRITY journals and TEAM_PLAN. DATA-INTEGRITY has a handoff for the theme/source parity test atom, but no accepted row or visible SETUP handoff bounds the dirty support-surface source change.
+Workspace contract: blocked - no new functional pass run because the current artifact boundary is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T22:11CEST]`.
+Evidence: REVIEWER did not edit product source; continuing would test a mixed checkout with active source-owner changes not bounded to this lane.
+Next manager action: commit, accept/reject, or explicitly bound the active source-owner changes before handing REVIEWER another focused pass.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: P0 SOURCE-CITATION follow-up on current Chapter 10 q075-q080 source stems and exported `/quiz/q076`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, existing reviewer queue entries, and current SETUP/DATA-INTEGRITY/CONTENT journals.
+- Checked queue helper availability: `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are still absent, so direct queue update fallback was used.
+- Static scan of `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, and `content/question-bank.csv` found the current q075 cleanup but continued source-authority wording in adjacent source questions and generated CSV rows.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q076` - loaded `Quizpass q076`, showed the old Swedish and English UHR-material stem text, showed the separate `Källa/Source: Sverige i fokus, Sveriges moderna historia, Befolkningsökning, s. 32` citation, kept the not-official disclaimer visible, and recorded console/page errors 0.
+- `npm run validate:content` - exit 0; summary still reports `questionAuthorityBoundaryTextValidated:500`, so the validator does not currently fail on this SOURCE-CITATION P0 wording.
+- Focused CSV check over `q075`-`q080` - exit 0 for the reviewer command by confirming `q075` is clean while `q076`, `q077`, `q078`, `q079`, and `q080` still contain UHR/source-authority phrasing.
+Workspace contract: provisional pass only - product source remains dirty outside REVIEWER, including an unaccepted q075 content diff; REVIEWER edited only queue/journal files and did not accept a source atom.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:15 CEST]`.
+Evidence: current user-facing `/quiz/q076` still displays redundant source-authority wording above the separate source citation, and the focused q075-q080 CSV check shows five adjacent remaining violations despite green content validation.
+Next manager action: assign a bounded SOURCE-CITATION content/data-integrity atom for `q076`-`q080` plus validator coverage for source-authority wording in authored and generated prompts; do not close the P0 on one-question cleanup.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: P0 SOURCE-CITATION follow-up on dirty q076 cleanup and remaining q075-q080 stems.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, current CONTENT/DATA-INTEGRITY/SETUP journals, and existing reviewer queue entries.
+- Checked queue helper availability: `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are still absent, so direct queue update fallback was used.
+- Inspected the current dirty `data/additionalQuestions.ts` / `content/question-bank.csv` q076 diff; no CONTENT handoff for q076 is present yet.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q076` - loaded `Quizpass q076`, showed the cleaned Swedish and English stems, preserved the separate `Källa/Source: Sverige i fokus, Sveriges moderna historia, Befolkningsökning, s. 32` citation, kept the not-official disclaimer, and recorded console/page errors 0.
+- `npm run validate:content` - exit 0; summary still reports `questionAuthorityBoundaryTextValidated:500`, so the validator still does not fail on the remaining SOURCE-CITATION P0 wording.
+- Focused CSV check over `q075`-`q080` - exit 0 for the reviewer command by confirming `q075` and `q076` are clean while `q077`, `q078`, `q079`, and `q080` still contain UHR/source-authority phrasing.
+Workspace contract: provisional pass only - product source remains dirty outside REVIEWER, including an uncommitted q076 content diff; REVIEWER edited only queue/journal files and did not accept a source atom.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:19 CEST]`.
+Evidence: q076 now behaves correctly in exported web, but the focused q075-q080 CSV check still shows four adjacent source-citation violations and the green content validator does not cover them.
+Next manager action: accept/reject or commit the q076 CONTENT atom with proper handoff, then assign q077-q080 cleanup plus validator coverage for authored and generated prompt source-authority wording.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: SETUP support route localization/actionability fix for `REVIEWER-SUPPORT-CONTACT-1`.
+Checks run:
+- Re-read current lane docs, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, and current SETUP handoff.
+- Reused the fresh exported web artifact from `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export -- --max-workers 2`, which exited 0 in the preceding REVIEWER pass.
+- System-Chrome exported-web smoke on `/support` - exit 0. The route showed Swedish `Support och återkoppling`, `Vad du kan rapportera`, `Inga personuppgifter`, and `Offentlig supportsida`; it did not show the stale release-checklist placeholder copy; links were `/profile` plus the public support URL with localized accessibility label `Öppna den offentliga supportsidan`; browser errors 0.
+Workspace contract: pass with caveat - source ownership is SETUP, not REVIEWER; REVIEWER edited only queue/journal files and did not accept the source atom.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SUPPORT-CONTACT-1 update [2026-05-17 22:20 CEST]`.
+Evidence: the previously missing actionable support destination is now present and accessible in exported web.
+Next manager action: VALIDATOR can close the reviewer support-contact defect after accepting the bounded SETUP commit `4064f0d`; keep unrelated release/contact policy gates separate.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: P0 SOURCE-CITATION follow-up on dirty q077 cleanup and remaining q075-q080 stems.
+Checks run:
+- Re-read required lane docs, `GOAL.md`, current `TEAM_PLAN`, current CONTENT/DATA-INTEGRITY journals, and existing reviewer queue entries.
+- Inspected the current dirty `data/additionalQuestions.ts` / `content/question-bank.csv` q077 diff; no CONTENT handoff for q077 is present yet.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q077` - loaded `Quizpass q077`, showed the cleaned Swedish and English stems, preserved the separate `Källa/Source: Sverige i fokus, Sveriges moderna historia, Befolkningsökning, s. 32` citation, kept the not-official disclaimer, and recorded console/page errors 0.
+- `npm run validate:content` - exit 0; summary still reports `questionAuthorityBoundaryTextValidated:500`, so the validator still does not fail on the remaining SOURCE-CITATION P0 wording.
+- Focused CSV check over `q075`-`q080` - exit 0 for the reviewer command by confirming `q075`, `q076`, and `q077` are clean while `q078`, `q079`, and `q080` still contain UHR/source-authority phrasing.
+Workspace contract: provisional pass only - product source remains dirty outside REVIEWER, including an uncommitted q077 content diff; REVIEWER edited only queue/journal files and did not accept a source atom.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:22 CEST]`.
+Evidence: q077 now behaves correctly in exported web, but the focused q075-q080 CSV check still shows three adjacent source-citation violations and the green content validator does not cover them.
+Next manager action: accept/reject or commit the q077 CONTENT atom with proper handoff, then assign q078-q080 cleanup plus validator coverage for authored and generated prompt source-authority wording.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: P0 SOURCE-CITATION runtime-strip follow-up on exported `/quiz/q078`, `/quiz/q079`, `/quiz/q080`, raw question data, generated templates, speech text, and validators.
+Checks run:
+- Re-read required lane docs, `GOAL.md`, current `TEAM_PLAN`, current CONTENT/DATA-INTEGRITY/SETUP journals, and existing reviewer queue entries.
+- Static scan for `Enligt UHR-materialet`, `According to the UHR material`, `enligt UHR-avsnittet`, and `the UHR section` across `data/additionalQuestions.ts`, `content/question-bank.csv`, `lib/content/derivedQuestions.ts`, app/components/lib/scripts/tests.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 180s npm run test:audio` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 240s npm run validate:content` - exit 0; summary still reports `questionAuthorityBoundaryTextValidated:500`.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 180s node --test tests/content-question-card-accessibility-parity.test.js tests/content-question-speech-text-parity.test.js` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke over `/quiz/q078`, `/quiz/q079`, and `/quiz/q080` - exit 1 because q079 still renders source-authority wording.
+Workspace contract: provisional pass only - product/test source remains dirty outside REVIEWER; REVIEWER edited only queue/journal notes and did not accept a source atom.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:25 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:25 CEST]`.
+Evidence: q078 rendered `Vad innebar 1809 års nya grundlag?` and q080 rendered the cleaned Riksdag-election prompt, but q079 still rendered `Vilka nämner UHR-materialet som fyra av de största svenska folkrörelserna?` and the English body still included `UHR material`; all three preserved separate `Källa/Source: Sverige i fokus...` citations and browser errors were 0. Static scan still finds raw source-authority phrasing in source data, CSV export, and generated prompt templates while green tests validate display/speech stripping rather than raw source cleanup.
+Next manager action: bound the current source-citation runtime/test diff, then require a source-touching data/generated-template cleanup plus validator coverage that rejects raw source-authority wording before closing SOURCE-CITATION.
+
+Lane: REVIEWER
+Host/branch: local/main
+Artifact reviewed: workspace contract state after the 22:25 SOURCE-CITATION pass.
+Checks run:
+- `git diff --check -- codex-tasks/validator.txt codex-tasks/blockers.txt docs/parallel-sessions/journals/reviewer.md` - exit 0.
+- `git status --short --branch` - source-owner dirty scope changed again after the pass.
+Workspace contract: blocked - no further reviewer pass run because the shared checkout is moving outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:26 CEST]`.
+Evidence: current dirty scope now includes `content/question-bank.csv`, `data/additionalQuestions.ts`, `package.json`, `scripts/ui-effects.test.js`, `tests/content-question-speech-text-parity.test.js`, and untracked `tests/content-uhr-map-text-normalization.test.js`, in addition to the source-citation runtime/test files and coordination/report changes. REVIEWER did not edit product source or tests.
+Next manager action: bound, commit, accept/reject, or clear the moving source-owner dirty scope before handing REVIEWER another functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `5801f01` (behind 1 from origin/main)
+Artifact reviewed: P0 SOURCE-CITATION follow-up on current raw stems, generated templates, exported CSV, and exported `/quiz/q079`-`/quiz/q081`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, existing reviewer queue entries, and current git state.
+- Checked queue helper availability: `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` exit 1 / absent, so direct queue update fallback was used.
+- `npm run test:answer-shuffle` - exit 0; 3/3 tests passed, so this pass did not reopen SHUFFLE-FIX.
+- `npm run validate:content` - exit 0; summary still reports `questionAuthorityBoundaryTextValidated:500` despite raw source-authority wording.
+- Focused static scan - 252 CSV rows still contain source-authority wording; `data/questions.ts`/`data/additionalQuestions.ts` contain 152 matches; `lib/content/derivedQuestions.ts` contains 2 generated-template matches.
+- `node --test tests/content-question-authority-boundary.test.js tests/content-question-speech-text-parity.test.js` - exit 0; 3/3 tests passed while the raw-content defect remains.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke over `/quiz/q079`, `/quiz/q080`, and `/quiz/q081` - exit 1 by design because q079 still renders `UHR-materialet` / `UHR material` in the visible stem. q080 and q081 are visually stripped; all checked routes keep separate source citations and the not-official disclaimer; browser errors 0.
+Workspace contract: pass with caveats - REVIEWER edited only queue/journal files; current product source is clean, while branch divergence remains for manager reconciliation before release acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:30 CEST]`.
+Evidence: runtime display stripping is incomplete for q079 and the raw content/export contract is still dirty across hundreds of published rows while green validators do not catch it.
+Next manager action: assign a source-touching content/data-integrity atom to clean raw stems and generated prompt templates, starting with q079 and the remaining Chapter 10/11 batch, and add validation that rejects source-authority wording in published stems/exports before closing SOURCE-CITATION.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `f9848ba` (behind 1 from origin/main)
+Artifact reviewed: workspace contract state after starting the next q079 content-quality pass.
+Checks run:
+- `git rev-parse --short HEAD`, `git status --short --branch`, and `git log --oneline -6` - HEAD moved from the just-reviewed `5801f01` boundary to `f9848ba`.
+- `git diff --name-status -- data/additionalQuestions.ts content/question-bank.csv lib/content/derivedQuestions.ts scripts/validate-content.js tests/content-question-speech-text-parity.test.js` - dirty product/content scope now includes `data/additionalQuestions.ts` and `content/question-bank.csv`.
+- Focused q079/q080/q081/q085 CSV/source inspection - q079 is now clean in the dirty content diff, while q080/q081/q085 and many other rows still show source-authority wording.
+Workspace contract: blocked - the artifact boundary moved and product content is dirty outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:32 CEST]`.
+Evidence: REVIEWER edited only queue/journal files; continuing would mix the completed 22:30 SOURCE-CITATION pass with unbounded CONTENT edits.
+Next manager action: CONTENT/VALIDATOR should commit, accept/reject, or explicitly bound the current content diff and reconcile `main` before handing REVIEWER another functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `cc5ea91` (ahead 1 / behind 1 from origin/main)
+Artifact reviewed: SETUP Iteration 141 SHUFFLE-FIX mock-exam scoring/review guard in `scripts/exam.test.js`.
+Checks run:
+- Re-read lane docs, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, `codex-tasks/P0.md`, and SETUP handoff for Iteration 141.
+- Inspected `scripts/exam.test.js`, `scripts/answer-shuffle.test.js`, `lib/quiz/examGenerator.ts`, and `lib/quiz/answerOptionShuffle.ts` for seeded session shuffle, remapped option ids, score calculation, and review item text.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` - exit 0; 8/8 tests passed including `generateExam preserves scoring and review after session answer shuffle`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` - exit 0; 3/3 tests passed.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/exam.test.js` - exit 0.
+- Direct reviewer probe against `generateExam`, `scoreExam`, and `buildExamReviewItems` - exit 0; a shuffled session moved the correct answer to display id `d`, correct scoring returned 100%, wrong-answer scoring returned 0%, and review rows preserved the original correct-answer text while separating selected wrong text.
+Workspace contract: pass with caveat - source ownership is SETUP, not REVIEWER; REVIEWER edited only journal/queue files.
+Findings queued: none from this focused pass.
+Evidence: the new test meaningfully covers mock-exam scoring/review after seeded answer-option shuffling and the direct probe covers both correct and wrong shuffled answers.
+Next manager action: VALIDATOR can review the bounded SETUP test atom; SOURCE-CITATION remains open for raw content/generated prompt cleanup and should stay prioritized before cosmetic work.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `cc5ea91` (ahead 1 / behind 1 from origin/main)
+Artifact reviewed: P0 SOURCE-CITATION follow-up after q079 cleanup, focused on q080-q091 raw stems/CSV and exported `/quiz/q080`, `/quiz/q081`, `/quiz/q085`.
+Checks run:
+- `npm run validate:content` - exit 0; summary still reports `questionAuthorityBoundaryTextValidated:500`.
+- Focused static CSV/source scan - q079 is clean, but q080, q081, q084, q085, q086, q087, q088, q089, q090, and q091 still contain source-authority wording; exported bank has 248 matching rows, authored source files have 151 matches, and `lib/content/derivedQuestions.ts` has 2 generated-template matches.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke over `/quiz/q080`, `/quiz/q081`, and `/quiz/q085` - exit 0; visible prompts are stripped, separate `Källa/Source: Sverige i fokus` citation is present, disclaimer is visible, and browser errors are 0.
+Workspace contract: pass with caveat - source ownership for q080-q091 is CONTENT/DATA-INTEGRITY, not REVIEWER; REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:35 CEST]`.
+Evidence: runtime display stripping masks the defect for sampled routes, but raw source/export and generated templates still violate the SOURCE-CITATION P0 while content validation remains green.
+Next manager action: keep SOURCE-CITATION open; assign bounded CONTENT cleanup for q080-q091 and DATA-INTEGRITY validation that fails raw published stems/exports and generated prompt templates containing source-authority wording.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `cc5ea91` (ahead 1 / behind 1 from origin/main)
+Artifact reviewed: workspace contract state after SOURCE-CITATION q080-q091 pass.
+Checks run:
+- `git status --short --branch` - source-owner dirty scope changed after the pass.
+- Checked current CONTENT/DATA-INTEGRITY journals and focused diff. CONTENT has a completed handoff for committed q079, but no q080 handoff yet; DATA-INTEGRITY has no current handoff for `tests/content-question-bank-csv-contract.test.js`.
+- `git diff -- data/additionalQuestions.ts tests/content-question-bank-csv-contract.test.js` - q080 source-citation cleanup and CSV header negative coverage are dirty outside REVIEWER ownership.
+Workspace contract: blocked - no further reviewer pass run because the shared checkout is again a mixed moving artifact.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:36 CEST]`.
+Evidence: REVIEWER edited only queue/journal files; dirty product/test files now include `data/additionalQuestions.ts`, `tests/content-question-bank-csv-contract.test.js`, and the bounded SETUP `scripts/exam.test.js`.
+Next manager action: CONTENT/DATA-INTEGRITY/SETUP should commit, accept/reject, or explicitly bound the current source-owner changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `cc5ea91` (ahead 1 / behind 1 from origin/main)
+Artifact reviewed: workspace contract recheck before attempting another functional pass.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `GOAL.md`, and `docs/architecture.md`.
+- `git status --short --branch` - dirty product/test scope remains and now includes `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/exam.test.js`, and `tests/content-question-bank-csv-contract.test.js`.
+- Checked latest CONTENT and DATA-INTEGRITY journals: CONTENT bounds committed q079 only; DATA-INTEGRITY has no visible handoff for the CSV-contract negative test.
+Workspace contract: blocked - no new functional pass run because host/branch and dirty-worktree state are ambiguous for REVIEWER.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:37 CEST]`.
+Evidence: `content/question-bank.csv` and `data/additionalQuestions.ts` indicate active q080 source/export work; `tests/content-question-bank-csv-contract.test.js` is active validation work; REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/DATA-INTEGRITY/SETUP should commit, accept/reject, or explicitly bound the dirty product/test files and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `19af8f5` (ahead 2 / behind 1 from origin/main)
+Artifact reviewed: CONTENT Iteration 184 q080 democracy-breakthrough source-citation cleanup.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, and current CONTENT/DATA-INTEGRITY/SETUP handoffs.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for q080/q417-q420.
+- `npm run validate:content` - exit 0; summary reports 500 published questions, 100 source questions, 400 generated questions, 500 UHR references, and `questionAuthorityBoundaryTextValidated:500`.
+- `node scripts/export-question-bank.js --check` - exit 0 with 500-question export parity.
+- `node --test tests/content-question-bank-csv-contract.test.js` - exit 0 with 2/2 passing.
+- Direct q080 source/export assertion - exit 0; confirmed UHR section `Demokratins genombrott`, page 34, correct option `c`/`1921`, clean authored SV/EN stems, and exported q080/q417-q420 rows.
+- Focused q079-q091 CSV scan - exit 0; authored q079 and q080 are clean, while q081 and q084-q091 remain dirty; total exported source-authority rows are now 244.
+- `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q080` - exit 0; the route showed clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, Sveriges moderna historia, Demokratins genombrott, s. 34`, the independent-study disclaimer, option `1921`, and browser errors 0.
+Workspace contract: pass with caveat - q080 content files are committed and clean; dirty product/test files are bounded SETUP Iteration 141 and DATA-INTEGRITY CSV-contract test handoffs, while branch divergence still needs manager reconciliation before release acceptance. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:41 CEST]`.
+Evidence: q080 is now a valid bounded CONTENT fix, but SOURCE-CITATION remains open because q081+ authored rows and generated source-practice templates still include source-authority wording.
+Next manager action: VALIDATOR can review q080 commit `19af8f5`; keep assigning SOURCE-CITATION cleanup for q081+ authored rows and generated templates before closing the P0.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `58fc505` (ahead 5 / behind 1 from origin/main)
+Artifact reviewed: CONTENT Iteration 185 q081 Saltsjöbaden Agreement source-citation cleanup.
+Checks run:
+- Re-read current `TEAM_PLAN`, CONTENT/DATA-INTEGRITY/SETUP handoffs, and current git state after HEAD advanced to `58fc505`.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for q081/q421-q424.
+- `npm run validate:content` - exit 0; summary reports 500 published questions, 100 source questions, 400 generated questions, 500 UHR references, and `questionAuthorityBoundaryTextValidated:500`.
+- `node scripts/export-question-bank.js --check` - exit 0 with 500-question export parity.
+- Direct q081 source/export assertion - exit 0; confirmed UHR section `Den svenska modellen`, page 35, correct option `a`, clean authored SV/EN stems, and exported q081/q421-q424 rows.
+- Focused q079-q091 CSV scan - exit 0; authored q079-q083 are clean, while q084-q091 remain dirty; total exported source-authority rows are now 240.
+- `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q081` - exit 0; the route showed clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, Sveriges moderna historia, Den svenska modellen, s. 35`, the independent-study disclaimer, correct answer text, and browser errors 0.
+Workspace contract: pass with caveat - q081 content files are committed and clean; current dirty files are coordination/report artifacts outside the CONTENT source atom, while branch divergence still needs manager reconciliation before release acceptance. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:44 CEST]`.
+Evidence: q081 is now a valid bounded CONTENT fix, but SOURCE-CITATION remains open because q084+ authored rows and generated source-practice templates still include source-authority wording.
+Next manager action: VALIDATOR can review q081 commit `58fc505`; keep assigning SOURCE-CITATION cleanup for q084+ authored rows and generated templates before closing the P0.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `58fc505` (ahead 5 / behind 3 from origin/main)
+Artifact reviewed: workspace contract state after q081 SOURCE-CITATION pass.
+Checks run:
+- `git status --short --branch` - source-owner scope changed after the q081 pass and now includes unresolved conflicts.
+- `git rev-parse --short HEAD` - still `58fc505`.
+- Confirmed the q081 web server on port 4193 was stopped.
+Workspace contract: blocked - no further functional pass run because the shared checkout is now a conflicted mixed artifact outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:44 CEST]`.
+Evidence: `content/question-bank.csv` and `data/additionalQuestions.ts` are `UU`; additional source/test edits include `data/questions.ts`, `lib/content/derivedQuestions.ts`, `package.json`, `scripts/validate-content.js`, `tests/content-question-authority-boundary.test.js`, `tests/content-generated-tag-parity.test.js`, and new `tests/content-uhr-source-citation-stem.test.js`. REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/DATA-INTEGRITY/GM should resolve conflicts, commit/accept/reject or explicitly bound the source/test changes, and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `58fc505` (ahead 5 / behind 3 from origin/main)
+Artifact reviewed: workspace contract recheck after transient conflict cleanup.
+Checks run:
+- `git status --short --branch` - conflicts cleared, but dirty source/test scope remains.
+- `git diff -- tests/content-generated-tag-parity.test.js` - current diff adds a generated-only tag negative check.
+- Checked current DATA-INTEGRITY journal tail - no visible handoff for the generated-tag parity diff; the latest bounded DATA-INTEGRITY atom is the committed CSV-contract coverage.
+Workspace contract: blocked - no further functional pass run because a product-path test diff remains unbounded outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:45 CEST]`.
+Evidence: `tests/content-generated-tag-parity.test.js` is dirty with no matching handoff; REVIEWER did not edit product source or tests.
+Next manager action: DATA-INTEGRITY/GM should commit, accept/reject, or explicitly bound the generated-tag parity test diff and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `58fc505` (ahead 5 / behind 3 from origin/main)
+Artifact reviewed: workspace contract second recheck after source-owner dirty scope moved again.
+Checks run:
+- `git status --short --branch` - dirty source/test scope now includes `content/question-bank.csv`, `data/additionalQuestions.ts`, and `tests/content-generated-tag-parity.test.js`.
+- `lsof -nP -iTCP:4192 -iTCP:4193 -sTCP:LISTEN` - no listener output, so the q080/q081 temporary web servers are stopped.
+Workspace contract: blocked - no further functional pass run because the shared checkout has active CONTENT/DATA-INTEGRITY source/test edits outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:45:55 CEST]`.
+Evidence: `content/question-bank.csv`, `data/additionalQuestions.ts`, and `tests/content-generated-tag-parity.test.js` are dirty; REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/DATA-INTEGRITY/GM should commit, accept/reject, or explicitly bound the data/CSV/test changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `58fc505` (ahead 5 / behind 3 from origin/main)
+Artifact reviewed: final workspace contract recheck for this loop.
+Checks run:
+- `git diff --check -- codex-tasks/validator.txt codex-tasks/blockers.txt docs/parallel-sessions/journals/reviewer.md` - exit 0.
+- `git status --short --branch` - dirty source/test scope expanded again.
+- `lsof -nP -iTCP:4192 -iTCP:4193 -sTCP:LISTEN` - no listener output.
+Workspace contract: blocked - no further functional pass run because the shared checkout is actively moving outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:46:15 CEST]`.
+Evidence: dirty product/test files now include `app/quiz/[sessionId].tsx`, `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/ui-effects.test.js`, and `tests/content-generated-tag-parity.test.js`; REVIEWER did not edit product source or tests.
+Next manager action: SETUP/CONTENT/DATA-INTEGRITY/GM should bound or commit these changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9bbf552` (ahead 8 / behind 3 from origin/main)
+Artifact reviewed: CONTENT Iteration 186 q086 EU membership source-citation cleanup.
+Checks run:
+- Re-read required lane docs, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, and latest CONTENT/DATA-INTEGRITY/SETUP handoffs before this pass.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for q086/q441-q444.
+- `npm run validate:content` - exit 0; summary reports 500 published questions, 100 source questions, 400 generated questions, 500 UHR references, and `questionAuthorityBoundaryTextValidated:500`.
+- `node scripts/export-question-bank.js --check` - exit 0 with 500-question export parity.
+- Direct q086 source/export assertion - exit 0; confirmed UHR section `EU och Europarådet`, page 39, correct option `b`/`1995`, clean authored SV/EN stems, and exported q086/q441-q444 rows.
+- Focused q084-q095 CSV scan - exit 0; q086 is clean, while q084, q085, q087-q091, and q095 remain dirty; total exported source-authority rows are now 236.
+- `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q086` - exit 0; the route showed clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, Sverige och omvärlden, EU och Europarådet, s. 39`, the independent-study disclaimer, option `1995`, and browser errors 0.
+Workspace contract: pass with caveat - q086 content files are committed and clean; branch divergence still needs manager reconciliation before release acceptance. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:48 CEST]`.
+Evidence: q086 is now a valid bounded CONTENT fix, but SOURCE-CITATION remains open because q084/q085/q087+ authored rows and generated source-practice templates still include source-authority wording.
+Next manager action: VALIDATOR can review q086 commit `9bbf552`; keep assigning SOURCE-CITATION cleanup for q084/q085/q087+ authored rows and generated templates before closing the P0.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9bbf552` (ahead 8 / behind 3 from origin/main)
+Artifact reviewed: SETUP Iteration 142 routed quiz answer-state reset for shuffled session seed changes.
+Checks run:
+- Re-read latest SETUP handoff and inspected commit `176db7a`, `app/quiz/[sessionId].tsx`, and `scripts/ui-effects.test.js`.
+- `npm run test:ui-effects -- --test-name-pattern "routed quiz answer state resets"` - exit 0; 49/49 UI-effects tests passed and the new reset guard was included.
+- `npm run test:answer-shuffle` - exit 0; 3/3 passed.
+- `npm run typecheck` - exit 0.
+- `npx --no-install prettier --check app/quiz/[sessionId].tsx scripts/ui-effects.test.js` - exit 0.
+- `npm run lint` - exit 0.
+- `npm run test:ownership` - exit 0.
+Workspace contract: pass with caveat - source ownership is SETUP, not REVIEWER; current product source is clean, while branch divergence still needs manager reconciliation before release acceptance. REVIEWER edited only queue/journal files.
+Findings queued: none from this focused pass.
+Evidence: the routed quiz reset effect now depends on both `normalizedSessionId` and `question?.id`, so a same-question route with a different shuffle seed cannot keep a stale selected option. Focused tests and project gates above passed.
+Next manager action: VALIDATOR can review SETUP commit `176db7a`; if treating SHUFFLE-FIX as resolved, run the remaining P0 executable guard and update the P0 queue under manager ownership.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9bbf552` (ahead 8 / behind 3 from origin/main)
+Artifact reviewed: workspace contract state after q086 and SETUP Iteration 142 passes.
+Checks run:
+- `git status --short --branch` - dirty source/release-test scope reappeared after the passes.
+- Checked CONTENT, DATA-INTEGRITY, and SETUP journal tails.
+- `git diff --name-status -- content/question-bank.csv data/additionalQuestions.ts eas.json tests/content-question-id-sequence.test.js` - exit 0 and lists the active dirty files.
+- `git diff -- eas.json tests/content-question-id-sequence.test.js` - release submit config contains fake-looking production values, and the question-id sequence test diff has no visible current handoff.
+Workspace contract: blocked - no further functional pass run because the shared checkout is again a mixed artifact outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:50:46 CEST]`.
+Evidence: dirty files include `content/question-bank.csv`, `data/additionalQuestions.ts`, `eas.json`, and `tests/content-question-id-sequence.test.js`; REVIEWER did not edit product source, release config, or tests.
+Next manager action: CONTENT/DATA-INTEGRITY/GM should bound or commit the data/CSV/test changes, reject or clear the fake submit-credential config diff, and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9bbf552` (ahead 8 / behind 3 from origin/main)
+Artifact reviewed: final workspace contract recheck after transient release-config diff cleared.
+Checks run:
+- `git diff --check -- codex-tasks/validator.txt codex-tasks/blockers.txt docs/parallel-sessions/journals/reviewer.md` - exit 0.
+- `git status --short --branch` - `eas.json` is no longer dirty, but data/CSV and question-id test files remain dirty.
+- `lsof -nP -iTCP:4194 -sTCP:LISTEN` - no listener output.
+Workspace contract: blocked - no further functional pass run because product/test files remain dirty outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:51:20 CEST]`.
+Evidence: dirty files still include `content/question-bank.csv`, `data/additionalQuestions.ts`, and `tests/content-question-id-sequence.test.js`; REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/DATA-INTEGRITY/GM should bound or commit the data/CSV/test changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `4cac91b` (ahead 9 / behind 3 from origin/main)
+Artifact reviewed: CONTENT Iteration 187 q084 digital-revolution source-citation cleanup, plus bundled DATA-INTEGRITY question-ID sequence coverage.
+Checks run:
+- Re-read required lane docs, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, latest CONTENT/DATA-INTEGRITY handoffs, and current git state before this pass.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for q084/q433-q436.
+- `npm run validate:content` - exit 0; summary reports 500 published questions, 100 source questions, 400 generated questions, 500 UHR references, and `questionAuthorityBoundaryTextValidated:500`.
+- `node scripts/export-question-bank.js --check` - exit 0 with 500-question export parity.
+- `node --test tests/content-question-id-sequence.test.js` - exit 0 with 2/2 passing, including the duplicate/gap rejection.
+- Direct q084 source/export assertion - exit 0; confirmed UHR section `Digital revolution och globalisering`, page 38, correct option `a`, clean authored SV/EN stems, and exported q084/q433-q436 rows.
+- Focused q084-q095 CSV scan - exit 0; q084 and q086 are clean, while q085, q087-q091, and q095 remain dirty; total exported source-authority rows are now 232.
+- `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q084` - exit 0; the route showed clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, Sveriges moderna historia, Digital revolution och globalisering, s. 38`, the independent-study disclaimer, correct answer text, and browser errors 0.
+Workspace contract: pass with caveat - q084 content files are committed and clean; commit `4cac91b` also includes the DATA-INTEGRITY ID-sequence test/journal, so VALIDATOR should review the mixed commit boundary intentionally. Branch divergence still needs manager reconciliation before release acceptance. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 22:54 CEST]`.
+Evidence: q084 is now a valid bounded CONTENT fix, but SOURCE-CITATION remains open because q085/q087+ authored rows and generated source-practice templates still include source-authority wording.
+Next manager action: VALIDATOR can review q084 commit `4cac91b`; keep assigning SOURCE-CITATION cleanup for q085/q087+ authored rows and generated templates before closing the P0.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `19438f0` (ahead 10 / behind 3 from origin/main)
+Artifact reviewed: SETUP Iteration 143 answer-shuffle distribution audit.
+Checks run:
+- Re-read required lane docs, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, latest SETUP/DATA-INTEGRITY/CONTENT handoffs, and current git state before this pass.
+- Inspected `lib/quiz/answerOptionShuffle.ts` and `scripts/answer-shuffle.test.js`; the committed SETUP files are clean in the working tree.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` - exit 0 with 4/4 passing, including the 50 routed-session seed distribution audit.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` - exit 0 with 8/8 passing, including the shuffled-session scoring/review guard.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/quiz/answerOptionShuffle.ts scripts/answer-shuffle.test.js` - exit 0.
+- `git diff --check -- lib/quiz/answerOptionShuffle.ts scripts/answer-shuffle.test.js` - exit 0.
+Workspace contract: pass with caveat - the bounded SETUP atom is verified, but the checkout still has unaccepted source-owner dirty files outside REVIEWER scope. REVIEWER edited only queue/journal files.
+Findings queued: none from this focused pass.
+Evidence: `summarizeAnswerShuffleDistribution` reports seeded correct-answer position counts over shufflable single-choice questions, and `answerShuffleDistributionIsBalanced` enforces the exported 35 percent P0 concentration threshold. The test now checks both the existing single-session bank distribution and 50 routed session seeds.
+Next manager action: VALIDATOR can review SETUP commit `19438f0`; keep the current q085 content/CSV and question-id sequence test dirt blocked until CONTENT/DATA-INTEGRITY/GM bounds or commits it and reconciles `main`.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `19438f0` (ahead 10 / behind 3 from origin/main)
+Artifact reviewed: workspace contract state after SETUP Iteration 143 pass.
+Checks run:
+- `git status --short --branch` - source-owner files remain dirty outside REVIEWER scope.
+- Checked CONTENT and DATA-INTEGRITY journal tails and inspected dirty diffs for `data/additionalQuestions.ts`, `content/question-bank.csv`, and `tests/content-question-id-sequence.test.js`.
+Workspace contract: blocked - no further functional pass run because the shared checkout remains a mixed artifact outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:57 CEST]`.
+Evidence: dirty product/test files include q085 content/CSV source-citation cleanup plus an uncommitted DATA-INTEGRITY-shaped question-id sequence test diff; REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/DATA-INTEGRITY/GM should bound or commit the data/CSV/test changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `15dac79` (ahead 12 / behind 5 from origin/main)
+Artifact reviewed: workspace contract recheck before q085 CONTENT pass.
+Checks run:
+- Rechecked `git rev-parse --short HEAD`, recent log, current `TEAM_PLAN`, CONTENT/DATA-INTEGRITY journal tails, and current product/config dirty state.
+- Confirmed prior q085 content dirt and question-id sequence test dirt landed as commits `619dc5b` and `15dac79`.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and now lists only `eas.json`.
+- `git diff -- eas.json` - production submit placeholders are replaced with fake-looking release credentials and a fake-looking Android service-account path.
+Workspace contract: blocked - q085 acceptance checks were not run because release config is dirty outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 22:58 CEST]`.
+Evidence: dirty `eas.json` changes `appleId`, `ascAppId`, `appleTeamId`, and `serviceAccountKeyPath`; REVIEWER did not edit release config or product source.
+Next manager action: SETUP/GM/VALIDATOR should revert, bound with real evidence, or explicitly approve the `eas.json` submit-credential diff and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: final workspace contract recheck after moving dirty-state updates.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and lists `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, and `tests/content-chapter-text-normalization.test.js`.
+- `git status --short --branch` - also shows untracked `lib/scaffold/architectureManifest.ts`.
+Workspace contract: blocked - product/test source-owner files are moving outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:07 CEST]`.
+Evidence: REVIEWER did not edit product source or tests; only queue/journal files were changed by this lane.
+Next manager action: CONTENT/SETUP/DATA-INTEGRITY/GM should bound or commit the moving data/CSV/architecture/chapter-test changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: final workspace contract recheck after moving dirty-state updates.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and lists `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, and `tests/content-chapter-text-normalization.test.js`.
+- `git status --short --branch` - also shows untracked `lib/scaffold/architectureManifest.ts`.
+Workspace contract: blocked - product/test source-owner files are moving outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:07 CEST]`.
+Evidence: REVIEWER did not edit product source or tests; only queue/journal files were changed by this lane.
+Next manager action: CONTENT/SETUP/DATA-INTEGRITY/GM should bound or commit the moving data/CSV/architecture/chapter-test changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: final workspace contract recheck after transient release-config diff cleared.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and lists q088 content/CSV plus architecture/scaffold test files.
+- `git status --short --branch` - also shows untracked `lib/scaffold/architectureManifest.ts`.
+- Inspected q088 data diff, CONTENT journal tail, and SETUP journal tail.
+Workspace contract: blocked - the checkout contains mixed CONTENT and SETUP source/test changes outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:06 CEST]`.
+Evidence: dirty product/test paths are `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, and untracked `lib/scaffold/architectureManifest.ts`; q088 has no visible CONTENT handoff beyond q087, while the architecture/scaffold diff has SETUP Iteration 145 but is uncommitted and mixed with q088 dirt. REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/SETUP/GM should bound or commit the data/CSV/architecture changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `15dac79` (ahead 12 / behind 6 from origin/main after pass)
+Artifact reviewed: CONTENT Iteration 188 q085 Nordic-cooperation source-citation cleanup, plus DATA-INTEGRITY question-ID sequence coverage at HEAD.
+Checks run:
+- Re-read required lane docs, `GOAL.md`, `docs/architecture.md`, current `TEAM_PLAN`, latest CONTENT/DATA-INTEGRITY handoffs, and current git state before this pass.
+- Confirmed the transient `eas.json` diff cleared before running q085 acceptance checks.
+- Inspected commit `619dc5b`, `data/additionalQuestions.ts`, and `content/question-bank.csv` for q085/q437-q440.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; summary reports 500 published questions, 100 source questions, 400 generated questions, 500 UHR references, and `questionAuthorityBoundaryTextValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question export parity.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-id-sequence.test.js` - exit 0 with 2/2 passing, including the duplicate/gap rejection.
+- Direct q085 source/export assertion - exit 0; confirmed UHR section `Nordiskt samarbete`, page 39, correct option `a`, clean authored SV/EN stems, and exported q085/q437-q440 rows.
+- Focused q084-q095 CSV scan - exit 0; q084-q086 are clean, q087-q094 are still dirty, and total exported source-authority rows are now 135.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- `node scripts/prepare-web-export.js --check dist-web` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q085` - first run failed on a stale REVIEWER assertion for old disclaimer wording; corrected rerun exited 0 with clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, Sverige och omvärlden, Nordiskt samarbete, s. 39`, the current independent-study disclaimer, correct answer text, and browser errors 0.
+Workspace contract: pass with caveat - q085 content files are committed and verified, but product/test dirt reappeared after the pass. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:00 CEST]`.
+Evidence: q085 is now a valid bounded CONTENT fix; SOURCE-CITATION remains open because q087-q094 and generated source-practice templates still include source-authority wording.
+Next manager action: VALIDATOR can review CONTENT commit `619dc5b` and DATA-INTEGRITY commit `15dac79`; keep assigning SOURCE-CITATION cleanup for q087+ authored rows and generated templates before closing the P0.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `15dac79` (ahead 12 / behind 6 from origin/main)
+Artifact reviewed: workspace contract state after q085 CONTENT pass.
+Checks run:
+- `git status --short --branch` - source-owner files became dirty again after the pass.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and lists active dirty product/test files.
+- Inspected current dirty q087 content/data and validator/test diffs, plus CONTENT/DATA-INTEGRITY/SETUP journal tails.
+Workspace contract: blocked - no further functional pass run because the shared checkout is again a mixed artifact outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:00 CEST]`.
+Evidence: dirty product/test files include q087 content/CSV cleanup plus SETUP Iteration 144 answer-shuffle validation/public-export test changes; REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/SETUP/GM should bound or commit the data/CSV/validation/test changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: answer-shuffle validator parity atom in commit `9925cb3`.
+Checks run:
+- Inspected the current HEAD stat and the bounded validator/test diff in `scripts/validate-content.js`, `scripts/content-production.test.js`, and `tests/architecture-public-exports.test.js`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; summary reports `answerShuffleSingleChoiceQuestionsValidated:282`, `answerShuffleTrueFalseQuestionsValidated:218`, `answerShuffleSeedDistributionsValidated:50`, and `answerShuffleDistributionParityValidated:true`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` - exit 0 with 4/4 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern "full content production"` - exit 0 with 1/1 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` - exit 0 with 9/9 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/validate-content.js scripts/content-production.test.js tests/architecture-public-exports.test.js` - exit 0.
+- `git diff --check -- scripts/validate-content.js scripts/content-production.test.js tests/architecture-public-exports.test.js` - exit 0.
+Workspace contract: pass - the validator/test atom is committed and product/test paths are clean after the pass. REVIEWER edited only queue/journal files.
+Findings queued: none from this focused pass.
+Evidence: central `validate:content` now exercises the reusable answer-shuffle helper over all published single-choice and true/false questions and 50 routed session seeds, with the public export architecture test updated for the new helper exports.
+Next manager action: VALIDATOR can review commit `9925cb3`; use the new validator summary fields when deciding whether SHUFFLE-FIX can be closed by the operator-owned P0 checklist.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: CONTENT Iteration 189 q087 EU four-freedoms source-citation cleanup.
+Checks run:
+- Re-read latest CONTENT handoff and inspected commit `038cf25`, `data/additionalQuestions.ts`, and `content/question-bank.csv` for q087/q445-q448.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 under the latest validator, with 500 published questions and answer-shuffle validator fields green.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question export parity.
+- Direct q087 source/export assertion - exit 0; confirmed UHR section `EU och Europarådet`, page 39, correct option `a`, clean authored SV/EN stems, and exported q087/q445-q448 rows.
+- Focused q084-q095 CSV scan - exit 0; q084-q087 are clean, q088-q094 are still dirty, and total exported source-authority rows are now 130.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- `node scripts/prepare-web-export.js --check dist-web` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q087` - exit 0 with clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, Sverige och omvärlden, EU och Europarådet, s. 39`, the current independent-study disclaimer, correct answer text, and browser errors 0.
+Workspace contract: pass - q087 content files are committed and verified; current product/test paths are clean. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:04 CEST]`.
+Evidence: q087 is now a valid bounded CONTENT fix; SOURCE-CITATION remains open because q088-q094 and generated source-practice templates still include source-authority wording.
+Next manager action: VALIDATOR can review CONTENT commit `038cf25`; keep assigning SOURCE-CITATION cleanup for q088+ authored rows and generated templates before closing the P0.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: workspace contract state after q087 and answer-shuffle validator passes.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 with no output.
+- `git status --short --branch` - remaining dirty files are coordination/report/prompt artifacts only.
+Workspace contract: clean product/test boundary - no further product/test blocker at this instant, but branch divergence remains.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:04 CEST]` to supersede the transient 23:00 blocker.
+Evidence: product/test paths are clean at HEAD `9925cb3`; REVIEWER did not edit product source or tests.
+Next manager action: reconcile `main` with `origin/main` and continue with the next bounded CONTENT/SETUP/DATA-INTEGRITY atom.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: final workspace contract recheck after q087 and answer-shuffle validator passes.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and lists `eas.json`.
+- `git diff -- eas.json` - production submit placeholders are again replaced with fake-looking release credentials and a fake-looking Android service-account path.
+Workspace contract: blocked - release config is dirty outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:05 CEST]`.
+Evidence: dirty `eas.json` changes `appleId`, `ascAppId`, `appleTeamId`, and `serviceAccountKeyPath`; REVIEWER did not edit release config or product source.
+Next manager action: SETUP/GM/VALIDATOR should revert, bound with real evidence, or explicitly approve the `eas.json` submit-credential diff and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9925cb3` (ahead 14 / behind 6 from origin/main)
+Artifact reviewed: final workspace contract recheck after moving dirty-state updates.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and lists `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, and `tests/content-chapter-text-normalization.test.js`.
+- `git status --short --branch` - also shows untracked `lib/scaffold/architectureManifest.ts`.
+Workspace contract: blocked - product/test source-owner files are moving outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:07 CEST]`.
+Evidence: REVIEWER did not edit product source or tests; only queue/journal files were changed by this lane.
+Next manager action: CONTENT/SETUP/DATA-INTEGRITY/GM should bound or commit the moving data/CSV/architecture/chapter-test changes and reconcile `main` before assigning another REVIEWER pass.
+Lane: REVIEWER
+Host/branch: local/main HEAD `68d727c` (ahead 15 / behind 6 from origin/main)
+Artifact reviewed: final workspace contract recheck after q088 landed.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - exit 0 and lists `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, and `tests/content-chapter-text-normalization.test.js`.
+- `git status --short --branch` - also shows untracked `lib/scaffold/architectureManifest.ts`.
+Workspace contract: blocked - SETUP/DATA-INTEGRITY source-test files remain dirty outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:08 CEST]`.
+Evidence: q088 landed as commit `68d727c`, but the architecture scaffold and chapter text-normalization test diffs remain uncommitted; REVIEWER did not edit product source or tests.
+Next manager action: SETUP/DATA-INTEGRITY/GM should bound or commit the remaining source-test changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `68d727c` (ahead 15 / behind 6 from origin/main)
+Artifact reviewed: SETUP Iteration 145 architecture scaffold manifest atom.
+Checks run:
+- Re-read required lane/project docs and current TEAM_PLAN before this pass.
+- Inspected `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, and `tests/architecture-public-exports.test.js`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` - exit 0 with 10/10 passing, including `product architecture manifest matches the target scaffold files`.
+- `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
+Workspace contract: pass with caveat - the SETUP atom is bounded and verified, but the checkout moved again afterward. REVIEWER edited only queue/journal files.
+Findings queued: none from this focused pass.
+Evidence: the product architecture manifest mirrors the target scaffold file list, directory list, and tab route list, and the public-export test now covers the manifest exports.
+Next manager action: VALIDATOR can review the SETUP architecture-manifest atom once it is committed or otherwise cleanly bounded; keep unrelated CONTENT/DATA-INTEGRITY dirt out of that acceptance.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `68d727c` (ahead 15 / behind 6 from origin/main)
+Artifact reviewed: workspace contract state after SETUP Iteration 145 pass.
+Checks run:
+- `git status --short --branch` and `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - source-owner files are dirty again after the pass.
+- Inspected the current q089 data diff and latest CONTENT/DATA-INTEGRITY journal tails.
+Workspace contract: blocked - no further functional pass run because the shared checkout is again a mixed artifact outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:11 CEST]`.
+Evidence: dirty product/test files include q089 content/CSV cleanup, the architecture-manifest SETUP atom, and DATA-INTEGRITY chapter/source-metadata tests; REVIEWER did not edit product source or tests.
+Next manager action: CONTENT/SETUP/DATA-INTEGRITY/GM should bound or commit these moving changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `70feef7` (ahead 16 / behind 6 from origin/main)
+Artifact reviewed: provisional CONTENT q090 source-citation cleanup on exported web.
+Checks run:
+- Re-read required lane/project docs, current plan, queues, and latest handoffs before selecting this pass.
+- Inspected current diffs in `data/additionalQuestions.ts`, `content/question-bank.csv`, architecture scaffold tests, and DATA-INTEGRITY tests.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; summary still reports `questionAuthorityBoundaryTextValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- Focused CSV scan over q088-q095 - exit 0; q088-q090 are clean, q091-q095 are dirty, and 212 exported rows still match source-authority wording.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- `node scripts/prepare-web-export.js --check dist-web` - exit 0.
+- System-Chrome exported-web smoke on `/quiz/q090` - exit 0 with clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, Sverige och omvärlden, Försvars- och säkerhetspolitik, s. 40`, current independent-study disclaimer, correct answer text, and browser errors 0.
+Workspace contract: blocked after pass - q090 content files are uncommitted and mixed with SETUP/DATA-INTEGRITY source-test dirt. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:15 CEST]` and `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:15 CEST]`.
+Evidence: q090 is a valid provisional CONTENT fix, but SOURCE-CITATION remains open because q091-q095 and 212 exported rows still contain source-authority phrasing while the validator reports the boundary green.
+Next manager action: CONTENT should bound or commit q090; DATA-INTEGRITY should make validation fail on the raw exported/source-authority stems; SETUP/DATA-INTEGRITY/GM should clear or commit the remaining source-test dirt before the next REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `9349500` (ahead 17 / behind 7 from origin/main)
+Artifact reviewed: final workspace boundary after q090 landed.
+Checks run:
+- `git rev-parse --short HEAD` - `9349500`.
+- `git log --oneline -n 5` - confirms `9349500 content: correct q090 nato prompt` on top of q089/q088.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - source-owner dirt remains in q091 data/CSV plus architecture scaffold and DATA-INTEGRITY tests.
+Workspace contract: blocked - no further functional pass run because the shared checkout moved to q091 and remains mixed outside REVIEWER ownership. REVIEWER edited only queue/journal files.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:16 CEST]` and `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:16 CEST]`.
+Evidence: q090 route/export evidence from the previous pass now maps to committed CONTENT atom `9349500`; current dirty content has advanced to q091, while q092-q095 still need SOURCE-CITATION cleanup and validator hardening remains missing.
+Next manager action: VALIDATOR can review q090 at `9349500`; CONTENT/SETUP/DATA-INTEGRITY/GM should bound or commit the current q091/scaffold/schema-test changes before another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `1873e15` (ahead 18 / behind 7 from origin/main)
+Artifact reviewed: workspace contract state on resume.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- `git status --short --branch` and `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - product/test dirt remains.
+- Inspected current accepted rows and DATA-INTEGRITY handoff state for the dirty test files.
+Workspace contract: blocked - no new functional pass run because the dirty product/test boundary is not fully accepted or committed.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:19 CEST]`.
+Evidence: `TEAM_PLAN` now accepts the architecture manifest plus chapter text-normalization and UHR retrieved-date test atoms, but `tests/content-source-material-link-parity.test.js` remains dirty with only a DATA-INTEGRITY journal handoff and no accepted TEAM_PLAN row. REVIEWER edited only queue/journal notes, not product source or tests.
+Next manager action: VALIDATOR/GM should accept, reject, commit, or explicitly bound the source-material link parity test diff and reconcile `main` before assigning another REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `1873e15` (ahead 18 / behind 7 from origin/main)
+Artifact reviewed: updated workspace contract state after the boundary moved again.
+Checks run:
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - product/config/test dirt remains and has changed.
+- Inspected `data/additionalQuestions.ts`/`content/question-bank.csv` diff, `eas.json` diff, latest CONTENT handoff, DATA-INTEGRITY handoff, and current B4 text.
+Workspace contract: blocked - no functional pass run because current artifact is a mixed unbounded checkout.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:20 CEST]`.
+Evidence: the dirty data/CSV diff is q092 cleanup, but the latest CONTENT handoff only bounds q091 at commit `1873e15`; `eas.json` again contains fake-looking submit credentials while TEAM_PLAN still marks B4 resolved from an earlier empty diff; `tests/content-source-material-link-parity.test.js` remains dirty with only a DATA-INTEGRITY handoff and no accepted TEAM_PLAN row. REVIEWER edited only queue/journal notes.
+Next manager action: CONTENT/DATA-INTEGRITY/SETUP/VALIDATOR should commit, accept/reject, or explicitly bound the q092/parity/release-config changes and reconcile `main` before assigning another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `1873e15` (ahead 18 / behind 7 from origin/main)
+Artifact reviewed: final workspace boundary recheck after another shared-checkout move.
+Checks run:
+- `git status --short --branch` - dirty product/test/config scope changed again; `eas.json` cleared, but new package/test dirt appeared.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - lists q092 data/CSV, package/test, architecture, chapter, source-material, and UHR source-metadata diffs.
+- Inspected the new `package.json` and `tests/content-uhr-map-section-uniqueness.test.js` diff plus DATA-INTEGRITY journal tail.
+Workspace contract: blocked - no functional pass run because the artifact boundary is still moving and unbounded.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:21 CEST]`.
+Evidence: `eas.json` is no longer dirty, but unbounded product/test changes remain: q092 data/CSV, `tests/content-source-material-link-parity.test.js`, new `tests/content-uhr-map-section-uniqueness.test.js` wired through `package.json`, and accepted-but-still-dirty architecture/chapter/source-metadata atoms. Current DATA-INTEGRITY journal tail has no handoff for the new section-uniqueness test. REVIEWER edited only queue/journal notes.
+Next manager action: CONTENT/DATA-INTEGRITY/SETUP/VALIDATOR should bound or commit the q092, source-material, section-uniqueness, and accepted dirty-tree atoms and reconcile `main`; then REVIEWER can run the next focused pass from a stable boundary.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `1873e15` (ahead 18 / behind 7 from origin/main)
+Artifact reviewed: TEAM_PLAN update and current dirty product/test boundary.
+Checks run:
+- Rechecked `TEAM_PLAN` rows and manager audit log after the previous blocker.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - still shows q092 data/CSV plus package/test/scaffold/schema diffs.
+- `rg -n "DI33|CNT39|section-uniqueness|q092|23:26 CEST" ...` - confirmed DI33 is now accepted, while q092/package/section-uniqueness are explicitly not accepted.
+Workspace contract: blocked - no functional pass run because unaccepted product/test scope remains.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:22 CEST]`.
+Evidence: source-material parity is now bounded by accepted DI33, but the manager audit log says q092 content/CSV cleanup, `package.json`, and `tests/content-uhr-map-section-uniqueness.test.js` appeared after verification and are not accepted. REVIEWER edited only queue/journal notes.
+Next manager action: CONTENT/DATA-INTEGRITY/VALIDATOR should bound or commit q092 and the section-uniqueness package/test change, then hand REVIEWER a stable artifact for the next focused pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `da611c8` (ahead 19 / behind 7 from origin/main)
+Artifact reviewed: updated workspace contract after q092 landed.
+Checks run:
+- Rechecked current `TEAM_PLAN`, CONTENT/DATA-INTEGRITY handoffs, `git status --short --branch`, `git log --oneline -8`, and the product/test diff boundary.
+- Confirmed q092 is now committed as `da611c8` and `data/additionalQuestions.ts`/`content/question-bank.csv` are no longer dirty.
+- Confirmed `package.json` still wires `tests/content-uhr-map-section-uniqueness.test.js`, that test remains untracked, and TEAM_PLAN has no accepted row for the section-uniqueness atom.
+Workspace contract: blocked - no functional pass run because the current artifact is still mixed and not fully accepted.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:23 CEST]`.
+Evidence: TEAM_PLAN's latest manager audit accepts through CNT39/DI33 and explicitly left q092 plus the section-uniqueness package/test atom unaccepted; q092 has since become commit `da611c8`, but TEAM_PLAN has not accepted it. DATA-INTEGRITY now has a duplicate-section handoff, but no corresponding TEAM_PLAN acceptance row. REVIEWER edited only queue/journal notes.
+Next manager action: VALIDATOR/GM should accept or reject `da611c8` and the DATA-INTEGRITY section-uniqueness package/test atom, or provide another stable artifact boundary before assigning a reviewer functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `da611c8` (ahead 19 / behind 7 from origin/main)
+Artifact reviewed: updated TEAM_PLAN acceptance boundary after CNT40/DI34 landed.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, and current `TEAM_PLAN.md`.
+- `git status --short --branch` and product/test `git diff --name-status` - q092 data/CSV is clean, accepted dirty-tree files remain, and `tests/content-published-question-types.test.js` is newly dirty.
+- Inspected `tests/content-published-question-types.test.js` diff and searched TEAM_PLAN/DATA-INTEGRITY handoffs for a matching accepted or bounded atom.
+Workspace contract: blocked - no functional pass run because the current artifact is still mixed by one unaccepted product-test diff.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:24 CEST]`.
+Evidence: TEAM_PLAN now accepts CNT40 (`da611c8`) and DI34, and APP12/DI31-DI34 cover the remaining accepted dirty-tree files. `tests/content-published-question-types.test.js` adds a negative `flashcard` published-question-type rejection, but no current DATA-INTEGRITY journal handoff or TEAM_PLAN row bounds that test diff. REVIEWER edited only queue/journal notes.
+Next manager action: DATA-INTEGRITY/VALIDATOR should accept, reject, commit, or clear `tests/content-published-question-types.test.js`; then REVIEWER can run the next focused functional pass from the stable accepted boundary.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `da611c8` (ahead 19 / behind 7 from origin/main)
+Artifact reviewed: current workspace boundary after another source-owner move.
+Checks run:
+- `git status --short --branch` and product/test `git diff --name-status` - current product/test dirt includes q093 data/CSV, accepted dirty-tree APP12/DI31-DI34 files, and `tests/content-published-question-types.test.js`.
+- Inspected `data/additionalQuestions.ts`/`content/question-bank.csv` diff - q093 religious-freedom prompt/export wording cleanup.
+- Checked CONTENT and DATA-INTEGRITY journals plus TEAM_PLAN - DATA-INTEGRITY has a handoff for published-question type coverage, but TEAM_PLAN has no accepted row; CONTENT journal currently stops at accepted q092 and has no q093 handoff.
+Workspace contract: blocked - no functional pass run because the artifact is again mixed by unaccepted source-owner content/test diffs.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:25 CEST]`.
+Evidence: q093 changes `data/additionalQuestions.ts` and `content/question-bank.csv` from UHR-material/source-authority wording to standalone law wording, but it is not bounded in TEAM_PLAN or the latest CONTENT handoff. `tests/content-published-question-types.test.js` has a DATA-INTEGRITY handoff but no TEAM_PLAN acceptance. REVIEWER edited only queue/journal notes.
+Next manager action: CONTENT and DATA-INTEGRITY/VALIDATOR should accept, reject, commit, or clear q093 and the published-question-types test, or provide a stable artifact boundary before the next REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `da611c8` (ahead 19 / behind 7 from origin/main)
+Artifact reviewed: TEAM_PLAN update after DI35 acceptance.
+Checks run:
+- Searched TEAM_PLAN, DATA-INTEGRITY journal, CONTENT journal, blocker queue, and validator queue for q093 and published-question-types state.
+- `git status --short --branch` and product/test `git diff --name-status` - data/CSV q093 remains dirty; published-question-types and other test/package/scaffold dirt are now accepted dirty-tree atoms.
+Workspace contract: blocked - no functional pass run because q093 content/CSV is still unaccepted source-owner work.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:26 CEST]`.
+Evidence: TEAM_PLAN accepts DI35 for `tests/content-published-question-types.test.js` and says remaining dirty product/test files are accepted APP12/DI31-DI35 except current CONTENT work after `da611c8`, which is in progress and unaccepted. The current data/CSV diff is q093 religious-freedom wording cleanup, while the latest CONTENT journal stops at q092. REVIEWER edited only queue/journal notes.
+Next manager action: CONTENT/VALIDATOR should accept, reject, commit, or clear q093, or provide a stable artifact boundary before the next REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `dd0ea1f` (ahead 20 / behind 7 from origin/main)
+Artifact reviewed: current boundary after q093 landed.
+Checks run:
+- Re-read required reviewer docs this cycle and checked `TEAM_PLAN`, CONTENT handoff, git status, product/config diff, q093 diff, and `eas.json` diff.
+- `git log --oneline -10` confirms q093 landed as `dd0ea1f` (`content: correct q093 religious freedom prompt`).
+- `git diff -- data/additionalQuestions.ts content/question-bank.csv` is empty, while `git diff -- eas.json` shows fake-looking production submit placeholders.
+Workspace contract: blocked - no functional pass run because release-config state is ambiguous and q093 lacks TEAM_PLAN acceptance.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:28 CEST]`.
+Evidence: CONTENT journal has a q093 handoff for commit `dd0ea1f`, but TEAM_PLAN has no CNT41/q093 row. `eas.json` is dirty with production submit values `release@example.com`, `1234567890`, `TEAM123456`, and `./tmp/fake-google-play-service-account.json`, while B4 remains marked resolved from an earlier empty diff. REVIEWER edited only queue/journal notes.
+Next manager action: VALIDATOR/GM should accept or reject q093 and reopen/resove B4 for `eas.json` before the next REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `dd0ea1f` (ahead 20 / behind 7 from origin/main)
+Artifact reviewed: CONTENT q093 religious-freedom source-citation cleanup and current post-pass boundary.
+Checks run:
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 500 published questions and `questionAuthorityBoundaryTextValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- Direct q093/q469-q472 source/export assertion - exit 0; confirms clean standalone stems, `Religionsfrihet` page 42 metadata, expected tags, and true/false variants.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- `node scripts/prepare-web-export.js --check dist-web` - exit 0.
+- System-Chrome exported-web `/quiz/q093` smoke - exit 0 with standalone Swedish/English prompts, separate `Källa/Source: Sverige i fokus, En sekulär stat och ett mångreligiöst land, Religionsfrihet, s. 42`, disclaimer visible, `Religionsfrihetslagen`, and browser errors 0. A first over-specific smoke expecting English answer-option labels timed out; diagnostic text showed this route renders Swedish option labels only, so the final smoke asserted the rendered labels actually used by the app.
+- Focused CSV scan - q088-q093 clean; q094-q096 dirty; 200 exported rows still match source-authority wording.
+Workspace contract: blocked after pass - q093 is reviewer-verified and accepted as CNT41 in TEAM_PLAN, but new unaccepted DATA-INTEGRITY-shaped test dirt appeared.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:30 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:30 CEST]`.
+Evidence: TEAM_PLAN now accepts CNT41 for `dd0ea1f`; `eas.json` diff cleared. Current product/test diff still includes accepted APP12/DI31-DI35 files plus unaccepted `tests/content-authored-source-parity.test.js`, whose new negative source-field drift check has no current DATA-INTEGRITY handoff or TEAM_PLAN acceptance row. REVIEWER edited only queue/journal notes.
+Next manager action: CONTENT should continue q094+ cleanup and DATA-INTEGRITY should harden raw source-authority validation; DATA-INTEGRITY/VALIDATOR should accept, reject, commit, or clear `tests/content-authored-source-parity.test.js` before the next REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `dd0ea1f` (ahead 20 / behind 7 from origin/main)
+Artifact reviewed: provisional q094 SOURCE-CITATION cleanup in the current dirty checkout.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and lane journals.
+- Checked queue helper availability; `/home/billy/Desktop/projects/.shared/review-to-queue.sh` is absent, so the direct queue fallback was used.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 500 published questions and `questionAuthorityBoundaryTextValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- Static CSV scan - q095 and q096 still contain source-authority phrasing, generated rows q473/q477-q485/q489/q493/q497 still contain source-authority prompt wording, and 196 exported rows still match the banned source-authority patterns.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- `node scripts/prepare-web-export.js --check dist-web` - exit 0 after rerun; an earlier check raced before `404.html` was visible.
+- System-Chrome exported-web `/quiz/q094` smoke - exit 0 with standalone SV/EN prompts, a separate `Sverige i fokus` / `Religionsfrihet` page 42 source citation, not-official disclaimer, true/false options, and browser errors 0.
+Workspace contract: blocked after pass - q094 is only provisional reviewer evidence because current data/CSV edits are outside REVIEWER and lack a CONTENT/TEAM_PLAN acceptance boundary; the authored-source parity test also has a handoff but no TEAM_PLAN acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:34 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:34 CEST]`.
+Evidence: q094 is visually clean in exported web, but the raw/exported SOURCE-CITATION P0 remains open for q095/q096 and generated prompt templates, and validation still reports green while 196 exported rows match source-authority wording.
+Next manager action: CONTENT should bound q094 and continue q095/q096 cleanup; DATA-INTEGRITY should harden validation for raw/exported source-authority stems; VALIDATOR should accept/reject the authored-source parity negative test before handing REVIEWER another stable pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `8bce784` (ahead 21 / behind 7 from origin/main)
+Artifact reviewed: boundary recheck after q094 landed.
+Checks run:
+- `git log --oneline -6` - confirms `8bce784 content: correct q094 church prompt` on top of q093-q089.
+- Rechecked `TEAM_PLAN`, CONTENT handoff, DATA-INTEGRITY handoff, and product/test diff boundary.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - data/CSV is clean; remaining product/test dirt is accepted dirty-tree APP12/DI31-DI36 scope.
+Workspace contract: blocked for more passes - q094 has a commit and handoff, but TEAM_PLAN has no CNT42/q094 acceptance row yet; reviewer evidence is attached to the commit but should not be treated as acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 boundary update [2026-05-17 23:36 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:36 CEST]`.
+Evidence: q094 route/export smoke evidence from 23:34 maps to commit `8bce784`; SOURCE-CITATION remains open for q095/q096 and generated prompt templates, with 196 exported source-authority matches while validation stays green.
+Next manager action: VALIDATOR should accept/reject q094, then hand REVIEWER a stable boundary for the next focused pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `8bce784` (ahead 21 / behind 7 from origin/main)
+Artifact reviewed: final moving-boundary check after q095 dirt appeared.
+Checks run:
+- `git status --short -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - q095 data/CSV dirt is present, along with accepted dirty-tree APP12/DI31-DI36 files and untracked `tests/content-question-tag-schema.test.js`.
+- `git diff -- data/additionalQuestions.ts content/question-bank.csv` - current diff changes q095 and generated q477-q480 wording, while q096 remains visibly source-authority phrased.
+Workspace contract: blocked - no additional functional pass run because the shared checkout moved again outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:37 CEST]`.
+Evidence: q095 cleanup is in progress but unaccepted, q096 remains the next authored SOURCE-CITATION violation, and a new tag-schema test appeared without a verified acceptance boundary in the checked TEAM_PLAN log window.
+Next manager action: CONTENT/DATA-INTEGRITY/VALIDATOR should bound or clear q095, q096 follow-up, and the tag-schema test before another REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `8ecc5e8` (ahead 22 / behind 7 from origin/main during pass)
+Artifact reviewed: CONTENT q095 Church of Sweden tradition prompt plus exported `/quiz/q095`.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `DESIGN.md`, `docs/parallel-sessions.md`, `docs/parallel-sessions/TEAM_PLAN.md`, current queue files, and CONTENT/DATA-INTEGRITY/SETUP handoffs.
+- Inspected `data/additionalQuestions.ts`, `content/question-bank.csv`, `content/uhr-section-map.json`, and `tmp/sverige-i-fokus.txt` for `q095`, section `Kristendom`, and source lines 2014-2022.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 500 published questions, 500 UHR references, `questionAuthorityBoundaryTextValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` - exit 0; 213/213 tests passed.
+- Direct normalized q095 source/export assertion - first attempt failed on PDF line wrapping; corrected normalization rerun exit 0 and confirmed q095 data, q095/q477-q480 CSV rows, and UHR source support for the Lutheran Protestant answer.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web `/quiz/q095` smoke - first attempt expected stale `Session q095` copy and timed out; diagnostic rerun showed the current localized `Quizpass q095`; corrected smoke exit 0 with clean SV/EN prompt, source citation, disclaimer, correct answer, no banned source-authority phrase in the rendered question, and console errors 0.
+- Static CSV scan - exit 0; q095 is clean, current unaccepted q096 worktree rows are clean, but generated section-practice rows such as q481/q485/q489/q493/q497 and 188 total exported rows still match source-authority patterns while validation stays green.
+Workspace contract: pass for bounded q095 evidence, then blocked for more passes because the checkout moved again outside REVIEWER ownership.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:41 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:41 CEST]`.
+Evidence: q095 is source-aligned, exported, and user-facing clean on `/quiz/q095`; SOURCE-CITATION remains open for generated prompt-template wording and unaccepted q096/source-owner follow-up.
+Next manager action: VALIDATOR can review q095 as bounded CONTENT evidence, but should keep REVIEWER stopped until the current CONTENT/DATA-INTEGRITY/SETUP dirty files are accepted, rejected, committed, or cleared.

@@ -5,20 +5,24 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-test('published question IDs are unique and sequential', () => {
+function readValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
 
-  const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionIdSequencesValidated, 500);
-  assert.equal(summary.questionIdSequencesValidated, summary.publishedQuestions);
+test('published question tags stay lowercase kebab-case and unique', () => {
+  const summary = readValidationSummary();
+
+  assert.equal(summary.questionTagsValidated, 500);
+  assert.equal(summary.questionTagsValidated, summary.publishedQuestions);
 });
 
-test('published question ID sequence rejects gaps and duplicates', () => {
+test('published question tag schema rejects malformed or duplicate tags', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -30,7 +34,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents).replace("    id: 'q002',", "    id: 'q001',");
+    return String(contents).replace(
+      "    tags: ['geography', 'norden', 'location'],",
+      "    tags: ['geography', 'Tag Drift', 'geography'],",
+    );
   }
   return contents;
 };
@@ -40,8 +47,8 @@ require('./scripts/validate-content.js');
     { cwd: repoRoot, encoding: 'utf8' },
   );
 
-  const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.match(output, /q001 expected sequential id q002/);
-  assert.match(output, /duplicate question id q001/);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /q001 tag\[1\] must use lowercase kebab-case/);
+  assert.match(output, /q001 has duplicate tag geography/);
 });

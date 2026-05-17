@@ -54,6 +54,18 @@ test('UHR reference parity rejects sections not listed for the referenced chapte
   );
 });
 
+test('UHR reference parity rejects chapters missing from the UHR section map', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: 'Okänt UHR-kapitel', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q072 UHR chapter "Okänt UHR-kapitel" is not in section map/,
+  );
+});
+
 test('UHR reference parity rejects pages outside the referenced chapter range', () => {
   const result = runValidationWithAdditionalQuestionsPatch(
     `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 99 }")`,

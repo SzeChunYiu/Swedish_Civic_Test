@@ -3504,6 +3504,14 @@ const scoreAnswers = scoringModule.scoreAnswers;
 const answerValidationModule = loadTs('lib/quiz/answerValidation.ts');
 const isCorrectAnswer = answerValidationModule.isCorrectAnswer;
 const getAnswerOptionFeedback = answerValidationModule.getAnswerOptionFeedback;
+const answerOptionShuffleModule = loadTs('lib/quiz/answerOptionShuffle.ts');
+const shuffleQuestionOptionsForSession = answerOptionShuffleModule.shuffleQuestionOptionsForSession;
+const summarizeAnswerShuffleDistribution =
+  answerOptionShuffleModule.summarizeAnswerShuffleDistribution;
+const answerShuffleDistributionIsBalanced =
+  answerOptionShuffleModule.answerShuffleDistributionIsBalanced;
+const ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE =
+  answerOptionShuffleModule.ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE;
 const audioModule = loadTs('lib/audio/speak.ts');
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
 const speakSwedish = audioModule.speakSwedish;
@@ -3728,6 +3736,10 @@ let answerValidationTypeSchemaParityValidated = false;
 let answerFeedbackQuestionsValidated = 0;
 let answerFeedbackOptionsValidated = 0;
 let answerFeedbackRuntimeParityValidated = false;
+let answerShuffleSingleChoiceQuestionsValidated = 0;
+let answerShuffleTrueFalseQuestionsValidated = 0;
+let answerShuffleSeedDistributionsValidated = 0;
+let answerShuffleDistributionParityValidated = false;
 let questionSpeechTextQuestionsValidated = 0;
 let questionSpeechTextOptionsValidated = 0;
 let questionSpeechTextParityValidated = false;
@@ -3814,6 +3826,18 @@ if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a funct
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
   fail('getAnswerOptionFeedback export is not a function');
+}
+if (typeof shuffleQuestionOptionsForSession !== 'function') {
+  fail('shuffleQuestionOptionsForSession export is not a function');
+}
+if (typeof summarizeAnswerShuffleDistribution !== 'function') {
+  fail('summarizeAnswerShuffleDistribution export is not a function');
+}
+if (typeof answerShuffleDistributionIsBalanced !== 'function') {
+  fail('answerShuffleDistributionIsBalanced export is not a function');
+}
+if (typeof ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE !== 'number') {
+  fail('ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE export is not a number');
 }
 if (typeof buildQuestionSpeechText !== 'function') {
   fail('buildQuestionSpeechText export is not a function');
@@ -9051,6 +9075,151 @@ function validateAnswerFeedbackParity() {
   }
 }
 
+function answerShuffleOptionSignature(question) {
+  return (question.options || [])
+    .map((option) => `${option.id}:${option.textSv}:${option.textEn}`)
+    .join('|');
+}
+
+function validateAnswerShuffleDistributionParity() {
+  if (
+    !Array.isArray(questions) ||
+    typeof shuffleQuestionOptionsForSession !== 'function' ||
+    typeof summarizeAnswerShuffleDistribution !== 'function' ||
+    typeof answerShuffleDistributionIsBalanced !== 'function'
+  ) {
+    return;
+  }
+
+  let runtimeParityIsValid = true;
+  const singleChoiceQuestions = questions.filter(
+    (question) =>
+      question.reviewStatus === 'published' &&
+      question.type === 'single_choice' &&
+      Array.isArray(question.options) &&
+      question.options.length === SINGLE_CHOICE_OPTION_IDS.length,
+  );
+  const trueFalseQuestionsForShuffle = questions.filter(
+    (question) =>
+      question.reviewStatus === 'published' &&
+      question.type === 'true_false' &&
+      Array.isArray(question.options),
+  );
+
+  function reject(message) {
+    runtimeParityIsValid = false;
+    fail(message);
+  }
+
+  if (singleChoiceQuestions.length <= 100) {
+    reject('answer shuffle needs more than 100 published single-choice questions');
+    return;
+  }
+
+  const baseDistribution = summarizeAnswerShuffleDistribution(
+    singleChoiceQuestions,
+    'p0-answer-shuffle',
+  );
+  if (baseDistribution.totalQuestions !== singleChoiceQuestions.length) {
+    reject(
+      `answer shuffle distribution saw ${baseDistribution.totalQuestions} questions, expected ${singleChoiceQuestions.length}`,
+    );
+  }
+  if (!answerShuffleDistributionIsBalanced(baseDistribution)) {
+    reject(
+      `answer shuffle correct positions exceed ${ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE}: ${JSON.stringify(
+        baseDistribution.correctPositionCounts,
+      )}`,
+    );
+  }
+
+  singleChoiceQuestions.forEach((question) => {
+    let questionIsValid = true;
+    const originalSignature = answerShuffleOptionSignature(question);
+    const originalCorrectOption = question.options.find(
+      (option) => option.id === question.correctOptionId,
+    );
+    const firstShuffle = shuffleQuestionOptionsForSession(question, 'p0-answer-shuffle');
+    const secondShuffle = shuffleQuestionOptionsForSession(question, 'p0-answer-shuffle');
+    const shuffledCorrectOption = firstShuffle.options.find(
+      (option) => option.id === firstShuffle.correctOptionId,
+    );
+
+    function rejectQuestion(message) {
+      questionIsValid = false;
+      reject(message);
+    }
+
+    if (JSON.stringify(firstShuffle) !== JSON.stringify(secondShuffle)) {
+      rejectQuestion(`${question.id} answer shuffle is not stable for the same session`);
+    }
+    if (answerShuffleOptionSignature(question) !== originalSignature) {
+      rejectQuestion(`${question.id} answer shuffle mutated source options`);
+    }
+    if (
+      !arrayEquals(
+        firstShuffle.options.map((option) => option.id),
+        SINGLE_CHOICE_OPTION_IDS,
+      )
+    ) {
+      rejectQuestion(`${question.id} answer shuffle did not remap display option ids`);
+    }
+    if (!originalCorrectOption || !shuffledCorrectOption) {
+      rejectQuestion(`${question.id} answer shuffle lost the correct option`);
+    } else if (
+      shuffledCorrectOption.textSv !== originalCorrectOption.textSv ||
+      shuffledCorrectOption.textEn !== originalCorrectOption.textEn
+    ) {
+      rejectQuestion(`${question.id} answer shuffle moved the correct label incorrectly`);
+    }
+    if (!isCorrectAnswer(firstShuffle, firstShuffle.correctOptionId)) {
+      rejectQuestion(`${question.id} shuffled correctOptionId does not score as correct`);
+    }
+
+    if (questionIsValid) answerShuffleSingleChoiceQuestionsValidated += 1;
+  });
+
+  trueFalseQuestionsForShuffle.forEach((question) => {
+    const shuffled = shuffleQuestionOptionsForSession(question, 'p0-answer-shuffle');
+    if (
+      JSON.stringify(shuffled.options) !== JSON.stringify(question.options) ||
+      shuffled.correctOptionId !== question.correctOptionId
+    ) {
+      reject(`${question.id} true/false answer order must stay fixed`);
+      return;
+    }
+    answerShuffleTrueFalseQuestionsValidated += 1;
+  });
+
+  for (let index = 0; index < 50; index += 1) {
+    const distribution = summarizeAnswerShuffleDistribution(
+      singleChoiceQuestions,
+      `p0-session-${index}`,
+    );
+    if (
+      distribution.totalQuestions !== singleChoiceQuestions.length ||
+      !answerShuffleDistributionIsBalanced(distribution)
+    ) {
+      reject(
+        `answer shuffle distribution is unbalanced for ${distribution.sessionId}: ${JSON.stringify(
+          distribution.correctPositionCounts,
+        )}`,
+      );
+      continue;
+    }
+    answerShuffleSeedDistributionsValidated += 1;
+  }
+
+  if (
+    runtimeParityIsValid &&
+    answerShuffleSingleChoiceQuestionsValidated === singleChoiceQuestions.length &&
+    answerShuffleTrueFalseQuestionsValidated === trueFalseQuestionsForShuffle.length &&
+    answerShuffleSeedDistributionsValidated === 50
+  ) {
+    answerShuffleDistributionParityValidated = true;
+  }
+}
+
 function speechOptionLetter(index) {
   return String.fromCharCode('A'.charCodeAt(0) + index);
 }
@@ -10583,6 +10752,7 @@ validatePracticeFlowParity();
 validatePracticeSessionStoreParity();
 validateAnswerValidationTypeSchemaParity();
 validateAnswerFeedbackParity();
+validateAnswerShuffleDistributionParity();
 validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
@@ -10785,6 +10955,10 @@ console.log(
       answerFeedbackQuestionsValidated,
       answerFeedbackOptionsValidated,
       answerFeedbackRuntimeParityValidated,
+      answerShuffleSingleChoiceQuestionsValidated,
+      answerShuffleTrueFalseQuestionsValidated,
+      answerShuffleSeedDistributionsValidated,
+      answerShuffleDistributionParityValidated,
       questionSpeechTextQuestionsValidated,
       questionSpeechTextOptionsValidated,
       questionSpeechTextParityValidated,

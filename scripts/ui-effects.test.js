@@ -359,6 +359,16 @@ test('routed quiz shell copy follows Swedish and English settings language', () 
   assert.match(source, /accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}/);
 });
 
+test('routed quiz answer state resets when the shuffle session seed changes', () => {
+  const source = read('app/quiz/[sessionId].tsx');
+
+  assert.match(
+    source,
+    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
+  );
+  assert.doesNotMatch(source, /\}, \[question\?\.id\]\);/);
+});
+
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
   const source = read('app/(tabs)/home.tsx');
 

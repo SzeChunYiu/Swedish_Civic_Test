@@ -96,6 +96,53 @@ test('generateExam balances chapter coverage before repeating a chapter', () => 
   );
 });
 
+test('generateExam preserves scoring and review after session answer shuffle', () => {
+  const { buildExamReviewItems, generateExam, scoreExam } = loadTs('lib/quiz/examGenerator.ts');
+  const sourceQuestion = {
+    ...baseQuestion,
+    id: 'q-shuffle',
+    options: [
+      { id: 'a', textSv: 'Rätt ursprungssvar', textEn: 'Original correct answer' },
+      { id: 'b', textSv: 'Distraktor B', textEn: 'Distractor B' },
+      { id: 'c', textSv: 'Distraktor C', textEn: 'Distractor C' },
+      { id: 'd', textSv: 'Distraktor D', textEn: 'Distractor D' },
+    ],
+    correctOptionId: 'a',
+  };
+
+  const shuffledExam = Array.from({ length: 12 }, (_unused, index) =>
+    generateExam([sourceQuestion], {
+      questionCount: 1,
+      sessionId: `mock-exam-shuffle-${index}`,
+    }),
+  ).find(([question]) => question.correctOptionId !== sourceQuestion.correctOptionId);
+
+  assert.ok(shuffledExam, 'at least one deterministic exam session should move the correct answer');
+  const [question] = shuffledExam;
+  const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+
+  assert.deepEqual(
+    question.options.map((option) => option.id),
+    ['a', 'b', 'c', 'd'],
+  );
+  assert.equal(correctOption.textSv, 'Rätt ursprungssvar');
+  assert.equal(correctOption.textEn, 'Original correct answer');
+  assert.deepEqual(scoreExam([question], { [question.id]: question.correctOptionId }), {
+    correctCount: 1,
+    totalCount: 1,
+    percent: 100,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 1, totalCount: 1 }],
+  });
+
+  const [review] = buildExamReviewItems([question], { [question.id]: question.correctOptionId });
+
+  assert.equal(review.isCorrect, true);
+  assert.equal(review.correctOptionTextSv, 'Rätt ursprungssvar');
+  assert.equal(review.correctOptionTextEn, 'Original correct answer');
+  assert.equal(review.selectedOptionTextSv, 'Rätt ursprungssvar');
+  assert.equal(review.selectedOptionTextEn, 'Original correct answer');
+});
+
 test('scoreExam returns score and per-chapter breakdown', () => {
   const { scoreExam } = loadTs('lib/quiz/examGenerator.ts');
   const questions = [

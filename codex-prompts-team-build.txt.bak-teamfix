@@ -3,3 +3,4 @@
 /goal PANE 2 lane SETUP. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/architecture.md; ship one verified Expo scaffold or tooling atom touching product paths. Iterate until rate-limited.
 /goal PANE 3 lane CONTENT. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/content-strategy.md; ship one verified UHR-traceable Swedish-English question atom. Iterate until rate-limited.
 /goal PANE 4 lane DATA-INTEGRITY. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/architecture.md; ship one verified schema, UHR reference, or parity atom. Iterate until rate-limited.
+/goal PANE 5 lane TESTS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/architecture.md; ship one focused product-source test or failing-test fix. Iterate until rate-limited.

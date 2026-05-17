@@ -63,6 +63,20 @@ const architectureTargetFiles = [
   'types/monetization.ts',
 ];
 
+function valuesInConstArray(source, constName) {
+  const match = source.match(new RegExp(`export const ${constName}\\s*=\\s*\\[([\\s\\S]*?)\\]`));
+
+  assert.notEqual(match, null, `${constName} should be declared as an exported array`);
+
+  return [...match[1].matchAll(/['"]([^'"]+)['"]/g)].map((arrayMatch) => arrayMatch[1]);
+}
+
+function valuesForFieldInSource(source, fieldName) {
+  return [...source.matchAll(new RegExp(`${fieldName}:\\s*['"]([^'"]+)['"]`, 'g'))].map(
+    (match) => match[1],
+  );
+}
+
 const architectureRouteFiles = architectureTargetFiles.filter(
   (relativePath) => relativePath.startsWith('app/') && relativePath.endsWith('.tsx'),
 );
@@ -117,6 +131,17 @@ test('architecture target scaffold files exist', () => {
     architectureTargetFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
+});
+
+test('product architecture manifest matches the target scaffold files', () => {
+  const manifest = readText('lib/scaffold/architectureManifest.ts');
+  const manifestFiles = valuesForFieldInSource(manifest, 'file');
+  const manifestDirectories = valuesInConstArray(manifest, 'architectureScaffoldDirectories');
+  const manifestTabRoutes = valuesInConstArray(manifest, 'architectureTabRouteFiles');
+
+  assert.deepEqual(manifestFiles, architectureTargetFiles);
+  assert.deepEqual(manifestDirectories, ['app', 'components', 'data', 'lib', 'types']);
+  assert.deepEqual(manifestTabRoutes, architectureTabRouteFiles);
 });
 
 test('Expo Router route scaffold files expose default component exports', () => {

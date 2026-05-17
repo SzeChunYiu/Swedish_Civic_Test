@@ -46,3 +46,138 @@
 
   ⚠ PRODUCTIVITY-STALL: 9 consecutive verifier rounds with source_commits=0.
   ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:04:41Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=1 total=1
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 10 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:10:16Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:16:01Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:22:52Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=1 total=1
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:28:53Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=2 total=2
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:35:54Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:43:37Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:49:14Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T20:56:29Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T21:03:41Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=1 total=1
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T21:11:05Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T21:18:22Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T21:25:55Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T21:33:30Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.
+
+[VERIFIER | 2026-05-17T21:40:40Z] project=Swedish_Civic_Test window=120s
+  acceptance_test: PASS (rc=0)
+  source_commits=0 non_product_commits=0 total=0
+  product_paths: app/ components/ lib/ types/ data/ tests/ 
+  --- read-only by CEO. operator-owned. do not edit or clear.
+
+  ⚠ PRODUCTIVITY-STALL: 11 consecutive verifier rounds with source_commits=0.
+  ⚠ CEO MUST stop the lowest-output pane and post [CEO->OPERATOR PRODUCTIVITY-STALL] within next iteration.

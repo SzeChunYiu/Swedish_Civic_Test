@@ -94,7 +94,7 @@ export default function QuizSessionScreen() {
 
   useEffect(() => {
     setSelectedOptionId(null);
-  }, [question?.id]);
+  }, [normalizedSessionId, question?.id]);
 
   if (!question) {
     return (

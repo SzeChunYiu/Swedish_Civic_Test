@@ -1249,8 +1249,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q079',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Folkrörelserna', pageApprox: 33 },
-    'Vilka nämner UHR-materialet som fyra av de största svenska folkrörelserna?',
-    "Which movements does the UHR material mention as four of Sweden's largest popular movements?",
+    'Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?',
+    'Which four popular movements were among the largest in Sweden during the 19th century?',
     [
       [
         'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen',
@@ -1590,8 +1590,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Kristendom',
       pageApprox: 43,
     },
-    'Vilken tradition säger UHR-materialet att Svenska kyrkan har historiska rötter i?',
-    'Which tradition does the UHR material say the Church of Sweden has historical roots in?',
+    'Vilken tradition har Svenska kyrkan historiska rötter i?',
+    'Which tradition does the Church of Sweden have historical roots in?',
     [
       ['Den lutherska, protestantiska traditionen', 'The Lutheran Protestant tradition'],
       ['Den buddhistiska traditionen', 'The Buddhist tradition'],
@@ -1632,16 +1632,16 @@ export const additionalQuestions: PracticeQuestion[] = [
     'What is common to do on New Year’s Eve, 31 December, in Sweden?',
     [
       [
-        'Fira med fester och middagar med vänner och familj',
-        'Celebrate with parties and dinners with friends and family',
+        'Fira med fester och middagar och på natten med fyrverkerier',
+        'Celebrate with parties and dinners and at night with fireworks',
       ],
       ['Stora brasor och vårsånger', 'Large bonfires and spring songs'],
       ['Demonstrationer på arbetarnas dag', 'Demonstrations on workers’ day'],
       ['Ceremonier för nya medborgare', 'Ceremonies for new citizens'],
     ],
     0,
-    'Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas också på natten med fyrverkerier, precis som på många andra håll i världen.',
-    'New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is also celebrated at night with fireworks, as in many other parts of the world.',
+    'UHR-avsnittet Nyår säger att nyårsafton den 31 december ofta firas med fester och middagar med vänner och familj. Avsnittet säger också att det nya årets ankomst firas på natten med fyrverkerier, precis som på många andra håll i världen.',
+    'The UHR section New Year says New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. It also says the arrival of the new year is celebrated at night with fireworks, as in many other parts of the world.',
     ['new-year', 'fireworks', 'traditions'],
     'easy',
   ),

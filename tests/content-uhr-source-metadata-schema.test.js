@@ -52,3 +52,32 @@ require('./scripts/validate-content.js');
     /UHR section map source retrievedDate must not be in the future/,
   );
 });
+
+test('UHR source metadata schema rejects non-ISO retrieval dates', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    return String(contents).replace('"retrievedDate": "2026-05-15"', '"retrievedDate": "15 May 2026"');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /UHR section map source retrievedDate must use YYYY-MM-DD/,
+  );
+});
