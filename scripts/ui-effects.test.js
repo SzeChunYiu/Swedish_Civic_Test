@@ -114,6 +114,17 @@ test('answer option feedback remains available in the accessibility label', () =
   assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);
 });
 
+test('question card groups prompt and translation into an accessible summary', () => {
+  const source = read('components/quiz/QuestionCard.tsx');
+
+  assert.match(source, /const questionAccessibilityLabel =/);
+  assert.match(source, /`Difficulty: \$\{difficulty\}`/);
+  assert.match(source, /`Question: \$\{questionText\}`/);
+  assert.match(source, /English translation:/);
+  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
