@@ -171,6 +171,41 @@ test('Expo Router tab scaffold exposes the architecture tab routes', () => {
   assert.deepEqual(extractTabScreenNames(tabLayout).sort(), [...architectureTabRouteNames].sort());
 });
 
+test('Expo Router tab scaffold titles follow the persisted settings language', () => {
+  const tabLayout = readText('app/(tabs)/_layout.tsx');
+
+  assert.match(tabLayout, /useSettingsStore, type AppLanguage/);
+  assert.match(
+    tabLayout,
+    /type TabRouteName = 'home' \| 'learn' \| 'practice' \| 'exam' \| 'mistakes' \| 'profile';/,
+  );
+  assert.match(tabLayout, /type TabTitleCopy = Record<TabRouteName, string>;/);
+  assert.match(tabLayout, /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/);
+  assert.match(tabLayout, /home: 'Hem'/);
+  assert.match(tabLayout, /learn: 'Lär dig'/);
+  assert.match(tabLayout, /practice: 'Öva'/);
+  assert.match(tabLayout, /exam: 'Prov'/);
+  assert.match(tabLayout, /mistakes: 'Misstag'/);
+  assert.match(tabLayout, /profile: 'Profil'/);
+  assert.match(tabLayout, /home: 'Home'/);
+  assert.match(tabLayout, /learn: 'Learn'/);
+  assert.match(tabLayout, /practice: 'Practice'/);
+  assert.match(tabLayout, /exam: 'Exam'/);
+  assert.match(tabLayout, /mistakes: 'Mistakes'/);
+  assert.match(tabLayout, /profile: 'Profile'/);
+  assert.match(tabLayout, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(tabLayout, /const copy = tabTitleCopy\[language\];/);
+
+  for (const routeName of architectureTabRouteNames) {
+    assert.match(
+      tabLayout,
+      new RegExp(
+        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{\\{ title: copy\\.${routeName} \\}\\}`,
+      ),
+    );
+  }
+});
+
 test('Expo Router root scaffold redirects into the tab shell', () => {
   const rootLayout = readText('app/_layout.tsx');
   const indexRoute = readText('app/index.tsx');

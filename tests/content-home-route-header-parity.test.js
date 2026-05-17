@@ -22,10 +22,19 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 4);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.match(source, /<ScreenShell[\s\S]*title="Prepare calmly, one civic concept at a time"/);
-  assert.match(source, /<SectionHeader[\s\S]*title="Optimized study loop"/);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 58);
+  assert.equal(summary.homeRouteCopyParityValidated, true);
+  assert.match(source, /type HomeCopy =/);
+  assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
+  assert.match(source, /const copy = homeCopy\[language\]/);
+  assert.match(source, /Studieöversikt/);
+  assert.match(source, /Study dashboard/);
+  assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
+  assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
+  assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:goalLabel|feedbackTitle)\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
@@ -62,4 +71,61 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /home route card headings must expose accessibilityRole="header"/,
   );
+});
+
+test('home route copy parity rejects bypassing the settings language', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const copy = homeCopy[language];', 'const copy = homeCopy.en;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home route must select copy from settings language/,
+  );
+});
+
+test('home route copy parity rejects missing Swedish shell copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("'Starta övning'", "'Start practice'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /home route is missing sv copy/);
 });

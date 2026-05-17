@@ -22,9 +22,14 @@ test('profile route title and section headings stay on shared header components'
 
   assert.equal(summary.profileRouteHeadersValidated, 3);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
-  assert.match(source, /<ScreenShell[\s\S]*title="Progress without an account"/);
-  assert.match(source, /<SectionHeader[\s\S]*title="Study setup"/);
-  assert.match(source, /<SectionHeader[\s\S]*title="Badges"/);
+  assert.match(source, /type ProfileCopy =/);
+  assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
+  assert.match(source, /const copy = profileCopy\[language\]/);
+  assert.match(source, /Framsteg utan konto/);
+  assert.match(source, /Progress without an account/);
+  assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studySetupTitle\}/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.badgesTitle\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
@@ -43,7 +48,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('title="Badges"', 'subtitle="Badges"');
+      .replace('title={copy.badgesTitle}', 'subtitle={copy.badgesTitle}');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

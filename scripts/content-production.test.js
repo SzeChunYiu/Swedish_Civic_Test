@@ -31,6 +31,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.questionDisclaimerCopyValidated, true);
   assert.equal(summary.mockExamConfigTypeFieldsValidated, 5);
   assert.equal(summary.mockExamConfigTypeSchemaParityValidated, true);
+  assert.equal(summary.mockExamConfigExactSchemaKeysValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
@@ -46,14 +47,20 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.chapterRouteHeadersValidated, 3);
   assert.equal(summary.chapterRouteHeaderParityValidated, true);
+  assert.equal(summary.chapterRouteCopyLabelsValidated, 14);
+  assert.equal(summary.chapterRouteCopyParityValidated, true);
   assert.equal(summary.learnRouteHeadersValidated, 2);
   assert.equal(summary.learnRouteHeaderParityValidated, true);
   assert.equal(summary.learnRouteLinkCopyLabelsValidated, 6);
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
   assert.equal(summary.profileRouteHeadersValidated, 3);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 36);
+  assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteHeadersValidated, 4);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 58);
+  assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
   assert.equal(summary.mistakesRouteHeaderParityValidated, true);
   assert.equal(summary.mistakesRouteCopyLabelsValidated, 26);
@@ -62,8 +69,12 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.settingsRouteHeadersValidated, 4);
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 32);
+  assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
+  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
+  assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.equal(summary.screenShellLayoutRulesValidated, 7);
   assert.equal(summary.screenShellLayoutParityValidated, true);
   assert.equal(summary.settingsRouteScrollRulesValidated, 5);
@@ -135,6 +146,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
+  assert.equal(summary.glossaryTermExactSchemaKeysValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
   assert.equal(summary.supportedLanguagesValidated, 2);
   assert.equal(summary.localizationStringsValidated, summary.localizationStrings);
@@ -201,6 +213,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.questionOptionBilingualTextPairsValidated, 500);
   assert.equal(summary.questionExactSchemaKeysValidated, 500);
   assert.equal(summary.questionTextFieldsNormalizedValidated, 500);
+  assert.equal(summary.questionSentenceEndingsValidated, 500);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, 500);
   assert.equal(summary.questionPromptTextUniquenessValidated, 500);
   assert.equal(summary.questionOptionTextLabelsValidated, 500);
@@ -213,6 +226,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);
   assert.equal(summary.uhrMapSectionsValidated, 110);
+  assert.equal(summary.uhrMapSourceExactSchemaKeysValidated, true);
+  assert.equal(summary.uhrMapChapterExactSchemaKeysValidated, 13);
   assert.equal(summary.uhrMapTextFieldsNormalizedValidated, 140);
   assert.equal(summary.uhrMapPageRangesValidated, 13);
   assert.equal(summary.uhrSourceMaterialLinkParityValidated, true);

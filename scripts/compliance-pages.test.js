@@ -32,6 +32,11 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/privacy.tsx'), /Google UMP consent/i);
   assert.match(read('app/terms.tsx'), /study/i);
   assert.match(read('app/terms.tsx'), /no guarantee/i);
+  const legalPage = read('components/compliance/LegalPage.tsx');
+  assert.match(legalPage, /← Tillbaka till profil/);
+  assert.match(legalPage, /Tillbaka till profil/);
+  assert.match(legalPage, /← Back to Profile/);
+  assert.match(legalPage, /Back to profile/);
   const sourcesRoute = read('app/sources.tsx');
   assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/utbildningsmaterial/i);
   assert.match(sourcesRoute, /Sverige i fokus/i);
@@ -45,5 +50,8 @@ test('compliance pages and source links are present', () => {
   assert.match(supportRoute, /<Link[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
   assert.match(supportRoute, /accessibilityLabel="Open public support page"/);
   assert.doesNotMatch(supportRoute, /release checklist items/i);
-  assert.match(read('components/compliance/ComplianceLinks.tsx'), /Support/);
+  const complianceLinks = read('components/compliance/ComplianceLinks.tsx');
+  assert.match(complianceLinks, /Juridik och källor/);
+  assert.match(complianceLinks, /Legal and sources/);
+  assert.match(complianceLinks, /Support/);
 });

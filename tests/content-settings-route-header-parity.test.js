@@ -21,22 +21,29 @@ test('settings route title and preference sections stay accessible as headers', 
 
   assert.equal(summary.settingsRouteHeadersValidated, 4);
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
+  assert.match(source, /const copy = settingsCopy\[language\]/);
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*Settings\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*Question language\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.questionLanguageTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*Audio\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.audioTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*Daily goal\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   );
+  assert.match(source, /Inställningar/);
+  assert.match(source, /Frågespråk/);
+  assert.match(source, /Dagligt mål/);
+  assert.match(source, /Settings/);
+  assert.match(source, /Question language/);
+  assert.match(source, /Daily goal/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
 });
 

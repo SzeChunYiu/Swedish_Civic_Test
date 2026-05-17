@@ -8,12 +8,44 @@ const repoRoot = path.resolve(__dirname, '..');
 const expectedLegalRoutes = [
   {
     file: 'app/disclaimer.tsx',
+    requiredSnippets: [
+      'const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = disclaimerCopy[language];',
+      'Ansvarsfriskrivning',
+      'Oberoende studieverktyg',
+      'Disclaimer',
+      'Independent study tool',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+    ],
     title: 'Disclaimer',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Independent study tool', 'Practice content', 'Use with source material'],
   },
   {
     file: 'app/privacy.tsx',
+    requiredSnippets: [
+      'const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = privacyCopy[language];',
+      'Integritetspolicy',
+      'Inget konto krävs',
+      'Privacy policy',
+      'No account required',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}>/,
+    ],
     title: 'Privacy policy',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: [
       'No account required',
       'Local progress storage',
@@ -72,15 +104,22 @@ test('legal, source, and support routes stay on shared accessible header path', 
   for (const expectedRoute of expectedLegalRoutes) {
     const routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
     assert.match(routeSource, /LegalPage, LegalSection/);
+    if (expectedRoute.requiredSnippets) {
+      for (const snippet of expectedRoute.requiredSnippets) {
+        assert.match(routeSource, new RegExp(escapeRegExp(snippet)));
+      }
+    }
     assert.match(
       routeSource,
-      new RegExp(`<LegalPage\\s+title="${escapeRegExp(expectedRoute.title)}"`),
+      expectedRoute.titlePattern ??
+        new RegExp(`<LegalPage\\s+title="${escapeRegExp(expectedRoute.title)}"`),
     );
 
-    for (const sectionTitle of expectedRoute.sections) {
+    for (const [sectionIndex, sectionTitle] of expectedRoute.sections.entries()) {
       assert.match(
         routeSource,
-        new RegExp(`<LegalSection\\s+title="${escapeRegExp(sectionTitle)}"`),
+        expectedRoute.sectionPatterns?.[sectionIndex] ??
+          new RegExp(`<LegalSection\\s+title="${escapeRegExp(sectionTitle)}"`),
       );
     }
   }

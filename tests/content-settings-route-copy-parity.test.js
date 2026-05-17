@@ -15,30 +15,27 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
-test('onboarding route title stays accessible as a header', () => {
+test('settings route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
-  const source = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+  const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.onboardingRouteHeadersValidated, 1);
-  assert.equal(summary.onboardingRouteHeaderParityValidated, true);
-  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
-  assert.equal(summary.onboardingRouteCopyParityValidated, true);
-  assert.match(source, /type OnboardingCopy =/);
-  assert.match(source, /const onboardingCopy: Record<AppLanguage, OnboardingCopy> = \{/);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 32);
+  assert.equal(summary.settingsRouteCopyParityValidated, true);
+  assert.match(source, /type SettingsCopy =/);
+  assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
-  assert.match(source, /const copy = onboardingCopy\[language\];/);
-  assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
-  assert.match(source, /Prepare calmly for the civic test/);
-  assert.match(
-    source,
-    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
-  );
-  assert.match(source, /accessibilityLabel=\{copy\.startStudyingAccessibilityLabel\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.adjustSettingsAccessibilityLabel\}/);
-  assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
+  assert.match(source, /const copy = settingsCopy\[language\];/);
+  assert.match(source, /Styr studiespråk, ljud och ditt dagliga mål\./);
+  assert.match(source, /Control study language, audio, and your daily goal\./);
+  assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
+  assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
+  assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
+  assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
 });
 
-test('onboarding route header parity rejects a dropped title header role', () => {
+test('settings route copy parity rejects bypassing the settings language', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -48,13 +45,10 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        '<Text accessibilityRole="header" style={styles.title}>',
-        '<Text style={styles.title}>'
-      );
+      .replace('const copy = settingsCopy[language];', 'const copy = settingsCopy.en;');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -67,11 +61,11 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /onboarding route title text must expose accessibilityRole="header"/,
+    /settings route must select copy from settings language/,
   );
 });
 
-test('onboarding route copy parity rejects bypassing the settings language', () => {
+test('settings route copy parity rejects missing Swedish shell copy', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -81,10 +75,37 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('const copy = onboardingCopy[language];', 'const copy = onboardingCopy.en;');
+      .replace("'Styr studiespråk, ljud och ditt dagliga mål.'", "'Control study language, audio, and your daily goal.'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /settings route is missing sv copy/);
+});
+
+test('settings route copy parity rejects hardcoded language button labels', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("const label = language === 'sv' ? labelSv : labelEn;", 'const label = labelEn;');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -97,36 +118,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /onboarding route must select copy from settings language/,
+    /settings route language buttons must choose visible labels from settings language/,
   );
-});
-
-test('onboarding route copy parity rejects missing Swedish shell copy', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        "'Förbered dig lugnt för samhällskunskapsprovet'",
-        "'Prepare calmly for the civic test'",
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /onboarding route is missing sv copy/);
 });

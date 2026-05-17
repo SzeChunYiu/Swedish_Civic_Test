@@ -1,20 +1,37 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { ComponentProps, PropsWithChildren } from 'react';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type LegalBackHref = ComponentProps<typeof Link>['href'];
+type LegalPageCopy = {
+  defaultBackAccessibilityLabel: string;
+  defaultBackLabel: string;
+};
+
+const legalPageCopy: Record<AppLanguage, LegalPageCopy> = {
+  sv: {
+    defaultBackAccessibilityLabel: 'Tillbaka till profil',
+    defaultBackLabel: '← Tillbaka till profil',
+  },
+  en: {
+    defaultBackAccessibilityLabel: 'Back to profile',
+    defaultBackLabel: '← Back to Profile',
+  },
+};
 
 /**
- * Defaults: links back to Profile with `← Back to Profile`, derives the back
- * link spoken label from `backLabel`, and preserves the tokenized legal page
- * layout. Pass `backAccessibilityLabel` only when the visible label needs
+ * Defaults: links back to Profile with a language-aware label, derives custom
+ * back link spoken labels from `backLabel`, and preserves the tokenized legal
+ * page layout. Pass `backAccessibilityLabel` only when the visible label needs
  * a more specific spoken destination.
  */
 export interface LegalPageProps extends PropsWithChildren {
   backAccessibilityLabel?: string;
   backHref?: LegalBackHref;
   backLabel?: string;
+  language?: AppLanguage;
   title: string;
 }
 
@@ -29,19 +46,27 @@ export interface LegalSectionProps extends PropsWithChildren {
 export function LegalPage({
   backAccessibilityLabel,
   backHref = '/(tabs)/profile',
-  backLabel = '← Back to Profile',
+  backLabel,
   children,
+  language,
   title,
 }: LegalPageProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const copy = legalPageCopy[language ?? settingsLanguage];
+  const resolvedBackLabel = backLabel ?? copy.defaultBackLabel;
+  const resolvedBackAccessibilityLabel =
+    backAccessibilityLabel ??
+    (backLabel == null ? copy.defaultBackAccessibilityLabel : getBackAccessibilityLabel(backLabel));
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Link
-        accessibilityLabel={backAccessibilityLabel ?? getBackAccessibilityLabel(backLabel)}
+        accessibilityLabel={resolvedBackAccessibilityLabel}
         accessibilityRole="link"
         href={backHref}
         style={styles.backLink}
       >
-        {backLabel}
+        {resolvedBackLabel}
       </Link>
       <Text accessibilityRole="header" style={styles.title}>
         {title}

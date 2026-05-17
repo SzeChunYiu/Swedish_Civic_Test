@@ -3,29 +3,69 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
-const steps = [
-  'Study Swedish civic concepts with English support when needed.',
-  'Practice with UHR-referenced questions and explanations.',
-  'Track progress locally on your device without an account.',
-];
+type OnboardingCopy = {
+  adjustSettings: string;
+  adjustSettingsAccessibilityLabel: string;
+  eyebrow: string;
+  startStudying: string;
+  startStudyingAccessibilityLabel: string;
+  steps: readonly string[];
+  subtitle: string;
+  title: string;
+};
+
+const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
+  sv: {
+    adjustSettings: 'Justera inställningar',
+    adjustSettingsAccessibilityLabel: 'Öppna inställningar',
+    eyebrow: 'Välkommen',
+    startStudying: 'Börja studera',
+    startStudyingAccessibilityLabel: 'Börja studera',
+    steps: [
+      'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
+      'Öva med UHR-refererade frågor och förklaringar.',
+      'Följ framsteg lokalt på din enhet utan konto.',
+    ],
+    subtitle:
+      'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
+    title: 'Förbered dig lugnt för samhällskunskapsprovet',
+  },
+  en: {
+    adjustSettings: 'Adjust settings',
+    adjustSettingsAccessibilityLabel: 'Adjust settings',
+    eyebrow: 'Welcome',
+    startStudying: 'Start studying',
+    startStudyingAccessibilityLabel: 'Start studying',
+    steps: [
+      'Study Swedish civic concepts with English support when needed.',
+      'Practice with UHR-referenced questions and explanations.',
+      'Track progress locally on your device without an account.',
+    ],
+    subtitle:
+      'A small, independent study companion for daily practice, mock exams, and mistake review.',
+    title: 'Prepare calmly for the civic test',
+  },
+};
 
 export default function Screen() {
+  const language = useSettingsStore((state) => state.language);
+  const copy = onboardingCopy[language];
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Text style={styles.eyebrow}>Welcome</Text>
+        <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
         <Text accessibilityRole="header" style={styles.title}>
-          Prepare calmly for the civic test
+          {copy.title}
         </Text>
-        <Text style={styles.subtitle}>
-          A small, independent study companion for daily practice, mock exams, and mistake review.
-        </Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
       </View>
 
       <View style={styles.steps}>
-        {steps.map((step, index) => (
+        {copy.steps.map((step, index) => (
           <View key={step} style={styles.stepRow}>
             <Text style={styles.stepNumber}>{index + 1}</Text>
             <Text style={styles.stepText}>{step}</Text>
@@ -38,20 +78,20 @@ export default function Screen() {
 
       <View style={styles.actions}>
         <Link
-          accessibilityLabel="Start studying"
+          accessibilityLabel={copy.startStudyingAccessibilityLabel}
           accessibilityRole="link"
           href="/home"
           style={styles.primaryLink}
         >
-          Start studying
+          {copy.startStudying}
         </Link>
         <Link
-          accessibilityLabel="Adjust settings"
+          accessibilityLabel={copy.adjustSettingsAccessibilityLabel}
           accessibilityRole="link"
           href="/settings"
           style={styles.secondaryLink}
         >
-          Adjust settings
+          {copy.adjustSettings}
         </Link>
       </View>
     </ScrollView>

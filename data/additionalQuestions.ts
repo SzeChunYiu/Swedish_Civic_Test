@@ -303,13 +303,10 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q034',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Proportionella val', pageApprox: 15 },
-    'Vad säger materialets exempel om ett parti får ungefär 20 procent av rösterna i ett proportionellt val?',
-    "What does the material's example say if a party receives about 20 percent of the votes in a proportional election?",
+    'Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
+    'What happens in a proportional election if a party receives 20 percent of the votes?',
     [
-      [
-        'Partiet får ungefär 20 procent av platserna',
-        'The party receives about 20 percent of the seats',
-      ],
+      ['Partiet får 20 procent av platserna', 'The party receives 20 percent of the seats'],
       ['Partiet får alla platser', 'The party receives all seats'],
       [
         'Partiet får inga platser oavsett röstandel',
@@ -321,16 +318,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'UHR-materialet förklarar att proportionella val innebär att platser fördelas efter andelen röster. Exemplet anger att ett parti med tjugo procent av rösterna får tjugo procent av platserna.',
-    'The UHR material explains that proportional elections mean seats are distributed according to vote share. Its example says a party with twenty percent of the votes receives twenty percent of the seats.',
+    'Avsnittet Proportionella val säger att partier får platser utifrån den andel röster de har fått. Om ett parti får tjugo procent av folkets röster får det tjugo procent av platserna.',
+    "The Proportional elections section says parties receive seats based on their share of votes. If a party receives twenty percent of the people's votes, it receives twenty percent of the seats.",
     ['proportional-elections', 'seats', 'vote-share'],
   ),
   single(
     'q035',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Proportionella val', pageApprox: 15 },
-    'Enligt materialet, hur många procent av rösterna måste ett parti minst få för att komma in i riksdagen?',
-    'According to the material, what minimum share of votes must a party receive to enter the Riksdag?',
+    'Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?',
+    'What minimum share of votes must a party receive to enter the Riksdag?',
     [
       ['Minst 4 procent av rösterna', 'At least 4 percent of the votes'],
       ['Minst 1 procent av rösterna', 'At least 1 percent of the votes'],
@@ -338,8 +335,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Minst 50 procent av rösterna', 'At least 50 percent of the votes'],
     ],
     0,
-    'Materialet anger att ett parti måste få minst fyra procent av rösterna i valet för att komma in i riksdagen. Regeln finns för att hindra att för många partier kommer in, vilket skulle göra det svårare att skapa stabila majoriteter.',
-    'The material states that a party must receive at least four percent of the votes in the election to enter the Riksdag. The rule exists to prevent too many parties from entering, which would make stable majorities harder to form.',
+    'Avsnittet Proportionella val anger att ett parti måste få minst fyra procent av rösterna i valet för att komma in i riksdagen. Regeln finns för att hindra att för många partier kommer in, vilket skulle göra det svårare att skapa stabila majoriteter.',
+    'The Proportional elections section states that a party must receive at least four percent of the votes in the election to enter the Riksdag. The rule exists to prevent too many parties from entering, which would make stable majorities harder to form.',
     ['riksdag', 'threshold', 'parties'],
     'easy',
   ),
@@ -347,8 +344,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q036',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Grundlagarna', pageApprox: 16 },
-    'Vilken lista innehåller bara Sveriges fyra grundlagar enligt materialet?',
-    'Which list contains only Sweden’s four constitutional laws according to the material?',
+    'Vilken lista innehåller bara Sveriges fyra grundlagar?',
+    "Which list contains only Sweden's four constitutional laws?",
     [
       [
         'Regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen',
@@ -388,8 +385,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q038',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Successionsordningen', pageApprox: 16 },
-    'Vilken fråga regleras av successionsordningen enligt materialet?',
-    'Which question is regulated by the Act of Succession according to the material?',
+    'Vad reglerar successionsordningen?',
+    'What does the Act of Succession regulate?',
     [
       [
         'Vem som ska bli kung eller drottning efter den nuvarande monarken',
@@ -400,16 +397,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Vilka varor som har moms', 'Which goods have VAT'],
     ],
     0,
-    'Materialet beskriver successionsordningen som en av Sveriges fyra grundlagar. Den bestämmer vem som ska bli kung eller drottning efter den nuvarande monarken, inte regler för arbetsmarknad, skola eller skatt.',
-    'The material describes the Act of Succession as one of Sweden’s four constitutional laws. It decides who will become king or queen after the current monarch, not rules for the labour market, schools, or tax.',
+    'UHR-avsnittet Successionsordningen beskriver den som grundlagen som bestämmer vem som ska bli kung eller drottning efter den nuvarande monarken. Därför handlar frågan om tronföljden, inte regler för arbetsmarknad, skola eller skatt.',
+    'The UHR section The Act of Succession describes it as the constitutional law that decides who will become king or queen after the current monarch. The question is therefore about succession to the throne, not rules for the labour market, schools, or tax.',
     ['succession', 'monarchy', 'constitution'],
   ),
   single(
     'q039',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Allemansrätten', pageApprox: 17 },
-    'Vad säger materialet om allemansrätten?',
-    'What does the material say about the right of public access?',
+    'Vad innebär allemansrätten?',
+    'What does the right of public access mean?',
     [
       [
         'Den ger alla möjlighet att vara i naturen, men man måste visa ansvar',
@@ -426,16 +423,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Den gäller bara personer som äger mark', 'It applies only to people who own land'],
     ],
     0,
-    'Avsnittet säger att allemansrätten är skyddad i regeringsformen och ger alla möjlighet att vara i naturen oavsett vem som äger marken. Samtidigt måste man vara ansvarsfull: man får inte skada naturen, störa markägaren, gå på åkrar, gå in i trädgårdar eller kasta skräp.',
-    'The section says the right of public access is protected in the Instrument of Government and gives everyone the opportunity to be in nature regardless of who owns the land. At the same time, people must act responsibly: they may not damage nature, disturb landowners, walk on fields, enter private gardens, or throw litter.',
+    'UHR-avsnittet Allemansrätten säger att rätten är skyddad i regeringsformen och ger alla möjlighet att vara i naturen oavsett vem som äger marken. Samtidigt måste man vara ansvarsfull: man får inte skada naturen, störa markägaren, gå på åkrar, gå in i trädgårdar eller kasta skräp.',
+    'The UHR Right of public access section says this right is protected in the Instrument of Government and gives everyone the opportunity to be in nature regardless of who owns the land. At the same time, people must act responsibly: they may not damage nature, disturb landowners, walk on fields, enter private gardens, or throw litter.',
     ['right-of-public-access', 'nature', 'responsibility'],
   ),
   single(
     'q040',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättsväsendet', pageApprox: 17 },
-    'Vilken lista innehåller myndigheter som materialet nämner som delar av rättsväsendet?',
-    'Which list contains authorities the material names as parts of the justice system?',
+    'Vilka myndigheter ingår i det svenska rättsväsendet?',
+    'Which authorities are part of the Swedish justice system?',
     [
       [
         'Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten och Kriminalvården',
@@ -449,16 +446,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Fackförbund, banker och företag', 'Unions, banks, and companies'],
     ],
     0,
-    'Avsnittet listar flera myndigheter i rättsväsendet: Polisen, Åklagarmyndigheten, domstolarna, Brottsoffermyndigheten och Kriminalvården. De andra alternativen blandar politiska nivåer, medier eller arbetsmarknadsaktörer.',
-    'The section lists several justice-system authorities: the Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service. The other options mix political levels, media, or labour-market actors.',
+    'UHR-avsnittet Rättsväsendet säger att det svenska rättsväsendet består av olika myndigheter som arbetar för att lagar följs och att staten utövar sin makt enligt lagen. Avsnittet listar Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten och Kriminalvården.',
+    "The UHR section The justice system says Sweden's justice system consists of different authorities that work to ensure laws are followed and state power is exercised according to law. The section lists the Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service.",
     ['justice-system', 'authorities', 'law'],
   ),
   single(
     'q041',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättssäkerhet', pageApprox: 17 },
-    'Vilket påstående om rättssäkerhet stämmer enligt materialet?',
-    'Which statement about legal certainty is correct according to the material?',
+    'Vilket påstående beskriver rättssäkerhet i Sverige?',
+    'Which statement describes legal certainty in Sweden?',
     [
       [
         'Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom',
@@ -478,16 +475,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Materialet beskriver rättssäkerhet som lika behandling inför lagen, rättvis rättegång och noggrann granskning av bevis och fakta. Det betonar också att domstolarna är oberoende och att alla har rätt att försvara sig med advokat och kan överklaga en dom.',
-    'The material describes legal certainty as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
+    'UHR-avsnittet Rättssäkerhet beskriver rättssäkerhet som lika behandling inför lagen, rättvis rättegång och noggrann granskning av bevis och fakta. Det betonar också att domstolarna är oberoende och att alla har rätt att försvara sig med advokat och kan överklaga en dom.',
+    'The UHR section Legal certainty describes legal certainty as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
     ['legal-certainty', 'independent-courts', 'appeal'],
   ),
   single(
     'q042',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Domstolar', pageApprox: 18 },
-    'Vilket påstående om domstolar stämmer enligt materialet?',
-    'Which statement about courts is correct according to the material?',
+    'Vad gäller för en person som är misstänkt för brott i Sverige?',
+    'What applies to a person suspected of a crime in Sweden?',
     [
       [
         'En misstänkt person ska betraktas som oskyldig tills personen har dömts',
@@ -504,16 +501,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Högsta domstolen prövar alla mål direkt', 'The Supreme Court tries all cases directly'],
     ],
     0,
-    'Avsnittet Domstolar säger att domstolar bedömer om någon är skyldig till brott och vilken påföljd personen i så fall ska få. En misstänkt person ska betraktas som oskyldig tills personen har dömts, och en dom kan överklagas till en högre domstol.',
-    'The Courts section says that courts decide whether someone is guilty of a crime and what penalty the person should receive if so. A suspected person should be considered innocent until convicted, and a judgment can be appealed to a higher court.',
+    'UHR-avsnittet Domstolar säger att domstolar bedömer om någon är skyldig till brott och vilken påföljd personen i så fall ska få. En misstänkt person ska betraktas som oskyldig tills personen har dömts, och en dom kan överklagas till en högre domstol.',
+    'The UHR Courts section says that courts decide whether someone is guilty of a crime and what penalty the person should receive if so. A suspected person should be considered innocent until convicted, and a judgment can be appealed to a higher court.',
     ['courts', 'presumption-of-innocence', 'appeal'],
   ),
   single(
     'q043',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Polisen', pageApprox: 18 },
-    'Vilket påstående beskriver polisens uppgift enligt materialet?',
-    'Which statement describes the police role according to the material?',
+    'Vilket påstående beskriver polisens uppgift i Sverige?',
+    'Which statement describes the role of the police in Sweden?',
     [
       [
         'Att upprätthålla lag och ordning samt förebygga och utreda brott',
@@ -532,8 +529,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q044',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Straffmyndighet och belastningsregister', pageApprox: 19 },
-    'Från vilken ålder är en person straffmyndig i Sverige enligt materialet?',
-    'From what age is a person criminally responsible in Sweden according to the material?',
+    'Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?',
+    'From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?',
     [
       ['13 år', '13 years'],
       ['15 år', '15 years'],
@@ -640,8 +637,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q050',
     'ch06',
     { chapter: 'Mediernas roll', section: 'Källkritik', pageApprox: 21 },
-    'Vad betyder det att vara källkritisk enligt materialet?',
-    'According to the material, what does it mean to be source-critical?',
+    'Vad betyder det att vara källkritisk?',
+    'What does it mean to be source-critical?',
     [
       [
         'Att ifrågasätta och kontrollera om information är korrekt',
@@ -996,8 +993,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q067',
     'ch08',
     { chapter: 'Arbetsmarknad och privatekonomi', section: 'A-kassan', pageApprox: 29 },
-    'Vad är arbetslöshetskassan (A-kassan) enligt UHR-materialet?',
-    'According to the UHR material, what is the unemployment insurance fund (A-kassan)?',
+    'Vad är arbetslöshetskassan (A-kassan)?',
+    'What is the unemployment insurance fund (A-kassan)?',
     [
       [
         'En ekonomisk förening som betalar ut pengar till arbetslösa medlemmar',
@@ -1023,8 +1020,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Privatekonomi i Sverige',
       pageApprox: 29,
     },
-    'Vilken uppgift har Kronofogdemyndigheten enligt UHR-materialet?',
-    'According to the UHR material, what task does the Swedish Enforcement Authority have?',
+    'Vilken uppgift har Kronofogdemyndigheten när det gäller skulder?',
+    'What task does the Swedish Enforcement Authority have regarding debts?',
     [
       [
         'Att se till att skulder blir betalda och kunna hjälpa till med skuldsanering',
@@ -1049,8 +1046,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q069',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Skatter för Sveriges välfärd', pageApprox: 30 },
-    'Hur finansieras många viktiga välfärdstjänster enligt UHR-materialet?',
-    'According to the UHR material, how are many important welfare services financed?',
+    'Hur finansieras många viktiga välfärdstjänster i Sverige?',
+    'How are many important welfare services in Sweden financed?',
     [
       [
         'Genom skatter som finansierar tjänster gemensamt',
@@ -1073,8 +1070,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q070',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Skatter för Sveriges välfärd', pageApprox: 30 },
-    'Sant eller falskt: Enligt UHR-materialet betalar företag också skatt, och moms är skatt på varor och tjänster.',
-    'True or false: According to the UHR material, companies also pay tax, and VAT is a tax on goods and services.',
+    'Sant eller falskt: Företag betalar också skatt, och moms är skatt på varor och tjänster.',
+    'True or false: Companies also pay tax, and VAT is a tax on goods and services.',
     true,
     'UHR-avsnittet Skatter för Sveriges välfärd säger att skatt inte bara betalas av personer som arbetar utan också av företag. Avsnittet förklarar också att moms är en skatt på varor och tjänster, och att sådana skatteinkomster bidrar till statens, regionernas och kommunernas välfärdsbudgetar.',
     'The UHR section Taxes for Sweden’s welfare says that tax is not only paid by people who work but also by companies. It also explains that VAT is a tax on goods and services, and that these tax revenues contribute to the welfare budgets of the state, regions, and municipalities.',
@@ -1084,8 +1081,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q071',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Statligt finansierad välfärd', pageApprox: 30 },
-    'Vilket svar listar exempel på statligt finansierad välfärd enligt UHR-materialet?',
-    'Which answer lists examples of state-financed welfare according to the UHR material?',
+    'Vilket svar listar exempel på statligt finansierad välfärd i Sverige?',
+    'Which answer lists examples of state-financed welfare in Sweden?',
     [
       [
         'Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag',

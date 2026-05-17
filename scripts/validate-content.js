@@ -214,6 +214,213 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
+const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
+  sv: [
+    'Lokal profil',
+    'Framsteg utan konto',
+    'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
+    'nivå',
+    'XP',
+    'dagars svit',
+    'klara',
+    'frågor',
+    'Studieinställningar',
+    'Små dagliga mål är lättare att hålla än långa maratonpass.',
+    'svar/dag',
+    'Svenska',
+    'Märken',
+    'Milstolpar gör framsteg synliga utan att störa lärandet.',
+    'Inga märken ännu',
+    'Öppna inställningar',
+    'Första övningen',
+    'Nivå 2',
+    'Misstagsrepetition',
+    'Tre dagars svit',
+  ],
+  en: [
+    'Local profile',
+    'Progress without an account',
+    'Your goals, language mode, streaks, and badges stay on this device for a private study experience.',
+    'level',
+    'XP',
+    'day streak',
+    'completed',
+    'questions',
+    'Study setup',
+    'Small daily goals are easier to keep than long cram sessions.',
+    'answers/day',
+    'English support',
+    'Badges',
+    'Achievement cues make progress visible without distracting from learning.',
+    'No badges yet',
+    'Open settings',
+  ],
+};
+const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
+  ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
+  [
+    'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
+    'profile route copy must cover every AppLanguage value',
+  ],
+  [
+    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
+    'profile route must define localized badge-title overrides',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'profile route must read language from settings store',
+  ],
+  ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
+  [
+    '<ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>',
+    'profile shell must render localized copy',
+  ],
+  ['label={copy.levelMetric}', 'profile level metric must render localized copy'],
+  ['label={copy.xpMetric}', 'profile XP metric must render localized copy'],
+  ['label={copy.dayStreakMetric}', 'profile streak metric must render localized copy'],
+  ['label={copy.completedMetric}', 'profile completed metric must render localized copy'],
+  ['helper={copy.questionsHelper}', 'profile questions helper must render localized copy'],
+  ['title={copy.studySetupTitle}', 'profile study setup title must render localized copy'],
+  ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
+  ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
+  ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
+  ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
+  ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
+  [
+    'formatBadges(badges, language, copy.noBadges)',
+    'profile badge summary must use localized badge and empty-state copy',
+  ],
+  [
+    'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
+    'profile settings link must expose localized accessibility copy',
+  ],
+  ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ['language={language}', 'profile premium banner must receive the settings language'],
+];
+const EXPECTED_HOME_ROUTE_COPY_LABELS = {
+  sv: [
+    'Studieöversikt',
+    'Studera lugnt, ett samhällsbegrepp i taget',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'Dagens mål',
+    'Repetera svaga kapitel',
+    'Starta en 5-minutersövning',
+    'Starta den rekommenderade övningen',
+    'Starta övning',
+    'Bläddra bland alla samhällskapitel',
+    'Bläddra bland kapitel',
+    'nivå',
+    'XP-baserad',
+    'dagars svit',
+    'daglig vana',
+    'svaga kapitel',
+    'behöver repetition',
+    'frågor',
+    '${count} kapitel',
+    '10 000 elevers återkoppling',
+    'UX-förbättringar från simulerade studier',
+    '10 000 simulerade elever bad om tydligare framsteg, sparade svåra frågor, källstödd repetition och annonser som hålls borta från prov. De förbättringarna finns nu i studieflödet.',
+    'Granska bokmärkta eller missade frågor',
+    'Repetera sparade frågor',
+    'Optimerat studieflöde',
+    'Lärdomar från framgångsrika samhällsprovs- och språkstudieappar: ett tydligt nästa steg, direkt återkoppling och synliga framsteg.',
+    'Börja med kort ämnesövning, tydliga sviter, XP, märken och väg tillbaka efter misstag.',
+    'Visa behärskning per område så att eleven ser vad som är klart, repeterat eller fortfarande svagt.',
+    'Kombinera realistiska tidsatta prov med flashcards, bokmärken, felspårning, ljud, offline-studier och tydliga redo-signaler.',
+    'Ge en snabb första vinst, en självklar nästa handling och varsam daglig vanefeedback utan att hindra seriösa studier.',
+  ],
+  en: [
+    'Study dashboard',
+    'Prepare calmly, one civic concept at a time',
+    'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
+    "Today's goal",
+    'Review weak chapters',
+    'Start a 5-minute practice set',
+    'Start the recommended practice session',
+    'Start practice',
+    'Browse all civic chapters',
+    'Browse chapters',
+    'level',
+    'XP-based',
+    'day streak',
+    'daily habit',
+    'weak chapters',
+    'needs review',
+    'questions',
+    '${count} chapters',
+    '10,000-learner feedback pass',
+    'UX updates from simulated study sessions',
+    '10,000 simulated learners asked for clearer progress, saved hard questions, source-backed review, and ads that stay out of exams. Those fixes are now built into the study loop.',
+    'Review bookmarked or missed questions',
+    'Review saved questions',
+    'Optimized study loop',
+    'Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress.',
+    'Lead with bite-sized topic practice, visible streaks, XP, badges, and mistake recovery.',
+    'Show mastery by skill area so learners know what is ready, reviewed, or still weak.',
+    'Combine realistic timed exams with flashcards, bookmarks, wrong-answer tracking, audio, offline study, and readiness indicators.',
+    'Give a fast first win, one obvious next action, and gentle daily habit feedback without blocking serious study.',
+  ],
+};
+const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
+  ['type HomeCopy = {', 'home route must define a typed copy contract'],
+  [
+    'const homeCopy: Record<AppLanguage, HomeCopy> = {',
+    'home route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'home route must read language from settings store',
+  ],
+  ['const copy = homeCopy[language];', 'home route must select copy from settings language'],
+  [
+    'const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;',
+    'home route next action must use localized copy',
+  ],
+  ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
+  ['title={copy.title}', 'home route title must render localized copy'],
+  ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
+  ['{copy.dailyGoalTitle}', 'home daily goal title must render localized copy'],
+  [
+    'accessibilityLabel={copy.startPracticeAccessibilityLabel}',
+    'home practice link must expose localized accessibility copy',
+  ],
+  ['{copy.startPractice}', 'home practice link must render localized copy'],
+  [
+    'accessibilityLabel={copy.browseChaptersAccessibilityLabel}',
+    'home chapter link must expose localized accessibility copy',
+  ],
+  ['{copy.browseChapters}', 'home chapter link must render localized copy'],
+  ['label={copy.levelMetric}', 'home level metric must render localized copy'],
+  ['helper={copy.xpBasedHelper}', 'home XP helper must render localized copy'],
+  ['label={copy.dayStreakMetric}', 'home streak metric must render localized copy'],
+  ['helper={copy.dayStreakHelper}', 'home streak helper must render localized copy'],
+  ['label={copy.weakChaptersMetric}', 'home weak-chapter metric must render localized copy'],
+  ['helper={copy.weakChaptersHelper}', 'home weak-chapter helper must render localized copy'],
+  ['label={copy.questionsMetric}', 'home question metric must render localized copy'],
+  [
+    'helper={copy.questionsHelper(chapters.length)}',
+    'home question helper must render localized copy',
+  ],
+  ['<Badge tone="blue">{copy.feedbackBadge}</Badge>', 'home feedback badge must localize'],
+  ['{copy.feedbackTitle}', 'home feedback title must render localized copy'],
+  [
+    '<Text style={styles.feedbackText}>{copy.feedbackText}</Text>',
+    'home feedback body must localize',
+  ],
+  [
+    'accessibilityLabel={copy.feedbackLinkAccessibilityLabel}',
+    'home feedback link must expose localized accessibility copy',
+  ],
+  ['{copy.feedbackLink}', 'home feedback link must render localized copy'],
+  ['title={copy.studyLoopTitle}', 'home study-loop title must render localized copy'],
+  ['subtitle={copy.studyLoopSubtitle}', 'home study-loop subtitle must render localized copy'],
+  [
+    '{copy.benchmarkLessons[item.product]}',
+    'home study-loop benchmark lessons must render localized copy',
+  ],
+];
 const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
@@ -413,6 +620,89 @@ const EXPECTED_PRACTICE_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.questionTitle\(questionNumber\)\}\s*<\/Text>/,
   },
 ];
+const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
+  sv: [
+    'Tillbaka till kapitellistan',
+    'Tillbaka till studievägen',
+    'Frågor för det här kapitlet har inte lagts till ännu.',
+    'Kapitlet hittades inte',
+    'Övningsfrågor (${count})',
+    'Starta quiz',
+    'Starta quiz för ${chapterTitle}',
+  ],
+  en: [
+    'Back to chapter list',
+    'Back to Learn',
+    'Questions for this chapter are not added yet.',
+    'Chapter not found',
+    'Practice questions (${count})',
+    'Start quiz',
+    'Start quiz for ${chapterTitle}',
+  ],
+};
+const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
+  ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
+  [
+    'const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy> = {',
+    'chapter route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'chapter route must read language from settings store',
+  ],
+  [
+    'const copy = chapterRouteCopy[language];',
+    'chapter route must select copy from settings language',
+  ],
+  [
+    'chapterDescription: (chapter) => chapter.descriptionSv',
+    'chapter route Swedish copy must use the Swedish chapter description',
+  ],
+  [
+    'chapterDescription: (chapter) => chapter.descriptionEn',
+    'chapter route English copy must use the English chapter description',
+  ],
+  [
+    'chapterSubtitle: (chapter) => chapter.nameEn',
+    'chapter route Swedish copy must expose the English chapter subtitle',
+  ],
+  [
+    'chapterSubtitle: (chapter) => chapter.nameSv',
+    'chapter route English copy must expose the Swedish chapter subtitle',
+  ],
+  [
+    'chapterTitle: (chapter) => chapter.nameSv',
+    'chapter route Swedish copy must use Swedish chapter titles',
+  ],
+  [
+    'chapterTitle: (chapter) => chapter.nameEn',
+    'chapter route English copy must use English chapter titles',
+  ],
+  ['const chapterTitle = copy.chapterTitle(chapter);', 'chapter title must resolve from copy'],
+  [
+    'accessibilityLabel={copy.backToListAccessibilityLabel}',
+    'chapter route back link must expose localized accessibility copy',
+  ],
+  ['{copy.backToLearn}', 'chapter route back link must render localized copy'],
+  ['{chapterTitle}', 'chapter route title must render localized chapter copy'],
+  ['{copy.chapterSubtitle(chapter)}', 'chapter route subtitle must render localized copy'],
+  ['{copy.chapterDescription(chapter)}', 'chapter route description must render localized copy'],
+  [
+    'accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}',
+    'chapter route quiz link must expose localized accessibility copy',
+  ],
+  ['{copy.startQuiz}', 'chapter route quiz link must render localized copy'],
+  [
+    '{copy.practiceQuestionsTitle(chapterQuestions.length)}',
+    'chapter route section title must render localized copy',
+  ],
+  ['{copy.emptyQuestions}', 'chapter route empty state must render localized copy'],
+  [
+    'UHRReferenceCard language={language}',
+    'chapter route UHR cards must receive settings language',
+  ],
+];
 const EXPECTED_CHAPTER_ROUTE_HEADERS = [
   {
     label: 'missing chapter title',
@@ -443,35 +733,35 @@ const EXPECTED_LEARN_ROUTE_HEADERS = [
 const EXPECTED_PROFILE_ROUTE_HEADERS = [
   {
     label: 'profile route title',
-    pattern: /<ScreenShell[\s\S]*\btitle="Progress without an account"/,
+    pattern: /<ScreenShell[\s\S]*\btitle=\{copy\.title\}/,
   },
   {
     label: 'study setup section title',
-    pattern: /<SectionHeader[\s\S]*\btitle="Study setup"/,
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.studySetupTitle\}/,
   },
   {
     label: 'badges section title',
-    pattern: /<SectionHeader[\s\S]*\btitle="Badges"/,
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.badgesTitle\}/,
   },
 ];
 const EXPECTED_HOME_ROUTE_HEADERS = [
   {
     label: 'home route title',
-    pattern: /<ScreenShell[\s\S]*\btitle="Prepare calmly, one civic concept at a time"/,
+    pattern: /<ScreenShell[\s\S]*\btitle=\{copy\.title\}/,
   },
   {
     label: 'daily goal card title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.goalLabel\}>\s*Today&apos;s goal\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.goalLabel\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
   {
     label: 'feedback card title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.feedbackTitle\}>\s*UX updates from simulated study sessions\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.feedbackTitle\}>\s*\{copy\.feedbackTitle\}\s*<\/Text>/,
   },
   {
     label: 'study-loop section title',
-    pattern: /<SectionHeader[\s\S]*\btitle="Optimized study loop"/,
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.studyLoopTitle\}/,
   },
 ];
 const EXPECTED_MISTAKES_ROUTE_HEADERS = [
@@ -499,12 +789,44 @@ const EXPECTED_MISTAKES_ROUTE_HEADERS = [
 const EXPECTED_LEGAL_ROUTE_HEADERS = [
   {
     file: 'app/disclaimer.tsx',
+    requiredSnippets: [
+      'const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = disclaimerCopy[language];',
+      'Ansvarsfriskrivning',
+      'Oberoende studieverktyg',
+      'Disclaimer',
+      'Independent study tool',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+    ],
     title: 'Disclaimer',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Independent study tool', 'Practice content', 'Use with source material'],
   },
   {
     file: 'app/privacy.tsx',
+    requiredSnippets: [
+      'const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = privacyCopy[language];',
+      'Integritetspolicy',
+      'Inget konto krävs',
+      'Privacy policy',
+      'No account required',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}>/,
+    ],
     title: 'Privacy policy',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: [
       'No account required',
       'Local progress storage',
@@ -537,30 +859,180 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
-    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Settings\s*<\/Text>/,
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
   {
     label: 'question language section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Question language\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.questionLanguageTitle\}\s*<\/Text>/,
   },
   {
     label: 'audio section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Audio\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.audioTitle\}\s*<\/Text>/,
   },
   {
     label: 'daily goal section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Daily goal\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
+];
+const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
+  sv: [
+    'Ljud avstängt',
+    'Ljud på',
+    'Ljud',
+    '← Tillbaka till profil',
+    'Tillbaka till profil',
+    '${answerCount} svar per dag',
+    'Dagligt mål',
+    'Stäng av ljud',
+    'Slå på ljud',
+    'Byt frågespråk till ${label}',
+    'Frågespråk',
+    'Ställ in dagligt mål till ${goal} svar',
+    'Styr studiespråk, ljud och ditt dagliga mål.',
+    'Inställningar',
+    'Svenska',
+    'Engelskt stöd',
+  ],
+  en: [
+    'Audio disabled',
+    'Audio enabled',
+    'Audio',
+    '← Back to Profile',
+    'Back to profile',
+    '${answerCount} answers per day',
+    'Daily goal',
+    'Disable audio',
+    'Enable audio',
+    'Set question language to ${label}',
+    'Question language',
+    'Set daily goal to ${goal} answers',
+    'Control study language, audio, and your daily goal.',
+    'Settings',
+    'Swedish',
+    'English support',
+  ],
+};
+const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
+  ['import type { AppLanguage }', 'settings route must import AppLanguage'],
+  ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
+  [
+    'const settingsCopy: Record<AppLanguage, SettingsCopy> = {',
+    'settings route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'settings route must read language from settings store',
+  ],
+  [
+    'const copy = settingsCopy[language];',
+    'settings route must select copy from settings language',
+  ],
+  [
+    "const label = language === 'sv' ? labelSv : labelEn;",
+    'settings route language buttons must choose visible labels from settings language',
+  ],
+  [
+    "renderLanguageButton('sv', 'Swedish', 'Svenska')",
+    'settings route must provide localized Swedish-language button labels',
+  ],
+  [
+    "renderLanguageButton('en', 'English support', 'Engelskt stöd')",
+    'settings route must provide localized English-support button labels',
+  ],
+  [
+    'accessibilityLabel={copy.backToProfileAccessibilityLabel}',
+    'settings back link must expose localized accessibility copy',
+  ],
+  ['{copy.backToProfile}', 'settings back link must render localized copy'],
+  ['{copy.title}', 'settings title must render localized copy'],
+  ['{copy.subtitle}', 'settings subtitle must render localized copy'],
+  ['{copy.questionLanguageTitle}', 'settings language section must render localized copy'],
+  [
+    'accessibilityLabel={copy.languageAccessibilityLabel(label)}',
+    'settings language buttons must expose localized accessibility copy',
+  ],
+  ['{copy.audioTitle}', 'settings audio section must render localized copy'],
+  [
+    'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
+    'settings audio switch must expose localized accessibility copy',
+  ],
+  [
+    '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
+    'settings audio switch must render localized state copy',
+  ],
+  ['{copy.dailyGoalTitle}', 'settings daily-goal section must render localized copy'],
+  [
+    '{copy.dailyGoalSummary(dailyGoalAnswers)}',
+    'settings daily-goal summary must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}',
+    'settings daily-goal buttons must expose localized accessibility copy',
+  ],
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
   {
     label: 'onboarding route title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Prepare calmly for the civic test\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
+];
+const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
+  sv: [
+    'Justera inställningar',
+    'Öppna inställningar',
+    'Välkommen',
+    'Börja studera',
+    'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
+    'Öva med UHR-refererade frågor och förklaringar.',
+    'Följ framsteg lokalt på din enhet utan konto.',
+    'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
+    'Förbered dig lugnt för samhällskunskapsprovet',
+  ],
+  en: [
+    'Adjust settings',
+    'Welcome',
+    'Start studying',
+    'Study Swedish civic concepts with English support when needed.',
+    'Practice with UHR-referenced questions and explanations.',
+    'Track progress locally on your device without an account.',
+    'A small, independent study companion for daily practice, mock exams, and mistake review.',
+    'Prepare calmly for the civic test',
+  ],
+};
+const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'onboarding route must import AppLanguage from settings'],
+  ['type OnboardingCopy = {', 'onboarding route must define a typed copy contract'],
+  [
+    'const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {',
+    'onboarding route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'onboarding route must read language from settings store',
+  ],
+  [
+    'const copy = onboardingCopy[language];',
+    'onboarding route must select copy from settings language',
+  ],
+  ['{copy.eyebrow}', 'onboarding eyebrow must render localized copy'],
+  ['{copy.title}', 'onboarding title must render localized copy'],
+  ['{copy.subtitle}', 'onboarding subtitle must render localized copy'],
+  ['{copy.steps.map((step, index) => (', 'onboarding steps must render localized copy'],
+  [
+    'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
+    'onboarding start link must expose localized accessibility copy',
+  ],
+  ['{copy.startStudying}', 'onboarding start link must render localized copy'],
+  [
+    'accessibilityLabel={copy.adjustSettingsAccessibilityLabel}',
+    'onboarding settings link must expose localized accessibility copy',
+  ],
+  ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -1638,6 +2110,9 @@ const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference')
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
+const EXPECTED_GLOSSARY_TERM_KEYS = expectedContentInterfaceKeys('GlossaryTerm');
+const EXPECTED_UHR_SECTION_MAP_SOURCE_KEYS = ['title', 'publisher', 'url', 'retrievedDate'];
+const EXPECTED_UHR_SECTION_MAP_CHAPTER_KEYS = ['id', 'chapter', 'startPage', 'endPage', 'sections'];
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'questionCount', type: 'number', optional: false },
   { name: 'durationMinutes', type: 'number', optional: false },
@@ -1645,6 +2120,7 @@ const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'showExplanationsDuringExam', type: 'boolean', optional: false },
   { name: 'adsAllowedDuringExam', type: 'boolean', optional: false },
 ];
+const EXPECTED_MOCK_EXAM_CONFIG_KEYS = EXPECTED_MOCK_EXAM_CONFIG_FIELDS.map((field) => field.name);
 const EXPECTED_EXAM_GENERATOR_TYPE_ALIASES = [
   { typeName: 'ExamAnswerMap', type: 'Record<string, string>' },
 ];
@@ -2165,6 +2641,16 @@ function questionTextFieldsAreNormalized(question) {
   return fields.every(textIsTrimmedSingleSpaced);
 }
 
+function textHasSentenceEnding(value) {
+  return typeof value === 'string' && /[.!?]$/.test(value.trim());
+}
+
+function questionSentenceEndingsAreComplete(question) {
+  return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
+    textHasSentenceEnding(question[field]),
+  );
+}
+
 function findQuestionAuthorityOverclaim(question) {
   const text = [
     question.questionSv,
@@ -2399,6 +2885,32 @@ function questionExactSchemaKeyFailures(question, label) {
 
 function chapterExactSchemaKeyFailures(chapter, label) {
   return schemaKeyFailures(chapter, EXPECTED_CHAPTER_KEYS, label, 'Chapter');
+}
+
+function glossaryTermExactSchemaKeyFailures(term, label) {
+  return schemaKeyFailures(term, EXPECTED_GLOSSARY_TERM_KEYS, label, 'GlossaryTerm');
+}
+
+function mockExamConfigExactSchemaKeyFailures(config, label) {
+  return schemaKeyFailures(config, EXPECTED_MOCK_EXAM_CONFIG_KEYS, label, 'MockExamConfig');
+}
+
+function uhrSectionMapSourceExactSchemaKeyFailures(source, label) {
+  return schemaKeyFailures(
+    source,
+    EXPECTED_UHR_SECTION_MAP_SOURCE_KEYS,
+    label,
+    'UHRSectionMapSource',
+  );
+}
+
+function uhrSectionMapChapterExactSchemaKeyFailures(chapter, label) {
+  return schemaKeyFailures(
+    chapter,
+    EXPECTED_UHR_SECTION_MAP_CHAPTER_KEYS,
+    label,
+    'UHRSectionMapChapter',
+  );
 }
 
 function isColorToken(value) {
@@ -2831,6 +3343,11 @@ function validateQuestionSchema(question, index) {
   ) {
     reject(`${label} explanationSv and explanationEn must be distinct bilingual text`);
   }
+  for (const field of ['questionSv', 'questionEn', 'explanationSv', 'explanationEn']) {
+    if (hasText(question[field]) && !textHasSentenceEnding(question[field])) {
+      reject(`${label} ${field} must end with sentence punctuation`);
+    }
+  }
 
   if (!Array.isArray(question.options) || ![2, 4].includes(question.options.length)) {
     reject(`${label} must have 2 or 4 options`);
@@ -3008,6 +3525,7 @@ let questionDisclaimerRoutesValidated = 0;
 let questionDisclaimerCopyValidated = false;
 let mockExamConfigTypeFieldsValidated = 0;
 let mockExamConfigTypeSchemaParityValidated = false;
+let mockExamConfigExactSchemaKeysValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -3021,20 +3539,30 @@ let practiceRouteHeadersValidated = 0;
 let practiceRouteHeaderParityValidated = false;
 let chapterRouteHeadersValidated = 0;
 let chapterRouteHeaderParityValidated = false;
+let chapterRouteCopyLabelsValidated = 0;
+let chapterRouteCopyParityValidated = false;
 let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
 let profileRouteHeadersValidated = 0;
 let profileRouteHeaderParityValidated = false;
+let profileRouteCopyLabelsValidated = 0;
+let profileRouteCopyParityValidated = false;
 let homeRouteHeadersValidated = 0;
 let homeRouteHeaderParityValidated = false;
+let homeRouteCopyLabelsValidated = 0;
+let homeRouteCopyParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
+let settingsRouteCopyLabelsValidated = 0;
+let settingsRouteCopyParityValidated = false;
 let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
+let onboardingRouteCopyLabelsValidated = 0;
+let onboardingRouteCopyParityValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -3077,6 +3605,7 @@ let examGeneratorTypeAliasesValidated = 0;
 let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
+let glossaryTermExactSchemaKeysValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -3168,6 +3697,7 @@ let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
 let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
+let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -3179,6 +3709,8 @@ let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
+let uhrMapSourceExactSchemaKeysValidated = false;
+let uhrMapChapterExactSchemaKeysValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
 let uhrMapPageRangesValidated = 0;
 let uhrSourceMetadataValidated = false;
@@ -3990,6 +4522,8 @@ function validateMockExamConfig(config, publishedQuestionCount) {
   if (!config || typeof config !== 'object') {
     reject('defaultMockExamConfig export is not an object');
   } else {
+    mockExamConfigExactSchemaKeyFailures(config, 'defaultMockExamConfig').forEach(reject);
+
     if (!Number.isInteger(config.questionCount) || config.questionCount < 1) {
       reject('defaultMockExamConfig questionCount must be a positive integer');
     } else if (config.questionCount > publishedQuestionCount) {
@@ -4012,7 +4546,10 @@ function validateMockExamConfig(config, publishedQuestionCount) {
     }
   }
 
-  if (valid) mockExamConfigValidated = true;
+  if (valid) {
+    mockExamConfigExactSchemaKeysValidated = true;
+    mockExamConfigValidated = true;
+  }
 }
 
 function validateMockExamRuntimeParity(config) {
@@ -4522,6 +5059,58 @@ function validateChapterRouteHeaderParity() {
   }
 }
 
+function validateChapterRouteCopyParity() {
+  let valid = true;
+  let chapterRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    chapterRoute = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
+  } catch (error) {
+    reject(`chapter route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!chapterRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_CHAPTER_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`chapter route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!chapterRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`chapter route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`chapter route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) chapterRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_CHAPTER_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && chapterRouteCopyLabelsValidated === expectedLabelCount) {
+    chapterRouteCopyParityValidated = true;
+  }
+}
+
 function validateLearnRouteHeaderParity() {
   let valid = true;
   let learnRoute = '';
@@ -4630,6 +5219,58 @@ function validateProfileRouteHeaderParity() {
   }
 }
 
+function validateProfileRouteCopyParity() {
+  let valid = true;
+  let profileRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  } catch (error) {
+    reject(`profile route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!profileRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_PROFILE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`profile route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!profileRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`profile route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`profile route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) profileRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_PROFILE_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && profileRouteCopyLabelsValidated === expectedLabelCount) {
+    profileRouteCopyParityValidated = true;
+  }
+}
+
 function validateHomeRouteHeaderParity() {
   let valid = true;
   let homeRoute = '';
@@ -4682,6 +5323,58 @@ function validateHomeRouteHeaderParity() {
   }
 }
 
+function validateHomeRouteCopyParity() {
+  let valid = true;
+  let homeRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  } catch (error) {
+    reject(`home route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_HOME_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!homeRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`home route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!homeRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`home route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`home route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) homeRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_HOME_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && homeRouteCopyLabelsValidated === expectedLabelCount) {
+    homeRouteCopyParityValidated = true;
+  }
+}
+
 function validateMistakesRouteHeaderParity() {
   let valid = true;
   let mistakesRoute = '';
@@ -4720,6 +5413,11 @@ function validateMistakesRouteHeaderParity() {
 function countLegalTitleOccurrences(source, componentName, title) {
   const titlePattern = new RegExp(`<${componentName}\\s+title="${escapeRegExp(title)}"`, 'g');
   return (source.match(titlePattern) || []).length;
+}
+
+function countPatternOccurrences(source, pattern) {
+  const flags = pattern.flags.includes('g') ? pattern.flags : `${pattern.flags}g`;
+  return (source.match(new RegExp(pattern.source, flags)) || []).length;
 }
 
 function validateLegalRouteHeaderParity() {
@@ -4762,11 +5460,17 @@ function validateLegalRouteHeaderParity() {
       reject(`${expectedRoute.file} must use shared LegalPage and LegalSection headers`);
     }
 
-    const pageTitleOccurrences = countLegalTitleOccurrences(
-      routeSource,
-      'LegalPage',
-      expectedRoute.title,
-    );
+    if (expectedRoute.requiredSnippets) {
+      expectedRoute.requiredSnippets.forEach((snippet) => {
+        if (!routeSource.includes(snippet)) {
+          reject(`${expectedRoute.file} missing legal route snippet: ${snippet}`);
+        }
+      });
+    }
+
+    const pageTitleOccurrences = expectedRoute.titlePattern
+      ? countPatternOccurrences(routeSource, expectedRoute.titlePattern)
+      : countLegalTitleOccurrences(routeSource, 'LegalPage', expectedRoute.title);
     if (pageTitleOccurrences !== 1) {
       reject(
         `${expectedRoute.file} legal page title "${expectedRoute.title}" appears ${pageTitleOccurrences} times, expected 1`,
@@ -4775,12 +5479,11 @@ function validateLegalRouteHeaderParity() {
       legalRouteHeadersValidated += 1;
     }
 
-    for (const sectionTitle of expectedRoute.sections) {
-      const sectionTitleOccurrences = countLegalTitleOccurrences(
-        routeSource,
-        'LegalSection',
-        sectionTitle,
-      );
+    for (const [sectionIndex, sectionTitle] of expectedRoute.sections.entries()) {
+      const sectionPattern = expectedRoute.sectionPatterns?.[sectionIndex];
+      const sectionTitleOccurrences = sectionPattern
+        ? countPatternOccurrences(routeSource, sectionPattern)
+        : countLegalTitleOccurrences(routeSource, 'LegalSection', sectionTitle);
       if (sectionTitleOccurrences !== 1) {
         reject(
           `${expectedRoute.file} legal section title "${sectionTitle}" appears ${sectionTitleOccurrences} times, expected 1`,
@@ -4835,6 +5538,58 @@ function validateSettingsRouteHeaderParity() {
   }
 }
 
+function validateSettingsRouteCopyParity() {
+  let valid = true;
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!settingsRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`settings route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!settingsRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`settings route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`settings route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) settingsRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && settingsRouteCopyLabelsValidated === expectedLabelCount) {
+    settingsRouteCopyParityValidated = true;
+  }
+}
+
 function validateOnboardingRouteHeaderParity() {
   let valid = true;
   let onboardingRoute = '';
@@ -4866,6 +5621,58 @@ function validateOnboardingRouteHeaderParity() {
 
   if (valid && onboardingRouteHeadersValidated === EXPECTED_ONBOARDING_ROUTE_HEADERS.length) {
     onboardingRouteHeaderParityValidated = true;
+  }
+}
+
+function validateOnboardingRouteCopyParity() {
+  let valid = true;
+  let onboardingRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+  } catch (error) {
+    reject(`onboarding route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!onboardingRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_ONBOARDING_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`onboarding route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!onboardingRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`onboarding route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`onboarding route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) onboardingRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_ONBOARDING_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
+    onboardingRouteCopyParityValidated = true;
   }
 }
 
@@ -5935,6 +6742,12 @@ function validateLocalizationLanguageContract() {
     if (normalizedLabel) seenLabels.add(normalizedLabel);
   });
 
+  if (!settingsRoute.includes('Svenska') || !settingsRoute.includes('Engelskt stöd')) {
+    reject('app/settings.tsx must expose Swedish labels for language buttons in Swedish mode');
+  }
+  if (!settingsRoute.includes('Byt frågespråk till ${label}')) {
+    reject('app/settings.tsx language buttons must expose Swedish accessibility text');
+  }
   if (!settingsRoute.includes('Set question language to ${label}')) {
     reject('app/settings.tsx language buttons must expose label-derived accessibility text');
   }
@@ -6130,7 +6943,13 @@ function validateSettingsDailyGoalParity() {
   if (!settingsRoute.includes('Set daily goal to ${goal} answers')) {
     reject('app/settings.tsx daily goal buttons must expose goal-derived accessibility text');
   }
-  if (!settingsRoute.includes('{dailyGoalAnswers} answers per day')) {
+  if (!settingsRoute.includes('Ställ in dagligt mål till ${goal} svar')) {
+    reject('app/settings.tsx daily goal buttons must expose Swedish accessibility text');
+  }
+  if (!settingsRoute.includes('${answerCount} svar per dag')) {
+    reject('app/settings.tsx must render the Swedish persisted daily-goal count');
+  }
+  if (!settingsRoute.includes('${answerCount} answers per day')) {
     reject('app/settings.tsx must render the persisted daily-goal count');
   }
 
@@ -6218,14 +7037,16 @@ function validateSettingsAudioParity() {
     reject('app/settings.tsx audio switch must expose checked state from audioEnabled');
   }
   if (
-    !settingsRoute.includes("accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}")
+    !settingsRoute.includes(
+      'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
+    )
   ) {
     reject('app/settings.tsx audio switch must expose state-changing accessibility labels');
   }
   if (!settingsRoute.includes('onPress={() => setAudioEnabled(!audioEnabled)}')) {
     reject('app/settings.tsx audio switch must toggle persisted audio state');
   }
-  if (!settingsRoute.includes("{audioEnabled ? 'Audio enabled' : 'Audio disabled'}")) {
+  if (!settingsRoute.includes('audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel')) {
     reject('app/settings.tsx audio switch must render the current audio state label');
   }
 
@@ -7628,9 +8449,16 @@ function validateGlossaryTerms() {
           reject(`${label} references unknown chapter ${term.chapterId}`);
         }
       }
+
+      for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
+        reject(failure);
+      }
     }
 
-    if (valid) glossaryTermsValidated += 1;
+    if (valid) {
+      glossaryTermsValidated += 1;
+      glossaryTermExactSchemaKeysValidated += 1;
+    }
   });
 }
 
@@ -9180,6 +10008,7 @@ function buildUhrReferenceChapters() {
     }
 
     if (!hasText(chapter.id)) reject(`uhr-section-map chapter[${index}] missing id`);
+    uhrSectionMapChapterExactSchemaKeyFailures(chapter, label).forEach(reject);
     if (hasText(chapter.id) && seenChapterIds.has(chapter.id)) {
       reject(`${label} has duplicate chapter id`);
     }
@@ -9260,6 +10089,9 @@ function buildUhrReferenceChapters() {
     if (Number.isInteger(chapter.startPage)) previousStartPage = chapter.startPage;
     if (valid) {
       uhrMapChaptersValidated += 1;
+      if (uhrSectionMapChapterExactSchemaKeyFailures(chapter, label).length === 0) {
+        uhrMapChapterExactSchemaKeysValidated += 1;
+      }
       uhrMapSectionsValidated += chapter.sections.length;
     }
 
@@ -9287,6 +10119,7 @@ function validateUhrSourceMetadata() {
   if (!source || typeof source !== 'object') {
     reject('UHR section map missing source metadata');
   } else {
+    uhrSectionMapSourceExactSchemaKeyFailures(source, 'UHR section map source').forEach(reject);
     if (!hasText(source.title) || !source.title.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
       reject(`UHR section map source title must reference ${EXPECTED_UHR_SOURCE.titleKeyword}`);
     }
@@ -9319,7 +10152,12 @@ function validateUhrSourceMetadata() {
     }
   }
 
-  if (valid) uhrSourceMetadataValidated = true;
+  if (valid) {
+    uhrSourceMetadataValidated = true;
+    if (uhrSectionMapSourceExactSchemaKeyFailures(source, 'UHR section map source').length === 0) {
+      uhrMapSourceExactSchemaKeysValidated = true;
+    }
+  }
 }
 
 function validateUhrSourceMaterialLinkParity() {
@@ -9488,6 +10326,9 @@ if (Array.isArray(questions)) {
       if (questionTextFieldsAreNormalized(question)) {
         questionTextFieldsNormalizedValidated += 1;
       }
+      if (questionSentenceEndingsAreComplete(question)) {
+        questionSentenceEndingsValidated += 1;
+      }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
@@ -9583,15 +10424,20 @@ validateQuizRouteHeaderParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateChapterRouteHeaderParity();
+validateChapterRouteCopyParity();
 validateLearnRouteHeaderParity();
 validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
+validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
+validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
+validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
+validateOnboardingRouteCopyParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -9682,6 +10528,7 @@ console.log(
       questionDisclaimerCopyValidated,
       mockExamConfigTypeFieldsValidated,
       mockExamConfigTypeSchemaParityValidated,
+      mockExamConfigExactSchemaKeysValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
@@ -9697,14 +10544,20 @@ console.log(
       practiceRouteCopyParityValidated,
       chapterRouteHeadersValidated,
       chapterRouteHeaderParityValidated,
+      chapterRouteCopyLabelsValidated,
+      chapterRouteCopyParityValidated,
       learnRouteHeadersValidated,
       learnRouteHeaderParityValidated,
       learnRouteLinkCopyLabelsValidated,
       learnRouteLinkCopyParityValidated,
       profileRouteHeadersValidated,
       profileRouteHeaderParityValidated,
+      profileRouteCopyLabelsValidated,
+      profileRouteCopyParityValidated,
       homeRouteHeadersValidated,
       homeRouteHeaderParityValidated,
+      homeRouteCopyLabelsValidated,
+      homeRouteCopyParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
@@ -9713,8 +10566,12 @@ console.log(
       legalRouteHeaderParityValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
+      settingsRouteCopyLabelsValidated,
+      settingsRouteCopyParityValidated,
       onboardingRouteHeadersValidated,
       onboardingRouteHeaderParityValidated,
+      onboardingRouteCopyLabelsValidated,
+      onboardingRouteCopyParityValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
@@ -9789,6 +10646,7 @@ console.log(
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
+      glossaryTermExactSchemaKeysValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:
@@ -9863,6 +10721,7 @@ console.log(
       questionOptionBilingualTextPairsValidated,
       questionExactSchemaKeysValidated,
       questionTextFieldsNormalizedValidated,
+      questionSentenceEndingsValidated,
       questionAuthorityBoundaryTextValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
@@ -9875,6 +10734,8 @@ console.log(
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
+      uhrMapSourceExactSchemaKeysValidated,
+      uhrMapChapterExactSchemaKeysValidated,
       uhrMapTextFieldsNormalizedValidated,
       uhrMapPageRangesValidated,
       uhrSourceMaterialLinkParityValidated,

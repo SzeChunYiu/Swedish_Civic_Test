@@ -9,7 +9,9 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/home', { waitUntil: 'networkidle' });
-  const closeLaunchAd = page.getByRole('button', { name: 'Close launch sponsor ad' });
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
   if (await closeLaunchAd.isVisible()) {
     await closeLaunchAd.click();
   }

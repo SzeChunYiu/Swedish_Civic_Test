@@ -12,13 +12,16 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
 
   const dialogs = page.locator('[role="dialog"][aria-modal="true"]');
   await expect(dialogs).toHaveCount(1);
-  await expect(dialogs.first()).toHaveAttribute('aria-label', 'Launch sponsor ad');
-  await expect(page.getByRole('heading', { name: 'Launch sponsor' })).toBeVisible();
+  await expect(dialogs.first()).toHaveAttribute('aria-label', 'Startannons');
+  await expect(page.getByRole('heading', { name: 'Startannons' })).toBeVisible();
+  await expect(page.getByText('Testannons för appstart visas en gång per appstart.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Launch sponsor' })).toHaveCount(0);
+  await expect(page.getByText('Continue studying')).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Close launch sponsor ad' }).click();
+  await page.getByRole('button', { name: 'Stäng startannons' }).click();
 
   await expect(dialogs).toHaveCount(0);
-  await expect(page.getByText("Today's goal")).toBeVisible();
+  await expect(page.getByText('Dagens mål')).toBeVisible();
 
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);

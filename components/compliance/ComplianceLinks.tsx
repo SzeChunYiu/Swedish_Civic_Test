@@ -1,26 +1,72 @@
 import { Link } from 'expo-router';
+import type { ComponentProps } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
-const links = [
-  { href: '/disclaimer', label: 'Disclaimer' },
-  { href: '/privacy', label: 'Privacy' },
-  { href: '/terms', label: 'Terms' },
-  { href: '/sources', label: 'Sources' },
-  { href: '/support', label: 'Support' },
-] as const;
+type ComplianceLinkKey = 'disclaimer' | 'privacy' | 'terms' | 'sources' | 'support';
+type ComplianceHref = ComponentProps<typeof Link>['href'];
+type ComplianceLinksCopy = {
+  title: string;
+  openLabel: (label: string) => string;
+  links: Record<ComplianceLinkKey, string>;
+};
 
-export function ComplianceLinks() {
+const linkKeys = ['disclaimer', 'privacy', 'terms', 'sources', 'support'] as const;
+
+const linkHrefs: Record<ComplianceLinkKey, ComplianceHref> = {
+  disclaimer: '/disclaimer',
+  privacy: '/privacy',
+  terms: '/terms',
+  sources: '/sources',
+  support: '/support',
+};
+
+const complianceLinksCopy: Record<AppLanguage, ComplianceLinksCopy> = {
+  sv: {
+    title: 'Juridik och källor',
+    openLabel: (label) => `Öppna ${label}`,
+    links: {
+      disclaimer: 'Information',
+      privacy: 'Integritet',
+      terms: 'Villkor',
+      sources: 'Källor',
+      support: 'Support',
+    },
+  },
+  en: {
+    title: 'Legal and sources',
+    openLabel: (label) => `Open ${label}`,
+    links: {
+      disclaimer: 'Disclaimer',
+      privacy: 'Privacy',
+      terms: 'Terms',
+      sources: 'Sources',
+      support: 'Support',
+    },
+  },
+};
+
+export function ComplianceLinks({ language }: { language?: AppLanguage } = {}) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const copy = complianceLinksCopy[language ?? settingsLanguage];
+
+  const links = linkKeys.map((key) => ({
+    href: linkHrefs[key],
+    label: copy.links[key],
+  }));
+
   return (
     <View style={styles.container}>
       <Text accessibilityRole="header" style={styles.title}>
-        Legal and sources
+        {copy.title}
       </Text>
       <View style={styles.links}>
         {links.map((link) => (
           <Link
-            key={link.href}
-            accessibilityLabel={`Open ${link.label}`}
+            key={String(link.href)}
+            accessibilityLabel={copy.openLabel(link.label)}
             accessibilityRole="link"
             href={link.href}
             style={styles.link}

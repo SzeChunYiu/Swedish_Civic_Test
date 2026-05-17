@@ -91,10 +91,56 @@ test('screen scaffold exposes page and section titles as headers', () => {
 test('compliance scaffold exposes legal page headings as headers', () => {
   const legalPageSource = read('components/compliance/LegalPage.tsx');
   const complianceLinksSource = read('components/compliance/ComplianceLinks.tsx');
+  const disclaimerSource = read('app/disclaimer.tsx');
+  const privacySource = read('app/privacy.tsx');
 
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.match(legalPageSource, /useSettingsStore, type AppLanguage/);
+  assert.match(legalPageSource, /type LegalPageCopy =/);
+  assert.match(legalPageSource, /const legalPageCopy: Record<AppLanguage, LegalPageCopy>/);
+  assert.match(legalPageSource, /const settingsLanguage = useSettingsStore/);
+  assert.match(legalPageSource, /const copy = legalPageCopy\[language \?\? settingsLanguage\]/);
+  assert.match(legalPageSource, /defaultBackLabel: '← Tillbaka till profil'/);
+  assert.match(legalPageSource, /defaultBackAccessibilityLabel: 'Tillbaka till profil'/);
+  assert.match(legalPageSource, /defaultBackLabel: '← Back to Profile'/);
+  assert.match(legalPageSource, /defaultBackAccessibilityLabel: 'Back to profile'/);
+  assert.match(legalPageSource, /const resolvedBackLabel = backLabel \?\? copy\.defaultBackLabel;/);
+  assert.match(legalPageSource, /accessibilityLabel=\{resolvedBackAccessibilityLabel\}/);
+  assert.match(legalPageSource, /\{resolvedBackLabel\}/);
   assert.match(complianceLinksSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(complianceLinksSource, /type ComplianceLinksCopy =/);
+  assert.match(
+    complianceLinksSource,
+    /const complianceLinksCopy: Record<AppLanguage, ComplianceLinksCopy>/,
+  );
+  assert.match(
+    complianceLinksSource,
+    /const copy = complianceLinksCopy\[language \?\? settingsLanguage\]/,
+  );
+  assert.match(complianceLinksSource, /Juridik och källor/);
+  assert.match(complianceLinksSource, /Legal and sources/);
+  assert.match(complianceLinksSource, /Öppna \$\{label\}/);
+  assert.match(complianceLinksSource, /Open \$\{label\}/);
+  assert.match(complianceLinksSource, /accessibilityLabel=\{copy\.openLabel\(link\.label\)\}/);
+  assert.match(disclaimerSource, /const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy>/);
+  assert.match(
+    disclaimerSource,
+    /const language = useSettingsStore\(\(state\) => state\.language\);/,
+  );
+  assert.match(disclaimerSource, /const copy = disclaimerCopy\[language\];/);
+  assert.match(disclaimerSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(disclaimerSource, /Ansvarsfriskrivning/);
+  assert.match(disclaimerSource, /Oberoende studieverktyg/);
+  assert.match(disclaimerSource, /Disclaimer/);
+  assert.match(disclaimerSource, /Independent study tool/);
+  assert.match(privacySource, /const privacyCopy: Record<AppLanguage, PrivacyRouteCopy>/);
+  assert.match(privacySource, /const copy = privacyCopy\[language\];/);
+  assert.match(privacySource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(privacySource, /Integritetspolicy/);
+  assert.match(privacySource, /Inget konto krävs/);
+  assert.match(privacySource, /Privacy policy/);
+  assert.match(privacySource, /No account required/);
   assert.doesNotMatch(legalPageSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -106,9 +152,14 @@ test('settings route exposes page and section titles as headers', () => {
   );
 
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /\{copy\.title\}/);
+  assert.match(source, /\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /Inställningar/);
+  assert.match(source, /Settings/);
+  assert.match(source, /Frågespråk/);
   assert.match(source, /Question language/);
+  assert.match(source, /Dagligt mål/);
   assert.match(source, /Audio/);
-  assert.match(source, /Daily goal/);
   assert.equal(sectionHeaderMatches?.length, 3);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -116,12 +167,28 @@ test('settings route exposes page and section titles as headers', () => {
 test('settings controls mirror selected and checked state to web aria attributes', () => {
   const source = read('app/settings.tsx');
 
+  assert.match(source, /type SettingsCopy =/);
+  assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy>/);
+  assert.match(source, /const copy = settingsCopy\[language\]/);
   assert.match(source, /aria-selected=\{language === value\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityState=\{\{ selected: language === value \}\}/);
   assert.match(source, /aria-checked=\{audioEnabled\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{\s*audioEnabled \? copy\.disableAudioAccessibilityLabel : copy\.enableAudioAccessibilityLabel\s*\}/,
+  );
+  assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
   assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
+  assert.match(source, /Svenska/);
+  assert.match(source, /Engelskt stöd/);
+  assert.match(source, /Byt frågespråk till \$\{label\}/);
+  assert.match(source, /Set question language to \$\{label\}/);
+  assert.match(source, /\$\{answerCount\} svar per dag/);
+  assert.match(source, /\$\{answerCount\} answers per day/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -143,9 +210,16 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
 test('onboarding route exposes its primary title as a header', () => {
   const source = read('app/onboarding.tsx');
 
+  assert.match(source, /type OnboardingCopy =/);
+  assert.match(source, /const onboardingCopy: Record<AppLanguage, OnboardingCopy> = \{/);
+  assert.match(source, /const copy = onboardingCopy\[language\];/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /\{copy\.title\}/);
+  assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
   assert.match(source, /Prepare calmly for the civic test/);
+  assert.match(source, /Börja studera/);
   assert.match(source, /Start studying/);
+  assert.match(source, /Justera inställningar/);
   assert.match(source, /Adjust settings/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -583,6 +657,31 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('profile shell copy follows Swedish and English settings language', () => {
+  const source = read('app/(tabs)/profile.tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /type ProfileCopy =/);
+  assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
+  assert.match(source, /const copy = profileCopy\[language\]/);
+  assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
+  assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
+  assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /Lokal profil/);
+  assert.match(source, /Framsteg utan konto/);
+  assert.match(source, /Studieinställningar/);
+  assert.match(source, /Märken/);
+  assert.match(source, /Inga märken ännu/);
+  assert.match(source, /Öppna inställningar/);
+  assert.match(source, /Första övningen/);
+  assert.match(source, /Progress without an account/);
+  assert.match(source, /Study setup/);
+  assert.match(source, /No badges yet/);
+  assert.match(source, /Open settings/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   const fallbackFiles = [
     'components/learning/ChapterCard.tsx',
@@ -630,16 +729,43 @@ test('home screen surfaces the 10000-learner feedback loop and review action', (
   const source = read('app/(tabs)/home.tsx');
 
   assert.match(source, /10,000-learner feedback pass/);
+  assert.match(source, /10 000 elevers återkoppling/);
   assert.match(source, /Review saved questions/);
+  assert.match(source, /Repetera sparade frågor/);
   assert.match(source, /href="\/mistakes"/);
+});
+
+test('home shell copy follows Swedish and English settings language', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /type HomeCopy =/);
+  assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
+  assert.match(source, /const copy = homeCopy\[language\]/);
+  assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.startPracticeAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}/);
+  assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
+  assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
+  assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
+  assert.match(source, /\{copy\.benchmarkLessons\[item\.product\]\}/);
+  assert.match(source, /Studieöversikt/);
+  assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
+  assert.match(source, /Starta den rekommenderade övningen/);
+  assert.match(source, /Optimerat studieflöde/);
+  assert.match(source, /Prepare calmly, one civic concept at a time/);
+  assert.match(source, /Start the recommended practice session/);
+  assert.match(source, /Optimized study loop/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('home screen exposes dashboard card titles as headers', () => {
   const source = read('app/(tabs)/home.tsx');
   const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
 
-  assert.match(source, /Today&apos;s goal/);
-  assert.match(source, /UX updates from simulated study sessions/);
+  assert.match(source, /\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.equal(headerMatches?.length, 2);
@@ -656,11 +782,25 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
   assert.match(webSource, /launchPopupShownThisRuntime/);
   assert.match(webSource, /Modal/);
-  assert.match(webSource, /accessibilityLabel=\{LAUNCH_SPONSOR_DIALOG_LABEL\}/);
+  assert.match(webSource, /useSettingsStore, type AppLanguage/);
+  assert.match(webSource, /type LaunchPopupAdCopy =/);
+  assert.match(webSource, /const launchPopupAdCopy: Record<AppLanguage, LaunchPopupAdCopy>/);
+  assert.match(webSource, /dialogAccessibilityLabel: 'Startannons'/);
+  assert.match(webSource, /closeAccessibilityLabel: 'Stäng startannons'/);
+  assert.match(webSource, /closeLabel: 'Fortsätt studera'/);
+  assert.match(webSource, /dialogAccessibilityLabel: 'Launch sponsor ad'/);
+  assert.match(webSource, /closeAccessibilityLabel: 'Close launch sponsor ad'/);
+  assert.match(webSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(webSource, /const copy = launchPopupAdCopy\[language\];/);
+  assert.match(webSource, /accessibilityLabel=\{copy\.dialogAccessibilityLabel\}/);
   assert.match(webSource, /accessibilityViewIsModal/);
   assert.doesNotMatch(webSource, /aria-modal=\{true\}/);
   assert.doesNotMatch(webSource, /role="dialog"/);
   assert.match(webSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(webSource, /\{copy\.title\}/);
+  assert.match(webSource, /\{unit\?\.testOnly \? copy\.testBody : copy\.liveBody\}/);
+  assert.match(webSource, /accessibilityLabel=\{copy\.closeAccessibilityLabel\}/);
+  assert.match(webSource, /\{copy\.closeLabel\}/);
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /AppOpenAd/);
   assert.match(nativeSource, /launchPopupShownThisRuntime/);
