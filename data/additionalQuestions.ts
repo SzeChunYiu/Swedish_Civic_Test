@@ -1276,8 +1276,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q080',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Demokratins genombrott', pageApprox: 34 },
-    'När hölls det första valet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
-    'When was the first election in which both women and men could vote and women could become members of the Riksdag?',
+    'Vilket år hölls enligt UHR-materialet det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
+    'According to the UHR material, in which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?',
     [
       ['1809', '1809'],
       ['1865', '1865'],
@@ -1294,8 +1294,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q081',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Den svenska modellen', pageApprox: 35 },
-    'Vad var Saltsjöbadsavtalet viktigt för?',
-    'What was the Saltsjöbaden Agreement important for?',
+    'Vad blev Saltsjöbadsavtalet från 1938 viktigt för enligt UHR-materialet?',
+    'According to the UHR material, what did the 1938 Saltsjöbaden Agreement become important for?',
     [
       [
         'Samarbetet mellan fackföreningar och arbetsgivare',
@@ -1314,12 +1314,12 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q082',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Rekordåren', pageApprox: 36 },
-    'Varför kallas tiden efter andra världskriget ofta rekordåren?',
-    'Why is the period after the Second World War often called the record years?',
+    'Varför kallas tiden efter andra världskriget enligt UHR-materialet ofta de svenska rekordåren?',
+    'According to the UHR material, why is the period after the Second World War often called the Swedish record years?',
     [
       [
-        'Sverige hade stark ekonomisk tillväxt och kunde genomföra omfattande reformer',
-        'Sweden had strong economic growth and could carry out extensive reforms',
+        'Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer',
+        'Sweden had long-lasting strong economic growth and could carry out major reforms',
       ],
       ['Sverige saknade nästan all industri', 'Sweden had almost no industry'],
       ['Alla välfärdstjänster avskaffades', 'All welfare services were abolished'],

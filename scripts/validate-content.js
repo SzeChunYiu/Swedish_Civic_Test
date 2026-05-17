@@ -666,6 +666,93 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
     pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
   },
 ];
+const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
+  {
+    label: 'explicit accessibility label prop',
+    pattern: /accessibilityLabel\?: string;/,
+  },
+  {
+    label: 'derived accessibility label variable',
+    pattern: /const badgeAccessibilityLabel =/,
+  },
+  {
+    label: 'explicit label override before child fallback',
+    pattern:
+      /accessibilityLabel \?\?\s*\(\s*typeof children === 'string' \|\| typeof children === 'number' \? String\(children\) : undefined\s*\)/,
+  },
+  {
+    label: 'web aria label',
+    pattern: /aria-label=\{badgeAccessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
+  },
+  {
+    label: 'tone style path',
+    pattern: /style=\{\[styles\.badge, styles\[tone\]\]\}/,
+  },
+  {
+    label: 'visible child text',
+    pattern: /<Text[\s\S]*>\s*\{children\}\s*<\/Text>/,
+  },
+  {
+    label: 'visual uppercase transform',
+    pattern: /textTransform:\s*'uppercase'/,
+  },
+];
+const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
+  {
+    label: 'shared Button import',
+    pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
+  },
+  {
+    label: 'disabled prop',
+    pattern: /disabled\?: boolean;/,
+  },
+  {
+    label: 'selected prop',
+    pattern: /selected\?: boolean;/,
+  },
+  {
+    label: 'result label prop',
+    pattern: /resultLabel\?: string;/,
+  },
+  {
+    label: 'language-specific option label',
+    pattern: /const label = option \? getOptionLabel\(option, language\) : 'Answer option';/,
+  },
+  {
+    label: 'feedback-aware accessibility label',
+    pattern:
+      /const accessibilityLabel = resultLabel \? `\$\{label\}, \$\{resultLabel\}` : `Select answer \$\{label\}`;/,
+  },
+  {
+    label: 'explicit button role',
+    pattern: /accessibilityRole="button"/,
+  },
+  {
+    label: 'selected and disabled state forwarding',
+    pattern: /accessibilityState=\{\{ disabled, selected \}\}/,
+  },
+  {
+    label: 'disabled interaction forwarding',
+    pattern: /disabled=\{disabled\}/,
+  },
+  {
+    label: 'feedback-aware visible label',
+    pattern: /\{resultLabel \? `\$\{label\}[^`]*\$\{resultLabel\}` : label\}/,
+  },
+  {
+    label: 'tone-to-variant mapping',
+    pattern:
+      /const variant = tone === 'correct' \? 'success' : tone === 'incorrect' \? 'danger' : 'option';/,
+  },
+  {
+    label: 'English and Swedish option label switch',
+    pattern: /return language === 'en' \? option\.textEn : option\.textSv;/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -986,7 +1073,10 @@ const EXPECTED_EXAM_GENERATOR_TYPE_ALIASES = [
 const EXPECTED_EXAM_GENERATOR_INTERFACES = [
   {
     name: 'ExamOptions',
-    fields: [{ name: 'questionCount', type: 'number', optional: true }],
+    fields: [
+      { name: 'questionCount', type: 'number', optional: true },
+      { name: 'sessionId', type: 'string', optional: true },
+    ],
   },
   {
     name: 'ExamChapterResult',
@@ -2321,6 +2411,10 @@ let progressBarAccessibilityRulesValidated = 0;
 let progressBarAccessibilityParityValidated = false;
 let metricCardAccessibilityRulesValidated = 0;
 let metricCardAccessibilityParityValidated = false;
+let badgeAccessibilityRulesValidated = 0;
+let badgeAccessibilityParityValidated = false;
+let answerOptionAccessibilityRulesValidated = 0;
+let answerOptionAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4222,6 +4316,72 @@ function validateMetricCardAccessibilityParity() {
     metricCardAccessibilityRulesValidated === EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES.length
   ) {
     metricCardAccessibilityParityValidated = true;
+  }
+}
+
+function validateBadgeAccessibilityParity() {
+  let valid = true;
+  let badgeSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    badgeSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Badge.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/Badge.tsx could not be read for accessibility parity: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_BADGE_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(badgeSource)) {
+      reject(`Badge missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    badgeAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && badgeAccessibilityRulesValidated === EXPECTED_BADGE_ACCESSIBILITY_RULES.length) {
+    badgeAccessibilityParityValidated = true;
+  }
+}
+
+function validateAnswerOptionAccessibilityParity() {
+  let valid = true;
+  let answerOptionSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    answerOptionSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/AnswerOption.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/AnswerOption.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(answerOptionSource)) {
+      reject(`AnswerOption missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    answerOptionAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    answerOptionAccessibilityRulesValidated === EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES.length
+  ) {
+    answerOptionAccessibilityParityValidated = true;
   }
 }
 
@@ -8314,6 +8474,8 @@ validateButtonAccessibilityParity();
 validateCardAccessibilityParity();
 validateProgressBarAccessibilityParity();
 validateMetricCardAccessibilityParity();
+validateBadgeAccessibilityParity();
+validateAnswerOptionAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8429,6 +8591,10 @@ console.log(
       progressBarAccessibilityParityValidated,
       metricCardAccessibilityRulesValidated,
       metricCardAccessibilityParityValidated,
+      badgeAccessibilityRulesValidated,
+      badgeAccessibilityParityValidated,
+      answerOptionAccessibilityRulesValidated,
+      answerOptionAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,

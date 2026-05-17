@@ -49,6 +49,7 @@ const architectureExpectedExports = {
   'lib/quiz/practiceSessionStore.ts': ['usePracticeSessionStore'],
   'lib/quiz/scoring.ts': ['scoreAnswers'],
   'lib/quiz/answerValidation.ts': ['isCorrectAnswer', 'getAnswerOptionFeedback'],
+  'lib/quiz/answerOptionShuffle.ts': ['shuffleQuestionOptionsForSession'],
   'lib/learning/badges.ts': ['Badge', 'badgeCatalog', 'deriveBadges'],
   'lib/learning/spacedRepetition.ts': ['spacedRepetitionSchedule', 'getNextReviewAt'],
   'lib/learning/mastery.ts': ['calculateChapterMastery', 'calculateMastery', 'findWeakChapterIds'],

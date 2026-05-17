@@ -1,7 +1,9 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
+import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
 
 export type ExamOptions = {
   questionCount?: number;
+  sessionId?: string;
 };
 
 export type ExamAnswerMap = Record<string, string>;
@@ -69,7 +71,7 @@ function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
 
 export function generateExam(
   questions: PracticeQuestion[] = [],
-  { questionCount = 20 }: ExamOptions = {},
+  { questionCount = 20, sessionId = 'mock-exam' }: ExamOptions = {},
 ): PracticeQuestion[] {
   const targetCount = Math.max(0, Math.floor(questionCount));
   const chapterBuckets = new Map<string, PracticeQuestion[]>();
@@ -99,7 +101,7 @@ export function generateExam(
     round += 1;
   }
 
-  return selected;
+  return selected.map((question) => shuffleQuestionOptionsForSession(question, sessionId));
 }
 
 export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap): ExamResult {

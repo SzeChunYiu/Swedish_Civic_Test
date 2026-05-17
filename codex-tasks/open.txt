@@ -202,3 +202,8 @@ exam/question screen. Reactive micro-animations tie into the MOTION priority
 prefers-reduced-motion, 60fps, token colors only, keep 7/7 acceptance green.
 Repeatable atoms: one mascot SVG or the picker per atom; name it in the commit.
 === END ===
+
+MASCOT-UPDATE (operator 2026-05-17): add "Skoglimpa" (Swedish dark rye/forest
+loaf) to the mascot set. FEATURE Kanelbulle + Skoglimpa as the highlighted
+"favourites" in the picker (top row / pre-selected default = Kanelbulle).
+Same Jellycat-inspired original SVG style + reactive animation rules.

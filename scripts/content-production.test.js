@@ -73,6 +73,10 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.progressBarAccessibilityParityValidated, true);
   assert.equal(summary.metricCardAccessibilityRulesValidated, 10);
   assert.equal(summary.metricCardAccessibilityParityValidated, true);
+  assert.equal(summary.badgeAccessibilityRulesValidated, 8);
+  assert.equal(summary.badgeAccessibilityParityValidated, true);
+  assert.equal(summary.answerOptionAccessibilityRulesValidated, 12);
+  assert.equal(summary.answerOptionAccessibilityParityValidated, true);
   assert.equal(summary.examReviewItemsValidated, 20);
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);
