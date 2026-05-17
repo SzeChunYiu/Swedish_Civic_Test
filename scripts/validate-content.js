@@ -56,6 +56,7 @@ const QUESTION_BANK_CSV_HEADER = [
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_XP_RULE_COUNT = 11;
+const EXPECTED_MASTERY_RULE_COUNT = 7;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -599,6 +600,10 @@ const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
 const calculateLevel = xpModule.calculateLevel;
+const masteryModule = loadTs('lib/learning/mastery.ts');
+const calculateMastery = masteryModule.calculateMastery;
+const calculateChapterMastery = masteryModule.calculateChapterMastery;
+const findWeakChapterIds = masteryModule.findWeakChapterIds;
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
@@ -614,6 +619,8 @@ let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
 let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
+let masteryRulesValidated = 0;
+let masteryRulesParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -666,6 +673,11 @@ if (typeof calculateQuizCompletionXp !== 'function') {
   fail('calculateQuizCompletionXp export is not a function');
 }
 if (typeof calculateLevel !== 'function') fail('calculateLevel export is not a function');
+if (typeof calculateMastery !== 'function') fail('calculateMastery export is not a function');
+if (typeof calculateChapterMastery !== 'function') {
+  fail('calculateChapterMastery export is not a function');
+}
+if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -1115,6 +1127,114 @@ function validateXpRules() {
 
   if (rulesAreValid && xpRulesValidated === EXPECTED_XP_RULE_COUNT) {
     xpRulesParityValidated = true;
+  }
+}
+
+function validateMasteryRules() {
+  if (
+    typeof calculateMastery !== 'function' ||
+    typeof calculateChapterMastery !== 'function' ||
+    typeof findWeakChapterIds !== 'function'
+  ) {
+    return;
+  }
+
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch01' },
+    { id: 'q3', chapterId: 'ch02' },
+  ];
+  const progress = {
+    q1: { correctCount: 0, seenCount: 2, wrongCount: 2 },
+    q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
+    q3: { correctCount: 3, seenCount: 3, wrongCount: 0 },
+  };
+  const cases = [
+    {
+      label: 'no progress mastery',
+      actual: () =>
+        calculateMastery({
+          correctCount: 0,
+          seenCount: 0,
+          totalQuestions: 20,
+          recent: false,
+        }),
+      expected: 0,
+    },
+    {
+      label: 'weighted accuracy coverage and recency',
+      actual: () =>
+        calculateMastery({
+          correctCount: 8,
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: true,
+        }),
+      expected: 0.75,
+    },
+    {
+      label: 'mastery clamps oversampled counts',
+      actual: () =>
+        calculateMastery({
+          correctCount: 20,
+          seenCount: 10,
+          totalQuestions: 5,
+          recent: false,
+        }),
+      expected: 0.8,
+    },
+    {
+      label: 'mastery without recency bonus',
+      actual: () =>
+        calculateMastery({
+          correctCount: 5,
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: false,
+        }),
+      expected: 0.4,
+    },
+    {
+      label: 'chapter mastery aggregate',
+      actual: () => calculateChapterMastery('ch01', questions, progress),
+      expected: 0.67,
+    },
+    {
+      label: 'unknown chapter mastery',
+      actual: () => calculateChapterMastery('ch99', questions, progress),
+      expected: 0,
+    },
+    {
+      label: 'weak chapter ids',
+      actual: () => findWeakChapterIds(questions, progress, 0.7),
+      expected: ['ch01'],
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`mastery rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `mastery rule ${label} returned ${JSON.stringify(actualValue)}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      masteryRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && masteryRulesValidated === EXPECTED_MASTERY_RULE_COUNT) {
+    masteryRulesParityValidated = true;
   }
 }
 
@@ -1835,6 +1955,7 @@ validateUxBenchmarks();
 validateBadgeCatalog();
 validateSpacedRepetitionSchedule();
 validateXpRules();
+validateMasteryRules();
 validateQuestionBankCsvContract();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
@@ -1876,6 +1997,8 @@ console.log(
       spacedRepetitionRuntimeParityValidated,
       xpRulesValidated,
       xpRulesParityValidated,
+      masteryRulesValidated,
+      masteryRulesParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
