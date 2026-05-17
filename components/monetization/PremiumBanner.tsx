@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import {
   REMOVE_ADS_PRICE_LABEL,
   buyRemoveAds,
-  createMemoryPurchaseStorage,
-  createMockPurchaseProvider,
   getPurchaseEntitlements,
   restoreRemoveAdsPurchase,
 } from '../../lib/monetization/purchases';
+import { createDefaultPurchaseRuntimeOptions } from '../../lib/monetization/useRemoveAdsEntitlements';
 import type {
   PurchaseRuntimeOptions,
   RemoveAdsPurchaseStatus,
@@ -48,12 +47,7 @@ export function PremiumBanner({
 }) {
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(() => {
     if (runtimeOptions) return runtimeOptions;
-    if (Platform.OS !== 'web') return undefined;
-
-    return {
-      provider: createMockPurchaseProvider(),
-      storage: createMemoryPurchaseStorage(entitlements.adsDisabled),
-    };
+    return createDefaultPurchaseRuntimeOptions(entitlements.adsDisabled);
   }, [entitlements.adsDisabled, runtimeOptions]);
   const [currentEntitlements, setCurrentEntitlements] = useState(entitlements);
   const [activeAction, setActiveAction] = useState<PurchaseAction | null>(null);

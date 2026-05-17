@@ -311,10 +311,12 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     'utf8',
   );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
+  assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
@@ -324,8 +326,11 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(
     homeSource,
-    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
+  assert.match(profileSource, /useRemoveAdsEntitlements/);
+  assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
+  assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
@@ -574,9 +579,18 @@ test('exam screen does not import ad components', () => {
 
 test('global launch popup ad is suppressed on exam routes', () => {
   const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
+  const entitlementHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
+    'utf8',
+  );
 
   assert.match(layoutSource, /usePathname/);
+  assert.match(layoutSource, /useRemoveAdsEntitlements/);
   assert.match(layoutSource, /pathname\s*===\s*['"]\/exam['"]/);
   assert.match(layoutSource, /pathname\.startsWith\(['"]\/exam\/['"]\)/);
-  assert.match(layoutSource, /!\s*isExamRoute\s*\?\s*<LaunchPopupAd\s*\/>\s*:\s*null/);
+  assert.match(layoutSource, /entitlementsReady/);
+  assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
+  assert.match(entitlementHookSource, /getPurchaseEntitlements/);
+  assert.match(entitlementHookSource, /createMemoryPurchaseStorage/);
+  assert.match(entitlementHookSource, /Platform\.OS !== 'web'/);
 });

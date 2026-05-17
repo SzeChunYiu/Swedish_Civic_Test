@@ -1,5 +1,4 @@
 import { Link } from 'expo-router';
-import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
@@ -15,13 +14,17 @@ import { uxBenchmarks } from '../../data/uxBenchmarks';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
-  const [monetizationEntitlements, setMonetizationEntitlements] = useState(FREE_ENTITLEMENTS);
+  const {
+    entitlements: monetizationEntitlements,
+    purchaseRuntime,
+    setEntitlements: setMonetizationEntitlements,
+  } = useRemoveAdsEntitlements();
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
@@ -116,6 +119,7 @@ export default function Screen() {
       <PremiumBanner
         entitlements={monetizationEntitlements}
         onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
       />
       <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
     </ScreenShell>
