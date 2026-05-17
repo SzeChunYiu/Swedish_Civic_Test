@@ -13,7 +13,9 @@ const links = [
 export function ComplianceLinks() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Legal and sources</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        Legal and sources
+      </Text>
       <View style={styles.links}>
         {links.map((link) => (
           <Link

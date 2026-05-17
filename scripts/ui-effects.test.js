@@ -64,6 +64,17 @@ test('screen scaffold exposes page and section titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('compliance scaffold exposes legal page headings as headers', () => {
+  const legalPageSource = read('components/compliance/LegalPage.tsx');
+  const complianceLinksSource = read('components/compliance/ComplianceLinks.tsx');
+
+  assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.match(complianceLinksSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.doesNotMatch(legalPageSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 

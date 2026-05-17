@@ -43,7 +43,9 @@ export function LegalPage({
       >
         {backLabel}
       </Link>
-      <Text style={styles.title}>{title}</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        {title}
+      </Text>
       <View style={styles.body}>{children}</View>
     </ScrollView>
   );
@@ -52,7 +54,9 @@ export function LegalPage({
 export function LegalSection({ title, children }: LegalSectionProps) {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        {title}
+      </Text>
       <Text style={styles.paragraph}>{children}</Text>
     </View>
   );
