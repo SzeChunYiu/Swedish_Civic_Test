@@ -551,8 +551,9 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q019',
     chapterId: 'ch04',
     type: 'single_choice',
-    questionSv: 'Hur gammal måste man ha fyllt för att ha rätt att rösta?',
-    questionEn: 'How old must a person be to have the right to vote?',
+    questionSv: 'Enligt UHR-materialet, hur gammal måste man ha fyllt för att ha rösträtt?',
+    questionEn:
+      'According to the UHR material, how old must a person be to have the right to vote?',
     options: [
       { id: 'a', textSv: '16 år', textEn: '16 years old' },
       { id: 'b', textSv: '18 år', textEn: '18 years old' },
@@ -561,9 +562,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'För att ha rätt att rösta ska man ha fyllt 18 år. För riksdagsval gäller dessutom kravet att man måste vara svensk medborgare.',
+      'UHR-avsnittet Val och röstning säger att man ska ha fyllt 18 år för att ha rösträtt. För att rösta i riksdagsvalet måste man dessutom vara svensk medborgare.',
     explanationEn:
-      'To have the right to vote, a person must have turned 18. For elections to the Riksdag, there is also a requirement to be a Swedish citizen.',
+      'The UHR section Elections and voting says a person must have turned 18 to have the right to vote. To vote in a Riksdag election, a person must also be a Swedish citizen.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Val och röstning',
