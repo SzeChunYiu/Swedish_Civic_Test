@@ -1314,8 +1314,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q082',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Rekordåren', pageApprox: 36 },
-    'Varför kallas tiden efter andra världskriget enligt UHR-materialet ofta de svenska rekordåren?',
-    'According to the UHR material, why is the period after the Second World War often called the Swedish record years?',
+    'Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?',
+    'Why is the period after the Second World War often called the Swedish record years?',
     [
       [
         'Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer',
