@@ -623,6 +623,49 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
   },
 ];
+const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'native View root',
+    pattern: /<View[\s\S]*>/,
+  },
+  {
+    label: 'explicit accessibility label prop',
+    pattern: /accessibilityLabel\?: string;/,
+  },
+  {
+    label: 'label value helper summary',
+    pattern:
+      /accessibilityLabel \?\? `\$\{label\}: \$\{value\}\$\{helper \? `\. \$\{helper\}` : ''\}`;/,
+  },
+  {
+    label: 'web aria label',
+    pattern: /aria-label=\{metricAccessibilityLabel\}/,
+  },
+  {
+    label: 'native grouped surface',
+    pattern: /\s+accessible\s+/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{metricAccessibilityLabel\}/,
+  },
+  {
+    label: 'visible value text',
+    pattern: /<Text\s+style=\{styles\.value\}>\{value\}<\/Text>/,
+  },
+  {
+    label: 'visible label text',
+    pattern: /<Text\s+style=\{styles\.label\}>\{label\}<\/Text>/,
+  },
+  {
+    label: 'visible helper text',
+    pattern: /\{helper \? <Text style=\{styles\.helper\}>\{helper\}<\/Text> : null\}/,
+  },
+  {
+    label: 'blue tone style path',
+    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2276,6 +2319,8 @@ let cardAccessibilityRulesValidated = 0;
 let cardAccessibilityParityValidated = false;
 let progressBarAccessibilityRulesValidated = 0;
 let progressBarAccessibilityParityValidated = false;
+let metricCardAccessibilityRulesValidated = 0;
+let metricCardAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4143,6 +4188,40 @@ function validateProgressBarAccessibilityParity() {
     progressBarAccessibilityRulesValidated === EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length
   ) {
     progressBarAccessibilityParityValidated = true;
+  }
+}
+
+function validateMetricCardAccessibilityParity() {
+  let valid = true;
+  let metricCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    metricCardSource = fs.readFileSync(path.join(repoRoot, 'components/ui/MetricCard.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `components/ui/MetricCard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(metricCardSource)) {
+      reject(`MetricCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    metricCardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    metricCardAccessibilityRulesValidated === EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES.length
+  ) {
+    metricCardAccessibilityParityValidated = true;
   }
 }
 
@@ -8234,6 +8313,7 @@ validateLegalRouteScrollParity();
 validateButtonAccessibilityParity();
 validateCardAccessibilityParity();
 validateProgressBarAccessibilityParity();
+validateMetricCardAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8347,6 +8427,8 @@ console.log(
       cardAccessibilityParityValidated,
       progressBarAccessibilityRulesValidated,
       progressBarAccessibilityParityValidated,
+      metricCardAccessibilityRulesValidated,
+      metricCardAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
