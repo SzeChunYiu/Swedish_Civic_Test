@@ -94,6 +94,18 @@ test('compliance scaffold exposes legal page headings as headers', () => {
 
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.match(legalPageSource, /useSettingsStore, type AppLanguage/);
+  assert.match(legalPageSource, /type LegalPageCopy =/);
+  assert.match(legalPageSource, /const legalPageCopy: Record<AppLanguage, LegalPageCopy>/);
+  assert.match(legalPageSource, /const settingsLanguage = useSettingsStore/);
+  assert.match(legalPageSource, /const copy = legalPageCopy\[language \?\? settingsLanguage\]/);
+  assert.match(legalPageSource, /defaultBackLabel: '← Tillbaka till profil'/);
+  assert.match(legalPageSource, /defaultBackAccessibilityLabel: 'Tillbaka till profil'/);
+  assert.match(legalPageSource, /defaultBackLabel: '← Back to Profile'/);
+  assert.match(legalPageSource, /defaultBackAccessibilityLabel: 'Back to profile'/);
+  assert.match(legalPageSource, /const resolvedBackLabel = backLabel \?\? copy\.defaultBackLabel;/);
+  assert.match(legalPageSource, /accessibilityLabel=\{resolvedBackAccessibilityLabel\}/);
+  assert.match(legalPageSource, /\{resolvedBackLabel\}/);
   assert.match(complianceLinksSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(complianceLinksSource, /type ComplianceLinksCopy =/);
   assert.match(
