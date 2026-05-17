@@ -2,22 +2,27 @@ import { Button } from '../ui/Button';
 import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
 
 export function AudioButton({ text = '', enabled = true }: { text?: string; enabled?: boolean }) {
-  const label = enabled ? 'Listen' : 'Audio disabled';
+  const speechText = text.trim();
+  const hasSpeechText = speechText.length > 0;
+  const canPlayAudio = enabled && hasSpeechText;
+  const label = !enabled ? 'Audio disabled' : hasSpeechText ? 'Listen' : 'Audio unavailable';
+  const accessibilityLabel = !enabled
+    ? 'Audio is disabled'
+    : hasSpeechText
+      ? 'Listen to the Swedish question and answers'
+      : 'Audio is unavailable for this question';
 
   return (
     <Button
-      accessibilityLabel={
-        enabled ? 'Listen to the Swedish question and answers' : 'Audio is disabled'
-      }
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !enabled }}
-      disabled={!enabled}
+      accessibilityState={{ disabled: !canPlayAudio }}
+      disabled={!canPlayAudio}
       onPress={() => {
-        if (!enabled) return;
+        if (!canPlayAudio) return;
         stopSpeech();
-        speakSwedish(text);
+        speakSwedish(speechText);
       }}
-      style={!enabled ? { opacity: 0.45 } : undefined}
     >
       {label}
     </Button>

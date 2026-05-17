@@ -144,6 +144,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   const fallbackFiles = [
     'components/learning/ChapterCard.tsx',
+    'components/learning/AudioButton.tsx',
     'components/learning/Flashcard.tsx',
     'components/monetization/NativeAdCard.tsx',
     'components/quiz/ExplanationPanel.tsx',
@@ -156,6 +157,7 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   }
 
   assert.match(read('components/learning/ChapterCard.tsx'), /Chapter unavailable/);
+  assert.match(read('components/learning/AudioButton.tsx'), /Audio unavailable/);
   assert.match(read('components/learning/Flashcard.tsx'), /Study prompt unavailable/);
   assert.match(read('components/learning/Flashcard.tsx'), /Answer unavailable/);
   assert.match(read('components/learning/Flashcard.tsx'), /accessibilityLabel/);
@@ -165,6 +167,21 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   assert.match(read('components/quiz/ExplanationPanel.tsx'), /Explanation unavailable/);
   assert.match(read('components/quiz/QuestionCard.tsx'), /Question unavailable/);
   assert.match(read('components/quiz/UHRReferenceCard.tsx'), /Source reference unavailable/);
+});
+
+test('audio button disables playback when speech text is unavailable', () => {
+  const source = read('components/learning/AudioButton.tsx');
+
+  assert.match(source, /const speechText = text\.trim\(\);/);
+  assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
+  assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
+  assert.match(source, /Audio unavailable/);
+  assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(source, /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/);
+  assert.match(source, /disabled=\{!canPlayAudio\}/);
+  assert.match(source, /if \(!canPlayAudio\) return;/);
+  assert.match(source, /speakSwedish\(speechText\)/);
+  assert.doesNotMatch(source, /speakSwedish\(text\)/);
 });
 
 test('home screen surfaces the 10000-learner feedback loop and review action', () => {
