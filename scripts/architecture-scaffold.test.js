@@ -102,6 +102,13 @@ function extractTabScreenNames(tabLayoutSource) {
   );
 }
 
+function extractStackScreenNames(rootLayoutSource) {
+  return Array.from(
+    rootLayoutSource.matchAll(/<Stack\.Screen\s+name=(["'])([^"']+)\1/g),
+    (match) => match[2],
+  );
+}
+
 test('architecture target scaffold files exist', () => {
   assert.deepEqual(
     architectureTargetFiles.filter((relativePath) => !exists(relativePath)),
@@ -159,4 +166,22 @@ test('Expo Router tab scaffold exposes the architecture tab routes', () => {
 
   assert.match(tabLayout, /import\s+\{\s*Tabs\s*\}\s+from ['"]expo-router['"]/);
   assert.deepEqual(extractTabScreenNames(tabLayout).sort(), [...architectureTabRouteNames].sort());
+});
+
+test('Expo Router root scaffold redirects into the tab shell', () => {
+  const rootLayout = readText('app/_layout.tsx');
+  const indexRoute = readText('app/index.tsx');
+
+  assert.match(rootLayout, /import\s+\{\s*Stack\s*,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
+  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), ['(tabs)', 'index']);
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']index["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
+  );
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
+  );
+  assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
+  assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);
 });
