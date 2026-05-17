@@ -8,3 +8,22 @@ TEST-1 tests: monetization gating unit tests + e2e web stub by entitlement; npx 
 
 
 WEB-DEPLOY: make the web build host-agnostic and deploy-ready. (1) app.json: expo.web.output="single"; baseUrl only if served from a subpath. (2) npm run build:web:export -> dist-web; in build add cp dist-web/index.html dist-web/404.html. (3) Add vercel.json (SPA rewrite all->/index.html) and public/_redirects (/* /index.html 200) so Vercel OR Netlify OR Cloudflare Pages deploy in one click. (4) Add .github/workflows/web-deploy.yml that builds + uploads dist-web as a CI artifact (do NOT assume GitHub Pages; repo is private). Acceptance: workflow green AND dist-web/index.html loads the app offline (open file -> mounts). Product path app.json + .github/ + vercel.json. One atom, no monetization/test edits.
+
+=== PRIORITY FOCUS (operator, 2026-05-17): UI/UX POLISH + CONTENT VERIFICATION ===
+The v1.0 frame exists & is 7/7 green. Two sustained priorities now, every iteration until done:
+
+UIUX-POLISH (lane SETUP/UI, repeat as many atoms as needed): Implement the v1.0-SAFE UI/UX
+recommendations from docs/competitive-teardown.md (NOT the backend/v1.1 items). Each atom: pick
+ONE concrete improvement and ship it in app/ or components/ — button affordance/size/states/
+hierarchy, layout & spacing on the 8px scale, visual hierarchy, empty states, answer-reveal
+SV+EN explanation, calmer information density, loading/disabled states, tap targets >=44px,
+a11y labels. MUST honor DESIGN.md tokens (zero hardcoded colors — keeps step 6 green), keep all
+7 acceptance steps green. Reference a named teardown row in the commit msg.
+
+CONTENT-VERIFY (lane CONTENT/REVIEWER, repeat): Rigorously audit the question bank in data/.
+Each atom: take a batch of questions and verify — (a) traceable to UHR Sverige i fokus ref,
+(b) Swedish natural & correct, (c) English an accurate translation, (d) the marked answer is
+factually correct, (e) disclaimer present on every question screen. Fix defects in data/ and
+file via review-to-queue.sh. A wrong answer or mistranslation is a P0. Do NOT mass-rewrite;
+verify, correct, cite the UHR page.
+=== END PRIORITY FOCUS ===
