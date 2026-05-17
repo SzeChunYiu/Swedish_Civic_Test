@@ -86,6 +86,98 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.swedishcivictest';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
+const EXPECTED_THEME_COLOR_TOKENS = [
+  'canvas',
+  'surface',
+  'surfaceWarm',
+  'surfaceMuted',
+  'text',
+  'textSoft',
+  'textSecondary',
+  'textDisclaimer',
+  'textMuted',
+  'textPlaceholder',
+  'warmDark',
+  'accent',
+  'accentActive',
+  'focus',
+  'focusSoft',
+  'badgeBlueBg',
+  'badgeBlueText',
+  'border',
+  'success',
+  'successSoft',
+  'correctBg',
+  'warning',
+  'warningSoft',
+  'incorrectBg',
+  'teal',
+  'navy',
+  'purple',
+  'pink',
+  'brown',
+];
+const EXPECTED_THEME_SPACE_VALUES = {
+  hairline: 2,
+  micro: 3,
+  0: 0,
+  0.5: 4,
+  0.75: 6,
+  1: 8,
+  1.25: 10,
+  1.5: 12,
+  1.75: 14,
+  2: 16,
+  2.25: 18,
+  3: 24,
+  4: 32,
+  5: 40,
+  6: 48,
+  8: 64,
+  10: 80,
+  12: 96,
+  15: 120,
+};
+const EXPECTED_THEME_RADIUS_VALUES = {
+  micro: 4,
+  subtle: 5,
+  small: 8,
+  card: 12,
+  large: 16,
+  pill: 9999,
+  circle: 9999,
+};
+const EXPECTED_THEME_TYPOGRAPHY_TOKENS = [
+  'displayHero',
+  'displaySecondary',
+  'sectionHeading',
+  'subHeadingLarge',
+  'subHeading',
+  'cardTitle',
+  'bodyLarge',
+  'heroMobile',
+  'metric',
+  'sectionTitle',
+  'bodyTight',
+  'finePrint',
+  'disclaimer',
+  'body',
+  'bodyMedium',
+  'bodySemibold',
+  'bodyBold',
+  'navButton',
+  'caption',
+  'captionLight',
+  'badge',
+  'micro',
+];
+const EXPECTED_THEME_SHADOW_TOKENS = ['card', 'deep'];
+const EXPECTED_THEME_MOTION_DURATIONS = {
+  fast: 120,
+  base: 200,
+  slow: 320,
+};
+const EXPECTED_THEME_MOTION_EASING = ['standard', 'press'];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -521,6 +613,16 @@ function isHttpsUrl(value) {
   } catch {
     return false;
   }
+}
+
+function isObjectRecord(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isColorToken(value) {
+  return (
+    typeof value === 'string' && (/^#[0-9a-fA-F]{6}$/.test(value) || /^rgba?\(.+\)$/.test(value))
+  );
 }
 
 function extractStringConstantFromTs(source, constantName) {
@@ -1004,6 +1106,13 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const themeModule = loadTs('lib/theme/index.ts');
+const colors = themeModule.colors;
+const motion = themeModule.motion;
+const radius = themeModule.radius;
+const shadows = themeModule.shadows;
+const space = themeModule.space;
+const typography = themeModule.typography;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
@@ -1039,6 +1148,13 @@ let progressTypeSchemaParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
+let themeColorTokensValidated = 0;
+let themeSpaceTokensValidated = 0;
+let themeRadiusTokensValidated = 0;
+let themeTypographyTokensValidated = 0;
+let themeShadowTokensValidated = 0;
+let themeMotionTokensValidated = 0;
+let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -1149,6 +1265,12 @@ if (typeof calculateChapterMastery !== 'function') {
   fail('calculateChapterMastery export is not a function');
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
+if (!isObjectRecord(colors)) fail('theme colors export is not an object');
+if (!isObjectRecord(motion)) fail('theme motion export is not an object');
+if (!isObjectRecord(radius)) fail('theme radius export is not an object');
+if (!isObjectRecord(shadows)) fail('theme shadows export is not an object');
+if (!isObjectRecord(space)) fail('theme space export is not an object');
+if (!isObjectRecord(typography)) fail('theme typography export is not an object');
 
 function getExpoPluginEntry(plugins, pluginName) {
   return plugins.find((plugin) => {
@@ -2416,6 +2538,208 @@ function validateMonetizationTypeSchemaParity() {
     monetizationTypeInterfacesValidated === EXPECTED_MONETIZATION_INTERFACES.length
   ) {
     monetizationTypeSchemaParityValidated = true;
+  }
+}
+
+function validateThemeTokenSchema() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function validateNoExtraKeys(actual, expectedKeys, label) {
+    if (!isObjectRecord(actual)) {
+      reject(`${label} must be an object`);
+      return;
+    }
+    const expectedKeySet = new Set(expectedKeys);
+    for (const key of Object.keys(actual)) {
+      if (!expectedKeySet.has(key)) reject(`${label}.${key} is not an expected token`);
+    }
+  }
+
+  validateNoExtraKeys(colors, EXPECTED_THEME_COLOR_TOKENS, 'theme colors');
+  if (isObjectRecord(colors)) {
+    for (const token of EXPECTED_THEME_COLOR_TOKENS) {
+      if (!Object.prototype.hasOwnProperty.call(colors, token)) {
+        reject(`theme colors missing ${token}`);
+        continue;
+      }
+      if (!isColorToken(colors[token])) {
+        reject(`theme colors.${token} must be a hex or rgb/rgba color token`);
+        continue;
+      }
+      themeColorTokensValidated += 1;
+    }
+  }
+
+  validateNoExtraKeys(space, Object.keys(EXPECTED_THEME_SPACE_VALUES), 'theme space');
+  if (isObjectRecord(space)) {
+    for (const [token, expectedValue] of Object.entries(EXPECTED_THEME_SPACE_VALUES)) {
+      if (space[token] !== expectedValue) {
+        reject(`theme space.${token} expected ${expectedValue}, found ${space[token]}`);
+        continue;
+      }
+      themeSpaceTokensValidated += 1;
+    }
+  }
+
+  validateNoExtraKeys(radius, Object.keys(EXPECTED_THEME_RADIUS_VALUES), 'theme radius');
+  if (isObjectRecord(radius)) {
+    for (const [token, expectedValue] of Object.entries(EXPECTED_THEME_RADIUS_VALUES)) {
+      if (radius[token] !== expectedValue) {
+        reject(`theme radius.${token} expected ${expectedValue}, found ${radius[token]}`);
+        continue;
+      }
+      themeRadiusTokensValidated += 1;
+    }
+  }
+
+  validateNoExtraKeys(
+    typography,
+    ['fontFamily', ...EXPECTED_THEME_TYPOGRAPHY_TOKENS],
+    'theme typography',
+  );
+  const fontFamily = typography?.fontFamily;
+  if (!hasText(fontFamily)) reject('theme typography.fontFamily is required');
+  if (isObjectRecord(typography)) {
+    for (const token of EXPECTED_THEME_TYPOGRAPHY_TOKENS) {
+      const style = typography[token];
+      let tokenIsValid = true;
+
+      function rejectToken(message) {
+        tokenIsValid = false;
+        reject(message);
+      }
+
+      if (!isObjectRecord(style)) {
+        rejectToken(`theme typography.${token} must be an object`);
+      } else {
+        if (style.fontFamily !== fontFamily) {
+          rejectToken(`theme typography.${token}.fontFamily must match theme fontFamily`);
+        }
+        if (!Number.isFinite(style.fontSize) || style.fontSize <= 0) {
+          rejectToken(`theme typography.${token}.fontSize must be positive`);
+        }
+        if (!Number.isFinite(style.lineHeight) || style.lineHeight < style.fontSize) {
+          rejectToken(`theme typography.${token}.lineHeight must be at least fontSize`);
+        }
+        if (!['400', '500', '600', '700'].includes(style.fontWeight)) {
+          rejectToken(`theme typography.${token}.fontWeight must use a supported weight`);
+        }
+        if (
+          style.letterSpacing !== undefined &&
+          (!Number.isFinite(style.letterSpacing) || Math.abs(style.letterSpacing) > 4)
+        ) {
+          rejectToken(`theme typography.${token}.letterSpacing must be a bounded number`);
+        }
+      }
+
+      if (tokenIsValid) themeTypographyTokensValidated += 1;
+    }
+  }
+
+  validateNoExtraKeys(shadows, EXPECTED_THEME_SHADOW_TOKENS, 'theme shadows');
+  if (isObjectRecord(shadows)) {
+    for (const token of EXPECTED_THEME_SHADOW_TOKENS) {
+      const shadow = shadows[token];
+      let tokenIsValid = true;
+
+      function rejectToken(message) {
+        tokenIsValid = false;
+        reject(message);
+      }
+
+      if (!isObjectRecord(shadow)) {
+        rejectToken(`theme shadows.${token} must be an object`);
+      } else {
+        if (!isColorToken(shadow.shadowColor)) {
+          rejectToken(`theme shadows.${token}.shadowColor must be a color token`);
+        }
+        if (!isObjectRecord(shadow.shadowOffset)) {
+          rejectToken(`theme shadows.${token}.shadowOffset must be an object`);
+        } else if (
+          !Number.isFinite(shadow.shadowOffset.width) ||
+          !Number.isFinite(shadow.shadowOffset.height)
+        ) {
+          rejectToken(`theme shadows.${token}.shadowOffset must have numeric width and height`);
+        }
+        if (
+          !Number.isFinite(shadow.shadowOpacity) ||
+          shadow.shadowOpacity < 0 ||
+          shadow.shadowOpacity > 1
+        ) {
+          rejectToken(`theme shadows.${token}.shadowOpacity must be between 0 and 1`);
+        }
+        if (!Number.isFinite(shadow.shadowRadius) || shadow.shadowRadius < 0) {
+          rejectToken(`theme shadows.${token}.shadowRadius must be non-negative`);
+        }
+        if (!Number.isFinite(shadow.elevation) || shadow.elevation < 0) {
+          rejectToken(`theme shadows.${token}.elevation must be non-negative`);
+        }
+      }
+
+      if (tokenIsValid) themeShadowTokensValidated += 1;
+    }
+  }
+
+  if (!isObjectRecord(motion?.duration)) {
+    reject('theme motion.duration must be an object');
+  } else {
+    for (const [token, expectedValue] of Object.entries(EXPECTED_THEME_MOTION_DURATIONS)) {
+      if (motion.duration[token] !== expectedValue) {
+        reject(
+          `theme motion.duration.${token} expected ${expectedValue}, found ${motion.duration[token]}`,
+        );
+      } else {
+        themeMotionTokensValidated += 1;
+      }
+    }
+    if (
+      !(motion.duration.fast < motion.duration.base && motion.duration.base < motion.duration.slow)
+    ) {
+      reject('theme motion.duration values must increase from fast to slow');
+    }
+  }
+  if (!isObjectRecord(motion?.easing)) {
+    reject('theme motion.easing must be an object');
+  } else {
+    for (const token of EXPECTED_THEME_MOTION_EASING) {
+      if (!/^cubic-bezier\(.+\)$/.test(motion.easing[token] || '')) {
+        reject(`theme motion.easing.${token} must be a cubic-bezier easing token`);
+      } else {
+        themeMotionTokensValidated += 1;
+      }
+    }
+  }
+  if (
+    !Number.isFinite(motion?.pressedScale) ||
+    motion.pressedScale <= 0 ||
+    motion.pressedScale >= 1
+  ) {
+    reject('theme motion.pressedScale must be between 0 and 1');
+  } else {
+    themeMotionTokensValidated += 1;
+  }
+  if (!Number.isFinite(motion?.hoverScale) || motion.hoverScale <= 1) {
+    reject('theme motion.hoverScale must be greater than 1');
+  } else {
+    themeMotionTokensValidated += 1;
+  }
+
+  if (
+    valid &&
+    themeColorTokensValidated === EXPECTED_THEME_COLOR_TOKENS.length &&
+    themeSpaceTokensValidated === Object.keys(EXPECTED_THEME_SPACE_VALUES).length &&
+    themeRadiusTokensValidated === Object.keys(EXPECTED_THEME_RADIUS_VALUES).length &&
+    themeTypographyTokensValidated === EXPECTED_THEME_TYPOGRAPHY_TOKENS.length &&
+    themeShadowTokensValidated === EXPECTED_THEME_SHADOW_TOKENS.length &&
+    themeMotionTokensValidated ===
+      Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length + EXPECTED_THEME_MOTION_EASING.length + 2
+  ) {
+    themeTokenSchemaValidated = true;
   }
 }
 
@@ -4006,6 +4330,7 @@ validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
+validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
@@ -4069,6 +4394,13 @@ console.log(
       monetizationTypeUnionsValidated,
       monetizationTypeInterfacesValidated,
       monetizationTypeSchemaParityValidated,
+      themeColorTokensValidated,
+      themeSpaceTokensValidated,
+      themeRadiusTokensValidated,
+      themeTypographyTokensValidated,
+      themeShadowTokensValidated,
+      themeMotionTokensValidated,
+      themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
