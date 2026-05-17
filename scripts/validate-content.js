@@ -6,10 +6,13 @@ const ts = require('typescript');
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
 const moduleCache = new Map();
-const QUESTION_TYPES = new Set(['single_choice', 'true_false', 'flashcard']);
+const QUESTION_TYPE_VALUES = ['single_choice', 'true_false', 'flashcard'];
+const REVIEW_STATUS_VALUES = ['draft', 'reviewed', 'published'];
+const DIFFICULTY_VALUES = ['easy', 'medium', 'hard'];
+const QUESTION_TYPES = new Set(QUESTION_TYPE_VALUES);
 const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
-const DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
-const REVIEW_STATUSES = new Set(['draft', 'reviewed', 'published']);
+const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
+const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 100;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
@@ -70,6 +73,9 @@ const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
 const EXPECTED_DAILY_GOAL_MAX = 50;
+const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
+const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
+const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -91,6 +97,111 @@ const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   nextReviewAt: 'string',
   bookmarked: 'boolean',
 };
+const EXPECTED_PROGRESS_TYPE_UNIONS = [
+  { typeName: 'QuizMode', values: ['study', 'exam', 'mistakes', 'challenge'] },
+  { typeName: 'Confidence', values: ['low', 'medium', 'high'] },
+];
+const EXPECTED_PROGRESS_INTERFACES = [
+  {
+    name: 'UserQuestionProgress',
+    fields: [
+      { name: 'questionId', type: 'string', optional: false },
+      { name: 'seenCount', type: 'number', optional: false },
+      { name: 'correctCount', type: 'number', optional: false },
+      { name: 'wrongCount', type: 'number', optional: false },
+      { name: 'correctStreak', type: 'number', optional: false },
+      { name: 'lastAnsweredAt', type: 'string', optional: true },
+      { name: 'nextReviewAt', type: 'string', optional: true },
+      { name: 'confidence', type: 'Confidence', optional: true },
+      { name: 'bookmarked', type: 'boolean', optional: true },
+    ],
+  },
+  {
+    name: 'QuizAnswer',
+    fields: [
+      { name: 'questionId', type: 'string', optional: false },
+      { name: 'selectedOptionIds', type: 'string[]', optional: false },
+      { name: 'isCorrect', type: 'boolean', optional: false },
+      { name: 'answeredAt', type: 'string', optional: false },
+      { name: 'timeSpentSeconds', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'QuizSession',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'mode', type: 'QuizMode', optional: false },
+      { name: 'questionIds', type: 'string[]', optional: false },
+      { name: 'answers', type: 'QuizAnswer[]', optional: false },
+      { name: 'startedAt', type: 'string', optional: false },
+      { name: 'completedAt', type: 'string', optional: true },
+      { name: 'score', type: 'number', optional: true },
+    ],
+  },
+  {
+    name: 'UserProgress',
+    fields: [
+      { name: 'totalXp', type: 'number', optional: false },
+      { name: 'level', type: 'number', optional: false },
+      { name: 'currentStreak', type: 'number', optional: false },
+      { name: 'dailyGoalAnswers', type: 'number', optional: false },
+      { name: 'questionProgress', type: 'Record<string, UserQuestionProgress>', optional: false },
+      { name: 'sessions', type: 'QuizSession[]', optional: false },
+    ],
+  },
+];
+const EXPECTED_CONTENT_TYPE_UNIONS = [
+  { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
+  { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
+  { typeName: 'Difficulty', values: DIFFICULTY_VALUES },
+];
+const EXPECTED_CONTENT_INTERFACES = [
+  {
+    name: 'UHRReference',
+    fields: [
+      { name: 'chapter', type: 'string', optional: false },
+      { name: 'section', type: 'string', optional: false },
+      { name: 'pageApprox', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'QuestionOption',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'textSv', type: 'string', optional: false },
+      { name: 'textEn', type: 'string', optional: false },
+    ],
+  },
+  {
+    name: 'PracticeQuestion',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'chapterId', type: 'string', optional: false },
+      { name: 'type', type: 'QuestionType', optional: false },
+      { name: 'questionSv', type: 'string', optional: false },
+      { name: 'questionEn', type: 'string', optional: false },
+      { name: 'options', type: 'QuestionOption[]', optional: false },
+      { name: 'correctOptionId', type: 'string', optional: false },
+      { name: 'explanationSv', type: 'string', optional: false },
+      { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'uhrReference', type: 'UHRReference', optional: false },
+      { name: 'difficulty', type: 'Difficulty', optional: false },
+      { name: 'reviewStatus', type: 'ReviewStatus', optional: false },
+      { name: 'tags', type: 'string[]', optional: false },
+    ],
+  },
+  {
+    name: 'Chapter',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'nameSv', type: 'string', optional: false },
+      { name: 'nameEn', type: 'string', optional: false },
+      { name: 'descriptionSv', type: 'string', optional: false },
+      { name: 'descriptionEn', type: 'string', optional: false },
+      { name: 'questionCount', type: 'number', optional: false },
+    ],
+  },
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -854,13 +965,21 @@ let examChapterBreakdownItemsValidated = 0;
 let examChapterBreakdownParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
+let contentTypeUnionsValidated = 0;
+let contentTypeInterfacesValidated = 0;
+let contentTypeSchemaParityValidated = false;
 let supportedLanguagesValidated = 0;
 let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
 let settingsDailyGoalOptionsValidated = 0;
 let settingsDailyGoalParityValidated = false;
+let settingsAudioLabelsValidated = 0;
+let settingsAudioParityValidated = false;
 let progressQuestionFieldsValidated = 0;
 let progressQuestionSchemaParityValidated = false;
+let progressTypeUnionsValidated = 0;
+let progressTypeInterfacesValidated = 0;
+let progressTypeSchemaParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -1632,6 +1751,127 @@ function validateSettingsDailyGoalParity() {
   }
 }
 
+function validateSettingsAudioParity() {
+  let valid = true;
+  let settingsStore = '';
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings audio parity source could not be read: ${error.message}`);
+    return;
+  }
+
+  const audioEnabledKey = extractStringConstantFromTs(settingsStore, 'audioEnabledKey');
+  if (audioEnabledKey !== EXPECTED_AUDIO_SETTING_KEY) {
+    reject(
+      `audioEnabledKey is ${JSON.stringify(audioEnabledKey)}, expected ${JSON.stringify(
+        EXPECTED_AUDIO_SETTING_KEY,
+      )}`,
+    );
+  }
+
+  const settingsFields = extractObjectTypePropertiesFromTs(settingsStore, 'SettingsState') || [];
+  const settingsFieldsByName = new Map(settingsFields.map((field) => [field.name, field]));
+  const audioEnabledField = settingsFieldsByName.get('audioEnabled');
+  const setAudioEnabledField = settingsFieldsByName.get('setAudioEnabled');
+  if (!audioEnabledField || audioEnabledField.type !== 'boolean' || audioEnabledField.optional) {
+    reject('SettingsState.audioEnabled must be a required boolean');
+  }
+  if (
+    !setAudioEnabledField ||
+    setAudioEnabledField.type !== '(enabled: boolean) => void' ||
+    setAudioEnabledField.optional
+  ) {
+    reject('SettingsState.setAudioEnabled must accept a boolean enabled value');
+  }
+
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  if (
+    !normalizedSettingsStore.includes(
+      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
+    )
+  ) {
+    reject('readAudioEnabled must read the persisted audioEnabled boolean');
+  }
+  if (!normalizedSettingsStore.includes('return storedValue ?? true;')) {
+    reject('readAudioEnabled must default audio to enabled');
+  }
+  if (!normalizedSettingsStore.includes('audioEnabled: readAudioEnabled()')) {
+    reject('SettingsState must initialize audioEnabled from persisted storage');
+  }
+  if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
+    reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
+  }
+
+  if (
+    !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')
+  ) {
+    reject('app/settings.tsx must read audioEnabled from useSettingsStore');
+  }
+  if (
+    !settingsRoute.includes(
+      'const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);',
+    )
+  ) {
+    reject('app/settings.tsx must read setAudioEnabled from useSettingsStore');
+  }
+  if (!settingsRoute.includes('accessibilityRole="switch"')) {
+    reject('app/settings.tsx audio control must expose switch accessibility role');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: audioEnabled }}')) {
+    reject('app/settings.tsx audio switch must expose checked state from audioEnabled');
+  }
+  if (
+    !settingsRoute.includes("accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}")
+  ) {
+    reject('app/settings.tsx audio switch must expose state-changing accessibility labels');
+  }
+  if (!settingsRoute.includes('onPress={() => setAudioEnabled(!audioEnabled)}')) {
+    reject('app/settings.tsx audio switch must toggle persisted audio state');
+  }
+  if (!settingsRoute.includes("{audioEnabled ? 'Audio enabled' : 'Audio disabled'}")) {
+    reject('app/settings.tsx audio switch must render the current audio state label');
+  }
+
+  const seenLabels = new Set();
+  EXPECTED_AUDIO_LABELS.forEach((label) => {
+    let labelIsValid = true;
+    if (!textIsTrimmedSingleSpaced(label)) {
+      labelIsValid = false;
+      reject(`audio label ${JSON.stringify(label)} must be trimmed and single-spaced`);
+    }
+    if (!settingsRoute.includes(label)) {
+      labelIsValid = false;
+      reject(`app/settings.tsx is missing audio label ${JSON.stringify(label)}`);
+    }
+    const normalizedLabel = normalizeComparableText(label);
+    if (seenLabels.has(normalizedLabel)) {
+      labelIsValid = false;
+      reject(`audio label ${JSON.stringify(label)} is duplicated`);
+    }
+    if (normalizedLabel) seenLabels.add(normalizedLabel);
+    if (labelIsValid) settingsAudioLabelsValidated += 1;
+  });
+
+  EXPECTED_AUDIO_ACCESSIBILITY_LABELS.forEach((label) => {
+    if (!settingsRoute.includes(label)) {
+      reject(`app/settings.tsx is missing audio accessibility label ${JSON.stringify(label)}`);
+    }
+  });
+
+  if (valid && settingsAudioLabelsValidated === EXPECTED_AUDIO_LABELS.length) {
+    settingsAudioParityValidated = true;
+  }
+}
+
 function validateProgressQuestionSchemaParity() {
   let valid = true;
   let progressTypesSource = '';
@@ -1731,6 +1971,190 @@ function validateProgressQuestionSchemaParity() {
 
   if (valid && progressQuestionFieldsValidated === EXPECTED_PROGRESS_QUESTION_FIELDS.length) {
     progressQuestionSchemaParityValidated = true;
+  }
+}
+
+function validateProgressTypeSchemaParity() {
+  let valid = true;
+  let progressTypesSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    progressTypesSource = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
+  } catch (error) {
+    reject(`types/progress.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_PROGRESS_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(progressTypesSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`types/progress.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `types/progress.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    progressTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_PROGRESS_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      progressTypesSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(`types/progress.ts ${expectedInterface.name} interface could not be read`);
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `types/progress.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `types/progress.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `types/progress.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `types/progress.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) progressTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    progressTypeUnionsValidated === EXPECTED_PROGRESS_TYPE_UNIONS.length &&
+    progressTypeInterfacesValidated === EXPECTED_PROGRESS_INTERFACES.length
+  ) {
+    progressTypeSchemaParityValidated = true;
+  }
+}
+
+function validateContentTypeSchemaParity() {
+  let valid = true;
+  let contentTypesSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    contentTypesSource = fs.readFileSync(path.join(repoRoot, 'types/content.ts'), 'utf8');
+  } catch (error) {
+    reject(`types/content.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_CONTENT_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(contentTypesSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`types/content.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `types/content.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    contentTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_CONTENT_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      contentTypesSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(`types/content.ts ${expectedInterface.name} interface could not be read`);
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `types/content.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(`types/content.ts ${expectedInterface.name} missing ${expectedField.name}`);
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `types/content.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `types/content.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) contentTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    contentTypeUnionsValidated === EXPECTED_CONTENT_TYPE_UNIONS.length &&
+    contentTypeInterfacesValidated === EXPECTED_CONTENT_INTERFACES.length
+  ) {
+    contentTypeSchemaParityValidated = true;
   }
 }
 
@@ -3318,11 +3742,14 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
+validateContentTypeSchemaParity();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
 validateSettingsDailyGoalParity();
+validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
+validateProgressTypeSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
@@ -3371,6 +3798,9 @@ console.log(
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
       examChapterBreakdownParityValidated,
+      contentTypeUnionsValidated,
+      contentTypeInterfacesValidated,
+      contentTypeSchemaParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
@@ -3385,8 +3815,13 @@ console.log(
       languageSettingsParityValidated,
       settingsDailyGoalOptionsValidated,
       settingsDailyGoalParityValidated,
+      settingsAudioLabelsValidated,
+      settingsAudioParityValidated,
       progressQuestionFieldsValidated,
       progressQuestionSchemaParityValidated,
+      progressTypeUnionsValidated,
+      progressTypeInterfacesValidated,
+      progressTypeSchemaParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,

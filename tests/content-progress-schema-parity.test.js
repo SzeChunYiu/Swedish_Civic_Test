@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -22,8 +22,47 @@ test('progress question schema stays in parity with persisted progress records',
 
   assert.equal(summary.progressQuestionFieldsValidated, 8);
   assert.equal(summary.progressQuestionSchemaParityValidated, true);
+  assert.equal(summary.progressTypeUnionsValidated, 2);
+  assert.equal(summary.progressTypeInterfacesValidated, 4);
+  assert.equal(summary.progressTypeSchemaParityValidated, true);
   assert.match(progressTypes, /export interface UserQuestionProgress/);
+  assert.match(
+    progressTypes,
+    /export type QuizMode = 'study' \| 'exam' \| 'mistakes' \| 'challenge';/,
+  );
+  assert.match(progressTypes, /export interface QuizSession/);
+  assert.match(progressTypes, /questionProgress: Record<string, UserQuestionProgress>;/);
   assert.match(progressStore, /export type QuestionProgress = \{/);
   assert.match(progressStore, /questionProgress: Record<string, QuestionProgress>;/);
   assert.match(progressStore, /completedQuestionIds: string\[\];/);
+});
+
+test('progress type schema parity rejects session optionality drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/types/progress.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('score?: number;', 'score: number;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /types\/progress\.ts QuizSession\.score optional=false, expected true/,
+  );
 });

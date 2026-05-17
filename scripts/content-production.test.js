@@ -21,6 +21,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);
   assert.equal(summary.examChapterBreakdownParityValidated, true);
+  assert.equal(summary.contentTypeUnionsValidated, 3);
+  assert.equal(summary.contentTypeInterfacesValidated, 4);
+  assert.equal(summary.contentTypeSchemaParityValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
   assert.equal(summary.supportedLanguagesValidated, 2);
@@ -28,8 +31,13 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.languageSettingsParityValidated, true);
   assert.equal(summary.settingsDailyGoalOptionsValidated, 3);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
+  assert.equal(summary.settingsAudioLabelsValidated, 2);
+  assert.equal(summary.settingsAudioParityValidated, true);
   assert.equal(summary.progressQuestionFieldsValidated, 8);
   assert.equal(summary.progressQuestionSchemaParityValidated, true);
+  assert.equal(summary.progressTypeUnionsValidated, 2);
+  assert.equal(summary.progressTypeInterfacesValidated, 4);
+  assert.equal(summary.progressTypeSchemaParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);

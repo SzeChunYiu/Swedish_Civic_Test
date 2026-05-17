@@ -23,6 +23,8 @@ export function ProgressBar({ progress = 0 }: { progress?: number }) {
   return (
     <View
       accessibilityLabel={`${Math.round(clampedProgress * 100)} percent complete`}
+      accessibilityRole="progressbar"
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(clampedProgress * 100) }}
       style={styles.track}
     >
       <Animated.View style={[styles.fill, { width: fillWidth }]} />
