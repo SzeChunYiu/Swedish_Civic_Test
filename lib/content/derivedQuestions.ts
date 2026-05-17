@@ -12,6 +12,8 @@ const SOMETIMES_OPTION: QuestionOption = {
   textEn: 'Only sometimes',
 };
 
+const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'] as const;
+
 function nextId(startId: number, offset: number): string {
   return `q${String(startId + offset).padStart(3, '0')}`;
 }
@@ -32,6 +34,28 @@ function publishedCopy(question: PracticeQuestion): PracticeQuestion {
   return { ...question, reviewStatus: 'published' };
 }
 
+function uniqueTags(tags: string[]): string[] {
+  return [...new Set(tags)];
+}
+
+function normalizeSingleChoiceOptions(
+  options: QuestionOption[],
+  correctOptionId: string,
+): { options: QuestionOption[]; correctOptionId: string } {
+  if (options.length !== SINGLE_CHOICE_OPTION_IDS.length) {
+    return { options, correctOptionId };
+  }
+
+  const correctIndex = options.findIndex((option) => option.id === correctOptionId);
+  return {
+    options: options.map((option, index) => ({
+      ...option,
+      id: SINGLE_CHOICE_OPTION_IDS[index],
+    })),
+    correctOptionId: correctIndex >= 0 ? SINGLE_CHOICE_OPTION_IDS[correctIndex] : correctOptionId,
+  };
+}
+
 function withSharedFields(
   source: PracticeQuestion,
   id: string,
@@ -42,20 +66,25 @@ function withSharedFields(
   correctOptionId: string,
   extraTags: string[],
 ): PracticeQuestion {
+  const normalized =
+    type === 'single_choice'
+      ? normalizeSingleChoiceOptions(options, correctOptionId)
+      : { options, correctOptionId };
+
   return {
     id,
     chapterId: source.chapterId,
     type,
     questionSv,
     questionEn,
-    options,
-    correctOptionId,
+    options: normalized.options,
+    correctOptionId: normalized.correctOptionId,
     explanationSv: source.explanationSv,
     explanationEn: source.explanationEn,
     uhrReference: source.uhrReference,
     difficulty: source.difficulty,
     reviewStatus: 'published',
-    tags: [...source.tags, ...extraTags],
+    tags: uniqueTags([...source.tags, ...extraTags]),
   };
 }
 
@@ -64,6 +93,12 @@ function trueFalseOptions(): QuestionOption[] {
     { id: 'true', textSv: 'Sant', textEn: 'True' },
     { id: 'false', textSv: 'Falskt', textEn: 'False' },
   ];
+}
+
+function singleChoiceOptions(source: PracticeQuestion): QuestionOption[] {
+  if (source.options.length === 4) return source.options;
+  if (source.type === 'true_false') return [...source.options, UNKNOWN_OPTION, SOMETIMES_OPTION];
+  return source.options;
 }
 
 function answerLabel(option: QuestionOption): string {
@@ -77,7 +112,7 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
     'single_choice',
     `Vilket svar stämmer bäst enligt UHR-avsnittet "${source.uhrReference.section}"? ${source.questionSv}`,
     `Which answer best matches the UHR section "${source.uhrReference.section}"? ${source.questionEn}`,
-    source.options,
+    singleChoiceOptions(source),
     source.correctOptionId,
     ['published-variant', 'section-practice'],
   );

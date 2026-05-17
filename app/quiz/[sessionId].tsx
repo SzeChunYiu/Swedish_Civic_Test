@@ -1,23 +1,165 @@
-import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
-import { colors, space, typography } from '../../lib/theme';
+import { Link, useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import { AnswerOption } from '../../components/quiz/AnswerOption';
+import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { QuestionCard } from '../../components/quiz/QuestionCard';
+import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { Badge } from '../../components/ui/Badge';
+import { ProgressBar } from '../../components/ui/ProgressBar';
+import { questions } from '../../data/questions';
+import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { scoreAnswers } from '../../lib/quiz/scoring';
+import { useProgressStore } from '../../lib/storage/progressStore';
+import { colors, radius, space, typography } from '../../lib/theme';
+
+function normalizeSessionId(sessionId: string | string[] | undefined): string {
+  if (Array.isArray(sessionId)) return sessionId[0] ?? 'practice';
+  return sessionId || 'practice';
+}
+
+function pickSessionQuestion(sessionId: string) {
+  const exactMatch = questions.find((question) => question.id === sessionId);
+  if (exactMatch || questions.length === 0) return exactMatch;
+
+  const stableIndex =
+    [...sessionId].reduce((total, character) => total + character.charCodeAt(0), 0) %
+    questions.length;
+
+  return questions[stableIndex];
+}
 
 export default function QuizSessionScreen() {
   const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
+  const normalizedSessionId = normalizeSessionId(sessionId);
+  const question = useMemo(() => pickSessionQuestion(normalizedSessionId), [normalizedSessionId]);
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const recordAnswer = useProgressStore((state) => state.recordAnswer);
+
+  useEffect(() => {
+    setSelectedOptionId(null);
+  }, [question?.id]);
+
+  if (!question) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.title}>No quiz questions are available yet.</Text>
+        <Link
+          accessibilityLabel="Back to practice"
+          accessibilityRole="link"
+          href="/practice"
+          style={styles.link}
+        >
+          Back to Practice
+        </Link>
+      </View>
+    );
+  }
+
+  const hasSelectedAnswer = Boolean(selectedOptionId);
+  const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
+  const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+
+  const handleSelectOption = (optionId: string) => {
+    setSelectedOptionId(optionId);
+    recordAnswer(question.id, isCorrectAnswer(question, optionId));
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Quiz {sessionId}</Text>
-      <Text style={styles.subtitle}>Quiz session placeholder.</Text>
-    </View>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <View style={styles.hero}>
+        <Badge>Quiz session</Badge>
+        <Text style={styles.title}>Session {normalizedSessionId}</Text>
+        <Text style={styles.subtitle}>
+          Answer the routed question, then review the source-backed feedback.
+        </Text>
+        <ProgressBar progress={hasSelectedAnswer ? 1 : 0} />
+      </View>
+
+      <QuestionDisclaimer />
+      <QuestionCard question={question} />
+
+      <View style={styles.options}>
+        {question.options.map((option) => {
+          const feedback = getAnswerOptionFeedback(
+            question,
+            option.id,
+            hasSelectedAnswer ? selectedOptionId : null,
+          );
+
+          return (
+            <AnswerOption
+              key={option.id}
+              disabled={hasSelectedAnswer}
+              option={option}
+              onPress={() => handleSelectOption(option.id)}
+              resultLabel={feedback.resultLabel}
+              tone={feedback.tone}
+            />
+          );
+        })}
+      </View>
+
+      {hasSelectedAnswer ? (
+        <View style={styles.feedback}>
+          {score ? (
+            <Text style={styles.score}>
+              Score: {score.correct}/{score.total}
+            </Text>
+          ) : null}
+          <ExplanationPanel explanationSv={question.explanationSv} />
+          <UHRReferenceCard reference={question.uhrReference} />
+          <View style={styles.actions}>
+            <Pressable
+              accessibilityLabel="Try this quiz question again"
+              accessibilityRole="button"
+              accessibilityState={{ disabled: false }}
+              onPress={() => setSelectedOptionId(null)}
+              style={styles.secondaryButton}
+            >
+              <Text style={styles.secondaryButtonText}>Try again</Text>
+            </Pressable>
+            <Link
+              accessibilityLabel="Back to practice"
+              accessibilityRole="link"
+              href="/practice"
+              style={styles.linkButton}
+            >
+              Back to Practice
+            </Link>
+          </View>
+        </View>
+      ) : null}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
     backgroundColor: colors.surface,
+    flex: 1,
+  },
+  content: {
+    gap: space[2],
+    padding: space[3],
+    paddingBottom: space[10],
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    flex: 1,
+    gap: space[1.5],
+    justifyContent: 'center',
+    padding: space[3],
+  },
+  hero: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.25],
     padding: space[3],
   },
   title: {
@@ -30,6 +172,51 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
-    marginTop: space[1],
+  },
+  options: {
+    gap: space[1],
+  },
+  feedback: {
+    gap: space[1.5],
+  },
+  score: {
+    color: colors.success,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  actions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  secondaryButton: {
+    alignSelf: 'flex-start',
+    borderColor: colors.border,
+    borderRadius: radius.micro,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  secondaryButtonText: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+  },
+  linkButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  link: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
   },
 });

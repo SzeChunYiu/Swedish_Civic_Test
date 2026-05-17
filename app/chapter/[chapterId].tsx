@@ -6,7 +6,8 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
-import { colors, space, typography } from '../../lib/theme';
+import { getChapterQuizSessionId } from '../../lib/quiz/practiceFlow';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function ChapterScreen() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
@@ -29,6 +30,8 @@ export default function ChapterScreen() {
     );
   }
 
+  const quizSessionId = getChapterQuizSessionId(questions, chapter.id);
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Link
@@ -42,6 +45,16 @@ export default function ChapterScreen() {
       <Text style={styles.title}>{chapter.nameSv}</Text>
       <Text style={styles.subtitle}>{chapter.nameEn}</Text>
       <Text style={styles.description}>{chapter.descriptionSv}</Text>
+      {quizSessionId ? (
+        <Link
+          accessibilityLabel={`Start quiz for ${chapter.nameSv}`}
+          accessibilityRole="link"
+          href={`/quiz/${quizSessionId}`}
+          style={styles.startQuizLink}
+        >
+          Start quiz
+        </Link>
+      ) : null}
       <QuestionDisclaimer />
 
       <Text style={styles.sectionTitle}>Practice questions ({chapterQuestions.length})</Text>
@@ -115,6 +128,17 @@ const styles = StyleSheet.create({
     color: colors.accent,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
+  },
+  startQuizLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.25],
     textDecorationLine: 'none',
   },
 });

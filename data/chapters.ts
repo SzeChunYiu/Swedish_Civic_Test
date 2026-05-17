@@ -7,7 +7,7 @@ export const chapters: Chapter[] = [
     nameEn: 'The country of Sweden',
     descriptionSv: 'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
     descriptionEn: 'Geography, climate, nature, population, natural resources, and climate change.',
-    questionCount: 0,
+    questionCount: 50,
   },
   {
     id: 'ch02',
@@ -16,7 +16,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.',
     descriptionEn:
       'Democracy, rule by the people, ways to influence society, and threats to democracy.',
-    questionCount: 0,
+    questionCount: 25,
   },
   {
     id: 'ch03',
@@ -26,7 +26,7 @@ export const chapters: Chapter[] = [
       'Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick.',
     descriptionEn:
       "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
-    questionCount: 0,
+    questionCount: 55,
   },
   {
     id: 'ch04',
@@ -34,7 +34,7 @@ export const chapters: Chapter[] = [
     nameEn: 'Political elections and parties',
     descriptionSv: 'Val, röstning, folkomröstningar och politiska partiers roll i Sverige.',
     descriptionEn: 'Elections, voting, referendums, and the role of political parties in Sweden.',
-    questionCount: 0,
+    questionCount: 45,
   },
   {
     id: 'ch05',
@@ -43,7 +43,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.',
     descriptionEn:
       'The fundamental laws, the justice system, rule of law, and the right of public access.',
-    questionCount: 0,
+    questionCount: 45,
   },
   {
     id: 'ch06',
@@ -52,7 +52,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Fria medier, olika slags medier, public service och källkritik.',
     descriptionEn:
       'Free media, different types of media, public service broadcasting, and source criticism.',
-    questionCount: 0,
+    questionCount: 30,
   },
   {
     id: 'ch07',
@@ -62,7 +62,7 @@ export const chapters: Chapter[] = [
       'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',
     descriptionEn:
       "Human rights, gender equality, children's rights, minority rights, and discrimination.",
-    questionCount: 0,
+    questionCount: 55,
   },
   {
     id: 'ch08',
@@ -71,7 +71,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.',
     descriptionEn:
       'The labour market, labour-market parties, workplace rules, and personal finance.',
-    questionCount: 0,
+    questionCount: 35,
   },
   {
     id: 'ch09',
@@ -80,7 +80,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.',
     descriptionEn:
       'Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.',
-    questionCount: 0,
+    questionCount: 30,
   },
   {
     id: 'ch10',
@@ -90,7 +90,7 @@ export const chapters: Chapter[] = [
       'Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering.',
     descriptionEn:
       "From agricultural society to industrial society, democratization, the people's home, and globalization.",
-    questionCount: 0,
+    questionCount: 50,
   },
   {
     id: 'ch11',
@@ -99,7 +99,7 @@ export const chapters: Chapter[] = [
     descriptionSv:
       'Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik.',
     descriptionEn: 'Nordic, European, and global cooperation, plus defence and security policy.',
-    questionCount: 0,
+    questionCount: 35,
   },
   {
     id: 'ch12',
@@ -109,7 +109,7 @@ export const chapters: Chapter[] = [
       'Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället.',
     descriptionEn:
       "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
-    questionCount: 0,
+    questionCount: 25,
   },
   {
     id: 'ch13',
@@ -117,6 +117,6 @@ export const chapters: Chapter[] = [
     nameEn: 'Traditions and holidays',
     descriptionSv: 'Traditionella högtider i Sverige och hur traditioner förändras över tid.',
     descriptionEn: 'Traditional holidays in Sweden and how traditions change over time.',
-    questionCount: 0,
+    questionCount: 20,
   },
 ];

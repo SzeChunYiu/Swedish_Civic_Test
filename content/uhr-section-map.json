@@ -10,79 +10,203 @@
       "id": "ch01",
       "chapter": "Landet Sverige",
       "startPage": 5,
-      "sections": ["Geografi, klimat och natur", "Sveriges indelning", "Befolkning", "Naturresurser", "Klimatförändringar"]
+      "sections": [
+        "Geografi, klimat och natur",
+        "Fjäll",
+        "Skogar, sjöar och öar",
+        "Sveriges indelning",
+        "Befolkning",
+        "Naturresurser",
+        "Klimatförändringar"
+      ]
     },
     {
       "id": "ch02",
       "chapter": "Sveriges demokratiska system",
       "startPage": 10,
-      "sections": ["Demokrati betyder folkstyre", "Hot mot demokratin", "Segregation och integration"]
+      "sections": [
+        "Demokrati betyder folkstyre",
+        "En stark demokrati",
+        "Hot mot demokratin",
+        "Segregation och integration"
+      ]
     },
     {
       "id": "ch03",
       "chapter": "Så här styrs Sverige",
       "startPage": 12,
-      "sections": ["Landet styrs på olika nivåer", "Staten", "Myndigheter", "Regioner och kommuner", "Kommunernas ansvar", "Sveriges statsskick"]
+      "sections": [
+        "Landet styrs på olika nivåer",
+        "Staten",
+        "Myndigheter",
+        "Regioner och kommuner",
+        "Kommunernas ansvar",
+        "Sveriges statsskick"
+      ]
     },
     {
       "id": "ch04",
       "chapter": "Politiska val och partier",
       "startPage": 14,
-      "sections": ["Val och röstning", "Folkomröstningar", "Så här går det till att rösta", "Politiska partier", "Proportionella val", "Politiska partier i riksdagen"]
+      "sections": [
+        "Val och röstning",
+        "Folkomröstningar",
+        "Så här går det till att rösta",
+        "Politiska partier",
+        "Proportionella val",
+        "Politiska partier i riksdagen"
+      ]
     },
     {
       "id": "ch05",
       "chapter": "Lag och rätt",
       "startPage": 16,
-      "sections": ["Grundlagarna", "Regeringsformen", "Tryckfrihetsförordningen", "Yttrandefrihetsgrundlagen", "Successionsordningen", "Allemansrätten", "Rättsväsendet", "Rättssäkerhet", "Domstolar", "Polisen", "Brottsutredning", "Rättegång", "Straffmyndighet och belastningsregister"]
+      "sections": [
+        "Grundlagarna",
+        "Regeringsformen",
+        "Tryckfrihetsförordningen",
+        "Yttrandefrihetsgrundlagen",
+        "Successionsordningen",
+        "Allemansrätten",
+        "Rättsväsendet",
+        "Rättssäkerhet",
+        "Domstolar",
+        "Polisen",
+        "Brottsutredning",
+        "Rättegång",
+        "Straffmyndighet och belastningsregister"
+      ]
     },
     {
       "id": "ch06",
       "chapter": "Mediernas roll",
       "startPage": 20,
-      "sections": ["Fria medier", "Olika slags medier", "Privat- och reklamfinansierade medier", "Public service", "Webb och sociala medier", "Källkritik"]
+      "sections": [
+        "Fria medier",
+        "Olika slags medier",
+        "Privat- och reklamfinansierade medier",
+        "Public service",
+        "Webb och sociala medier",
+        "Källkritik"
+      ]
     },
     {
       "id": "ch07",
       "chapter": "Mänskliga rättigheter",
       "startPage": 22,
-      "sections": ["Mänskliga rättigheter gäller alla", "FN:s förklaring om de mänskliga rättigheterna", "Jämställdhet mellan könen", "Könsrelaterat våld och förtryck", "Sexköpslagen", "Barns rättigheter", "Minoriteters rättigheter", "Nationella minoriteter och urfolk", "Hbtqi-personer", "Personer med funktionsnedsättning", "Arbetet mot diskriminering"]
+      "sections": [
+        "Mänskliga rättigheter gäller alla",
+        "FN:s förklaring om de mänskliga rättigheterna",
+        "Jämställdhet mellan könen",
+        "Könsrelaterat våld och förtryck",
+        "Sexköpslagen",
+        "Barns rättigheter",
+        "Minoriteters rättigheter",
+        "Nationella minoriteter och urfolk",
+        "Hbtqi-personer",
+        "Personer med funktionsnedsättning",
+        "Arbetet mot diskriminering"
+      ]
     },
     {
       "id": "ch08",
       "chapter": "Arbetsmarknad och privatekonomi",
       "startPage": 27,
-      "sections": ["Så fungerar arbetsmarknaden", "Arbetsmarknadens parter", "Organisationer", "Lagar och regler på arbetsmarknaden", "Skatt på arbete", "A-kassan", "Privatekonomi i Sverige"]
+      "sections": [
+        "Så fungerar arbetsmarknaden",
+        "Arbetsmarknadens parter",
+        "Organisationer",
+        "Lagar och regler på arbetsmarknaden",
+        "Skatt på arbete",
+        "A-kassan",
+        "Privatekonomi i Sverige"
+      ]
     },
     {
       "id": "ch09",
       "chapter": "Välfärdssamhället",
       "startPage": 30,
-      "sections": ["Skatter för Sveriges välfärd", "Stat, regioner och kommuner har olika ansvar", "Statligt finansierad välfärd", "Regionerna ansvarar för sjukvården", "Olika slags sjukvård", "Kommunerna har ett stort ansvar"]
+      "sections": [
+        "Skatter för Sveriges välfärd",
+        "Stat, regioner och kommuner har olika ansvar",
+        "Statligt finansierad välfärd",
+        "Regionerna ansvarar för sjukvården",
+        "Olika slags sjukvård",
+        "Kommunerna har ett stort ansvar"
+      ]
     },
     {
       "id": "ch10",
       "chapter": "Sveriges moderna historia",
       "startPage": 32,
-      "sections": ["Från jordbrukssamhälle till industrisamhälle", "Befolkningsökning", "Industrialisering", "Sveriges väg till demokrati", "Folkrörelserna", "Demokratins genombrott", "Första världskriget", "Modernisering och folkhem", "Den svenska modellen", "Rekordåren", "Välfärdssamhället", "Sverige blir ett invandrarland", "Jämställdhet och kulturförändringar", "Informationssamhället och globalisering", "Digital revolution och globalisering"]
+      "sections": [
+        "Från jordbrukssamhälle till industrisamhälle",
+        "Befolkningsökning",
+        "Industrialisering",
+        "Sveriges väg till demokrati",
+        "Folkrörelserna",
+        "Demokratins genombrott",
+        "Första världskriget",
+        "Modernisering och folkhem",
+        "Den svenska modellen",
+        "Rekordåren",
+        "Välfärdssamhället",
+        "Sverige blir ett invandrarland",
+        "Jämställdhet och kulturförändringar",
+        "Informationssamhället och globalisering",
+        "Digital revolution och globalisering"
+      ]
     },
     {
       "id": "ch11",
       "chapter": "Sverige och omvärlden",
       "startPage": 39,
-      "sections": ["Nordiskt och europeiskt samarbete", "Nordiskt samarbete", "EU och Europarådet", "Globalt samarbete", "Förenta nationerna", "Sveriges samarbete för utveckling i världen", "Försvars- och säkerhetspolitik", "Den långa fredens historia", "Efter kalla krigets slut", "Sveriges försvar", "Det civila försvaret"]
+      "sections": [
+        "Nordiskt och europeiskt samarbete",
+        "Nordiskt samarbete",
+        "EU och Europarådet",
+        "Globalt samarbete",
+        "Förenta nationerna",
+        "Sveriges samarbete för utveckling i världen",
+        "Försvars- och säkerhetspolitik",
+        "Den långa fredens historia",
+        "Efter kalla krigets slut",
+        "Sveriges försvar",
+        "Det civila försvaret"
+      ]
     },
     {
       "id": "ch12",
       "chapter": "En sekulär stat och ett mångreligiöst land",
       "startPage": 42,
-      "sections": ["Religionsfrihet", "Religionens roll", "Kristendom", "Judendom", "Hinduism och buddhism", "Islam"]
+      "sections": [
+        "Religionsfrihet",
+        "Religionens roll",
+        "Kristendom",
+        "Judendom",
+        "Hinduism och buddhism",
+        "Islam"
+      ]
     },
     {
       "id": "ch13",
       "chapter": "Traditioner och högtider",
       "startPage": 45,
-      "sections": ["Några traditionella högtider under året", "Nyår", "Påsk", "Valborgsmässoafton", "Första maj", "Sveriges nationaldag", "Midsommar", "Alla helgons dag", "Advent", "Lucia", "Jul", "Nya traditioner"]
+      "endPage": 47,
+      "sections": [
+        "Några traditionella högtider under året",
+        "Nyår",
+        "Påsk",
+        "Valborgsmässoafton",
+        "Första maj",
+        "Sveriges nationaldag",
+        "Midsommar",
+        "Alla helgons dag",
+        "Advent",
+        "Lucia",
+        "Jul",
+        "Nya traditioner"
+      ]
     }
   ]
 }

@@ -5,6 +5,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
+const checkMode = process.argv.includes('--check');
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -76,6 +77,18 @@ const rows = [
 ];
 
 const outPath = path.join(repoRoot, 'content', 'question-bank.csv');
+const csv = `${rows.map((row) => row.map(csvCell).join(',')).join('\n')}\n`;
+
+if (checkMode) {
+  const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
+  if (existing !== csv) {
+    console.error('content/question-bank.csv is out of sync; run npm run content:export');
+    process.exit(1);
+  }
+  console.log(`Question bank export parity OK (${questions.length} questions)`);
+  process.exit(0);
+}
+
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, `${rows.map((row) => row.map(csvCell).join(',')).join('\n')}\n`);
+fs.writeFileSync(outPath, csv);
 console.log(`Exported ${questions.length} questions to ${path.relative(repoRoot, outPath)}`);
