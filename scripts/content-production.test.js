@@ -179,6 +179,14 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.answerFeedbackQuestionsValidated, 500);
   assert.ok(summary.answerFeedbackOptionsValidated > summary.answerFeedbackQuestionsValidated);
   assert.equal(summary.answerFeedbackRuntimeParityValidated, true);
+  assert.ok(summary.answerShuffleSingleChoiceQuestionsValidated > 100);
+  assert.equal(
+    summary.answerShuffleSingleChoiceQuestionsValidated +
+      summary.answerShuffleTrueFalseQuestionsValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(summary.answerShuffleSeedDistributionsValidated, 50);
+  assert.equal(summary.answerShuffleDistributionParityValidated, true);
   assert.equal(summary.questionSpeechTextQuestionsValidated, 500);
   assert.ok(
     summary.questionSpeechTextOptionsValidated > summary.questionSpeechTextQuestionsValidated,
