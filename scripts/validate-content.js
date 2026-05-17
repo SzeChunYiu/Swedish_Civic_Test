@@ -76,6 +76,16 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+const EXPECTED_APP_CONFIG_PLUGINS = [
+  'expo-router',
+  'react-native-google-mobile-ads',
+  'expo-secure-store',
+  'react-native-iap',
+  'expo-tracking-transparency',
+];
+const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.swedishcivictest';
+const EXPECTED_TRACKING_PERMISSION =
+  'This identifier may be used to deliver relevant study app ads after consent.';
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -285,6 +295,10 @@ function loadTs(relativePath, exportName) {
   new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
   moduleCache.set(filePath, mod.exports);
   return exportName ? mod.exports[exportName] : mod.exports;
+}
+
+function loadJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8'));
 }
 
 function fail(message) {
@@ -990,11 +1004,13 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
-const uhrSectionMap = JSON.parse(
-  fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
-);
+const packageMetadata = loadJson('package.json');
+const appConfig = loadJson('app.json');
+const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
+let appConfigPluginsValidated = 0;
+let appConfigSchemaValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -1133,6 +1149,113 @@ if (typeof calculateChapterMastery !== 'function') {
   fail('calculateChapterMastery export is not a function');
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
+
+function getExpoPluginEntry(plugins, pluginName) {
+  return plugins.find((plugin) => {
+    if (typeof plugin === 'string') return plugin === pluginName;
+    if (Array.isArray(plugin)) return plugin[0] === pluginName;
+    return false;
+  });
+}
+
+function getPluginConfig(pluginEntry) {
+  return Array.isArray(pluginEntry) && pluginEntry[1] && typeof pluginEntry[1] === 'object'
+    ? pluginEntry[1]
+    : undefined;
+}
+
+function validateAppConfigSchema() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const expo = appConfig?.expo;
+  if (!expo || typeof expo !== 'object' || Array.isArray(expo)) {
+    reject('app.json expo config is missing');
+    return;
+  }
+
+  if (expo.name !== 'Sweden Citizenship Test Prep') {
+    reject('app.json expo.name must identify the release app');
+  }
+  if (expo.slug !== 'swedish-civic-test') {
+    reject('app.json expo.slug must be swedish-civic-test');
+  }
+  if (expo.scheme !== expo.slug) {
+    reject('app.json expo.scheme must match expo.slug');
+  }
+  if (expo.version !== packageMetadata.version) {
+    reject(
+      `app.json expo.version ${expo.version} must match package.json version ${packageMetadata.version}`,
+    );
+  }
+  if (expo.orientation !== 'portrait') {
+    reject('app.json expo.orientation must be portrait');
+  }
+  if (expo.userInterfaceStyle !== 'light') {
+    reject('app.json expo.userInterfaceStyle must be light');
+  }
+  if (expo.newArchEnabled !== true) {
+    reject('app.json expo.newArchEnabled must be true');
+  }
+  if (expo.ios?.bundleIdentifier !== EXPECTED_APP_NATIVE_IDENTIFIER) {
+    reject(`app.json ios.bundleIdentifier must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
+  }
+  if (expo.android?.package !== EXPECTED_APP_NATIVE_IDENTIFIER) {
+    reject(`app.json android.package must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
+  }
+
+  const plugins = expo.plugins;
+  if (!Array.isArray(plugins)) {
+    reject('app.json expo.plugins must be an array');
+  } else {
+    for (const pluginName of EXPECTED_APP_CONFIG_PLUGINS) {
+      const pluginEntry = getExpoPluginEntry(plugins, pluginName);
+      if (!pluginEntry) {
+        reject(`app.json missing required plugin ${pluginName}`);
+      } else {
+        appConfigPluginsValidated += 1;
+      }
+    }
+
+    const googleAdsConfig = getPluginConfig(
+      getExpoPluginEntry(plugins, 'react-native-google-mobile-ads'),
+    );
+    if (!googleAdsConfig) {
+      reject('app.json react-native-google-mobile-ads plugin must include config');
+    } else {
+      const adMobAppIdPattern = /^ca-app-pub-\d{16}~\d{10}$/;
+      if (!adMobAppIdPattern.test(String(googleAdsConfig.androidAppId ?? ''))) {
+        reject('app.json react-native-google-mobile-ads androidAppId must be configured');
+      }
+      if (!adMobAppIdPattern.test(String(googleAdsConfig.iosAppId ?? ''))) {
+        reject('app.json react-native-google-mobile-ads iosAppId must be configured');
+      }
+      if (googleAdsConfig.delayAppMeasurementInit !== true) {
+        reject('app.json react-native-google-mobile-ads must delay app measurement initialization');
+      }
+      if (googleAdsConfig.userTrackingUsageDescription !== EXPECTED_TRACKING_PERMISSION) {
+        reject('app.json Google ads tracking usage description must match ATT permission copy');
+      }
+    }
+
+    const trackingConfig = getPluginConfig(
+      getExpoPluginEntry(plugins, 'expo-tracking-transparency'),
+    );
+    if (!trackingConfig) {
+      reject('app.json expo-tracking-transparency plugin must include config');
+    } else if (trackingConfig.userTrackingPermission !== EXPECTED_TRACKING_PERMISSION) {
+      reject('app.json ATT permission copy must match Google ads tracking usage description');
+    }
+  }
+
+  if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
+    appConfigSchemaValidated = true;
+  }
+}
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -3876,6 +3999,7 @@ validateMockExamConfig(
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0,
 );
+validateAppConfigSchema();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -3929,6 +4053,8 @@ console.log(
       chapters: chapters.length,
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
+      appConfigPluginsValidated,
+      appConfigSchemaValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,

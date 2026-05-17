@@ -13,6 +13,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.publishedQuestions, 500);
   assert.equal(summary.chapterSchemasValidated, 13);
   assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
+  assert.equal(summary.appConfigPluginsValidated, 5);
+  assert.equal(summary.appConfigSchemaValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
