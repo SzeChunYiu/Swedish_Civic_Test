@@ -529,8 +529,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q044',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Straffmyndighet och belastningsregister', pageApprox: 19 },
-    'Från vilken ålder är en person straffmyndig i Sverige enligt materialet?',
-    'From what age is a person criminally responsible in Sweden according to the material?',
+    'Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?',
+    'From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?',
     [
       ['13 år', '13 years'],
       ['15 år', '15 years'],
