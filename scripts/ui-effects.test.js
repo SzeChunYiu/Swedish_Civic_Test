@@ -15,6 +15,8 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.match(source, /Animated\.timing/);
   assert.match(source, /motion\.duration\.slow/);
   assert.match(source, /accessibilityLabel/);
+  assert.match(source, /accessibilityRole="progressbar"/);
+  assert.match(source, /accessibilityValue=\{\{ min: 0, max: 100, now: Math\.round/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
