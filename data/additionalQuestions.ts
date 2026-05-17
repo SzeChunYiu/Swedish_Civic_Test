@@ -119,8 +119,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q024',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Myndigheter', pageApprox: 13 },
-    'Vilket påstående beskriver statliga myndigheter enligt UHR-materialet?',
-    'Which statement describes government agencies according to the UHR material?',
+    'Vilket påstående beskriver statliga myndigheter?',
+    'Which statement describes government agencies?',
     [
       ['De ersätter domstolarna i brottmål', 'They replace courts in criminal cases'],
       [
