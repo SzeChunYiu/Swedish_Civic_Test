@@ -244,8 +244,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q010',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vilka naturresurser lyfter materialet fram som viktiga i Sverige?',
-    questionEn: 'Which natural resources does the material highlight as important in Sweden?',
+    questionSv: 'Vilka naturresurser nämner UHR-materialet som viktiga i Sverige?',
+    questionEn: 'Which natural resources does the UHR material mention as important in Sweden?',
     options: [
       {
         id: 'a',
@@ -270,9 +270,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Materialet beskriver Sverige som rikt på flera viktiga naturresurser. Det nämner järnmalm och andra mineraler, skog, jordbruksmark och vatten.',
+      'UHR-avsnittet Naturresurser säger att Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte stöds av avsnittet.',
     explanationEn:
-      'The material describes Sweden as rich in several important natural resources. It names iron ore and other minerals, forest, agricultural land, and water.',
+      'The UHR section Natural resources says Sweden is rich in several important natural resources: iron ore and other minerals, forest, agricultural land, and water. That makes the option with those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items are not supported by the section.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Naturresurser',
