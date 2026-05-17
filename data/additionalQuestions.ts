@@ -1365,8 +1365,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Digital revolution och globalisering',
       pageApprox: 38,
     },
-    'Vad har den digitala revolutionen förändrat enligt materialet?',
-    'What has the digital revolution changed according to the material?',
+    'Vad har den digitala revolutionen förändrat enligt UHR-materialet?',
+    'What has the digital revolution changed according to the UHR material?',
     [
       [
         'Hur människor arbetar, studerar, kommunicerar och tar del av information',
