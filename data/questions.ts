@@ -7,8 +7,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q001',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Var ligger Sverige?',
-    questionEn: 'Where is Sweden located?',
+    questionSv: 'Enligt UHR-materialet, var ligger Sverige?',
+    questionEn: 'According to the UHR material, where is Sweden located?',
     options: [
       {
         id: 'a',
@@ -21,9 +21,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Sverige ligger i Norden, som är en del av norra Europa. Därför är alternativen om södra Europa, Asien och Nordamerika fel.',
+      'UHR-avsnittet Geografi, klimat och natur säger att Sverige ligger i Norden i norra Europa. Det beskriver också Norden som en del av norra Europa, vilket gör alternativen om södra Europa, västra Asien och Nordamerika fel.',
     explanationEn:
-      'Sweden is located in the Nordic region, which is part of northern Europe. That makes the alternatives about southern Europe, Asia, and North America incorrect.',
+      'The UHR section Geography, climate, and nature says that Sweden is in the Nordic region in northern Europe. It also describes the Nordic region as part of northern Europe, which makes the alternatives about southern Europe, western Asia, and North America incorrect.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
