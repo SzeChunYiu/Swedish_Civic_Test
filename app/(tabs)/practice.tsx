@@ -57,7 +57,9 @@ export default function Screen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge>5-minute practice</Badge>
-        <Text style={styles.title}>Question {questionNumber}</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Question {questionNumber}
+        </Text>
         <Text style={styles.subtitle}>
           Answer, get instant feedback, then review the UHR source before moving on.
         </Text>

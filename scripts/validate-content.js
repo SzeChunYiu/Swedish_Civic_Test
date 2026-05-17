@@ -154,6 +154,8 @@ const EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS = [
   'Google UMP consent',
 ];
 const EXPECTED_RELEASE_REAL_ADS_ENV_FLAG = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
+const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -1747,6 +1749,8 @@ let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
+let removeAdsEntitlementHookCasesValidated = 0;
+let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
 let premiumEntitlementParityValidated = false;
 let questionDisclaimerRoutesValidated = 0;
@@ -1797,6 +1801,8 @@ let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
+let mobileAdsConsentHookCasesValidated = 0;
+let mobileAdsConsentHookParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
 let rewardedAdTypeInterfacesValidated = 0;
 let rewardedAdTypeSchemaParityValidated = false;
@@ -2232,6 +2238,70 @@ function validateReleaseMonetizationPolicyParity() {
     releaseMonetizationPolicyFieldsValidated === EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS.length
   ) {
     releaseMonetizationPolicyParityValidated = true;
+  }
+}
+
+function validateRemoveAdsEntitlementHookParity() {
+  let valid = true;
+  let hookSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    hookSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/useRemoveAdsEntitlements.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
+  const hookCases = [
+    [
+      /const\s+AD_BLOCKED_PENDING_ENTITLEMENTS:\s*PremiumEntitlements\s*=\s*\{[\s\S]*\.\.\.FREE_ENTITLEMENTS,[\s\S]*adsDisabled:\s*true,[\s\S]*\};/.test(
+        hookSource,
+      ),
+      'Remove Ads entitlement hook must fail closed while purchase state loads',
+    ],
+    [
+      normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
+        normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
+      'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
+    ],
+    [
+      normalizedHookSource.includes('void getPurchaseEntitlements(purchaseRuntime)') &&
+        normalizedHookSource.includes('publishRemoveAdsEntitlements(storedEntitlements);'),
+      'Remove Ads entitlement hook must publish persisted purchase entitlements',
+    ],
+    [
+      /if\s*\(\s*explicitEntitlements\s*\)\s*\{\s*return\s*\{\s*entitlements:\s*explicitEntitlements,\s*entitlementsReady:\s*true,?\s*\};\s*\}/.test(
+        hookSource,
+      ),
+      'explicit ad entitlements must bypass async purchase loading as ready',
+    ],
+    [
+      /if\s*\(\s*!entitlementsReady\s*\)\s*\{\s*return\s*\{\s*entitlements:\s*AD_BLOCKED_PENDING_ENTITLEMENTS,\s*entitlementsReady:\s*false,?\s*\};\s*\}/.test(
+        hookSource,
+      ),
+      'unresolved purchase state must return ad-blocked pending entitlements',
+    ],
+  ];
+
+  hookCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    removeAdsEntitlementHookCasesValidated += 1;
+  });
+
+  if (valid && removeAdsEntitlementHookCasesValidated === EXPECTED_REMOVE_ADS_HOOK_CASES) {
+    removeAdsEntitlementHookParityValidated = true;
   }
 }
 
@@ -4259,6 +4329,87 @@ function validateMobileAdsConsentTypeSchemaParity() {
     mobileAdsConsentTypeInterfacesValidated === EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.length
   ) {
     mobileAdsConsentTypeSchemaParityValidated = true;
+  }
+}
+
+function validateMobileAdsConsentHookParity() {
+  let valid = true;
+  let hookSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    hookSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/useMobileAdsConsent.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/useMobileAdsConsent.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
+  const hookCases = [
+    [
+      normalizedHookSource.includes(
+        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;',
+      ) &&
+        normalizedHookSource.includes(
+          "trackingTransparencyStatus: Platform.OS === 'ios' && shouldCollectConsent ? 'not_determined' : 'unavailable',",
+        ) &&
+        normalizedHookSource.includes(
+          "umpConsentStatus: shouldCollectConsent ? 'unknown' : 'not_required',",
+        ),
+      'Mobile Ads consent hook must derive initial prompt state from ads config and Remove Ads entitlements',
+    ],
+    [
+      normalizedHookSource.includes(
+        'const state: AdConsentState = createInitialAdConsentState({',
+      ) && normalizedHookSource.includes('decision: getAdSdkInitializationDecision(state),'),
+      'Mobile Ads consent hook must route initial state through the consent SDK decision helper',
+    ],
+    [
+      /if\s*\(\s*entitlements\.adsDisabled\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(Platform\.OS\),[\s\S]*\}\);\s*\}/.test(
+        hookSource,
+      ),
+      'Mobile Ads consent hook must bypass cached initialization when Remove Ads is active',
+    ],
+    [
+      normalizedHookSource.includes(
+        'initializationPromise ??= initializeGoogleMobileAdsAfterConsent({',
+      ) &&
+        normalizedHookSource.includes('cachedInitialization = result;') &&
+        normalizedHookSource.includes('initializationPromise = undefined;') &&
+        normalizedHookSource.includes('throw error;'),
+      'Mobile Ads consent hook must cache successful non-disabled initialization and reset after errors',
+    ],
+    [
+      normalizedHookSource.includes(
+        'if (!entitlements.adsDisabled && cachedInitialization) return cachedInitialization;',
+      ) &&
+        normalizedHookSource.includes('setResult(initialResult);') &&
+        normalizedHookSource.includes('void initializeOnce(entitlements)') &&
+        /\.\s*catch\(\(\)\s*=>\s*\{\s*if\s*\(\s*isMounted\s*\)\s*setResult\(createInitialResult\(entitlements\)\);\s*\}\);/.test(
+          hookSource,
+        ) &&
+        normalizedHookSource.includes('isMounted = false;'),
+      'Mobile Ads consent hook must fail closed to initial consent state after async initialization errors',
+    ],
+  ];
+
+  hookCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    mobileAdsConsentHookCasesValidated += 1;
+  });
+
+  if (valid && mobileAdsConsentHookCasesValidated === EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES) {
+    mobileAdsConsentHookParityValidated = true;
   }
 }
 
@@ -6625,6 +6776,7 @@ validateMockExamConfig(
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
 validateReleaseMonetizationPolicyParity();
+validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
 validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
@@ -6639,6 +6791,7 @@ validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
+validateMobileAdsConsentHookParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
@@ -6690,6 +6843,8 @@ console.log(
       launchAdRouteSuppressionParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
+      removeAdsEntitlementHookCasesValidated,
+      removeAdsEntitlementHookParityValidated,
       premiumEntitlementStatesValidated,
       premiumEntitlementParityValidated,
       questionDisclaimerRoutesValidated,
@@ -6722,6 +6877,8 @@ console.log(
       adConsentTypeSchemaParityValidated,
       mobileAdsConsentTypeInterfacesValidated,
       mobileAdsConsentTypeSchemaParityValidated,
+      mobileAdsConsentHookCasesValidated,
+      mobileAdsConsentHookParityValidated,
       rewardedAdTypeUnionsValidated,
       rewardedAdTypeInterfacesValidated,
       rewardedAdTypeSchemaParityValidated,

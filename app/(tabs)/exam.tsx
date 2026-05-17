@@ -213,7 +213,9 @@ export default function Screen() {
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
           <Badge tone="orange">Timed simulation</Badge>
-          <Text style={styles.title}>Mock exam</Text>
+          <Text accessibilityRole="header" style={styles.title}>
+            Mock exam
+          </Text>
           <Text style={styles.subtitle}>
             Time limit {defaultMockExamConfig.durationMinutes} minutes · {examQuestions.length}{' '}
             UHR-based questions · no ads during exam
@@ -221,7 +223,9 @@ export default function Screen() {
         </View>
         <QuestionDisclaimer />
         <View style={styles.accessCard}>
-          <Text style={styles.sectionTitle}>Exam access</Text>
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            Exam access
+          </Text>
           <Text style={styles.subtitle}>{accessStatusText}</Text>
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
@@ -253,7 +257,9 @@ export default function Screen() {
           <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
             {endedByTime ? 'Time expired' : 'Mock exam result'}
           </Badge>
-          <Text style={styles.title}>Exam result</Text>
+          <Text accessibilityRole="header" style={styles.title}>
+            Exam result
+          </Text>
           <Text style={styles.subtitle}>
             Explanations and review are shown only after the exam is submitted.
             {endedByTime
@@ -273,7 +279,9 @@ export default function Screen() {
         </View>
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
-            <Text style={styles.sectionTitle}>Next exam</Text>
+            <Text accessibilityRole="header" style={styles.sectionTitle}>
+              Next exam
+            </Text>
             <Badge tone={accessDecision.canStartExam ? 'green' : 'warm'}>
               {completionRecorded ? 'Saved' : 'Saving'}
             </Badge>
@@ -303,7 +311,9 @@ export default function Screen() {
           </Pressable>
         </View>
 
-        <Text style={styles.sectionTitle}>Chapter breakdown</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          Chapter breakdown
+        </Text>
         {chapterBreakdown.map((chapter) => (
           <View key={chapter.chapterId} style={styles.breakdownRow}>
             <View style={styles.breakdownLabel}>
@@ -316,7 +326,9 @@ export default function Screen() {
           </View>
         ))}
 
-        <Text style={styles.sectionTitle}>Question review</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          Question review
+        </Text>
         {reviewItems.map((item, index) => (
           <View key={item.questionId} style={styles.reviewCard}>
             <View style={styles.reviewHeader}>
@@ -348,7 +360,9 @@ export default function Screen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge tone="orange">Timed simulation</Badge>
-        <Text style={styles.title}>Mock exam</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Mock exam
+        </Text>
         <Text style={styles.subtitle}>
           Time left {formatExamTime(remainingSeconds)} · {examQuestions.length} UHR-based questions
           · no ads during exam
@@ -360,7 +374,9 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <View style={styles.progressCard}>
-        <Text style={styles.sectionTitle}>Progress</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          Progress
+        </Text>
         <Text style={styles.subtitle}>
           {answeredCount}/{examQuestions.length} answered
         </Text>
