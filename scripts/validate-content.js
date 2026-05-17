@@ -97,6 +97,59 @@ const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   nextReviewAt: 'string',
   bookmarked: 'boolean',
 };
+const EXPECTED_PROGRESS_TYPE_UNIONS = [
+  { typeName: 'QuizMode', values: ['study', 'exam', 'mistakes', 'challenge'] },
+  { typeName: 'Confidence', values: ['low', 'medium', 'high'] },
+];
+const EXPECTED_PROGRESS_INTERFACES = [
+  {
+    name: 'UserQuestionProgress',
+    fields: [
+      { name: 'questionId', type: 'string', optional: false },
+      { name: 'seenCount', type: 'number', optional: false },
+      { name: 'correctCount', type: 'number', optional: false },
+      { name: 'wrongCount', type: 'number', optional: false },
+      { name: 'correctStreak', type: 'number', optional: false },
+      { name: 'lastAnsweredAt', type: 'string', optional: true },
+      { name: 'nextReviewAt', type: 'string', optional: true },
+      { name: 'confidence', type: 'Confidence', optional: true },
+      { name: 'bookmarked', type: 'boolean', optional: true },
+    ],
+  },
+  {
+    name: 'QuizAnswer',
+    fields: [
+      { name: 'questionId', type: 'string', optional: false },
+      { name: 'selectedOptionIds', type: 'string[]', optional: false },
+      { name: 'isCorrect', type: 'boolean', optional: false },
+      { name: 'answeredAt', type: 'string', optional: false },
+      { name: 'timeSpentSeconds', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'QuizSession',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'mode', type: 'QuizMode', optional: false },
+      { name: 'questionIds', type: 'string[]', optional: false },
+      { name: 'answers', type: 'QuizAnswer[]', optional: false },
+      { name: 'startedAt', type: 'string', optional: false },
+      { name: 'completedAt', type: 'string', optional: true },
+      { name: 'score', type: 'number', optional: true },
+    ],
+  },
+  {
+    name: 'UserProgress',
+    fields: [
+      { name: 'totalXp', type: 'number', optional: false },
+      { name: 'level', type: 'number', optional: false },
+      { name: 'currentStreak', type: 'number', optional: false },
+      { name: 'dailyGoalAnswers', type: 'number', optional: false },
+      { name: 'questionProgress', type: 'Record<string, UserQuestionProgress>', optional: false },
+      { name: 'sessions', type: 'QuizSession[]', optional: false },
+    ],
+  },
+];
 const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
@@ -924,6 +977,9 @@ let settingsAudioLabelsValidated = 0;
 let settingsAudioParityValidated = false;
 let progressQuestionFieldsValidated = 0;
 let progressQuestionSchemaParityValidated = false;
+let progressTypeUnionsValidated = 0;
+let progressTypeInterfacesValidated = 0;
+let progressTypeSchemaParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -1915,6 +1971,99 @@ function validateProgressQuestionSchemaParity() {
 
   if (valid && progressQuestionFieldsValidated === EXPECTED_PROGRESS_QUESTION_FIELDS.length) {
     progressQuestionSchemaParityValidated = true;
+  }
+}
+
+function validateProgressTypeSchemaParity() {
+  let valid = true;
+  let progressTypesSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    progressTypesSource = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
+  } catch (error) {
+    reject(`types/progress.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_PROGRESS_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(progressTypesSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`types/progress.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `types/progress.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    progressTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_PROGRESS_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      progressTypesSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(`types/progress.ts ${expectedInterface.name} interface could not be read`);
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `types/progress.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `types/progress.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `types/progress.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `types/progress.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) progressTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    progressTypeUnionsValidated === EXPECTED_PROGRESS_TYPE_UNIONS.length &&
+    progressTypeInterfacesValidated === EXPECTED_PROGRESS_INTERFACES.length
+  ) {
+    progressTypeSchemaParityValidated = true;
   }
 }
 
@@ -3600,6 +3749,7 @@ validateLocalizationLanguageContract();
 validateSettingsDailyGoalParity();
 validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
+validateProgressTypeSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
@@ -3669,6 +3819,9 @@ console.log(
       settingsAudioParityValidated,
       progressQuestionFieldsValidated,
       progressQuestionSchemaParityValidated,
+      progressTypeUnionsValidated,
+      progressTypeInterfacesValidated,
+      progressTypeSchemaParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
