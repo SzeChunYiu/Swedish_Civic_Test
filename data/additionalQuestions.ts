@@ -303,13 +303,10 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q034',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Proportionella val', pageApprox: 15 },
-    'Vad säger materialets exempel om ett parti får ungefär 20 procent av rösterna i ett proportionellt val?',
-    "What does the material's example say if a party receives about 20 percent of the votes in a proportional election?",
+    'Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
+    'What happens in a proportional election if a party receives 20 percent of the votes?',
     [
-      [
-        'Partiet får ungefär 20 procent av platserna',
-        'The party receives about 20 percent of the seats',
-      ],
+      ['Partiet får 20 procent av platserna', 'The party receives 20 percent of the seats'],
       ['Partiet får alla platser', 'The party receives all seats'],
       [
         'Partiet får inga platser oavsett röstandel',
@@ -321,8 +318,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'UHR-materialet förklarar att proportionella val innebär att platser fördelas efter andelen röster. Exemplet anger att ett parti med tjugo procent av rösterna får tjugo procent av platserna.',
-    'The UHR material explains that proportional elections mean seats are distributed according to vote share. Its example says a party with twenty percent of the votes receives twenty percent of the seats.',
+    'Avsnittet Proportionella val säger att partier får platser utifrån den andel röster de har fått. Om ett parti får tjugo procent av folkets röster får det tjugo procent av platserna.',
+    "The Proportional elections section says parties receive seats based on their share of votes. If a party receives twenty percent of the people's votes, it receives twenty percent of the seats.",
     ['proportional-elections', 'seats', 'vote-share'],
   ),
   single(
