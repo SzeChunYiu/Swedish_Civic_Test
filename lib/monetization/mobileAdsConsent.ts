@@ -71,10 +71,10 @@ export function mapTrackingTransparencyStatus(
 
 export function mapUmpConsentStatus(consentInfo: UmpConsentResult | undefined): UmpConsentStatus {
   const status = normalizeStatus(consentInfo?.status);
+  if (consentInfo?.canRequestAds === true) return 'obtained';
   if (status === 'obtained') return 'obtained';
   if (status === 'not_required') return 'not_required';
   if (status === 'required') return 'required';
-  if (consentInfo?.canRequestAds === true) return 'obtained';
   return 'unknown';
 }
 

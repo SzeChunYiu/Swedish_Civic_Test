@@ -586,6 +586,7 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(mapTrackingTransparencyStatus({ status: 'undetermined' }, 'ios'), 'not_determined');
   assert.equal(mapUmpConsentStatus({ status: 'OBTAINED' }), 'obtained');
   assert.equal(mapUmpConsentStatus({ status: 'NOT_REQUIRED' }), 'not_required');
+  assert.equal(mapUmpConsentStatus({ canRequestAds: true, status: 'REQUIRED' }), 'obtained');
 
   const calls = [];
   const initializedResult = await initializeGoogleMobileAdsAfterConsent({
@@ -644,6 +645,28 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.deepEqual(disabledCalls, []);
   assert.equal(disabledState.trackingTransparencyStatus, 'unavailable');
   assert.equal(disabledState.umpConsentStatus, 'not_required');
+
+  const canRequestAdsCalls = [];
+  const canRequestAdsResult = await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    runtime: {
+      async gatherUmpConsent() {
+        canRequestAdsCalls.push('ump');
+        return { canRequestAds: true, status: 'REQUIRED' };
+      },
+      async initializeGoogleMobileAds() {
+        canRequestAdsCalls.push('ads:init');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(canRequestAdsResult.initialized, true);
+  assert.equal(canRequestAdsResult.state.umpConsentStatus, 'obtained');
+  assert.equal(canRequestAdsResult.decision.canInitializeGoogleMobileAds, true);
+  assert.deepEqual(canRequestAdsCalls, ['ump', 'ads:init']);
 });
 
 test('exam screen does not import ad components', () => {
