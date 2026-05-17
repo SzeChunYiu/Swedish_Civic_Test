@@ -4,9 +4,25 @@ import { colors, radius, shadows, space } from '../../lib/theme';
 
 type CardProps = PropsWithChildren<ComponentProps<typeof View> & { elevated?: boolean }>;
 
-export function Card({ children, style, elevated = false, ...viewProps }: CardProps) {
+export function Card({
+  accessible,
+  accessibilityLabel,
+  accessibilityRole,
+  children,
+  style,
+  elevated = false,
+  ...viewProps
+}: CardProps) {
+  const groupedForAccessibility = accessible ?? Boolean(accessibilityLabel || accessibilityRole);
+
   return (
-    <View style={[styles.card, elevated ? styles.elevated : null, style]} {...viewProps}>
+    <View
+      accessible={groupedForAccessibility}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole={accessibilityRole}
+      style={[styles.card, elevated ? styles.elevated : null, style]}
+      {...viewProps}
+    >
       {children}
     </View>
   );

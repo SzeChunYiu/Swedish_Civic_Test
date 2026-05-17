@@ -15,6 +15,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
   assert.equal(summary.appConfigPluginsValidated, 5);
   assert.equal(summary.appConfigSchemaValidated, true);
+  assert.equal(summary.launchAdSuppressedRoutesValidated, 6);
+  assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
@@ -29,6 +31,13 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.monetizationTypeUnionsValidated, 1);
   assert.equal(summary.monetizationTypeInterfacesValidated, 3);
   assert.equal(summary.monetizationTypeSchemaParityValidated, true);
+  assert.equal(summary.themeColorTokensValidated, 29);
+  assert.equal(summary.themeSpaceTokensValidated, 19);
+  assert.equal(summary.themeRadiusTokensValidated, 7);
+  assert.equal(summary.themeTypographyTokensValidated, 22);
+  assert.equal(summary.themeShadowTokensValidated, 2);
+  assert.equal(summary.themeMotionTokensValidated, 7);
+  assert.equal(summary.themeTokenSchemaValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
   assert.equal(summary.supportedLanguagesValidated, 2);
@@ -94,6 +103,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.uhrMapTextFieldsNormalizedValidated, 140);
   assert.equal(summary.uhrMapPageRangesValidated, 13);
   assert.equal(summary.uhrSourceMaterialLinkParityValidated, true);
+  assert.equal(summary.uhrSourceRetrievedDateValidated, true);
   assert.equal(summary.questionChapterReferenceParityValidated, 500);
   assert.equal(summary.uhrReferencesValidated, 500);
 });

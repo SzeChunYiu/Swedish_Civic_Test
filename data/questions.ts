@@ -7,8 +7,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q001',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Var ligger Sverige?',
-    questionEn: 'Where is Sweden located?',
+    questionSv: 'Enligt UHR-materialet, var ligger Sverige?',
+    questionEn: 'According to the UHR material, where is Sweden located?',
     options: [
       {
         id: 'a',
@@ -21,9 +21,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Sverige ligger i Norden, som är en del av norra Europa. Därför är alternativen om södra Europa, Asien och Nordamerika fel.',
+      'UHR-avsnittet Geografi, klimat och natur säger att Sverige ligger i Norden i norra Europa. Det beskriver också Norden som en del av norra Europa, vilket gör alternativen om södra Europa, västra Asien och Nordamerika fel.',
     explanationEn:
-      'Sweden is located in the Nordic region, which is part of northern Europe. That makes the alternatives about southern Europe, Asia, and North America incorrect.',
+      'The UHR section Geography, climate, and nature says that Sweden is in the Nordic region in northern Europe. It also describes the Nordic region as part of northern Europe, which makes the alternatives about southern Europe, western Asia, and North America incorrect.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -37,17 +37,19 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q002',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Den nordligaste delen av Sverige ligger norr om polcirkeln.',
-    questionEn: 'True or false: The northernmost part of Sweden lies north of the Arctic Circle.',
+    questionSv:
+      'Sant eller falskt enligt UHR-materialet: Sveriges nordligaste del ligger norr om polcirkeln.',
+    questionEn:
+      "True or false according to the UHR material: Sweden's northernmost part lies north of the Arctic Circle.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Den nordligaste delen av Sverige ligger norr om polcirkeln i det arktiska området. Påståendet är därför sant.',
+      'UHR-avsnittet Geografi, klimat och natur beskriver att den nordligaste delen av landet ligger norr om polcirkeln, i det arktiska området. Därför är påståendet sant; alternativet Falskt motsäger källan.',
     explanationEn:
-      'The northernmost part of Sweden is north of the Arctic Circle in the Arctic area. The statement is therefore true.',
+      'The UHR section Geography, climate, and nature says the northernmost part of the country lies north of the Arctic Circle, in the Arctic area. Therefore the statement is true; the False option contradicts the source.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -61,8 +63,10 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q003',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
-    questionEn: 'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    questionSv:
+      'Enligt UHR-materialet, ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+    questionEn:
+      'According to the UHR material, approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
     options: [
       { id: 'a', textSv: 'Cirka 160 kilometer', textEn: 'About 160 kilometres' },
       { id: 'b', textSv: 'Cirka 1 600 kilometer', textEn: 'About 1,600 kilometres' },
@@ -71,9 +75,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'Sverige beskrivs som ett avlångt land som sträcker sig cirka 1 600 kilometer från norr till söder. De andra avstånden är antingen för korta eller orimligt långa.',
+      'UHR-avsnittet Geografi, klimat och natur säger att Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från den nordligaste punkten, Treriksröset, till den sydligaste punkten, Smygehuk. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt.',
     explanationEn:
-      'Sweden is described as an elongated country stretching about 1,600 kilometres from north to south. The other distances are either too short or unrealistically long.',
+      'The UHR section Geography, climate, and nature says that Sweden is an elongated country stretching about 1,600 kilometres from the northernmost point, Treriksröset, to the southernmost point, Smygehuk. Therefore 1,600 kilometres is correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -81,7 +85,7 @@ export const baseQuestions: PracticeQuestion[] = [
     },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
-    tags: ['geography', 'distance', 'trr-smg'],
+    tags: ['geography', 'distance', 'treriksroset', 'smygehuk'],
   },
   {
     id: 'q004',

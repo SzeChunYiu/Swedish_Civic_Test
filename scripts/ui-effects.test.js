@@ -56,6 +56,28 @@ test('button derives an accessibility label from plain text children by default'
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('screen scaffold exposes page and section titles as headers', () => {
+  const source = read('components/ui/ScreenShell.tsx');
+
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('card scaffold groups labelled surfaces for accessibility', () => {
+  const source = read('components/ui/Card.tsx');
+
+  assert.match(source, /accessible,/);
+  assert.match(source, /accessibilityLabel,/);
+  assert.match(source, /accessibilityRole,/);
+  assert.match(source, /const groupedForAccessibility =/);
+  assert.match(source, /accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\)/);
+  assert.match(source, /accessible=\{groupedForAccessibility\}/);
+  assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('practice screen adds bookmark controls backed by progress storage', () => {
   const source = read('app/(tabs)/practice.tsx');
 

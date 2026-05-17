@@ -3,6 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+require('../tests/architecture-public-exports.test.js');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 const architectureTabRouteFiles = [
