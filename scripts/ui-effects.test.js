@@ -125,6 +125,19 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('chapter card groups title, translation, status, and description into an accessible summary', () => {
+  const source = read('components/learning/ChapterCard.tsx');
+
+  assert.match(source, /const title = chapter\?\.nameSv \?\? 'Chapter unavailable'/);
+  assert.match(source, /const chapterAccessibilityLabel =/);
+  assert.match(source, /`Chapter: \$\{title\}`/);
+  assert.match(source, /`English name: \$\{chapter\.nameEn\}`/);
+  assert.match(source, /`Status: \$\{status\}`/);
+  assert.match(source, /`Description: \$\{chapter\.descriptionSv\}`/);
+  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('quiz feedback cards expose accessible summaries', () => {
   const explanationSource = read('components/quiz/ExplanationPanel.tsx');
   const referenceSource = read('components/quiz/UHRReferenceCard.tsx');
