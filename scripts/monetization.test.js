@@ -606,19 +606,39 @@ test('exam screen does not import ad components', () => {
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
 });
 
-test('global launch popup ad is suppressed on exam routes', () => {
+test('global launch popup ad is suppressed on exam and compliance routes', () => {
   const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
   const entitlementHookSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
     'utf8',
   );
+  const { adsConfig, shouldSuppressLaunchPopupAdForPath } = loadTs('lib/monetization/ads.ts');
 
   assert.match(layoutSource, /usePathname/);
   assert.match(layoutSource, /useRemoveAdsEntitlements/);
-  assert.match(layoutSource, /pathname\s*===\s*['"]\/exam['"]/);
-  assert.match(layoutSource, /pathname\.startsWith\(['"]\/exam\/['"]\)/);
+  assert.match(layoutSource, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
   assert.match(layoutSource, /entitlementsReady/);
   assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/exam'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/exam/review'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/privacy'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/disclaimer'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/practice'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/mistakes'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/profile'), false);
+  assert.deepEqual(adsConfig.suppressedLaunchPopupRoutes, [
+    '/exam',
+    '/disclaimer',
+    '/privacy',
+    '/sources',
+    '/support',
+    '/terms',
+  ]);
   assert.match(entitlementHookSource, /getPurchaseEntitlements/);
   assert.match(entitlementHookSource, /createMemoryPurchaseStorage/);
   assert.match(entitlementHookSource, /Platform\.OS !== 'web'/);
