@@ -620,6 +620,89 @@ const EXPECTED_PRACTICE_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.questionTitle\(questionNumber\)\}\s*<\/Text>/,
   },
 ];
+const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
+  sv: [
+    'Tillbaka till kapitellistan',
+    'Tillbaka till studievägen',
+    'Frågor för det här kapitlet har inte lagts till ännu.',
+    'Kapitlet hittades inte',
+    'Övningsfrågor (${count})',
+    'Starta quiz',
+    'Starta quiz för ${chapterTitle}',
+  ],
+  en: [
+    'Back to chapter list',
+    'Back to Learn',
+    'Questions for this chapter are not added yet.',
+    'Chapter not found',
+    'Practice questions (${count})',
+    'Start quiz',
+    'Start quiz for ${chapterTitle}',
+  ],
+};
+const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
+  ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
+  [
+    'const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy> = {',
+    'chapter route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'chapter route must read language from settings store',
+  ],
+  [
+    'const copy = chapterRouteCopy[language];',
+    'chapter route must select copy from settings language',
+  ],
+  [
+    'chapterDescription: (chapter) => chapter.descriptionSv',
+    'chapter route Swedish copy must use the Swedish chapter description',
+  ],
+  [
+    'chapterDescription: (chapter) => chapter.descriptionEn',
+    'chapter route English copy must use the English chapter description',
+  ],
+  [
+    'chapterSubtitle: (chapter) => chapter.nameEn',
+    'chapter route Swedish copy must expose the English chapter subtitle',
+  ],
+  [
+    'chapterSubtitle: (chapter) => chapter.nameSv',
+    'chapter route English copy must expose the Swedish chapter subtitle',
+  ],
+  [
+    'chapterTitle: (chapter) => chapter.nameSv',
+    'chapter route Swedish copy must use Swedish chapter titles',
+  ],
+  [
+    'chapterTitle: (chapter) => chapter.nameEn',
+    'chapter route English copy must use English chapter titles',
+  ],
+  ['const chapterTitle = copy.chapterTitle(chapter);', 'chapter title must resolve from copy'],
+  [
+    'accessibilityLabel={copy.backToListAccessibilityLabel}',
+    'chapter route back link must expose localized accessibility copy',
+  ],
+  ['{copy.backToLearn}', 'chapter route back link must render localized copy'],
+  ['{chapterTitle}', 'chapter route title must render localized chapter copy'],
+  ['{copy.chapterSubtitle(chapter)}', 'chapter route subtitle must render localized copy'],
+  ['{copy.chapterDescription(chapter)}', 'chapter route description must render localized copy'],
+  [
+    'accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}',
+    'chapter route quiz link must expose localized accessibility copy',
+  ],
+  ['{copy.startQuiz}', 'chapter route quiz link must render localized copy'],
+  [
+    '{copy.practiceQuestionsTitle(chapterQuestions.length)}',
+    'chapter route section title must render localized copy',
+  ],
+  ['{copy.emptyQuestions}', 'chapter route empty state must render localized copy'],
+  [
+    'UHRReferenceCard language={language}',
+    'chapter route UHR cards must receive settings language',
+  ],
+];
 const EXPECTED_CHAPTER_ROUTE_HEADERS = [
   {
     label: 'missing chapter title',
@@ -3419,6 +3502,8 @@ let practiceRouteHeadersValidated = 0;
 let practiceRouteHeaderParityValidated = false;
 let chapterRouteHeadersValidated = 0;
 let chapterRouteHeaderParityValidated = false;
+let chapterRouteCopyLabelsValidated = 0;
+let chapterRouteCopyParityValidated = false;
 let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
 let profileRouteHeadersValidated = 0;
@@ -4933,6 +5018,58 @@ function validateChapterRouteHeaderParity() {
 
   if (valid && chapterRouteHeadersValidated === EXPECTED_CHAPTER_ROUTE_HEADERS.length) {
     chapterRouteHeaderParityValidated = true;
+  }
+}
+
+function validateChapterRouteCopyParity() {
+  let valid = true;
+  let chapterRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    chapterRoute = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
+  } catch (error) {
+    reject(`chapter route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!chapterRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_CHAPTER_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`chapter route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!chapterRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`chapter route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`chapter route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) chapterRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_CHAPTER_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && chapterRouteCopyLabelsValidated === expectedLabelCount) {
+    chapterRouteCopyParityValidated = true;
   }
 }
 
@@ -10232,6 +10369,7 @@ validateQuizRouteHeaderParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateChapterRouteHeaderParity();
+validateChapterRouteCopyParity();
 validateLearnRouteHeaderParity();
 validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
@@ -10351,6 +10489,8 @@ console.log(
       practiceRouteCopyParityValidated,
       chapterRouteHeadersValidated,
       chapterRouteHeaderParityValidated,
+      chapterRouteCopyLabelsValidated,
+      chapterRouteCopyParityValidated,
       learnRouteHeadersValidated,
       learnRouteHeaderParityValidated,
       learnRouteLinkCopyLabelsValidated,
