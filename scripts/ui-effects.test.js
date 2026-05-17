@@ -374,6 +374,18 @@ test('home screen surfaces the 10000-learner feedback loop and review action', (
   assert.match(source, /href="\/mistakes"/);
 });
 
+test('home screen exposes dashboard card titles as headers', () => {
+  const source = read('app/(tabs)/home.tsx');
+  const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
+
+  assert.match(source, /Today&apos;s goal/);
+  assert.match(source, /UX updates from simulated study sessions/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
+  assert.equal(headerMatches?.length, 2);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('launch popup ad has native app-open implementation and safe web preview', () => {
   const layoutSource = read('app/_layout.tsx');
   const webSource = read('components/monetization/LaunchPopupAd.tsx');
