@@ -85,7 +85,9 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   const webSource = read('components/monetization/LaunchPopupAd.tsx');
   const nativeSource = read('components/monetization/LaunchPopupAd.native.tsx');
 
-  assert.match(layoutSource, /<LaunchPopupAd \/>/);
+  assert.match(layoutSource, /useRemoveAdsEntitlements/);
+  assert.match(layoutSource, /entitlementsReady/);
+  assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
   assert.match(webSource, /launchPopupShownThisRuntime/);
   assert.match(webSource, /Modal/);
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);

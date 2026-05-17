@@ -171,6 +171,12 @@ function jsonEqual(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+function expectedGeneratedTags(sourceQuestion, convention) {
+  return [
+    ...new Set([...sourceQuestion.tags, 'published-variant', convention?.tag].filter(Boolean)),
+  ];
+}
+
 function answerLabel(option) {
   return `${option?.textSv ?? ''}`.replace(/[.!?]\s*$/, '');
 }
@@ -515,6 +521,7 @@ let generationParityValidated = false;
 let generatedSourceMetadataParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
+let generatedTagTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
@@ -705,6 +712,7 @@ function validateGeneratedSourceMetadataParity() {
       if (!Array.isArray(variant.tags)) {
         reject(`${label} tags is not an array`);
       } else {
+        const expectedTags = expectedGeneratedTags(sourceQuestion, convention);
         const variantTags = new Set(variant.tags);
         sourceQuestion.tags.forEach((tag) => {
           if (!variantTags.has(tag)) reject(`${label} is missing source tag ${tag}`);
@@ -714,6 +722,11 @@ function validateGeneratedSourceMetadataParity() {
         }
         if (convention && !variantTags.has(convention.tag)) {
           reject(`${label} is missing ${convention.tag} tag`);
+        }
+        if (!jsonEqual(variant.tags, expectedTags)) {
+          reject(`${label} tags do not exactly match generated tag template`);
+        } else {
+          generatedTagTemplateParityValidated += 1;
         }
       }
 
@@ -1178,6 +1191,7 @@ console.log(
       generatedSourceMetadataParityValidated,
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
+      generatedTagTemplateParityValidated,
       questionSchemasValidated,
       questionIdSequencesValidated,
       questionBilingualTextPairsValidated,
