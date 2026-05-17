@@ -100,3 +100,25 @@ SOURCE-EXPANSION [content, ongoing]: question sets may now be EXPANDED beyond
   correct & current, SV+EN parity, passes the legal-safety subset. Inaccurate
   or unverifiable = P0 blocker. Grow coverage; do not dilute accuracy.
 === END CONTENT OVERHAUL ===
+
+=== P0 BUG — DO THIS FIRST, ahead of all cosmetic/design work ===
+SHUFFLE-FIX [P0, correctness]: Single-choice answer options are NOT shuffled —
+data/questions.ts authored with correct answer mostly first (correctOptionId
+'a' dominant) and lib/content/derivedQuestions.ts normalizeSingleChoiceOptions
+maps by index with no randomization, so the correct answer is almost always A.
+This makes the quiz trivially gameable and looks broken.
+FIX (root cause, in the derivation/session pipeline, NOT a data-only patch):
+- Shuffle single-choice options with a SEEDED RNG keyed by (questionId +
+  sessionId) so order is randomized but STABLE within a quiz session/instance
+  (must NOT reshuffle on re-render or change mid-question), and reproducible
+  for review screens and tests.
+- Remap correctOptionId after shuffle; isCorrectAnswer must still resolve
+  correctly; explanations/option feedback follow the option, not the slot.
+- Exclude true_false from positional shuffle (keep true/false order fixed).
+- Interacts with DIFFICULTY-1: pick distractors by difficulty FIRST, then
+  shuffle the final option set.
+TESTS (add, must pass): over the full published bank, correct-answer display
+  position is ~uniform (no single position > 35%); shuffle stable within a
+  session; isCorrectAnswer correct post-shuffle. Keep all 7 acceptance steps
+  green. This is the highest-priority item in this file.
+=== END P0 ===
