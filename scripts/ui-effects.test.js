@@ -176,8 +176,22 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(webSource, /web preview/);
+  assert.match(webSource, /const placementLabel = placement\.replaceAll\('_', ' '\);/);
+  assert.match(webSource, /<Card accessibilityLabel=\{`Google AdMob: \$\{placementLabel\}/);
   assert.match(nativeSource, /react-native-google-mobile-ads/);
+  assert.match(nativeSource, /accessible/);
+  assert.match(nativeSource, /accessibilityLabel=\{`Google AdMob banner: \$\{placementLabel\}`\}/);
   assert.match(nativeSource, /<BannerAd/);
+});
+
+test('native ad preview card exposes a grouped accessibility summary', () => {
+  const source = read('components/monetization/NativeAdCard.tsx');
+
+  assert.match(
+    source,
+    /<Card accessibilityLabel="Test native ad: Sponsored study placement\. AdMob test placement preview\. Keep out of timed exams\.">/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
