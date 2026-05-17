@@ -17,6 +17,10 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.appConfigSchemaValidated, true);
   assert.equal(summary.launchAdSuppressedRoutesValidated, 6);
   assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
+  assert.equal(summary.questionDisclaimerRoutesValidated, 6);
+  assert.equal(summary.questionDisclaimerCopyValidated, true);
+  assert.equal(summary.mockExamConfigTypeFieldsValidated, 5);
+  assert.equal(summary.mockExamConfigTypeSchemaParityValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
@@ -31,6 +35,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.monetizationTypeUnionsValidated, 1);
   assert.equal(summary.monetizationTypeInterfacesValidated, 3);
   assert.equal(summary.monetizationTypeSchemaParityValidated, true);
+  assert.equal(summary.adConsentTypeUnionsValidated, 6);
+  assert.equal(summary.adConsentTypeInterfacesValidated, 3);
+  assert.equal(summary.adConsentTypeSchemaParityValidated, true);
   assert.equal(summary.themeColorTokensValidated, 29);
   assert.equal(summary.themeSpaceTokensValidated, 19);
   assert.equal(summary.themeRadiusTokensValidated, 7);

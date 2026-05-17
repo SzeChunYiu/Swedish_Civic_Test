@@ -102,6 +102,22 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/support': 'app/support.tsx',
   '/terms': 'app/terms.tsx',
 };
+const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
+  { route: '/onboarding', file: 'app/onboarding.tsx' },
+  { route: '/practice', file: 'app/(tabs)/practice.tsx' },
+  { route: '/exam', file: 'app/(tabs)/exam.tsx' },
+  { route: '/mistakes', file: 'app/(tabs)/mistakes.tsx' },
+  { route: '/chapter/[chapterId]', file: 'app/chapter/[chapterId].tsx' },
+  { route: '/quiz/[sessionId]', file: 'app/quiz/[sessionId].tsx' },
+];
+const REQUIRED_QUESTION_DISCLAIMER_PHRASES = [
+  'independent study tool',
+  'not official',
+  'affiliated with UHR',
+  'UHR',
+  'Swedish government',
+  'not real exam questions',
+];
 const EXPECTED_THEME_COLOR_TOKENS = [
   'canvas',
   'surface',
@@ -320,6 +336,13 @@ const EXPECTED_CONTENT_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
+  { name: 'questionCount', type: 'number', optional: false },
+  { name: 'durationMinutes', type: 'number', optional: false },
+  { name: 'sourceScope', type: "'uhr_based'", optional: false },
+  { name: 'showExplanationsDuringExam', type: 'boolean', optional: false },
+  { name: 'adsAllowedDuringExam', type: 'boolean', optional: false },
+];
 const EXPECTED_MONETIZATION_TYPE_UNIONS = [
   {
     typeName: 'AdPlacement',
@@ -357,6 +380,67 @@ const EXPECTED_MONETIZATION_INTERFACES = [
     fields: [
       { name: 'premium', type: 'PremiumEntitlements', optional: false },
       { name: 'adUnits', type: 'AdUnitConfig[]', optional: false },
+    ],
+  },
+];
+const EXPECTED_AD_CONSENT_TYPE_UNIONS = [
+  { typeName: 'AdConsentPlatform', values: ['android', 'ios', 'web', 'unknown'] },
+  { typeName: 'AdConsentRegion', values: ['eea', 'uk', 'us', 'other', 'unknown'] },
+  {
+    typeName: 'AppTrackingTransparencyStatus',
+    values: ['authorized', 'denied', 'not_determined', 'restricted', 'unavailable'],
+  },
+  {
+    typeName: 'UmpConsentStatus',
+    values: ['obtained', 'not_required', 'required', 'unknown'],
+  },
+  {
+    typeName: 'AdConsentPrompt',
+    values: ['app_tracking_transparency', 'ump_consent_form'],
+  },
+  {
+    typeName: 'AdSdkInitializationBlockReason',
+    values: [
+      'google_ads_disabled',
+      'remove_ads_entitlement',
+      'pending_consent_prompts',
+      'consent_required',
+    ],
+  },
+];
+const EXPECTED_AD_CONSENT_INTERFACES = [
+  {
+    name: 'AdConsentState',
+    fields: [
+      { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: false },
+      { name: 'googleMobileAdsEnabled', type: 'boolean', optional: false },
+      { name: 'platform', type: 'AdConsentPlatform', optional: false },
+      { name: 'realAdsEnabled', type: 'boolean', optional: false },
+      { name: 'region', type: 'AdConsentRegion', optional: false },
+      {
+        name: 'trackingTransparencyStatus',
+        type: 'AppTrackingTransparencyStatus',
+        optional: false,
+      },
+      { name: 'umpConsentStatus', type: 'UmpConsentStatus', optional: false },
+    ],
+  },
+  {
+    name: 'AdConsentDecision',
+    fields: [
+      { name: 'adServingAllowed', type: 'boolean', optional: false },
+      { name: 'canRequestNonPersonalizedAds', type: 'boolean', optional: false },
+      { name: 'canRequestPersonalizedAds', type: 'boolean', optional: false },
+      { name: 'pendingPrompts', type: 'AdConsentPrompt[]', optional: false },
+    ],
+  },
+  {
+    name: 'AdSdkInitializationDecision',
+    fields: [
+      { name: 'blockReason', type: 'AdSdkInitializationBlockReason', optional: true },
+      { name: 'canInitializeGoogleMobileAds', type: 'boolean', optional: false },
+      { name: 'consentDecision', type: 'AdConsentDecision', optional: false },
+      { name: 'requestNonPersonalizedAdsOnly', type: 'boolean', optional: false },
     ],
   },
 ];
@@ -1141,6 +1225,10 @@ let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
+let questionDisclaimerRoutesValidated = 0;
+let questionDisclaimerCopyValidated = false;
+let mockExamConfigTypeFieldsValidated = 0;
+let mockExamConfigTypeSchemaParityValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -1169,6 +1257,9 @@ let progressTypeSchemaParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
+let adConsentTypeUnionsValidated = 0;
+let adConsentTypeInterfacesValidated = 0;
+let adConsentTypeSchemaParityValidated = false;
 let themeColorTokensValidated = 0;
 let themeSpaceTokensValidated = 0;
 let themeRadiusTokensValidated = 0;
@@ -1473,6 +1564,140 @@ function validateLaunchAdRouteSuppressionParity() {
     launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
   ) {
     launchAdRouteSuppressionParityValidated = true;
+  }
+}
+
+function validateQuestionDisclaimerParity() {
+  let copyIsValid = true;
+
+  function rejectCopy(message) {
+    copyIsValid = false;
+    fail(message);
+  }
+
+  let componentSource = '';
+  let disclaimerRouteSource = '';
+  try {
+    componentSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    rejectCopy(`components/quiz/QuestionDisclaimer.tsx could not be read: ${error.message}`);
+  }
+  try {
+    disclaimerRouteSource = fs.readFileSync(path.join(repoRoot, 'app/disclaimer.tsx'), 'utf8');
+  } catch (error) {
+    rejectCopy(`app/disclaimer.tsx could not be read: ${error.message}`);
+  }
+
+  const componentLower = componentSource.toLocaleLowerCase('en-US');
+  const routeLower = disclaimerRouteSource.toLocaleLowerCase('en-US');
+  REQUIRED_QUESTION_DISCLAIMER_PHRASES.forEach((phrase) => {
+    const normalizedPhrase = phrase.toLocaleLowerCase('en-US');
+    if (!componentLower.includes(normalizedPhrase)) {
+      rejectCopy(`QuestionDisclaimer missing required "${phrase}" wording`);
+    }
+    if (!routeLower.includes(normalizedPhrase)) {
+      rejectCopy(`app/disclaimer.tsx missing required "${phrase}" wording`);
+    }
+  });
+
+  if (!/export function QuestionDisclaimer/.test(componentSource)) {
+    rejectCopy('QuestionDisclaimer component must keep its named export');
+  }
+  if (/guaranteed|guarantee/i.test(componentSource)) {
+    rejectCopy('QuestionDisclaimer must not imply guaranteed exam outcomes');
+  }
+
+  if (copyIsValid) questionDisclaimerCopyValidated = true;
+
+  EXPECTED_QUESTION_DISCLAIMER_ROUTES.forEach(({ route, file }) => {
+    let routeIsValid = true;
+    let source = '';
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      routeIsValid = false;
+      fail(`${file} could not be read for ${route} disclaimer coverage: ${error.message}`);
+    }
+
+    if (!/import\s+\{\s*QuestionDisclaimer\s*\}/.test(source)) {
+      routeIsValid = false;
+      fail(`${file} must import QuestionDisclaimer for ${route}`);
+    }
+    if (!source.includes('<QuestionDisclaimer />')) {
+      routeIsValid = false;
+      fail(`${file} is missing QuestionDisclaimer for ${route}`);
+    }
+
+    if (routeIsValid) questionDisclaimerRoutesValidated += 1;
+  });
+}
+
+function validateMockExamConfigTypeSchemaParity() {
+  let valid = true;
+  let mockExamConfigSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mockExamConfigSource = fs.readFileSync(path.join(repoRoot, 'data/mockExamConfig.ts'), 'utf8');
+  } catch (error) {
+    reject(`data/mockExamConfig.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const actualFields = extractObjectTypePropertiesFromTs(mockExamConfigSource, 'MockExamConfig');
+  if (!Array.isArray(actualFields)) {
+    reject('data/mockExamConfig.ts MockExamConfig interface could not be read');
+    return;
+  }
+
+  const actualNames = actualFields.map((field) => field.name);
+  const expectedNames = EXPECTED_MOCK_EXAM_CONFIG_FIELDS.map((field) => field.name);
+  if (!arrayEquals(actualNames, expectedNames)) {
+    reject(
+      `MockExamConfig fields are ${JSON.stringify(actualNames)}, expected ${JSON.stringify(
+        expectedNames,
+      )}`,
+    );
+  }
+
+  const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+  EXPECTED_MOCK_EXAM_CONFIG_FIELDS.forEach((expectedField) => {
+    const actualField = actualFieldsByName.get(expectedField.name);
+    let fieldIsValid = true;
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!actualField) {
+      rejectField(`MockExamConfig missing ${expectedField.name}`);
+    } else {
+      if (actualField.type !== expectedField.type) {
+        rejectField(
+          `MockExamConfig.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectField(
+          `MockExamConfig.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    }
+
+    if (fieldIsValid) mockExamConfigTypeFieldsValidated += 1;
+  });
+
+  if (valid && mockExamConfigTypeFieldsValidated === EXPECTED_MOCK_EXAM_CONFIG_FIELDS.length) {
+    mockExamConfigTypeSchemaParityValidated = true;
   }
 }
 
@@ -2635,6 +2860,98 @@ function validateMonetizationTypeSchemaParity() {
     monetizationTypeInterfacesValidated === EXPECTED_MONETIZATION_INTERFACES.length
   ) {
     monetizationTypeSchemaParityValidated = true;
+  }
+}
+
+function validateAdConsentTypeSchemaParity() {
+  let valid = true;
+  let consentSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/monetization/consent.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_AD_CONSENT_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(consentSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`lib/monetization/consent.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `lib/monetization/consent.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    adConsentTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_AD_CONSENT_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(consentSource, expectedInterface.name);
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `lib/monetization/consent.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `lib/monetization/consent.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `lib/monetization/consent.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `lib/monetization/consent.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `lib/monetization/consent.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) adConsentTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    adConsentTypeUnionsValidated === EXPECTED_AD_CONSENT_TYPE_UNIONS.length &&
+    adConsentTypeInterfacesValidated === EXPECTED_AD_CONSENT_INTERFACES.length
+  ) {
+    adConsentTypeSchemaParityValidated = true;
   }
 }
 
@@ -4431,12 +4748,15 @@ validateMockExamConfig(
 );
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateQuestionDisclaimerParity();
+validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
+validateAdConsentTypeSchemaParity();
 validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
@@ -4456,17 +4776,6 @@ validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
 validateUhrSourceMaterialLinkParity();
-
-const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-const disclaimer = fs.readFileSync(
-  path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
-  'utf8',
-);
-if (!practiceScreen.includes('<QuestionDisclaimer />'))
-  fail('practice screen is missing QuestionDisclaimer');
-if (!/not official/i.test(disclaimer) || !/not real exam questions/i.test(disclaimer)) {
-  fail('QuestionDisclaimer missing required independent/not-real-exam wording');
-}
 
 if (failures.length) {
   console.error('Content validation failed:');
@@ -4489,6 +4798,10 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      questionDisclaimerRoutesValidated,
+      questionDisclaimerCopyValidated,
+      mockExamConfigTypeFieldsValidated,
+      mockExamConfigTypeSchemaParityValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
@@ -4503,6 +4816,9 @@ console.log(
       monetizationTypeUnionsValidated,
       monetizationTypeInterfacesValidated,
       monetizationTypeSchemaParityValidated,
+      adConsentTypeUnionsValidated,
+      adConsentTypeInterfacesValidated,
+      adConsentTypeSchemaParityValidated,
       themeColorTokensValidated,
       themeSpaceTokensValidated,
       themeRadiusTokensValidated,

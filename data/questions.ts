@@ -91,8 +91,9 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q004',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vad heter havet vid Sveriges östra kust?',
-    questionEn: "What is the sea along Sweden's eastern coast called?",
+    questionSv: 'Enligt UHR-materialet, vad heter havet vid Sveriges östra kust?',
+    questionEn:
+      "According to the UHR material, what is the sea along Sweden's eastern coast called?",
     options: [
       { id: 'a', textSv: 'Nordsjön', textEn: 'The North Sea' },
       { id: 'b', textSv: 'Medelhavet', textEn: 'The Mediterranean Sea' },
@@ -101,9 +102,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Havet vid Sveriges östra kust heter Östersjön. Skagerrak och Kattegatt ligger däremot vid västkusten.',
+      'UHR-avsnittet Geografi, klimat och natur säger att havet vid Sveriges östra kust heter Östersjön. Samma avsnitt säger att Skagerrak och Kattegatt ligger vid västkusten, vilket gör de andra alternativen fel.',
     explanationEn:
-      "The sea along Sweden's eastern coast is the Baltic Sea. Skagerrak and Kattegat are instead on the west coast.",
+      'The UHR section Geography, climate, and nature says that the sea along Sweden’s eastern coast is the Baltic Sea. The same section says Skagerrak and Kattegat are on the west coast, which makes the other options incorrect.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -117,8 +118,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q005',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vilka är Sveriges två största öar?',
-    questionEn: "Which are Sweden's two largest islands?",
+    questionSv: 'Enligt UHR-materialet, vilka öar är Sveriges två största?',
+    questionEn: "According to the UHR material, which islands are Sweden's two largest?",
     options: [
       { id: 'a', textSv: 'Gotland och Öland', textEn: 'Gotland and Öland' },
       { id: 'b', textSv: 'Hisingen och Orust', textEn: 'Hisingen and Orust' },
@@ -127,9 +128,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Gotland och Öland är Sveriges två största öar. Malmö och Göteborg är städer, inte öar.',
+      'UHR-avsnittet Geografi, klimat och natur säger att Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn nämns inte som de två största där, och Malmö och Göteborg är städer.',
     explanationEn:
-      "Gotland and Öland are Sweden's two largest islands. Malmö and Gothenburg are cities, not islands.",
+      'The UHR section Geography, climate, and nature says that Sweden’s two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are not named there as the two largest, and Malmö and Gothenburg are cities.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -144,18 +145,18 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'true_false',
     questionSv:
-      'Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
+      'Sant eller falskt enligt UHR-materialet: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
     questionEn:
-      "True or false: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
+      "True or false according to the UHR material: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Sverige har ett mildare klimat än många andra områden på samma breddgrad. En förklaring är att varmare havsvatten och vindar påverkar luften över Sverige.',
+      'UHR-avsnittet Geografi, klimat och natur säger att Sverige har ett milt klimat jämfört med många områden på samma breddgrad. Det förklaras med att Golfströmmen och den Nordatlantiska strömmen för varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
     explanationEn:
-      'Sweden has a milder climate than many other areas at the same latitude. One explanation is that warmer ocean water and winds affect the air over Sweden.',
+      'The UHR section Geography, climate, and nature says Sweden has a mild climate compared with many areas at the same latitude. It explains this with the Gulf Stream and the North Atlantic Current carrying warm water toward Europe, warming the air that winds bring over Sweden.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -169,8 +170,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q007',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vad heter Sveriges högsta berg?',
-    questionEn: "What is the name of Sweden's highest mountain?",
+    questionSv: 'Enligt UHR-materialet, vad heter Sveriges högsta berg?',
+    questionEn: "According to the UHR material, what is the name of Sweden's highest mountain?",
     options: [
       { id: 'a', textSv: 'Kebnekaise', textEn: 'Kebnekaise' },
       { id: 'b', textSv: 'Smygehuk', textEn: 'Smygehuk' },
@@ -179,9 +180,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Kebnekaise anges som Sveriges högsta berg, cirka 2 000 meter högt. Smygehuk, Treriksröset och Mälaren är andra geografiska namn men inte Sveriges högsta berg.',
+      'UHR-avsnittet Fjäll säger att bergskedjan Skanderna ligger längs gränsen mot Norge och kallas fjällen. Där finns Sveriges högsta berg Kebnekaise, som är cirka 2 000 meter högt.',
     explanationEn:
-      "Kebnekaise is given as Sweden's highest mountain, about 2,000 metres high. Smygehuk, Treriksröset, and Mälaren are other geographical names but not Sweden's highest mountain.",
+      "The UHR section Mountains says the Scandinavian Mountains lie along the border with Norway and are called the Swedish mountains. Sweden's highest mountain, Kebnekaise, is there and is about 2,000 metres high.",
     uhrReference: { chapter: 'Landet Sverige', section: 'Fjäll', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
