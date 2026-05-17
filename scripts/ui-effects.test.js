@@ -47,6 +47,15 @@ test('practice locks answer options after feedback is visible', () => {
   assert.match(practiceSource, /disabled=\{hasSelectedAnswer\}/);
 });
 
+test('answer option feedback remains available in the accessibility label', () => {
+  const source = read('components/quiz/AnswerOption.tsx');
+
+  assert.match(source, /const accessibilityLabel = resultLabel/);
+  assert.match(source, /\$\{label\}, \$\{resultLabel\}/);
+  assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 

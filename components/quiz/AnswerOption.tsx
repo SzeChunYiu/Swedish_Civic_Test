@@ -18,10 +18,11 @@ export function AnswerOption({
 }) {
   const label = option?.textSv ?? 'Answer option';
   const variant = tone === 'correct' ? 'success' : tone === 'incorrect' ? 'danger' : 'option';
+  const accessibilityLabel = resultLabel ? `${label}, ${resultLabel}` : `Select answer ${label}`;
 
   return (
     <Button
-      accessibilityLabel={`Select answer ${label}`}
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       accessibilityState={{ disabled }}
       disabled={disabled}
