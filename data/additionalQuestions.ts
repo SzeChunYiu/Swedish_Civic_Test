@@ -764,8 +764,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Lagen gäller bara företag', 'The law only applies to companies'],
     ],
     0,
-    'Lagen riktar straffet mot den som köper sex.',
-    'The law directs punishment at the person buying sex.',
+    'UHR-avsnittet Sexköpslagen säger att det i Sverige är olagligt att köpa sex och att personen som köper sex kan straffas, men inte den som säljer det. Lagen riktar straffet mot köparen för att markera att det inte är acceptabelt att utnyttja någon sexuellt mot betalning.',
+    'The UHR Sex purchase law section says that buying sex is illegal in Sweden and that the person who buys sex can be punished, but not the person who sells it. The law directs punishment at the buyer to show that exploiting someone sexually for payment is not acceptable.',
     ['sex-purchase-law', 'law', 'rights'],
   ),
   single(
