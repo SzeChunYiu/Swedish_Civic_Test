@@ -678,6 +678,7 @@ let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
 let generationParityValidated = false;
+let chapterGenerationParityValidated = 0;
 let generatedSourceMetadataParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
@@ -1586,6 +1587,64 @@ function validateGenerationParity() {
 
 validateGenerationParity();
 
+function countQuestionsByChapter(questionsToCount) {
+  return questionsToCount.reduce((counts, question) => {
+    counts.set(question.chapterId, (counts.get(question.chapterId) || 0) + 1);
+    return counts;
+  }, new Map());
+}
+
+function validateChapterGenerationParity() {
+  if (
+    !Array.isArray(chapters) ||
+    !Array.isArray(sourceQuestions) ||
+    !Array.isArray(generatedPublishedQuestions) ||
+    !Array.isArray(questions)
+  ) {
+    return;
+  }
+
+  const sourceCounts = countQuestionsByChapter(sourceQuestions);
+  const generatedCounts = countQuestionsByChapter(generatedPublishedQuestions);
+  const publishedCounts = countQuestionsByChapter(questions);
+
+  chapters.forEach((chapter) => {
+    const sourceCount = sourceCounts.get(chapter.id) || 0;
+    const generatedCount = generatedCounts.get(chapter.id) || 0;
+    const publishedCount = publishedCounts.get(chapter.id) || 0;
+    const expectedGeneratedCount = sourceCount * GENERATED_VARIANTS_PER_SOURCE;
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (sourceCount < 1) {
+      reject(`${chapter.id} has no authored source questions`);
+    }
+    if (generatedCount !== expectedGeneratedCount) {
+      reject(
+        `${chapter.id} has ${generatedCount} generated questions, expected ${expectedGeneratedCount} from ${sourceCount} source questions`,
+      );
+    }
+    if (publishedCount !== sourceCount + generatedCount) {
+      reject(
+        `${chapter.id} has ${publishedCount} published questions, expected ${sourceCount + generatedCount} from source + generated questions`,
+      );
+    }
+    if (chapter.questionCount !== publishedCount) {
+      reject(
+        `${chapter.id} questionCount is ${chapter.questionCount}, expected ${publishedCount} published questions`,
+      );
+    }
+
+    if (valid) chapterGenerationParityValidated += 1;
+  });
+}
+
+validateChapterGenerationParity();
+
 function validateGeneratedSourceMetadataParity() {
   if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
     return;
@@ -2212,6 +2271,7 @@ console.log(
       authoredSourceQuestionsValidated,
       sourcePublicationParityValidated,
       generationParityValidated,
+      chapterGenerationParityValidated,
       generatedSourceMetadataParityValidated,
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
