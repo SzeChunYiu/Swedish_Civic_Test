@@ -460,3 +460,62 @@ Workspace contract: pass with caveat - no product source edited; concurrent sour
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-RELEASE-GATES-1 update [2026-05-17 08:54Z]`.
 Evidence: the prior local-validation/a11y failure is cleared, but the release verifier still cannot be trusted for the new ad-supported contract until stale store/privacy evidence is updated.
 Next manager action: keep release gates blocked for stale store/privacy evidence and external release artifacts; do not reopen A11Y1 from this pass.
+
+Lane: REVIEWER
+Artifact reviewed: SETUP Iteration 24 Google Mobile Ads SDK initialization decision helper.
+Checks run:
+- Inspected `lib/monetization/consent.ts` and `scripts/monetization.test.js` for `getAdSdkInitializationDecision`, `canInitializeGoogleMobileAds`, and `sdkInitRequiresConsentDecision`.
+- `rg -n "getAdSdkInitializationDecision|canInitializeGoogleMobileAds|sdkInitRequiresConsentDecision|getAdConsentDecision|shouldShowAd|LaunchPopupAd|AdBanner|NativeAdCard" lib/monetization app components scripts/monetization.test.js -S` - helper/test references found; app/components still call `shouldShowAd`/`shouldShowLaunchPopupAd` directly.
+- `npm run test:monetization` - exit 0; 12/12 tests passed.
+- `npm run typecheck` - exit 0.
+- `npm run lint` - exit 0.
+- Direct SDK-init helper assertion - exit 0; helper blocks disabled config, Remove Ads, pending prompts, and missing consent, while allowing satisfied consent and test-unit preview init.
+- `npx prettier --check lib/monetization/consent.ts scripts/monetization.test.js` - exit 0.
+- `npm run test:ownership` - exit 0.
+- `git diff --check -- lib/monetization/consent.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` - exit 0.
+Workspace contract: pass with caveat - source ownership is SETUP, not REVIEWER; no product source edited by REVIEWER.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1 update [2026-05-17 08:55Z]`.
+Evidence: the pure helper is verified, but the app still lacks integration that actually runs ATT/UMP prompts and gates native SDK initialization through this helper.
+Next manager action: VALIDATOR can assess SETUP Iteration 24 as a plumbing atom; keep consent/compliance open for app/native prompt integration, `app-ads.txt`, and public/privacy copy.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT CNT15 q045 free-media role question and exported CSV rows.
+Checks run:
+- Checked official UHR `Sverige i fokus` PDF section `Fria medier`, lines 546-557; it supports the answer about free media informing, enabling public discussion, and scrutinizing people with power.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for `q045` plus generated rows `q277`-`q280`.
+- `npm run validate:content` - exit 0; 500 questions, 500 UHR references, 500 prompt-unique questions, and 400 generated prompt-template parity checks.
+- `npm run test:content` - exit 0; 4/4 tests passed.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- Direct q045 assertion - exit 0 with `q045 OK; exported rows q045/q277-q280 present`.
+- `npm run typecheck` - exit 0.
+- `npm run test:ownership` - exit 0.
+- `npx prettier --check data/additionalQuestions.ts` - exit 0.
+- `git diff --check -- data/additionalQuestions.ts content/question-bank.csv docs/parallel-sessions/journals/content.md` - exit 0.
+Workspace contract: pass with caveat - source ownership is CONTENT, not REVIEWER; REVIEWER did not edit product source.
+Findings queued: none from this focused pass.
+Evidence: q045 has a non-debatable correct answer aligned to the UHR `Fria medier` section, coherent Swedish/English wording, expected source tags, and exported generated rows.
+Next manager action: no q045 defect; continue with the next bounded product or release-gate review atom.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY DI16 generated prompt-template parity validation.
+Checks run:
+- Inspected `scripts/validate-content.js` and `scripts/content-production.test.js` for `expectedGeneratedPrompt` and `generatedPromptTemplateParityValidated`.
+- `npm run validate:content` - exit 0 in the preceding content pass; summary reports 400 `generatedPromptTemplateParityValidated`.
+- `npm run test:content` - exit 0 in the preceding content pass; 4/4 tests passed and assert generated prompt-template parity.
+- `node scripts/export-question-bank.js --check` - exit 0 in the preceding content pass; 500-question export parity OK.
+- Temp-copy negative check - exit 0 for the reviewer command by confirming the validator rejects a mutated generated section-practice prompt template with `generated variant[0] questionSv does not match generated prompt template`.
+Workspace contract: pass with caveat - source ownership is DATA-INTEGRITY, not REVIEWER; REVIEWER mutated only a temp copy.
+Findings queued: none from this focused pass.
+Evidence: the validator now counts all 400 generated variants and rejects template drift between generated prompts and the source-derived Swedish/English prompt shapes.
+Next manager action: no DI16 reviewer defect; keep `npm run validate:content` and `npm run test:content` as the nearest regression gates.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after DI16 review.
+Checks run:
+- `git status --short --branch` - product-source dirty scope reappeared outside REVIEWER.
+- `git diff --name-status` - current source diff includes `app/(tabs)/home.tsx`, `components/monetization/PremiumBanner.tsx`, `scripts/monetization.test.js`, `scripts/content-production.test.js`, and `scripts/validate-content.js`.
+- Checked latest SETUP and DATA-INTEGRITY journals; no completed handoff row yet for the paywall UI or generated-answer-template parity diffs.
+Workspace contract: blocked - current product-source changes are ambiguous for REVIEWER acceptance-grade passes.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:58Z]`.
+Evidence: REVIEWER did not edit product source; queue/journal updates only.
+Next manager action: provide source-owner handoffs or a clean commit/boundary for the current paywall and data-integrity diffs before the next reviewer pass.

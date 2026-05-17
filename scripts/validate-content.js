@@ -19,6 +19,20 @@ const GENERATED_VARIANT_CONVENTIONS = [
   { type: 'true_false', tag: 'false-statement' },
   { type: 'single_choice', tag: 'judgement' },
 ];
+const UNKNOWN_OPTION = {
+  id: 'unknown',
+  textSv: 'Det går inte att avgöra av materialet',
+  textEn: 'It cannot be determined from the material',
+};
+const SOMETIMES_OPTION = {
+  id: 'sometimes',
+  textSv: 'Endast ibland',
+  textEn: 'Only sometimes',
+};
+const TRUE_FALSE_OPTIONS = [
+  { id: 'true', textSv: 'Sant', textEn: 'True' },
+  { id: 'false', textSv: 'Falskt', textEn: 'False' },
+];
 const EXPECTED_UHR_SOURCE = {
   titleKeyword: 'Sverige i fokus',
   publisher: 'Universitets- och högskolerådet (UHR)',
@@ -126,10 +140,7 @@ function correctOption(question) {
 
 function wrongOption(question) {
   return (
-    question.options?.find((option) => option.id !== question.correctOptionId) ?? {
-      textSv: 'Det går inte att avgöra av materialet',
-      textEn: 'It cannot be determined from the material',
-    }
+    question.options?.find((option) => option.id !== question.correctOptionId) ?? UNKNOWN_OPTION
   );
 }
 
@@ -161,6 +172,65 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
     questionSv: `Vilket alternativ motsvarar rätt bedömning av påståendet? ${sourceQuestion.questionSv}`,
     questionEn: `Which option gives the correct judgment of the statement? ${sourceQuestion.questionEn}`,
   };
+}
+
+function singleChoiceOptions(sourceQuestion) {
+  if (sourceQuestion.options?.length === SINGLE_CHOICE_OPTION_IDS.length) {
+    return sourceQuestion.options;
+  }
+  if (sourceQuestion.type === 'true_false') {
+    return [...sourceQuestion.options, UNKNOWN_OPTION, SOMETIMES_OPTION];
+  }
+  return sourceQuestion.options || [];
+}
+
+function normalizeSingleChoiceOptions(options, correctOptionId) {
+  if (options.length !== SINGLE_CHOICE_OPTION_IDS.length) {
+    return { options, correctOptionId };
+  }
+
+  const correctIndex = options.findIndex((option) => option.id === correctOptionId);
+  return {
+    options: options.map((option, index) => ({
+      ...option,
+      id: SINGLE_CHOICE_OPTION_IDS[index],
+    })),
+    correctOptionId: correctIndex >= 0 ? SINGLE_CHOICE_OPTION_IDS[correctIndex] : correctOptionId,
+  };
+}
+
+function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
+  if (variantIndex === 0) {
+    return normalizeSingleChoiceOptions(
+      singleChoiceOptions(sourceQuestion),
+      sourceQuestion.correctOptionId,
+    );
+  }
+
+  if (variantIndex === 1) {
+    return {
+      options: TRUE_FALSE_OPTIONS,
+      correctOptionId: 'true',
+    };
+  }
+
+  if (variantIndex === 2) {
+    return {
+      options: TRUE_FALSE_OPTIONS,
+      correctOptionId: 'false',
+    };
+  }
+
+  const correct = correctOption(sourceQuestion);
+  const wrong = wrongOption(sourceQuestion);
+  const isTrueFalseSource =
+    sourceQuestion.options?.length === 2 &&
+    ['true', 'false'].includes(sourceQuestion.correctOptionId);
+  const options = isTrueFalseSource
+    ? [...sourceQuestion.options, UNKNOWN_OPTION, SOMETIMES_OPTION]
+    : [correct, wrong, UNKNOWN_OPTION, SOMETIMES_OPTION];
+
+  return normalizeSingleChoiceOptions(options, correct.id);
 }
 
 function isIsoDate(value) {
@@ -298,6 +368,7 @@ let sourcePublicationParityValidated = 0;
 let generationParityValidated = false;
 let generatedSourceMetadataParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
+let generatedAnswerTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
@@ -543,6 +614,43 @@ function validateGeneratedPromptTemplateParity() {
 }
 
 validateGeneratedPromptTemplateParity();
+
+function validateGeneratedAnswerTemplateParity() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return;
+  }
+
+  sourceQuestions.forEach((sourceQuestion, sourceIndex) => {
+    const variants = generatedPublishedQuestions.slice(
+      sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+      (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+    );
+
+    variants.forEach((variant, variantIndex) => {
+      const label = `${sourceQuestion.id} generated variant[${variantIndex}]`;
+      if (!variant) {
+        fail(`${label} is missing`);
+        return;
+      }
+
+      let variantIsValid = true;
+      const expected = expectedGeneratedAnswerShape(sourceQuestion, variantIndex);
+
+      if (!jsonEqual(variant.options, expected.options)) {
+        variantIsValid = false;
+        fail(`${label} options do not match generated answer template`);
+      }
+      if (variant.correctOptionId !== expected.correctOptionId) {
+        variantIsValid = false;
+        fail(`${label} correctOptionId does not match generated answer template`);
+      }
+
+      if (variantIsValid) generatedAnswerTemplateParityValidated += 1;
+    });
+  });
+}
+
+validateGeneratedAnswerTemplateParity();
 
 function buildUhrReferenceChapters() {
   validateUhrSourceMetadata();
@@ -853,6 +961,7 @@ console.log(
       generationParityValidated,
       generatedSourceMetadataParityValidated,
       generatedPromptTemplateParityValidated,
+      generatedAnswerTemplateParityValidated,
       questionSchemasValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

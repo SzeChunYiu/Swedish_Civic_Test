@@ -1,7 +1,9 @@
 import { Link } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
+import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
@@ -13,11 +15,13 @@ import { uxBenchmarks } from '../../data/uxBenchmarks';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
+import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
+  const [monetizationEntitlements, setMonetizationEntitlements] = useState(FREE_ENTITLEMENTS);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
@@ -109,7 +113,11 @@ export default function Screen() {
         ))}
       </View>
 
-      <AdBanner placement="home_banner" />
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        onEntitlementsChange={setMonetizationEntitlements}
+      />
+      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
     </ScreenShell>
   );
 }

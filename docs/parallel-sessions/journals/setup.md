@@ -169,3 +169,10 @@ Artifacts changed: `lib/monetization/consent.ts`, `scripts/monetization.test.js`
 Verification: `npm run test:monetization` exit 0 with 12/12 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check lib/monetization/consent.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/consent.ts scripts/monetization.test.js` exit 0.
 Blocked? no — app/native prompt wiring and public compliance files remain separate atoms outside this non-UI SETUP plumbing pass.
 Next suggested validator action: inspect `getAdSdkInitializationDecision` and the monetization test coverage, then schedule the app integration when the UI/UX lease permits `app/`/`components/` writes.
+
+## Iteration 25 — 2026-05-17
+Task completed: Tooling/product atom — replaced the stale premium/deferred-ad banner with a Remove Ads paywall surface wired to the existing buy/restore helpers and surfaced it next to the Home ad placement.
+Artifacts changed: `components/monetization/PremiumBanner.tsx`, `app/(tabs)/home.tsx`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:monetization` exit 0 with 13/13 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0; `npm run test:ownership` exit 0; `npx prettier --check components/monetization/PremiumBanner.tsx app/'(tabs)'/home.tsx scripts/monetization.test.js` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0; targeted `git diff --check` exit 0.
+Blocked? no — native store product creation and device purchase QA remain external release gates; app-ads.txt/privacy copy are separate release/compliance atoms.
+Next suggested validator action: inspect the Home Remove Ads surface and rerun `npm run test:monetization`, then schedule native consent prompt wiring or compliance assets.

@@ -125,3 +125,19 @@ Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.te
 Verification: `npm run validate:content` passed and reported 500 `questionPromptTextUniquenessValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check data/additionalQuestions.ts scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js data/additionalQuestions.ts content/question-bank.csv docs/parallel-sessions/journals/data-integrity.md` passed; temp-copy negative check passed by rejecting duplicated q022/q017 Swedish and English prompt text.
 Blocked? no - the content validator now rejects duplicate published question prompts in either Swedish or English, and q022 was moved from a duplicate Riksdag member-count prompt to a separate UHR `Staten` law-and-budget role prompt before regenerating the CSV export.
 Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest prompt-uniqueness regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Generated question prompt-template parity atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `npm run validate:content` passed and reported 400 `generatedPromptTemplateParityValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed before this handoff append; temp-copy negative check passed by rejecting a mutated generated section-practice prompt template with `questionSv does not match generated prompt template`.
+Blocked? no - the content validator now rejects generated variants whose Swedish or English prompts drift from the source question prompt and answer labels.
+Next suggested validator action: review and accept this DATA-INTEGRITY parity atom, then keep `npm run validate:content` and `npm run test:content` as the nearest generated prompt-template regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Generated question answer-template parity atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `npm run validate:content` passed and reported 400 `generatedAnswerTemplateParityValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed; in-memory negative check passed by rejecting a generated variant whose `correctOptionId` no longer matched the generated answer template.
+Blocked? no - the content validator now rejects generated variants whose answer options or correct answer drift from the section-practice, true-statement, false-statement, and judgement answer templates.
+Next suggested validator action: review and accept this DATA-INTEGRITY parity atom, then keep `npm run validate:content` and `npm run test:content` as the nearest generated answer-template regression gates.

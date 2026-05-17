@@ -280,6 +280,29 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
   assert.equal(result.entitlements.adsDisabled, false);
 });
 
+test('remove-ads paywall is surfaced near an ad placement and wired to purchase helpers', () => {
+  const paywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+    'utf8',
+  );
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+
+  assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(paywallSource, /buyRemoveAds/);
+  assert.match(paywallSource, /restoreRemoveAdsPurchase/);
+  assert.match(paywallSource, /setCurrentEntitlements/);
+  assert.match(paywallSource, /onEntitlementsChange/);
+  assert.match(paywallSource, /adsDisabled/);
+  assert.match(paywallSource, /Buy Remove Ads for 29 SEK/);
+  assert.match(paywallSource, /Restore Remove Ads purchase/);
+  assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
+  assert.match(homeSource, /import \{ PremiumBanner \}/);
+  assert.match(
+    homeSource,
+    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+  );
+});
+
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
   const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
