@@ -346,9 +346,17 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(webSource, /web preview/);
   assert.match(webSource, /const placementLabel = placement\.replaceAll\('_', ' '\);/);
-  assert.match(webSource, /<Card accessibilityLabel=\{`Google AdMob: \$\{placementLabel\}/);
+  assert.match(
+    webSource,
+    /accessibilityHint="Sponsored ad preview\. Hidden after Remove Ads is active\."/,
+  );
+  assert.match(webSource, /<Card[\s\S]*accessibilityLabel=\{`Google AdMob: \$\{placementLabel\}/);
   assert.match(nativeSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /accessible/);
+  assert.match(
+    nativeSource,
+    /accessibilityHint="Sponsored ad banner\. Hidden after Remove Ads is active\."/,
+  );
   assert.match(nativeSource, /accessibilityLabel=\{`Google AdMob banner: \$\{placementLabel\}`\}/);
   assert.match(nativeSource, /<BannerAd/);
 });
@@ -358,7 +366,7 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
 
   assert.match(
     source,
-    /<Card accessibilityLabel="Test native ad: Sponsored study placement\. AdMob test placement preview\. Keep out of timed exams\.">/,
+    /accessibilityHint="Sponsored ad preview\. Hidden after Remove Ads is active\."[\s\S]*accessibilityLabel="Test native ad: Sponsored study placement\. AdMob test placement preview\. Keep out of timed exams\."/,
   );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -448,9 +456,10 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
   assert.match(webSource, /launchPopupShownThisRuntime/);
   assert.match(webSource, /Modal/);
+  assert.match(webSource, /accessibilityLabel=\{LAUNCH_SPONSOR_DIALOG_LABEL\}/);
   assert.match(webSource, /accessibilityViewIsModal/);
-  assert.match(webSource, /aria-modal=\{true\}/);
-  assert.match(webSource, /role="dialog"/);
+  assert.doesNotMatch(webSource, /aria-modal=\{true\}/);
+  assert.doesNotMatch(webSource, /role="dialog"/);
   assert.match(webSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /AppOpenAd/);

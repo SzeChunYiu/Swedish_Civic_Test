@@ -1385,8 +1385,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q085',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Nordiskt samarbete', pageApprox: 39 },
-    'Vilka två organ nämns som främsta vägar för Sveriges nordiska samarbete?',
-    "Which two bodies are named as the main channels for Sweden's Nordic cooperation?",
+    'Genom vilka två organ sker Sveriges nordiska samarbete främst enligt UHR-materialet?',
+    "Through which two bodies does Sweden's Nordic cooperation mainly take place according to the UHR material?",
     [
       [
         'Nordiska rådet och Nordiska ministerrådet',
@@ -1397,16 +1397,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['EU-domstolen och JO', 'The EU Court and the Parliamentary Ombudsmen'],
     ],
     0,
-    'UHR-avsnittet Nordiskt samarbete säger att Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i olika frågor som varje land sedan kan genomföra.',
-    'The UHR section on Nordic cooperation says Sweden works with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. The councils agree on different issues that each country can then implement.',
+    'UHR-avsnittet Nordiskt samarbete säger att Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. De två råden kommer överens i olika frågor som respektive land sedan kan genomföra.',
+    'The UHR section Nordic cooperation says Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. The two councils agree on issues that each country can then carry out.',
     ['nordic-cooperation', 'nordic-council', 'foreign-relations'],
   ),
   single(
     'q086',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vilket år blev Sverige medlem i EU?',
-    'In which year did Sweden become a member of the EU?',
+    'Vilket år säger UHR-materialet att Sverige blev medlem i EU?',
+    'According to the UHR material, in what year did Sweden become a member of the EU?',
     [
       ['1949', '1949'],
       ['1995', '1995'],
@@ -1423,8 +1423,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q087',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vad innebär EU:s fyra friheter enligt materialet?',
-    "What do the EU's four freedoms mean according to the material?",
+    'Vad innebär EU:s fyra friheter enligt UHR-materialet?',
+    "According to the UHR material, what do the EU's four freedoms mean?",
     [
       [
         'Att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder',

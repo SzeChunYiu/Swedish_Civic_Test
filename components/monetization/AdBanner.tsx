@@ -25,7 +25,10 @@ export function AdBanner({
     : 'AdMob placement active';
 
   return (
-    <Card accessibilityLabel={`Google AdMob: ${placementLabel}. ${adStatusLabel}`}>
+    <Card
+      accessibilityHint="Sponsored ad preview. Hidden after Remove Ads is active."
+      accessibilityLabel={`Google AdMob: ${placementLabel}. ${adStatusLabel}`}
+    >
       <Text style={styles.eyebrow}>Google AdMob</Text>
       <Text style={styles.title}>{placementLabel}</Text>
       <Text style={styles.meta}>{adStatusLabel}</Text>
