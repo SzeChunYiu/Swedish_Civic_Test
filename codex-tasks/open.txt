@@ -187,6 +187,15 @@ accurate & current, ORIGINAL paraphrased wording (never copied verbatim),
 natural fluent language, SV+EN parity now (full language set in v1.1), each
 fact cites a verifiable public source. Inaccurate fact = P0. Start ~30-50
 strong facts, expandable; rotate without immediate repeats.
+TONE (operator 2026-05-17, user directive): FACT-BUBBLE MUST carry a
+sense of Swedish humor — witty, warm, self-aware (lagom, fika, the
+queue ticket, jantelagen, weather complaints, Systembolaget, allemans-
+ratten quirks, etc.). Dry encyclopedic trivia is a MISS even if
+factually correct; the humor is the point and makes the app lively.
+Humor must land naturally in BOTH SV and EN (not a translated pun that
+dies in one language) and never undercut factual accuracy or the
+not-a-real-exam disclaimer. Aim: a Swede smiles in recognition; a
+learner abroad finds it charming and memorable.
 === END ===
 
 === PRIORITY: SWEDISH MASCOTS (Jellycat-style) + PICKER (operator 2026-05-17) ===
