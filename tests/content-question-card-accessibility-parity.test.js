@@ -22,13 +22,15 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.equal(summary.questionCardAccessibilityRulesValidated, 10);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.match(source, /const questionAccessibilityLabel =/);
+  assert.match(source, /getQuestionDisplayText\(question, 'sv'\)/);
+  assert.match(source, /getQuestionTranslationText\(question\)/);
   assert.match(source, /`Difficulty: \$\{difficulty\}`/);
   assert.match(source, /`Question: \$\{questionText\}`/);
-  assert.match(source, /English translation: \$\{question\.questionEn\}/);
+  assert.match(source, /English translation: \$\{questionTranslation\}/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /\{questionText\}/);
-  assert.match(source, /\{question\.questionEn\}/);
+  assert.match(source, /\{questionTranslation\}/);
 });
 
 test('QuestionCard accessibility parity rejects dropped question header', () => {

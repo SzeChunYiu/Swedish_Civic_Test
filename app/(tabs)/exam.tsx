@@ -21,6 +21,7 @@ import {
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
+import { getQuestionDisplayText } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
@@ -348,9 +349,7 @@ export default function Screen() {
                 {item.isCorrect ? 'Correct' : 'Review'}
               </Badge>
             </View>
-            <Text style={styles.questionText}>
-              {language === 'en' ? item.questionEn : item.questionSv}
-            </Text>
+            <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
             <View style={styles.answerGrid}>
               <View style={styles.answerCard}>
                 <Text style={styles.answerLabel}>Selected answer</Text>
@@ -406,9 +405,7 @@ export default function Screen() {
       {examQuestions.map((question, index) => (
         <View key={question.id} style={styles.questionCard}>
           <Text style={styles.questionMeta}>Question {index + 1}</Text>
-          <Text style={styles.questionText}>
-            {language === 'en' ? question.questionEn : question.questionSv}
-          </Text>
+          <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
           <View style={styles.options}>
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
