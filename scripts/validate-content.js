@@ -177,6 +177,23 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Session\s*\{normalizedSessionId\}\s*<\/Text>/,
   },
 ];
+const EXPECTED_CHAPTER_ROUTE_HEADERS = [
+  {
+    label: 'missing chapter title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Chapter not found\s*<\/Text>/,
+  },
+  {
+    label: 'chapter title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{chapter\.nameSv\}\s*<\/Text>/,
+  },
+  {
+    label: 'practice questions section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Practice questions \(\{chapterQuestions\.length\}\)\s*<\/Text>/,
+  },
+];
 const EXPECTED_LEARN_ROUTE_HEADERS = [
   {
     label: 'learn route title',
@@ -1906,6 +1923,8 @@ let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
+let chapterRouteHeadersValidated = 0;
+let chapterRouteHeaderParityValidated = false;
 let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
 let profileRouteHeadersValidated = 0;
@@ -3031,6 +3050,41 @@ function validateQuizRouteHeaderParity() {
 
   if (valid && quizRouteHeadersValidated === EXPECTED_QUIZ_ROUTE_HEADERS.length) {
     quizRouteHeaderParityValidated = true;
+  }
+}
+
+function validateChapterRouteHeaderParity() {
+  let valid = true;
+  let chapterRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    chapterRoute = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/chapter/[chapterId].tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  const unheaderedRouteHeadings =
+    chapterRoute.match(/<Text\s+style=\{styles\.(?:title|sectionTitle)\}>/g) || [];
+  if (unheaderedRouteHeadings.length > 0) {
+    reject('chapter route title and section text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_CHAPTER_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(chapterRoute)) {
+      reject(`chapter route missing ${expectedHeader.label} as a header`);
+      return;
+    }
+    chapterRouteHeadersValidated += 1;
+  });
+
+  if (valid && chapterRouteHeadersValidated === EXPECTED_CHAPTER_ROUTE_HEADERS.length) {
+    chapterRouteHeaderParityValidated = true;
   }
 }
 
@@ -7291,6 +7345,7 @@ validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
+validateChapterRouteHeaderParity();
 validateLearnRouteHeaderParity();
 validateProfileRouteHeaderParity();
 validateHomeRouteHeaderParity();
@@ -7374,6 +7429,8 @@ console.log(
       examRouteHeaderParityValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
+      chapterRouteHeadersValidated,
+      chapterRouteHeaderParityValidated,
       learnRouteHeadersValidated,
       learnRouteHeaderParityValidated,
       profileRouteHeadersValidated,
