@@ -431,8 +431,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q040',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättsväsendet', pageApprox: 17 },
-    'Vilken lista innehåller myndigheter som materialet nämner som delar av rättsväsendet?',
-    'Which list contains authorities the material names as parts of the justice system?',
+    'Vilka myndigheter ingår i det svenska rättsväsendet?',
+    'Which authorities are part of the Swedish justice system?',
     [
       [
         'Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten och Kriminalvården',
@@ -446,8 +446,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Fackförbund, banker och företag', 'Unions, banks, and companies'],
     ],
     0,
-    'Avsnittet listar flera myndigheter i rättsväsendet: Polisen, Åklagarmyndigheten, domstolarna, Brottsoffermyndigheten och Kriminalvården. De andra alternativen blandar politiska nivåer, medier eller arbetsmarknadsaktörer.',
-    'The section lists several justice-system authorities: the Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service. The other options mix political levels, media, or labour-market actors.',
+    'UHR-avsnittet Rättsväsendet säger att det svenska rättsväsendet består av olika myndigheter som arbetar för att lagar följs och att staten utövar sin makt enligt lagen. Avsnittet listar Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten och Kriminalvården.',
+    "The UHR section The justice system says Sweden's justice system consists of different authorities that work to ensure laws are followed and state power is exercised according to law. The section lists the Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service.",
     ['justice-system', 'authorities', 'law'],
   ),
   single(
