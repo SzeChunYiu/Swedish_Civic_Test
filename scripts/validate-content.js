@@ -114,6 +114,27 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/support': 'app/support.tsx',
   '/terms': 'app/terms.tsx',
 };
+const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
+  'adSupportedByDefault',
+  'adMobAppRecordRequired',
+  'appAdsTxtReviewRequired',
+  'consentPromptsRequired',
+  'noAdPlacements',
+  'privacyReviewRequiresBinary',
+  'realAdsEnvFlag',
+  'removeAdsPriceLabel',
+  'removeAdsProductId',
+  'storeDisclosureTopics',
+];
+const EXPECTED_RELEASE_CONSENT_PROMPTS = ['app_tracking_transparency', 'ump_consent_form'];
+const EXPECTED_RELEASE_NO_AD_PLACEMENTS = ['exam_screen'];
+const EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS = [
+  'Google Mobile Ads',
+  'Remove Ads in-app purchase',
+  'App Tracking Transparency',
+  'Google UMP consent',
+];
+const EXPECTED_RELEASE_REAL_ADS_ENV_FLAG = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
 const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
   { route: '/onboarding', file: 'app/onboarding.tsx' },
   { route: '/practice', file: 'app/(tabs)/practice.tsx' },
@@ -1431,6 +1452,14 @@ const typography = themeModule.typography;
 const adsModule = loadTs('lib/monetization/ads.ts');
 const adsConfig = adsModule.adsConfig;
 const shouldSuppressLaunchPopupAdForPath = adsModule.shouldSuppressLaunchPopupAdForPath;
+const consentModule = loadTs('lib/monetization/consent.ts');
+const consentConfig = consentModule.consentConfig;
+const purchaseModule = loadTs('lib/monetization/purchases.ts');
+const REMOVE_ADS_PRICE_LABEL = purchaseModule.REMOVE_ADS_PRICE_LABEL;
+const REMOVE_ADS_PRODUCT_ID = purchaseModule.REMOVE_ADS_PRODUCT_ID;
+const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
+const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
+const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
@@ -1440,6 +1469,8 @@ let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
+let releaseMonetizationPolicyFieldsValidated = 0;
+let releaseMonetizationPolicyParityValidated = false;
 let questionDisclaimerRoutesValidated = 0;
 let questionDisclaimerCopyValidated = false;
 let mockExamConfigTypeFieldsValidated = 0;
@@ -1611,6 +1642,15 @@ if (!isObjectRecord(typography)) fail('theme typography export is not an object'
 if (!isObjectRecord(adsConfig)) fail('adsConfig export is not an object');
 if (typeof shouldSuppressLaunchPopupAdForPath !== 'function') {
   fail('shouldSuppressLaunchPopupAdForPath export is not a function');
+}
+if (!isObjectRecord(consentConfig)) fail('consentConfig export is not an object');
+if (!hasText(REMOVE_ADS_PRICE_LABEL)) fail('REMOVE_ADS_PRICE_LABEL export is missing');
+if (!hasText(REMOVE_ADS_PRODUCT_ID)) fail('REMOVE_ADS_PRODUCT_ID export is missing');
+if (!isObjectRecord(releaseMonetizationPolicy)) {
+  fail('releaseMonetizationPolicy export is not an object');
+}
+if (typeof isReleaseMonetizationPolicyReady !== 'function') {
+  fail('isReleaseMonetizationPolicyReady export is not a function');
 }
 
 function getExpoPluginEntry(plugins, pluginName) {
@@ -1788,6 +1828,90 @@ function validateLaunchAdRouteSuppressionParity() {
     launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
   ) {
     launchAdRouteSuppressionParityValidated = true;
+  }
+}
+
+function validateReleaseMonetizationPolicyParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!isObjectRecord(releaseMonetizationPolicy)) return;
+
+  const expectedFieldValues = {
+    adSupportedByDefault: true,
+    adMobAppRecordRequired: true,
+    appAdsTxtReviewRequired: true,
+    consentPromptsRequired: EXPECTED_RELEASE_CONSENT_PROMPTS,
+    noAdPlacements: EXPECTED_RELEASE_NO_AD_PLACEMENTS,
+    privacyReviewRequiresBinary: true,
+    realAdsEnvFlag: EXPECTED_RELEASE_REAL_ADS_ENV_FLAG,
+    removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL,
+    removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
+    storeDisclosureTopics: EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS,
+  };
+
+  const actualFieldNames = Object.keys(releaseMonetizationPolicy);
+  if (!arrayEquals(actualFieldNames, EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS)) {
+    reject(
+      `releaseMonetizationPolicy fields are ${JSON.stringify(
+        actualFieldNames,
+      )}, expected ${JSON.stringify(EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS)}`,
+    );
+  }
+
+  EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS.forEach((fieldName) => {
+    const actualValue = releaseMonetizationPolicy[fieldName];
+    const expectedValue = expectedFieldValues[fieldName];
+
+    if (!jsonEqual(actualValue, expectedValue)) {
+      reject(
+        `releaseMonetizationPolicy.${fieldName} is ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expectedValue)}`,
+      );
+      return;
+    }
+
+    releaseMonetizationPolicyFieldsValidated += 1;
+  });
+
+  if (typeof isReleaseMonetizationPolicyReady !== 'function') return;
+  if (!isReleaseMonetizationPolicyReady()) {
+    reject('isReleaseMonetizationPolicyReady must return true for the current release policy');
+  }
+
+  if (!Array.isArray(consentConfig?.prompts)) {
+    reject('consentConfig.prompts must be an array for release policy parity');
+  } else if (
+    !arrayEquals(releaseMonetizationPolicy.consentPromptsRequired, consentConfig.prompts)
+  ) {
+    reject('releaseMonetizationPolicy consent prompts must match consentConfig.prompts');
+  }
+
+  if (!Array.isArray(adsConfig?.blockedPlacements)) {
+    reject('adsConfig.blockedPlacements must be an array for release policy parity');
+  } else if (!arrayEquals(releaseMonetizationPolicy.noAdPlacements, adsConfig.blockedPlacements)) {
+    reject('releaseMonetizationPolicy no-ad placements must match adsConfig.blockedPlacements');
+  }
+
+  const storeDisclosureLabels = Array.isArray(consentConfig?.storeDisclosureLabels)
+    ? consentConfig.storeDisclosureLabels
+    : [];
+  storeDisclosureLabels.forEach((label) => {
+    if (!releaseMonetizationPolicy.storeDisclosureTopics?.includes(label)) {
+      reject(`releaseMonetizationPolicy store disclosures must include ${label}`);
+    }
+  });
+
+  if (
+    valid &&
+    releaseMonetizationPolicyFieldsValidated === EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS.length
+  ) {
+    releaseMonetizationPolicyParityValidated = true;
   }
 }
 
@@ -5237,6 +5361,7 @@ validateMockExamConfig(
 );
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateReleaseMonetizationPolicyParity();
 validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
@@ -5290,6 +5415,8 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      releaseMonetizationPolicyFieldsValidated,
+      releaseMonetizationPolicyParityValidated,
       questionDisclaimerRoutesValidated,
       questionDisclaimerCopyValidated,
       mockExamConfigTypeFieldsValidated,
