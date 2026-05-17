@@ -8,3 +8,59 @@ TEST-1 tests: monetization gating unit tests + e2e web stub by entitlement; npx 
 
 
 WEB-DEPLOY: make the web build host-agnostic and deploy-ready. (1) app.json: expo.web.output="single"; baseUrl only if served from a subpath. (2) npm run build:web:export -> dist-web; in build add cp dist-web/index.html dist-web/404.html. (3) Add vercel.json (SPA rewrite all->/index.html) and public/_redirects (/* /index.html 200) so Vercel OR Netlify OR Cloudflare Pages deploy in one click. (4) Add .github/workflows/web-deploy.yml that builds + uploads dist-web as a CI artifact (do NOT assume GitHub Pages; repo is private). Acceptance: workflow green AND dist-web/index.html loads the app offline (open file -> mounts). Product path app.json + .github/ + vercel.json. One atom, no monetization/test edits.
+
+=== PRIORITY FOCUS (operator, 2026-05-17): UI/UX POLISH + CONTENT VERIFICATION ===
+The v1.0 frame exists & is 7/7 green. Two sustained priorities now, every iteration until done:
+
+UIUX-POLISH (lane SETUP/UI, repeat as many atoms as needed): Implement the v1.0-SAFE UI/UX
+recommendations from docs/competitive-teardown.md (NOT the backend/v1.1 items). Each atom: pick
+ONE concrete improvement and ship it in app/ or components/ — button affordance/size/states/
+hierarchy, layout & spacing on the 8px scale, visual hierarchy, empty states, answer-reveal
+SV+EN explanation, calmer information density, loading/disabled states, tap targets >=44px,
+a11y labels. MUST honor DESIGN.md tokens (zero hardcoded colors — keeps step 6 green), keep all
+7 acceptance steps green. Reference a named teardown row in the commit msg.
+
+CONTENT-VERIFY (lane CONTENT/REVIEWER, repeat): Rigorously audit the question bank in data/.
+Each atom: take a batch of questions and verify — (a) traceable to UHR Sverige i fokus ref,
+(b) Swedish natural & correct, (c) English an accurate translation, (d) the marked answer is
+factually correct, (e) disclaimer present on every question screen. Fix defects in data/ and
+file via review-to-queue.sh. A wrong answer or mistranslation is a P0. Do NOT mass-rewrite;
+verify, correct, cite the UHR page.
+=== END PRIORITY FOCUS ===
+
+=== PRIORITY: APPLY CLAUDE DESIGN SYSTEM (operator 2026-05-17) ===
+DESIGN.md is now the Claude (Anthropic) warm-parchment system. Execute in order:
+DESIGN-1 [P0, one atom]: rewrite lib/theme/colors.ts token VALUES to exactly the
+  table in DESIGN.md section 2 (same KEYS, new values). Update the DESIGN.md
+  line-ref comments to point at the new file. tsc must pass (values must satisfy
+  the HexColor/RgbaColor types). This single change restyles the whole app via
+  the token system; acceptance step 6 (zero hardcoded colors) MUST stay green.
+  Verify: npx tsc --noEmit and npm test -- monetization.
+DESIGN-2..N [repeat atoms]: align components/ and app/ to DESIGN.md sections 3-5
+  — serif headings (load a serif via expo-font, weight 500, never 700), radius
+  scale (cards 8-12, primary button 12, pills 9999), warm ring + whisper
+  shadows, body line-height 1.6, tap targets >= 44px. Token-only colors, keep
+  all 7 acceptance steps green, honor the DESIGN.md do and dont lists. This
+  folds into the existing UIUX-POLISH priority — the Claude look is the target.
+=== END CLAUDE DESIGN PRIORITY ===
+
+=== PRIORITY: MOTION + GRAPHICS RICHNESS (operator 2026-05-17) ===
+Make the app feel alive and delightful — generous, polished motion and graphics
+throughout, WITHOUT breaking the calm Claude aesthetic, a11y, or 60fps.
+Repeatable atoms in app/ + components/ (token-driven via lib/theme/motion.ts —
+add motion tokens for durations/easings, no hardcoded timings/colors):
+- Entrance/stagger animations for lists, cards, screens (Reanimated/Moti).
+- Route/screen transitions (shared-element where natural).
+- Micro-interactions: button press/scale, ripple, focus, toggles, tab switches.
+- Celebratory moments: correct answer, quiz complete, streak/XP, badge unlock
+  (confetti/Lottie, spring pop, count-up numbers) — tasteful, ~1s, skippable.
+- Skeleton/shimmer loaders, animated empty states, progress ring animations.
+- Subtle ambient: parallax/illustration motion on hero/results, gentle.
+- Add richer graphics: Lottie animations + organic illustrations matching
+  DESIGN.md (terracotta/warm, hand-drawn feel), not generic stock.
+HARD RULES: honor prefers-reduced-motion (respect Accessibility reduce-motion —
+provide reduced/no-motion variants); keep 60fps (use native driver/Reanimated
+worklets, no JS-thread jank); colors via tokens only; all 7 acceptance steps
+stay green; NO motion on the exam screen that distracts; nothing janky on the
+web export. Folds into UIUX-POLISH. Tasteful-but-abundant, premium not noisy.
+=== END MOTION PRIORITY ===
