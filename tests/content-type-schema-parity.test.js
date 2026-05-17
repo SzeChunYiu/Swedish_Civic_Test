@@ -17,7 +17,7 @@ test('content TypeScript schema stays in parity with runtime validator expectati
   const contentTypes = fs.readFileSync(path.join(repoRoot, 'types/content.ts'), 'utf8');
 
   assert.equal(summary.contentTypeUnionsValidated, 3);
-  assert.equal(summary.contentTypeInterfacesValidated, 4);
+  assert.equal(summary.contentTypeInterfacesValidated, 5);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
   assert.match(contentTypes, /export type ReviewStatus = 'draft' \| 'reviewed' \| 'published';/);
   assert.match(
@@ -27,6 +27,8 @@ test('content TypeScript schema stays in parity with runtime validator expectati
   assert.match(contentTypes, /export interface PracticeQuestion/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
+  assert.match(contentTypes, /export interface GlossaryTerm/);
+  assert.match(contentTypes, /chapterId\?: string;/);
 });
 
 test('content TypeScript schema parity rejects content field optionality drift', () => {
@@ -56,5 +58,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /PracticeQuestion\.tags optional=true, expected false/,
+  );
+});
+
+test('content TypeScript schema parity rejects glossary field optionality drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/types/content.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('chapterId?: string;', 'chapterId: string;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /GlossaryTerm\.chapterId optional=false, expected true/,
   );
 });

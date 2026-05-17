@@ -40,3 +40,12 @@ export interface Chapter {
   descriptionEn: string;
   questionCount: number;
 }
+
+export interface GlossaryTerm {
+  id: string;
+  termSv: string;
+  termEn: string;
+  explanationSv: string;
+  explanationEn: string;
+  chapterId?: string;
+}

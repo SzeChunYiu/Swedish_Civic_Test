@@ -335,6 +335,17 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
+  {
+    name: 'GlossaryTerm',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'termSv', type: 'string', optional: false },
+      { name: 'termEn', type: 'string', optional: false },
+      { name: 'explanationSv', type: 'string', optional: false },
+      { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'chapterId', type: 'string', optional: true },
+    ],
+  },
 ];
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'questionCount', type: 'number', optional: false },
