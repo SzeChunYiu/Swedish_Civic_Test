@@ -5,16 +5,25 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-const architectureTargetFiles = [
-  'app/_layout.tsx',
-  'app/index.tsx',
-  'app/onboarding.tsx',
+const architectureTabRouteFiles = [
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
   'app/(tabs)/practice.tsx',
   'app/(tabs)/exam.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/(tabs)/profile.tsx',
+];
+
+const architectureTabRouteNames = architectureTabRouteFiles.map((routeFile) =>
+  path.basename(routeFile, '.tsx'),
+);
+
+const architectureTargetFiles = [
+  'app/_layout.tsx',
+  'app/index.tsx',
+  'app/onboarding.tsx',
+  'app/(tabs)/_layout.tsx',
+  ...architectureTabRouteFiles,
   'app/chapter/[chapterId].tsx',
   'app/quiz/[sessionId].tsx',
   'app/settings.tsx',
@@ -64,6 +73,13 @@ function exists(relativePath) {
   return fs.existsSync(path.join(repoRoot, relativePath));
 }
 
+function extractTabScreenNames(tabLayoutSource) {
+  return Array.from(
+    tabLayoutSource.matchAll(/<Tabs\.Screen\s+name=(["'])([^"']+)\1/g),
+    (match) => match[2],
+  );
+}
+
 test('architecture target scaffold files exist', () => {
   assert.deepEqual(
     architectureTargetFiles.filter((relativePath) => !exists(relativePath)),
@@ -90,4 +106,11 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
   assert.equal(tsconfig.extends, 'expo/tsconfig.base');
   assert.equal(tsconfig.compilerOptions.strict, true);
   assert.match(babelConfig, /babel-preset-expo/);
+});
+
+test('Expo Router tab scaffold exposes the architecture tab routes', () => {
+  const tabLayout = readText('app/(tabs)/_layout.tsx');
+
+  assert.match(tabLayout, /import\s+\{\s*Tabs\s*\}\s+from ['"]expo-router['"]/);
+  assert.deepEqual(extractTabScreenNames(tabLayout).sort(), [...architectureTabRouteNames].sort());
 });
