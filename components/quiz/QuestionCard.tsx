@@ -4,10 +4,20 @@ import { Card } from '../ui/Card';
 import { colors, space, typography } from '../../lib/theme';
 
 export function QuestionCard({ question }: { question?: PracticeQuestion }) {
+  const difficulty = question?.difficulty ?? 'practice';
+  const questionText = question?.questionSv ?? 'Question unavailable';
+  const questionAccessibilityLabel = [
+    `Difficulty: ${difficulty}`,
+    `Question: ${questionText}`,
+    question?.questionEn ? `English translation: ${question.questionEn}` : null,
+  ]
+    .filter(Boolean)
+    .join('. ');
+
   return (
-    <Card>
-      <Text style={styles.label}>{question?.difficulty ?? 'practice'}</Text>
-      <Text style={styles.question}>{question?.questionSv ?? 'Question unavailable'}</Text>
+    <Card accessibilityLabel={questionAccessibilityLabel}>
+      <Text style={styles.label}>{difficulty}</Text>
+      <Text style={styles.question}>{questionText}</Text>
       {question?.questionEn ? <Text style={styles.translation}>{question.questionEn}</Text> : null}
     </Card>
   );

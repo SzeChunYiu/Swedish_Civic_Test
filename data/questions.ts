@@ -192,8 +192,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q008',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vilka är Sveriges tre största sjöar enligt materialet?',
-    questionEn: "Which are Sweden's three largest lakes according to the material?",
+    questionSv: 'Enligt UHR-materialet, vilka är Sveriges tre största sjöar?',
+    questionEn: "According to the UHR material, which are Sweden's three largest lakes?",
     options: [
       { id: 'a', textSv: 'Vänern, Vättern och Mälaren', textEn: 'Vänern, Vättern, and Mälaren' },
       {
@@ -210,9 +210,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'De tre största sjöarna är Vänern, Vättern och Mälaren. De andra alternativen blandar ihop hav, öar eller städer med sjöar.',
+      'UHR-avsnittet Skogar, sjöar och öar säger att Sverige har många sjöar spridda över hela landet och att de tre största är Vänern, Vättern och Mälaren. Alternativen med hav, öar eller städer blandar ihop andra geografiska begrepp med sjöar.',
     explanationEn:
-      'The three largest lakes are Vänern, Vättern, and Mälaren. The other alternatives confuse seas, islands, or cities with lakes.',
+      'The UHR section Forests, lakes, and islands says Sweden has many lakes spread throughout the country and that the three largest are Vänern, Vättern, and Mälaren. The alternatives with seas, islands, or cities confuse other geographical concepts with lakes.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Skogar, sjöar och öar', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -222,8 +222,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q009',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Ungefär hur många människor bor i Sverige enligt materialet?',
-    questionEn: 'Approximately how many people live in Sweden according to the material?',
+    questionSv: 'Enligt UHR-materialet, ungefär hur många människor bor i Sverige?',
+    questionEn: 'According to the UHR material, approximately how many people live in Sweden?',
     options: [
       { id: 'a', textSv: 'Nästan 11 miljoner', textEn: 'Almost 11 million' },
       { id: 'b', textSv: 'Nästan 1 miljon', textEn: 'Almost 1 million' },
@@ -232,9 +232,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Materialet anger att nästan 11 miljoner människor bor i Sverige. De andra alternativen ligger långt från den uppgiften.',
+      'UHR-avsnittet Befolkning säger att det bor nästan 11 miljoner människor i Sverige. Det beskriver också att befolkningen inte är jämnt fördelad och att de flesta bor i södra Sverige och längs kusterna.',
     explanationEn:
-      'The material states that almost 11 million people live in Sweden. The other alternatives are far from that figure.',
+      'The UHR section Population says almost 11 million people live in Sweden. It also describes the population as unevenly distributed, with most people living in southern Sweden and along the coasts.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -286,8 +286,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q011',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vad betyder ordet demokrati?',
-    questionEn: 'What does the word democracy mean?',
+    questionSv: 'Vad betyder demokrati enligt UHR-materialet?',
+    questionEn: 'According to the UHR material, what does democracy mean?',
     options: [
       { id: 'a', textSv: 'Folkstyre', textEn: 'Rule by the people' },
       { id: 'b', textSv: 'Militärstyre', textEn: 'Military rule' },
@@ -296,9 +296,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Demokrati betyder folkstyre. Det handlar om att makten utgår från folket och att medborgare kan påverka beslut.',
+      'UHR-avsnittet Demokrati betyder folkstyre säger att demokrati är ett politiskt system där makten utgår från folket. Det betyder att medborgarna har möjlighet att påverka beslut och att de som får makten ska kunna bytas ut.',
     explanationEn:
-      'Democracy means rule by the people. It means that power comes from the people and that citizens can influence decisions.',
+      'The UHR section Democracy means rule by the people says democracy is a political system where power comes from the people. This means citizens can influence decisions and those who gain power must be able to be replaced.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -312,13 +312,13 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q012',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vad är ett kännetecken på fria val i en demokrati?',
-    questionEn: 'What is a feature of free elections in a democracy?',
+    questionSv: 'Vad beskriver UHR-materialet som en del av fria val i en demokrati?',
+    questionEn: 'What does the UHR material describe as part of free elections in a democracy?',
     options: [
       {
         id: 'a',
-        textSv: 'Alla med rösträtt har en röst var',
-        textEn: 'Everyone with the right to vote has one vote each',
+        textSv: 'Alla som har rätt att rösta har en röst var',
+        textEn: 'Everyone who has the right to vote has one vote each',
       },
       {
         id: 'b',
@@ -327,20 +327,20 @@ export const baseQuestions: PracticeQuestion[] = [
       },
       {
         id: 'c',
-        textSv: 'Man måste visa offentligt hur man röstar',
-        textEn: 'You must publicly show how you vote',
+        textSv: 'Väljare måste visa offentligt hur de röstar',
+        textEn: 'Voters must publicly show how they vote',
       },
       {
         id: 'd',
-        textSv: 'Man måste rösta på regeringen',
-        textEn: 'You must vote for the government',
+        textSv: 'Regeringen bestämmer hur alla röster ska användas',
+        textEn: 'The government decides how all votes must be used',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'I fria val har alla med rösträtt en röst var och valet ska vara hemligt. Det ska också finnas flera partier att rösta på.',
+      'UHR-avsnittet Demokrati betyder folkstyre säger att fria val innebär att alla som har rätt att rösta har en röst var. Avsnittet säger också att väljare ska kunna uttrycka åsikter utan hot eller tvång, att det ska finnas flera partier och att valet ska vara hemligt.',
     explanationEn:
-      'In free elections, everyone with the right to vote has one vote each and the vote should be secret. There should also be several parties to choose from.',
+      'The UHR section Democracy means rule by the people says that free elections mean everyone who has the right to vote has one vote each. It also says voters should be able to express opinions without threats or coercion, that there should be several parties, and that the vote should be secret.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',

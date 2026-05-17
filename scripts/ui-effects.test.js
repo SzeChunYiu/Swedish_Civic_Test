@@ -114,6 +114,45 @@ test('answer option feedback remains available in the accessibility label', () =
   assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);
 });
 
+test('question card groups prompt and translation into an accessible summary', () => {
+  const source = read('components/quiz/QuestionCard.tsx');
+
+  assert.match(source, /const questionAccessibilityLabel =/);
+  assert.match(source, /`Difficulty: \$\{difficulty\}`/);
+  assert.match(source, /`Question: \$\{questionText\}`/);
+  assert.match(source, /English translation:/);
+  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('chapter card groups title, translation, status, and description into an accessible summary', () => {
+  const source = read('components/learning/ChapterCard.tsx');
+
+  assert.match(source, /const title = chapter\?\.nameSv \?\? 'Chapter unavailable'/);
+  assert.match(source, /const chapterAccessibilityLabel =/);
+  assert.match(source, /`Chapter: \$\{title\}`/);
+  assert.match(source, /`English name: \$\{chapter\.nameEn\}`/);
+  assert.match(source, /`Status: \$\{status\}`/);
+  assert.match(source, /`Description: \$\{chapter\.descriptionSv\}`/);
+  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('quiz feedback cards expose accessible summaries', () => {
+  const explanationSource = read('components/quiz/ExplanationPanel.tsx');
+  const referenceSource = read('components/quiz/UHRReferenceCard.tsx');
+
+  assert.match(explanationSource, /const panelAccessibilityLabel =/);
+  assert.match(explanationSource, /`Explanation: \$\{explanationSv\}`/);
+  assert.match(explanationSource, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
+  assert.doesNotMatch(explanationSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+
+  assert.match(referenceSource, /const referenceAccessibilityLabel =/);
+  assert.match(referenceSource, /`UHR reference: \$\{label\}\. \$\{pageLabel\}`/);
+  assert.match(referenceSource, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
+  assert.doesNotMatch(referenceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 

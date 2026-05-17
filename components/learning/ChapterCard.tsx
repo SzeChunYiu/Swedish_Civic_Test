@@ -17,13 +17,22 @@ export function ChapterCard({
   const progress = questionCount > 0 ? completedCount / questionCount : 0;
   const status =
     questionCount > 0 ? `${completedCount}/${questionCount} practiced` : 'Content queued';
+  const title = chapter?.nameSv ?? 'Chapter unavailable';
+  const chapterAccessibilityLabel = [
+    `Chapter: ${title}`,
+    chapter?.nameEn ? `English name: ${chapter.nameEn}` : null,
+    `Status: ${status}`,
+    chapter?.descriptionSv ? `Description: ${chapter.descriptionSv}` : null,
+  ]
+    .filter(Boolean)
+    .join('. ');
 
   return (
-    <Card elevated style={styles.card}>
+    <Card accessibilityLabel={chapterAccessibilityLabel} elevated style={styles.card}>
       <View style={styles.headerRow}>
         <Badge tone={questionCount > 0 ? 'blue' : 'warm'}>{status}</Badge>
       </View>
-      <Text style={styles.title}>{chapter?.nameSv ?? 'Chapter unavailable'}</Text>
+      <Text style={styles.title}>{title}</Text>
       {chapter?.nameEn ? <Text style={styles.subtitle}>{chapter.nameEn}</Text> : null}
       {chapter?.descriptionSv ? (
         <Text style={styles.description}>{chapter.descriptionSv}</Text>
