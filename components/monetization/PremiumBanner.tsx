@@ -4,7 +4,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import {
   REMOVE_ADS_PRICE_LABEL,
   buyRemoveAds,
-  getPurchaseEntitlements,
   restoreRemoveAdsPurchase,
 } from '../../lib/monetization/purchases';
 import { createDefaultPurchaseRuntimeOptions } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -62,16 +61,8 @@ export function PremiumBanner({
   );
 
   useEffect(() => {
-    let isMounted = true;
-
-    void getPurchaseEntitlements(purchaseRuntime).then((storedEntitlements) => {
-      if (isMounted) updateEntitlements(storedEntitlements);
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [purchaseRuntime, updateEntitlements]);
+    setCurrentEntitlements(entitlements);
+  }, [entitlements]);
 
   async function runPurchaseAction(action: PurchaseAction) {
     setActiveAction(action);
