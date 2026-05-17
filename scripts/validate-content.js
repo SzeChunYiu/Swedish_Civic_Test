@@ -155,6 +155,7 @@ const EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS = [
 ];
 const EXPECTED_RELEASE_REAL_ADS_ENV_FLAG = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   { text: 'Mock exam', styleName: 'title', occurrences: 2 },
@@ -2069,6 +2070,8 @@ let monetizationTypeSchemaParityValidated = false;
 let purchaseTypeUnionsValidated = 0;
 let purchaseTypeInterfacesValidated = 0;
 let purchaseTypeSchemaParityValidated = false;
+let removeAdsPurchaseRuntimeCasesValidated = 0;
+let removeAdsPurchaseRuntimeParityValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
@@ -5041,6 +5044,84 @@ function validatePurchaseTypeSchemaParity() {
   }
 }
 
+function validateRemoveAdsPurchaseRuntimeParity() {
+  let valid = true;
+  let purchaseSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/monetization/purchases.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const runtimeCases = [
+    [
+      typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
+        /^[a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads$/.test(REMOVE_ADS_PRODUCT_ID),
+      'Remove Ads product id must stay a reverse-DNS removeads identifier',
+    ],
+    [
+      /return\s+\{[\s\S]*priceLabel:\s*REMOVE_ADS_PRICE_LABEL,[\s\S]*productId:\s*REMOVE_ADS_PRODUCT_ID,[\s\S]*\};/.test(
+        purchaseSource,
+      ),
+      'Remove Ads purchase results must expose canonical price label and product id',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+      ),
+      'buyRemoveAds must request canonical Remove Ads product id',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
+      ),
+      'restoreRemoveAdsPurchase must restore canonical Remove Ads product id',
+    ],
+    [
+      /finishTransaction\(\{[\s\S]*isConsumable:\s*false,[\s\S]*purchase:\s*purchase\.raw\s+as\s+Purchase,[\s\S]*\}\);/.test(
+        purchaseSource,
+      ),
+      'native Remove Ads finish transaction must be non-consumable',
+    ],
+    [
+      /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*productId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*productId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
+        purchaseSource,
+      ),
+      'native Remove Ads purchase request must use the supplied product id as an in-app purchase',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];',
+      ) && normalizedPurchaseSource.includes("return [createMockPurchase('restore-remove-ads')];"),
+      'mock Remove Ads restore must require the canonical product id',
+    ],
+  ];
+
+  runtimeCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+
+    removeAdsPurchaseRuntimeCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    removeAdsPurchaseRuntimeCasesValidated === EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES
+  ) {
+    removeAdsPurchaseRuntimeParityValidated = true;
+  }
+}
+
 function validateAdConsentTypeSchemaParity() {
   let valid = true;
   let consentSource = '';
@@ -7684,6 +7765,7 @@ validateExamGeneratorTypeSchemaParity();
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
+validateRemoveAdsPurchaseRuntimeParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
@@ -7795,6 +7877,8 @@ console.log(
       purchaseTypeUnionsValidated,
       purchaseTypeInterfacesValidated,
       purchaseTypeSchemaParityValidated,
+      removeAdsPurchaseRuntimeCasesValidated,
+      removeAdsPurchaseRuntimeParityValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,
