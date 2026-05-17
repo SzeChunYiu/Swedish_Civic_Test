@@ -461,6 +461,40 @@ test('mock exam access persistence stores daily completions and rewarded credits
   );
 });
 
+test('rewarded extra exam credit is granted only after an earned ad reward', async () => {
+  const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
+  const defaultResult = await showRewardedExtraExamAd();
+  const nativeRewardedAdSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedAd.native.ts'),
+    'utf8',
+  );
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.deepEqual(defaultResult, {
+    reward: {
+      amount: 1,
+      type: 'extra_mock_exam',
+    },
+    status: 'earned_reward',
+  });
+  assert.match(nativeRewardedAdSource, /initializeGoogleMobileAdsAfterConsent/);
+  assert.match(nativeRewardedAdSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
+  assert.match(nativeRewardedAdSource, /RewardedAd\.createForAdRequest/);
+  assert.match(nativeRewardedAdSource, /RewardedAdEventType\.LOADED/);
+  assert.match(nativeRewardedAdSource, /RewardedAdEventType\.EARNED_REWARD/);
+  assert.match(nativeRewardedAdSource, /AdEventType\.CLOSED/);
+  assert.match(nativeRewardedAdSource, /status: 'closed_without_reward'/);
+  assert.match(nativeRewardedAdSource, /status: 'earned_reward'/);
+  assert.match(
+    examSource,
+    /accessDecision\.canOfferRewardedAd \|\| accessDecision\.reason === 'consent_required'/,
+  );
+  assert.match(
+    examSource,
+    /const rewardedAdResult = await showRewardedExtraExamAd\(\{ entitlements \}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*await grantRewardedExamCredit\(\);/,
+  );
+});
+
 test('ad rendering flag disables all placements even for free users', () => {
   withEnv(
     {

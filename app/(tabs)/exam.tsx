@@ -10,6 +10,10 @@ import { chapters } from '../../data/chapters';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
 import {
+  showRewardedExtraExamAd,
+  type RewardedExtraExamAdStatus,
+} from '../../lib/monetization/rewardedAd';
+import {
   buildExamChapterBreakdownItems,
   buildExamReviewItems,
   formatExamTime,
@@ -40,6 +44,23 @@ function getAccessStatusText(reason: MockExamAccessReason): string {
   }
 }
 
+function getRewardedAdStatusText(status: RewardedExtraExamAdStatus): string {
+  switch (status) {
+    case 'closed_without_reward':
+      return 'Extra mock exam unlock needs a completed rewarded ad.';
+    case 'earned_reward':
+      return 'Extra mock exam unlocked.';
+    case 'failed_to_load':
+      return 'Rewarded ad could not load right now.';
+    case 'show_failed':
+      return 'Rewarded ad could not be shown right now.';
+    case 'timed_out':
+      return 'Rewarded ad timed out before the extra exam unlocked.';
+    case 'unavailable':
+      return 'Rewarded ad is unavailable on this device right now.';
+  }
+}
+
 export default function Screen() {
   const examQuestions = useMemo(
     () => generateExam(questions, { questionCount: defaultMockExamConfig.questionCount }),
@@ -58,6 +79,7 @@ export default function Screen() {
     accessDecision,
     accessReady,
     consumeRewardedExamCredit,
+    entitlements,
     entitlementsReady,
     grantRewardedExamCredit,
     recordExamCompletion,
@@ -101,7 +123,9 @@ export default function Screen() {
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
-  const startAccessibleExamLabel = accessDecision.canOfferRewardedAd
+  const shouldAttemptRewardedAd =
+    accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
+  const startAccessibleExamLabel = shouldAttemptRewardedAd
     ? 'Unlock extra exam'
     : accessDecision.reason === 'rewarded_exam_credit'
       ? 'Start unlocked extra exam'
@@ -109,7 +133,7 @@ export default function Screen() {
   const canStartAccessibleExam =
     !accessLoading &&
     (accessDecision.canStartExam ||
-      accessDecision.canOfferRewardedAd ||
+      shouldAttemptRewardedAd ||
       accessDecision.reason === 'rewarded_exam_credit');
   const accessStatusText = accessLoading
     ? 'Checking mock exam access.'
@@ -132,7 +156,14 @@ export default function Screen() {
     try {
       if (accessDecision.reason === 'rewarded_exam_credit') {
         await consumeRewardedExamCredit();
-      } else if (accessDecision.canOfferRewardedAd) {
+      } else if (shouldAttemptRewardedAd) {
+        const rewardedAdResult = await showRewardedExtraExamAd({ entitlements });
+
+        if (rewardedAdResult.status !== 'earned_reward') {
+          setAccessStatusMessage(getRewardedAdStatusText(rewardedAdResult.status));
+          return;
+        }
+
         await grantRewardedExamCredit();
         await consumeRewardedExamCredit();
       } else if (!accessDecision.canStartExam) {
@@ -147,13 +178,14 @@ export default function Screen() {
       setStartingAccessibleExam(false);
     }
   }, [
-    accessDecision.canOfferRewardedAd,
     accessDecision.canStartExam,
     accessDecision.reason,
     canStartAccessibleExam,
     consumeRewardedExamCredit,
+    entitlements,
     grantRewardedExamCredit,
     resetExamAttempt,
+    shouldAttemptRewardedAd,
     startingAccessibleExam,
   ]);
 
