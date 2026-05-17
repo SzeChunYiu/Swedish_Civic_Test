@@ -1326,8 +1326,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Stark tillväxt, låg arbetslöshet och reformer präglade rekordåren.',
-    'Strong growth, low unemployment, and reforms characterized the record years.',
+    'UHR-avsnittet Rekordåren säger att Sverige efter andra världskriget hade stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrierna gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga.',
+    'The UHR section The record years says Sweden had strong economic growth for a long time after the Second World War. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.',
     ['record-years', 'welfare', 'postwar'],
   ),
   single(
