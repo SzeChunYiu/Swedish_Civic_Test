@@ -839,8 +839,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Nationella minoriteter och urfolk',
       pageApprox: 25,
     },
-    'Vad heter samernas folkvalda parlament?',
-    'What is the name of the Sami people’s elected parliament?',
+    'Vad kallas samernas eget folkvalda parlament?',
+    "What is the Sami people's own elected parliament called?",
     [
       ['Sametinget', 'The Sami Parliament'],
       ['Riksdagen', 'The Riksdag'],
@@ -848,8 +848,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Regionfullmäktige', 'The regional council'],
     ],
     0,
-    'Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet.',
-    'The Sami Parliament represents the Sami population on questions of language, culture, and identity.',
+    'UHR-avsnittet Nationella minoriteter och urfolk säger att samerna är ett erkänt urfolk och har ett eget folkvalt parlament som kallas Sametinget. Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet och har även vissa myndighetsuppgifter.',
+    'The UHR section on national minorities and Indigenous people says that the Sami are a recognized Indigenous people and have their own elected parliament, called the Sami Parliament. The Sami Parliament represents the Sami population on questions of language, culture, and identity, and also has some public-authority tasks.',
     ['sami', 'sametinget', 'indigenous-people'],
   ),
   trueFalse(
