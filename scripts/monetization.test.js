@@ -272,6 +272,72 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
   assert.equal(result.entitlements.adsDisabled, false);
 });
 
+test('ad consent decision covers ATT and UMP prompts before real ad serving', () => {
+  const consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
+  const { consentConfig, getAdConsentDecision } = loadTs('lib/monetization/consent.ts');
+
+  assert.match(consentSource, /App Tracking Transparency/);
+  assert.match(consentSource, /UMP consent/);
+  assert.deepEqual(consentConfig.prompts, ['app_tracking_transparency', 'ump_consent_form']);
+
+  const pendingIosDecision = getAdConsentDecision({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    platform: 'ios',
+    realAdsEnabled: true,
+    region: 'eea',
+    trackingTransparencyStatus: 'not_determined',
+    umpConsentStatus: 'required',
+  });
+
+  assert.equal(pendingIosDecision.adServingAllowed, false);
+  assert.deepEqual(pendingIosDecision.pendingPrompts, [
+    'app_tracking_transparency',
+    'ump_consent_form',
+  ]);
+
+  const nonPersonalizedDecision = getAdConsentDecision({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    platform: 'ios',
+    realAdsEnabled: true,
+    region: 'eea',
+    trackingTransparencyStatus: 'denied',
+    umpConsentStatus: 'obtained',
+  });
+
+  assert.equal(nonPersonalizedDecision.adServingAllowed, true);
+  assert.equal(nonPersonalizedDecision.canRequestNonPersonalizedAds, true);
+  assert.equal(nonPersonalizedDecision.canRequestPersonalizedAds, false);
+  assert.deepEqual(nonPersonalizedDecision.pendingPrompts, []);
+
+  const notRequiredDecision = getAdConsentDecision({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    platform: 'android',
+    realAdsEnabled: true,
+    region: 'us',
+    trackingTransparencyStatus: 'unavailable',
+    umpConsentStatus: 'not_required',
+  });
+
+  assert.equal(notRequiredDecision.adServingAllowed, true);
+  assert.deepEqual(notRequiredDecision.pendingPrompts, []);
+
+  const disabledDecision = getAdConsentDecision({
+    entitlements: { adsDisabled: true },
+    googleMobileAdsEnabled: true,
+    platform: 'android',
+    realAdsEnabled: true,
+    region: 'eea',
+    trackingTransparencyStatus: 'unavailable',
+    umpConsentStatus: 'required',
+  });
+
+  assert.equal(disabledDecision.adServingAllowed, false);
+  assert.deepEqual(disabledDecision.pendingPrompts, []);
+});
+
 test('exam screen does not import ad components', () => {
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);

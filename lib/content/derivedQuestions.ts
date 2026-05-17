@@ -70,6 +70,12 @@ function trueFalseOptions(): QuestionOption[] {
   ];
 }
 
+function singleChoiceOptions(source: PracticeQuestion): QuestionOption[] {
+  if (source.options.length === 4) return source.options;
+  if (source.type === 'true_false') return [...source.options, UNKNOWN_OPTION, SOMETIMES_OPTION];
+  return source.options;
+}
+
 function answerLabel(option: QuestionOption): string {
   return `${option.textSv}`.replace(/[.!?]\s*$/, '');
 }
@@ -81,7 +87,7 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
     'single_choice',
     `Vilket svar stämmer bäst enligt UHR-avsnittet "${source.uhrReference.section}"? ${source.questionSv}`,
     `Which answer best matches the UHR section "${source.uhrReference.section}"? ${source.questionEn}`,
-    source.options,
+    singleChoiceOptions(source),
     source.correctOptionId,
     ['published-variant', 'section-practice'],
   );

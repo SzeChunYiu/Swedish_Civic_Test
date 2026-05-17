@@ -81,6 +81,13 @@ function findDuplicateOptionTextLabels(question) {
   return duplicates;
 }
 
+function optionCountMatchesQuestionType(question) {
+  if (!Array.isArray(question.options)) return false;
+  if (question.type === 'single_choice') return question.options.length === 4;
+  if (question.type === 'true_false') return question.options.length === 2;
+  return [2, 4].includes(question.options.length);
+}
+
 function validateQuestionSchema(question, index) {
   const label = hasText(question.id) ? question.id : `question[${index}]`;
   let valid = true;
@@ -139,6 +146,9 @@ function validateQuestionSchema(question, index) {
     if (!optionIds.has(question.correctOptionId)) {
       reject(`${label} correctOptionId does not match an option`);
     }
+    if (question.type === 'single_choice' && question.options.length !== 4) {
+      reject(`${label} single_choice questions must have 4 options`);
+    }
     if (
       question.type === 'true_false' &&
       (question.options.length !== 2 ||
@@ -177,6 +187,7 @@ const uhrSectionMap = JSON.parse(
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionOptionTextLabelsValidated = 0;
+let questionTypeOptionCountsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let questionChapterReferenceParityValidated = 0;
@@ -470,6 +481,9 @@ if (Array.isArray(questions)) {
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
       }
+      if (optionCountMatchesQuestionType(question)) {
+        questionTypeOptionCountsValidated += 1;
+      }
     }
 
     if (
@@ -567,6 +581,7 @@ console.log(
       generationParityValidated,
       questionSchemasValidated,
       questionOptionTextLabelsValidated,
+      questionTypeOptionCountsValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
       questionChapterReferenceParityValidated,

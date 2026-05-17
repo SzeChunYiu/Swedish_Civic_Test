@@ -120,3 +120,17 @@ Artifacts changed: `lib/monetization/purchases.ts`, `scripts/monetization.test.j
 Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check app/_layout.tsx lib/monetization/purchases.ts scripts/monetization.test.js` exit 0; `git diff --check -- app/_layout.tsx lib/monetization/purchases.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `rg -n "REMOVE_ADS_VERIFIER_TOKEN|remove\\.\\?ads" lib/monetization/purchases.ts scripts/monetization.test.js` found no matches.
 Blocked? no — IAP-1 no longer depends on the artificial token; the focused monetization verifier now covers the real purchase/restore path and the exam-route ad suppression.
 Next suggested validator action: rerun `npm run test:monetization`, inspect `lib/monetization/purchases.ts`, and decide whether IAP-1 can move from blocked to accepted before assigning IAP-2 paywall UI.
+
+## Iteration 18 — 2026-05-17
+Task completed: Tooling/product atom — added chapter-to-quiz session helpers in the quiz flow layer so future chapter quiz-entry UI can resolve a stable first question without duplicating route logic.
+Artifacts changed: `lib/quiz/practiceFlow.ts`, `scripts/practice-flow.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:practice` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check lib/quiz/practiceFlow.ts scripts/practice-flow.test.js` exit 0; `git diff --check -- lib/quiz/practiceFlow.ts scripts/practice-flow.test.js docs/parallel-sessions/journals/setup.md` exit 0; `npm run test:ownership` exit 0. Direct `npx eslint lib/quiz/practiceFlow.ts scripts/practice-flow.test.js` is not project-equivalent and fails on the pre-existing script `__dirname` Node-global config gap.
+Blocked? no — non-UI plumbing is verified; wiring the visible chapter start control remains a separate `app/` screen atom under the current UI/UX lease.
+Next suggested validator action: inspect the new `getChapterQuizSessionId` coverage, then schedule the chapter screen link when the `app/` lease is available.
+
+## Iteration 19 — 2026-05-17
+Task completed: Tooling/product atom — added monetization consent decision helpers for ATT and Google UMP prompts before real ad serving.
+Artifacts changed: `lib/monetization/consent.ts`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check lib/monetization/consent.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/consent.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `rg -n "tracking-transparency|ATT|UMP|consent" lib app` found consent coverage in `lib/monetization/consent.ts`.
+Blocked? no — this is a verified consent-plumbing atom; native prompt wiring remains a separate app integration task.
+Next suggested validator action: inspect `getAdConsentDecision` and rerun `npm run test:monetization` before assigning the native consent prompt integration.

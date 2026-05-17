@@ -51,3 +51,32 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
 });
+
+test('derivePublishedQuestions keeps generated single-choice variants at four options', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q002',
+    chapterId: 'ch01',
+    type: 'true_false',
+    questionSv: 'Sant eller falskt: Sverige ligger i Norden.',
+    questionEn: 'True or false: Sweden is in the Nordic region.',
+    options: [
+      { id: 'true', textSv: 'Sant', textEn: 'True' },
+      { id: 'false', textSv: 'Falskt', textEn: 'False' },
+    ],
+    correctOptionId: 'true',
+    explanationSv: 'Sverige ligger i Norden.',
+    explanationEn: 'Sweden is in the Nordic region.',
+    uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
+    difficulty: 'easy',
+    reviewStatus: 'reviewed',
+    tags: ['geography', 'true-false'],
+  };
+
+  const derived = derivePublishedQuestions([source], 105);
+  const singleChoiceVariants = derived.filter((question) => question.type === 'single_choice');
+
+  assert.ok(singleChoiceVariants.length > 0);
+  assert.ok(singleChoiceVariants.every((question) => question.options.length === 4));
+  assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'true'));
+});

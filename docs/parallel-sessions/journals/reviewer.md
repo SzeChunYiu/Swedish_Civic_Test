@@ -174,3 +174,27 @@ Workspace contract: pass with caveats — no product source edited; source chang
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ADS-IAP-1 update`.
 Evidence: `/home` now shows AdMob test placement (`googleAdMobCount:2`, `homeBannerVisible:1`), `/exam` no longer shows global launch ads (`launchSponsorVisible:0`, `googleAdMobVisible:0`), but `/profile` returned `removeAdsVisible:false`, `priceVisible:false`, `restoreVisible:false`, and stale deferred copy still visible; console/page errors 0.
 Next manager action: keep ADS/IAP open for a source-touching paywall UI/entitlement atom; do not accept monetization solely on green unit tests or fixed home/exam ad rendering.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web free-tier ad placements after monetization route changes.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queue first; did not duplicate open IAP/paywall, consent/compliance, release-gate, learn-chapter, language, mobile-scroll, support, sources, dirty-worktree, or Playwright-cache findings.
+- `npm run test:monetization` - exit 0, 10/10 tests passed.
+- `CI=1 EXPO_NO_TELEMETRY=1 timeout 360s npm run build:web:export` - exit 0; `dist-web` rebuilt from the current dirty checkout.
+- Inline Playwright route pass against `/home`, `/learn`, `/practice`, `/mistakes`, and `/exam` using `/usr/bin/google-chrome` on port 4190 - exit 0.
+Workspace contract: pass with caveats - no product source edited; current dirty product files are outside this lane, and official Playwright cache remains blocked, so this is reviewer functional evidence rather than acceptance-grade e2e evidence.
+Findings queued: none from this focused pass.
+Evidence: `/home` showed and closed the launch sponsor, then showed `home banner`; `/learn` showed 13 chapter links plus `chapter list banner`; `/practice` did not show the completion interstitial before answering, then showed `quiz completed interstitial` with the next-question action after answering; `/mistakes` showed the native ad and empty-state practice action; direct `/exam` showed `Mock exam`, 20 questions, no `Launch sponsor`, no `Google AdMob`, and no console/page errors.
+Next manager action: keep existing IAP/paywall, consent/compliance, and official Playwright-cache blockers open; this pass does not clear them.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web routed quiz session at `/quiz/daily`.
+Checks run:
+- Checked existing reviewer queue first; did not duplicate the learn-chapter missing-entry defect or the practice wrong-answer feedback defect.
+- Reused the current `dist-web` export from the previous reviewer pass.
+- Inline Playwright route pass against `/quiz/daily` using `/usr/bin/google-chrome` on port 4192 - exit 0 after correcting the expected disclaimer locator to the actual independent-study copy.
+Workspace contract: pass with caveats - no product source edited; current dirty product files are outside this lane, and official Playwright cache remains blocked, so this is reviewer functional evidence rather than acceptance-grade e2e evidence.
+Findings queued: none from this focused pass.
+Evidence: direct `/quiz/daily` showed a closable launch sponsor, `Session daily`, the independent-study disclaimer, 4 answer options, score after answering, explanation, UHR reference, `Try this quiz question again`, and `Back to practice`; retry cleared score feedback and restored 4 selectable options; console/page errors 0.
+Next manager action: keep `REVIEWER-LEARN-CHAPTER-1` and `REVIEWER-PRACTICE-WRONG-FEEDBACK-1` open; this direct-route smoke does not clear those broader navigation/feedback defects.
