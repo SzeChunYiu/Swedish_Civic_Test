@@ -1,10 +1,14 @@
 name: Release validation
 
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
