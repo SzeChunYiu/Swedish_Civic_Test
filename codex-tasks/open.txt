@@ -5,3 +5,6 @@ IAP-2 app/ + components/monetization: "Remove Ads" paywall UI 29 SEK, Buy + Rest
 CONSENT-1 lib/ + app/: expo-tracking-transparency (iOS ATT) + Google UMP consent gate before ad SDK init; no personalized ads without consent.
 COMPLY-1 publishing/public-site/app-ads.txt placeholder + update publishing/privacy-labels.md + google-play-data-safety.md (ads SDK + IAP); reports/release-ads-iap-device-qa.md template.
 TEST-1 tests: monetization gating unit tests + e2e web stub by entitlement; npx expo export --platform web must not crash with ad stubs.
+
+
+WEB-DEPLOY: make the web build host-agnostic and deploy-ready. (1) app.json: expo.web.output="single"; baseUrl only if served from a subpath. (2) npm run build:web:export -> dist-web; in build add cp dist-web/index.html dist-web/404.html. (3) Add vercel.json (SPA rewrite all->/index.html) and public/_redirects (/* /index.html 200) so Vercel OR Netlify OR Cloudflare Pages deploy in one click. (4) Add .github/workflows/web-deploy.yml that builds + uploads dist-web as a CI artifact (do NOT assume GitHub Pages; repo is private). Acceptance: workflow green AND dist-web/index.html loads the app offline (open file -> mounts). Product path app.json + .github/ + vercel.json. One atom, no monetization/test edits.

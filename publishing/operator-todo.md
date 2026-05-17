@@ -37,3 +37,11 @@ Do NOT start these until the mobile app is shipped.
 - [ ] Google AdSense account — apply AFTER web site is live & trafficked
       (AdSense only approves live sites; cannot gate release on it)
 - [ ] (neural_grow gets the same login/progress milestone — see ng repo spec)
+
+### A4. Web version host (free, no payment) — YOUR one step
+- [ ] Go to vercel.com, Sign Up, Continue with GitHub (free, no card)
+- [ ] Authorize Vercel for the SzeChunYiu account; Add New Project >
+      Import SzeChunYiu/Swedish_Civic_Test
+- [ ] Stop at the configure screen (do NOT guess settings) and tell Claude;
+      Claude sets build cmd / output / SPA + hands you the live URL
+- [ ] (optional, paid ~10/yr) custom domain later
