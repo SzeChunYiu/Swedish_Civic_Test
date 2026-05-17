@@ -615,6 +615,7 @@ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
 const generateExam = examGeneratorModule.generateExam;
+const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
@@ -643,6 +644,8 @@ let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
+let examReviewItemsValidated = 0;
+let examReviewSourceParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
@@ -699,6 +702,9 @@ if (!Array.isArray(generatedPublishedQuestions)) {
 }
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
+if (typeof buildExamReviewItems !== 'function') {
+  fail('buildExamReviewItems export is not a function');
+}
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
@@ -840,6 +846,96 @@ function validateMockExamRuntimeParity(config) {
 
   if (valid) mockExamRuntimeParityValidated = true;
   if (valid) mockExamChapterBalanceParityValidated = true;
+}
+
+function firstWrongOptionId(question) {
+  return question.options?.find((option) => option.id !== question.correctOptionId)?.id;
+}
+
+function validateExamReviewSourceParity(config) {
+  if (!config || typeof config !== 'object' || !Array.isArray(questions)) return;
+  if (typeof generateExam !== 'function' || typeof buildExamReviewItems !== 'function') return;
+
+  const examQuestions = generateExam(questions, { questionCount: config.questionCount });
+  const answers = Object.fromEntries(
+    examQuestions.map((question, index) => [
+      question.id,
+      index % 2 === 0 ? question.correctOptionId : firstWrongOptionId(question),
+    ]),
+  );
+  const reviewItems = buildExamReviewItems(examQuestions, answers);
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Array.isArray(reviewItems)) {
+    reject('buildExamReviewItems did not return an array for the default mock exam');
+    return;
+  }
+  if (reviewItems.length !== examQuestions.length) {
+    reject(
+      `buildExamReviewItems returned ${reviewItems.length} items for ${examQuestions.length} default exam questions`,
+    );
+  }
+
+  reviewItems.forEach((item, index) => {
+    const question = examQuestions[index];
+    const label = question?.id || `exam review item[${index}]`;
+    let itemIsValid = true;
+
+    function rejectItem(message) {
+      itemIsValid = false;
+      reject(message);
+    }
+
+    if (!question) {
+      rejectItem(`${label} has no matching default exam question`);
+      return;
+    }
+
+    const selectedOption = question.options.find((option) => option.id === answers[question.id]);
+    const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+
+    if (item.questionId !== question.id) rejectItem(`${label} review questionId drifted`);
+    if (item.questionSv !== question.questionSv)
+      rejectItem(`${label} review question text drifted`);
+    if (item.chapterId !== question.chapterId) rejectItem(`${label} review chapter drifted`);
+    if (item.explanationSv !== question.explanationSv) {
+      rejectItem(`${label} review explanation drifted`);
+    }
+    if (!jsonEqual(item.uhrReference, question.uhrReference)) {
+      rejectItem(`${label} review UHR reference drifted`);
+    }
+    if (item.selectedOptionTextSv !== selectedOption?.textSv) {
+      rejectItem(`${label} review selected answer text drifted`);
+    }
+    if (item.correctOptionTextSv !== correctOption?.textSv) {
+      rejectItem(`${label} review correct answer text drifted`);
+    }
+    if (item.isCorrect !== (answers[question.id] === question.correctOptionId)) {
+      rejectItem(`${label} review correctness drifted`);
+    }
+    if (item.selectedOptionTextSv === 'Not answered') {
+      rejectItem(`${label} review did not resolve the selected answer`);
+    }
+    if (item.correctOptionTextSv === 'Correct answer missing') {
+      rejectItem(`${label} review did not resolve the correct answer`);
+    }
+
+    if (itemIsValid) examReviewItemsValidated += 1;
+  });
+
+  if (
+    valid &&
+    examReviewItemsValidated === examQuestions.length &&
+    reviewItems.some((item) => item.isCorrect) &&
+    reviewItems.some((item) => !item.isCorrect)
+  ) {
+    examReviewSourceParityValidated = true;
+  }
 }
 
 function validateUxBenchmarks() {
@@ -2287,6 +2383,7 @@ validateMockExamConfig(
     : 0,
 );
 validateMockExamRuntimeParity(defaultMockExamConfig);
+validateExamReviewSourceParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
@@ -2330,6 +2427,8 @@ console.log(
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
+      examReviewItemsValidated,
+      examReviewSourceParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
