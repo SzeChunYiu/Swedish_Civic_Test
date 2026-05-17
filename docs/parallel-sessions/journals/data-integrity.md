@@ -141,3 +141,36 @@ Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.te
 Verification: `npm run validate:content` passed and reported 400 `generatedAnswerTemplateParityValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed; in-memory negative check passed by rejecting a generated variant whose `correctOptionId` no longer matched the generated answer template.
 Blocked? no - the content validator now rejects generated variants whose answer options or correct answer drift from the section-practice, true-statement, false-statement, and judgement answer templates.
 Next suggested validator action: review and accept this DATA-INTEGRITY parity atom, then keep `npm run validate:content` and `npm run test:content` as the nearest generated answer-template regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Published question bilingual text-pair schema atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-bilingual-text-parity.test.js`, `package.json` (`test:content` entry), `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `npm run validate:content` passed and reported 500 `questionBilingualTextPairsValidated`; `npm run test:content` passed 5/5 including the new bilingual text-pair test; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check package.json scripts/validate-content.js scripts/content-production.test.js tests/content-bilingual-text-parity.test.js` passed; `git diff --check -- package.json scripts/validate-content.js scripts/content-production.test.js tests/content-bilingual-text-parity.test.js docs/parallel-sessions/journals/data-integrity.md` passed; in-memory negative checks passed by rejecting q001 when `questionEn` matched `questionSv` and when `explanationEn` matched `explanationSv`.
+Blocked? no - the content validator now rejects published questions whose Swedish and English prompt or explanation text collapses to the same normalized string. Note: shared checkout has unrelated dirty files outside this atom; DATA-INTEGRITY did not touch them.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest bilingual content regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Chapter metadata schema atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-chapter-schema.test.js`, `package.json` (`test:content` entry), `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `npm run validate:content` passed and reported 13 `chapterSchemasValidated`; `npm run test:content` passed 6/6 including the new chapter schema test; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check package.json scripts/validate-content.js scripts/content-production.test.js tests/content-chapter-schema.test.js` passed; `git diff --check -- package.json scripts/validate-content.js scripts/content-production.test.js tests/content-chapter-schema.test.js` passed; in-memory negative check passed by rejecting a copied chapter bilingual name with `ch01 nameSv and nameEn must be distinct bilingual text`.
+Blocked? no - the content validator now rejects chapter metadata with non-sequential ids, duplicate chapter ids or names, blank bilingual fields, copied Swedish/English chapter text, or invalid positive question counts.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest chapter metadata regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: True/false option-label convention schema atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `npm run validate:content` passed and reported 218 `trueFalseQuestions` plus 218 `trueFalseOptionLabelsValidated`; `npm run test:content` passed 6/6; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed; temp-copy negative check passed by rejecting a mutated `q002` true/false Swedish label with `true_false questions must use true/false option ids and labels in order`.
+Blocked? no - the content validator now rejects published `true_false` questions whose visible Swedish/English option labels drift from the canonical `Sant`/`Falskt` and `True`/`False` labels, not just the `true`/`false` option ids.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest true/false option-label regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Published question text-normalization schema atom.
+Commit: `72a4c82` (`data-integrity: validate content text normalization`)
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`.
+Verification: `npm run validate:content` passed and reported 500 `questionTextFieldsNormalizedValidated`; `npm run test:content` passed 6/6; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js` passed; temp-copy negative check passed by rejecting a mutated q001 prompt with `questionSv must be trimmed and single-spaced`.
+Blocked? no - the content validator now rejects published question prompt, explanation, answer-option, and UHR reference chapter/section text with leading/trailing or repeated whitespace before counting the question as schema-valid.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest text-normalization regression gates.
