@@ -1276,8 +1276,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q080',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Demokratins genombrott', pageApprox: 34 },
-    'När hölls det första valet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
-    'When was the first election in which both women and men could vote and women could become members of the Riksdag?',
+    'Vilket år hölls enligt UHR-materialet det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
+    'According to the UHR material, in which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?',
     [
       ['1809', '1809'],
       ['1865', '1865'],
