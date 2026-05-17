@@ -1530,8 +1530,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Religionsfrihet',
       pageApprox: 42,
     },
-    'Vad betyder det enligt UHR-materialet att Sverige är en sekulär stat?',
-    'According to the UHR material, what does it mean that Sweden is a secular state?',
+    'Vad betyder det att Sverige är en sekulär stat?',
+    'What does it mean that Sweden is a secular state?',
     [
       [
         'Staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion',
