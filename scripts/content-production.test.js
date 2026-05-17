@@ -28,6 +28,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.languageSettingsParityValidated, true);
   assert.equal(summary.settingsDailyGoalOptionsValidated, 3);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
+  assert.equal(summary.progressQuestionFieldsValidated, 8);
+  assert.equal(summary.progressQuestionSchemaParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
