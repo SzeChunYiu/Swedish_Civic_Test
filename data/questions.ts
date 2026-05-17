@@ -222,8 +222,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q009',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Ungefär hur många människor bor i Sverige enligt materialet?',
-    questionEn: 'Approximately how many people live in Sweden according to the material?',
+    questionSv: 'Enligt UHR-materialet, ungefär hur många människor bor i Sverige?',
+    questionEn: 'According to the UHR material, approximately how many people live in Sweden?',
     options: [
       { id: 'a', textSv: 'Nästan 11 miljoner', textEn: 'Almost 11 million' },
       { id: 'b', textSv: 'Nästan 1 miljon', textEn: 'Almost 1 million' },
@@ -232,9 +232,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Materialet anger att nästan 11 miljoner människor bor i Sverige. De andra alternativen ligger långt från den uppgiften.',
+      'UHR-avsnittet Befolkning säger att det bor nästan 11 miljoner människor i Sverige. Det beskriver också att befolkningen inte är jämnt fördelad och att de flesta bor i södra Sverige och längs kusterna.',
     explanationEn:
-      'The material states that almost 11 million people live in Sweden. The other alternatives are far from that figure.',
+      'The UHR section Population says almost 11 million people live in Sweden. It also describes the population as unevenly distributed, with most people living in southern Sweden and along the coasts.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
