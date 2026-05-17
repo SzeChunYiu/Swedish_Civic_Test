@@ -277,6 +277,31 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
 test('rewarded extra exam access honors real-ad consent readiness', () => {
   withEnv(
     {
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID: undefined,
+      EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID: undefined,
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const { getMockExamAccessDecision } = loadTs(
+        'lib/monetization/rewardedExam.ts',
+        undefined,
+        new Map(),
+      );
+
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: { adsDisabled: false, unlimitedMockExams: false },
+          freeMockExamLimit: 1,
+        }).reason,
+        'ads_unavailable',
+      );
+    },
+  );
+
+  withEnv(
+    {
       EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
         'ca-app-pub-1234567890123456/3333333333',
       EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
