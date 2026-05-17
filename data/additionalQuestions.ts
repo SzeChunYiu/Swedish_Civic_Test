@@ -483,8 +483,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q042',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Domstolar', pageApprox: 18 },
-    'Vilket påstående om domstolar stämmer enligt materialet?',
-    'Which statement about courts is correct according to the material?',
+    'Vad gäller för en person som är misstänkt för brott i Sverige?',
+    'What applies to a person suspected of a crime in Sweden?',
     [
       [
         'En misstänkt person ska betraktas som oskyldig tills personen har dömts',
@@ -501,8 +501,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Högsta domstolen prövar alla mål direkt', 'The Supreme Court tries all cases directly'],
     ],
     0,
-    'Avsnittet Domstolar säger att domstolar bedömer om någon är skyldig till brott och vilken påföljd personen i så fall ska få. En misstänkt person ska betraktas som oskyldig tills personen har dömts, och en dom kan överklagas till en högre domstol.',
-    'The Courts section says that courts decide whether someone is guilty of a crime and what penalty the person should receive if so. A suspected person should be considered innocent until convicted, and a judgment can be appealed to a higher court.',
+    'UHR-avsnittet Domstolar säger att domstolar bedömer om någon är skyldig till brott och vilken påföljd personen i så fall ska få. En misstänkt person ska betraktas som oskyldig tills personen har dömts, och en dom kan överklagas till en högre domstol.',
+    'The UHR Courts section says that courts decide whether someone is guilty of a crime and what penalty the person should receive if so. A suspected person should be considered innocent until convicted, and a judgment can be appealed to a higher court.',
     ['courts', 'presumption-of-innocence', 'appeal'],
   ),
   single(
