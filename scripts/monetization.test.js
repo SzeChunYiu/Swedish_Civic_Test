@@ -181,6 +181,140 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   );
 });
 
+test('rewarded extra exam access uses free limits before offering ads', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: undefined,
+    },
+    () => {
+      const {
+        REWARDED_EXTRA_EXAM_PLACEMENT,
+        consumeRewardedExtraExamCredit,
+        getMockExamAccessDecision,
+        grantRewardedExtraExamCredit,
+      } = loadTs('lib/monetization/rewardedExam.ts');
+      const { shouldShowAd } = loadTs('lib/monetization/ads.ts');
+      const freeEntitlements = { adsDisabled: false, unlimitedMockExams: false };
+
+      assert.equal(REWARDED_EXTRA_EXAM_PLACEMENT, 'rewarded_extra_exam');
+      assert.equal(shouldShowAd('exam_screen', { adsDisabled: false }), false);
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 0,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }),
+        {
+          canOfferRewardedAd: false,
+          canStartExam: true,
+          freeExamsRemaining: 1,
+          placement: 'rewarded_extra_exam',
+          reason: 'free_exam_available',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }),
+        {
+          canOfferRewardedAd: true,
+          canStartExam: false,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'rewarded_ad_available',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+
+      const grantedCredit = grantRewardedExtraExamCredit(0);
+      assert.equal(grantedCredit, 1);
+      assert.equal(consumeRewardedExtraExamCredit(grantedCredit), 0);
+      assert.equal(consumeRewardedExtraExamCredit(0), 0);
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+          rewardedExtraExamCredits: grantedCredit,
+        }),
+        {
+          canOfferRewardedAd: false,
+          canStartExam: true,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'rewarded_exam_credit',
+          rewardedExtraExamCredits: 1,
+        },
+      );
+
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: { adsDisabled: true, unlimitedMockExams: false },
+          freeMockExamLimit: 1,
+        }).reason,
+        'remove_ads_active',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 9,
+          entitlements: { adsDisabled: true, unlimitedMockExams: true },
+          freeMockExamLimit: 1,
+        }).reason,
+        'premium_unlimited_mock_exams',
+      );
+    },
+  );
+});
+
+test('rewarded extra exam access honors real-ad consent readiness', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
+        'ca-app-pub-1234567890123456/3333333333',
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const { getMockExamAccessDecision } = loadTs('lib/monetization/rewardedExam.ts');
+      const freeEntitlements = { adsDisabled: false, unlimitedMockExams: false };
+
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }).reason,
+        'consent_required',
+      );
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          consentDecision: { adServingAllowed: true },
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+        }),
+        {
+          canOfferRewardedAd: true,
+          canStartExam: false,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'rewarded_ad_available',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+    },
+  );
+});
+
 test('ad rendering flag disables all placements even for free users', () => {
   withEnv(
     {
