@@ -250,6 +250,18 @@ test('mistakes screen exposes page and review section headings as headers', () =
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('chapter detail route exposes page and question section headings as headers', () => {
+  const source = read('app/chapter/[chapterId].tsx');
+  const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
+
+  assert.match(source, /Chapter not found/);
+  assert.match(source, /Practice questions/);
+  assert.equal(headerMatches?.length, 3);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('mistakes screen teaches with explanations before source references', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 

@@ -17,7 +17,9 @@ export default function ChapterScreen() {
   if (!chapter) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.title}>Chapter not found</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Chapter not found
+        </Text>
         <Link
           accessibilityLabel="Back to chapter list"
           accessibilityRole="link"
@@ -42,7 +44,9 @@ export default function ChapterScreen() {
       >
         ← Back to Learn
       </Link>
-      <Text style={styles.title}>{chapter.nameSv}</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        {chapter.nameSv}
+      </Text>
       <Text style={styles.subtitle}>{chapter.nameEn}</Text>
       <Text style={styles.description}>{chapter.descriptionSv}</Text>
       {quizSessionId ? (
@@ -57,7 +61,9 @@ export default function ChapterScreen() {
       ) : null}
       <QuestionDisclaimer />
 
-      <Text style={styles.sectionTitle}>Practice questions ({chapterQuestions.length})</Text>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        Practice questions ({chapterQuestions.length})
+      </Text>
       <View style={styles.list}>
         {chapterQuestions.length > 0 ? (
           chapterQuestions.map((question) => (
