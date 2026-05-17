@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
@@ -31,7 +31,7 @@ export default function Screen() {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Link
         accessibilityLabel="Back to profile"
         accessibilityRole="link"
@@ -99,7 +99,7 @@ export default function Screen() {
       </View>
 
       <ComplianceLinks />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -107,6 +107,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface,
     flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     gap: space[2.25],
     padding: space[3],
     paddingBottom: space[10],
