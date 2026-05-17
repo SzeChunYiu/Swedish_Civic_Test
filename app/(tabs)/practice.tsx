@@ -67,6 +67,7 @@ export default function Screen() {
         <ProgressBar progress={bankProgress} />
         <Text style={styles.meta}>Completed questions: {completedQuestionIds.length}</Text>
         <Pressable
+          aria-selected={isBookmarked}
           accessibilityLabel={
             isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question'
           }

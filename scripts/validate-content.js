@@ -155,6 +155,7 @@ const EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS = [
 ];
 const EXPECTED_RELEASE_REAL_ADS_ENV_FLAG = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   { text: 'Mock exam', styleName: 'title', occurrences: 2 },
@@ -376,6 +377,21 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'bottom safe padding',
     pattern: /paddingBottom:\s*space\[10\]/,
+  },
+];
+const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
+  {
+    label: 'ScrollView import',
+    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  },
+  {
+    label: 'scroll root container',
+    pattern:
+      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+  },
+  {
+    label: 'scroll root closing tag',
+    pattern: /<\/ScrollView>/,
   },
 ];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
@@ -2018,6 +2034,8 @@ let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
 let onboardingRouteScrollParityValidated = false;
+let legalRouteScrollRulesValidated = 0;
+let legalRouteScrollParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2052,6 +2070,8 @@ let monetizationTypeSchemaParityValidated = false;
 let purchaseTypeUnionsValidated = 0;
 let purchaseTypeInterfacesValidated = 0;
 let purchaseTypeSchemaParityValidated = false;
+let removeAdsPurchaseRuntimeCasesValidated = 0;
+let removeAdsPurchaseRuntimeParityValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
@@ -3619,6 +3639,43 @@ function validateOnboardingRouteScrollParity() {
   }
 }
 
+function validateLegalRouteScrollParity() {
+  let valid = true;
+  let legalPage = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    legalPage = fs.readFileSync(path.join(repoRoot, 'components/compliance/LegalPage.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `components/compliance/LegalPage.tsx could not be read for scroll parity: ${error.message}`,
+    );
+    return;
+  }
+
+  if (/<View\s+style=\{styles\.container\}>/.test(legalPage)) {
+    reject(
+      'legal routes must keep shared LegalPage content inside ScrollView for mobile scrolling',
+    );
+  }
+
+  EXPECTED_LEGAL_ROUTE_SCROLL_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(legalPage)) {
+      reject(`shared LegalPage missing ${expectedRule.label} for mobile scroll parity`);
+      return;
+    }
+    legalRouteScrollRulesValidated += 1;
+  });
+
+  if (valid && legalRouteScrollRulesValidated === EXPECTED_LEGAL_ROUTE_SCROLL_RULES.length) {
+    legalRouteScrollParityValidated = true;
+  }
+}
+
 function firstWrongOptionId(question) {
   return question.options?.find((option) => option.id !== question.correctOptionId)?.id;
 }
@@ -4984,6 +5041,84 @@ function validatePurchaseTypeSchemaParity() {
     purchaseTypeInterfacesValidated === EXPECTED_PURCHASE_INTERFACES.length
   ) {
     purchaseTypeSchemaParityValidated = true;
+  }
+}
+
+function validateRemoveAdsPurchaseRuntimeParity() {
+  let valid = true;
+  let purchaseSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/monetization/purchases.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const runtimeCases = [
+    [
+      typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
+        /^[a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads$/.test(REMOVE_ADS_PRODUCT_ID),
+      'Remove Ads product id must stay a reverse-DNS removeads identifier',
+    ],
+    [
+      /return\s+\{[\s\S]*priceLabel:\s*REMOVE_ADS_PRICE_LABEL,[\s\S]*productId:\s*REMOVE_ADS_PRODUCT_ID,[\s\S]*\};/.test(
+        purchaseSource,
+      ),
+      'Remove Ads purchase results must expose canonical price label and product id',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+      ),
+      'buyRemoveAds must request canonical Remove Ads product id',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
+      ),
+      'restoreRemoveAdsPurchase must restore canonical Remove Ads product id',
+    ],
+    [
+      /finishTransaction\(\{[\s\S]*isConsumable:\s*false,[\s\S]*purchase:\s*purchase\.raw\s+as\s+Purchase,[\s\S]*\}\);/.test(
+        purchaseSource,
+      ),
+      'native Remove Ads finish transaction must be non-consumable',
+    ],
+    [
+      /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*productId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*productId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
+        purchaseSource,
+      ),
+      'native Remove Ads purchase request must use the supplied product id as an in-app purchase',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];',
+      ) && normalizedPurchaseSource.includes("return [createMockPurchase('restore-remove-ads')];"),
+      'mock Remove Ads restore must require the canonical product id',
+    ],
+  ];
+
+  runtimeCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+
+    removeAdsPurchaseRuntimeCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    removeAdsPurchaseRuntimeCasesValidated === EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES
+  ) {
+    removeAdsPurchaseRuntimeParityValidated = true;
   }
 }
 
@@ -7623,12 +7758,14 @@ validateSettingsRouteHeaderParity();
 validateOnboardingRouteHeaderParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
+validateLegalRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
+validateRemoveAdsPurchaseRuntimeParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
@@ -7722,6 +7859,8 @@ console.log(
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,
       onboardingRouteScrollParityValidated,
+      legalRouteScrollRulesValidated,
+      legalRouteScrollParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
@@ -7738,6 +7877,8 @@ console.log(
       purchaseTypeUnionsValidated,
       purchaseTypeInterfacesValidated,
       purchaseTypeSchemaParityValidated,
+      removeAdsPurchaseRuntimeCasesValidated,
+      removeAdsPurchaseRuntimeParityValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,

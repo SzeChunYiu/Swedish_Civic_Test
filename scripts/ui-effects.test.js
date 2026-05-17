@@ -14,9 +14,18 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
 
   assert.match(source, /Animated\.timing/);
   assert.match(source, /motion\.duration\.slow/);
-  assert.match(source, /accessibilityLabel/);
+  assert.match(source, /const progressPercent = Math\.round\(clampedProgress \* 100\);/);
+  assert.match(
+    source,
+    /const progressAccessibilityLabel = `\$\{progressPercent\} percent complete`;/,
+  );
+  assert.match(source, /aria-label=\{progressAccessibilityLabel\}/);
+  assert.match(source, /aria-valuemax=\{100\}/);
+  assert.match(source, /aria-valuemin=\{0\}/);
+  assert.match(source, /aria-valuenow=\{progressPercent\}/);
+  assert.match(source, /accessibilityLabel=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole="progressbar"/);
-  assert.match(source, /accessibilityValue=\{\{ min: 0, max: 100, now: Math\.round/);
+  assert.match(source, /accessibilityValue=\{\{ min: 0, max: 100, now: progressPercent \}\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -27,6 +36,7 @@ test('metric card groups value, label, and helper into one accessible summary', 
   assert.match(source, /const metricAccessibilityLabel =/);
   assert.match(source, /accessibilityLabel \?\? `\$\{label\}: \$\{value\}/);
   assert.match(source, /accessible/);
+  assert.match(source, /aria-label=\{metricAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{metricAccessibilityLabel\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -38,6 +48,7 @@ test('badge preserves a readable accessibility label when visual text is upperca
   assert.match(source, /const badgeAccessibilityLabel =/);
   assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
   assert.match(source, /String\(children\)/);
+  assert.match(source, /aria-label=\{badgeAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{badgeAccessibilityLabel\}/);
   assert.match(source, /textTransform: 'uppercase'/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -151,6 +162,7 @@ test('card scaffold groups labelled surfaces for accessibility', () => {
   assert.match(source, /accessibilityRole,/);
   assert.match(source, /const groupedForAccessibility =/);
   assert.match(source, /accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\)/);
+  assert.match(source, /aria-label=\{accessibilityLabel\}/);
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
@@ -162,6 +174,7 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
 
   assert.match(source, /toggleBookmark/);
   assert.match(source, /bookmarked/);
+  assert.match(source, /aria-selected=\{isBookmarked\}/);
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
@@ -535,6 +548,21 @@ test('exam route exposes page and review section headings as headers', () => {
   assert.match(source, /Question review/);
   assert.match(source, /Progress/);
   assert.equal(headerMatches?.length, 8);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('exam controls mirror selected and disabled state to web aria attributes', () => {
+  const source = read('app/(tabs)/exam.tsx');
+
+  assert.match(source, /aria-disabled=\{!canStartAccessibleExam \|\| startingAccessibleExam\}/);
+  assert.match(
+    source,
+    /aria-disabled=\{!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam\}/,
+  );
+  assert.match(source, /aria-selected=\{isSelected\}/);
+  assert.match(source, /aria-disabled=\{!canSubmit\}/);
+  assert.match(source, /accessibilityState=\{\{ selected: isSelected \}\}/);
+  assert.match(source, /accessibilityState=\{\{ disabled: !canSubmit \}\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
