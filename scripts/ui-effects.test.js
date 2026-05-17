@@ -327,12 +327,20 @@ test('question card groups prompt and translation into an accessible summary', (
 test('chapter card groups title, translation, status, and description into an accessible summary', () => {
   const source = read('components/learning/ChapterCard.tsx');
 
-  assert.match(source, /const title = chapter\?\.nameSv \?\? 'Chapter unavailable'/);
+  assert.match(source, /type ChapterCardCopy =/);
+  assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy>/);
+  assert.match(source, /language = 'sv'/);
+  assert.match(source, /const copy = chapterCardCopy\[language\]/);
+  assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} besvarade/);
+  assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} practiced/);
+  assert.match(source, /innehåll planerat/);
+  assert.match(source, /Content queued/);
+  assert.match(source, /const title = chapter\?\.nameSv \?\? copy\.chapterUnavailable/);
   assert.match(source, /const chapterAccessibilityLabel =/);
-  assert.match(source, /`Chapter: \$\{title\}`/);
-  assert.match(source, /`English name: \$\{chapter\.nameEn\}`/);
-  assert.match(source, /`Status: \$\{status\}`/);
-  assert.match(source, /`Description: \$\{chapter\.descriptionSv\}`/);
+  assert.match(source, /copy\.accessibilityLabel\.chapter\(title\)/);
+  assert.match(source, /copy\.accessibilityLabel\.englishName\(chapter\.nameEn\)/);
+  assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
+  assert.match(source, /copy\.accessibilityLabel\.description\(chapter\.descriptionSv\)/);
   assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -370,6 +378,7 @@ test('learn route chapter links announce chapter progress', () => {
   assert.match(source, /copy\.progressLabel\(completedCount, questionCount\)/);
   assert.match(source, /copy\.accessibilityLabel\(\{ nameSv, nameEn, progressLabel \}\)/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
+  assert.match(source, /language=\{language\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -382,18 +391,34 @@ test('quiz feedback cards expose accessible summaries', () => {
   assert.match(explanationSource, /language = 'sv'/);
   assert.match(
     explanationSource,
-    /const explanation = language === 'en' && explanationEn \? explanationEn : explanationSv;/,
+    /const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy>/,
+  );
+  assert.match(explanationSource, /Förklaring saknas för den här frågan\./);
+  assert.match(
+    explanationSource,
+    /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
   );
   assert.match(explanationSource, /const panelAccessibilityLabel =/);
-  assert.match(explanationSource, /`Explanation: \$\{explanation\}`/);
+  assert.match(explanationSource, /`\$\{copy\.accessibilityLabelPrefix\}: \$\{explanation\}`/);
   assert.match(explanationSource, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
   assert.match(explanationSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(explanationSource, /\{copy\.title\}/);
   assert.doesNotMatch(explanationSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 
+  assert.match(
+    referenceSource,
+    /const uhrReferenceCardCopy: Record<AppLanguage, UHRReferenceCardCopy>/,
+  );
+  assert.match(referenceSource, /UHR-källa/);
+  assert.match(referenceSource, /Ungefär sida/);
   assert.match(referenceSource, /const referenceAccessibilityLabel =/);
-  assert.match(referenceSource, /`UHR reference: \$\{label\}\. \$\{pageLabel\}`/);
+  assert.match(
+    referenceSource,
+    /`\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{pageLabel\}`/,
+  );
   assert.match(referenceSource, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
   assert.match(referenceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(referenceSource, /\{copy\.title\}/);
   assert.doesNotMatch(referenceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -430,9 +455,15 @@ test('celebration burst keeps decorative particles out of the accessibility tree
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
+  assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
+  assert.match(source, /const copy = mistakesCopy\[language\];/);
   assert.match(source, /bookmarkedQuestions/);
+  assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
+  assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
+  assert.match(source, /\{copy\.bookmarkedTitle\}/);
+  assert.match(source, /\{copy\.bookmarkedMeta\}/);
 });
 
 test('mistakes screen exposes page and review section headings as headers', () => {
@@ -442,6 +473,9 @@ test('mistakes screen exposes page and review section headings as headers', () =
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.emptyTitle\}>/);
+  assert.match(source, /\{copy\.title\}/);
+  assert.match(source, /\{copy\.mistakeTitle\}/);
+  assert.match(source, /\{copy\.emptyTitle\}/);
   assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -461,8 +495,12 @@ test('chapter detail route exposes page and question section headings as headers
 test('mistakes screen teaches with explanations before source references', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
+  assert.match(source, /useSettingsStore/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /ExplanationPanel/);
+  assert.match(source, /question\.explanationEn/);
   assert.match(source, /question\.explanationSv/);
+  assert.match(source, /language=\{language\}/);
   assert.match(source, /question, explanation, source reference/);
   assert.match(source, /<ExplanationPanel[\s\S]*<UHRReferenceCard/);
 });
@@ -629,10 +667,12 @@ test('English support reaches quiz options, explanations, and exam review text',
   );
   assert.match(practiceSource, /language=\{language\}[\s\S]*option=\{option\}/);
   assert.match(practiceSource, /explanationEn=\{question\.explanationEn\}/);
+  assert.match(practiceSource, /<UHRReferenceCard language=\{language\}/);
 
   assert.match(quizSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(quizSource, /language=\{language\}[\s\S]*option=\{option\}/);
   assert.match(quizSource, /explanationEn=\{question\.explanationEn\}/);
+  assert.match(quizSource, /<UHRReferenceCard language=\{language\}/);
 
   assert.match(examSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(examSource, /language === 'en' \? option\.textEn : option\.textSv/);
@@ -642,6 +682,7 @@ test('English support reaches quiz options, explanations, and exam review text',
     /language === 'en' \? item\.selectedOptionTextEn : item\.selectedOptionTextSv/,
   );
   assert.match(examSource, /explanationEn=\{item\.explanationEn\}/);
+  assert.match(examSource, /<UHRReferenceCard language=\{language\}/);
 
   assert.match(examGeneratorSource, /questionEn: question\.questionEn/);
   assert.match(examGeneratorSource, /selectedOptionTextEn: selectedOption\?\.textEn/);

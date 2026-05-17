@@ -207,8 +207,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q029',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige enligt UHR-materialet?',
-    'According to the UHR material, how often are elections to the Riksdag, regional councils, and municipal councils held?',
+    'Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?',
+    'How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?',
     [
       ['Varje år', 'Every year'],
       ['Vart fjärde år', 'Every four years'],
@@ -225,8 +225,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q030',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Vilket krav gäller för att rösta i riksdagsvalet enligt UHR-materialet?',
-    'According to the UHR material, which requirement applies to voting in Riksdag elections?',
+    'Vilka krav gäller för att rösta i Sveriges riksdagsval?',
+    'Which requirements apply to voting in Sweden’s Riksdag election?',
     [
       [
         'Man måste vara svensk medborgare och ha fyllt 18 år',
@@ -245,8 +245,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q031',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Folkomröstningar', pageApprox: 14 },
-    'Sant eller falskt enligt UHR-materialet: Politiker måste följa resultatet av en svensk folkomröstning.',
-    'True or false according to the UHR material: Politicians must follow the result of a Swedish referendum.',
+    'Sant eller falskt: Politiker i Sverige måste följa resultatet av en folkomröstning.',
+    'True or false: Politicians in Sweden must follow the result of a referendum.',
     false,
     'UHR-avsnittet Folkomröstningar säger att folkomröstningar kan hållas nationellt, i en region eller i en kommun. Avsnittet säger också att folkomröstningar är rådgivande, vilket betyder att politikerna inte måste följa resultatet.',
     'The UHR section Referendums says referendums can be held nationally, in a region, or in a municipality. It also says referendums are advisory, which means politicians do not have to follow the result.',

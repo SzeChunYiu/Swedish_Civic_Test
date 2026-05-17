@@ -22,16 +22,53 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     'utf8',
   );
 
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 11);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 19);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
+  assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/);
+  assert.match(source, /language = 'sv'/);
+  assert.match(source, /const copy = chapterCardCopy\[language\];/);
+  assert.match(source, /innehåll planerat/);
+  assert.match(source, /Content queued/);
+  assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} besvarade/);
+  assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} practiced/);
   assert.match(source, /const chapterAccessibilityLabel =/);
-  assert.match(source, /`Chapter: \$\{title\}`/);
-  assert.match(source, /English name: \$\{chapter\.nameEn\}/);
-  assert.match(source, /`Status: \$\{status\}`/);
-  assert.match(source, /Description: \$\{chapter\.descriptionSv\}/);
+  assert.match(source, /copy\.accessibilityLabel\.chapter\(title\)/);
+  assert.match(source, /copy\.accessibilityLabel\.englishName\(chapter\.nameEn\)/);
+  assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
+  assert.match(source, /copy\.accessibilityLabel\.description\(chapter\.descriptionSv\)/);
   assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
   assert.match(source, /<Text style=\{styles\.title\}>\{title\}<\/Text>/);
   assert.match(source, /<ProgressBar progress=\{progress\} \/>/);
+});
+
+test('ChapterCard accessibility parity rejects settings-language bypass', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/learning/ChapterCard.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const copy = chapterCardCopy[language];', 'const copy = chapterCardCopy.sv;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /ChapterCard missing settings language copy selection for accessibility parity/,
+  );
 });
 
 test('ChapterCard accessibility parity rejects status summary drift', () => {
@@ -47,7 +84,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/learning/ChapterCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Status: \${status}', 'Progress hidden');
+      .replace('copy.accessibilityLabel.status(status)', "'Progress hidden'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

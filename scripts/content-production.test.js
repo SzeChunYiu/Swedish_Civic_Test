@@ -79,7 +79,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.metricCardAccessibilityParityValidated, true);
   assert.equal(summary.badgeAccessibilityRulesValidated, 8);
   assert.equal(summary.badgeAccessibilityParityValidated, true);
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 11);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 19);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.equal(summary.flashcardAccessibilityRulesValidated, 11);
   assert.equal(summary.flashcardAccessibilityParityValidated, true);
@@ -89,9 +89,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.equal(summary.answerOptionAccessibilityRulesValidated, 12);
   assert.equal(summary.answerOptionAccessibilityParityValidated, true);
-  assert.equal(summary.explanationPanelAccessibilityRulesValidated, 8);
+  assert.equal(summary.explanationPanelAccessibilityRulesValidated, 10);
   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
-  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 8);
+  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 10);
   assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
   assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 11);
   assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
@@ -183,6 +183,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.sourceQuestions, 100);
   assert.equal(summary.generatedPublishedQuestions, 400);
   assert.equal(summary.authoredSourceQuestionsValidated, 100);
+  assert.equal(summary.authoredSourcePartitionQuestionsValidated, 100);
   assert.equal(summary.sourcePublicationParityValidated, 100);
   assert.equal(summary.generationParityValidated, true);
   assert.equal(summary.chapterGenerationParityValidated, 13);

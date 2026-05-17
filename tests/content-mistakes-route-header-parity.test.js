@@ -21,21 +21,29 @@ test('mistakes route title, review sections, and empty state stay accessible as 
 
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
   assert.equal(summary.mistakesRouteHeaderParityValidated, true);
+  assert.match(source, /type MistakesCopy =/);
+  assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(source, /const copy = mistakesCopy\[language\];/);
+  assert.match(source, /Misstag/);
+  assert.match(source, /Inga misstag ännu/);
+  assert.match(source, /Fel svar att repetera/);
+  assert.match(source, /Mistakes/);
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*Mistakes\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*Bookmarked questions\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.bookmarkedTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*Wrong answers to revisit\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.mistakeTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.emptyTitle\}>\s*No mistakes yet\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.emptyTitle\}>\s*\{copy\.emptyTitle\}\s*<\/Text>/,
   );
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle|emptyTitle)\}>/);
 });

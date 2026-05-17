@@ -24,6 +24,7 @@ const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 100;
+const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
@@ -211,6 +212,7 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
     'learn route chapter links must expose localized accessibility labels',
   ],
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
+  ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
 const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
@@ -399,22 +401,23 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
 const EXPECTED_MISTAKES_ROUTE_HEADERS = [
   {
     label: 'mistakes route title',
-    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Mistakes\s*<\/Text>/,
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
   {
     label: 'bookmarked questions section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Bookmarked questions\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.bookmarkedTitle\}\s*<\/Text>/,
   },
   {
     label: 'wrong answers section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Wrong answers to revisit\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.mistakeTitle\}\s*<\/Text>/,
   },
   {
     label: 'empty-state title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.emptyTitle\}>\s*No mistakes yet\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.emptyTitle\}>\s*\{copy\.emptyTitle\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_LEGAL_ROUTE_HEADERS = [
@@ -825,17 +828,49 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
 ];
 const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   {
+    label: 'settings language type import',
+    pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
+  },
+  {
+    label: 'localized ChapterCard copy contract',
+    pattern: /type ChapterCardCopy = \{/,
+  },
+  {
+    label: 'localized ChapterCard copy map',
+    pattern: /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/,
+  },
+  {
+    label: 'settings language prop default',
+    pattern: /language = 'sv'/,
+  },
+  {
+    label: 'settings language copy selection',
+    pattern: /const copy = chapterCardCopy\[language\];/,
+  },
+  {
     label: 'optional Chapter prop contract',
     pattern: /chapter\?: Chapter;/,
   },
   {
+    label: 'optional language prop contract',
+    pattern: /language\?: AppLanguage;/,
+  },
+  {
+    label: 'Swedish practiced status copy',
+    pattern: /\$\{completedCount\}\/\$\{questionCount\} besvarade/,
+  },
+  {
+    label: 'English practiced status copy',
+    pattern: /\$\{completedCount\}\/\$\{questionCount\} practiced/,
+  },
+  {
     label: 'content-queued status fallback',
     pattern:
-      /const status =[\s\S]*questionCount > 0 \? `\$\{completedCount\}\/\$\{questionCount\} practiced` : 'Content queued';/,
+      /const status =[\s\S]*questionCount > 0 \? copy\.practicedStatus\(completedCount, questionCount\) : copy\.contentQueued;/,
   },
   {
     label: 'chapter title fallback',
-    pattern: /const title = chapter\?\.nameSv \?\? 'Chapter unavailable';/,
+    pattern: /const title = chapter\?\.nameSv \?\? copy\.chapterUnavailable;/,
   },
   {
     label: 'chapter accessibility summary variable',
@@ -843,19 +878,20 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'Swedish title in accessibility summary',
-    pattern: /`Chapter: \$\{title\}`/,
+    pattern: /copy\.accessibilityLabel\.chapter\(title\)/,
   },
   {
     label: 'English title in accessibility summary',
-    pattern: /chapter\?\.nameEn \? `English name: \$\{chapter\.nameEn\}` : null/,
+    pattern: /chapter\?\.nameEn \? copy\.accessibilityLabel\.englishName\(chapter\.nameEn\) : null/,
   },
   {
     label: 'progress status in accessibility summary',
-    pattern: /`Status: \$\{status\}`/,
+    pattern: /copy\.accessibilityLabel\.status\(status\)/,
   },
   {
     label: 'description in accessibility summary',
-    pattern: /chapter\?\.descriptionSv \? `Description: \$\{chapter\.descriptionSv\}` : null/,
+    pattern:
+      /chapter\?\.descriptionSv \? copy\.accessibilityLabel\.description\(chapter\.descriptionSv\) : null/,
   },
   {
     label: 'Card receives chapter accessibility summary',
@@ -1081,28 +1117,38 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
   },
   {
     label: 'language prop contract',
-    pattern: /language\?: 'sv' \| 'en';/,
+    pattern: /language\?: AppLanguage;/,
+  },
+  {
+    label: 'localized copy map',
+    pattern: /const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy>/,
   },
   {
     label: 'release-safe Swedish fallback',
-    pattern: /explanationSv = 'Explanation unavailable for this question\.'/,
+    pattern: /Förklaring saknas för den här frågan\./,
+  },
+  {
+    label: 'release-safe English fallback',
+    pattern: /Explanation unavailable for this question\./,
   },
   {
     label: 'language-specific explanation selection',
     pattern:
-      /const explanation = language === 'en' && explanationEn \? explanationEn : explanationSv;/,
+      /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
   },
   {
-    label: 'explanation in accessibility summary',
-    pattern: /const panelAccessibilityLabel = `Explanation: \$\{explanation\}`;/,
+    label: 'localized explanation in accessibility summary',
+    pattern:
+      /const panelAccessibilityLabel = `\$\{copy\.accessibilityLabelPrefix\}: \$\{explanation\}`;/,
   },
   {
     label: 'Card receives accessibility summary',
     pattern: /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/,
   },
   {
-    label: 'explanation header text',
-    pattern: /<Text accessibilityRole="header" style=\{styles\.title\}>/,
+    label: 'localized explanation header text',
+    pattern:
+      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*\{copy\.title\}[\s\S]*<\/Text>/,
   },
   {
     label: 'visible selected explanation',
@@ -1115,28 +1161,36 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /reference\?: UHRReference/,
   },
   {
+    label: 'language prop contract',
+    pattern: /language\?: AppLanguage;/,
+  },
+  {
+    label: 'localized copy map',
+    pattern: /const uhrReferenceCardCopy: Record<AppLanguage, UHRReferenceCardCopy>/,
+  },
+  {
     label: 'chapter and section source label',
     pattern:
-      /const label = reference\s*\?\s*`\$\{reference\.chapter\} · \$\{reference\.section\}`\s*:\s*'Source reference unavailable';/,
+      /const label = reference\s*\?\s*`\$\{reference\.chapter\} · \$\{reference\.section\}`\s*:\s*copy\.unavailable;/,
   },
   {
-    label: 'approximate page source label',
+    label: 'localized approximate page source label',
     pattern:
-      /const pageLabel = reference\?\.pageApprox \? `Approx\. page \$\{reference\.pageApprox\}` : null;/,
+      /const pageLabel = reference\?\.pageApprox[\s\S]*\? `\$\{copy\.approximatePage\} \$\{reference\.pageApprox\}`[\s\S]*: null;/,
   },
   {
-    label: 'page-aware accessibility label',
+    label: 'localized page-aware accessibility label',
     pattern:
-      /const referenceAccessibilityLabel = pageLabel[\s\S]*\? `UHR reference: \$\{label\}\. \$\{pageLabel\}`[\s\S]*: `UHR reference: \$\{label\}`;/,
+      /const referenceAccessibilityLabel = pageLabel[\s\S]*\? `\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{pageLabel\}`[\s\S]*: `\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}`;/,
   },
   {
     label: 'Card receives UHR accessibility label',
     pattern: /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/,
   },
   {
-    label: 'UHR title header text',
+    label: 'localized UHR title header text',
     pattern:
-      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*UHR reference[\s\S]*<\/Text>/,
+      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*\{copy\.title\}[\s\S]*<\/Text>/,
   },
   {
     label: 'visible chapter-section source label',
@@ -3044,6 +3098,7 @@ let uhrSourceRetrievedDateValidated = false;
 let uhrSourceMaterialLinkParityValidated = false;
 let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
+let authoredSourcePartitionQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
 let generationParityValidated = false;
 let chapterGenerationParityValidated = 0;
@@ -8591,6 +8646,30 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'tags',
 ];
 
+function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
+  if (!Array.isArray(questionsToValidate)) return;
+
+  if (questionsToValidate.length !== count) {
+    fail(`${label} has ${questionsToValidate.length} rows, expected ${count}`);
+  }
+
+  questionsToValidate.forEach((question, index) => {
+    if (index >= count) {
+      fail(`${label}[${index}] exceeds expected ${count} rows`);
+      return;
+    }
+
+    const expectedId = `q${String(startQuestionNumber + index).padStart(3, '0')}`;
+    const actualId = question?.id;
+    if (actualId !== expectedId) {
+      fail(`${label}[${index}] has id ${actualId}, expected ${expectedId}`);
+      return;
+    }
+
+    authoredSourcePartitionQuestionsValidated += 1;
+  });
+}
+
 function validateAuthoredSourceParity() {
   if (
     !Array.isArray(baseQuestions) ||
@@ -8599,6 +8678,19 @@ function validateAuthoredSourceParity() {
   ) {
     return;
   }
+
+  validateAuthoredSourcePartition(
+    baseQuestions,
+    'baseQuestions',
+    1,
+    EXPECTED_BASE_SOURCE_QUESTIONS,
+  );
+  validateAuthoredSourcePartition(
+    additionalQuestions,
+    'additionalQuestions',
+    EXPECTED_BASE_SOURCE_QUESTIONS + 1,
+    EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
+  );
 
   const authoredQuestions = [...baseQuestions, ...additionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
@@ -9609,6 +9701,7 @@ console.log(
         ? generatedPublishedQuestions.length
         : 0,
       authoredSourceQuestionsValidated,
+      authoredSourcePartitionQuestionsValidated,
       sourcePublicationParityValidated,
       generationParityValidated,
       chapterGenerationParityValidated,

@@ -1,28 +1,71 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { Chapter } from '../../types/content';
+import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { ProgressBar } from '../ui/ProgressBar';
 import { colors, space, typography } from '../../lib/theme';
 
+type ChapterCardCopy = {
+  accessibilityLabel: {
+    chapter: (title: string) => string;
+    description: (description: string) => string;
+    englishName: (name: string) => string;
+    status: (status: string) => string;
+  };
+  chapterUnavailable: string;
+  contentQueued: string;
+  practicedStatus: (completedCount: number, questionCount: number) => string;
+};
+
+const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = {
+  sv: {
+    accessibilityLabel: {
+      chapter: (title) => `Kapitel: ${title}`,
+      description: (description) => `Beskrivning: ${description}`,
+      englishName: (name) => `Engelskt namn: ${name}`,
+      status: (status) => `Status: ${status}`,
+    },
+    chapterUnavailable: 'Kapitel saknas',
+    contentQueued: 'innehåll planerat',
+    practicedStatus: (completedCount, questionCount) =>
+      `${completedCount}/${questionCount} besvarade`,
+  },
+  en: {
+    accessibilityLabel: {
+      chapter: (title) => `Chapter: ${title}`,
+      description: (description) => `Description: ${description}`,
+      englishName: (name) => `English name: ${name}`,
+      status: (status) => `Status: ${status}`,
+    },
+    chapterUnavailable: 'Chapter unavailable',
+    contentQueued: 'Content queued',
+    practicedStatus: (completedCount, questionCount) =>
+      `${completedCount}/${questionCount} practiced`,
+  },
+};
+
 export function ChapterCard({
   chapter,
   questionCount = chapter?.questionCount ?? 0,
   completedCount = 0,
+  language = 'sv',
 }: {
   chapter?: Chapter;
   questionCount?: number;
   completedCount?: number;
+  language?: AppLanguage;
 }) {
+  const copy = chapterCardCopy[language];
   const progress = questionCount > 0 ? completedCount / questionCount : 0;
   const status =
-    questionCount > 0 ? `${completedCount}/${questionCount} practiced` : 'Content queued';
-  const title = chapter?.nameSv ?? 'Chapter unavailable';
+    questionCount > 0 ? copy.practicedStatus(completedCount, questionCount) : copy.contentQueued;
+  const title = chapter?.nameSv ?? copy.chapterUnavailable;
   const chapterAccessibilityLabel = [
-    `Chapter: ${title}`,
-    chapter?.nameEn ? `English name: ${chapter.nameEn}` : null,
-    `Status: ${status}`,
-    chapter?.descriptionSv ? `Description: ${chapter.descriptionSv}` : null,
+    copy.accessibilityLabel.chapter(title),
+    chapter?.nameEn ? copy.accessibilityLabel.englishName(chapter.nameEn) : null,
+    copy.accessibilityLabel.status(status),
+    chapter?.descriptionSv ? copy.accessibilityLabel.description(chapter.descriptionSv) : null,
   ]
     .filter(Boolean)
     .join('. ');
