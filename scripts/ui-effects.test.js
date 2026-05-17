@@ -75,6 +75,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   const fallbackFiles = [
     'components/learning/ChapterCard.tsx',
+    'components/learning/Flashcard.tsx',
     'components/monetization/NativeAdCard.tsx',
     'components/quiz/ExplanationPanel.tsx',
     'components/quiz/QuestionCard.tsx',
@@ -86,6 +87,11 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   }
 
   assert.match(read('components/learning/ChapterCard.tsx'), /Chapter unavailable/);
+  assert.match(read('components/learning/Flashcard.tsx'), /Study prompt unavailable/);
+  assert.match(read('components/learning/Flashcard.tsx'), /Answer unavailable/);
+  assert.match(read('components/learning/Flashcard.tsx'), /accessibilityLabel/);
+  assert.doesNotMatch(read('components/learning/Flashcard.tsx'), /front\s*=\s*['"]Front/);
+  assert.doesNotMatch(read('components/learning/Flashcard.tsx'), /back\s*=\s*['"]Back/);
   assert.match(read('components/monetization/NativeAdCard.tsx'), /AdMob test placement preview/);
   assert.match(read('components/quiz/ExplanationPanel.tsx'), /Explanation unavailable/);
   assert.match(read('components/quiz/QuestionCard.tsx'), /Question unavailable/);
