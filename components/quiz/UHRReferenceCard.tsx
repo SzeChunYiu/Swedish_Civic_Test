@@ -8,9 +8,12 @@ export function UHRReferenceCard({ reference }: { reference?: UHRReference }) {
     ? `${reference.chapter} · ${reference.section}`
     : 'Source reference unavailable';
   const pageLabel = reference?.pageApprox ? `Approx. page ${reference.pageApprox}` : null;
+  const referenceAccessibilityLabel = pageLabel
+    ? `UHR reference: ${label}. ${pageLabel}`
+    : `UHR reference: ${label}`;
 
   return (
-    <Card>
+    <Card accessibilityLabel={referenceAccessibilityLabel}>
       <Text style={styles.title}>UHR reference</Text>
       <Text style={styles.body}>{label}</Text>
       {pageLabel ? <Text style={styles.meta}>{pageLabel}</Text> : null}

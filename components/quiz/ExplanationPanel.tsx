@@ -7,8 +7,10 @@ export function ExplanationPanel({
 }: {
   explanationSv?: string;
 }) {
+  const panelAccessibilityLabel = `Explanation: ${explanationSv}`;
+
   return (
-    <Card>
+    <Card accessibilityLabel={panelAccessibilityLabel}>
       <Text style={styles.title}>Explanation</Text>
       <Text style={styles.body}>{explanationSv}</Text>
     </Card>

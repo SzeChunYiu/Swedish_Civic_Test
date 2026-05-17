@@ -125,6 +125,21 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('quiz feedback cards expose accessible summaries', () => {
+  const explanationSource = read('components/quiz/ExplanationPanel.tsx');
+  const referenceSource = read('components/quiz/UHRReferenceCard.tsx');
+
+  assert.match(explanationSource, /const panelAccessibilityLabel =/);
+  assert.match(explanationSource, /`Explanation: \$\{explanationSv\}`/);
+  assert.match(explanationSource, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
+  assert.doesNotMatch(explanationSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+
+  assert.match(referenceSource, /const referenceAccessibilityLabel =/);
+  assert.match(referenceSource, /`UHR reference: \$\{label\}\. \$\{pageLabel\}`/);
+  assert.match(referenceSource, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
+  assert.doesNotMatch(referenceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
