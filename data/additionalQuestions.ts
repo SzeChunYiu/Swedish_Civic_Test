@@ -1203,9 +1203,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Minskad matproduktion', 'Reduced food production'],
     ],
     0,
-    'Mer mat och medicinska framsteg minskade risken att barn dog av sjukdomar.',
-    'More food and medical advances reduced the risk that children died of disease.',
-    ['population', '1800s', 'history'],
+    'UHR-avsnittet Befolkningsökning säger att Sveriges befolkning var ungefär 2,5 miljoner i början av 1800-talet och dubbelt så stor hundra år senare. Orsaken var bättre jordbruksmetoder som gav mer mat och medicinska framsteg som minskade risken att barn dog av sjukdomar.',
+    'The UHR section Population growth says Sweden had about 2.5 million inhabitants at the start of the 19th century and twice as many one hundred years later. The reason was better farming methods that produced more food and medical advances that reduced the risk of children dying from disease.',
+    ['population-growth', '1800s', 'food', 'medical-advances'],
   ),
   single(
     'q077',
