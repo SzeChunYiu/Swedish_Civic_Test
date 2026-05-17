@@ -19,6 +19,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
   assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 10);
   assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
+  assert.equal(summary.premiumEntitlementStatesValidated, 3);
+  assert.equal(summary.premiumEntitlementParityValidated, true);
   assert.equal(summary.questionDisclaimerRoutesValidated, 6);
   assert.equal(summary.questionDisclaimerCopyValidated, true);
   assert.equal(summary.mockExamConfigTypeFieldsValidated, 5);
