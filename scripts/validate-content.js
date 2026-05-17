@@ -259,6 +259,44 @@ const EXPECTED_MISTAKES_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.emptyTitle\}>\s*No mistakes yet\s*<\/Text>/,
   },
 ];
+const EXPECTED_LEGAL_ROUTE_HEADERS = [
+  {
+    file: 'app/disclaimer.tsx',
+    title: 'Disclaimer',
+    sections: ['Independent study tool', 'Practice content', 'Use with source material'],
+  },
+  {
+    file: 'app/privacy.tsx',
+    title: 'Privacy policy',
+    sections: [
+      'No account required',
+      'Local progress storage',
+      'Ads and purchases',
+      'Ad consent',
+      'Provider processing',
+    ],
+  },
+  {
+    file: 'app/terms.tsx',
+    title: 'Terms of use',
+    sections: ['Study purpose', 'No guarantee', 'Respect source material'],
+  },
+  {
+    file: 'app/sources.tsx',
+    title: 'Sources',
+    sections: ['Primary study material', 'Question references', 'Authority boundaries'],
+  },
+  {
+    file: 'app/support.tsx',
+    title: 'Support and feedback',
+    sections: [
+      'What to report',
+      'No personal data',
+      'Independent study tool',
+      'Public support page',
+    ],
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
@@ -1933,6 +1971,8 @@ let homeRouteHeadersValidated = 0;
 let homeRouteHeaderParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
+let legalRouteHeadersValidated = 0;
+let legalRouteHeaderParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
@@ -3280,6 +3320,89 @@ function validateMistakesRouteHeaderParity() {
 
   if (valid && mistakesRouteHeadersValidated === EXPECTED_MISTAKES_ROUTE_HEADERS.length) {
     mistakesRouteHeaderParityValidated = true;
+  }
+}
+
+function countLegalTitleOccurrences(source, componentName, title) {
+  const titlePattern = new RegExp(`<${componentName}\\s+title="${escapeRegExp(title)}"`, 'g');
+  return (source.match(titlePattern) || []).length;
+}
+
+function validateLegalRouteHeaderParity() {
+  let valid = true;
+  let legalPage = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    legalPage = fs.readFileSync(path.join(repoRoot, 'components/compliance/LegalPage.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/compliance/LegalPage.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  if (
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>/.test(legalPage) ||
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(legalPage)
+  ) {
+    reject('legal route shared heading components must expose accessibilityRole="header"');
+  }
+
+  for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
+    let routeSource = '';
+    try {
+      routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
+    } catch (error) {
+      reject(`${expectedRoute.file} could not be read: ${error.message}`);
+      continue;
+    }
+
+    if (
+      !routeSource.includes(
+        "import { LegalPage, LegalSection } from '../components/compliance/LegalPage';",
+      )
+    ) {
+      reject(`${expectedRoute.file} must use shared LegalPage and LegalSection headers`);
+    }
+
+    const pageTitleOccurrences = countLegalTitleOccurrences(
+      routeSource,
+      'LegalPage',
+      expectedRoute.title,
+    );
+    if (pageTitleOccurrences !== 1) {
+      reject(
+        `${expectedRoute.file} legal page title "${expectedRoute.title}" appears ${pageTitleOccurrences} times, expected 1`,
+      );
+    } else {
+      legalRouteHeadersValidated += 1;
+    }
+
+    for (const sectionTitle of expectedRoute.sections) {
+      const sectionTitleOccurrences = countLegalTitleOccurrences(
+        routeSource,
+        'LegalSection',
+        sectionTitle,
+      );
+      if (sectionTitleOccurrences !== 1) {
+        reject(
+          `${expectedRoute.file} legal section title "${sectionTitle}" appears ${sectionTitleOccurrences} times, expected 1`,
+        );
+      } else {
+        legalRouteHeadersValidated += 1;
+      }
+    }
+  }
+
+  const expectedHeaderCount = EXPECTED_LEGAL_ROUTE_HEADERS.reduce(
+    (sum, route) => sum + 1 + route.sections.length,
+    0,
+  );
+  if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
+    legalRouteHeaderParityValidated = true;
   }
 }
 
@@ -7350,6 +7473,7 @@ validateLearnRouteHeaderParity();
 validateProfileRouteHeaderParity();
 validateHomeRouteHeaderParity();
 validateMistakesRouteHeaderParity();
+validateLegalRouteHeaderParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -7439,6 +7563,8 @@ console.log(
       homeRouteHeaderParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
+      legalRouteHeadersValidated,
+      legalRouteHeaderParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,
