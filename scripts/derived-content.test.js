@@ -78,5 +78,11 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
 
   assert.ok(singleChoiceVariants.length > 0);
   assert.ok(singleChoiceVariants.every((question) => question.options.length === 4));
-  assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'true'));
+  singleChoiceVariants.forEach((question) => {
+    assert.deepEqual(
+      question.options.map((option) => option.id),
+      ['a', 'b', 'c', 'd'],
+    );
+  });
+  assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
 });

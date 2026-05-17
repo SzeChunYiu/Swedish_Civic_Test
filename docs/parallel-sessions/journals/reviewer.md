@@ -198,3 +198,54 @@ Workspace contract: pass with caveats - no product source edited; current dirty 
 Findings queued: none from this focused pass.
 Evidence: direct `/quiz/daily` showed a closable launch sponsor, `Session daily`, the independent-study disclaimer, 4 answer options, score after answering, explanation, UHR reference, `Try this quiz question again`, and `Back to practice`; retry cleared score feedback and restored 4 selectable options; console/page errors 0.
 Next manager action: keep `REVIEWER-LEARN-CHAPTER-1` and `REVIEWER-PRACTICE-WRONG-FEEDBACK-1` open; this direct-route smoke does not clear those broader navigation/feedback defects.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the latest reviewer passes.
+Checks run:
+- `git status --short --branch` - source changes changed during the reviewer loop.
+Workspace contract: blocked - dirty product-source ownership is ambiguous for additional reviewer passes.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update`.
+Evidence: current status includes product/content/test changes in `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `scripts/monetization.test.js`, `scripts/validate-content.js`, plus untracked `lib/monetization/consent.ts`; this lane did not edit those files.
+Next manager action: provide a clean branch/commit target or accept/reject the active source-owner changes before more reviewer functional passes.
+
+Lane: REVIEWER
+Artifact reviewed: accepted `CONSENT1` helper against the ad-supported v1.0 consent/compliance requirement.
+Checks run:
+- Re-read updated `docs/parallel-sessions/TEAM_PLAN.md`; `CONSENT1` is accepted as a consent decision helper, with native prompt wiring still separate.
+- `rg -n "getAdConsentDecision|consentConfig|AdConsent|ump_consent_form|app_tracking_transparency" app components lib/monetization -S` - only `lib/monetization/consent.ts` references the helper.
+- `rg -n "shouldShowAd|shouldShowLaunchPopupAd|getAdUnit" components/monetization lib/monetization/ads.ts app/_layout.tsx -S` - ad components still call the ad gate directly.
+- `npm run test:monetization` - exit 0, 11/11 tests passed.
+- `test -f publishing/public-site/app-ads.txt && grep -rqiE "tracking-transparency|ATT|UMP|consent" lib app && test -f publishing/admob-iap-setup-runbook.md` - exit 1; `publishing/public-site/app-ads.txt` is missing.
+Workspace contract: pass - no product source edited; existing consent/compliance finding updated instead of creating a duplicate.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1 update`.
+Evidence: `CONSENT1` added decision logic, but no app/component ad path calls `getAdConsentDecision`, so helper-only work does not enforce the goal's "consent gate before ad SDK init" requirement. The public-site `app-ads.txt` file is still absent.
+Next manager action: assign source-touching ad-consent wiring and `app-ads.txt` compliance work; keep helper-only consent acceptance from clearing the release blocker.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the consent recheck.
+Checks run:
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope reappeared while reviewer was recording findings.
+Workspace contract: blocked - dirty product-source ownership is ambiguous for additional reviewer passes.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update`.
+Evidence: current status includes `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, and `scripts/validate-content.js`; this lane did not edit those files.
+Next manager action: bound the current source changes with a commit or explicit accept/reject decision before handing REVIEWER another pass.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state on resume.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope remains ambiguous.
+Workspace contract: blocked - no new functional pass run because source ownership is unclear.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:28Z]`.
+Evidence: current dirty product/source files include `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `lib/monetization/ads.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `scripts/monetization.test.js`, and `scripts/validate-content.js`; this lane did not edit product source.
+Next manager action: commit, accept/reject, or explicitly bound the active source-owner changes before handing REVIEWER another functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: current workspace contract state after rechecking instructions and TEAM_PLAN.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope remains outside this lane.
+Workspace contract: blocked - no new functional pass run because the current artifact boundary is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:29Z]`.
+Evidence: dirty product/source files include `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `lib/monetization/ads.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `scripts/monetization.test.js`, and `scripts/validate-content.js`, plus `TEAM_PLAN` and worker journals; this lane did not edit product source.
+Next manager action: bound or clear the source-owner changes before handing REVIEWER another functional pass.

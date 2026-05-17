@@ -1,8 +1,10 @@
 import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types/monetization';
+import type { AdConsentDecision } from './consent';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
+type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 function readBooleanFlag(value: string | undefined, defaultValue: boolean): boolean {
   const normalized = value?.trim().toLowerCase();
@@ -111,22 +113,26 @@ export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
 export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
+  consentDecision?: AdConsentGate,
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
+  if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
   const unit = getAdUnit(placement);
   return Boolean(unit?.enabled);
 }
 
 export function shouldShowLaunchPopupAd({
   alreadyShownThisLaunch,
+  consentDecision,
   entitlements,
 }: {
   alreadyShownThisLaunch: boolean;
+  consentDecision?: AdConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
 }): boolean {
-  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements);
+  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
 }
 
 export function getPlatformAdUnitId(
@@ -143,6 +149,7 @@ export function getPlatformAdUnitId(
 export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
+  realAdsRequireConsentDecision: true,
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,

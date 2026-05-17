@@ -134,3 +134,10 @@ Artifacts changed: `lib/monetization/consent.ts`, `scripts/monetization.test.js`
 Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check lib/monetization/consent.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/consent.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `rg -n "tracking-transparency|ATT|UMP|consent" lib app` found consent coverage in `lib/monetization/consent.ts`.
 Blocked? no — this is a verified consent-plumbing atom; native prompt wiring remains a separate app integration task.
 Next suggested validator action: inspect `getAdConsentDecision` and rerun `npm run test:monetization` before assigning the native consent prompt integration.
+
+## Iteration 20 — 2026-05-17
+Task completed: Tooling/product atom — made the ad gate require an explicit consent decision before serving real AdMob units, while preserving test-unit rendering for dev/web previews.
+Artifacts changed: `lib/monetization/ads.ts`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check lib/monetization/ads.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/ads.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0.
+Blocked? no — this is non-UI SETUP plumbing inside `lib/monetization`; app/component consent prompt wiring and public `app-ads.txt` compliance remain separate atoms.
+Next suggested validator action: inspect the real-ad consent guard in `shouldShowAd`, then schedule the UI/app integration once the active UI/UX lease permits `app/` and `components/` writes.

@@ -12,6 +12,8 @@ const SOMETIMES_OPTION: QuestionOption = {
   textEn: 'Only sometimes',
 };
 
+const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'] as const;
+
 function nextId(startId: number, offset: number): string {
   return `q${String(startId + offset).padStart(3, '0')}`;
 }
@@ -36,6 +38,24 @@ function uniqueTags(tags: string[]): string[] {
   return [...new Set(tags)];
 }
 
+function normalizeSingleChoiceOptions(
+  options: QuestionOption[],
+  correctOptionId: string,
+): { options: QuestionOption[]; correctOptionId: string } {
+  if (options.length !== SINGLE_CHOICE_OPTION_IDS.length) {
+    return { options, correctOptionId };
+  }
+
+  const correctIndex = options.findIndex((option) => option.id === correctOptionId);
+  return {
+    options: options.map((option, index) => ({
+      ...option,
+      id: SINGLE_CHOICE_OPTION_IDS[index],
+    })),
+    correctOptionId: correctIndex >= 0 ? SINGLE_CHOICE_OPTION_IDS[correctIndex] : correctOptionId,
+  };
+}
+
 function withSharedFields(
   source: PracticeQuestion,
   id: string,
@@ -46,14 +66,19 @@ function withSharedFields(
   correctOptionId: string,
   extraTags: string[],
 ): PracticeQuestion {
+  const normalized =
+    type === 'single_choice'
+      ? normalizeSingleChoiceOptions(options, correctOptionId)
+      : { options, correctOptionId };
+
   return {
     id,
     chapterId: source.chapterId,
     type,
     questionSv,
     questionEn,
-    options,
-    correctOptionId,
+    options: normalized.options,
+    correctOptionId: normalized.correctOptionId,
     explanationSv: source.explanationSv,
     explanationEn: source.explanationEn,
     uhrReference: source.uhrReference,

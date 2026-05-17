@@ -11,6 +11,8 @@ const DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const REVIEW_STATUSES = new Set(['draft', 'reviewed', 'published']);
 const EXPECTED_SOURCE_QUESTIONS = 100;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
+const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
+const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -88,6 +90,22 @@ function optionCountMatchesQuestionType(question) {
   return [2, 4].includes(question.options.length);
 }
 
+function arrayEquals(left, right) {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function optionIdsMatchQuestionType(question) {
+  if (!Array.isArray(question.options)) return false;
+  const optionIds = question.options.map((option) => option?.id);
+  if (question.type === 'single_choice') {
+    return arrayEquals(optionIds, SINGLE_CHOICE_OPTION_IDS);
+  }
+  if (question.type === 'true_false') {
+    return arrayEquals(optionIds, TRUE_FALSE_OPTION_IDS);
+  }
+  return optionIds.every(hasText);
+}
+
 function validateQuestionSchema(question, index) {
   const label = hasText(question.id) ? question.id : `question[${index}]`;
   let valid = true;
@@ -149,14 +167,16 @@ function validateQuestionSchema(question, index) {
     if (question.type === 'single_choice' && question.options.length !== 4) {
       reject(`${label} single_choice questions must have 4 options`);
     }
+    if (question.type === 'single_choice' && !optionIdsMatchQuestionType(question)) {
+      reject(`${label} single_choice options must use a/b/c/d option ids in order`);
+    }
     if (
       question.type === 'true_false' &&
       (question.options.length !== 2 ||
-        !optionIds.has('true') ||
-        !optionIds.has('false') ||
+        !optionIdsMatchQuestionType(question) ||
         !['true', 'false'].includes(question.correctOptionId))
     ) {
-      reject(`${label} true_false questions must use true/false option ids`);
+      reject(`${label} true_false questions must use true/false option ids in order`);
     }
   }
 
@@ -188,6 +208,7 @@ let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
+let questionOptionIdConventionsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let questionChapterReferenceParityValidated = 0;
@@ -484,6 +505,9 @@ if (Array.isArray(questions)) {
       if (optionCountMatchesQuestionType(question)) {
         questionTypeOptionCountsValidated += 1;
       }
+      if (optionIdsMatchQuestionType(question)) {
+        questionOptionIdConventionsValidated += 1;
+      }
     }
 
     if (
@@ -582,6 +606,7 @@ console.log(
       questionSchemasValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,
+      questionOptionIdConventionsValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
       questionChapterReferenceParityValidated,

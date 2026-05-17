@@ -101,7 +101,15 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
         getPlatformAdUnitId('home_banner', 'ios'),
         'ca-app-pub-1234567890123456/2222222222',
       );
-      assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), true);
+      assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), false);
+      assert.equal(
+        shouldShowAd('home_banner', { adsDisabled: false }, { adServingAllowed: false }),
+        false,
+      );
+      assert.equal(
+        shouldShowAd('home_banner', { adsDisabled: false }, { adServingAllowed: true }),
+        true,
+      );
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
     },
   );
@@ -274,10 +282,13 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
 
 test('ad consent decision covers ATT and UMP prompts before real ad serving', () => {
   const consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
   const { consentConfig, getAdConsentDecision } = loadTs('lib/monetization/consent.ts');
 
   assert.match(consentSource, /App Tracking Transparency/);
   assert.match(consentSource, /UMP consent/);
+  assert.match(adsSource, /realAdsRequireConsentDecision/);
+  assert.match(adsSource, /consentDecision\?\.adServingAllowed/);
   assert.deepEqual(consentConfig.prompts, ['app_tracking_transparency', 'ump_consent_form']);
 
   const pendingIosDecision = getAdConsentDecision({
