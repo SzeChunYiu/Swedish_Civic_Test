@@ -1679,8 +1679,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q099',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Midsommar', pageApprox: 46 },
-    'Vilket svar stämmer enligt UHR-materialet om midsommar?',
-    'Which answer matches the UHR material about Midsummer?',
+    'Vilket påstående om midsommar i Sverige är korrekt?',
+    'Which statement about Midsummer in Sweden is correct?',
     [
       [
         'Midsommar välkomnar sommaren och ljuset, och midsommarafton firas på en fredag mellan 19 och 25 juni',
