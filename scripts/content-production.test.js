@@ -11,6 +11,7 @@ test('full content production validates 500 published UHR-referenced questions',
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questions, 500);
   assert.equal(summary.publishedQuestions, 500);
+  assert.equal(summary.chapterSchemasValidated, 13);
   assert.equal(summary.sourceQuestions, 100);
   assert.equal(summary.generatedPublishedQuestions, 400);
   assert.equal(summary.authoredSourceQuestionsValidated, 100);
@@ -20,10 +21,14 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.generatedPromptTemplateParityValidated, 400);
   assert.equal(summary.generatedAnswerTemplateParityValidated, 400);
   assert.equal(summary.questionSchemasValidated, 500);
+  assert.equal(summary.questionBilingualTextPairsValidated, 500);
+  assert.equal(summary.questionTextFieldsNormalizedValidated, 500);
   assert.equal(summary.questionPromptTextUniquenessValidated, 500);
   assert.equal(summary.questionOptionTextLabelsValidated, 500);
   assert.equal(summary.questionTypeOptionCountsValidated, 500);
   assert.equal(summary.questionOptionIdConventionsValidated, 500);
+  assert.ok(summary.trueFalseQuestions > 0);
+  assert.equal(summary.trueFalseOptionLabelsValidated, summary.trueFalseQuestions);
   assert.equal(summary.questionTagsValidated, 500);
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);

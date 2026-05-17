@@ -92,6 +92,36 @@ function normalizeOptionText(value) {
   return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
 }
 
+function textIsTrimmedSingleSpaced(value) {
+  return typeof value === 'string' && value === normalizeOptionText(value);
+}
+
+function normalizeComparableText(value) {
+  return normalizeOptionText(value).toLocaleLowerCase('sv-SE');
+}
+
+function bilingualTextPairsAreDistinct(question) {
+  return (
+    normalizeComparableText(question.questionSv) !== normalizeComparableText(question.questionEn) &&
+    normalizeComparableText(question.explanationSv) !==
+      normalizeComparableText(question.explanationEn)
+  );
+}
+
+function questionTextFieldsAreNormalized(question) {
+  const fields = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    question.uhrReference?.chapter,
+    question.uhrReference?.section,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ];
+
+  return fields.every(textIsTrimmedSingleSpaced);
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -251,6 +281,60 @@ function optionIdsMatchQuestionType(question) {
   return optionIds.every(hasText);
 }
 
+function trueFalseOptionLabelsMatchConvention(question) {
+  if (question.type !== 'true_false' || !Array.isArray(question.options)) return false;
+  return jsonEqual(question.options, TRUE_FALSE_OPTIONS);
+}
+
+function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn) {
+  const expectedId = `ch${String(index + 1).padStart(2, '0')}`;
+  const label = hasText(chapter.id) ? chapter.id : `chapter[${index}]`;
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (chapter.id !== expectedId) reject(`expected chapter ${expectedId}, found ${chapter.id}`);
+  if (hasText(chapter.id) && seenChapterIds.has(chapter.id)) {
+    reject(`${label} has duplicate chapter id`);
+  }
+  if (hasText(chapter.id)) seenChapterIds.add(chapter.id);
+
+  for (const field of ['nameSv', 'nameEn', 'descriptionSv', 'descriptionEn']) {
+    if (!hasText(chapter[field])) reject(`${label} missing ${field}`);
+  }
+
+  if (normalizeComparableText(chapter.nameSv) === normalizeComparableText(chapter.nameEn)) {
+    reject(`${label} nameSv and nameEn must be distinct bilingual text`);
+  }
+  if (
+    normalizeComparableText(chapter.descriptionSv) ===
+    normalizeComparableText(chapter.descriptionEn)
+  ) {
+    reject(`${label} descriptionSv and descriptionEn must be distinct bilingual text`);
+  }
+
+  const normalizedNameSv = normalizeComparableText(chapter.nameSv);
+  if (normalizedNameSv && seenNamesSv.has(normalizedNameSv)) {
+    reject(`${label} duplicates Swedish chapter name`);
+  }
+  if (normalizedNameSv) seenNamesSv.add(normalizedNameSv);
+
+  const normalizedNameEn = normalizeComparableText(chapter.nameEn);
+  if (normalizedNameEn && seenNamesEn.has(normalizedNameEn)) {
+    reject(`${label} duplicates English chapter name`);
+  }
+  if (normalizedNameEn) seenNamesEn.add(normalizedNameEn);
+
+  if (!Number.isInteger(chapter.questionCount) || chapter.questionCount < 1) {
+    reject(`${label} has invalid questionCount`);
+  }
+
+  return valid;
+}
+
 function validateQuestionSchema(question, index) {
   const label = hasText(question.id) ? question.id : `question[${index}]`;
   let valid = true;
@@ -261,7 +345,11 @@ function validateQuestionSchema(question, index) {
   }
 
   function requireText(field) {
-    if (!hasText(question[field])) reject(`${label} missing ${field}`);
+    if (!hasText(question[field])) {
+      reject(`${label} missing ${field}`);
+    } else if (!textIsTrimmedSingleSpaced(question[field])) {
+      reject(`${label} ${field} must be trimmed and single-spaced`);
+    }
   }
 
   requireText('id');
@@ -287,6 +375,17 @@ function validateQuestionSchema(question, index) {
   if (!REVIEW_STATUSES.has(question.reviewStatus)) {
     reject(`${label} has invalid reviewStatus ${question.reviewStatus}`);
   }
+  if (
+    normalizeComparableText(question.questionSv) === normalizeComparableText(question.questionEn)
+  ) {
+    reject(`${label} questionSv and questionEn must be distinct bilingual text`);
+  }
+  if (
+    normalizeComparableText(question.explanationSv) ===
+    normalizeComparableText(question.explanationEn)
+  ) {
+    reject(`${label} explanationSv and explanationEn must be distinct bilingual text`);
+  }
 
   if (!Array.isArray(question.options) || ![2, 4].includes(question.options.length)) {
     reject(`${label} must have 2 or 4 options`);
@@ -295,12 +394,21 @@ function validateQuestionSchema(question, index) {
     question.options.forEach((option, optionIndex) => {
       const optionLabel = `${label} option[${optionIndex}]`;
       if (!hasText(option.id)) reject(`${optionLabel} missing id`);
+      if (hasText(option.id) && !textIsTrimmedSingleSpaced(option.id)) {
+        reject(`${optionLabel} id must be trimmed and single-spaced`);
+      }
       if (hasText(option.id) && optionIds.has(option.id)) {
         reject(`${label} has duplicate option id ${option.id}`);
       }
       optionIds.add(option.id);
       if (!hasText(option.textSv)) reject(`${optionLabel} missing textSv`);
       if (!hasText(option.textEn)) reject(`${optionLabel} missing textEn`);
+      if (hasText(option.textSv) && !textIsTrimmedSingleSpaced(option.textSv)) {
+        reject(`${optionLabel} textSv must be trimmed and single-spaced`);
+      }
+      if (hasText(option.textEn) && !textIsTrimmedSingleSpaced(option.textEn)) {
+        reject(`${optionLabel} textEn must be trimmed and single-spaced`);
+      }
     });
     findDuplicateOptionTextLabels(question).forEach((duplicate) => {
       reject(`${label} has duplicate ${duplicate.field} option text "${duplicate.label}"`);
@@ -319,9 +427,10 @@ function validateQuestionSchema(question, index) {
       question.type === 'true_false' &&
       (question.options.length !== 2 ||
         !optionIdsMatchQuestionType(question) ||
-        !['true', 'false'].includes(question.correctOptionId))
+        !['true', 'false'].includes(question.correctOptionId) ||
+        !trueFalseOptionLabelsMatchConvention(question))
     ) {
-      reject(`${label} true_false questions must use true/false option ids in order`);
+      reject(`${label} true_false questions must use true/false option ids and labels in order`);
     }
   }
 
@@ -339,6 +448,17 @@ function validateQuestionSchema(question, index) {
     });
   }
 
+  if (question.uhrReference && typeof question.uhrReference === 'object') {
+    for (const field of ['chapter', 'section']) {
+      if (
+        hasText(question.uhrReference[field]) &&
+        !textIsTrimmedSingleSpaced(question.uhrReference[field])
+      ) {
+        reject(`${label} uhrReference.${field} must be trimmed and single-spaced`);
+      }
+    }
+  }
+
   return valid;
 }
 
@@ -352,12 +472,17 @@ const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQue
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
+let chapterSchemasValidated = 0;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
+let questionBilingualTextPairsValidated = 0;
+let questionTextFieldsNormalizedValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
 let questionOptionIdConventionsValidated = 0;
+let trueFalseQuestions = 0;
+let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -779,14 +904,12 @@ const uhrReferenceChapters = buildUhrReferenceChapters();
 
 if (Array.isArray(chapters)) {
   if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
+  const seenChapterIds = new Set();
+  const seenNamesSv = new Set();
+  const seenNamesEn = new Set();
   chapters.forEach((chapter, index) => {
-    const expectedId = `ch${String(index + 1).padStart(2, '0')}`;
-    if (chapter.id !== expectedId) fail(`expected chapter ${expectedId}, found ${chapter.id}`);
-    for (const field of ['nameSv', 'nameEn', 'descriptionSv', 'descriptionEn']) {
-      if (!chapter[field]) fail(`${chapter.id || expectedId} missing ${field}`);
-    }
-    if (!Number.isInteger(chapter.questionCount) || chapter.questionCount < 0) {
-      fail(`${chapter.id || expectedId} has invalid questionCount`);
+    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
+      chapterSchemasValidated += 1;
     }
   });
 }
@@ -852,6 +975,12 @@ if (Array.isArray(questions)) {
       if (promptTextIsUnique) {
         questionPromptTextUniquenessValidated += 1;
       }
+      if (bilingualTextPairsAreDistinct(question)) {
+        questionBilingualTextPairsValidated += 1;
+      }
+      if (questionTextFieldsAreNormalized(question)) {
+        questionTextFieldsNormalizedValidated += 1;
+      }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
       }
@@ -860,6 +989,12 @@ if (Array.isArray(questions)) {
       }
       if (optionIdsMatchQuestionType(question)) {
         questionOptionIdConventionsValidated += 1;
+      }
+      if (question.type === 'true_false') {
+        trueFalseQuestions += 1;
+        if (trueFalseOptionLabelsMatchConvention(question)) {
+          trueFalseOptionLabelsValidated += 1;
+        }
       }
       if (question.tags.every(isSlugTag)) {
         questionTagsValidated += 1;
@@ -950,6 +1085,7 @@ console.log(
   JSON.stringify(
     {
       chapters: chapters.length,
+      chapterSchemasValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
@@ -963,10 +1099,14 @@ console.log(
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
       questionSchemasValidated,
+      questionBilingualTextPairsValidated,
+      questionTextFieldsNormalizedValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,
       questionOptionIdConventionsValidated,
+      trueFalseQuestions,
+      trueFalseOptionLabelsValidated,
       questionTagsValidated,
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
