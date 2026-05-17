@@ -7,6 +7,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
 const moduleCache = new Map();
 const QUESTION_TYPES = new Set(['single_choice', 'true_false', 'flashcard']);
+const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const REVIEW_STATUSES = new Set(['draft', 'reviewed', 'published']);
 const EXPECTED_UX_BENCHMARKS = 4;
@@ -673,6 +674,7 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
+let publishedQuestionTypesValidated = 0;
 let questionIdSequencesValidated = 0;
 let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
@@ -2516,6 +2518,11 @@ if (Array.isArray(questions)) {
     const questionSchemaIsValid = validateQuestionSchema(question, index);
     if (questionSchemaIsValid) {
       questionSchemasValidated += 1;
+      if (PUBLISHED_QUESTION_TYPES.has(question.type)) {
+        publishedQuestionTypesValidated += 1;
+      } else {
+        fail(`${label} published question type ${question.type} is not quiz-answerable`);
+      }
       if (promptTextIsUnique) {
         questionPromptTextUniquenessValidated += 1;
       }
@@ -2697,6 +2704,7 @@ console.log(
       generatedAnswerTemplateParityValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
+      publishedQuestionTypesValidated,
       questionIdSequencesValidated,
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
