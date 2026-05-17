@@ -591,6 +591,8 @@ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
 const generateExam = examGeneratorModule.generateExam;
+const scoringModule = loadTs('lib/quiz/scoring.ts');
+const scoreAnswers = scoringModule.scoreAnswers;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -618,6 +620,8 @@ let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
+let practiceScoringRulesValidated = 0;
+let practiceScoringRulesParityValidated = false;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
 let streakRulesValidated = 0;
@@ -665,6 +669,7 @@ if (!Array.isArray(generatedPublishedQuestions)) {
 }
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
+if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
 }
@@ -986,6 +991,43 @@ function validateBadgeCatalog() {
     } else {
       badgeMilestoneParityValidated = true;
     }
+  }
+}
+
+function validatePracticeScoringRules() {
+  if (typeof scoreAnswers !== 'function') return;
+
+  const cases = [
+    { label: 'default empty results', input: undefined, expected: { correct: 0, total: 0 } },
+    { label: 'empty results', input: [], expected: { correct: 0, total: 0 } },
+    { label: 'all wrong results', input: [false, false], expected: { correct: 0, total: 2 } },
+    { label: 'mixed results', input: [true, false, true], expected: { correct: 2, total: 3 } },
+    { label: 'all correct results', input: [true, true], expected: { correct: 2, total: 2 } },
+  ];
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, input, expected }) => {
+    let actual;
+    try {
+      actual = input === undefined ? scoreAnswers() : scoreAnswers(input);
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`practice scoring rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actual, expected)) {
+      rulesAreValid = false;
+      fail(
+        `practice scoring rule ${label} returned ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      practiceScoringRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && practiceScoringRulesValidated === cases.length) {
+    practiceScoringRulesParityValidated = true;
   }
 }
 
@@ -2026,6 +2068,7 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
+validatePracticeScoringRules();
 validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
@@ -2067,6 +2110,8 @@ console.log(
       uxBenchmarksValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
+      practiceScoringRulesValidated,
+      practiceScoringRulesParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
       streakRulesValidated,
