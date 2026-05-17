@@ -64,6 +64,31 @@ test('screen scaffold exposes page and section titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('compliance scaffold exposes legal page headings as headers', () => {
+  const legalPageSource = read('components/compliance/LegalPage.tsx');
+  const complianceLinksSource = read('components/compliance/ComplianceLinks.tsx');
+
+  assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.match(complianceLinksSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.doesNotMatch(legalPageSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('settings route exposes page and section titles as headers', () => {
+  const source = read('app/settings.tsx');
+  const sectionHeaderMatches = source.match(
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/g,
+  );
+
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /Question language/);
+  assert.match(source, /Audio/);
+  assert.match(source, /Daily goal/);
+  assert.equal(sectionHeaderMatches?.length, 3);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 
@@ -84,6 +109,14 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
   assert.match(source, /toggleBookmark/);
   assert.match(source, /bookmarked/);
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
+});
+
+test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /countAnswersForLocalDate/);
+  assert.match(source, /countAnswersForLocalDate\(questionProgress\)/);
+  assert.doesNotMatch(source, /completedQuestionIds\.length,\s*dailyGoalAnswers/);
 });
 
 test('practice answer flow requires explicit next question after feedback', () => {

@@ -33,6 +33,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);
   assert.equal(summary.examChapterBreakdownParityValidated, true);
+  assert.equal(summary.examGeneratorTypeAliasesValidated, 1);
+  assert.equal(summary.examGeneratorTypeInterfacesValidated, 6);
+  assert.equal(summary.examGeneratorTypeSchemaParityValidated, true);
   assert.equal(summary.contentTypeUnionsValidated, 3);
   assert.equal(summary.contentTypeInterfacesValidated, 5);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
@@ -82,6 +85,12 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
+  assert.equal(summary.practiceSessionStoreFieldsValidated, 5);
+  assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
+  assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
+  assert.equal(summary.answerValidationTypeUnionsValidated, 1);
+  assert.equal(summary.answerValidationTypeInterfacesValidated, 1);
+  assert.equal(summary.answerValidationTypeSchemaParityValidated, true);
   assert.equal(summary.answerFeedbackQuestionsValidated, 500);
   assert.ok(summary.answerFeedbackOptionsValidated > summary.answerFeedbackQuestionsValidated);
   assert.equal(summary.answerFeedbackRuntimeParityValidated, true);

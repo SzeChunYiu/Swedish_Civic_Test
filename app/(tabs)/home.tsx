@@ -12,7 +12,7 @@ import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
-import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -25,12 +25,11 @@ export default function Screen() {
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
-  const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
-  const completedToday = Math.min(completedQuestionIds.length, dailyGoalAnswers);
+  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const currentStreak = calculateStreak(answerDates);
   const level = calculateLevel(totalXp);

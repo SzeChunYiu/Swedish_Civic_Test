@@ -368,6 +368,25 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'toggleBookmark', type: '(questionId: string) => void', optional: false },
   { name: 'resetProgress', type: '() => void', optional: false },
 ];
+const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
+  { name: 'activeQuestionId', type: 'string | null', optional: false },
+  { name: 'selectedOptionId', type: 'string | null', optional: false },
+  { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
+  { name: 'resetSelection', type: '() => void', optional: false },
+  { name: 'advanceQuestion', type: '() => void', optional: false },
+];
+const EXPECTED_ANSWER_VALIDATION_TYPE_UNIONS = [
+  { typeName: 'AnswerOptionFeedbackTone', values: ['idle', 'correct', 'incorrect'] },
+];
+const EXPECTED_ANSWER_VALIDATION_INTERFACES = [
+  {
+    name: 'AnswerOptionFeedback',
+    fields: [
+      { name: 'resultLabel', type: 'string', optional: true },
+      { name: 'tone', type: 'AnswerOptionFeedbackTone', optional: false },
+    ],
+  },
+];
 const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
@@ -437,6 +456,63 @@ const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'sourceScope', type: "'uhr_based'", optional: false },
   { name: 'showExplanationsDuringExam', type: 'boolean', optional: false },
   { name: 'adsAllowedDuringExam', type: 'boolean', optional: false },
+];
+const EXPECTED_EXAM_GENERATOR_TYPE_ALIASES = [
+  { typeName: 'ExamAnswerMap', type: 'Record<string, string>' },
+];
+const EXPECTED_EXAM_GENERATOR_INTERFACES = [
+  {
+    name: 'ExamOptions',
+    fields: [{ name: 'questionCount', type: 'number', optional: true }],
+  },
+  {
+    name: 'ExamChapterResult',
+    fields: [
+      { name: 'chapterId', type: 'string', optional: false },
+      { name: 'correctCount', type: 'number', optional: false },
+      { name: 'totalCount', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'ExamResult',
+    fields: [
+      { name: 'correctCount', type: 'number', optional: false },
+      { name: 'totalCount', type: 'number', optional: false },
+      { name: 'percent', type: 'number', optional: false },
+      { name: 'chapterBreakdown', type: 'ExamChapterResult[]', optional: false },
+    ],
+  },
+  {
+    name: 'ExamChapterBreakdownItem',
+    fields: [
+      { name: 'chapterId', type: 'string', optional: false },
+      { name: 'correctCount', type: 'number', optional: false },
+      { name: 'totalCount', type: 'number', optional: false },
+      { name: 'chapterNameSv', type: 'string', optional: false },
+      { name: 'chapterNameEn', type: 'string', optional: false },
+    ],
+  },
+  {
+    name: 'ExamReviewItem',
+    fields: [
+      { name: 'questionId', type: 'string', optional: false },
+      { name: 'questionSv', type: 'string', optional: false },
+      { name: 'chapterId', type: 'string', optional: false },
+      { name: 'selectedOptionTextSv', type: 'string', optional: false },
+      { name: 'correctOptionTextSv', type: 'string', optional: false },
+      { name: 'isCorrect', type: 'boolean', optional: false },
+      { name: 'explanationSv', type: 'string', optional: false },
+      { name: 'uhrReference', type: "PracticeQuestion['uhrReference']", optional: false },
+    ],
+  },
+  {
+    name: 'ExamAutoSubmitState',
+    fields: [
+      { name: 'remainingSeconds', type: 'number', optional: false },
+      { name: 'submitted', type: 'boolean', optional: false },
+      { name: 'questionCount', type: 'number', optional: false },
+    ],
+  },
 ];
 const EXPECTED_MONETIZATION_TYPE_UNIONS = [
   {
@@ -1134,6 +1210,26 @@ function extractStringUnionTypeFromTs(source, typeName) {
   return values;
 }
 
+function extractTypeAliasTextFromTs(source, typeName) {
+  const sourceFile = ts.createSourceFile('source.ts', source, ts.ScriptTarget.Latest, true);
+  let text;
+
+  function visit(node) {
+    if (
+      ts.isTypeAliasDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === typeName
+    ) {
+      text = node.type.getText(sourceFile);
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return text;
+}
+
 function propertyNameText(name) {
   if (ts.isIdentifier(name) || ts.isStringLiteralLike(name) || ts.isNumericLiteral(name)) {
     return name.text;
@@ -1582,6 +1678,8 @@ const audioModule = loadTs('lib/audio/speak.ts');
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
+const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
+const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -1649,6 +1747,9 @@ let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
 let examChapterBreakdownParityValidated = false;
+let examGeneratorTypeAliasesValidated = 0;
+let examGeneratorTypeInterfacesValidated = 0;
+let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
@@ -1698,6 +1799,12 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let practiceSessionStoreFieldsValidated = 0;
+let practiceSessionStoreSchemaParityValidated = false;
+let practiceSessionStoreRuntimeParityValidated = false;
+let answerValidationTypeUnionsValidated = 0;
+let answerValidationTypeInterfacesValidated = 0;
+let answerValidationTypeSchemaParityValidated = false;
 let answerFeedbackQuestionsValidated = 0;
 let answerFeedbackOptionsValidated = 0;
 let answerFeedbackRuntimeParityValidated = false;
@@ -1786,6 +1893,13 @@ if (typeof buildQuestionSpeechText !== 'function') {
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
+}
+if (
+  !usePracticeSessionStore ||
+  typeof usePracticeSessionStore.getState !== 'function' ||
+  typeof usePracticeSessionStore.setState !== 'function'
+) {
+  fail('usePracticeSessionStore export is not a Zustand store');
 }
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
@@ -2742,6 +2856,97 @@ function validateExamChapterBreakdownParity(config) {
     breakdownItems.length === expectedByChapter.size
   ) {
     examChapterBreakdownParityValidated = true;
+  }
+}
+
+function validateExamGeneratorTypeSchemaParity() {
+  let valid = true;
+  let examGeneratorSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    examGeneratorSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/examGenerator.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/quiz/examGenerator.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_EXAM_GENERATOR_TYPE_ALIASES.forEach(({ typeName, type }) => {
+    const actualType = extractTypeAliasTextFromTs(examGeneratorSource, typeName);
+    if (actualType !== type) {
+      reject(
+        `lib/quiz/examGenerator.ts ${typeName} type is ${JSON.stringify(
+          actualType,
+        )}, expected ${JSON.stringify(type)}`,
+      );
+      return;
+    }
+    examGeneratorTypeAliasesValidated += 1;
+  });
+
+  EXPECTED_EXAM_GENERATOR_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      examGeneratorSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `lib/quiz/examGenerator.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `lib/quiz/examGenerator.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `lib/quiz/examGenerator.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `lib/quiz/examGenerator.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `lib/quiz/examGenerator.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) examGeneratorTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    examGeneratorTypeAliasesValidated === EXPECTED_EXAM_GENERATOR_TYPE_ALIASES.length &&
+    examGeneratorTypeInterfacesValidated === EXPECTED_EXAM_GENERATOR_INTERFACES.length
+  ) {
+    examGeneratorTypeSchemaParityValidated = true;
   }
 }
 
@@ -4586,6 +4791,219 @@ function validatePracticeScoringRules() {
   }
 }
 
+function validatePracticeSessionStoreParity() {
+  let valid = true;
+  let runtimeValid = true;
+  let practiceSessionStoreSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function rejectRuntime(message) {
+    runtimeValid = false;
+    reject(message);
+  }
+
+  try {
+    practiceSessionStoreSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/quiz/practiceSessionStore.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`practice session store schema source could not be read: ${error.message}`);
+    return;
+  }
+
+  const actualFields = extractObjectTypePropertiesFromTs(
+    practiceSessionStoreSource,
+    'PracticeSessionState',
+  );
+  if (!Array.isArray(actualFields)) {
+    reject('lib/quiz/practiceSessionStore.ts PracticeSessionState type could not be read');
+    return;
+  }
+
+  const actualNames = actualFields.map((field) => field.name);
+  const expectedNames = EXPECTED_PRACTICE_SESSION_STORE_FIELDS.map((field) => field.name);
+  if (!arrayEquals(actualNames, expectedNames)) {
+    reject(
+      `PracticeSessionState fields are ${JSON.stringify(actualNames)}, expected ${JSON.stringify(
+        expectedNames,
+      )}`,
+    );
+  }
+
+  const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+  EXPECTED_PRACTICE_SESSION_STORE_FIELDS.forEach((expectedField) => {
+    let fieldIsValid = true;
+    const actualField = actualFieldsByName.get(expectedField.name);
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!actualField) {
+      rejectField(`PracticeSessionState missing ${expectedField.name}`);
+      return;
+    }
+    if (actualField.type !== expectedField.type) {
+      rejectField(
+        `PracticeSessionState.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+      );
+    }
+    if (actualField.optional !== expectedField.optional) {
+      rejectField(
+        `PracticeSessionState.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+      );
+    }
+
+    if (fieldIsValid) practiceSessionStoreFieldsValidated += 1;
+  });
+
+  if (
+    usePracticeSessionStore &&
+    typeof usePracticeSessionStore.getState === 'function' &&
+    typeof usePracticeSessionStore.setState === 'function'
+  ) {
+    usePracticeSessionStore.setState({
+      activeQuestionId: null,
+      selectedOptionId: null,
+    });
+
+    usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
+    let state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
+      rejectRuntime('practice session selectOption must lock question id and selected option id');
+    }
+
+    usePracticeSessionStore.getState().resetSelection();
+    state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== null) {
+      rejectRuntime(
+        'practice session resetSelection must keep active question while clearing answer',
+      );
+    }
+
+    usePracticeSessionStore.getState().advanceQuestion();
+    state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== null || state.selectedOptionId !== null) {
+      rejectRuntime(
+        'practice session advanceQuestion must clear active question and selected answer',
+      );
+    }
+
+    usePracticeSessionStore.setState({
+      activeQuestionId: null,
+      selectedOptionId: null,
+    });
+  }
+
+  if (
+    valid &&
+    practiceSessionStoreFieldsValidated === EXPECTED_PRACTICE_SESSION_STORE_FIELDS.length
+  ) {
+    practiceSessionStoreSchemaParityValidated = true;
+  }
+  if (valid && runtimeValid) practiceSessionStoreRuntimeParityValidated = true;
+}
+
+function validateAnswerValidationTypeSchemaParity() {
+  let valid = true;
+  let answerValidationSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    answerValidationSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/quiz/answerValidation.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/quiz/answerValidation.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_ANSWER_VALIDATION_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(answerValidationSource, typeName);
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `lib/quiz/answerValidation.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    answerValidationTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_ANSWER_VALIDATION_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      answerValidationSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `lib/quiz/answerValidation.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `lib/quiz/answerValidation.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `lib/quiz/answerValidation.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `lib/quiz/answerValidation.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `lib/quiz/answerValidation.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) answerValidationTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    answerValidationTypeUnionsValidated === EXPECTED_ANSWER_VALIDATION_TYPE_UNIONS.length &&
+    answerValidationTypeInterfacesValidated === EXPECTED_ANSWER_VALIDATION_INTERFACES.length
+  ) {
+    answerValidationTypeSchemaParityValidated = true;
+  }
+}
+
 function validateAnswerFeedbackParity() {
   if (
     !Array.isArray(questions) ||
@@ -5984,6 +6402,7 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
+validateExamGeneratorTypeSchemaParity();
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
@@ -6003,6 +6422,8 @@ validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validatePracticeSessionStoreParity();
+validateAnswerValidationTypeSchemaParity();
 validateAnswerFeedbackParity();
 validateQuestionSpeechTextParity();
 validateChapterQuizSessionParity();
@@ -6050,6 +6471,9 @@ console.log(
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
       examChapterBreakdownParityValidated,
+      examGeneratorTypeAliasesValidated,
+      examGeneratorTypeInterfacesValidated,
+      examGeneratorTypeSchemaParityValidated,
       contentTypeUnionsValidated,
       contentTypeInterfacesValidated,
       contentTypeSchemaParityValidated,
@@ -6106,6 +6530,12 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      practiceSessionStoreFieldsValidated,
+      practiceSessionStoreSchemaParityValidated,
+      practiceSessionStoreRuntimeParityValidated,
+      answerValidationTypeUnionsValidated,
+      answerValidationTypeInterfacesValidated,
+      answerValidationTypeSchemaParityValidated,
       answerFeedbackQuestionsValidated,
       answerFeedbackOptionsValidated,
       answerFeedbackRuntimeParityValidated,

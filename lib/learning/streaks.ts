@@ -1,5 +1,9 @@
 const dayInMs = 24 * 60 * 60 * 1000;
 
+type AnsweredProgress = {
+  lastAnsweredAt?: string;
+};
+
 export function getLocalDateKey(date: Date = new Date()): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -28,4 +32,20 @@ export function calculateStreak(days: string[] = [], today = getLocalDateKey()):
   }
 
   return streak;
+}
+
+export function countAnswersForLocalDate(
+  questionProgress: Record<string, AnsweredProgress | undefined> = {},
+  date: Date = new Date(),
+): number {
+  const targetDate = getLocalDateKey(date);
+
+  return Object.values(questionProgress).filter((progress) => {
+    if (!progress?.lastAnsweredAt) return false;
+
+    const answeredAt = new Date(progress.lastAnsweredAt);
+    if (Number.isNaN(answeredAt.getTime())) return false;
+
+    return getLocalDateKey(answeredAt) === targetDate;
+  }).length;
 }
