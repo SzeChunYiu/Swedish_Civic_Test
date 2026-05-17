@@ -118,8 +118,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q005',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vilka är Sveriges två största öar?',
-    questionEn: "Which are Sweden's two largest islands?",
+    questionSv: 'Enligt UHR-materialet, vilka öar är Sveriges två största?',
+    questionEn: "According to the UHR material, which islands are Sweden's two largest?",
     options: [
       { id: 'a', textSv: 'Gotland och Öland', textEn: 'Gotland and Öland' },
       { id: 'b', textSv: 'Hisingen och Orust', textEn: 'Hisingen and Orust' },
@@ -128,9 +128,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Gotland och Öland är Sveriges två största öar. Malmö och Göteborg är städer, inte öar.',
+      'UHR-avsnittet Geografi, klimat och natur säger att Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn nämns inte som de två största där, och Malmö och Göteborg är städer.',
     explanationEn:
-      "Gotland and Öland are Sweden's two largest islands. Malmö and Gothenburg are cities, not islands.",
+      'The UHR section Geography, climate, and nature says that Sweden’s two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are not named there as the two largest, and Malmö and Gothenburg are cities.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
