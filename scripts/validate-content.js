@@ -666,6 +666,41 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
     pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
   },
 ];
+const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
+  {
+    label: 'explicit accessibility label prop',
+    pattern: /accessibilityLabel\?: string;/,
+  },
+  {
+    label: 'derived accessibility label variable',
+    pattern: /const badgeAccessibilityLabel =/,
+  },
+  {
+    label: 'explicit label override before child fallback',
+    pattern:
+      /accessibilityLabel \?\?\s*\(\s*typeof children === 'string' \|\| typeof children === 'number' \? String\(children\) : undefined\s*\)/,
+  },
+  {
+    label: 'web aria label',
+    pattern: /aria-label=\{badgeAccessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
+  },
+  {
+    label: 'tone style path',
+    pattern: /style=\{\[styles\.badge, styles\[tone\]\]\}/,
+  },
+  {
+    label: 'visible child text',
+    pattern: /<Text[\s\S]*>\s*\{children\}\s*<\/Text>/,
+  },
+  {
+    label: 'visual uppercase transform',
+    pattern: /textTransform:\s*'uppercase'/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2321,6 +2356,8 @@ let progressBarAccessibilityRulesValidated = 0;
 let progressBarAccessibilityParityValidated = false;
 let metricCardAccessibilityRulesValidated = 0;
 let metricCardAccessibilityParityValidated = false;
+let badgeAccessibilityRulesValidated = 0;
+let badgeAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4222,6 +4259,35 @@ function validateMetricCardAccessibilityParity() {
     metricCardAccessibilityRulesValidated === EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES.length
   ) {
     metricCardAccessibilityParityValidated = true;
+  }
+}
+
+function validateBadgeAccessibilityParity() {
+  let valid = true;
+  let badgeSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    badgeSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Badge.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/Badge.tsx could not be read for accessibility parity: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_BADGE_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(badgeSource)) {
+      reject(`Badge missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    badgeAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && badgeAccessibilityRulesValidated === EXPECTED_BADGE_ACCESSIBILITY_RULES.length) {
+    badgeAccessibilityParityValidated = true;
   }
 }
 
@@ -8314,6 +8380,7 @@ validateButtonAccessibilityParity();
 validateCardAccessibilityParity();
 validateProgressBarAccessibilityParity();
 validateMetricCardAccessibilityParity();
+validateBadgeAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8429,6 +8496,8 @@ console.log(
       progressBarAccessibilityParityValidated,
       metricCardAccessibilityRulesValidated,
       metricCardAccessibilityParityValidated,
+      badgeAccessibilityRulesValidated,
+      badgeAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
