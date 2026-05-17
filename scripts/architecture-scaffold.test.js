@@ -68,6 +68,7 @@ const architectureRouteFiles = architectureTargetFiles.filter(
 );
 
 const releaseComplianceRouteFiles = [
+  'app/+not-found.tsx',
   'app/disclaimer.tsx',
   'app/privacy.tsx',
   'app/sources.tsx',
@@ -175,7 +176,7 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   const indexRoute = readText('app/index.tsx');
 
   assert.match(rootLayout, /import\s+\{\s*Stack\s*,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
-  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), ['(tabs)', 'index']);
+  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), ['(tabs)', '+not-found', 'index']);
   assert.match(
     rootLayout,
     /<Stack\.Screen\s+name=["']index["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
@@ -184,6 +185,20 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
     rootLayout,
     /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
   );
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']\+not-found["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
+  );
   assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
   assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);
+});
+
+test('Expo Router unmatched routes fall back to the Home tab', () => {
+  const notFoundRoute = readText('app/+not-found.tsx');
+
+  assert.match(notFoundRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
+  assert.match(notFoundRoute, /import\s+HomeScreen\s+from ['"]\.\/\(tabs\)\/home['"]/);
+  assert.match(notFoundRoute, /window\.location\.protocol\s+===\s+['"]file:['"]/);
+  assert.match(notFoundRoute, /return\s+<HomeScreen\s*\/>/);
+  assert.match(notFoundRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);
 });
