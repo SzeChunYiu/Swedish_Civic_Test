@@ -715,19 +715,19 @@ export const additionalQuestions: PracticeQuestion[] = [
     'What is the goal of Sweden’s gender equality policy?',
     [
       [
-        'Att kvinnor och män ska ha samma rättigheter, skyldigheter och makt att påverka',
-        'That women and men should have the same rights, duties, and power to influence',
+        'Att kvinnor och män ska ha samma rättigheter, skyldigheter och makt att påverka samhället och sina liv',
+        'That women and men should have the same rights, duties, and power to influence society and their lives',
       ],
       ['Att bara män ska delta i politiken', 'That only men should participate in politics'],
-      ['Att arbetsplatser inte ska arbeta med löner', 'That workplaces should not work with wages'],
+      ['Att arbetsplatser inte ska granska löner', 'That workplaces should not review wages'],
       [
         'Att föräldraledighet bara ska tas av en förälder',
         'That parental leave should only be taken by one parent',
       ],
     ],
     0,
-    'Jämställdhetspolitiken handlar om lika rättigheter, skyldigheter och makt över samhälle och eget liv.',
-    'Gender equality policy concerns equal rights, duties, and power over society and one’s own life.',
+    'UHR-avsnittet beskriver att jämställdhetspolitiken handlar om att kvinnor och män ska ha samma rättigheter och skyldigheter samt makt att påverka samhället och sina egna liv. Det ger exempel som lika lön för lika arbete, samma möjligheter till utbildning och att båda föräldrarna kan dela på föräldraledigheten.',
+    'The UHR section describes gender equality policy as women and men having the same rights and duties, plus power to influence society and their own lives. It gives examples such as equal pay for equal work, equal opportunities in education, and both parents being able to share parental leave.',
     ['gender-equality', 'rights', 'policy'],
   ),
   trueFalse(
