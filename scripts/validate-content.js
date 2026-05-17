@@ -88,6 +88,14 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+const EXPECTED_SETTINGS_STORE_FIELDS = [
+  { name: 'language', type: 'AppLanguage', optional: false },
+  { name: 'audioEnabled', type: 'boolean', optional: false },
+  { name: 'dailyGoalAnswers', type: 'number', optional: false },
+  { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
+  { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
+  { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
+];
 const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-router',
   'react-native-google-mobile-ads',
@@ -1491,6 +1499,8 @@ let contentTypeSchemaParityValidated = false;
 let supportedLanguagesValidated = 0;
 let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
+let settingsStoreFieldsValidated = 0;
+let settingsStoreSchemaParityValidated = false;
 let settingsDailyGoalOptionsValidated = 0;
 let settingsDailyGoalParityValidated = false;
 let settingsAudioLabelsValidated = 0;
@@ -2624,6 +2634,120 @@ function validateLocalizationLanguageContract() {
   }
 
   if (valid) languageSettingsParityValidated = true;
+}
+
+function validateSettingsStoreSchemaParity() {
+  let valid = true;
+  let settingsStore = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
+  } catch (error) {
+    reject(`settings store schema source could not be read: ${error.message}`);
+    return;
+  }
+
+  const actualFields = extractObjectTypePropertiesFromTs(settingsStore, 'SettingsState');
+  if (!Array.isArray(actualFields)) {
+    reject('lib/storage/settingsStore.ts SettingsState type could not be read');
+    return;
+  }
+
+  const actualNames = actualFields.map((field) => field.name);
+  const expectedNames = EXPECTED_SETTINGS_STORE_FIELDS.map((field) => field.name);
+  if (!arrayEquals(actualNames, expectedNames)) {
+    reject(
+      `SettingsState fields are ${JSON.stringify(actualNames)}, expected ${JSON.stringify(
+        expectedNames,
+      )}`,
+    );
+  }
+
+  const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+  EXPECTED_SETTINGS_STORE_FIELDS.forEach((expectedField) => {
+    let fieldIsValid = true;
+    const actualField = actualFieldsByName.get(expectedField.name);
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!actualField) {
+      rejectField(`SettingsState missing ${expectedField.name}`);
+      return;
+    }
+    if (actualField.type !== expectedField.type) {
+      rejectField(
+        `SettingsState.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+      );
+    }
+    if (actualField.optional !== expectedField.optional) {
+      rejectField(
+        `SettingsState.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+      );
+    }
+
+    if (fieldIsValid) settingsStoreFieldsValidated += 1;
+  });
+
+  const languageKey = extractStringConstantFromTs(settingsStore, 'languageKey');
+  const audioEnabledKey = extractStringConstantFromTs(settingsStore, 'audioEnabledKey');
+  const dailyGoalKey = extractStringConstantFromTs(settingsStore, 'dailyGoalKey');
+  if (languageKey !== 'language') {
+    reject(`languageKey is ${JSON.stringify(languageKey)}, expected "language"`);
+  }
+  if (audioEnabledKey !== EXPECTED_AUDIO_SETTING_KEY) {
+    reject(
+      `audioEnabledKey is ${JSON.stringify(audioEnabledKey)}, expected ${JSON.stringify(
+        EXPECTED_AUDIO_SETTING_KEY,
+      )}`,
+    );
+  }
+  if (dailyGoalKey !== 'dailyGoalAnswers') {
+    reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
+  }
+
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  const requiredSnippets = [
+    ["createMMKV({ id: 'settings' })", 'settings storage must use the stable settings MMKV id'],
+    ['language: readLanguage()', 'SettingsState must initialize language from persisted storage'],
+    [
+      'audioEnabled: readAudioEnabled()',
+      'SettingsState must initialize audioEnabled from persisted storage',
+    ],
+    [
+      'dailyGoalAnswers: readDailyGoalAnswers()',
+      'SettingsState must initialize dailyGoalAnswers from persisted storage',
+    ],
+    [
+      'settingsStorage?.set(languageKey, language);',
+      'setLanguage must persist through languageKey',
+    ],
+    [
+      'settingsStorage?.set(audioEnabledKey, audioEnabled);',
+      'setAudioEnabled must persist through audioEnabledKey',
+    ],
+    [
+      'settingsStorage?.set(dailyGoalKey, safeGoal);',
+      'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
+    ],
+  ];
+
+  requiredSnippets.forEach(([snippet, message]) => {
+    if (!normalizedSettingsStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  if (valid && settingsStoreFieldsValidated === EXPECTED_SETTINGS_STORE_FIELDS.length) {
+    settingsStoreSchemaParityValidated = true;
+  }
 }
 
 function validateSettingsDailyGoalParity() {
@@ -5378,6 +5502,7 @@ validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
+validateSettingsStoreSchemaParity();
 validateSettingsDailyGoalParity();
 validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
@@ -5465,6 +5590,8 @@ console.log(
           : 0,
       localizationStringsValidated,
       languageSettingsParityValidated,
+      settingsStoreFieldsValidated,
+      settingsStoreSchemaParityValidated,
       settingsDailyGoalOptionsValidated,
       settingsDailyGoalParityValidated,
       settingsAudioLabelsValidated,
