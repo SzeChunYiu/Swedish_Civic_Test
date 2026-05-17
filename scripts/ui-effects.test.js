@@ -75,6 +75,20 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('settings route exposes page and section titles as headers', () => {
+  const source = read('app/settings.tsx');
+  const sectionHeaderMatches = source.match(
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/g,
+  );
+
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /Question language/);
+  assert.match(source, /Audio/);
+  assert.match(source, /Daily goal/);
+  assert.equal(sectionHeaderMatches?.length, 3);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 
