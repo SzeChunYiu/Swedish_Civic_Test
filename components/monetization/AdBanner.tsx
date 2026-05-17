@@ -6,6 +6,8 @@ import { colors, space, typography } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
+const REMOVE_ADS_ACCESSIBILITY_HINT = 'Hidden after Remove Ads is active.';
+
 export function AdBanner({
   placement = 'home_banner',
   entitlements,
@@ -23,11 +25,12 @@ export function AdBanner({
   const adStatusLabel = unit?.testOnly
     ? 'AdMob test unit active · web preview'
     : 'AdMob placement active';
+  const accessibilityLabel = `Google AdMob: ${placementLabel}. ${adStatusLabel}. ${REMOVE_ADS_ACCESSIBILITY_HINT}`;
 
   return (
     <Card
-      accessibilityHint="Sponsored ad preview. Hidden after Remove Ads is active."
-      accessibilityLabel={`Google AdMob: ${placementLabel}. ${adStatusLabel}`}
+      accessibilityHint={`Sponsored ad preview. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
+      accessibilityLabel={accessibilityLabel}
     >
       <Text style={styles.eyebrow}>Google AdMob</Text>
       <Text style={styles.title}>{placementLabel}</Text>

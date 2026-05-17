@@ -348,27 +348,35 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(webSource, /web preview/);
   assert.match(webSource, /const placementLabel = placement\.replaceAll\('_', ' '\);/);
+  assert.match(webSource, /const REMOVE_ADS_ACCESSIBILITY_HINT =/);
   assert.match(
     webSource,
-    /accessibilityHint="Sponsored ad preview\. Hidden after Remove Ads is active\."/,
+    /accessibilityHint=\{`Sponsored ad preview\. \$\{REMOVE_ADS_ACCESSIBILITY_HINT\}`\}/,
   );
-  assert.match(webSource, /<Card[\s\S]*accessibilityLabel=\{`Google AdMob: \$\{placementLabel\}/);
+  assert.match(webSource, /const accessibilityLabel = `Google AdMob: \$\{placementLabel\}/);
+  assert.match(webSource, /\$\{adStatusLabel\}\. \$\{REMOVE_ADS_ACCESSIBILITY_HINT\}`/);
+  assert.match(webSource, /<Card[\s\S]*accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(nativeSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /accessible/);
+  assert.match(nativeSource, /const REMOVE_ADS_ACCESSIBILITY_HINT =/);
   assert.match(
     nativeSource,
-    /accessibilityHint="Sponsored ad banner\. Hidden after Remove Ads is active\."/,
+    /accessibilityHint=\{`Sponsored ad banner\. \$\{REMOVE_ADS_ACCESSIBILITY_HINT\}`\}/,
   );
-  assert.match(nativeSource, /accessibilityLabel=\{`Google AdMob banner: \$\{placementLabel\}`\}/);
+  assert.match(
+    nativeSource,
+    /accessibilityLabel=\{`Google AdMob banner: \$\{placementLabel\}\. \$\{REMOVE_ADS_ACCESSIBILITY_HINT\}`\}/,
+  );
   assert.match(nativeSource, /<BannerAd/);
 });
 
 test('native ad preview card exposes a grouped accessibility summary', () => {
   const source = read('components/monetization/NativeAdCard.tsx');
 
+  assert.match(source, /const REMOVE_ADS_ACCESSIBILITY_HINT =/);
   assert.match(
     source,
-    /accessibilityHint="Sponsored ad preview\. Hidden after Remove Ads is active\."[\s\S]*accessibilityLabel="Test native ad: Sponsored study placement\. AdMob test placement preview\. Keep out of timed exams\."/,
+    /accessibilityHint=\{`Sponsored ad preview\. \$\{REMOVE_ADS_ACCESSIBILITY_HINT\}`\}[\s\S]*accessibilityLabel=\{`Test native ad: Sponsored study placement\. AdMob test placement preview\. Keep out of timed exams\. \$\{REMOVE_ADS_ACCESSIBILITY_HINT\}`\}/,
   );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

@@ -7,6 +7,8 @@ import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEn
 import { colors, radius, space } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 
+const REMOVE_ADS_ACCESSIBILITY_HINT = 'Hidden after Remove Ads is active.';
+
 export function AdBanner({
   placement = 'home_banner',
   entitlements,
@@ -30,8 +32,8 @@ export function AdBanner({
   return (
     <View
       accessible
-      accessibilityHint="Sponsored ad banner. Hidden after Remove Ads is active."
-      accessibilityLabel={`Google AdMob banner: ${placementLabel}`}
+      accessibilityHint={`Sponsored ad banner. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
+      accessibilityLabel={`Google AdMob banner: ${placementLabel}. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
       style={styles.nativeSlot}
     >
       <BannerAd

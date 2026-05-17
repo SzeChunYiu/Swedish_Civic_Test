@@ -6,6 +6,8 @@ import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 import { colors, space, typography } from '../../lib/theme';
 
+const REMOVE_ADS_ACCESSIBILITY_HINT = 'Hidden after Remove Ads is active.';
+
 export function NativeAdCard({
   entitlements,
 }: {
@@ -18,8 +20,8 @@ export function NativeAdCard({
 
   return (
     <Card
-      accessibilityHint="Sponsored ad preview. Hidden after Remove Ads is active."
-      accessibilityLabel="Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams."
+      accessibilityHint={`Sponsored ad preview. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
+      accessibilityLabel={`Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
     >
       <Text style={styles.eyebrow}>Test native ad</Text>
       <Text style={styles.title}>Sponsored study placement</Text>
