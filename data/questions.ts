@@ -286,8 +286,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q011',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vad betyder ordet demokrati?',
-    questionEn: 'What does the word democracy mean?',
+    questionSv: 'Vad betyder demokrati enligt UHR-materialet?',
+    questionEn: 'According to the UHR material, what does democracy mean?',
     options: [
       { id: 'a', textSv: 'Folkstyre', textEn: 'Rule by the people' },
       { id: 'b', textSv: 'Militärstyre', textEn: 'Military rule' },
@@ -296,9 +296,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Demokrati betyder folkstyre. Det handlar om att makten utgår från folket och att medborgare kan påverka beslut.',
+      'UHR-avsnittet Demokrati betyder folkstyre säger att demokrati är ett politiskt system där makten utgår från folket. Det betyder att medborgarna har möjlighet att påverka beslut och att de som får makten ska kunna bytas ut.',
     explanationEn:
-      'Democracy means rule by the people. It means that power comes from the people and that citizens can influence decisions.',
+      'The UHR section Democracy means rule by the people says democracy is a political system where power comes from the people. This means citizens can influence decisions and those who gain power must be able to be replaced.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
