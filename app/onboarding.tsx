@@ -16,7 +16,9 @@ export default function Screen() {
     <View style={styles.container}>
       <View style={styles.hero}>
         <Text style={styles.eyebrow}>Welcome</Text>
-        <Text style={styles.title}>Prepare calmly for the civic test</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Prepare calmly for the civic test
+        </Text>
         <Text style={styles.subtitle}>
           A small, independent study companion for daily practice, mock exams, and mistake review.
         </Text>

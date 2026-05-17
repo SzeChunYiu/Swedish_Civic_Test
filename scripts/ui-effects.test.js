@@ -89,6 +89,16 @@ test('settings route exposes page and section titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('onboarding route exposes its primary title as a header', () => {
+  const source = read('app/onboarding.tsx');
+
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /Prepare calmly for the civic test/);
+  assert.match(source, /Start studying/);
+  assert.match(source, /Adjust settings/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 
