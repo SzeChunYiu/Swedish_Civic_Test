@@ -1649,8 +1649,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q098',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Sveriges nationaldag', pageApprox: 46 },
-    'Vad är vanligt på Sveriges nationaldag den 6 juni?',
-    'What is common on Sweden’s National Day, 6 June?',
+    'Vad brukar hända på Sveriges nationaldag den 6 juni?',
+    'What usually happens on Sweden’s National Day, 6 June?',
     [
       [
         'Flaggan hissas, tal hålls och många kommuner välkomnar nya medborgare',
@@ -1667,8 +1667,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Sveriges nationaldag är den 6 juni. Dagen uppmärksammas bland annat genom att flaggan hissas, tal hålls och att många kommuner ordnar ceremonier för att välkomna nya medborgare.',
-    'Sweden’s National Day is 6 June. It is marked by flags being raised, speeches being held, and many municipalities arranging ceremonies to welcome new citizens.',
+    'UHR-avsnittet Sveriges nationaldag säger att den 6 juni är Sveriges nationaldag och att dagen blev helgdag genom ett riksdagsbeslut 2005. Avsnittet säger också att flaggan hissas, tal hålls och att många kommuner ordnar ceremonier för att välkomna nya medborgare på nationaldagen.',
+    'The UHR section Sweden’s National Day says that 6 June is Sweden’s National Day and that it became a public holiday through a Riksdag decision in 2005. It also says flags are raised, speeches are held, and many municipalities arrange ceremonies to welcome new citizens on National Day.',
     ['national-day', 'june-6', 'citizenship-ceremony', 'traditions'],
     'easy',
   ),

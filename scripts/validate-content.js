@@ -1625,6 +1625,10 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /const questionText = getQuestionDisplayText\(question, 'sv'\);/,
   },
   {
+    label: 'source citation helper',
+    pattern: /const sourceCitation = getQuestionSourceCitation\(question\);/,
+  },
+  {
     label: 'difficulty in accessibility summary',
     pattern: /`Difficulty: \$\{difficulty\}`/,
   },
@@ -1637,6 +1641,10 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /questionTranslation \? `English translation: \$\{questionTranslation\}` : null/,
   },
   {
+    label: 'source citation in accessibility summary',
+    pattern: /`Source citation: \$\{sourceCitation\}`/,
+  },
+  {
     label: 'Card receives accessibility summary',
     pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
   },
@@ -1647,6 +1655,10 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'question header text',
     pattern: /<Text accessibilityRole="header" style=\{styles\.question\}>/,
+  },
+  {
+    label: 'visible source citation line',
+    pattern: /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/,
   },
   {
     label: 'visible display-safe English translation',
