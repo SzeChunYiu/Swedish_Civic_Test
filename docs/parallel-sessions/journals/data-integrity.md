@@ -190,3 +190,11 @@ Artifacts changed: `tests/content-option-bilingual-text.test.js`.
 Verification: `node --test tests/content-option-bilingual-text.test.js` passed 2/2 including the copied-label rejection; `npm run validate:content` passed and reported 500 `questionOptionBilingualTextPairsValidated`; `npm run test:content` passed 198/198; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check tests/content-option-bilingual-text.test.js` passed; `git diff --check -- tests/content-option-bilingual-text.test.js` passed.
 Blocked? no - the dedicated option bilingual-text schema test now proves the validator rejects long answer-option labels copied between Swedish and English while preserving short intentional invariant labels.
 Next suggested validator action: review and accept this DATA-INTEGRITY schema coverage atom, then keep `tests/content-option-bilingual-text.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest regression gates. Note that the shared checkout still contains pre-existing dirty files outside this atom.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: UHR section-map adjacent page-range negative coverage atom.
+Artifacts changed: `tests/content-uhr-map-page-ranges.test.js`.
+Verification: `node --test tests/content-uhr-map-page-ranges.test.js` passed 2/2 including adjacent overlap rejection; `npm run validate:content` passed and reported 13 `uhrMapPageRangesValidated` plus 500 `uhrReferencesValidated`; `npm run test:content` passed 199/199; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check tests/content-uhr-map-page-ranges.test.js` passed; `git diff --check -- tests/content-uhr-map-page-ranges.test.js` passed.
+Blocked? no - the dedicated UHR page-range test now proves the validator rejects an overlap where one chapter's `endPage` reaches the next chapter's `startPage`.
+Next suggested validator action: review and accept this DATA-INTEGRITY UHR coverage atom, then keep `tests/content-uhr-map-page-ranges.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest UHR map page-range regression gates.
