@@ -506,6 +506,7 @@ let questionTagsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
+let uhrMapPageRangesValidated = 0;
 let uhrSourceMetadataValidated = false;
 let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
@@ -816,11 +817,19 @@ function buildUhrReferenceChapters() {
 
   const chapterEntries = uhrSectionMap.chapters.map((chapter, index) => {
     const label = chapter.id || `uhr-section-map chapter[${index}]`;
+    const nextChapter = uhrSectionMap.chapters[index + 1];
+    const nextStartPage = nextChapter?.startPage;
     let valid = true;
+    let pageRangeIsValid = true;
 
     function reject(message) {
       valid = false;
       fail(message);
+    }
+
+    function rejectPageRange(message) {
+      pageRangeIsValid = false;
+      reject(message);
     }
 
     if (!hasText(chapter.id)) reject(`uhr-section-map chapter[${index}] missing id`);
@@ -860,9 +869,9 @@ function buildUhrReferenceChapters() {
     }
 
     if (!Number.isInteger(chapter.startPage) || chapter.startPage < 1) {
-      reject(`${label} has invalid startPage`);
+      rejectPageRange(`${label} has invalid startPage`);
     } else if (chapter.startPage <= previousStartPage) {
-      reject(`${label} startPage must be greater than previous chapter startPage`);
+      rejectPageRange(`${label} startPage must be greater than previous chapter startPage`);
     }
     if (!Array.isArray(chapter.sections) || chapter.sections.length === 0) {
       reject(`${label} missing sections`);
@@ -886,14 +895,21 @@ function buildUhrReferenceChapters() {
       });
     }
 
-    const nextChapter = uhrSectionMap.chapters[index + 1];
-    if (
-      chapter.endPage !== undefined &&
-      (!Number.isInteger(chapter.endPage) || chapter.endPage < chapter.startPage)
-    ) {
-      reject(`${label} has invalid endPage`);
+    if (chapter.endPage !== undefined) {
+      if (!Number.isInteger(chapter.endPage) || chapter.endPage < chapter.startPage) {
+        rejectPageRange(`${label} has invalid endPage`);
+      } else if (Number.isInteger(nextStartPage) && chapter.endPage >= nextStartPage) {
+        rejectPageRange(`${label} endPage must be before next chapter startPage`);
+      }
+    } else if (!nextChapter) {
+      rejectPageRange(`${label} final chapter must define endPage`);
+    } else if (!Number.isInteger(nextStartPage)) {
+      rejectPageRange(`${label} cannot derive endPage from next chapter startPage`);
+    } else if (Number.isInteger(chapter.startPage) && nextStartPage <= chapter.startPage) {
+      rejectPageRange(`${label} next chapter startPage must be after startPage`);
     }
 
+    if (pageRangeIsValid) uhrMapPageRangesValidated += 1;
     if (Number.isInteger(chapter.startPage)) previousStartPage = chapter.startPage;
     if (valid) {
       uhrMapChaptersValidated += 1;
@@ -904,7 +920,7 @@ function buildUhrReferenceChapters() {
       ...chapter,
       endPage:
         chapter.endPage ??
-        (nextChapter?.startPage ? nextChapter.startPage - 1 : Number.POSITIVE_INFINITY),
+        (Number.isInteger(nextStartPage) ? nextStartPage - 1 : Number.POSITIVE_INFINITY),
       sections: new Set(chapter.sections || []),
     };
   });
@@ -1178,6 +1194,7 @@ console.log(
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
       uhrMapTextFieldsNormalizedValidated,
+      uhrMapPageRangesValidated,
       questionChapterReferenceParityValidated,
       uhrReferencesValidated,
     },

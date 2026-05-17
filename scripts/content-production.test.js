@@ -36,6 +36,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.uhrMapChaptersValidated, 13);
   assert.equal(summary.uhrMapSectionsValidated, 110);
   assert.equal(summary.uhrMapTextFieldsNormalizedValidated, 140);
+  assert.equal(summary.uhrMapPageRangesValidated, 13);
   assert.equal(summary.questionChapterReferenceParityValidated, 500);
   assert.equal(summary.uhrReferencesValidated, 500);
 });
