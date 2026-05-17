@@ -619,6 +619,8 @@ const generateExam = examGeneratorModule.generateExam;
 const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
 const scoreExam = examGeneratorModule.scoreExam;
 const buildExamChapterBreakdownItems = examGeneratorModule.buildExamChapterBreakdownItems;
+const formatExamTime = examGeneratorModule.formatExamTime;
+const shouldAutoSubmitExam = examGeneratorModule.shouldAutoSubmitExam;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
 const answerValidationModule = loadTs('lib/quiz/answerValidation.ts');
@@ -650,6 +652,7 @@ let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
+let mockExamTimerParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -720,6 +723,10 @@ if (typeof buildExamReviewItems !== 'function') {
 if (typeof scoreExam !== 'function') fail('scoreExam export is not a function');
 if (typeof buildExamChapterBreakdownItems !== 'function') {
   fail('buildExamChapterBreakdownItems export is not a function');
+}
+if (typeof formatExamTime !== 'function') fail('formatExamTime export is not a function');
+if (typeof shouldAutoSubmitExam !== 'function') {
+  fail('shouldAutoSubmitExam export is not a function');
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
@@ -866,6 +873,78 @@ function validateMockExamRuntimeParity(config) {
 
   if (valid) mockExamRuntimeParityValidated = true;
   if (valid) mockExamChapterBalanceParityValidated = true;
+}
+
+function expectedFormattedExamTime(totalSeconds) {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function validateMockExamTimerParity(config) {
+  if (!config || typeof config !== 'object') return;
+  if (typeof formatExamTime !== 'function' || typeof shouldAutoSubmitExam !== 'function') return;
+
+  const totalSeconds = config.durationMinutes * 60;
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Number.isInteger(totalSeconds) || totalSeconds < 60) {
+    reject('defaultMockExamConfig duration must convert to at least 60 whole seconds');
+  }
+
+  const formattedStartTime = formatExamTime(totalSeconds);
+  const expectedStartTime = expectedFormattedExamTime(totalSeconds);
+  if (formattedStartTime !== expectedStartTime) {
+    reject(
+      `formatExamTime default duration is ${formattedStartTime}, expected ${expectedStartTime}`,
+    );
+  }
+
+  const liveExamState = {
+    remainingSeconds: totalSeconds,
+    submitted: false,
+    questionCount: config.questionCount,
+  };
+  if (shouldAutoSubmitExam(liveExamState)) {
+    reject('shouldAutoSubmitExam must not submit at the configured start time');
+  }
+  if (
+    !shouldAutoSubmitExam({
+      ...liveExamState,
+      remainingSeconds: 0,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must submit a live exam when the timer reaches zero');
+  }
+  if (
+    shouldAutoSubmitExam({
+      ...liveExamState,
+      remainingSeconds: 0,
+      submitted: true,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must not resubmit an already submitted exam');
+  }
+  if (
+    shouldAutoSubmitExam({
+      ...liveExamState,
+      remainingSeconds: 0,
+      questionCount: 0,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must not submit an empty exam');
+  }
+  if (formatExamTime(-1) !== '00:00') {
+    reject('formatExamTime must clamp negative remaining time to 00:00');
+  }
+
+  if (valid) mockExamTimerParityValidated = true;
 }
 
 function firstWrongOptionId(question) {
@@ -2620,6 +2699,7 @@ validateMockExamConfig(
     : 0,
 );
 validateMockExamRuntimeParity(defaultMockExamConfig);
+validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateGlossaryTerms();
@@ -2666,6 +2746,7 @@ console.log(
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
+      mockExamTimerParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
