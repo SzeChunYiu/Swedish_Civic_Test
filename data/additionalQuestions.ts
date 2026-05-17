@@ -1191,8 +1191,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q076',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Befolkningsökning', pageApprox: 32 },
-    'Enligt UHR-materialet, varför ökade Sveriges befolkning under 1800-talet?',
-    'According to the UHR material, why did Sweden’s population grow during the 19th century?',
+    'Varför ökade Sveriges befolkning under 1800-talet?',
+    'Why did Sweden’s population grow during the 19th century?',
     [
       [
         'Bättre jordbruksmetoder och medicinska framsteg',
@@ -1211,8 +1211,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q077',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Befolkningsökning', pageApprox: 32 },
-    'Enligt UHR-materialet, ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
-    'According to the UHR material, approximately how many Swedes emigrated to the United States between 1850 and 1920?',
+    'Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
+    'Approximately how many Swedes emigrated to the United States between 1850 and 1920?',
     [
       ['Över en miljon', 'More than one million'],
       ['Cirka tio tusen', 'About ten thousand'],
@@ -1232,8 +1232,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Sveriges väg till demokrati',
       pageApprox: 33,
     },
-    'Enligt UHR-materialet, vad innebar 1809 års nya grundlag?',
-    'According to the UHR material, what did the new constitution of 1809 mean?',
+    'Vad förändrades genom den nya grundlagen år 1809?',
+    'What changed through the new constitution in 1809?',
     [
       ['Kungens makt begränsades', 'The king’s power was limited'],
       ['Sverige gick med i EU', 'Sweden joined the EU'],

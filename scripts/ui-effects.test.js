@@ -94,6 +94,7 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   const disclaimerSource = read('app/disclaimer.tsx');
   const privacySource = read('app/privacy.tsx');
   const sourcesSource = read('app/sources.tsx');
+  const supportSource = read('app/support.tsx');
   const termsSource = read('app/terms.tsx');
 
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
@@ -154,6 +155,14 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(sourcesSource, /Primärt studiematerial/);
   assert.match(sourcesSource, /Sources/);
   assert.match(sourcesSource, /Primary study material/);
+  assert.match(supportSource, /const supportCopy: Record<AppLanguage, SupportRouteCopy>/);
+  assert.match(supportSource, /const copy = supportCopy\[language\];/);
+  assert.match(supportSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(supportSource, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
+  assert.match(supportSource, /Support och återkoppling/);
+  assert.match(supportSource, /Vad du kan rapportera/);
+  assert.match(supportSource, /Support and feedback/);
+  assert.match(supportSource, /What to report/);
   assert.match(termsSource, /const termsCopy: Record<AppLanguage, TermsRouteCopy>/);
   assert.match(termsSource, /const copy = termsCopy\[language\];/);
   assert.match(termsSource, /<LegalPage title=\{copy\.title\}>/);
@@ -404,14 +413,20 @@ test('answer option feedback remains available in the accessibility label', () =
 
 test('question card groups prompt and translation into an accessible summary', () => {
   const source = read('components/quiz/QuestionCard.tsx');
+  const helperSource = read('lib/quiz/questionText.ts');
 
   assert.match(source, /const questionAccessibilityLabel =/);
-  assert.match(source, /function getSourceCitation\(question\?: PracticeQuestion\)/);
+  assert.match(source, /getQuestionDisplayText\(question, 'sv'\)/);
+  assert.match(source, /const questionTranslation = getQuestionTranslationText\(question\);/);
+  assert.match(source, /const sourceCitation = getQuestionSourceCitation\(question\);/);
   assert.match(source, /`Difficulty: \$\{difficulty\}`/);
   assert.match(source, /`Question: \$\{questionText\}`/);
-  assert.match(source, /English translation:/);
+  assert.match(source, /English translation: \$\{questionTranslation\}/);
   assert.match(source, /`Source citation: \$\{sourceCitation\}`/);
-  assert.match(source, /Källa\/Source: Sverige i fokus/);
+  assert.match(helperSource, /Källa\/Source: Sverige i fokus/);
+  assert.match(helperSource, /stripSourceAuthorityPhrasing/);
+  assert.match(helperSource, /Enligt UHR-materialet/);
+  assert.match(helperSource, /According to the UHR material/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
@@ -726,7 +741,7 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   assert.doesNotMatch(read('components/learning/Flashcard.tsx'), /back\s*=\s*['"]Back/);
   assert.match(read('components/monetization/NativeAdCard.tsx'), /AdMob test placement preview/);
   assert.match(read('components/quiz/ExplanationPanel.tsx'), /Explanation unavailable/);
-  assert.match(read('components/quiz/QuestionCard.tsx'), /Question unavailable/);
+  assert.match(read('lib/quiz/questionText.ts'), /Question unavailable/);
   assert.match(read('components/quiz/UHRReferenceCard.tsx'), /Source reference unavailable/);
 });
 
@@ -862,7 +877,8 @@ test('English support reaches quiz options, explanations, and exam review text',
 
   assert.match(examSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(examSource, /language === 'en' \? option\.textEn : option\.textSv/);
-  assert.match(examSource, /language === 'en' \? item\.questionEn : item\.questionSv/);
+  assert.match(examSource, /getQuestionDisplayText\(question, language\)/);
+  assert.match(examSource, /getQuestionDisplayText\(item, language\)/);
   assert.match(
     examSource,
     /language === 'en' \? item\.selectedOptionTextEn : item\.selectedOptionTextSv/,

@@ -877,7 +877,25 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
   },
   {
     file: 'app/support.tsx',
+    requiredSnippets: [
+      'const supportCopy: Record<AppLanguage, SupportRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = supportCopy[language];',
+      'Support och återkoppling',
+      'Vad du kan rapportera',
+      'Support and feedback',
+      'What to report',
+      'Öppna den offentliga supportsidan',
+      'Open public support page',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>/,
+    ],
     title: 'Support and feedback',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: [
       'What to report',
       'No personal data',
@@ -1603,8 +1621,8 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /const difficulty = question\?\.difficulty \?\? 'practice';/,
   },
   {
-    label: 'question text fallback',
-    pattern: /const questionText = question\?\.questionSv \?\? 'Question unavailable';/,
+    label: 'display-safe question text fallback',
+    pattern: /const questionText = getQuestionDisplayText\(question, 'sv'\);/,
   },
   {
     label: 'difficulty in accessibility summary',
@@ -1615,8 +1633,8 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /`Question: \$\{questionText\}`/,
   },
   {
-    label: 'English translation in accessibility summary',
-    pattern: /question\?\.questionEn \? `English translation: \$\{question\.questionEn\}` : null/,
+    label: 'display-safe English translation in accessibility summary',
+    pattern: /questionTranslation \? `English translation: \$\{questionTranslation\}` : null/,
   },
   {
     label: 'Card receives accessibility summary',
@@ -1631,9 +1649,9 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /<Text accessibilityRole="header" style=\{styles\.question\}>/,
   },
   {
-    label: 'visible English translation',
+    label: 'visible display-safe English translation',
     pattern:
-      /\{question\?\.questionEn \? <Text style=\{styles\.translation\}>\{question\.questionEn\}<\/Text> : null\}/,
+      /\{questionTranslation \? <Text style=\{styles\.translation\}>\{questionTranslation\}<\/Text> : null\}/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -9037,13 +9055,51 @@ function speechOptionLetter(index) {
   return String.fromCharCode('A'.charCodeAt(0) + index);
 }
 
+const SOURCE_AUTHORITY_REPLACEMENTS = [
+  {
+    pattern: /\bSant eller falskt\s+enligt UHR-materialet\s*:/gi,
+    replacement: 'Sant eller falskt:',
+  },
+  {
+    pattern: /\bTrue or false\s+according to the UHR material\s*:/gi,
+    replacement: 'True or false:',
+  },
+  { pattern: /\bEnligt UHR-materialet,\s*/gi, replacement: '' },
+  { pattern: /\bAccording to the UHR material,\s*/gi, replacement: '' },
+  { pattern: /\s+enligt UHR-materialet\b/gi, replacement: '' },
+  { pattern: /\s+according to the UHR material\b/gi, replacement: '' },
+  { pattern: /\s+enligt UHR-avsnittet\s+"[^"]+"/gi, replacement: '' },
+  { pattern: /\s+the UHR section\s+"[^"]+"/gi, replacement: '' },
+];
+
+function stripSourceAuthorityPhrasing(text) {
+  if (!text) return '';
+
+  const cleaned = SOURCE_AUTHORITY_REPLACEMENTS.reduce(
+    (current, replacement) => current.replace(replacement.pattern, replacement.replacement),
+    String(text),
+  )
+    .replace(/\?\s*,\s*/g, '? ')
+    .replace(/:\s*,\s*/g, ': ')
+    .replace(/\s+([,.:;!?])/g, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+  return cleaned
+    .replace(/^([a-zåäö])/, (character) => character.toLocaleUpperCase('sv-SE'))
+    .replace(/([.!?]\s+)([a-zåäö])/g, (_match, prefix, character) => {
+      return `${prefix}${character.toLocaleUpperCase('sv-SE')}`;
+    });
+}
+
 function expectedQuestionSpeechText(question) {
   const options = Array.isArray(question.options) ? question.options : [];
+  const questionText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;
   const optionText = options
     .map((option, index) => `Alternativ ${speechOptionLetter(index)}. ${option.textSv}.`)
     .join(' ');
 
-  return `${question.questionSv} ${optionText}`.trim();
+  return `${questionText} ${optionText}`.trim();
 }
 
 function validateQuestionSpeechTextParity() {
@@ -9089,8 +9145,9 @@ function validateQuestionSpeechTextParity() {
       );
     }
 
-    if (!speechText.startsWith(question.questionSv)) {
-      reject(`${label} speech text must start with the Swedish question prompt`);
+    const expectedPrompt = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;
+    if (!speechText.startsWith(expectedPrompt)) {
+      reject(`${label} speech text must start with the display-safe Swedish question prompt`);
     }
 
     question.options.forEach((option, optionIndex) => {

@@ -1,16 +1,22 @@
 import { StyleSheet, Text } from 'react-native';
 import type { PracticeQuestion } from '../../types/content';
 import { Card } from '../ui/Card';
+import {
+  getQuestionDisplayText,
+  getQuestionSourceCitation,
+  getQuestionTranslationText,
+} from '../../lib/quiz/questionText';
 import { colors, space, typography } from '../../lib/theme';
 
 export function QuestionCard({ question }: { question?: PracticeQuestion }) {
   const difficulty = question?.difficulty ?? 'practice';
-  const questionText = question?.questionSv ?? 'Question unavailable';
-  const sourceCitation = getSourceCitation(question);
+  const questionText = getQuestionDisplayText(question, 'sv');
+  const questionTranslation = getQuestionTranslationText(question);
+  const sourceCitation = getQuestionSourceCitation(question);
   const questionAccessibilityLabel = [
     `Difficulty: ${difficulty}`,
     `Question: ${questionText}`,
-    question?.questionEn ? `English translation: ${question.questionEn}` : null,
+    questionTranslation ? `English translation: ${questionTranslation}` : null,
     `Source citation: ${sourceCitation}`,
   ]
     .filter(Boolean)
@@ -23,16 +29,9 @@ export function QuestionCard({ question }: { question?: PracticeQuestion }) {
         {questionText}
       </Text>
       <Text style={styles.sourceCitation}>{sourceCitation}</Text>
-      {question?.questionEn ? <Text style={styles.translation}>{question.questionEn}</Text> : null}
+      {questionTranslation ? <Text style={styles.translation}>{questionTranslation}</Text> : null}
     </Card>
   );
-}
-
-function getSourceCitation(question?: PracticeQuestion) {
-  if (!question?.uhrReference) return 'Source citation unavailable';
-
-  const { chapter, pageApprox, section } = question.uhrReference;
-  return `Källa/Source: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
 }
 
 const styles = StyleSheet.create({

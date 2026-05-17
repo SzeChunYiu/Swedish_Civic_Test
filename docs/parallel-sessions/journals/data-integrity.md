@@ -182,3 +182,27 @@ Artifacts changed: `scripts/content-production.test.js`, `tests/content-theme-to
 Verification: `npm run validate:content` passed and reported 24 `themeSpaceTokensValidated`, `themeTokenSchemaValidated:true`, `uhrSourceMaterialLinkParityValidated:true`, and 500 UHR references; `node --test tests/content-theme-token-schema.test.js tests/content-source-material-link-parity.test.js scripts/content-production.test.js` passed 4/4; `npm run test:content` passed 197/197; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js tests/content-theme-token-schema.test.js tests/content-source-material-link-parity.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js tests/content-theme-token-schema.test.js tests/content-source-material-link-parity.test.js docs/parallel-sessions/journals/data-integrity.md` passed before this handoff append.
 Blocked? no - the validator schema now matches the current 24-token spacing scale, and the source-material parity test now enforces the localized UHR education-material link labels used by `app/sources.tsx`.
 Next suggested validator action: review and accept this DATA-INTEGRITY schema/parity atom, then keep `npm run validate:content` and `npm run test:content` as the nearest regression gates. Note that the shared checkout still contains pre-existing dirty files outside this atom.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Published question option bilingual-text negative schema coverage atom.
+Artifacts changed: `tests/content-option-bilingual-text.test.js`.
+Verification: `node --test tests/content-option-bilingual-text.test.js` passed 2/2 including the copied-label rejection; `npm run validate:content` passed and reported 500 `questionOptionBilingualTextPairsValidated`; `npm run test:content` passed 198/198; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check tests/content-option-bilingual-text.test.js` passed; `git diff --check -- tests/content-option-bilingual-text.test.js` passed.
+Blocked? no - the dedicated option bilingual-text schema test now proves the validator rejects long answer-option labels copied between Swedish and English while preserving short intentional invariant labels.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema coverage atom, then keep `tests/content-option-bilingual-text.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest regression gates. Note that the shared checkout still contains pre-existing dirty files outside this atom.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: UHR section-map adjacent page-range negative coverage atom.
+Artifacts changed: `tests/content-uhr-map-page-ranges.test.js`.
+Verification: `node --test tests/content-uhr-map-page-ranges.test.js` passed 2/2 including adjacent overlap rejection; `npm run validate:content` passed and reported 13 `uhrMapPageRangesValidated` plus 500 `uhrReferencesValidated`; `npm run test:content` passed 199/199; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check tests/content-uhr-map-page-ranges.test.js` passed; `git diff --check -- tests/content-uhr-map-page-ranges.test.js` passed.
+Blocked? no - the dedicated UHR page-range test now proves the validator rejects an overlap where one chapter's `endPage` reaches the next chapter's `startPage`.
+Next suggested validator action: review and accept this DATA-INTEGRITY UHR coverage atom, then keep `tests/content-uhr-map-page-ranges.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest UHR map page-range regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: UHR section-map text-normalization negative coverage atom.
+Artifacts changed: `package.json`, `tests/content-uhr-map-text-normalization.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `node --test tests/content-uhr-map-text-normalization.test.js` passed 2/2 including source title, chapter title, and section whitespace-drift rejection; `npm run validate:content` passed and reported 140 `uhrMapTextFieldsNormalizedValidated`, 13 `uhrMapChaptersValidated`, 110 `uhrMapSectionsValidated`, and 500 `uhrReferencesValidated`; `npm run test:content -- --test-concurrency=1` passed 201/201; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check package.json tests/content-uhr-map-text-normalization.test.js` passed; `git diff --check -- package.json tests/content-uhr-map-text-normalization.test.js docs/parallel-sessions/journals/data-integrity.md` passed before this handoff append.
+Blocked? no - the dedicated UHR text-normalization test now proves the validator rejects leading/trailing or repeated whitespace in UHR section-map source, chapter, and section text.
+Next suggested validator action: review and accept this DATA-INTEGRITY UHR coverage atom, then keep `tests/content-uhr-map-text-normalization.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest UHR text-normalization regression gates.
