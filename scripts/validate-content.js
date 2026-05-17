@@ -620,6 +620,9 @@ const scoreExam = examGeneratorModule.scoreExam;
 const buildExamChapterBreakdownItems = examGeneratorModule.buildExamChapterBreakdownItems;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
+const answerValidationModule = loadTs('lib/quiz/answerValidation.ts');
+const isCorrectAnswer = answerValidationModule.isCorrectAnswer;
+const getAnswerOptionFeedback = answerValidationModule.getAnswerOptionFeedback;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const badgeModule = loadTs('lib/learning/badges.ts');
@@ -656,6 +659,9 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let answerFeedbackQuestionsValidated = 0;
+let answerFeedbackOptionsValidated = 0;
+let answerFeedbackRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
@@ -714,6 +720,10 @@ if (typeof buildExamChapterBreakdownItems !== 'function') {
   fail('buildExamChapterBreakdownItems export is not a function');
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
+if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
+if (typeof getAnswerOptionFeedback !== 'function') {
+  fail('getAnswerOptionFeedback export is not a function');
+}
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
 }
@@ -1302,6 +1312,106 @@ function validatePracticeScoringRules() {
 
   if (rulesAreValid && practiceScoringRulesValidated === cases.length) {
     practiceScoringRulesParityValidated = true;
+  }
+}
+
+function validateAnswerFeedbackParity() {
+  if (
+    !Array.isArray(questions) ||
+    typeof isCorrectAnswer !== 'function' ||
+    typeof getAnswerOptionFeedback !== 'function'
+  ) {
+    return;
+  }
+
+  let runtimeParityIsValid = true;
+
+  questions.forEach((question) => {
+    const correctOption = question.options?.find(
+      (option) => option.id === question.correctOptionId,
+    );
+    let questionIsValid = true;
+
+    function reject(message) {
+      questionIsValid = false;
+      runtimeParityIsValid = false;
+      fail(message);
+    }
+
+    if (!correctOption) {
+      reject(`${question.id} answer feedback cannot find the correct option`);
+      return;
+    }
+
+    if (!isCorrectAnswer(question, correctOption.id)) {
+      reject(`${question.id} isCorrectAnswer rejects the correct option`);
+    }
+
+    const selectedCorrectFeedback = getAnswerOptionFeedback(
+      question,
+      correctOption.id,
+      correctOption.id,
+    );
+    if (
+      selectedCorrectFeedback.resultLabel !== 'Rätt' ||
+      selectedCorrectFeedback.tone !== 'correct'
+    ) {
+      reject(`${question.id} selected correct feedback drifted`);
+    }
+
+    question.options.forEach((option) => {
+      const label = `${question.id} option ${option.id}`;
+      const idleFeedback = getAnswerOptionFeedback(question, option.id, null);
+      if (!jsonEqual(idleFeedback, { tone: 'idle' })) {
+        reject(`${label} idle feedback drifted`);
+      }
+
+      if (option.id === question.correctOptionId) {
+        answerFeedbackOptionsValidated += 1;
+        return;
+      }
+
+      if (isCorrectAnswer(question, option.id)) {
+        reject(`${label} isCorrectAnswer accepts a wrong option`);
+      }
+
+      const selectedWrongFeedback = getAnswerOptionFeedback(question, option.id, option.id);
+      if (
+        selectedWrongFeedback.resultLabel !== 'Fel' ||
+        selectedWrongFeedback.tone !== 'incorrect'
+      ) {
+        reject(`${label} selected wrong feedback drifted`);
+      }
+
+      const revealedCorrectFeedback = getAnswerOptionFeedback(
+        question,
+        correctOption.id,
+        option.id,
+      );
+      if (
+        revealedCorrectFeedback.resultLabel !== 'Rätt svar' ||
+        revealedCorrectFeedback.tone !== 'correct'
+      ) {
+        reject(`${label} correct-answer reveal feedback drifted`);
+      }
+
+      question.options
+        .filter((otherOption) => ![option.id, correctOption.id].includes(otherOption.id))
+        .forEach((otherOption) => {
+          const otherFeedback = getAnswerOptionFeedback(question, otherOption.id, option.id);
+          if (!jsonEqual(otherFeedback, { tone: 'idle' })) {
+            reject(`${label} changed neutral feedback for ${otherOption.id}`);
+          }
+        });
+
+      answerFeedbackOptionsValidated += 1;
+    });
+
+    if (questionIsValid) answerFeedbackQuestionsValidated += 1;
+  });
+
+  if (runtimeParityIsValid && answerFeedbackQuestionsValidated === questions.length) {
+    answerFeedbackRuntimeParityValidated = true;
   }
 }
 
@@ -2509,6 +2619,7 @@ validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validateAnswerFeedbackParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateStreakRules();
@@ -2559,6 +2670,9 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      answerFeedbackQuestionsValidated,
+      answerFeedbackOptionsValidated,
+      answerFeedbackRuntimeParityValidated,
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
