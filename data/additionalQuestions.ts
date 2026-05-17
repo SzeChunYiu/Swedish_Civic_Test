@@ -1171,8 +1171,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Från jordbrukssamhälle till industrisamhälle',
       pageApprox: 32,
     },
-    'Hur beskriver UHR-materialet Sverige för tvåhundra år sedan?',
-    'How does the UHR material describe Sweden two hundred years ago?',
+    'Vilket påstående beskriver Sverige för tvåhundra år sedan?',
+    'Which statement describes Sweden two hundred years ago?',
     [
       [
         'Som ett typiskt jordbruksland där nästan alla bodde på landet',
