@@ -6,10 +6,13 @@ const ts = require('typescript');
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
 const moduleCache = new Map();
-const QUESTION_TYPES = new Set(['single_choice', 'true_false', 'flashcard']);
+const QUESTION_TYPE_VALUES = ['single_choice', 'true_false', 'flashcard'];
+const REVIEW_STATUS_VALUES = ['draft', 'reviewed', 'published'];
+const DIFFICULTY_VALUES = ['easy', 'medium', 'hard'];
+const QUESTION_TYPES = new Set(QUESTION_TYPE_VALUES);
 const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
-const DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
-const REVIEW_STATUSES = new Set(['draft', 'reviewed', 'published']);
+const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
+const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 100;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
@@ -94,6 +97,58 @@ const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   nextReviewAt: 'string',
   bookmarked: 'boolean',
 };
+const EXPECTED_CONTENT_TYPE_UNIONS = [
+  { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
+  { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
+  { typeName: 'Difficulty', values: DIFFICULTY_VALUES },
+];
+const EXPECTED_CONTENT_INTERFACES = [
+  {
+    name: 'UHRReference',
+    fields: [
+      { name: 'chapter', type: 'string', optional: false },
+      { name: 'section', type: 'string', optional: false },
+      { name: 'pageApprox', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'QuestionOption',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'textSv', type: 'string', optional: false },
+      { name: 'textEn', type: 'string', optional: false },
+    ],
+  },
+  {
+    name: 'PracticeQuestion',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'chapterId', type: 'string', optional: false },
+      { name: 'type', type: 'QuestionType', optional: false },
+      { name: 'questionSv', type: 'string', optional: false },
+      { name: 'questionEn', type: 'string', optional: false },
+      { name: 'options', type: 'QuestionOption[]', optional: false },
+      { name: 'correctOptionId', type: 'string', optional: false },
+      { name: 'explanationSv', type: 'string', optional: false },
+      { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'uhrReference', type: 'UHRReference', optional: false },
+      { name: 'difficulty', type: 'Difficulty', optional: false },
+      { name: 'reviewStatus', type: 'ReviewStatus', optional: false },
+      { name: 'tags', type: 'string[]', optional: false },
+    ],
+  },
+  {
+    name: 'Chapter',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'nameSv', type: 'string', optional: false },
+      { name: 'nameEn', type: 'string', optional: false },
+      { name: 'descriptionSv', type: 'string', optional: false },
+      { name: 'descriptionEn', type: 'string', optional: false },
+      { name: 'questionCount', type: 'number', optional: false },
+    ],
+  },
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -857,6 +912,9 @@ let examChapterBreakdownItemsValidated = 0;
 let examChapterBreakdownParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
+let contentTypeUnionsValidated = 0;
+let contentTypeInterfacesValidated = 0;
+let contentTypeSchemaParityValidated = false;
 let supportedLanguagesValidated = 0;
 let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
@@ -1857,6 +1915,97 @@ function validateProgressQuestionSchemaParity() {
 
   if (valid && progressQuestionFieldsValidated === EXPECTED_PROGRESS_QUESTION_FIELDS.length) {
     progressQuestionSchemaParityValidated = true;
+  }
+}
+
+function validateContentTypeSchemaParity() {
+  let valid = true;
+  let contentTypesSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    contentTypesSource = fs.readFileSync(path.join(repoRoot, 'types/content.ts'), 'utf8');
+  } catch (error) {
+    reject(`types/content.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_CONTENT_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(contentTypesSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`types/content.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `types/content.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    contentTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_CONTENT_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      contentTypesSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(`types/content.ts ${expectedInterface.name} interface could not be read`);
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `types/content.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(`types/content.ts ${expectedInterface.name} missing ${expectedField.name}`);
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `types/content.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `types/content.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) contentTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    contentTypeUnionsValidated === EXPECTED_CONTENT_TYPE_UNIONS.length &&
+    contentTypeInterfacesValidated === EXPECTED_CONTENT_INTERFACES.length
+  ) {
+    contentTypeSchemaParityValidated = true;
   }
 }
 
@@ -3444,6 +3593,7 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
+validateContentTypeSchemaParity();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
@@ -3498,6 +3648,9 @@ console.log(
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
       examChapterBreakdownParityValidated,
+      contentTypeUnionsValidated,
+      contentTypeInterfacesValidated,
+      contentTypeSchemaParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,

@@ -21,6 +21,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);
   assert.equal(summary.examChapterBreakdownParityValidated, true);
+  assert.equal(summary.contentTypeUnionsValidated, 3);
+  assert.equal(summary.contentTypeInterfacesValidated, 4);
+  assert.equal(summary.contentTypeSchemaParityValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
   assert.equal(summary.supportedLanguagesValidated, 2);
