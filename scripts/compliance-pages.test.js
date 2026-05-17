@@ -42,8 +42,17 @@ test('compliance pages and source links are present', () => {
   const sourcesRoute = read('app/sources.tsx');
   assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/utbildningsmaterial/i);
   assert.match(sourcesRoute, /Sverige i fokus/i);
+  assert.match(sourcesRoute, /Källor/);
+  assert.match(sourcesRoute, /Primärt studiematerial/);
+  assert.match(sourcesRoute, /Sources/);
+  assert.match(sourcesRoute, /Primary study material/);
   assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
-  assert.match(sourcesRoute, /accessibilityLabel="Open UHR education material"/);
+  assert.match(
+    sourcesRoute,
+    /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
+  );
+  assert.match(sourcesRoute, /Öppna UHR:s utbildningsmaterial/);
+  assert.match(sourcesRoute, /Open UHR education material/);
   const supportRoute = read('app/support.tsx');
   assert.match(supportRoute, /support/i);
   assert.match(supportRoute, /content issue/i);

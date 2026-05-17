@@ -76,7 +76,22 @@ const expectedLegalRoutes = [
   },
   {
     file: 'app/sources.tsx',
+    requiredSnippets: [
+      'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = sourcesCopy[language];',
+      'Källor',
+      'Primärt studiematerial',
+      'Sources',
+      'Primary study material',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}>/,
+    ],
     title: 'Sources',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {
