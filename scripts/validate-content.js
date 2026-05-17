@@ -66,6 +66,10 @@ const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
 };
+const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
+const EXPECTED_DAILY_GOAL_DEFAULT = 10;
+const EXPECTED_DAILY_GOAL_MIN = 1;
+const EXPECTED_DAILY_GOAL_MAX = 50;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -414,6 +418,54 @@ function extractCallStringArgumentsFromTs(source, functionName) {
   return calls;
 }
 
+function numericLiteralValue(node) {
+  if (ts.isNumericLiteral(node)) return Number(node.text);
+  if (
+    ts.isPrefixUnaryExpression(node) &&
+    node.operator === ts.SyntaxKind.MinusToken &&
+    ts.isNumericLiteral(node.operand)
+  ) {
+    return -Number(node.operand.text);
+  }
+  return undefined;
+}
+
+function extractMappedNumericArraysFromTs(source, parameterName) {
+  const sourceFile = ts.createSourceFile(
+    'source.tsx',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const arrays = [];
+
+  function visit(node) {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.name.text === 'map' &&
+      ts.isArrayLiteralExpression(node.expression.expression)
+    ) {
+      const callback = node.arguments[0];
+      const callbackParameter = callback?.parameters?.[0]?.name;
+      if (
+        callbackParameter &&
+        ts.isIdentifier(callbackParameter) &&
+        callbackParameter.text === parameterName
+      ) {
+        arrays.push(
+          node.expression.expression.elements.map((element) => numericLiteralValue(element)),
+        );
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return arrays;
+}
+
 function parseCsvRows(csv) {
   const rows = [];
   let row = [];
@@ -733,6 +785,8 @@ let uxBenchmarksValidated = 0;
 let supportedLanguagesValidated = 0;
 let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
+let settingsDailyGoalOptionsValidated = 0;
+let settingsDailyGoalParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -1419,6 +1473,89 @@ function validateLocalizationLanguageContract() {
   }
 
   if (valid) languageSettingsParityValidated = true;
+}
+
+function validateSettingsDailyGoalParity() {
+  let valid = true;
+  let settingsStore = '';
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings daily-goal parity source could not be read: ${error.message}`);
+    return;
+  }
+
+  const dailyGoalKey = extractStringConstantFromTs(settingsStore, 'dailyGoalKey');
+  if (dailyGoalKey !== 'dailyGoalAnswers') {
+    reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
+  }
+
+  if (!settingsStore.includes(`: ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
+    reject(`readDailyGoalAnswers must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
+  }
+
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  const expectedClamp = `Math.max(${EXPECTED_DAILY_GOAL_MIN}, Math.min(${EXPECTED_DAILY_GOAL_MAX}, Math.round(dailyGoalAnswers)))`;
+  if (!normalizedSettingsStore.includes(expectedClamp)) {
+    reject(
+      `setDailyGoalAnswers must clamp between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
+    );
+  }
+
+  const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
+  const goalOptions = goalOptionArrays[0] || [];
+  if (!arrayEquals(goalOptions, EXPECTED_DAILY_GOAL_OPTIONS)) {
+    reject(
+      `app/settings.tsx daily goal options are ${JSON.stringify(
+        goalOptionArrays,
+      )}, expected ${JSON.stringify(EXPECTED_DAILY_GOAL_OPTIONS)}`,
+    );
+  }
+
+  const seenGoals = new Set();
+  goalOptions.forEach((goal, index) => {
+    let optionIsValid = true;
+    if (!Number.isInteger(goal)) {
+      optionIsValid = false;
+      reject(`daily goal option[${index}] must be an integer`);
+    } else {
+      if (goal < EXPECTED_DAILY_GOAL_MIN || goal > EXPECTED_DAILY_GOAL_MAX) {
+        optionIsValid = false;
+        reject(
+          `daily goal option ${goal} must be between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
+        );
+      }
+      if (seenGoals.has(goal)) {
+        optionIsValid = false;
+        reject(`daily goal option ${goal} is duplicated`);
+      }
+      seenGoals.add(goal);
+    }
+
+    if (optionIsValid) settingsDailyGoalOptionsValidated += 1;
+  });
+
+  if (!seenGoals.has(EXPECTED_DAILY_GOAL_DEFAULT)) {
+    reject(`daily goal options must include the default ${EXPECTED_DAILY_GOAL_DEFAULT}`);
+  }
+  if (!settingsRoute.includes('Set daily goal to ${goal} answers')) {
+    reject('app/settings.tsx daily goal buttons must expose goal-derived accessibility text');
+  }
+  if (!settingsRoute.includes('{dailyGoalAnswers} answers per day')) {
+    reject('app/settings.tsx must render the persisted daily-goal count');
+  }
+
+  if (valid && settingsDailyGoalOptionsValidated === EXPECTED_DAILY_GOAL_OPTIONS.length) {
+    settingsDailyGoalParityValidated = true;
+  }
 }
 
 function validateGlossaryTerms() {
@@ -3008,6 +3145,7 @@ validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
+validateSettingsDailyGoalParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
@@ -3068,6 +3206,8 @@ console.log(
           : 0,
       localizationStringsValidated,
       languageSettingsParityValidated,
+      settingsDailyGoalOptionsValidated,
+      settingsDailyGoalParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
