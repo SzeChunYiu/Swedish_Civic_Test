@@ -6,7 +6,7 @@ import { colors, space, typography } from '../../lib/theme';
 export function UHRReferenceCard({ reference }: { reference?: UHRReference }) {
   const label = reference
     ? `${reference.chapter} · ${reference.section}`
-    : 'UHR reference placeholder';
+    : 'Source reference unavailable';
   const pageLabel = reference?.pageApprox ? `Approx. page ${reference.pageApprox}` : null;
 
   return (

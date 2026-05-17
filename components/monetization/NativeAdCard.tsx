@@ -20,9 +20,7 @@ export function NativeAdCard({
     <Card>
       <Text style={styles.eyebrow}>Test native ad</Text>
       <Text style={styles.title}>Sponsored study placement</Text>
-      <Text style={styles.meta}>
-        Native ad placeholder using AdMob test placement. Keep out of timed exams.
-      </Text>
+      <Text style={styles.meta}>AdMob test placement preview. Keep out of timed exams.</Text>
     </Card>
   );
 }

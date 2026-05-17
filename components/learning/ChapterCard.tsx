@@ -23,7 +23,7 @@ export function ChapterCard({
       <View style={styles.headerRow}>
         <Badge tone={questionCount > 0 ? 'blue' : 'warm'}>{status}</Badge>
       </View>
-      <Text style={styles.title}>{chapter?.nameSv ?? 'Chapter placeholder'}</Text>
+      <Text style={styles.title}>{chapter?.nameSv ?? 'Chapter unavailable'}</Text>
       {chapter?.nameEn ? <Text style={styles.subtitle}>{chapter.nameEn}</Text> : null}
       {chapter?.descriptionSv ? (
         <Text style={styles.description}>{chapter.descriptionSv}</Text>
