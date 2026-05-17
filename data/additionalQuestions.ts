@@ -344,8 +344,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q036',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Grundlagarna', pageApprox: 16 },
-    'Vilken lista innehåller bara Sveriges fyra grundlagar enligt materialet?',
-    'Which list contains only Sweden’s four constitutional laws according to the material?',
+    'Vilken lista innehåller bara Sveriges fyra grundlagar?',
+    "Which list contains only Sweden's four constitutional laws?",
     [
       [
         'Regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen',
