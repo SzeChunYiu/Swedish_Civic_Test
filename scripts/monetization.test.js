@@ -783,8 +783,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
-  assert.match(paywallSource, /Buy Remove Ads for 29 SEK/);
+  assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
+  assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
+  assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(

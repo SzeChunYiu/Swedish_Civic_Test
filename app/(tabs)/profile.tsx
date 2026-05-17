@@ -78,6 +78,7 @@ export default function Screen() {
 
       <PremiumBanner
         entitlements={monetizationEntitlements}
+        language={language}
         onEntitlementsChange={setMonetizationEntitlements}
         runtimeOptions={purchaseRuntime}
       />

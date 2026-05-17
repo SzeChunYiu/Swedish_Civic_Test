@@ -29,6 +29,7 @@ export default function Screen() {
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+  const language = useSettingsStore((state) => state.language);
   const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const currentStreak = calculateStreak(answerDates);
@@ -121,6 +122,7 @@ export default function Screen() {
 
       <PremiumBanner
         entitlements={monetizationEntitlements}
+        language={language}
         onEntitlementsChange={setMonetizationEntitlements}
         runtimeOptions={purchaseRuntime}
       />
