@@ -616,6 +616,8 @@ const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamC
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
 const generateExam = examGeneratorModule.generateExam;
 const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
+const scoreExam = examGeneratorModule.scoreExam;
+const buildExamChapterBreakdownItems = examGeneratorModule.buildExamChapterBreakdownItems;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
@@ -646,6 +648,8 @@ let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
+let examChapterBreakdownItemsValidated = 0;
+let examChapterBreakdownParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
@@ -704,6 +708,10 @@ if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
   fail('buildExamReviewItems export is not a function');
+}
+if (typeof scoreExam !== 'function') fail('scoreExam export is not a function');
+if (typeof buildExamChapterBreakdownItems !== 'function') {
+  fail('buildExamChapterBreakdownItems export is not a function');
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof getChapterQuizSessionId !== 'function') {
@@ -935,6 +943,118 @@ function validateExamReviewSourceParity(config) {
     reviewItems.some((item) => !item.isCorrect)
   ) {
     examReviewSourceParityValidated = true;
+  }
+}
+
+function buildAlternatingExamAnswers(examQuestions) {
+  return Object.fromEntries(
+    examQuestions.map((question, index) => [
+      question.id,
+      index % 2 === 0 ? question.correctOptionId : firstWrongOptionId(question),
+    ]),
+  );
+}
+
+function validateExamChapterBreakdownParity(config) {
+  if (!config || typeof config !== 'object' || !Array.isArray(questions)) return;
+  if (
+    !Array.isArray(chapters) ||
+    typeof generateExam !== 'function' ||
+    typeof scoreExam !== 'function' ||
+    typeof buildExamChapterBreakdownItems !== 'function'
+  ) {
+    return;
+  }
+
+  const examQuestions = generateExam(questions, { questionCount: config.questionCount });
+  const answers = buildAlternatingExamAnswers(examQuestions);
+  const result = scoreExam(examQuestions, answers);
+  const breakdownItems = buildExamChapterBreakdownItems(result.chapterBreakdown, chapters);
+  const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+  const expectedByChapter = new Map();
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  examQuestions.forEach((question) => {
+    const previous = expectedByChapter.get(question.chapterId) ?? {
+      correctCount: 0,
+      totalCount: 0,
+    };
+    expectedByChapter.set(question.chapterId, {
+      correctCount:
+        previous.correctCount + (answers[question.id] === question.correctOptionId ? 1 : 0),
+      totalCount: previous.totalCount + 1,
+    });
+  });
+
+  if (result.totalCount !== examQuestions.length) {
+    reject(`scoreExam totalCount is ${result.totalCount}, expected ${examQuestions.length}`);
+  }
+  const expectedCorrectCount = [...expectedByChapter.values()].reduce(
+    (sum, chapterResult) => sum + chapterResult.correctCount,
+    0,
+  );
+  if (result.correctCount !== expectedCorrectCount) {
+    reject(`scoreExam correctCount is ${result.correctCount}, expected ${expectedCorrectCount}`);
+  }
+  if (breakdownItems.length !== expectedByChapter.size) {
+    reject(
+      `exam chapter breakdown has ${breakdownItems.length} rows, expected ${expectedByChapter.size}`,
+    );
+  }
+
+  breakdownItems.forEach((item) => {
+    const chapter = chapterById.get(item.chapterId);
+    const expected = expectedByChapter.get(item.chapterId);
+    let itemIsValid = true;
+
+    function rejectItem(message) {
+      itemIsValid = false;
+      reject(message);
+    }
+
+    if (!chapter) {
+      rejectItem(`${item.chapterId} breakdown row references an unknown chapter`);
+    } else {
+      if (item.chapterNameSv !== chapter.nameSv) {
+        rejectItem(`${item.chapterId} breakdown Swedish chapter name drifted`);
+      }
+      if (item.chapterNameEn !== chapter.nameEn) {
+        rejectItem(`${item.chapterId} breakdown English chapter name drifted`);
+      }
+    }
+
+    if (!expected) {
+      rejectItem(`${item.chapterId} breakdown row is not present in the default exam`);
+    } else {
+      if (item.correctCount !== expected.correctCount) {
+        rejectItem(`${item.chapterId} breakdown correctCount drifted`);
+      }
+      if (item.totalCount !== expected.totalCount) {
+        rejectItem(`${item.chapterId} breakdown totalCount drifted`);
+      }
+    }
+
+    if (itemIsValid) examChapterBreakdownItemsValidated += 1;
+  });
+
+  const countedTotal = breakdownItems.reduce((sum, item) => sum + item.totalCount, 0);
+  if (countedTotal !== examQuestions.length) {
+    reject(
+      `exam chapter breakdown counted ${countedTotal} questions, expected ${examQuestions.length}`,
+    );
+  }
+
+  if (
+    valid &&
+    examChapterBreakdownItemsValidated === breakdownItems.length &&
+    breakdownItems.length === expectedByChapter.size
+  ) {
+    examChapterBreakdownParityValidated = true;
   }
 }
 
@@ -2384,6 +2504,7 @@ validateMockExamConfig(
 );
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
+validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
@@ -2429,6 +2550,8 @@ console.log(
       mockExamChapterBalanceParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
+      examChapterBreakdownItemsValidated,
+      examChapterBreakdownParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
