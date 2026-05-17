@@ -214,6 +214,90 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
+const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
+  sv: [
+    'Lokal profil',
+    'Framsteg utan konto',
+    'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
+    'nivå',
+    'XP',
+    'dagars svit',
+    'klara',
+    'frågor',
+    'Studieinställningar',
+    'Små dagliga mål är lättare att hålla än långa maratonpass.',
+    'svar/dag',
+    'Svenska',
+    'Märken',
+    'Milstolpar gör framsteg synliga utan att störa lärandet.',
+    'Inga märken ännu',
+    'Öppna inställningar',
+    'Första övningen',
+    'Nivå 2',
+    'Misstagsrepetition',
+    'Tre dagars svit',
+  ],
+  en: [
+    'Local profile',
+    'Progress without an account',
+    'Your goals, language mode, streaks, and badges stay on this device for a private study experience.',
+    'level',
+    'XP',
+    'day streak',
+    'completed',
+    'questions',
+    'Study setup',
+    'Small daily goals are easier to keep than long cram sessions.',
+    'answers/day',
+    'English support',
+    'Badges',
+    'Achievement cues make progress visible without distracting from learning.',
+    'No badges yet',
+    'Open settings',
+  ],
+};
+const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
+  ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
+  [
+    'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
+    'profile route copy must cover every AppLanguage value',
+  ],
+  [
+    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
+    'profile route must define localized badge-title overrides',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'profile route must read language from settings store',
+  ],
+  ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
+  [
+    '<ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>',
+    'profile shell must render localized copy',
+  ],
+  ['label={copy.levelMetric}', 'profile level metric must render localized copy'],
+  ['label={copy.xpMetric}', 'profile XP metric must render localized copy'],
+  ['label={copy.dayStreakMetric}', 'profile streak metric must render localized copy'],
+  ['label={copy.completedMetric}', 'profile completed metric must render localized copy'],
+  ['helper={copy.questionsHelper}', 'profile questions helper must render localized copy'],
+  ['title={copy.studySetupTitle}', 'profile study setup title must render localized copy'],
+  ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
+  ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
+  ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
+  ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
+  ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
+  [
+    'formatBadges(badges, language, copy.noBadges)',
+    'profile badge summary must use localized badge and empty-state copy',
+  ],
+  [
+    'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
+    'profile settings link must expose localized accessibility copy',
+  ],
+  ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ['language={language}', 'profile premium banner must receive the settings language'],
+];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
@@ -3184,6 +3268,8 @@ let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
 let profileRouteHeadersValidated = 0;
 let profileRouteHeaderParityValidated = false;
+let profileRouteCopyLabelsValidated = 0;
+let profileRouteCopyParityValidated = false;
 let homeRouteHeadersValidated = 0;
 let homeRouteHeaderParityValidated = false;
 let homeRouteCopyLabelsValidated = 0;
@@ -4791,6 +4877,58 @@ function validateProfileRouteHeaderParity() {
 
   if (valid && profileRouteHeadersValidated === EXPECTED_PROFILE_ROUTE_HEADERS.length) {
     profileRouteHeaderParityValidated = true;
+  }
+}
+
+function validateProfileRouteCopyParity() {
+  let valid = true;
+  let profileRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  } catch (error) {
+    reject(`profile route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!profileRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_PROFILE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`profile route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!profileRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`profile route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`profile route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) profileRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_PROFILE_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && profileRouteCopyLabelsValidated === expectedLabelCount) {
+    profileRouteCopyParityValidated = true;
   }
 }
 
@@ -9829,6 +9967,7 @@ validateChapterRouteHeaderParity();
 validateLearnRouteHeaderParity();
 validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
+validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
 validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
@@ -9947,6 +10086,8 @@ console.log(
       learnRouteLinkCopyParityValidated,
       profileRouteHeadersValidated,
       profileRouteHeaderParityValidated,
+      profileRouteCopyLabelsValidated,
+      profileRouteCopyParityValidated,
       homeRouteHeadersValidated,
       homeRouteHeaderParityValidated,
       homeRouteCopyLabelsValidated,
