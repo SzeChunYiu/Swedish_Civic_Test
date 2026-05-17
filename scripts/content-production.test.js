@@ -50,6 +50,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.rewardedAdTypeUnionsValidated, 1);
   assert.equal(summary.rewardedAdTypeInterfacesValidated, 3);
   assert.equal(summary.rewardedAdTypeSchemaParityValidated, true);
+  assert.equal(summary.mockExamAccessTypeUnionsValidated, 1);
+  assert.equal(summary.mockExamAccessTypeInterfacesValidated, 6);
+  assert.equal(summary.mockExamAccessTypeSchemaParityValidated, true);
   assert.equal(summary.themeColorTokensValidated, 29);
   assert.equal(summary.themeSpaceTokensValidated, 19);
   assert.equal(summary.themeRadiusTokensValidated, 7);
