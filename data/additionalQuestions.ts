@@ -458,7 +458,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättssäkerhet', pageApprox: 17 },
     'Vilket påstående om rättssäkerhet stämmer enligt materialet?',
-    'Which statement about rule of law is correct according to the material?',
+    'Which statement about legal certainty is correct according to the material?',
     [
       [
         'Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom',
@@ -474,13 +474,13 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
       [
         'Rättssäkerhet betyder att vissa personer står över lagen',
-        'Rule of law means that some people are above the law',
+        'Legal certainty means that some people are above the law',
       ],
     ],
     0,
     'Materialet beskriver rättssäkerhet som lika behandling inför lagen, rättvis rättegång och noggrann granskning av bevis och fakta. Det betonar också att domstolarna är oberoende och att alla har rätt att försvara sig med advokat och kan överklaga en dom.',
-    'The material describes rule of law as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
-    ['rule-of-law', 'independent-courts', 'appeal'],
+    'The material describes legal certainty as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
+    ['legal-certainty', 'independent-courts', 'appeal'],
   ),
   single(
     'q042',
@@ -1049,7 +1049,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q069',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Skatter för Sveriges välfärd', pageApprox: 30 },
-    'Vad säger UHR-materialet om hur många viktiga välfärdstjänster finansieras?',
+    'Hur finansieras många viktiga välfärdstjänster enligt UHR-materialet?',
     'According to the UHR material, how are many important welfare services financed?',
     [
       [
@@ -1073,8 +1073,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q070',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Skatter för Sveriges välfärd', pageApprox: 30 },
-    'Sant eller falskt: Enligt UHR-materialet betalas skatt också av företag, och moms är skatt på varor och tjänster.',
-    'True or false: According to the UHR material, tax is also paid by companies, and VAT is a tax on goods and services.',
+    'Sant eller falskt: Enligt UHR-materialet betalar företag också skatt, och moms är skatt på varor och tjänster.',
+    'True or false: According to the UHR material, companies also pay tax, and VAT is a tax on goods and services.',
     true,
     'UHR-avsnittet Skatter för Sveriges välfärd säger att skatt inte bara betalas av personer som arbetar utan också av företag. Avsnittet förklarar också att moms är en skatt på varor och tjänster, och att sådana skatteinkomster bidrar till statens, regionernas och kommunernas välfärdsbudgetar.',
     'The UHR section Taxes for Sweden’s welfare says that tax is not only paid by people who work but also by companies. It also explains that VAT is a tax on goods and services, and that these tax revenues contribute to the welfare budgets of the state, regions, and municipalities.',

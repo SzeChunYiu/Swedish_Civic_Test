@@ -43,7 +43,8 @@ test('mock exam requires all answers before showing score and source-backed revi
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation').first()).toBeVisible();
   await expect(page.getByText('UHR reference').first()).toBeVisible();
-  await expect(page.getByLabel('Back to exam answers')).toBeVisible();
+  await expect(page.getByText('Submitted results are final')).toBeVisible();
+  await expect(page.getByLabel('Back to exam answers')).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });

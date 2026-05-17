@@ -6,6 +6,15 @@ const ts = require('typescript');
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
 const moduleCache = new Map();
+const speechEvents = [];
+const speechMock = {
+  speak(text, options) {
+    speechEvents.push({ type: 'speak', text, options });
+  },
+  stop() {
+    speechEvents.push({ type: 'stop' });
+  },
+};
 const QUESTION_TYPE_VALUES = ['single_choice', 'true_false', 'flashcard'];
 const REVIEW_STATUS_VALUES = ['draft', 'reviewed', 'published'];
 const DIFFICULTY_VALUES = ['easy', 'medium', 'hard'];
@@ -88,6 +97,8 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+const EXPECTED_SPEECH_RUNTIME_CASES = 4;
+const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
   { name: 'audioEnabled', type: 'boolean', optional: false },
@@ -895,7 +906,7 @@ function loadTs(relativePath, exportName) {
 
   function localRequire(request) {
     if (request === 'expo-speech') {
-      return { speak() {}, stop() {} };
+      return speechMock;
     }
     if (request.startsWith('.')) {
       const resolvedPath = resolveLocalModule(filePath, request);
@@ -1676,7 +1687,10 @@ const isCorrectAnswer = answerValidationModule.isCorrectAnswer;
 const getAnswerOptionFeedback = answerValidationModule.getAnswerOptionFeedback;
 const audioModule = loadTs('lib/audio/speak.ts');
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
+const speakSwedish = audioModule.speakSwedish;
+const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
+const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -1743,6 +1757,7 @@ let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let mockExamTimerParityValidated = false;
+let examSubmissionFinalityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -1799,6 +1814,8 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let practiceFlowCasesValidated = 0;
+let practiceFlowParityValidated = false;
 let practiceSessionStoreFieldsValidated = 0;
 let practiceSessionStoreSchemaParityValidated = false;
 let practiceSessionStoreRuntimeParityValidated = false;
@@ -1811,6 +1828,8 @@ let answerFeedbackRuntimeParityValidated = false;
 let questionSpeechTextQuestionsValidated = 0;
 let questionSpeechTextOptionsValidated = 0;
 let questionSpeechTextParityValidated = false;
+let speechRuntimeCasesValidated = 0;
+let speechRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
@@ -1890,6 +1909,11 @@ if (typeof getAnswerOptionFeedback !== 'function') {
 }
 if (typeof buildQuestionSpeechText !== 'function') {
   fail('buildQuestionSpeechText export is not a function');
+}
+if (typeof speakSwedish !== 'function') fail('speakSwedish export is not a function');
+if (typeof stopSpeech !== 'function') fail('stopSpeech export is not a function');
+if (typeof getPracticeQuestionForSession !== 'function') {
+  fail('getPracticeQuestionForSession export is not a function');
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
@@ -2655,6 +2679,47 @@ function validateMockExamTimerParity(config) {
   }
 
   if (valid) mockExamTimerParityValidated = true;
+}
+
+function validateExamSubmissionFinalityParity() {
+  let valid = true;
+  let examRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/exam.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  if (
+    !examRoute.includes('Submitted results are final. Start another mock exam for a fresh attempt.')
+  ) {
+    reject('exam result screen must tell users submitted results are final');
+  }
+  if (examRoute.includes('Back to exam answers') || examRoute.includes('Back to answers')) {
+    reject('exam result screen must not offer a back-to-answers control after submission');
+  }
+  if (examRoute.includes('onPress={() => setSubmitted(false)}')) {
+    reject('exam result screen must not directly reopen submitted answers');
+  }
+  if (
+    !examRoute.includes(
+      'disabled: !completionRecorded || !canStartAccessibleExam || startingAccessibleExam',
+    ) ||
+    !examRoute.includes(
+      'disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}',
+    )
+  ) {
+    reject('next-exam control must stay disabled until the submitted completion is stored');
+  }
+
+  if (valid) examSubmissionFinalityParityValidated = true;
 }
 
 function firstWrongOptionId(question) {
@@ -4791,6 +4856,105 @@ function validatePracticeScoringRules() {
   }
 }
 
+function validatePracticeFlowParity() {
+  if (!Array.isArray(questions) || typeof getPracticeQuestionForSession !== 'function') {
+    return;
+  }
+
+  const publishedQuestions = questions.filter((question) => question.reviewStatus === 'published');
+  if (publishedQuestions.length < 3) {
+    fail('practice flow parity needs at least three published questions');
+    return;
+  }
+
+  const [firstQuestion, secondQuestion, thirdQuestion] = publishedQuestions;
+  const completedAllQuestionIds = publishedQuestions.map((question) => question.id);
+  const cases = [
+    {
+      label: 'empty question bank',
+      questions: [],
+      completedQuestionIds: [],
+      activeQuestionId: null,
+      expectedId: undefined,
+    },
+    {
+      label: 'first unanswered question',
+      questions: publishedQuestions,
+      completedQuestionIds: [],
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+    },
+    {
+      label: 'active question remains locked',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id],
+      activeQuestionId: firstQuestion.id,
+      expectedId: firstQuestion.id,
+    },
+    {
+      label: 'stale active question falls back to completed-count rotation',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id],
+      activeQuestionId: 'missing-question-id',
+      expectedId: secondQuestion.id,
+    },
+    {
+      label: 'two completed questions advance to the third question',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id, secondQuestion.id],
+      activeQuestionId: null,
+      expectedId: thirdQuestion.id,
+    },
+    {
+      label: 'completed question count wraps to the first question',
+      questions: publishedQuestions,
+      completedQuestionIds: completedAllQuestionIds,
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+    },
+  ];
+
+  let valid = true;
+
+  cases.forEach((testCase) => {
+    const {
+      label,
+      questions: caseQuestions,
+      completedQuestionIds,
+      activeQuestionId,
+      expectedId,
+    } = testCase;
+    let actualQuestion;
+    try {
+      actualQuestion = getPracticeQuestionForSession(
+        caseQuestions,
+        completedQuestionIds,
+        activeQuestionId,
+      );
+    } catch (error) {
+      valid = false;
+      fail(`practice flow ${label} threw ${error.message}`);
+      return;
+    }
+
+    const actualId = actualQuestion?.id;
+    if (actualId !== expectedId) {
+      valid = false;
+      fail(
+        `practice flow ${label} returned ${JSON.stringify(actualId)}, expected ${JSON.stringify(
+          expectedId,
+        )}`,
+      );
+    } else {
+      practiceFlowCasesValidated += 1;
+    }
+  });
+
+  if (valid && practiceFlowCasesValidated === cases.length) {
+    practiceFlowParityValidated = true;
+  }
+}
+
 function validatePracticeSessionStoreParity() {
   let valid = true;
   let runtimeValid = true;
@@ -5183,6 +5347,72 @@ function validateQuestionSpeechTextParity() {
     questionSpeechTextOptionsValidated === expectedOptionCount
   ) {
     questionSpeechTextParityValidated = true;
+  }
+}
+
+function resetSpeechEvents() {
+  speechEvents.length = 0;
+}
+
+function validateSpeechRuntimeParity() {
+  if (typeof speakSwedish !== 'function' || typeof stopSpeech !== 'function') {
+    return;
+  }
+
+  let runtimeParityIsValid = true;
+
+  function reject(message) {
+    runtimeParityIsValid = false;
+    fail(message);
+  }
+
+  resetSpeechEvents();
+  speakSwedish('');
+  if (speechEvents.length === 0) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must ignore empty text');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('   ');
+  if (speechEvents.length === 0) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must ignore whitespace-only text');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige');
+  const speakEvent = speechEvents[0];
+  if (
+    speechEvents.length === 1 &&
+    speakEvent &&
+    speakEvent.type === 'speak' &&
+    speakEvent.text === 'Hej Sverige' &&
+    speakEvent.options &&
+    speakEvent.options.language === EXPECTED_SWEDISH_SPEECH_LANGUAGE
+  ) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject(
+      `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
+    );
+  }
+
+  resetSpeechEvents();
+  stopSpeech();
+  const stopEvent = speechEvents[0];
+  if (speechEvents.length === 1 && stopEvent && stopEvent.type === 'stop') {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('stopSpeech must call the Expo Speech stop handler');
+  }
+
+  resetSpeechEvents();
+
+  if (runtimeParityIsValid && speechRuntimeCasesValidated === EXPECTED_SPEECH_RUNTIME_CASES) {
+    speechRuntimeParityValidated = true;
   }
 }
 
@@ -6400,6 +6630,7 @@ validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
+validateExamSubmissionFinalityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -6422,10 +6653,12 @@ validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validatePracticeFlowParity();
 validatePracticeSessionStoreParity();
 validateAnswerValidationTypeSchemaParity();
 validateAnswerFeedbackParity();
 validateQuestionSpeechTextParity();
+validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateStreakRules();
@@ -6467,6 +6700,7 @@ console.log(
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
       mockExamTimerParityValidated,
+      examSubmissionFinalityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
@@ -6530,6 +6764,8 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      practiceFlowCasesValidated,
+      practiceFlowParityValidated,
       practiceSessionStoreFieldsValidated,
       practiceSessionStoreSchemaParityValidated,
       practiceSessionStoreRuntimeParityValidated,
@@ -6542,6 +6778,8 @@ console.log(
       questionSpeechTextQuestionsValidated,
       questionSpeechTextOptionsValidated,
       questionSpeechTextParityValidated,
+      speechRuntimeCasesValidated,
+      speechRuntimeParityValidated,
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,

@@ -17,6 +17,7 @@ export default function Screen() {
   const renderLanguageButton = (value: AppLanguage, label: string) => (
     <Pressable
       key={value}
+      aria-selected={language === value}
       accessibilityLabel={`Set question language to ${label}`}
       accessibilityRole="button"
       accessibilityState={{ selected: language === value }}
@@ -58,6 +59,7 @@ export default function Screen() {
           Audio
         </Text>
         <Pressable
+          aria-checked={audioEnabled}
           accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
@@ -79,6 +81,7 @@ export default function Screen() {
           {[5, 10, 20].map((goal) => (
             <Pressable
               key={goal}
+              aria-selected={dailyGoalAnswers === goal}
               accessibilityLabel={`Set daily goal to ${goal} answers`}
               accessibilityRole="button"
               accessibilityState={{ selected: dailyGoalAnswers === goal }}

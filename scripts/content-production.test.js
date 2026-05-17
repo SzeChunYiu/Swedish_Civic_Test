@@ -29,6 +29,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
   assert.equal(summary.mockExamTimerParityValidated, true);
+  assert.equal(summary.examSubmissionFinalityParityValidated, true);
   assert.equal(summary.examReviewItemsValidated, 20);
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);
@@ -85,6 +86,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
+  assert.equal(summary.practiceFlowCasesValidated, 6);
+  assert.equal(summary.practiceFlowParityValidated, true);
   assert.equal(summary.practiceSessionStoreFieldsValidated, 5);
   assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
   assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
@@ -99,6 +102,8 @@ test('full content production validates 500 published UHR-referenced questions',
     summary.questionSpeechTextOptionsValidated > summary.questionSpeechTextQuestionsValidated,
   );
   assert.equal(summary.questionSpeechTextParityValidated, true);
+  assert.equal(summary.speechRuntimeCasesValidated, 4);
+  assert.equal(summary.speechRuntimeParityValidated, true);
   assert.equal(summary.chapterQuizSessionParityValidated, 13);
   assert.equal(summary.spacedRepetitionIntervalsValidated, 5);
   assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
