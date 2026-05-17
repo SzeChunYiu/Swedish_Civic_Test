@@ -859,9 +859,9 @@ export const additionalQuestions: PracticeQuestion[] = [
     'Sant eller falskt: Det är tillåtet att gifta sig med en person av samma kön i Sverige.',
     'True or false: It is permitted to marry a person of the same sex in Sweden.',
     true,
-    'Rätten att leva med vem man vill är skyddad i lag, och äktenskap med samma kön är tillåtet.',
-    'The right to live with whom you choose is protected by law, and same-sex marriage is permitted.',
-    ['hbtqi', 'marriage', 'rights'],
+    'UHR-avsnittet Hbtqi-personer säger att rätten att leva med vem man vill är skyddad i lag. Avsnittet säger också att det är tillåtet att gifta sig med en person av samma kön och att diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen.',
+    'The UHR section on LGBTQI people says that the right to live with whomever one wants is protected by law. The section also says that it is permitted to marry a person of the same sex and that discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.',
+    ['hbtqi', 'same-sex-marriage', 'discrimination-law'],
   ),
   single(
     'q061',
