@@ -6,6 +6,15 @@ export type SafeAdPlacement = AdPlacement | 'exam_screen';
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
+export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
+  '/exam',
+  '/disclaimer',
+  '/privacy',
+  '/sources',
+  '/support',
+  '/terms',
+] as const;
+
 function readBooleanFlag(value: string | undefined, defaultValue: boolean): boolean {
   const normalized = value?.trim().toLowerCase();
   if (!normalized) return defaultValue;
@@ -135,6 +144,15 @@ export function shouldShowLaunchPopupAd({
   return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
 }
 
+function pathMatchesRoute(pathname: string, route: string): boolean {
+  const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  return normalizedPath === route || normalizedPath.startsWith(`${route}/`);
+}
+
+export function shouldSuppressLaunchPopupAdForPath(pathname: string): boolean {
+  return LAUNCH_POPUP_AD_SUPPRESSED_ROUTES.some((route) => pathMatchesRoute(pathname, route));
+}
+
 export function getPlatformAdUnitId(
   placement: AdPlacement,
   platform: 'ios' | 'android' | 'web' | string,
@@ -162,4 +180,5 @@ export const adsConfig = {
     'app_open_launch',
   ],
   blockedPlacements: ['exam_screen'],
+  suppressedLaunchPopupRoutes: LAUNCH_POPUP_AD_SUPPRESSED_ROUTES,
 };

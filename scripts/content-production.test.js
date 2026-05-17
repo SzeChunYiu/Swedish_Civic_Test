@@ -12,6 +12,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.questions, 500);
   assert.equal(summary.publishedQuestions, 500);
   assert.equal(summary.chapterSchemasValidated, 13);
+  assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
+  assert.equal(summary.mockExamConfigValidated, true);
+  assert.equal(summary.uxBenchmarksValidated, 4);
   assert.equal(summary.sourceQuestions, 100);
   assert.equal(summary.generatedPublishedQuestions, 400);
   assert.equal(summary.authoredSourceQuestionsValidated, 100);
@@ -33,6 +36,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.ok(summary.trueFalseQuestions > 0);
   assert.equal(summary.trueFalseOptionLabelsValidated, summary.trueFalseQuestions);
   assert.equal(summary.questionTagsValidated, 500);
+  assert.equal(summary.questionBankCsvRowsValidated, 500);
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);
   assert.equal(summary.uhrMapSectionsValidated, 110);

@@ -4,8 +4,8 @@ import { Platform } from 'react-native';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
-  createMemoryPurchaseStorage,
   createMockPurchaseProvider,
+  createWebPurchaseStorage,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
 } from './purchases';
@@ -16,6 +16,24 @@ const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
 };
 
 let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
+let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
+let sharedRemoveAdsEntitlementsVersion = 0;
+const removeAdsEntitlementListeners = new Set<(entitlements: PremiumEntitlements) => void>();
+
+function publishRemoveAdsEntitlements(entitlements: PremiumEntitlements) {
+  const nextEntitlements = { ...entitlements };
+  sharedRemoveAdsEntitlements = nextEntitlements;
+  sharedRemoveAdsEntitlementsVersion += 1;
+
+  for (const listener of removeAdsEntitlementListeners) {
+    listener(nextEntitlements);
+  }
+}
+
+function subscribeToRemoveAdsEntitlements(listener: (entitlements: PremiumEntitlements) => void) {
+  removeAdsEntitlementListeners.add(listener);
+  return () => removeAdsEntitlementListeners.delete(listener);
+}
 
 export function createDefaultPurchaseRuntimeOptions(
   initialAdsDisabled = false,
@@ -24,7 +42,7 @@ export function createDefaultPurchaseRuntimeOptions(
 
   defaultWebPurchaseRuntimeOptions ??= {
     provider: createMockPurchaseProvider(),
-    storage: createMemoryPurchaseStorage(initialAdsDisabled),
+    storage: createWebPurchaseStorage(initialAdsDisabled),
   };
 
   return defaultWebPurchaseRuntimeOptions;
@@ -43,27 +61,55 @@ export function useRemoveAdsEntitlements({
     () => runtimeOptions ?? createDefaultPurchaseRuntimeOptions(initialEntitlements.adsDisabled),
     [initialEntitlements.adsDisabled, runtimeOptions],
   );
-  const setEntitlements = useCallback((nextEntitlements: PremiumEntitlements) => {
+  const applyEntitlements = useCallback((nextEntitlements: PremiumEntitlements) => {
     setCurrentEntitlements(nextEntitlements);
     setEntitlementsReady(true);
+  }, []);
+  const setEntitlements = useCallback((nextEntitlements: PremiumEntitlements) => {
+    publishRemoveAdsEntitlements(nextEntitlements);
   }, []);
 
   useEffect(() => {
     let isMounted = true;
+    const loadVersion = sharedRemoveAdsEntitlementsVersion;
+    const unsubscribe = subscribeToRemoveAdsEntitlements((nextEntitlements) => {
+      if (isMounted) applyEntitlements(nextEntitlements);
+    });
+
     setEntitlementsReady(false);
+
+    if (sharedRemoveAdsEntitlements) {
+      applyEntitlements(sharedRemoveAdsEntitlements);
+    }
 
     void getPurchaseEntitlements(purchaseRuntime)
       .then((storedEntitlements) => {
-        if (isMounted) setEntitlements(storedEntitlements);
+        if (!isMounted) return;
+
+        if (
+          sharedRemoveAdsEntitlementsVersion === loadVersion ||
+          sharedRemoveAdsEntitlements === undefined
+        ) {
+          publishRemoveAdsEntitlements(storedEntitlements);
+        } else {
+          applyEntitlements(sharedRemoveAdsEntitlements);
+        }
       })
       .catch(() => {
-        if (isMounted) setEntitlementsReady(true);
+        if (!isMounted) return;
+
+        if (sharedRemoveAdsEntitlements) {
+          applyEntitlements(sharedRemoveAdsEntitlements);
+        } else {
+          setEntitlementsReady(true);
+        }
       });
 
     return () => {
       isMounted = false;
+      unsubscribe();
     };
-  }, [purchaseRuntime, setEntitlements]);
+  }, [applyEntitlements, purchaseRuntime]);
 
   return {
     entitlements,

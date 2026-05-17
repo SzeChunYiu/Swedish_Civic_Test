@@ -57,6 +57,12 @@ export interface MockPurchaseProviderOptions {
   pendingPurchase?: boolean;
 }
 
+interface BrowserPurchaseStorage {
+  getItem(key: string): string | null;
+  removeItem(key: string): void;
+  setItem(key: string, value: string): void;
+}
+
 function removeAdsEntitlements(adsDisabled: boolean): PremiumEntitlements {
   return {
     adsDisabled,
@@ -71,6 +77,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function optionalString(value: unknown): string | null | undefined {
   return typeof value === 'string' ? value : undefined;
+}
+
+function getBrowserPurchaseStorage(): BrowserPurchaseStorage | undefined {
+  const storage = (globalThis as { localStorage?: Partial<BrowserPurchaseStorage> }).localStorage;
+
+  if (
+    typeof storage?.getItem === 'function' &&
+    typeof storage.removeItem === 'function' &&
+    typeof storage.setItem === 'function'
+  ) {
+    return storage as BrowserPurchaseStorage;
+  }
+
+  return undefined;
 }
 
 function normalizePurchase(value: unknown): RemoveAdsPurchaseRecord | null {
@@ -160,6 +180,58 @@ export function createMemoryPurchaseStorage(initialAdsDisabled = false): Purchas
     },
     async setItemAsync(key, value) {
       values.set(key, value);
+    },
+  };
+}
+
+export function createWebPurchaseStorage(initialAdsDisabled = false): PurchaseStorage {
+  const fallbackStorage = createMemoryPurchaseStorage(initialAdsDisabled);
+  const browserStorage = getBrowserPurchaseStorage();
+
+  if (browserStorage && initialAdsDisabled) {
+    try {
+      if (browserStorage.getItem(REMOVE_ADS_STORAGE_KEY) === null) {
+        browserStorage.setItem(REMOVE_ADS_STORAGE_KEY, STORED_TRUE);
+      }
+    } catch {
+      // Fall back to in-memory storage when browser persistence is unavailable.
+    }
+  }
+
+  return {
+    async deleteItemAsync(key) {
+      await fallbackStorage.deleteItemAsync?.(key);
+
+      if (!browserStorage) return;
+
+      try {
+        browserStorage.removeItem(key);
+      } catch {
+        // The in-memory fallback has already been updated.
+      }
+    },
+    async getItemAsync(key) {
+      if (browserStorage) {
+        try {
+          const storedValue = browserStorage.getItem(key);
+          if (storedValue !== null) return storedValue;
+        } catch {
+          // Read through to the in-memory fallback below.
+        }
+      }
+
+      return fallbackStorage.getItemAsync(key);
+    },
+    async setItemAsync(key, value) {
+      await fallbackStorage.setItemAsync(key, value);
+
+      if (!browserStorage) return;
+
+      try {
+        browserStorage.setItem(key, value);
+      } catch {
+        // The in-memory fallback has already been updated.
+      }
     },
   };
 }

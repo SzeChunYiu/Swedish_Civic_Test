@@ -234,11 +234,14 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   const {
     REMOVE_ADS_PRICE_LABEL,
     REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
     createMemoryPurchaseStorage,
     createMockPurchaseProvider,
+    createWebPurchaseStorage,
     getPurchaseEntitlements,
     restoreRemoveAdsPurchase,
+    setRemoveAdsEntitlement,
   } = purchaseExports;
   const purchasesSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/purchases.ts'),
@@ -289,6 +292,44 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   });
   assert.equal(missingRestore.status, 'not_found');
   assert.equal(missingRestore.entitlements.adsDisabled, false);
+
+  const previousLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const localStorageValues = new Map();
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: {
+      getItem(key) {
+        return localStorageValues.get(key) ?? null;
+      },
+      removeItem(key) {
+        localStorageValues.delete(key);
+      },
+      setItem(key, value) {
+        localStorageValues.set(key, String(value));
+      },
+    },
+  });
+
+  try {
+    const webStorage = createWebPurchaseStorage();
+    await setRemoveAdsEntitlement(true, { storage: webStorage });
+
+    const webStorageAfterReload = createWebPurchaseStorage();
+    assert.equal(
+      (await getPurchaseEntitlements({ storage: webStorageAfterReload })).adsDisabled,
+      true,
+    );
+
+    await setRemoveAdsEntitlement(false, { storage: webStorageAfterReload });
+    assert.equal(localStorageValues.has(REMOVE_ADS_STORAGE_KEY), false);
+  } finally {
+    if (previousLocalStorage) {
+      Object.defineProperty(globalThis, 'localStorage', previousLocalStorage);
+    } else {
+      delete globalThis.localStorage;
+    }
+  }
 });
 
 test('pending remove-ads purchase does not grant adsDisabled until store confirmation', async () => {
@@ -318,6 +359,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
+  assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
   assert.match(paywallSource, /Buy Remove Ads for 29 SEK/);
@@ -352,6 +394,9 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   );
 
   assert.match(entitlementHookSource, /defaultWebPurchaseRuntimeOptions/);
+  assert.match(entitlementHookSource, /createWebPurchaseStorage/);
+  assert.match(entitlementHookSource, /publishRemoveAdsEntitlements/);
+  assert.match(entitlementHookSource, /subscribeToRemoveAdsEntitlements/);
   assert.match(entitlementHookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(entitlementHookSource, /useResolvedAdEntitlements/);
   assert.match(webBannerSource, /useResolvedAdEntitlements\(entitlements\)/);
@@ -606,20 +651,40 @@ test('exam screen does not import ad components', () => {
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
 });
 
-test('global launch popup ad is suppressed on exam routes', () => {
+test('global launch popup ad is suppressed on exam and compliance routes', () => {
   const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
   const entitlementHookSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
     'utf8',
   );
+  const { adsConfig, shouldSuppressLaunchPopupAdForPath } = loadTs('lib/monetization/ads.ts');
 
   assert.match(layoutSource, /usePathname/);
   assert.match(layoutSource, /useRemoveAdsEntitlements/);
-  assert.match(layoutSource, /pathname\s*===\s*['"]\/exam['"]/);
-  assert.match(layoutSource, /pathname\.startsWith\(['"]\/exam\/['"]\)/);
+  assert.match(layoutSource, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
   assert.match(layoutSource, /entitlementsReady/);
   assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/exam'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/exam/review'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/privacy'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/disclaimer'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/practice'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/mistakes'), false);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/profile'), false);
+  assert.deepEqual(adsConfig.suppressedLaunchPopupRoutes, [
+    '/exam',
+    '/disclaimer',
+    '/privacy',
+    '/sources',
+    '/support',
+    '/terms',
+  ]);
   assert.match(entitlementHookSource, /getPurchaseEntitlements/);
-  assert.match(entitlementHookSource, /createMemoryPurchaseStorage/);
+  assert.match(entitlementHookSource, /createWebPurchaseStorage/);
   assert.match(entitlementHookSource, /Platform\.OS !== 'web'/);
 });

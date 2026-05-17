@@ -9,6 +9,7 @@ const moduleCache = new Map();
 const QUESTION_TYPES = new Set(['single_choice', 'true_false', 'flashcard']);
 const DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const REVIEW_STATUSES = new Set(['draft', 'reviewed', 'published']);
+const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 100;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
@@ -38,6 +39,20 @@ const EXPECTED_UHR_SOURCE = {
   publisher: 'Universitets- och högskolerådet (UHR)',
   url: 'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
 };
+const QUESTION_BANK_CSV_HEADER = [
+  'id',
+  'chapterId',
+  'type',
+  'questionSv',
+  'questionEn',
+  'correctOptionId',
+  'uhrChapter',
+  'uhrSection',
+  'uhrPageApprox',
+  'difficulty',
+  'reviewStatus',
+  'tags',
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -289,6 +304,67 @@ function isIsoDate(value) {
   return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }
 
+function isHttpsUrl(value) {
+  if (!hasText(value)) return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function parseCsvRows(csv) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+
+  for (let index = 0; index < csv.length; index += 1) {
+    const character = csv[index];
+
+    if (inQuotes) {
+      if (character === '"') {
+        if (csv[index + 1] === '"') {
+          cell += '"';
+          index += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        cell += character;
+      }
+      continue;
+    }
+
+    if (character === '"') {
+      if (cell.length) {
+        throw new Error('unexpected quote inside unquoted cell');
+      }
+      inQuotes = true;
+    } else if (character === ',') {
+      row.push(cell);
+      cell = '';
+    } else if (character === '\n') {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+    } else if (character !== '\r') {
+      cell += character;
+    }
+  }
+
+  if (inQuotes) {
+    throw new Error('unterminated quoted cell');
+  }
+  if (cell.length || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
 function optionIdsMatchQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   const optionIds = question.options.map((option) => option?.id);
@@ -324,6 +400,9 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
 
   for (const field of ['nameSv', 'nameEn', 'descriptionSv', 'descriptionEn']) {
     if (!hasText(chapter[field])) reject(`${label} missing ${field}`);
+    if (hasText(chapter[field]) && !textIsTrimmedSingleSpaced(chapter[field])) {
+      reject(`${label} ${field} must be trimmed and single-spaced`);
+    }
   }
 
   if (normalizeComparableText(chapter.nameSv) === normalizeComparableText(chapter.nameEn)) {
@@ -353,6 +432,12 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
   }
 
   return valid;
+}
+
+function chapterTextFieldsAreNormalized(chapter) {
+  return ['id', 'nameSv', 'nameEn', 'descriptionSv', 'descriptionEn'].every((field) =>
+    textIsTrimmedSingleSpaced(chapter[field]),
+  );
 }
 
 function validateQuestionSchema(question, index) {
@@ -492,10 +577,15 @@ const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
+const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
 let chapterSchemasValidated = 0;
+let chapterTextFieldsNormalizedValidated = 0;
+let mockExamConfigValidated = false;
+let uxBenchmarksValidated = 0;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -509,6 +599,7 @@ let questionOptionIdConventionsValidated = 0;
 let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
+let questionBankCsvRowsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
@@ -530,6 +621,176 @@ if (!Array.isArray(questions)) fail('questions export is not an array');
 if (!Array.isArray(sourceQuestions)) fail('sourceQuestions export is not an array');
 if (!Array.isArray(generatedPublishedQuestions)) {
   fail('generatedPublishedQuestions export is not an array');
+}
+if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
+
+function validateMockExamConfig(config, publishedQuestionCount) {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!config || typeof config !== 'object') {
+    reject('defaultMockExamConfig export is not an object');
+  } else {
+    if (!Number.isInteger(config.questionCount) || config.questionCount < 1) {
+      reject('defaultMockExamConfig questionCount must be a positive integer');
+    } else if (config.questionCount > publishedQuestionCount) {
+      reject(
+        `defaultMockExamConfig questionCount ${config.questionCount} exceeds ${publishedQuestionCount} published questions`,
+      );
+    }
+
+    if (!Number.isInteger(config.durationMinutes) || config.durationMinutes < 1) {
+      reject('defaultMockExamConfig durationMinutes must be a positive integer');
+    }
+    if (config.sourceScope !== 'uhr_based') {
+      reject('defaultMockExamConfig sourceScope must be uhr_based');
+    }
+    if (config.showExplanationsDuringExam !== false) {
+      reject('defaultMockExamConfig must not show explanations during the exam');
+    }
+    if (config.adsAllowedDuringExam !== false) {
+      reject('defaultMockExamConfig must not allow ads during the exam');
+    }
+  }
+
+  if (valid) mockExamConfigValidated = true;
+}
+
+function validateUxBenchmarks() {
+  if (!Array.isArray(uxBenchmarks)) return;
+
+  if (uxBenchmarks.length !== EXPECTED_UX_BENCHMARKS) {
+    fail(`expected ${EXPECTED_UX_BENCHMARKS} UX benchmarks, found ${uxBenchmarks.length}`);
+  }
+
+  const seenProducts = new Set();
+  const seenSources = new Set();
+
+  uxBenchmarks.forEach((benchmark, index) => {
+    const label = hasText(benchmark?.product) ? benchmark.product : `ux benchmark[${index}]`;
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (!benchmark || typeof benchmark !== 'object') {
+      reject(`ux benchmark[${index}] is not an object`);
+    } else {
+      for (const field of ['product', 'lesson', 'source']) {
+        if (!hasText(benchmark[field])) {
+          reject(`${label} missing ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(benchmark[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      const normalizedProduct = normalizeComparableText(benchmark.product);
+      if (normalizedProduct && seenProducts.has(normalizedProduct)) {
+        reject(`${label} duplicates UX benchmark product`);
+      }
+      if (normalizedProduct) seenProducts.add(normalizedProduct);
+
+      if (hasText(benchmark.source)) {
+        if (!isHttpsUrl(benchmark.source)) {
+          reject(`${label} source must be an HTTPS URL`);
+        }
+        if (seenSources.has(benchmark.source)) {
+          reject(`${label} duplicates UX benchmark source`);
+        }
+        seenSources.add(benchmark.source);
+      }
+    }
+
+    if (valid) uxBenchmarksValidated += 1;
+  });
+}
+
+function validateQuestionBankCsvContract() {
+  if (!Array.isArray(questions)) return;
+
+  const csvPath = path.join(repoRoot, 'content/question-bank.csv');
+  let rows = [];
+  try {
+    rows = parseCsvRows(fs.readFileSync(csvPath, 'utf8'));
+  } catch (error) {
+    fail(`content/question-bank.csv could not be parsed: ${error.message}`);
+    return;
+  }
+
+  if (!rows.length) {
+    fail('content/question-bank.csv is empty');
+    return;
+  }
+
+  const [header, ...dataRows] = rows;
+  if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
+    fail(
+      `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
+        QUESTION_BANK_CSV_HEADER,
+      )}`,
+    );
+  }
+
+  if (dataRows.length !== questions.length) {
+    fail(
+      `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
+    );
+  }
+
+  dataRows.forEach((row, index) => {
+    const question = questions[index];
+    const rowNumber = index + 2;
+    const label = question?.id || `CSV row ${rowNumber}`;
+    let rowIsValid = true;
+
+    function reject(message) {
+      rowIsValid = false;
+      fail(message);
+    }
+
+    if (row.length !== QUESTION_BANK_CSV_HEADER.length) {
+      reject(
+        `content/question-bank.csv row ${rowNumber} has ${row.length} columns, expected ${QUESTION_BANK_CSV_HEADER.length}`,
+      );
+    }
+    if (!question) {
+      reject(`content/question-bank.csv row ${rowNumber} has no matching question`);
+      return;
+    }
+
+    const expectedRow = [
+      question.id,
+      question.chapterId,
+      question.type,
+      question.questionSv,
+      question.questionEn,
+      question.correctOptionId,
+      question.uhrReference?.chapter,
+      question.uhrReference?.section,
+      String(question.uhrReference?.pageApprox),
+      question.difficulty,
+      question.reviewStatus,
+      Array.isArray(question.tags) ? question.tags.join('|') : '',
+    ];
+
+    QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
+      if (row[fieldIndex] !== expectedRow[fieldIndex]) {
+        reject(
+          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+            row[fieldIndex],
+          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+        );
+      }
+    });
+
+    if (rowIsValid) questionBankCsvRowsValidated += 1;
+  });
 }
 
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
@@ -989,6 +1250,9 @@ if (Array.isArray(chapters)) {
   chapters.forEach((chapter, index) => {
     if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
       chapterSchemasValidated += 1;
+      if (chapterTextFieldsAreNormalized(chapter)) {
+        chapterTextFieldsNormalizedValidated += 1;
+      }
     }
   });
 }
@@ -1152,6 +1416,15 @@ if (Array.isArray(questions)) {
   });
 }
 
+validateMockExamConfig(
+  defaultMockExamConfig,
+  Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0,
+);
+validateUxBenchmarks();
+validateQuestionBankCsvContract();
+
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 const disclaimer = fs.readFileSync(
   path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
@@ -1179,6 +1452,9 @@ console.log(
     {
       chapters: chapters.length,
       chapterSchemasValidated,
+      chapterTextFieldsNormalizedValidated,
+      mockExamConfigValidated,
+      uxBenchmarksValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
@@ -1204,6 +1480,7 @@ console.log(
       trueFalseQuestions,
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
+      questionBankCsvRowsValidated,
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
