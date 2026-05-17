@@ -524,6 +524,14 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
   assert.match(nativeRewardedAdSource, /initializeGoogleMobileAdsAfterConsent/);
   assert.match(nativeRewardedAdSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
+  assert.match(
+    nativeRewardedAdSource,
+    /const unitId = getPlatformAdUnitId\(REWARDED_EXTRA_EXAM_PLACEMENT, Platform\.OS\);[\s\S]*if \(!unitId\) return \{ status: 'unavailable' \};[\s\S]*try \{[\s\S]*initializeGoogleMobileAdsAfterConsent/,
+  );
+  assert.match(
+    nativeRewardedAdSource,
+    /initializeGoogleMobileAdsAfterConsent[\s\S]*\} catch \{[\s\S]*return \{ status: 'unavailable' \};[\s\S]*\}[\s\S]*if \(!consentInitialization\.initialized\) return \{ status: 'unavailable' \};/,
+  );
   assert.match(nativeRewardedAdSource, /RewardedAd\.createForAdRequest/);
   assert.match(nativeRewardedAdSource, /RewardedAdEventType\.LOADED/);
   assert.match(nativeRewardedAdSource, /RewardedAdEventType\.EARNED_REWARD/);

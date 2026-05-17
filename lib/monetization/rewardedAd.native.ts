@@ -30,14 +30,20 @@ export async function showRewardedExtraExamAd({
   requestNonPersonalizedAdsOnly = false,
   timeoutMs = DEFAULT_REWARDED_AD_TIMEOUT_MS,
 }: RewardedExtraExamAdOptions = {}): Promise<RewardedExtraExamAdResult> {
-  const consentInitialization = await initializeGoogleMobileAdsAfterConsent({
-    entitlements,
-    runtime: createNativeMobileAdsConsentRuntime(Platform.OS),
-  });
   const unitId = getPlatformAdUnitId(REWARDED_EXTRA_EXAM_PLACEMENT, Platform.OS);
+  if (!unitId) return { status: 'unavailable' };
+
+  let consentInitialization;
+  try {
+    consentInitialization = await initializeGoogleMobileAdsAfterConsent({
+      entitlements,
+      runtime: createNativeMobileAdsConsentRuntime(Platform.OS),
+    });
+  } catch {
+    return { status: 'unavailable' };
+  }
 
   if (!consentInitialization.initialized) return { status: 'unavailable' };
-  if (!unitId) return { status: 'unavailable' };
 
   return new Promise((resolve) => {
     const cleanups: Array<() => void> = [];

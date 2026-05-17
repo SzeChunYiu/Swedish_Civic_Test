@@ -7,6 +7,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
 const moduleCache = new Map();
 const QUESTION_TYPES = new Set(['single_choice', 'true_false', 'flashcard']);
+const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const REVIEW_STATUSES = new Set(['draft', 'reviewed', 'published']);
 const EXPECTED_UX_BENCHMARKS = 4;
@@ -618,8 +619,13 @@ const generateExam = examGeneratorModule.generateExam;
 const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
 const scoreExam = examGeneratorModule.scoreExam;
 const buildExamChapterBreakdownItems = examGeneratorModule.buildExamChapterBreakdownItems;
+const formatExamTime = examGeneratorModule.formatExamTime;
+const shouldAutoSubmitExam = examGeneratorModule.shouldAutoSubmitExam;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
+const answerValidationModule = loadTs('lib/quiz/answerValidation.ts');
+const isCorrectAnswer = answerValidationModule.isCorrectAnswer;
+const getAnswerOptionFeedback = answerValidationModule.getAnswerOptionFeedback;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const badgeModule = loadTs('lib/learning/badges.ts');
@@ -646,6 +652,7 @@ let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
+let mockExamTimerParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -656,6 +663,9 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let answerFeedbackQuestionsValidated = 0;
+let answerFeedbackOptionsValidated = 0;
+let answerFeedbackRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
@@ -667,6 +677,7 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
+let publishedQuestionTypesValidated = 0;
 let questionIdSequencesValidated = 0;
 let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
@@ -713,7 +724,15 @@ if (typeof scoreExam !== 'function') fail('scoreExam export is not a function');
 if (typeof buildExamChapterBreakdownItems !== 'function') {
   fail('buildExamChapterBreakdownItems export is not a function');
 }
+if (typeof formatExamTime !== 'function') fail('formatExamTime export is not a function');
+if (typeof shouldAutoSubmitExam !== 'function') {
+  fail('shouldAutoSubmitExam export is not a function');
+}
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
+if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
+if (typeof getAnswerOptionFeedback !== 'function') {
+  fail('getAnswerOptionFeedback export is not a function');
+}
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
 }
@@ -854,6 +873,78 @@ function validateMockExamRuntimeParity(config) {
 
   if (valid) mockExamRuntimeParityValidated = true;
   if (valid) mockExamChapterBalanceParityValidated = true;
+}
+
+function expectedFormattedExamTime(totalSeconds) {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function validateMockExamTimerParity(config) {
+  if (!config || typeof config !== 'object') return;
+  if (typeof formatExamTime !== 'function' || typeof shouldAutoSubmitExam !== 'function') return;
+
+  const totalSeconds = config.durationMinutes * 60;
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Number.isInteger(totalSeconds) || totalSeconds < 60) {
+    reject('defaultMockExamConfig duration must convert to at least 60 whole seconds');
+  }
+
+  const formattedStartTime = formatExamTime(totalSeconds);
+  const expectedStartTime = expectedFormattedExamTime(totalSeconds);
+  if (formattedStartTime !== expectedStartTime) {
+    reject(
+      `formatExamTime default duration is ${formattedStartTime}, expected ${expectedStartTime}`,
+    );
+  }
+
+  const liveExamState = {
+    remainingSeconds: totalSeconds,
+    submitted: false,
+    questionCount: config.questionCount,
+  };
+  if (shouldAutoSubmitExam(liveExamState)) {
+    reject('shouldAutoSubmitExam must not submit at the configured start time');
+  }
+  if (
+    !shouldAutoSubmitExam({
+      ...liveExamState,
+      remainingSeconds: 0,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must submit a live exam when the timer reaches zero');
+  }
+  if (
+    shouldAutoSubmitExam({
+      ...liveExamState,
+      remainingSeconds: 0,
+      submitted: true,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must not resubmit an already submitted exam');
+  }
+  if (
+    shouldAutoSubmitExam({
+      ...liveExamState,
+      remainingSeconds: 0,
+      questionCount: 0,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must not submit an empty exam');
+  }
+  if (formatExamTime(-1) !== '00:00') {
+    reject('formatExamTime must clamp negative remaining time to 00:00');
+  }
+
+  if (valid) mockExamTimerParityValidated = true;
 }
 
 function firstWrongOptionId(question) {
@@ -1302,6 +1393,106 @@ function validatePracticeScoringRules() {
 
   if (rulesAreValid && practiceScoringRulesValidated === cases.length) {
     practiceScoringRulesParityValidated = true;
+  }
+}
+
+function validateAnswerFeedbackParity() {
+  if (
+    !Array.isArray(questions) ||
+    typeof isCorrectAnswer !== 'function' ||
+    typeof getAnswerOptionFeedback !== 'function'
+  ) {
+    return;
+  }
+
+  let runtimeParityIsValid = true;
+
+  questions.forEach((question) => {
+    const correctOption = question.options?.find(
+      (option) => option.id === question.correctOptionId,
+    );
+    let questionIsValid = true;
+
+    function reject(message) {
+      questionIsValid = false;
+      runtimeParityIsValid = false;
+      fail(message);
+    }
+
+    if (!correctOption) {
+      reject(`${question.id} answer feedback cannot find the correct option`);
+      return;
+    }
+
+    if (!isCorrectAnswer(question, correctOption.id)) {
+      reject(`${question.id} isCorrectAnswer rejects the correct option`);
+    }
+
+    const selectedCorrectFeedback = getAnswerOptionFeedback(
+      question,
+      correctOption.id,
+      correctOption.id,
+    );
+    if (
+      selectedCorrectFeedback.resultLabel !== 'Rätt' ||
+      selectedCorrectFeedback.tone !== 'correct'
+    ) {
+      reject(`${question.id} selected correct feedback drifted`);
+    }
+
+    question.options.forEach((option) => {
+      const label = `${question.id} option ${option.id}`;
+      const idleFeedback = getAnswerOptionFeedback(question, option.id, null);
+      if (!jsonEqual(idleFeedback, { tone: 'idle' })) {
+        reject(`${label} idle feedback drifted`);
+      }
+
+      if (option.id === question.correctOptionId) {
+        answerFeedbackOptionsValidated += 1;
+        return;
+      }
+
+      if (isCorrectAnswer(question, option.id)) {
+        reject(`${label} isCorrectAnswer accepts a wrong option`);
+      }
+
+      const selectedWrongFeedback = getAnswerOptionFeedback(question, option.id, option.id);
+      if (
+        selectedWrongFeedback.resultLabel !== 'Fel' ||
+        selectedWrongFeedback.tone !== 'incorrect'
+      ) {
+        reject(`${label} selected wrong feedback drifted`);
+      }
+
+      const revealedCorrectFeedback = getAnswerOptionFeedback(
+        question,
+        correctOption.id,
+        option.id,
+      );
+      if (
+        revealedCorrectFeedback.resultLabel !== 'Rätt svar' ||
+        revealedCorrectFeedback.tone !== 'correct'
+      ) {
+        reject(`${label} correct-answer reveal feedback drifted`);
+      }
+
+      question.options
+        .filter((otherOption) => ![option.id, correctOption.id].includes(otherOption.id))
+        .forEach((otherOption) => {
+          const otherFeedback = getAnswerOptionFeedback(question, otherOption.id, option.id);
+          if (!jsonEqual(otherFeedback, { tone: 'idle' })) {
+            reject(`${label} changed neutral feedback for ${otherOption.id}`);
+          }
+        });
+
+      answerFeedbackOptionsValidated += 1;
+    });
+
+    if (questionIsValid) answerFeedbackQuestionsValidated += 1;
+  });
+
+  if (runtimeParityIsValid && answerFeedbackQuestionsValidated === questions.length) {
+    answerFeedbackRuntimeParityValidated = true;
   }
 }
 
@@ -2406,6 +2597,11 @@ if (Array.isArray(questions)) {
     const questionSchemaIsValid = validateQuestionSchema(question, index);
     if (questionSchemaIsValid) {
       questionSchemasValidated += 1;
+      if (PUBLISHED_QUESTION_TYPES.has(question.type)) {
+        publishedQuestionTypesValidated += 1;
+      } else {
+        fail(`${label} published question type ${question.type} is not quiz-answerable`);
+      }
       if (promptTextIsUnique) {
         questionPromptTextUniquenessValidated += 1;
       }
@@ -2503,12 +2699,14 @@ validateMockExamConfig(
     : 0,
 );
 validateMockExamRuntimeParity(defaultMockExamConfig);
+validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validateAnswerFeedbackParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateStreakRules();
@@ -2548,6 +2746,7 @@ console.log(
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
+      mockExamTimerParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
@@ -2559,6 +2758,9 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      answerFeedbackQuestionsValidated,
+      answerFeedbackOptionsValidated,
+      answerFeedbackRuntimeParityValidated,
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
@@ -2583,6 +2785,7 @@ console.log(
       generatedAnswerTemplateParityValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
+      publishedQuestionTypesValidated,
       questionIdSequencesValidated,
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
