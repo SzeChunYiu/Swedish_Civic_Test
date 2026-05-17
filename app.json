@@ -18,7 +18,9 @@
           "delayAppMeasurementInit": true,
           "userTrackingUsageDescription": "This identifier may be used to deliver relevant study app ads after consent."
         }
-      ]
+      ],
+      "expo-secure-store",
+      "react-native-iap"
     ],
     "splash": {
       "image": "./assets/splash-icon.png",

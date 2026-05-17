@@ -1,0 +1,7 @@
+ADS-1 lib/monetization/premium.ts + ads.ts: decouple adsDisabled from isPremiumUser; shouldShowAd false when adsDisabled; unit tests (npm test -- monetization).
+ADS-2 lib/monetization/ads.ts: replace hardcoded REAL_ADS_ENABLED_FOR_V1=false with env/remote flag; keep Google test units default in dev; lib/monetization/ad-units.real.ts loader (gitignored) for operator real IDs.
+IAP-1 lib/monetization/purchases.ts: react-native-iap wrapper buy("removeads") + restorePurchases() + persisted adsDisabled (secure store) + product id constants; mock provider for web/dev/tests.
+IAP-2 app/ + components/monetization: "Remove Ads" paywall UI 29 SEK, Buy + Restore wired to purchases.ts->adsDisabled; surface near ad placements; tsc+lint clean.
+CONSENT-1 lib/ + app/: expo-tracking-transparency (iOS ATT) + Google UMP consent gate before ad SDK init; no personalized ads without consent.
+COMPLY-1 publishing/public-site/app-ads.txt placeholder + update publishing/privacy-labels.md + google-play-data-safety.md (ads SDK + IAP); reports/release-ads-iap-device-qa.md template.
+TEST-1 tests: monetization gating unit tests + e2e web stub by entitlement; npx expo export --platform web must not crash with ad stubs.

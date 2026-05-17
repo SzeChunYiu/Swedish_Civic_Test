@@ -5,7 +5,7 @@ Append-only. Keep under 120 lines.
 ## Iteration 1 — 2026-05-15
 Task completed: Task 1 — verified Expo TypeScript scaffold with Expo Router entry point and required dependencies already present.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`; verified existing scaffold artifacts `package.json`, `app.json`, `babel.config.js`, `tsconfig.json`, `app/_layout.tsx`, `app/index.tsx`.
-Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME="$PWD/.tmp-expo-home" EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`; prescribed `--non-interactive` variant is unsupported by Expo CLI 54 and fails before this HOME override because `/home/scyiu/.expo` is unavailable.
+Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME="$PWD/.tmp-expo-home" EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`; prescribed `--non-interactive` variant is unsupported by Expo CLI 54 and fails before this HOME override because `/home/legacy-owner/.expo` is unavailable.
 Blocked? no — Task 1 scaffold is usable; Task 3 should wait for CONTENT lane `data/questions.ts`.
 Next suggested validator action: check A2 scaffold artifacts and TypeScript output.
 
@@ -85,3 +85,31 @@ Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/s
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
 Blocked? no — Practice still displays the question and options; audio runtime should be checked on a device/simulator.
 Next suggested validator action: open Practice, tap `Listen`, and confirm Swedish TTS plays; then select an answer to re-check A7 behavior.
+
+## Iteration 13 — 2026-05-17
+Task completed: Scaffold improvement — replaced the dynamic quiz session placeholder with a routed question screen that selects a stable question for the session id, records the answer, and shows score, explanation, and UHR reference feedback.
+Artifacts changed: `app/quiz/[sessionId].tsx`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run typecheck` exit 0; `npx eslint 'app/quiz/[sessionId].tsx'` exit 0; `npm run test:practice` exit 0; `git diff --check -- app/quiz/'[sessionId]'.tsx docs/parallel-sessions/journals/setup.md` exit 0; `EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev --offline --port 8099 --max-workers 1` smoke-started Metro and printed `Waiting on http://localhost:8099`, then was stopped.
+Blocked? no — `/quiz/[sessionId]` is now a usable Expo Router scaffold route.
+Next suggested validator action: open `/quiz/daily` or `/quiz/<question-id>`, select an answer, and confirm the explanation/source feedback appears.
+
+## Iteration 14 — 2026-05-17
+Task completed: Tooling/product atom — replaced the hardcoded v1 ad fail-closed gate with env-driven ad rendering, default dev/test AdMob units, real-unit env slots, and a decoupled remove-ads entitlement.
+Artifacts changed: `lib/monetization/ads.ts`, `lib/monetization/premium.ts`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check lib/monetization/ads.ts lib/monetization/premium.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/ads.ts lib/monetization/premium.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts` exit 0; `grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts` exit 1 as expected; `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev --offline --port 8099 --max-workers 1` smoke-started Metro and printed `Waiting on http://localhost:8099`, then was stopped.
+Blocked? no — ADS-1/ADS-2 backend gating now has a passing focused verifier, but paywall UI, purchases, consent, and publishing docs remain separate queued atoms.
+Next suggested validator action: inspect `lib/monetization/ads.ts` and run `npm run test:monetization`; then assign IAP-1/IAP-2 or CONSENT-1.
+
+## Iteration 15 — 2026-05-17
+Task completed: Tooling/product atom — added the Remove Ads non-consumable IAP wrapper with secure persisted `adsDisabled`, native `react-native-iap` purchase/restore hooks, and a mock provider for web/dev/tests.
+Artifacts changed: `lib/monetization/purchases.ts`, `app.json`, `package.json`, `package-lock.json`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:monetization` exit 0; `npx prettier --check lib/monetization/purchases.ts scripts/monetization.test.js package.json app.json` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `test -f lib/monetization/purchases.ts` exit 0; `grep -qiE "restore" lib/monetization/purchases.ts` exit 0; `grep -rqi "remove.?ads" app components lib` exit 0; `npm ls react-native-iap expo-secure-store react-native-nitro-modules` exit 0; `git diff --check -- lib/monetization/purchases.ts scripts/monetization.test.js package.json package-lock.json app.json docs/parallel-sessions/journals/setup.md` exit 0; `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev --offline --port 8099 --max-workers 1` smoke-started Metro and printed `Waiting on http://localhost:8099`, then was stopped; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0.
+Blocked? no — IAP-1 library/tooling path is implemented and verified; paywall UI and consent/compliance remain separate queued atoms.
+Next suggested validator action: inspect `lib/monetization/purchases.ts`, rerun `npm run test:monetization`, then assign IAP-2 or CONSENT-1.
+
+## Iteration 16 — 2026-05-17
+Task completed: Tooling/product atom — suppressed the global launch popup ad on `/exam` routes while keeping the launch placement available elsewhere.
+Artifacts changed: `app/_layout.tsx`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check app/_layout.tsx scripts/monetization.test.js` exit 0; `git diff --check -- app/_layout.tsx scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0; inline Playwright with `/usr/bin/google-chrome` at `/exam` found `Mock exam` visible and `Launch sponsor`/`Google AdMob`/close-ad controls absent, then `/home` still showed the launch sponsor placement; console errors 0.
+Blocked? no — route-level static coverage now targets the global app-open ad mount point that the exam-screen import check missed.
+Next suggested validator action: rerun `npm run test:monetization` and exported `/exam` smoke to confirm no launch sponsor overlay appears on the mock exam.

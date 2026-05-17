@@ -49,4 +49,5 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.reviewStatus === 'published'));
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
+  assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
 });

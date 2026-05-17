@@ -32,6 +32,10 @@ function publishedCopy(question: PracticeQuestion): PracticeQuestion {
   return { ...question, reviewStatus: 'published' };
 }
 
+function uniqueTags(tags: string[]): string[] {
+  return [...new Set(tags)];
+}
+
 function withSharedFields(
   source: PracticeQuestion,
   id: string,
@@ -55,7 +59,7 @@ function withSharedFields(
     uhrReference: source.uhrReference,
     difficulty: source.difficulty,
     reviewStatus: 'published',
-    tags: [...source.tags, ...extraTags],
+    tags: uniqueTags([...source.tags, ...extraTags]),
   };
 }
 

@@ -239,27 +239,43 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q010',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vilken stad är Sveriges huvudstad?',
-    questionEn: "Which city is Sweden's capital?",
+    questionSv: 'Vilka naturresurser lyfter materialet fram som viktiga i Sverige?',
+    questionEn: 'Which natural resources does the material highlight as important in Sweden?',
     options: [
-      { id: 'a', textSv: 'Stockholm', textEn: 'Stockholm' },
-      { id: 'b', textSv: 'Göteborg', textEn: 'Gothenburg' },
-      { id: 'c', textSv: 'Malmö', textEn: 'Malmö' },
-      { id: 'd', textSv: 'Uppsala', textEn: 'Uppsala' },
+      {
+        id: 'a',
+        textSv: 'Järnmalm och andra mineraler, skog, jordbruksmark och vatten',
+        textEn: 'Iron ore and other minerals, forest, agricultural land, and water',
+      },
+      {
+        id: 'b',
+        textSv: 'Olja, naturgas, ökenmark och tropiskt regn',
+        textEn: 'Oil, natural gas, desert land, and tropical rain',
+      },
+      {
+        id: 'c',
+        textSv: 'Kol, diamantgruvor, vulkanjord och palmer',
+        textEn: 'Coal, diamond mines, volcanic soil, and palm trees',
+      },
+      {
+        id: 'd',
+        textSv: 'Risfält, bomullsplantager, korallrev och tidvatten',
+        textEn: 'Rice fields, cotton plantations, coral reefs, and tides',
+      },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Stockholm beskrivs som Sveriges huvudstad. Göteborg och Malmö är stora städer, men de är inte huvudstaden.',
+      'Materialet beskriver Sverige som rikt på flera viktiga naturresurser. Det nämner järnmalm och andra mineraler, skog, jordbruksmark och vatten.',
     explanationEn:
-      "Stockholm is described as Sweden's capital. Gothenburg and Malmö are large cities, but they are not the capital.",
+      'The material describes Sweden as rich in several important natural resources. It names iron ore and other minerals, forest, agricultural land, and water.',
     uhrReference: {
-      chapter: 'Så här styrs Sverige',
-      section: 'Kommunernas ansvar',
-      pageApprox: 13,
+      chapter: 'Landet Sverige',
+      section: 'Naturresurser',
+      pageApprox: 7,
     },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
-    tags: ['capital', 'stockholm', 'cities'],
+    tags: ['natural-resources', 'minerals', 'forest', 'water'],
   },
   {
     id: 'q011',
@@ -436,7 +452,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q016',
-    chapterId: 'ch02',
+    chapterId: 'ch03',
     type: 'single_choice',
     questionSv: 'Vad betyder det att Sverige är en parlamentarisk representativ demokrati?',
     questionEn: 'What does it mean that Sweden is a parliamentary representative democracy?',
@@ -474,7 +490,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q017',
-    chapterId: 'ch02',
+    chapterId: 'ch03',
     type: 'single_choice',
     questionSv: 'Hur många ledamöter har riksdagen?',
     questionEn: 'How many members does the Riksdag have?',
@@ -496,7 +512,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q018',
-    chapterId: 'ch02',
+    chapterId: 'ch03',
     type: 'single_choice',
     questionSv: 'Vem väljer statsministern enligt materialet?',
     questionEn: 'Who chooses the prime minister according to the material?',
@@ -518,7 +534,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q019',
-    chapterId: 'ch02',
+    chapterId: 'ch04',
     type: 'single_choice',
     questionSv: 'Hur gammal måste man ha fyllt för att ha rätt att rösta?',
     questionEn: 'How old must a person be to have the right to vote?',
@@ -544,7 +560,7 @@ export const baseQuestions: PracticeQuestion[] = [
   },
   {
     id: 'q020',
-    chapterId: 'ch02',
+    chapterId: 'ch04',
     type: 'true_false',
     questionSv: 'Sant eller falskt: Folkomröstningar i Sverige är rådgivande enligt materialet.',
     questionEn: 'True or false: Referendums in Sweden are advisory according to the material.',
