@@ -55,6 +55,7 @@ const QUESTION_BANK_CSV_HEADER = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
+const EXPECTED_XP_RULE_COUNT = 11;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -594,6 +595,10 @@ const deriveBadges = badgeModule.deriveBadges;
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+const xpModule = loadTs('lib/learning/xp.ts');
+const calculateAnswerXp = xpModule.calculateAnswerXp;
+const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
+const calculateLevel = xpModule.calculateLevel;
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
@@ -607,6 +612,8 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
+let xpRulesValidated = 0;
+let xpRulesParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -654,6 +661,11 @@ if (!Array.isArray(spacedRepetitionSchedule)) {
   fail('spacedRepetitionSchedule export is not an array');
 }
 if (typeof getNextReviewAt !== 'function') fail('getNextReviewAt export is not a function');
+if (typeof calculateAnswerXp !== 'function') fail('calculateAnswerXp export is not a function');
+if (typeof calculateQuizCompletionXp !== 'function') {
+  fail('calculateQuizCompletionXp export is not a function');
+}
+if (typeof calculateLevel !== 'function') fail('calculateLevel export is not a function');
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -1028,6 +1040,82 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
+}
+
+function validateXpRules() {
+  if (
+    typeof calculateAnswerXp !== 'function' ||
+    typeof calculateQuizCompletionXp !== 'function' ||
+    typeof calculateLevel !== 'function'
+  ) {
+    return;
+  }
+
+  const cases = [
+    {
+      label: 'correct answer with explanation',
+      actual: () => calculateAnswerXp({ isCorrect: true, explanationRead: true }),
+      expected: 12,
+    },
+    {
+      label: 'correct answer without explanation',
+      actual: () => calculateAnswerXp({ isCorrect: true, explanationRead: false }),
+      expected: 10,
+    },
+    {
+      label: 'wrong answer with explanation',
+      actual: () => calculateAnswerXp({ isCorrect: false, explanationRead: true }),
+      expected: 4,
+    },
+    {
+      label: 'wrong answer without explanation',
+      actual: () => calculateAnswerXp({ isCorrect: false, explanationRead: false }),
+      expected: 2,
+    },
+    {
+      label: 'empty quiz completion',
+      actual: () => calculateQuizCompletionXp({ answeredCount: 0, correctCount: 0 }),
+      expected: 0,
+    },
+    {
+      label: 'completed quiz without perfect bonus',
+      actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 9 }),
+      expected: 20,
+    },
+    {
+      label: 'perfect ten-question quiz',
+      actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }),
+      expected: 70,
+    },
+    { label: 'level at 0 XP', actual: () => calculateLevel(0), expected: 1 },
+    { label: 'level below first threshold', actual: () => calculateLevel(99), expected: 1 },
+    { label: 'level at 100 XP', actual: () => calculateLevel(100), expected: 2 },
+    { label: 'level at 400 XP', actual: () => calculateLevel(400), expected: 3 },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`XP rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actualValue !== expected) {
+      rulesAreValid = false;
+      fail(`XP rule ${label} returned ${actualValue}, expected ${expected}`);
+    } else {
+      xpRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && xpRulesValidated === EXPECTED_XP_RULE_COUNT) {
+    xpRulesParityValidated = true;
+  }
 }
 
 function validateQuestionBankCsvContract() {
@@ -1746,6 +1834,7 @@ validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
 validateSpacedRepetitionSchedule();
+validateXpRules();
 validateQuestionBankCsvContract();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
@@ -1785,6 +1874,8 @@ console.log(
       badgeMilestoneParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      xpRulesValidated,
+      xpRulesParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
