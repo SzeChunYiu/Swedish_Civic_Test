@@ -217,6 +217,16 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('premium banner announces Remove Ads purchase status changes', () => {
+  const source = read('components/monetization/PremiumBanner.tsx');
+
+  assert.match(source, /const statusMessage = getStatusMessage/);
+  assert.match(source, /accessibilityLabel=\{`Remove Ads status: \$\{statusMessage\}`\}/);
+  assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /Ads are disabled on this device\./);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   const fallbackFiles = [
     'components/learning/ChapterCard.tsx',

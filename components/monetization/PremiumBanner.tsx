@@ -64,6 +64,8 @@ export function PremiumBanner({
     setCurrentEntitlements(entitlements);
   }, [entitlements]);
 
+  const statusMessage = getStatusMessage(adsDisabled ? 'purchased' : status);
+
   async function runPurchaseAction(action: PurchaseAction) {
     setActiveAction(action);
 
@@ -113,7 +115,13 @@ export function PremiumBanner({
           {activeAction === 'restore' ? 'Restoring...' : 'Restore'}
         </Button>
       </View>
-      <Text style={styles.status}>{getStatusMessage(adsDisabled ? 'purchased' : status)}</Text>
+      <Text
+        accessibilityLabel={`Remove Ads status: ${statusMessage}`}
+        accessibilityLiveRegion="polite"
+        style={styles.status}
+      >
+        {statusMessage}
+      </Text>
     </Card>
   );
 }
