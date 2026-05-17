@@ -23,6 +23,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.examChapterBreakdownParityValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
+  assert.equal(summary.supportedLanguagesValidated, 2);
+  assert.equal(summary.localizationStringsValidated, summary.localizationStrings);
+  assert.equal(summary.languageSettingsParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);

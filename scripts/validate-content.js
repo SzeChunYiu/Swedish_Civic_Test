@@ -61,6 +61,11 @@ const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
+const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
+const EXPECTED_LANGUAGE_LABELS = {
+  sv: 'Swedish',
+  en: 'English support',
+};
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -350,6 +355,65 @@ function extractStringConstantFromTs(source, constantName) {
   return value;
 }
 
+function extractStringUnionTypeFromTs(source, typeName) {
+  const sourceFile = ts.createSourceFile('source.ts', source, ts.ScriptTarget.Latest, true);
+  let values;
+
+  function visit(node) {
+    if (
+      ts.isTypeAliasDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === typeName &&
+      ts.isUnionTypeNode(node.type)
+    ) {
+      values = node.type.types.map((typeNode) => {
+        if (
+          ts.isLiteralTypeNode(typeNode) &&
+          typeNode.literal &&
+          ts.isStringLiteralLike(typeNode.literal)
+        ) {
+          return typeNode.literal.text;
+        }
+        return undefined;
+      });
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return values;
+}
+
+function extractCallStringArgumentsFromTs(source, functionName) {
+  const sourceFile = ts.createSourceFile(
+    'source.tsx',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const calls = [];
+
+  function visit(node) {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === functionName
+    ) {
+      calls.push(
+        node.arguments.map((argument) =>
+          ts.isStringLiteralLike(argument) ? argument.text : undefined,
+        ),
+      );
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return calls;
+}
+
 function parseCsvRows(csv) {
   const rows = [];
   let row = [];
@@ -617,6 +681,8 @@ const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQue
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+const supportedLanguages = loadTs('lib/localization/language.ts', 'supportedLanguages');
+const localizationStrings = loadTs('lib/localization/strings.ts', 'strings');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
 const generateExam = examGeneratorModule.generateExam;
 const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
@@ -664,6 +730,9 @@ let examChapterBreakdownItemsValidated = 0;
 let examChapterBreakdownParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
+let supportedLanguagesValidated = 0;
+let localizationStringsValidated = 0;
+let languageSettingsParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -724,6 +793,14 @@ if (!Array.isArray(generatedPublishedQuestions)) {
   fail('generatedPublishedQuestions export is not an array');
 }
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
+if (!Array.isArray(supportedLanguages)) fail('supportedLanguages export is not an array');
+if (
+  !localizationStrings ||
+  typeof localizationStrings !== 'object' ||
+  Array.isArray(localizationStrings)
+) {
+  fail('strings export is not an object');
+}
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
   fail('buildExamReviewItems export is not a function');
@@ -1209,6 +1286,139 @@ function validateUxBenchmarks() {
 
     if (valid) uxBenchmarksValidated += 1;
   });
+}
+
+function validateLocalizationLanguageContract() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Array.isArray(supportedLanguages)) return;
+  if (!arrayEquals(supportedLanguages, EXPECTED_SUPPORTED_LANGUAGES)) {
+    reject(
+      `supportedLanguages is ${JSON.stringify(supportedLanguages)}, expected ${JSON.stringify(
+        EXPECTED_SUPPORTED_LANGUAGES,
+      )}`,
+    );
+  }
+
+  const seenLanguages = new Set();
+  supportedLanguages.forEach((language, index) => {
+    let languageIsValid = true;
+    if (!/^[a-z]{2}$/.test(language)) {
+      languageIsValid = false;
+      reject(`supportedLanguages[${index}] must be a lowercase ISO language code`);
+    }
+    if (seenLanguages.has(language)) {
+      languageIsValid = false;
+      reject(`supportedLanguages has duplicate language ${language}`);
+    }
+    seenLanguages.add(language);
+    if (!hasText(EXPECTED_LANGUAGE_LABELS[language])) {
+      languageIsValid = false;
+      reject(`supported language ${language} is missing a settings label`);
+    }
+    if (languageIsValid) supportedLanguagesValidated += 1;
+  });
+
+  if (
+    !localizationStrings ||
+    typeof localizationStrings !== 'object' ||
+    Array.isArray(localizationStrings)
+  ) {
+    return;
+  }
+
+  Object.entries(localizationStrings).forEach(([key, value]) => {
+    let entryIsValid = true;
+
+    function rejectEntry(message) {
+      entryIsValid = false;
+      reject(message);
+    }
+
+    if (!isSlugTag(key)) rejectEntry(`strings.${key} key must use lowercase kebab-case`);
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      rejectEntry(`strings.${key} must be a language map object`);
+      return;
+    }
+
+    supportedLanguages.forEach((language) => {
+      const text = value[language];
+      if (!hasText(text)) {
+        rejectEntry(`strings.${key}.${language} is missing`);
+      } else if (!textIsTrimmedSingleSpaced(text)) {
+        rejectEntry(`strings.${key}.${language} must be trimmed and single-spaced`);
+      }
+    });
+
+    const extraLanguages = Object.keys(value).filter((language) => !seenLanguages.has(language));
+    if (extraLanguages.length) {
+      rejectEntry(`strings.${key} has unsupported languages ${extraLanguages.join(', ')}`);
+    }
+
+    if (entryIsValid) localizationStringsValidated += 1;
+  });
+
+  let settingsStore = '';
+  let settingsRoute = '';
+  try {
+    settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings language parity source could not be read: ${error.message}`);
+    return;
+  }
+
+  const appLanguageValues = extractStringUnionTypeFromTs(settingsStore, 'AppLanguage');
+  if (!Array.isArray(appLanguageValues) || !arrayEquals(appLanguageValues, supportedLanguages)) {
+    reject(
+      `AppLanguage union is ${JSON.stringify(appLanguageValues)}, expected ${JSON.stringify(
+        supportedLanguages,
+      )}`,
+    );
+  }
+
+  const languageButtonCalls = extractCallStringArgumentsFromTs(
+    settingsRoute,
+    'renderLanguageButton',
+  );
+  const routeLanguages = languageButtonCalls.map(([language]) => language);
+  if (!arrayEquals(routeLanguages, supportedLanguages)) {
+    reject(
+      `app/settings.tsx language buttons are ${JSON.stringify(
+        routeLanguages,
+      )}, expected ${JSON.stringify(supportedLanguages)}`,
+    );
+  }
+
+  const seenLabels = new Set();
+  languageButtonCalls.forEach(([language, label], index) => {
+    if (label !== EXPECTED_LANGUAGE_LABELS[language]) {
+      reject(
+        `app/settings.tsx language button[${index}] label is ${JSON.stringify(
+          label,
+        )}, expected ${JSON.stringify(EXPECTED_LANGUAGE_LABELS[language])}`,
+      );
+    }
+    if (!textIsTrimmedSingleSpaced(label)) {
+      reject(`app/settings.tsx language button[${index}] label must be trimmed and single-spaced`);
+    }
+    const normalizedLabel = normalizeComparableText(label);
+    if (seenLabels.has(normalizedLabel)) {
+      reject(`app/settings.tsx duplicates language label ${label}`);
+    }
+    if (normalizedLabel) seenLabels.add(normalizedLabel);
+  });
+
+  if (!settingsRoute.includes('Set question language to ${label}')) {
+    reject('app/settings.tsx language buttons must expose label-derived accessibility text');
+  }
+
+  if (valid) languageSettingsParityValidated = true;
 }
 
 function validateGlossaryTerms() {
@@ -2797,6 +3007,7 @@ validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
+validateLocalizationLanguageContract();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
@@ -2848,6 +3059,15 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
+      supportedLanguagesValidated,
+      localizationStrings:
+        localizationStrings &&
+        typeof localizationStrings === 'object' &&
+        !Array.isArray(localizationStrings)
+          ? Object.keys(localizationStrings).length
+          : 0,
+      localizationStringsValidated,
+      languageSettingsParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
