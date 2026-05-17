@@ -86,6 +86,22 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.swedishcivictest';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
+const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
+  '/exam',
+  '/disclaimer',
+  '/privacy',
+  '/sources',
+  '/support',
+  '/terms',
+];
+const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
+  '/exam': 'app/(tabs)/exam.tsx',
+  '/disclaimer': 'app/disclaimer.tsx',
+  '/privacy': 'app/privacy.tsx',
+  '/sources': 'app/sources.tsx',
+  '/support': 'app/support.tsx',
+  '/terms': 'app/terms.tsx',
+};
 const EXPECTED_THEME_COLOR_TOKENS = [
   'canvas',
   'surface',
@@ -1113,6 +1129,9 @@ const radius = themeModule.radius;
 const shadows = themeModule.shadows;
 const space = themeModule.space;
 const typography = themeModule.typography;
+const adsModule = loadTs('lib/monetization/ads.ts');
+const adsConfig = adsModule.adsConfig;
+const shouldSuppressLaunchPopupAdForPath = adsModule.shouldSuppressLaunchPopupAdForPath;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
@@ -1120,6 +1139,8 @@ let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
+let launchAdSuppressedRoutesValidated = 0;
+let launchAdRouteSuppressionParityValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -1271,6 +1292,10 @@ if (!isObjectRecord(radius)) fail('theme radius export is not an object');
 if (!isObjectRecord(shadows)) fail('theme shadows export is not an object');
 if (!isObjectRecord(space)) fail('theme space export is not an object');
 if (!isObjectRecord(typography)) fail('theme typography export is not an object');
+if (!isObjectRecord(adsConfig)) fail('adsConfig export is not an object');
+if (typeof shouldSuppressLaunchPopupAdForPath !== 'function') {
+  fail('shouldSuppressLaunchPopupAdForPath export is not a function');
+}
 
 function getExpoPluginEntry(plugins, pluginName) {
   return plugins.find((plugin) => {
@@ -1376,6 +1401,77 @@ function validateAppConfigSchema() {
 
   if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
     appConfigSchemaValidated = true;
+  }
+}
+
+function validateLaunchAdRouteSuppressionParity() {
+  let valid = true;
+  let rootLayout = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const suppressedRoutes = adsConfig?.suppressedLaunchPopupRoutes;
+  if (!Array.isArray(suppressedRoutes)) {
+    reject('adsConfig.suppressedLaunchPopupRoutes must be an array');
+  } else if (!arrayEquals(suppressedRoutes, EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES)) {
+    reject(
+      `launch popup suppressed routes are ${JSON.stringify(
+        suppressedRoutes,
+      )}, expected ${JSON.stringify(EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES)}`,
+    );
+  }
+
+  for (const route of EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES) {
+    const routeFile = EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES[route];
+    if (!fs.existsSync(path.join(repoRoot, routeFile))) {
+      reject(`${route} launch-ad suppression route file ${routeFile} is missing`);
+      continue;
+    }
+
+    const routeIsSuppressed =
+      typeof shouldSuppressLaunchPopupAdForPath === 'function' &&
+      shouldSuppressLaunchPopupAdForPath(route) === true &&
+      shouldSuppressLaunchPopupAdForPath(`${route}/nested`) === true;
+    if (!routeIsSuppressed) {
+      reject(`${route} must suppress the launch popup ad, including nested paths`);
+    } else {
+      launchAdSuppressedRoutesValidated += 1;
+    }
+  }
+
+  if (typeof shouldSuppressLaunchPopupAdForPath === 'function') {
+    for (const studyRoute of ['/', '/home', '/learn', '/practice', '/profile']) {
+      if (shouldSuppressLaunchPopupAdForPath(studyRoute)) {
+        reject(`${studyRoute} must remain eligible for the launch popup ad`);
+      }
+    }
+  }
+
+  try {
+    rootLayout = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/_layout.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  if (!rootLayout.includes('usePathname()')) {
+    reject('root layout must read the current pathname before rendering the launch ad');
+  }
+  if (!rootLayout.includes('shouldSuppressLaunchPopupAdForPath(pathname)')) {
+    reject('root layout must derive launch ad suppression from current pathname');
+  }
+  if (!rootLayout.includes('!suppressLaunchPopupAd && entitlementsReady')) {
+    reject('root layout must gate LaunchPopupAd on route suppression and entitlement readiness');
+  }
+
+  if (
+    valid &&
+    launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
+  ) {
+    launchAdRouteSuppressionParityValidated = true;
   }
 }
 
@@ -4324,6 +4420,7 @@ validateMockExamConfig(
     : 0,
 );
 validateAppConfigSchema();
+validateLaunchAdRouteSuppressionParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -4380,6 +4477,8 @@ console.log(
       chapterTextFieldsNormalizedValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
+      launchAdSuppressedRoutesValidated,
+      launchAdRouteSuppressionParityValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
