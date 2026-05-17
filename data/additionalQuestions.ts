@@ -1362,8 +1362,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Digital revolution och globalisering',
       pageApprox: 38,
     },
-    'Vad har den digitala revolutionen förändrat enligt UHR-materialet?',
-    'What has the digital revolution changed according to the UHR material?',
+    'Vad har datorer, internet, smarta telefoner och AI förändrat sedan 1990-talet?',
+    'What have computers, the internet, smartphones, and AI changed since the 1990s?',
     [
       [
         'Hur människor arbetar, studerar, kommunicerar och tar del av information',
