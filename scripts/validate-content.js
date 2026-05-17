@@ -210,7 +210,7 @@ const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
     label: 'practice question title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Question\s*\{questionNumber\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.questionTitle\(questionNumber\)\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_CHAPTER_ROUTE_HEADERS = [

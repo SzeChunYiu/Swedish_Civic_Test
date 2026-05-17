@@ -204,8 +204,12 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   );
 
   assert.match(practiceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
-  assert.match(practiceSource, /Question \{questionNumber\}/);
+  assert.match(practiceSource, /\{copy\.questionTitle\(questionNumber\)\}/);
   assert.equal(quizHeaderMatches?.length, 2);
+  assert.match(practiceSource, /type PracticeCopy =/);
+  assert.match(practiceSource, /const practiceCopy: Record<AppLanguage, PracticeCopy>/);
+  assert.match(practiceSource, /Fråga \$\{questionNumber\}/);
+  assert.match(practiceSource, /Question \$\{questionNumber\}/);
   assert.match(routedQuizSource, /type QuizSessionCopy =/);
   assert.match(routedQuizSource, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy>/);
   assert.match(routedQuizSource, /Det finns inga quizfrågor ännu\./);
@@ -214,6 +218,26 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   assert.match(routedQuizSource, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
   assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(routedQuizSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('practice shell copy follows Swedish and English settings language', () => {
+  const source = read('app/(tabs)/practice.tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /const copy = practiceCopy\[language\]/);
+  assert.match(source, /5-minutersövning/);
+  assert.match(source, /Besvarade frågor: \$\{count\}/);
+  assert.match(source, /Bokmärk den här frågan/);
+  assert.match(source, /Ta bort bokmärket från den här frågan/);
+  assert.match(source, /Poäng/);
+  assert.match(source, /Nästa fråga/);
+  assert.match(source, /Försök igen med den här övningsfrågan/);
+  assert.match(source, /5-minute practice/);
+  assert.match(source, /Completed questions: \$\{count\}/);
+  assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.nextQuestionAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.tryAgainAccessibilityLabel\}/);
 });
 
 test('routed quiz shell copy follows Swedish and English settings language', () => {
@@ -248,6 +272,7 @@ test('practice answer flow requires explicit next question after feedback', () =
   assert.match(source, /selectOption\(question\.id,\s*optionId\)/);
   assert.match(source, /advanceQuestion/);
   assert.match(source, /Next question/);
+  assert.match(source, /\{copy\.nextQuestion\}/);
 });
 
 test('practice locks answer options after feedback is visible', () => {
