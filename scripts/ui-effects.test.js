@@ -20,6 +20,17 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('metric card groups value, label, and helper into one accessible summary', () => {
+  const source = read('components/ui/MetricCard.tsx');
+
+  assert.match(source, /accessibilityLabel\?: string/);
+  assert.match(source, /const metricAccessibilityLabel =/);
+  assert.match(source, /accessibilityLabel \?\? `\$\{label\}: \$\{value\}/);
+  assert.match(source, /accessible/);
+  assert.match(source, /accessibilityLabel=\{metricAccessibilityLabel\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('practice screen adds bookmark controls backed by progress storage', () => {
   const source = read('app/(tabs)/practice.tsx');
 
