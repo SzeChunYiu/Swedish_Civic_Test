@@ -454,8 +454,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q041',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättssäkerhet', pageApprox: 17 },
-    'Vilket påstående om rättssäkerhet stämmer enligt materialet?',
-    'Which statement about legal certainty is correct according to the material?',
+    'Vilket påstående beskriver rättssäkerhet i Sverige?',
+    'Which statement describes legal certainty in Sweden?',
     [
       [
         'Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom',
@@ -475,8 +475,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Materialet beskriver rättssäkerhet som lika behandling inför lagen, rättvis rättegång och noggrann granskning av bevis och fakta. Det betonar också att domstolarna är oberoende och att alla har rätt att försvara sig med advokat och kan överklaga en dom.',
-    'The material describes legal certainty as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
+    'UHR-avsnittet Rättssäkerhet beskriver rättssäkerhet som lika behandling inför lagen, rättvis rättegång och noggrann granskning av bevis och fakta. Det betonar också att domstolarna är oberoende och att alla har rätt att försvara sig med advokat och kan överklaga en dom.',
+    'The UHR section Legal certainty describes legal certainty as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
     ['legal-certainty', 'independent-courts', 'appeal'],
   ),
   single(
