@@ -31,6 +31,18 @@ test('metric card groups value, label, and helper into one accessible summary', 
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('badge preserves a readable accessibility label when visual text is uppercased', () => {
+  const source = read('components/ui/Badge.tsx');
+
+  assert.match(source, /accessibilityLabel\?: string/);
+  assert.match(source, /const badgeAccessibilityLabel =/);
+  assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
+  assert.match(source, /String\(children\)/);
+  assert.match(source, /accessibilityLabel=\{badgeAccessibilityLabel\}/);
+  assert.match(source, /textTransform: 'uppercase'/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('practice screen adds bookmark controls backed by progress storage', () => {
   const source = read('app/(tabs)/practice.tsx');
 
