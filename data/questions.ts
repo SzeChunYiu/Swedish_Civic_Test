@@ -354,32 +354,36 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q013',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vilket alternativ är ett exempel på hur man kan påverka och delta i samhället?',
+    questionSv: 'Vad nämner UHR-materialet som ett sätt att påverka och delta i samhället?',
     questionEn:
-      'Which option is an example of how a person can influence and participate in society?',
+      'What does the UHR material mention as a way to influence and participate in society?',
     options: [
       {
         id: 'a',
-        textSv: 'Kontakta politiker eller demonstrera',
-        textEn: 'Contact politicians or demonstrate',
+        textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
+        textEn: 'Contact politicians, demonstrate, or sign a petition',
       },
-      { id: 'b', textSv: 'Förbjuda andra från att rösta', textEn: 'Ban others from voting' },
+      {
+        id: 'b',
+        textSv: 'Förbjuda andra från att rösta i politiska val',
+        textEn: 'Ban others from voting in political elections',
+      },
       {
         id: 'c',
-        textSv: 'Tvinga journalister att skriva en viss sak',
-        textEn: 'Force journalists to write a certain thing',
+        textSv: 'Tvinga journalister att skriva vissa åsikter',
+        textEn: 'Force journalists to write certain opinions',
       },
       {
         id: 'd',
-        textSv: 'Stoppa fria diskussioner om politik',
-        textEn: 'Stop free discussions about politics',
+        textSv: 'Stoppa människor från att prata om politik',
+        textEn: 'Stop people from talking about politics',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Materialet ger flera exempel på deltagande, till exempel att kontakta politiker, demonstrera och skriva på namninsamlingar. De andra alternativen skulle begränsa demokratiska friheter.',
+      'UHR-avsnittet En stark demokrati listar flera sätt att påverka och delta i samhället, bland annat att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. Därför är alternativet med politiker, demonstrationer och namninsamlingar rätt; de andra alternativen skulle begränsa demokratiskt deltagande.',
     explanationEn:
-      'The material gives several examples of participation, such as contacting politicians, demonstrating, and signing petitions. The other alternatives would restrict democratic freedoms.',
+      'The UHR section A strong democracy lists several ways to influence and participate in society, including contacting politicians, demonstrating, and starting or signing a petition. Therefore the option about politicians, demonstrations, and petitions is correct; the other options would restrict democratic participation.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'En stark demokrati',
