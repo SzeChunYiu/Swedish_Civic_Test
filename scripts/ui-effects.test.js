@@ -133,6 +133,22 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
+test('practice and routed quiz screens expose primary titles as headers', () => {
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const routedQuizSource = read('app/quiz/[sessionId].tsx');
+  const quizHeaderMatches = routedQuizSource.match(
+    /<Text accessibilityRole="header" style=\{styles\.title\}>/g,
+  );
+
+  assert.match(practiceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(practiceSource, /Question \{questionNumber\}/);
+  assert.equal(quizHeaderMatches?.length, 2);
+  assert.match(routedQuizSource, /No quiz questions are available yet\./);
+  assert.match(routedQuizSource, /Session \{normalizedSessionId\}/);
+  assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(routedQuizSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
   const source = read('app/(tabs)/home.tsx');
 

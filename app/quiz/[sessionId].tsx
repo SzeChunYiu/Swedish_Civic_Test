@@ -49,7 +49,9 @@ export default function QuizSessionScreen() {
   if (!question) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.title}>No quiz questions are available yet.</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          No quiz questions are available yet.
+        </Text>
         <Link
           accessibilityLabel="Back to practice"
           accessibilityRole="link"
@@ -75,7 +77,9 @@ export default function QuizSessionScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge>Quiz session</Badge>
-        <Text style={styles.title}>Session {normalizedSessionId}</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Session {normalizedSessionId}
+        </Text>
         <Text style={styles.subtitle}>
           Answer the routed question, then review the source-backed feedback.
         </Text>
