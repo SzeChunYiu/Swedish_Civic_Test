@@ -1458,8 +1458,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Att ersätta FN', 'Replacing the UN'],
     ],
     0,
-    'Europarådet bildades 1949 och arbetar med mänskliga rättigheter, demokrati och rättsstat.',
-    'The Council of Europe was formed in 1949 and works with human rights, democracy, and rule of law.',
+    'UHR-avsnittet EU och Europarådet säger att Sverige är medlem i Europarådet, en europeisk organisation som bildades 1949. Organisationen arbetar för mänskliga rättigheter, demokrati och rättsstatens principer, och Europadomstolen finns där.',
+    'The UHR section EU and the Council of Europe says Sweden is a member of the Council of Europe, a European organization formed in 1949. The organization works for human rights, democracy, and the rule of law, and the European Court of Human Rights is part of it.',
     ['council-of-europe', 'human-rights', 'democracy'],
   ),
   single(
