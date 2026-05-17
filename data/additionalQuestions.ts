@@ -207,8 +207,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q029',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige enligt UHR-materialet?',
-    'According to the UHR material, how often are elections to the Riksdag, regional councils, and municipal councils held?',
+    'Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?',
+    'How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?',
     [
       ['Varje år', 'Every year'],
       ['Vart fjärde år', 'Every four years'],
