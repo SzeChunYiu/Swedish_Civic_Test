@@ -763,6 +763,102 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
 ];
+const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
+  sv: [
+    'Ljud avstängt',
+    'Ljud på',
+    'Ljud',
+    '← Tillbaka till profil',
+    'Tillbaka till profil',
+    '${answerCount} svar per dag',
+    'Dagligt mål',
+    'Stäng av ljud',
+    'Slå på ljud',
+    'Byt frågespråk till ${label}',
+    'Frågespråk',
+    'Ställ in dagligt mål till ${goal} svar',
+    'Styr studiespråk, ljud och ditt dagliga mål.',
+    'Inställningar',
+    'Svenska',
+    'Engelskt stöd',
+  ],
+  en: [
+    'Audio disabled',
+    'Audio enabled',
+    'Audio',
+    '← Back to Profile',
+    'Back to profile',
+    '${answerCount} answers per day',
+    'Daily goal',
+    'Disable audio',
+    'Enable audio',
+    'Set question language to ${label}',
+    'Question language',
+    'Set daily goal to ${goal} answers',
+    'Control study language, audio, and your daily goal.',
+    'Settings',
+    'Swedish',
+    'English support',
+  ],
+};
+const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
+  ['import type { AppLanguage }', 'settings route must import AppLanguage'],
+  ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
+  [
+    'const settingsCopy: Record<AppLanguage, SettingsCopy> = {',
+    'settings route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'settings route must read language from settings store',
+  ],
+  [
+    'const copy = settingsCopy[language];',
+    'settings route must select copy from settings language',
+  ],
+  [
+    "const label = language === 'sv' ? labelSv : labelEn;",
+    'settings route language buttons must choose visible labels from settings language',
+  ],
+  [
+    "renderLanguageButton('sv', 'Swedish', 'Svenska')",
+    'settings route must provide localized Swedish-language button labels',
+  ],
+  [
+    "renderLanguageButton('en', 'English support', 'Engelskt stöd')",
+    'settings route must provide localized English-support button labels',
+  ],
+  [
+    'accessibilityLabel={copy.backToProfileAccessibilityLabel}',
+    'settings back link must expose localized accessibility copy',
+  ],
+  ['{copy.backToProfile}', 'settings back link must render localized copy'],
+  ['{copy.title}', 'settings title must render localized copy'],
+  ['{copy.subtitle}', 'settings subtitle must render localized copy'],
+  ['{copy.questionLanguageTitle}', 'settings language section must render localized copy'],
+  [
+    'accessibilityLabel={copy.languageAccessibilityLabel(label)}',
+    'settings language buttons must expose localized accessibility copy',
+  ],
+  ['{copy.audioTitle}', 'settings audio section must render localized copy'],
+  [
+    'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
+    'settings audio switch must expose localized accessibility copy',
+  ],
+  [
+    '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
+    'settings audio switch must render localized state copy',
+  ],
+  ['{copy.dailyGoalTitle}', 'settings daily-goal section must render localized copy'],
+  [
+    '{copy.dailyGoalSummary(dailyGoalAnswers)}',
+    'settings daily-goal summary must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}',
+    'settings daily-goal buttons must expose localized accessibility copy',
+  ],
+];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
   {
     label: 'onboarding route title',
@@ -3286,6 +3382,8 @@ let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
+let settingsRouteCopyLabelsValidated = 0;
+let settingsRouteCopyParityValidated = false;
 let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let screenShellLayoutRulesValidated = 0;
@@ -5197,6 +5295,58 @@ function validateSettingsRouteHeaderParity() {
 
   if (valid && settingsRouteHeadersValidated === EXPECTED_SETTINGS_ROUTE_HEADERS.length) {
     settingsRouteHeaderParityValidated = true;
+  }
+}
+
+function validateSettingsRouteCopyParity() {
+  let valid = true;
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!settingsRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`settings route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!settingsRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`settings route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`settings route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) settingsRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && settingsRouteCopyLabelsValidated === expectedLabelCount) {
+    settingsRouteCopyParityValidated = true;
   }
 }
 
@@ -9985,6 +10135,7 @@ validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
+validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
@@ -10112,6 +10263,8 @@ console.log(
       legalRouteHeaderParityValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
+      settingsRouteCopyLabelsValidated,
+      settingsRouteCopyParityValidated,
       onboardingRouteHeadersValidated,
       onboardingRouteHeaderParityValidated,
       screenShellLayoutRulesValidated,
