@@ -1607,8 +1607,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q096',
     'ch12',
     { chapter: 'En sekulär stat och ett mångreligiöst land', section: 'Islam', pageApprox: 44 },
-    'Vilken religion beskrivs som den näst största i Sverige enligt UHR-materialet?',
-    'Which religion is described as the second largest in Sweden according to the UHR material?',
+    'Vilken religion beskrivs som den näst största i Sverige?',
+    'Which religion is described as the second largest in Sweden?',
     [
       ['Judendom', 'Judaism'],
       ['Islam', 'Islam'],
