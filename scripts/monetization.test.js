@@ -464,6 +464,9 @@ test('mock exam access persistence stores daily completions and rewarded credits
 test('rewarded extra exam credit is granted only after an earned ad reward', async () => {
   const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
   const defaultResult = await showRewardedExtraExamAd();
+  const removeAdsResult = await showRewardedExtraExamAd({
+    entitlements: { adsDisabled: true },
+  });
   const nativeRewardedAdSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/rewardedAd.native.ts'),
     'utf8',
@@ -477,6 +480,7 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     },
     status: 'earned_reward',
   });
+  assert.deepEqual(removeAdsResult, { status: 'unavailable' });
   assert.match(nativeRewardedAdSource, /initializeGoogleMobileAdsAfterConsent/);
   assert.match(nativeRewardedAdSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
   assert.match(nativeRewardedAdSource, /RewardedAd\.createForAdRequest/);
