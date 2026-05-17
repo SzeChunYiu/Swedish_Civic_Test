@@ -402,6 +402,21 @@ test('exam results include per-question explanations and UHR sources', () => {
   assert.match(source, /<UHRReferenceCard/);
 });
 
+test('exam route exposes page and review section headings as headers', () => {
+  const source = read('app/(tabs)/exam.tsx');
+  const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
+
+  assert.match(source, /Mock exam/);
+  assert.match(source, /Exam access/);
+  assert.match(source, /Exam result/);
+  assert.match(source, /Next exam/);
+  assert.match(source, /Chapter breakdown/);
+  assert.match(source, /Question review/);
+  assert.match(source, /Progress/);
+  assert.equal(headerMatches?.length, 8);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('exam results are final after submission', () => {
   const source = read('app/(tabs)/exam.tsx');
 
