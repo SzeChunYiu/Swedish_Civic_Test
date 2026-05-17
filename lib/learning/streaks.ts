@@ -1,15 +1,27 @@
 const dayInMs = 24 * 60 * 60 * 1000;
 
-function toDateKey(date: Date): string {
+type AnsweredProgress = {
+  lastAnsweredAt?: string;
+};
+
+export function getLocalDateKey(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function toUtcDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
 function previousDateKey(dateKey: string): string {
   const date = new Date(`${dateKey}T00:00:00.000Z`);
-  return toDateKey(new Date(date.getTime() - dayInMs));
+  return toUtcDateKey(new Date(date.getTime() - dayInMs));
 }
 
-export function calculateStreak(days: string[] = [], today = toDateKey(new Date())): number {
+export function calculateStreak(days: string[] = [], today = getLocalDateKey()): number {
   const uniqueDays = new Set(days.map((day) => day.slice(0, 10)));
   let cursor = uniqueDays.has(today) ? today : previousDateKey(today);
   let streak = 0;
@@ -20,4 +32,20 @@ export function calculateStreak(days: string[] = [], today = toDateKey(new Date(
   }
 
   return streak;
+}
+
+export function countAnswersForLocalDate(
+  questionProgress: Record<string, AnsweredProgress | undefined> = {},
+  date: Date = new Date(),
+): number {
+  const targetDate = getLocalDateKey(date);
+
+  return Object.values(questionProgress).filter((progress) => {
+    if (!progress?.lastAnsweredAt) return false;
+
+    const answeredAt = new Date(progress.lastAnsweredAt);
+    if (Number.isNaN(answeredAt.getTime())) return false;
+
+    return getLocalDateKey(answeredAt) === targetDate;
+  }).length;
 }

@@ -1,34 +1,63 @@
 # GOAL — Swedish_Civic_Test
 
-Updated: 2026-05-15 20:30 by billy (operator)
+Updated: 2026-05-17 09:10 by billy (operator)
 
 ## Sprint target (≤7 days)
 
-Ship a v1.0-ready Expo app with professional, token-driven UI/UX: every screen consumes a centralized `lib/theme/` design system (no hardcoded colors/spacings/fonts in `app/` or `components/`), every interactive element is accessibility-labeled, and every screen passes a Playwright visual smoke against DESIGN.md (Notion-inspired) on Expo web.
+Ship a **release-ready v1.0 that is ad-supported by default**: every published
+build shows Google AdMob ads to free users, and the only way to remove ads is a
+**one-time non-consumable in-app purchase "Remove Ads" priced 29 SEK**.
+Everything in the ad + purchase path must be implemented, gated, and verified
+**before** we submit to the stores. The token-driven UI/UX baseline from the
+previous goal still holds (no hardcoded colors in `app/`/`components/`, a11y
+labels, Playwright web smoke) — it is now a regression bar, not the headline.
 
-## Acceptance test (executable)
+Monetization model (authoritative):
+- Free tier = ads ON (banner/native/interstitial/app-open per existing placements).
+- "Remove Ads" = one-time non-consumable IAP, 29 SEK, sets `adsDisabled=true`.
+- `adsDisabled` MUST be decoupled from `unlimitedMockExams`/`fullMistakeReview`
+  (today `isPremiumUser` requires all three — fix so a Remove-Ads buyer gets
+  ad-free without those, and ads never render when `adsDisabled` is true).
+- No ads ever on the exam screen; no ads when `adsDisabled`.
+
+## Acceptance test (executable + documented device gate)
 
 ```bash
-# 1. lib/theme exists and exports a coherent token API
-test -f lib/theme/index.ts && test -f lib/theme/colors.ts && test -f lib/theme/spacing.ts && test -f lib/theme/typography.ts && test -f lib/theme/radius.ts && test -f lib/theme/shadows.ts && test -f lib/theme/motion.ts
+# 1. ads enablement is env/remote-driven, NOT hardcoded false; real-unit path exists
+grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts && ! grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts
 
-# 2. zero hardcoded colors or rgba() in screens or components
-test "$(grep -rE '#[0-9a-fA-F]{6}|rgba?\(' app components | wc -l)" -eq 0
+# 2. ad gating unit tests pass: no ad when adsDisabled, none on exam screen,
+#    none when ads disabled by config; banner shown for free entitlement
+npm test -- monetization
 
-# 3. typescript clean
-npx tsc --noEmit
+# 3. IAP module exists: purchase + restore + persisted entitlement + product id wired
+test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts \
+  && grep -rqi "remove.?ads" app components lib
 
-# 4. content + lint validations
-npm run lint && npm run validate:content
+# 4. consent + store compliance assets present
+test -f publishing/public-site/app-ads.txt \
+  && grep -rqiE "tracking-transparency|ATT|UMP|consent" lib app \
+  && test -f publishing/admob-iap-setup-runbook.md
 
-# 5. expo web export succeeds
-npx expo export --platform web
+# 5. typescript + lint + content clean; web export does not crash with ad stubs
+npx tsc --noEmit && npm run lint && npm run validate:content && npx expo export --platform web
 
-# 6. playwright smoke captures every primary route
-npm run test:e2e -- tests/e2e/visual-smoke.spec.ts
+# 6. UI/UX regression bar still green
+test "$(grep -rE '#[0-9a-fA-F]{6}|rgba?\(' app components | wc -l)" -eq 0 \
+  && npm run test:e2e -- tests/e2e/visual-smoke.spec.ts
+
+# 7. privacy labels + data-safety updated to declare ads SDK + IAP
+grep -qiE "admob|advertis|in-app purchase|IDFA|tracking" publishing/privacy-labels.md \
+  && grep -qiE "admob|advertis|in-app purchase" publishing/google-play-data-safety.md
 ```
 
-All six MUST pass. The screenshots from step 6 are saved under `reports/2026-05-15-uiux-screenshots/` and committed.
+Steps 1–7 are factory-verifiable and MUST pass. The final gate is a **manual
+device-QA sign-off** (EAS preview build on real iOS + Android): ads render with
+test units, purchase removes ads + persists across relaunch, restore works, ATT
++ EEA consent prompts appear, no ad on exam screen. Record it in
+`reports/release-ads-iap-device-qa.md` (template committed by the release lane).
+Real AdMob unit IDs and store IAP product creation are operator/account tasks —
+see `publishing/admob-iap-setup-runbook.md`.
 
 ## Product source paths (commits must touch ≥1 of these)
 
@@ -44,9 +73,9 @@ All six MUST pass. The screenshots from step 6 are saved under `reports/2026-05-
 - `docs/`
 - `codex-tasks/`
 - `change_log/`
-- `reports/` (except `reports/2026-05-15-uiux-screenshots/` produced by acceptance test step 6)
+- `reports/` (except device-QA evidence + acceptance screenshots)
 - `swedish_citizenship_app_project_plan/`
-- `publishing/` (EXCEPTION: the `release` team owns these; for the release team only, `publishing/` IS a product path)
+- `publishing/` (EXCEPTION: the `release` team owns these; for the release team only, `publishing/` IS a product path — incl. the AdMob/IAP runbook, app-ads.txt, privacy/data-safety)
 
 ## Banned iteration types
 
@@ -61,7 +90,8 @@ All six MUST pass. The screenshots from step 6 are saved under `reports/2026-05-
 ## Out of scope (do NOT spend time on)
 
 - AI tutor, backend services, user accounts, AI-generated questions inside the app, community features.
-- Real device builds, store submission, Expo/EAS login flow (these are external blockers tracked separately).
+- Creating the real AdMob account / real ad unit IDs / store IAP products (operator does these via the runbook).
+- Final store submission + Expo/EAS login (external; operator will grant EAS access for preview builds).
 
 ## Updated by operator only
 

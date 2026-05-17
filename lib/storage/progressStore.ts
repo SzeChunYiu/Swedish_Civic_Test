@@ -3,6 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import { getNextReviewAt } from '../learning/spacedRepetition';
+import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp } from '../learning/xp';
 
 export type QuestionProgress = {
@@ -120,7 +121,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
   recordAnswer: (questionId, isCorrect) =>
     set((state) => {
       const answeredAt = new Date().toISOString();
-      const answerDate = answeredAt.slice(0, 10);
+      const answerDate = getLocalDateKey(new Date(answeredAt));
       const previous = state.questionProgress[questionId] ?? {
         questionId,
         seenCount: 0,

@@ -10,12 +10,17 @@ import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 export default function Screen() {
+  const {
+    entitlements: monetizationEntitlements,
+    purchaseRuntime,
+    setEntitlements: setMonetizationEntitlements,
+  } = useRemoveAdsEntitlements();
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
@@ -71,7 +76,12 @@ export default function Screen() {
         </Text>
       </Card>
 
-      <PremiumBanner entitlements={FREE_ENTITLEMENTS} />
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
       <ComplianceLinks />
 
       <Link

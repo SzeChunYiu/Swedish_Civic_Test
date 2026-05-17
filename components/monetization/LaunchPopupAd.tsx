@@ -7,6 +7,7 @@ import { colors, radius, space, typography } from '../../lib/theme';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let launchPopupShownThisRuntime = false;
+const LAUNCH_SPONSOR_DIALOG_LABEL = 'Launch sponsor ad';
 
 export function LaunchPopupAd({
   entitlements = FREE_ENTITLEMENTS,
@@ -33,6 +34,8 @@ export function LaunchPopupAd({
 
   return (
     <Modal
+      accessibilityLabel={LAUNCH_SPONSOR_DIALOG_LABEL}
+      accessibilityViewIsModal
       animationType="fade"
       transparent
       visible={visible}
@@ -41,7 +44,9 @@ export function LaunchPopupAd({
       <View style={styles.backdrop}>
         <View style={styles.card}>
           <Text style={styles.eyebrow}>Google AdMob</Text>
-          <Text style={styles.title}>Launch sponsor</Text>
+          <Text accessibilityRole="header" style={styles.title}>
+            Launch sponsor
+          </Text>
           <Text style={styles.body}>
             {unit?.testOnly
               ? 'App-open test ad preview shown once per app launch.'

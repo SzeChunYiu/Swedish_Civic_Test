@@ -28,3 +28,30 @@ test('answer validation accepts only the exact correct option id', () => {
   assert.equal(isCorrectAnswer(question, ''), false);
   assert.equal(isCorrectAnswer(question, ' option-b '), false);
 });
+
+test('answer option feedback reveals the correct answer after a wrong selection', () => {
+  const { getAnswerOptionFeedback } = loadTs('lib/quiz/answerValidation.ts');
+  const question = {
+    id: 'q1',
+    correctOptionId: 'option-b',
+  };
+
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-a', null), {
+    tone: 'idle',
+  });
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-b', 'option-b'), {
+    resultLabel: 'Rätt',
+    tone: 'correct',
+  });
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-a', 'option-a'), {
+    resultLabel: 'Fel',
+    tone: 'incorrect',
+  });
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-b', 'option-a'), {
+    resultLabel: 'Rätt svar',
+    tone: 'correct',
+  });
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-c', 'option-a'), {
+    tone: 'idle',
+  });
+});

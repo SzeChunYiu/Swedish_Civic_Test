@@ -52,3 +52,5 @@ d. Every 15 minutes (until DONE for real or operator returns), append a `[CEO â†
 THE OPERATOR WILL CHECK YOUR HEARTBEATS EVERY 15 MIN AND VERIFY GIT INDEPENDENTLY. Lies will be caught.
 
 (Release work continues unchanged. The release team's work in publishing/ + reports/ is legitimate product work for that team under their GOAL paths.)
+
+[OPERATOR->CEO 2026-05-17 09:42 DIRECTIVE] Base reconciled to origin/main (228) + new GOAL (v1.0 ad-supported + 29 SEK Remove-Ads IAP, ads-only, decoupled). Drive ALL teams to the 7-step GOAL.md acceptance test; atoms in codex-tasks/open.txt (ADS/IAP/CONSENT/COMPLY/TEST). Reject docs-only handoffs. Build/test vs Google TEST units + mock purchases until operator supplies real IDs (publishing/admob-iap-setup-runbook.md).

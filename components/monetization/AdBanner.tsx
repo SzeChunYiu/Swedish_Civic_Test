@@ -1,28 +1,40 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { colors, space, typography } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
+const REMOVE_ADS_ACCESSIBILITY_HINT = 'Hidden after Remove Ads is active.';
+
 export function AdBanner({
   placement = 'home_banner',
-  entitlements = FREE_ENTITLEMENTS,
+  entitlements,
 }: {
   placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
-  if (!shouldShowAd(placement, entitlements)) return null;
+  const { entitlements: resolvedEntitlements, entitlementsReady } =
+    useResolvedAdEntitlements(entitlements);
+
+  if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;
 
   const unit = getAdUnit(placement);
+  const placementLabel = placement.replaceAll('_', ' ');
+  const adStatusLabel = unit?.testOnly
+    ? 'AdMob test unit active · web preview'
+    : 'AdMob placement active';
+  const accessibilityLabel = `Google AdMob: ${placementLabel}. ${adStatusLabel}. ${REMOVE_ADS_ACCESSIBILITY_HINT}`;
+
   return (
-    <Card>
+    <Card
+      accessibilityHint={`Sponsored ad preview. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
+      accessibilityLabel={accessibilityLabel}
+    >
       <Text style={styles.eyebrow}>Google AdMob</Text>
-      <Text style={styles.title}>{placement.replaceAll('_', ' ')}</Text>
-      <Text style={styles.meta}>
-        {unit?.testOnly ? 'AdMob test unit active · web preview' : 'AdMob placement active'}
-      </Text>
+      <Text style={styles.title}>{placementLabel}</Text>
+      <Text style={styles.meta}>{adStatusLabel}</Text>
     </Card>
   );
 }

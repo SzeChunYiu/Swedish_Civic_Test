@@ -46,6 +46,8 @@ export function CelebrationBurst({ active, streak = 0 }: CelebrationBurstProps) 
 
   return (
     <Animated.View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
       pointerEvents="none"
       style={[
         styles.container,
