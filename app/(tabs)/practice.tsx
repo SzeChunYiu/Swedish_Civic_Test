@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -12,6 +13,7 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -31,7 +33,16 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
-  const question = getPracticeQuestionForSession(questions, completedQuestionIds, activeQuestionId);
+  const rawQuestion = getPracticeQuestionForSession(
+    questions,
+    completedQuestionIds,
+    activeQuestionId,
+  );
+  const question = useMemo(
+    () =>
+      rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, 'practice-session') : undefined,
+    [rawQuestion],
+  );
 
   if (!question) {
     return (

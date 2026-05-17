@@ -63,9 +63,15 @@ function getRewardedAdStatusText(status: RewardedExtraExamAdStatus): string {
 }
 
 export default function Screen() {
+  const [examAttemptIndex, setExamAttemptIndex] = useState(0);
+  const examSessionId = `mock-exam-${examAttemptIndex}`;
   const examQuestions = useMemo(
-    () => generateExam(questions, { questionCount: defaultMockExamConfig.questionCount }),
-    [],
+    () =>
+      generateExam(questions, {
+        questionCount: defaultMockExamConfig.questionCount,
+        sessionId: examSessionId,
+      }),
+    [examSessionId],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -142,6 +148,7 @@ export default function Screen() {
     : getAccessStatusText(accessDecision.reason);
 
   const resetExamAttempt = useCallback(() => {
+    setExamAttemptIndex((current) => current + 1);
     setAnswers({});
     setSubmitted(false);
     setCompletionRecorded(false);

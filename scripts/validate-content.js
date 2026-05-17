@@ -1021,7 +1021,10 @@ const EXPECTED_EXAM_GENERATOR_TYPE_ALIASES = [
 const EXPECTED_EXAM_GENERATOR_INTERFACES = [
   {
     name: 'ExamOptions',
-    fields: [{ name: 'questionCount', type: 'number', optional: true }],
+    fields: [
+      { name: 'questionCount', type: 'number', optional: true },
+      { name: 'sessionId', type: 'string', optional: true },
+    ],
   },
   {
     name: 'ExamChapterResult',

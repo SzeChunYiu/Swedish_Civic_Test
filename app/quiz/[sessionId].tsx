@@ -13,6 +13,7 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
@@ -37,7 +38,17 @@ function pickSessionQuestion(sessionId: string) {
 export default function QuizSessionScreen() {
   const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
   const normalizedSessionId = normalizeSessionId(sessionId);
-  const question = useMemo(() => pickSessionQuestion(normalizedSessionId), [normalizedSessionId]);
+  const pickedQuestion = useMemo(
+    () => pickSessionQuestion(normalizedSessionId),
+    [normalizedSessionId],
+  );
+  const question = useMemo(
+    () =>
+      pickedQuestion
+        ? shuffleQuestionOptionsForSession(pickedQuestion, normalizedSessionId)
+        : undefined,
+    [normalizedSessionId, pickedQuestion],
+  );
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
