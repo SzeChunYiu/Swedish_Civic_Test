@@ -68,6 +68,14 @@ function toNonNegativeInteger(value: number | undefined): number {
   return Math.max(0, Math.floor(value ?? 0));
 }
 
+function formatLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
 function createEmptyPersistedMockExamAccess(): PersistedMockExamAccess {
   return {
     completedMockExamsByDate: {},
@@ -165,17 +173,16 @@ async function loadSecureStore(): Promise<SecureStoreModule> {
 
 export function getMockExamAccessDateKey(date: Date | string = new Date()): string {
   if (typeof date === 'string') {
-    const directDateKey = normalizeDateKey(date);
-    if (directDateKey) return directDateKey;
+    const trimmedDate = date.trim();
+    const directDateKey = normalizeDateKey(trimmedDate);
+    if (trimmedDate === directDateKey) return directDateKey;
 
     const parsedDate = new Date(date);
-    if (!Number.isNaN(parsedDate.getTime())) return parsedDate.toISOString().slice(0, 10);
-    return new Date().toISOString().slice(0, 10);
+    if (!Number.isNaN(parsedDate.getTime())) return formatLocalDateKey(parsedDate);
+    return formatLocalDateKey(new Date());
   }
 
-  return Number.isNaN(date.getTime())
-    ? new Date().toISOString().slice(0, 10)
-    : date.toISOString().slice(0, 10);
+  return Number.isNaN(date.getTime()) ? formatLocalDateKey(new Date()) : formatLocalDateKey(date);
 }
 
 export function createMemoryMockExamAccessStorage(

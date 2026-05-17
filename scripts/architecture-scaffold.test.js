@@ -61,6 +61,10 @@ const architectureTargetFiles = [
   'types/monetization.ts',
 ];
 
+const architectureRouteFiles = architectureTargetFiles.filter(
+  (relativePath) => relativePath.startsWith('app/') && relativePath.endsWith('.tsx'),
+);
+
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
@@ -83,6 +87,15 @@ function extractTabScreenNames(tabLayoutSource) {
 test('architecture target scaffold files exist', () => {
   assert.deepEqual(
     architectureTargetFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('Expo Router route scaffold files expose default component exports', () => {
+  assert.deepEqual(
+    architectureRouteFiles.filter(
+      (relativePath) => !/export\s+default\s+/.test(readText(relativePath)),
+    ),
     [],
   );
 });

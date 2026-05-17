@@ -349,6 +349,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
     createMemoryMockExamAccessStorage,
     createSecureStoreMockExamAccessStorage,
     createWebMockExamAccessStorage,
+    getMockExamAccessDateKey,
     getStoredMockExamAccess,
     grantStoredRewardedExtraExamCredit,
     recordStoredMockExamCompletion,
@@ -357,6 +358,8 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.equal(FREE_MOCK_EXAM_DAILY_LIMIT, 1);
   assert.equal(MOCK_EXAM_ACCESS_STORAGE_KEY, 'monetization.mockExamAccess.v1');
+  assert.equal(getMockExamAccessDateKey(new Date(2026, 4, 17, 0, 30)), '2026-05-17');
+  assert.equal(getMockExamAccessDateKey('2026-05-17'), '2026-05-17');
 
   assert.deepEqual(await getStoredMockExamAccess({ date: '2026-05-17T09:30:00.000Z', storage }), {
     completedMockExamsByDate: {},
