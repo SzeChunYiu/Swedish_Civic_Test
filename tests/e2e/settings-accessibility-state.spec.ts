@@ -9,7 +9,9 @@ test('settings controls expose selected and checked state on web', async ({ page
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  const closeLaunchSponsorAd = page.getByLabel('Close launch sponsor ad');
+  const closeLaunchSponsorAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
   if (await closeLaunchSponsorAd.isVisible()) {
     await closeLaunchSponsorAd.click();
   }
