@@ -375,6 +375,18 @@ const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
 ];
+const EXPECTED_ANSWER_VALIDATION_TYPE_UNIONS = [
+  { typeName: 'AnswerOptionFeedbackTone', values: ['idle', 'correct', 'incorrect'] },
+];
+const EXPECTED_ANSWER_VALIDATION_INTERFACES = [
+  {
+    name: 'AnswerOptionFeedback',
+    fields: [
+      { name: 'resultLabel', type: 'string', optional: true },
+      { name: 'tone', type: 'AnswerOptionFeedbackTone', optional: false },
+    ],
+  },
+];
 const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
@@ -1790,6 +1802,9 @@ let practiceScoringRulesParityValidated = false;
 let practiceSessionStoreFieldsValidated = 0;
 let practiceSessionStoreSchemaParityValidated = false;
 let practiceSessionStoreRuntimeParityValidated = false;
+let answerValidationTypeUnionsValidated = 0;
+let answerValidationTypeInterfacesValidated = 0;
+let answerValidationTypeSchemaParityValidated = false;
 let answerFeedbackQuestionsValidated = 0;
 let answerFeedbackOptionsValidated = 0;
 let answerFeedbackRuntimeParityValidated = false;
@@ -4895,6 +4910,100 @@ function validatePracticeSessionStoreParity() {
   if (valid && runtimeValid) practiceSessionStoreRuntimeParityValidated = true;
 }
 
+function validateAnswerValidationTypeSchemaParity() {
+  let valid = true;
+  let answerValidationSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    answerValidationSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/quiz/answerValidation.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/quiz/answerValidation.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_ANSWER_VALIDATION_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(answerValidationSource, typeName);
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `lib/quiz/answerValidation.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    answerValidationTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_ANSWER_VALIDATION_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      answerValidationSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `lib/quiz/answerValidation.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `lib/quiz/answerValidation.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `lib/quiz/answerValidation.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `lib/quiz/answerValidation.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `lib/quiz/answerValidation.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) answerValidationTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    answerValidationTypeUnionsValidated === EXPECTED_ANSWER_VALIDATION_TYPE_UNIONS.length &&
+    answerValidationTypeInterfacesValidated === EXPECTED_ANSWER_VALIDATION_INTERFACES.length
+  ) {
+    answerValidationTypeSchemaParityValidated = true;
+  }
+}
+
 function validateAnswerFeedbackParity() {
   if (
     !Array.isArray(questions) ||
@@ -6314,6 +6423,7 @@ validateProgressStoreSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validatePracticeSessionStoreParity();
+validateAnswerValidationTypeSchemaParity();
 validateAnswerFeedbackParity();
 validateQuestionSpeechTextParity();
 validateChapterQuizSessionParity();
@@ -6423,6 +6533,9 @@ console.log(
       practiceSessionStoreFieldsValidated,
       practiceSessionStoreSchemaParityValidated,
       practiceSessionStoreRuntimeParityValidated,
+      answerValidationTypeUnionsValidated,
+      answerValidationTypeInterfacesValidated,
+      answerValidationTypeSchemaParityValidated,
       answerFeedbackQuestionsValidated,
       answerFeedbackOptionsValidated,
       answerFeedbackRuntimeParityValidated,
