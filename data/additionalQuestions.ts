@@ -1537,8 +1537,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'According to the UHR material, what does it mean that Sweden is a secular state?',
     [
       [
-        'Staten är religiöst neutral och tar inte ställning för någon religion',
-        'The state is religiously neutral and does not take sides for any religion',
+        'Staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion',
+        'The state is religiously neutral and neither takes sides for nor discriminates against any religion',
       ],
       ['Alla måste tillhöra samma religion', 'Everyone must belong to the same religion'],
       ['Religion är förbjuden i hemmet', 'Religion is forbidden in the home'],
