@@ -177,6 +177,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Session\s*\{normalizedSessionId\}\s*<\/Text>/,
   },
 ];
+const EXPECTED_PRACTICE_ROUTE_HEADERS = [
+  {
+    label: 'practice question title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Question\s*\{questionNumber\}\s*<\/Text>/,
+  },
+];
 const EXPECTED_CHAPTER_ROUTE_HEADERS = [
   {
     label: 'missing chapter title',
@@ -1961,6 +1968,8 @@ let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
+let practiceRouteHeadersValidated = 0;
+let practiceRouteHeaderParityValidated = false;
 let chapterRouteHeadersValidated = 0;
 let chapterRouteHeaderParityValidated = false;
 let learnRouteHeadersValidated = 0;
@@ -3090,6 +3099,40 @@ function validateQuizRouteHeaderParity() {
 
   if (valid && quizRouteHeadersValidated === EXPECTED_QUIZ_ROUTE_HEADERS.length) {
     quizRouteHeaderParityValidated = true;
+  }
+}
+
+function validatePracticeRouteHeaderParity() {
+  let valid = true;
+  let practiceRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    practiceRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/practice.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  const unheaderedRouteTitles = practiceRoute.match(/<Text\s+style=\{styles\.title\}>/g) || [];
+  if (unheaderedRouteTitles.length > 0) {
+    reject('practice route title text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_PRACTICE_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(practiceRoute)) {
+      reject(`practice route missing ${expectedHeader.label} as a title header`);
+      return;
+    }
+    practiceRouteHeadersValidated += 1;
+  });
+
+  if (valid && practiceRouteHeadersValidated === EXPECTED_PRACTICE_ROUTE_HEADERS.length) {
+    practiceRouteHeaderParityValidated = true;
   }
 }
 
@@ -7468,6 +7511,7 @@ validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
+validatePracticeRouteHeaderParity();
 validateChapterRouteHeaderParity();
 validateLearnRouteHeaderParity();
 validateProfileRouteHeaderParity();
@@ -7553,6 +7597,8 @@ console.log(
       examRouteHeaderParityValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
+      practiceRouteHeadersValidated,
+      practiceRouteHeaderParityValidated,
       chapterRouteHeadersValidated,
       chapterRouteHeaderParityValidated,
       learnRouteHeadersValidated,
