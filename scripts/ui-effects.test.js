@@ -267,11 +267,15 @@ test('question card groups prompt and translation into an accessible summary', (
   const source = read('components/quiz/QuestionCard.tsx');
 
   assert.match(source, /const questionAccessibilityLabel =/);
+  assert.match(source, /function getSourceCitation\(question\?: PracticeQuestion\)/);
   assert.match(source, /`Difficulty: \$\{difficulty\}`/);
   assert.match(source, /`Question: \$\{questionText\}`/);
   assert.match(source, /English translation:/);
+  assert.match(source, /`Source citation: \$\{sourceCitation\}`/);
+  assert.match(source, /Källa\/Source: Sverige i fokus/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
+  assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
