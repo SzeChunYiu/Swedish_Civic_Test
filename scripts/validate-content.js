@@ -701,6 +701,49 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /textTransform:\s*'uppercase'/,
   },
 ];
+const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'PracticeQuestion prop contract',
+    pattern: /question\?: PracticeQuestion/,
+  },
+  {
+    label: 'difficulty fallback',
+    pattern: /const difficulty = question\?\.difficulty \?\? 'practice';/,
+  },
+  {
+    label: 'question text fallback',
+    pattern: /const questionText = question\?\.questionSv \?\? 'Question unavailable';/,
+  },
+  {
+    label: 'difficulty in accessibility summary',
+    pattern: /`Difficulty: \$\{difficulty\}`/,
+  },
+  {
+    label: 'Swedish question in accessibility summary',
+    pattern: /`Question: \$\{questionText\}`/,
+  },
+  {
+    label: 'English translation in accessibility summary',
+    pattern: /question\?\.questionEn \? `English translation: \$\{question\.questionEn\}` : null/,
+  },
+  {
+    label: 'Card receives accessibility summary',
+    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
+  },
+  {
+    label: 'visible difficulty label',
+    pattern: /<Text style=\{styles\.label\}>\{difficulty\}<\/Text>/,
+  },
+  {
+    label: 'question header text',
+    pattern: /<Text accessibilityRole="header" style=\{styles\.question\}>/,
+  },
+  {
+    label: 'visible English translation',
+    pattern:
+      /\{question\?\.questionEn \? <Text style=\{styles\.translation\}>\{question\.questionEn\}<\/Text> : null\}/,
+  },
+];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   {
     label: 'shared Button import',
@@ -751,6 +794,41 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   {
     label: 'English and Swedish option label switch',
     pattern: /return language === 'en' \? option\.textEn : option\.textSv;/,
+  },
+];
+const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
+  {
+    label: 'optional bilingual explanation props',
+    pattern: /explanationEn\?: string;[\s\S]*explanationSv\?: string;/,
+  },
+  {
+    label: 'language prop contract',
+    pattern: /language\?: 'sv' \| 'en';/,
+  },
+  {
+    label: 'release-safe Swedish fallback',
+    pattern: /explanationSv = 'Explanation unavailable for this question\.'/,
+  },
+  {
+    label: 'language-specific explanation selection',
+    pattern:
+      /const explanation = language === 'en' && explanationEn \? explanationEn : explanationSv;/,
+  },
+  {
+    label: 'explanation in accessibility summary',
+    pattern: /const panelAccessibilityLabel = `Explanation: \$\{explanation\}`;/,
+  },
+  {
+    label: 'Card receives accessibility summary',
+    pattern: /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/,
+  },
+  {
+    label: 'explanation header text',
+    pattern: /<Text accessibilityRole="header" style=\{styles\.title\}>/,
+  },
+  {
+    label: 'visible selected explanation',
+    pattern: /<Text style=\{styles\.body\}>\{explanation\}<\/Text>/,
   },
 ];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
@@ -2413,8 +2491,12 @@ let metricCardAccessibilityRulesValidated = 0;
 let metricCardAccessibilityParityValidated = false;
 let badgeAccessibilityRulesValidated = 0;
 let badgeAccessibilityParityValidated = false;
+let questionCardAccessibilityRulesValidated = 0;
+let questionCardAccessibilityParityValidated = false;
 let answerOptionAccessibilityRulesValidated = 0;
 let answerOptionAccessibilityParityValidated = false;
+let explanationPanelAccessibilityRulesValidated = 0;
+let explanationPanelAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4348,6 +4430,43 @@ function validateBadgeAccessibilityParity() {
   }
 }
 
+function validateQuestionCardAccessibilityParity() {
+  let valid = true;
+  let questionCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    questionCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/QuestionCard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/QuestionCard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(questionCardSource)) {
+      reject(`QuestionCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    questionCardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    questionCardAccessibilityRulesValidated === EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length
+  ) {
+    questionCardAccessibilityParityValidated = true;
+  }
+}
+
 function validateAnswerOptionAccessibilityParity() {
   let valid = true;
   let answerOptionSource = '';
@@ -4382,6 +4501,44 @@ function validateAnswerOptionAccessibilityParity() {
     answerOptionAccessibilityRulesValidated === EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES.length
   ) {
     answerOptionAccessibilityParityValidated = true;
+  }
+}
+
+function validateExplanationPanelAccessibilityParity() {
+  let valid = true;
+  let explanationPanelSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    explanationPanelSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/ExplanationPanel.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/ExplanationPanel.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(explanationPanelSource)) {
+      reject(`ExplanationPanel missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    explanationPanelAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    explanationPanelAccessibilityRulesValidated ===
+      EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.length
+  ) {
+    explanationPanelAccessibilityParityValidated = true;
   }
 }
 
@@ -8475,7 +8632,9 @@ validateCardAccessibilityParity();
 validateProgressBarAccessibilityParity();
 validateMetricCardAccessibilityParity();
 validateBadgeAccessibilityParity();
+validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
+validateExplanationPanelAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8593,8 +8752,12 @@ console.log(
       metricCardAccessibilityParityValidated,
       badgeAccessibilityRulesValidated,
       badgeAccessibilityParityValidated,
+      questionCardAccessibilityRulesValidated,
+      questionCardAccessibilityParityValidated,
       answerOptionAccessibilityRulesValidated,
       answerOptionAccessibilityParityValidated,
+      explanationPanelAccessibilityRulesValidated,
+      explanationPanelAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
