@@ -1640,8 +1640,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q098',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Sveriges nationaldag', pageApprox: 46 },
-    'Vilket datum är Sveriges nationaldag?',
-    'What date is Sweden’s National Day?',
+    'Vilket datum säger UHR-materialet är Sveriges nationaldag?',
+    'What date does the UHR material give as Sweden’s National Day?',
     [
       ['1 maj', '1 May'],
       ['6 juni', '6 June'],
@@ -1649,9 +1649,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['24 december', '24 December'],
     ],
     1,
-    'Sveriges nationaldag firas den 6 juni.',
-    'Sweden’s National Day is celebrated on 6 June.',
-    ['national-day', 'june-6', 'traditions'],
+    'UHR-avsnittet Sveriges nationaldag säger att den 6 juni är Sveriges nationaldag. Avsnittet förklarar också att dagen blev helgdag genom ett riksdagsbeslut 2005 och nämner Gustav Vasa 1523 samt regeringsformen 1809 som historisk bakgrund.',
+    'The UHR section Sweden’s National Day says that 6 June is Sweden’s National Day. It also explains that the day became a public holiday through a Riksdag decision in 2005 and mentions Gustav Vasa in 1523 and the 1809 Instrument of Government as historical background.',
+    ['national-day', 'june-6', 'public-holiday', 'traditions'],
     'easy',
   ),
   single(
