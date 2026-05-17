@@ -1291,8 +1291,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q081',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Den svenska modellen', pageApprox: 35 },
-    'Vad blev Saltsjöbadsavtalet från 1938 viktigt för enligt UHR-materialet?',
-    'According to the UHR material, what did the 1938 Saltsjöbaden Agreement become important for?',
+    'Vilket samarbete blev Saltsjöbadsavtalet från 1938 viktigt för?',
+    'Which cooperation did the 1938 Saltsjöbaden Agreement become important for?',
     [
       [
         'Samarbetet mellan fackföreningar och arbetsgivare',
