@@ -1374,8 +1374,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Vem som är statschef', 'Who is head of state'],
     ],
     0,
-    'Datorer, internet, smarta telefoner och AI har påverkat arbete, studier, kommunikation och information.',
-    'Computers, the internet, smartphones, and AI have affected work, study, communication, and information.',
+    'UHR-avsnittet Digital revolution och globalisering säger att datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också underlättat snabb handel, internationellt samarbete och informationsutbyte.',
+    'The UHR section Digital revolution and globalization says computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.',
     ['digital-revolution', 'globalization', 'information-society'],
   ),
   single(
