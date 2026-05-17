@@ -176,8 +176,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q027',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Sveriges statsskick', pageApprox: 13 },
-    'Vad betyder konstitutionell monarki enligt UHR-materialet?',
-    'According to the UHR material, what does constitutional monarchy mean?',
+    'Vad betyder det att Sverige är en konstitutionell monarki?',
+    'What does it mean that Sweden is a constitutional monarchy?',
     [
       ['Att monarken har all politisk makt', 'That the monarch has all political power'],
       [
