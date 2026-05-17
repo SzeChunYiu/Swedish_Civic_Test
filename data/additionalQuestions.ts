@@ -1020,8 +1020,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Privatekonomi i Sverige',
       pageApprox: 29,
     },
-    'Vilken uppgift har Kronofogdemyndigheten enligt UHR-materialet?',
-    'According to the UHR material, what task does the Swedish Enforcement Authority have?',
+    'Vilken uppgift har Kronofogdemyndigheten när det gäller skulder?',
+    'What task does the Swedish Enforcement Authority have regarding debts?',
     [
       [
         'Att se till att skulder blir betalda och kunna hjälpa till med skuldsanering',
