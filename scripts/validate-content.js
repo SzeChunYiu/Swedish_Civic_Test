@@ -1638,6 +1638,8 @@ const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference')
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
+const EXPECTED_UHR_SECTION_MAP_SOURCE_KEYS = ['title', 'publisher', 'url', 'retrievedDate'];
+const EXPECTED_UHR_SECTION_MAP_CHAPTER_KEYS = ['id', 'chapter', 'startPage', 'endPage', 'sections'];
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'questionCount', type: 'number', optional: false },
   { name: 'durationMinutes', type: 'number', optional: false },
@@ -2399,6 +2401,24 @@ function questionExactSchemaKeyFailures(question, label) {
 
 function chapterExactSchemaKeyFailures(chapter, label) {
   return schemaKeyFailures(chapter, EXPECTED_CHAPTER_KEYS, label, 'Chapter');
+}
+
+function uhrSectionMapSourceExactSchemaKeyFailures(source, label) {
+  return schemaKeyFailures(
+    source,
+    EXPECTED_UHR_SECTION_MAP_SOURCE_KEYS,
+    label,
+    'UHRSectionMapSource',
+  );
+}
+
+function uhrSectionMapChapterExactSchemaKeyFailures(chapter, label) {
+  return schemaKeyFailures(
+    chapter,
+    EXPECTED_UHR_SECTION_MAP_CHAPTER_KEYS,
+    label,
+    'UHRSectionMapChapter',
+  );
 }
 
 function isColorToken(value) {
@@ -3179,6 +3199,8 @@ let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
+let uhrMapSourceExactSchemaKeysValidated = false;
+let uhrMapChapterExactSchemaKeysValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
 let uhrMapPageRangesValidated = 0;
 let uhrSourceMetadataValidated = false;
@@ -9180,6 +9202,7 @@ function buildUhrReferenceChapters() {
     }
 
     if (!hasText(chapter.id)) reject(`uhr-section-map chapter[${index}] missing id`);
+    uhrSectionMapChapterExactSchemaKeyFailures(chapter, label).forEach(reject);
     if (hasText(chapter.id) && seenChapterIds.has(chapter.id)) {
       reject(`${label} has duplicate chapter id`);
     }
@@ -9260,6 +9283,9 @@ function buildUhrReferenceChapters() {
     if (Number.isInteger(chapter.startPage)) previousStartPage = chapter.startPage;
     if (valid) {
       uhrMapChaptersValidated += 1;
+      if (uhrSectionMapChapterExactSchemaKeyFailures(chapter, label).length === 0) {
+        uhrMapChapterExactSchemaKeysValidated += 1;
+      }
       uhrMapSectionsValidated += chapter.sections.length;
     }
 
@@ -9287,6 +9313,7 @@ function validateUhrSourceMetadata() {
   if (!source || typeof source !== 'object') {
     reject('UHR section map missing source metadata');
   } else {
+    uhrSectionMapSourceExactSchemaKeyFailures(source, 'UHR section map source').forEach(reject);
     if (!hasText(source.title) || !source.title.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
       reject(`UHR section map source title must reference ${EXPECTED_UHR_SOURCE.titleKeyword}`);
     }
@@ -9319,7 +9346,12 @@ function validateUhrSourceMetadata() {
     }
   }
 
-  if (valid) uhrSourceMetadataValidated = true;
+  if (valid) {
+    uhrSourceMetadataValidated = true;
+    if (uhrSectionMapSourceExactSchemaKeyFailures(source, 'UHR section map source').length === 0) {
+      uhrMapSourceExactSchemaKeysValidated = true;
+    }
+  }
 }
 
 function validateUhrSourceMaterialLinkParity() {
@@ -9875,6 +9907,8 @@ console.log(
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
+      uhrMapSourceExactSchemaKeysValidated,
+      uhrMapChapterExactSchemaKeysValidated,
       uhrMapTextFieldsNormalizedValidated,
       uhrMapPageRangesValidated,
       uhrSourceMaterialLinkParityValidated,
