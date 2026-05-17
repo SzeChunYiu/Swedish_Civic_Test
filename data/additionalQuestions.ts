@@ -1110,8 +1110,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q072',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 },
-    'Vad ska Sveriges 21 regioner enligt UHR-materialet bland annat erbjuda?',
-    "According to the UHR material, what should Sweden's 21 regions provide, among other things?",
+    'Vad ska Sveriges 21 regioner bland annat erbjuda?',
+    "What should Sweden's 21 regions provide, among other things?",
     [
       ['Hälso- och sjukvård till alla', 'Health and medical care for everyone'],
       ['Pensioner och studiestöd till alla', 'Pensions and study support to everyone'],
