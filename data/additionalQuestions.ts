@@ -1382,8 +1382,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q085',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Nordiskt samarbete', pageApprox: 39 },
-    'Genom vilka organ samarbetar Sverige främst med de andra nordiska länderna?',
-    'Through which bodies does Sweden mainly cooperate with the other Nordic countries?',
+    'Vilka två organ nämns som främsta vägar för Sveriges nordiska samarbete?',
+    "Which two bodies are named as the main channels for Sweden's Nordic cooperation?",
     [
       [
         'Nordiska rådet och Nordiska ministerrådet',
@@ -1394,8 +1394,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['EU-domstolen och JO', 'The EU Court and the Parliamentary Ombudsmen'],
     ],
     0,
-    'Nordiskt samarbete sker främst genom Nordiska rådet och Nordiska ministerrådet.',
-    'Nordic cooperation mainly happens through the Nordic Council and Nordic Council of Ministers.',
+    'UHR-avsnittet Nordiskt samarbete säger att Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i olika frågor som varje land sedan kan genomföra.',
+    'The UHR section on Nordic cooperation says Sweden works with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. The councils agree on different issues that each country can then implement.',
     ['nordic-cooperation', 'nordic-council', 'foreign-relations'],
   ),
   single(
