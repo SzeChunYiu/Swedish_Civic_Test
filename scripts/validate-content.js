@@ -24,6 +24,7 @@ const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 100;
+const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
@@ -3097,6 +3098,7 @@ let uhrSourceRetrievedDateValidated = false;
 let uhrSourceMaterialLinkParityValidated = false;
 let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
+let authoredSourcePartitionQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
 let generationParityValidated = false;
 let chapterGenerationParityValidated = 0;
@@ -8644,6 +8646,30 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'tags',
 ];
 
+function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
+  if (!Array.isArray(questionsToValidate)) return;
+
+  if (questionsToValidate.length !== count) {
+    fail(`${label} has ${questionsToValidate.length} rows, expected ${count}`);
+  }
+
+  questionsToValidate.forEach((question, index) => {
+    if (index >= count) {
+      fail(`${label}[${index}] exceeds expected ${count} rows`);
+      return;
+    }
+
+    const expectedId = `q${String(startQuestionNumber + index).padStart(3, '0')}`;
+    const actualId = question?.id;
+    if (actualId !== expectedId) {
+      fail(`${label}[${index}] has id ${actualId}, expected ${expectedId}`);
+      return;
+    }
+
+    authoredSourcePartitionQuestionsValidated += 1;
+  });
+}
+
 function validateAuthoredSourceParity() {
   if (
     !Array.isArray(baseQuestions) ||
@@ -8652,6 +8678,19 @@ function validateAuthoredSourceParity() {
   ) {
     return;
   }
+
+  validateAuthoredSourcePartition(
+    baseQuestions,
+    'baseQuestions',
+    1,
+    EXPECTED_BASE_SOURCE_QUESTIONS,
+  );
+  validateAuthoredSourcePartition(
+    additionalQuestions,
+    'additionalQuestions',
+    EXPECTED_BASE_SOURCE_QUESTIONS + 1,
+    EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
+  );
 
   const authoredQuestions = [...baseQuestions, ...additionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
@@ -9662,6 +9701,7 @@ console.log(
         ? generatedPublishedQuestions.length
         : 0,
       authoredSourceQuestionsValidated,
+      authoredSourcePartitionQuestionsValidated,
       sourcePublicationParityValidated,
       generationParityValidated,
       chapterGenerationParityValidated,

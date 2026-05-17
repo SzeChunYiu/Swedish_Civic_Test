@@ -183,6 +183,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.sourceQuestions, 100);
   assert.equal(summary.generatedPublishedQuestions, 400);
   assert.equal(summary.authoredSourceQuestionsValidated, 100);
+  assert.equal(summary.authoredSourcePartitionQuestionsValidated, 100);
   assert.equal(summary.sourcePublicationParityValidated, 100);
   assert.equal(summary.generationParityValidated, true);
   assert.equal(summary.chapterGenerationParityValidated, 13);
