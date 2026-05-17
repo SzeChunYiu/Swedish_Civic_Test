@@ -239,6 +239,18 @@ test('practice locks answer options after feedback is visible', () => {
   assert.match(practiceSource, /disabled=\{hasSelectedAnswer\}/);
 });
 
+test('practice and routed quiz answer options expose selected state', () => {
+  const answerOptionSource = read('components/quiz/AnswerOption.tsx');
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const routedQuizSource = read('app/quiz/[sessionId].tsx');
+
+  assert.match(answerOptionSource, /selected = false/);
+  assert.match(answerOptionSource, /selected\?: boolean/);
+  assert.match(answerOptionSource, /accessibilityState=\{\{ disabled, selected \}\}/);
+  assert.match(practiceSource, /selected=\{hasSelectedAnswer && selectedOptionId === option\.id\}/);
+  assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
+});
+
 test('answer option feedback remains available in the accessibility label', () => {
   const source = read('components/quiz/AnswerOption.tsx');
 

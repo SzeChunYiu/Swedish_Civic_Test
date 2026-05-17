@@ -101,6 +101,7 @@ export default function Screen() {
               option={option}
               onPress={() => handleSelectOption(option.id)}
               resultLabel={feedback.resultLabel}
+              selected={hasSelectedAnswer && selectedOptionId === option.id}
               tone={feedback.tone}
             />
           );

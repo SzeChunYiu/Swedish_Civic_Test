@@ -107,6 +107,7 @@ export default function QuizSessionScreen() {
               option={option}
               onPress={() => handleSelectOption(option.id)}
               resultLabel={feedback.resultLabel}
+              selected={selectedOptionId === option.id}
               tone={feedback.tone}
             />
           );

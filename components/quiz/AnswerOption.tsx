@@ -10,6 +10,7 @@ export function AnswerOption({
   option,
   onPress,
   resultLabel,
+  selected = false,
   tone = 'idle',
 }: {
   disabled?: boolean;
@@ -17,6 +18,7 @@ export function AnswerOption({
   option?: QuestionOption;
   onPress?: () => void;
   resultLabel?: string;
+  selected?: boolean;
   tone?: AnswerTone;
 }) {
   const label = option ? getOptionLabel(option, language) : 'Answer option';
@@ -27,7 +29,7 @@ export function AnswerOption({
     <Button
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled, selected }}
       disabled={disabled}
       onPress={onPress}
       variant={variant}
