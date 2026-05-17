@@ -91,6 +91,7 @@ test('screen scaffold exposes page and section titles as headers', () => {
 test('compliance scaffold exposes legal page headings as headers', () => {
   const legalPageSource = read('components/compliance/LegalPage.tsx');
   const complianceLinksSource = read('components/compliance/ComplianceLinks.tsx');
+  const disclaimerSource = read('app/disclaimer.tsx');
 
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
@@ -121,6 +122,17 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(complianceLinksSource, /Öppna \$\{label\}/);
   assert.match(complianceLinksSource, /Open \$\{label\}/);
   assert.match(complianceLinksSource, /accessibilityLabel=\{copy\.openLabel\(link\.label\)\}/);
+  assert.match(disclaimerSource, /const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy>/);
+  assert.match(
+    disclaimerSource,
+    /const language = useSettingsStore\(\(state\) => state\.language\);/,
+  );
+  assert.match(disclaimerSource, /const copy = disclaimerCopy\[language\];/);
+  assert.match(disclaimerSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(disclaimerSource, /Ansvarsfriskrivning/);
+  assert.match(disclaimerSource, /Oberoende studieverktyg/);
+  assert.match(disclaimerSource, /Disclaimer/);
+  assert.match(disclaimerSource, /Independent study tool/);
   assert.doesNotMatch(legalPageSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

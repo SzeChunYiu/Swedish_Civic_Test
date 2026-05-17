@@ -789,7 +789,22 @@ const EXPECTED_MISTAKES_ROUTE_HEADERS = [
 const EXPECTED_LEGAL_ROUTE_HEADERS = [
   {
     file: 'app/disclaimer.tsx',
+    requiredSnippets: [
+      'const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = disclaimerCopy[language];',
+      'Ansvarsfriskrivning',
+      'Oberoende studieverktyg',
+      'Disclaimer',
+      'Independent study tool',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+    ],
     title: 'Disclaimer',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Independent study tool', 'Practice content', 'Use with source material'],
   },
   {
@@ -5377,6 +5392,11 @@ function countLegalTitleOccurrences(source, componentName, title) {
   return (source.match(titlePattern) || []).length;
 }
 
+function countPatternOccurrences(source, pattern) {
+  const flags = pattern.flags.includes('g') ? pattern.flags : `${pattern.flags}g`;
+  return (source.match(new RegExp(pattern.source, flags)) || []).length;
+}
+
 function validateLegalRouteHeaderParity() {
   let valid = true;
   let legalPage = '';
@@ -5417,11 +5437,17 @@ function validateLegalRouteHeaderParity() {
       reject(`${expectedRoute.file} must use shared LegalPage and LegalSection headers`);
     }
 
-    const pageTitleOccurrences = countLegalTitleOccurrences(
-      routeSource,
-      'LegalPage',
-      expectedRoute.title,
-    );
+    if (expectedRoute.requiredSnippets) {
+      expectedRoute.requiredSnippets.forEach((snippet) => {
+        if (!routeSource.includes(snippet)) {
+          reject(`${expectedRoute.file} missing legal route snippet: ${snippet}`);
+        }
+      });
+    }
+
+    const pageTitleOccurrences = expectedRoute.titlePattern
+      ? countPatternOccurrences(routeSource, expectedRoute.titlePattern)
+      : countLegalTitleOccurrences(routeSource, 'LegalPage', expectedRoute.title);
     if (pageTitleOccurrences !== 1) {
       reject(
         `${expectedRoute.file} legal page title "${expectedRoute.title}" appears ${pageTitleOccurrences} times, expected 1`,
@@ -5430,12 +5456,11 @@ function validateLegalRouteHeaderParity() {
       legalRouteHeadersValidated += 1;
     }
 
-    for (const sectionTitle of expectedRoute.sections) {
-      const sectionTitleOccurrences = countLegalTitleOccurrences(
-        routeSource,
-        'LegalSection',
-        sectionTitle,
-      );
+    for (const [sectionIndex, sectionTitle] of expectedRoute.sections.entries()) {
+      const sectionPattern = expectedRoute.sectionPatterns?.[sectionIndex];
+      const sectionTitleOccurrences = sectionPattern
+        ? countPatternOccurrences(routeSource, sectionPattern)
+        : countLegalTitleOccurrences(routeSource, 'LegalSection', sectionTitle);
       if (sectionTitleOccurrences !== 1) {
         reject(
           `${expectedRoute.file} legal section title "${sectionTitle}" appears ${sectionTitleOccurrences} times, expected 1`,
