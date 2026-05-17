@@ -336,6 +336,13 @@ const EXPECTED_CONTENT_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
+  { name: 'questionCount', type: 'number', optional: false },
+  { name: 'durationMinutes', type: 'number', optional: false },
+  { name: 'sourceScope', type: "'uhr_based'", optional: false },
+  { name: 'showExplanationsDuringExam', type: 'boolean', optional: false },
+  { name: 'adsAllowedDuringExam', type: 'boolean', optional: false },
+];
 const EXPECTED_MONETIZATION_TYPE_UNIONS = [
   {
     typeName: 'AdPlacement',
@@ -1159,6 +1166,8 @@ let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let questionDisclaimerRoutesValidated = 0;
 let questionDisclaimerCopyValidated = false;
+let mockExamConfigTypeFieldsValidated = 0;
+let mockExamConfigTypeSchemaParityValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -1561,6 +1570,71 @@ function validateQuestionDisclaimerParity() {
 
     if (routeIsValid) questionDisclaimerRoutesValidated += 1;
   });
+}
+
+function validateMockExamConfigTypeSchemaParity() {
+  let valid = true;
+  let mockExamConfigSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mockExamConfigSource = fs.readFileSync(path.join(repoRoot, 'data/mockExamConfig.ts'), 'utf8');
+  } catch (error) {
+    reject(`data/mockExamConfig.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const actualFields = extractObjectTypePropertiesFromTs(mockExamConfigSource, 'MockExamConfig');
+  if (!Array.isArray(actualFields)) {
+    reject('data/mockExamConfig.ts MockExamConfig interface could not be read');
+    return;
+  }
+
+  const actualNames = actualFields.map((field) => field.name);
+  const expectedNames = EXPECTED_MOCK_EXAM_CONFIG_FIELDS.map((field) => field.name);
+  if (!arrayEquals(actualNames, expectedNames)) {
+    reject(
+      `MockExamConfig fields are ${JSON.stringify(actualNames)}, expected ${JSON.stringify(
+        expectedNames,
+      )}`,
+    );
+  }
+
+  const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+  EXPECTED_MOCK_EXAM_CONFIG_FIELDS.forEach((expectedField) => {
+    const actualField = actualFieldsByName.get(expectedField.name);
+    let fieldIsValid = true;
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!actualField) {
+      rejectField(`MockExamConfig missing ${expectedField.name}`);
+    } else {
+      if (actualField.type !== expectedField.type) {
+        rejectField(
+          `MockExamConfig.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectField(
+          `MockExamConfig.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    }
+
+    if (fieldIsValid) mockExamConfigTypeFieldsValidated += 1;
+  });
+
+  if (valid && mockExamConfigTypeFieldsValidated === EXPECTED_MOCK_EXAM_CONFIG_FIELDS.length) {
+    mockExamConfigTypeSchemaParityValidated = true;
+  }
 }
 
 function validateMockExamConfig(config, publishedQuestionCount) {
@@ -4519,6 +4593,7 @@ validateMockExamConfig(
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
 validateQuestionDisclaimerParity();
+validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -4568,6 +4643,8 @@ console.log(
       launchAdRouteSuppressionParityValidated,
       questionDisclaimerRoutesValidated,
       questionDisclaimerCopyValidated,
+      mockExamConfigTypeFieldsValidated,
+      mockExamConfigTypeSchemaParityValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
