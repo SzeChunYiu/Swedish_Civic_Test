@@ -1420,8 +1420,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q087',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vad innebär EU:s fyra friheter enligt UHR-materialet?',
-    "According to the UHR material, what do the EU's four freedoms mean?",
+    'Vad betyder EU:s fyra friheter?',
+    "What do the EU's four freedoms mean?",
     [
       [
         'Att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder',
