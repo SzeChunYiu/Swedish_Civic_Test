@@ -1492,8 +1492,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q090',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Försvars- och säkerhetspolitik', pageApprox: 40 },
-    'Vilket år blev Sverige medlem i Nato?',
-    'In which year did Sweden become a member of NATO?',
+    'Vilket år blev Sverige medlem i Nato enligt UHR-materialet?',
+    'According to the UHR material, in which year did Sweden become a member of NATO?',
     [
       ['1995', '1995'],
       ['2000', '2000'],
@@ -1501,8 +1501,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['2024', '2024'],
     ],
     3,
-    'Efter Rysslands angrepp mot Ukraina ansökte Sverige och Finland om medlemskap, och Sverige blev medlem 2024.',
-    'After Russia’s attack on Ukraine, Sweden and Finland applied for membership, and Sweden became a member in 2024.',
+    'UHR-avsnittet Försvars- och säkerhetspolitik säger att oron för säkerheten i Norden ökade när Ryssland angrep Ukraina 2022. Sverige och Finland ansökte därför nästan samtidigt om medlemskap i Nato, och Sverige blev medlem år 2024.',
+    'The UHR section Defence and security policy says concern about security in the Nordic region increased when Russia attacked Ukraine in 2022. Sweden and Finland therefore applied for NATO membership almost at the same time, and Sweden became a member in 2024.',
     ['nato', 'security-policy', '2024'],
   ),
   trueFalse(
