@@ -177,6 +177,16 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Session\s*\{normalizedSessionId\}\s*<\/Text>/,
   },
 ];
+const EXPECTED_LEARN_ROUTE_HEADERS = [
+  {
+    label: 'learn route title',
+    pattern: /<ScreenShell[\s\S]*\btitle="Browse chapters with a clear next step"/,
+  },
+  {
+    label: 'chapter-list section title',
+    pattern: /<SectionHeader[\s\S]*\btitle="13 civic areas"/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -1791,6 +1801,8 @@ let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
+let learnRouteHeadersValidated = 0;
+let learnRouteHeaderParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2904,6 +2916,60 @@ function validateQuizRouteHeaderParity() {
 
   if (valid && quizRouteHeadersValidated === EXPECTED_QUIZ_ROUTE_HEADERS.length) {
     quizRouteHeaderParityValidated = true;
+  }
+}
+
+function validateLearnRouteHeaderParity() {
+  let valid = true;
+  let learnRoute = '';
+  let screenShell = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    learnRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+    screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
+  } catch (error) {
+    reject(`learn route header files could not be read: ${error.message}`);
+    return;
+  }
+
+  if (
+    !learnRoute.includes(
+      "import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';",
+    )
+  ) {
+    reject('learn route must use the shared ScreenShell and SectionHeader header components');
+  }
+
+  const directRouteHeadings =
+    learnRoute.match(
+      /<Text\s+(?:accessibilityRole="header"\s+)?style=\{styles\.(?:title|sectionTitle)\}>/g,
+    ) || [];
+  if (directRouteHeadings.length > 0) {
+    reject('learn route headings must stay on the shared ScreenShell/SectionHeader path');
+  }
+
+  if (
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>/.test(screenShell) ||
+    !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(screenShell)
+  ) {
+    reject('learn route shared heading components must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_LEARN_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(learnRoute)) {
+      reject(`learn route missing ${expectedHeader.label} on the shared header path`);
+      return;
+    }
+    learnRouteHeadersValidated += 1;
+  });
+
+  if (valid && learnRouteHeadersValidated === EXPECTED_LEARN_ROUTE_HEADERS.length) {
+    learnRouteHeaderParityValidated = true;
   }
 }
 
@@ -6900,6 +6966,7 @@ validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
+validateLearnRouteHeaderParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -6977,6 +7044,8 @@ console.log(
       examRouteHeaderParityValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
+      learnRouteHeadersValidated,
+      learnRouteHeaderParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
