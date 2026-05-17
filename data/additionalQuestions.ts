@@ -888,8 +888,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Så fungerar arbetsmarknaden',
       pageApprox: 27,
     },
-    'Vad består den offentliga sektorn av?',
-    'What does the public sector consist of?',
+    'Vilket svar beskriver den offentliga sektorn?',
+    'Which answer describes the public sector?',
     [
       [
         'Verksamheter som staten, regionerna och kommunerna ansvarar för',
@@ -900,8 +900,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Bara ideella föreningar', 'Only non-profit associations'],
     ],
     0,
-    'Offentlig sektor finansieras med skatter och omfattar verksamheter som vård, skola, polis och räddningstjänst.',
-    'The public sector is tax-financed and includes activities such as health care, schools, police, and rescue services.',
+    'UHR-avsnittet Så fungerar arbetsmarknaden säger att arbetsmarknaden kan delas upp i offentlig och privat sektor. Den offentliga sektorn består av verksamheter som staten, regionerna och kommunerna ansvarar för och som finansieras med skatter, till exempel vård, skola, polis och räddningstjänst.',
+    'The UHR section Så fungerar arbetsmarknaden says that the labour market can be divided into public and private sectors. The public sector consists of activities for which the state, regions, and municipalities are responsible and that are financed by taxes, such as health care, schools, police, and rescue services.',
     ['public-sector', 'work', 'tax'],
   ),
   single(
