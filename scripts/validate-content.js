@@ -486,6 +486,7 @@ let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
+let uhrMapTextFieldsNormalizedValidated = 0;
 let uhrSourceMetadataValidated = false;
 let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
@@ -807,11 +808,25 @@ function buildUhrReferenceChapters() {
     if (hasText(chapter.id) && seenChapterIds.has(chapter.id)) {
       reject(`${label} has duplicate chapter id`);
     }
+    if (hasText(chapter.id)) {
+      if (!textIsTrimmedSingleSpaced(chapter.id)) {
+        reject(`${label} id must be trimmed and single-spaced`);
+      } else {
+        uhrMapTextFieldsNormalizedValidated += 1;
+      }
+    }
     if (hasText(chapter.id)) seenChapterIds.add(chapter.id);
 
     if (!hasText(chapter.chapter)) reject(`${label} missing chapter title`);
     if (hasText(chapter.chapter) && seenChapterTitles.has(chapter.chapter)) {
       reject(`${label} has duplicate chapter title`);
+    }
+    if (hasText(chapter.chapter)) {
+      if (!textIsTrimmedSingleSpaced(chapter.chapter)) {
+        reject(`${label} chapter title must be trimmed and single-spaced`);
+      } else {
+        uhrMapTextFieldsNormalizedValidated += 1;
+      }
     }
     if (hasText(chapter.chapter)) seenChapterTitles.add(chapter.chapter);
 
@@ -837,6 +852,13 @@ function buildUhrReferenceChapters() {
       chapter.sections.forEach((section, sectionIndex) => {
         if (!hasText(section)) {
           reject(`${label} section[${sectionIndex}] is blank`);
+        }
+        if (hasText(section)) {
+          if (!textIsTrimmedSingleSpaced(section)) {
+            reject(`${label} section[${sectionIndex}] must be trimmed and single-spaced`);
+          } else {
+            uhrMapTextFieldsNormalizedValidated += 1;
+          }
         }
         if (hasText(section) && sections.has(section)) {
           reject(`${label} has duplicate section "${section}"`);
@@ -894,6 +916,15 @@ function validateUhrSourceMetadata() {
     }
     if (!isIsoDate(source.retrievedDate)) {
       reject('UHR section map source retrievedDate must use YYYY-MM-DD');
+    }
+    for (const field of ['title', 'publisher', 'url', 'retrievedDate']) {
+      if (hasText(source[field])) {
+        if (!textIsTrimmedSingleSpaced(source[field])) {
+          reject(`UHR section map source ${field} must be trimmed and single-spaced`);
+        } else {
+          uhrMapTextFieldsNormalizedValidated += 1;
+        }
+      }
     }
   }
 
@@ -1111,6 +1142,7 @@ console.log(
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
+      uhrMapTextFieldsNormalizedValidated,
       questionChapterReferenceParityValidated,
       uhrReferencesValidated,
     },
