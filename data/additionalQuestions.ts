@@ -509,8 +509,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q043',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Polisen', pageApprox: 18 },
-    'Vilket påstående beskriver polisens uppgift enligt materialet?',
-    'Which statement describes the police role according to the material?',
+    'Vilket påstående beskriver polisens uppgift i Sverige?',
+    'Which statement describes the role of the police in Sweden?',
     [
       [
         'Att upprätthålla lag och ordning samt förebygga och utreda brott',
