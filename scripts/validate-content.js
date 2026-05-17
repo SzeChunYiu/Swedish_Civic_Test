@@ -2785,8 +2785,8 @@ function wrongOption(question) {
 function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   if (variantIndex === 0) {
     return {
-      questionSv: `Vilket svar stämmer bäst enligt UHR-avsnittet "${sourceQuestion.uhrReference?.section}"? ${sourceQuestion.questionSv}`,
-      questionEn: `Which answer best matches the UHR section "${sourceQuestion.uhrReference?.section}"? ${sourceQuestion.questionEn}`,
+      questionSv: `Vilket svar stämmer bäst? ${sourceQuestion.questionSv}`,
+      questionEn: `Which answer best matches? ${sourceQuestion.questionEn}`,
     };
   }
 

@@ -909,8 +909,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Så fungerar arbetsmarknaden',
       pageApprox: 27,
     },
-    'Ungefär hur stor andel av alla som jobbar i Sverige arbetar inom den privata sektorn enligt UHR-materialet?',
-    'According to the UHR material, approximately what share of all people working in Sweden work in the private sector?',
+    'Ungefär hur stor andel av alla som jobbar i Sverige arbetar inom den privata sektorn?',
+    'Approximately what share of all people working in Sweden work in the private sector?',
     [
       ['30 procent', '30 percent'],
       ['50 procent', '50 percent'],
@@ -973,8 +973,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Lagar och regler på arbetsmarknaden',
       pageApprox: 29,
     },
-    'Vilken uppgift har lagar på arbetsmarknaden enligt UHR-materialet?',
-    'According to the UHR material, what role do labour-market laws have?',
+    'Vilken uppgift har lagar på arbetsmarknaden?',
+    'What role do labour-market laws have?',
     [
       [
         'Att skydda anställdas rättigheter och skapa en trygg arbetsmiljö',
@@ -1291,8 +1291,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q081',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Den svenska modellen', pageApprox: 35 },
-    'Vilket samarbete blev Saltsjöbadsavtalet från 1938 viktigt för?',
-    'Which cooperation did the 1938 Saltsjöbaden Agreement become important for?',
+    'Vad blev Saltsjöbadsavtalet från 1938 viktigt för?',
+    'What did the 1938 Saltsjöbaden Agreement become important for?',
     [
       [
         'Samarbetet mellan fackföreningar och arbetsgivare',
@@ -1362,8 +1362,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Digital revolution och globalisering',
       pageApprox: 38,
     },
-    'Vad har datorer, internet, smarta telefoner och AI förändrat sedan 1990-talet?',
-    'What have computers, the internet, smartphones, and AI changed since the 1990s?',
+    'Vad har den digitala revolutionen förändrat?',
+    'What has the digital revolution changed?',
     [
       [
         'Hur människor arbetar, studerar, kommunicerar och tar del av information',
@@ -1382,8 +1382,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q085',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Nordiskt samarbete', pageApprox: 39 },
-    'Genom vilka två organ samarbetar Sverige främst med de andra nordiska länderna?',
-    'Through which two bodies does Sweden mainly cooperate with the other Nordic countries?',
+    'Genom vilka två organ sker Sveriges nordiska samarbete främst?',
+    "Through which two bodies does Sweden's Nordic cooperation mainly take place?",
     [
       [
         'Nordiska rådet och Nordiska ministerrådet',
@@ -1402,7 +1402,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q086',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vilket år blev Sverige medlem i EU?',
+    'Vilket år säger UHR-materialet att Sverige blev medlem i EU?',
     'In what year did Sweden become a member of the EU?',
     [
       ['1949', '1949'],
@@ -1420,7 +1420,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q087',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vad betyder EU:s fyra friheter?',
+    'Vad innebär EU:s fyra friheter?',
     "What do the EU's four freedoms mean?",
     [
       [
@@ -1446,7 +1446,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q088',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vad arbetar Europarådet för?',
+    'Vad säger UHR-materialet att Europarådet arbetar för?',
     'What does the Council of Europe work for?',
     [
       [
@@ -1466,8 +1466,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q089',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Globalt samarbete', pageApprox: 39 },
-    'Vad arbetar Sida för i Sveriges globala utvecklingssamarbete?',
-    'What does Sida work for in Sweden’s global development cooperation?',
+    'Vad säger UHR-materialet att Sida arbetar för?',
+    'What does Sida work to do?',
     [
       [
         'Att minska fattigdom och förtryck i världen',
@@ -1515,8 +1515,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q091',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Sveriges försvar', pageApprox: 40 },
-    'Sant eller falskt: Sveriges totalförsvar omfattar både det militära försvaret och det civila försvaret.',
-    'True or false: Sweden’s total defence includes both military defence and civil defence.',
+    'Sant eller falskt: Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret.',
+    'True or false: Swedish total defence includes both military defence and civil defence.',
     true,
     'UHR-avsnittet Sveriges försvar säger att Sverige ansvarar för att skydda landet och dess invånare. Det säger också att det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret, därför är påståendet sant.',
     'The UHR section Sweden’s defence says Sweden is responsible for protecting the country and its residents. It also says Swedish total defence includes both military defence and civil defence, so the statement is true.',
@@ -1554,8 +1554,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Religionsfrihet',
       pageApprox: 42,
     },
-    'Vilken lag från 1951 gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion?',
-    'Which 1951 law made it possible to choose a religion completely freely or not belong to any religion?',
+    'Vilken lag markerade religionsfrihetens slutliga genombrott 1951?',
+    'Which law marked the final breakthrough for religious freedom in 1951?',
     [
       ['Religionsfrihetslagen', 'The Religious Freedom Act'],
       ['Tryckfrihetsförordningen', 'The Freedom of the Press Act'],

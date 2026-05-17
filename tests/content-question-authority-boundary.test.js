@@ -26,8 +26,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      'According to the UHR material, where is Sweden located?',
-      'This is an official exam question. According to the UHR material, where is Sweden located?',
+      'Where is Sweden located?',
+      'This is an official exam question. Where is Sweden located?',
     );
   }
   return contents;

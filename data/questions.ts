@@ -7,8 +7,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q001',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, var ligger Sverige?',
-    questionEn: 'According to the UHR material, where is Sweden located?',
+    questionSv: 'Var ligger Sverige?',
+    questionEn: 'Where is Sweden located?',
     options: [
       {
         id: 'a',
@@ -38,9 +38,9 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'true_false',
     questionSv:
-      'Sant eller falskt enligt UHR-materialet: Sveriges nordligaste del ligger norr om polcirkeln.',
+      'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
     questionEn:
-      "True or false according to the UHR material: Sweden's northernmost part lies north of the Arctic Circle.",
+      "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -64,9 +64,9 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'single_choice',
     questionSv:
-      'Enligt UHR-materialet, ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+      'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
     questionEn:
-      'According to the UHR material, approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+      'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
     options: [
       { id: 'a', textSv: 'Cirka 160 kilometer', textEn: 'About 160 kilometres' },
       { id: 'b', textSv: 'Cirka 1 600 kilometer', textEn: 'About 1,600 kilometres' },
@@ -91,9 +91,9 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q004',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, vad heter havet vid Sveriges östra kust?',
+    questionSv: 'Vad heter havet vid Sveriges östra kust?',
     questionEn:
-      "According to the UHR material, what is the sea along Sweden's eastern coast called?",
+      "What is the sea along Sweden's eastern coast called?",
     options: [
       { id: 'a', textSv: 'Nordsjön', textEn: 'The North Sea' },
       { id: 'b', textSv: 'Medelhavet', textEn: 'The Mediterranean Sea' },
@@ -118,8 +118,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q005',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, vilka öar är Sveriges två största?',
-    questionEn: "According to the UHR material, which islands are Sweden's two largest?",
+    questionSv: 'Vilka öar är Sveriges två största?',
+    questionEn: "Which islands are Sweden's two largest?",
     options: [
       { id: 'a', textSv: 'Gotland och Öland', textEn: 'Gotland and Öland' },
       { id: 'b', textSv: 'Hisingen och Orust', textEn: 'Hisingen and Orust' },
@@ -145,9 +145,9 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'true_false',
     questionSv:
-      'Sant eller falskt enligt UHR-materialet: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
+      'Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
     questionEn:
-      "True or false according to the UHR material: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
+      "True or false: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -170,8 +170,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q007',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, vad heter Sveriges högsta berg?',
-    questionEn: "According to the UHR material, what is the name of Sweden's highest mountain?",
+    questionSv: 'Vad heter Sveriges högsta berg?',
+    questionEn: "What is the name of Sweden's highest mountain?",
     options: [
       { id: 'a', textSv: 'Kebnekaise', textEn: 'Kebnekaise' },
       { id: 'b', textSv: 'Smygehuk', textEn: 'Smygehuk' },
@@ -192,8 +192,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q008',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, vilka är Sveriges tre största sjöar?',
-    questionEn: "According to the UHR material, which are Sweden's three largest lakes?",
+    questionSv: 'Vilka är Sveriges tre största sjöar?',
+    questionEn: "Which are Sweden's three largest lakes?",
     options: [
       { id: 'a', textSv: 'Vänern, Vättern och Mälaren', textEn: 'Vänern, Vättern, and Mälaren' },
       {
@@ -222,8 +222,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q009',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, ungefär hur många människor bor i Sverige?',
-    questionEn: 'According to the UHR material, approximately how many people live in Sweden?',
+    questionSv: 'Ungefär hur många människor bor i Sverige?',
+    questionEn: 'Approximately how many people live in Sweden?',
     options: [
       { id: 'a', textSv: 'Nästan 11 miljoner', textEn: 'Almost 11 million' },
       { id: 'b', textSv: 'Nästan 1 miljon', textEn: 'Almost 1 million' },
@@ -286,8 +286,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q011',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vad betyder demokrati enligt UHR-materialet?',
-    questionEn: 'According to the UHR material, what does democracy mean?',
+    questionSv: 'Vad betyder demokrati?',
+    questionEn: 'What does democracy mean?',
     options: [
       { id: 'a', textSv: 'Folkstyre', textEn: 'Rule by the people' },
       { id: 'b', textSv: 'Militärstyre', textEn: 'Military rule' },
@@ -442,9 +442,9 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch02',
     type: 'true_false',
     questionSv:
-      'Sant eller falskt enligt UHR-materialet: Ett lågt valdeltagande kan påverka demokratin.',
+      'Sant eller falskt: Ett lågt valdeltagande kan påverka demokratin.',
     questionEn:
-      'True or false according to the UHR material: A low voter turnout can affect democracy.',
+      'True or false: A low voter turnout can affect democracy.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -468,9 +468,9 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch03',
     type: 'single_choice',
     questionSv:
-      'Vad innebär det enligt UHR-materialet att Sverige är en parlamentarisk representativ demokrati?',
+      'Vad innebär det att Sverige är en parlamentarisk representativ demokrati?',
     questionEn:
-      'According to the UHR material, what does it mean that Sweden is a parliamentary representative democracy?',
+      'What does it mean that Sweden is a parliamentary representative democracy?',
     options: [
       {
         id: 'a',
@@ -507,8 +507,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q017',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, hur många ledamöter har riksdagen?',
-    questionEn: 'According to the UHR material, how many members does the Riksdag have?',
+    questionSv: 'Hur många ledamöter har riksdagen?',
+    questionEn: 'How many members does the Riksdag have?',
     options: [
       { id: 'a', textSv: '21', textEn: '21' },
       { id: 'b', textSv: '290', textEn: '290' },
@@ -529,8 +529,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q018',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Vem väljer statsministern enligt UHR-materialet?',
-    questionEn: 'Who chooses the prime minister according to the UHR material?',
+    questionSv: 'Vem väljer statsministern?',
+    questionEn: 'Who chooses the prime minister?',
     options: [
       { id: 'a', textSv: 'Riksdagen', textEn: 'The Riksdag' },
       { id: 'b', textSv: 'Kungen ensam', textEn: 'The king alone' },
@@ -551,9 +551,9 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q019',
     chapterId: 'ch04',
     type: 'single_choice',
-    questionSv: 'Enligt UHR-materialet, hur gammal måste man ha fyllt för att ha rösträtt?',
+    questionSv: 'Hur gammal måste man ha fyllt för att ha rösträtt?',
     questionEn:
-      'According to the UHR material, how old must a person be to have the right to vote?',
+      'How old must a person be to have the right to vote?',
     options: [
       { id: 'a', textSv: '16 år', textEn: '16 years old' },
       { id: 'b', textSv: '18 år', textEn: '18 years old' },
@@ -579,8 +579,8 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch04',
     type: 'true_false',
     questionSv:
-      'Sant eller falskt enligt UHR-materialet: Folkomröstningar i Sverige är rådgivande.',
-    questionEn: 'True or false according to the UHR material: Referendums in Sweden are advisory.',
+      'Sant eller falskt: Folkomröstningar i Sverige är rådgivande.',
+    questionEn: 'True or false: Referendums in Sweden are advisory.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },

@@ -85,23 +85,79 @@ DIFFICULTY-1 [feature, v1.0]: add a difficulty setting (Lätt / Medel / Svår).
   (Settings + pre-quiz) + engine + schema now; content lane backfills harder
   distractors progressively. Easy must still be fair; Hard genuinely tricky.
 
-SOURCE-CITATION [v1.0, content+UI]: REMOVE "Enligt UHR/According to UHR" (and
-  similar) from question STEMS — it reads redundant and fake. Instead render a
-  small source citation line BELOW the question (e.g. "Källa/Source: Sverige i
-  fokus, s.X" localized). Stems read like natural standalone questions. Keep
-  the not-a-real-exam disclaimer (DIFFERENT from the source line).
+SOURCE-CITATION [DONE 2026-05-17 — commit d73f546 / PR #109]: The "Enligt
+  UHR-materialet, ..." / "According to the UHR material, ..." connective has
+  been stripped from ALL question stems (61 base literals) and from the
+  derived single-choice variant template (lib/content/derivedQuestions.ts).
+  UHR is now cited only via the uhrChapter/uhrSection/uhrPage fields (the
+  Källa/Source line), never in the stem. Enforced by an executable gate:
+  tests/content-uhr-source-citation-stem.test.js (wired into test:content) —
+  fails if any stem carries the connective. question-bank.csv offenders
+  228 -> 0; full test:content 202/202 green. DO NOT re-queue per-question
+  UHR-strip work; the gate keeps this done. (The not-a-real-exam disclaimer
+  is separate and unchanged.)
 
 TRANSLATE-COMPLETE [v1.0, P0]: 100% SV+EN parity — validate:content FAILS if
   any user-facing string or question field lacks both. Then a naturalness pass:
   English must be natural, idiomatic, fluent (not literal/MT). Stilted English
   = P0 defect via review-to-queue. Swedish must be correct & natural too.
 
-SOURCE-EXPANSION [content, ongoing]: question sets may now be EXPANDED beyond
-  UHR Sverige i fokus using OTHER authoritative public sources (official Swedish
-  civic/government public info, reputable civics references). Each new question
-  still cites its specific verifiable public source below it, is factually
-  correct & current, SV+EN parity, passes the legal-safety subset. Inaccurate
-  or unverifiable = P0 blocker. Grow coverage; do not dilute accuracy.
+SOURCE-EXPANSION [content, P0 program, target = 2000 verified questions]:
+  PHASE A — EXHAUST UHR: mine the UHR "Sverige i fokus" material
+  completely. Every distinct fact/concept/topic in every UHR chapter &
+  section must yield question(s) until UHR coverage is SATURATED (no
+  remaining UHR fact a fair test could ask that we don't cover). Add a
+  UHR-coverage report/check: per UHR chapter+section, list facts vs
+  questions; gaps are tracked and burned down.
+  PHASE B — EXPAND SAME TOPICS FROM OTHER AUTHORITIES: within the SAME
+  UHR topic domains, add questions researched from OTHER authoritative
+  public sources, e.g. riksdagen.se / lagen.nu (law), regeringen.se,
+  Skatteverket, Migrationsverket, SCB, Skolverket, Forsakringskassan,
+  1177, Arbetsformedlingen, Pensionsmyndigheten, MSB/krisinformation.se,
+  Sweden.se / Swedish Institute, official kommun/region .se pages. Prefer
+  primary official sources over secondary.
+  TARGET: ramp the bank to ~2000 questions total, balanced across all
+  civic domains and difficulty (Latt/Medel/Svar), NO near-duplicate
+  stems/answers (reuse the duplicate-text detector; dup = reject).
+  STRICT CITATION GATE (executable, hard, per question — uncited or
+  unverifiable = P0, NOT shippable): every question MUST carry a
+  specific verifiable public source — concrete source title + locator
+  (chapter/section/page or stable public URL), not a vague 'official
+  info'. That citation MUST render to the user on the website (the
+  Kalla/Source line under the question). Add/extend a test asserting:
+  (a) 100% of questions have a non-empty, well-formed verifiable source;
+  (b) the source string is surfaced in the rendered question UI. A
+  question whose fact cannot be traced to a citable public source is
+  deleted, not guessed. Factually wrong/outdated = P0.
+  PROVENANCE LABEL (executable, hard): every question has a required
+  provenance field marking its origin as either the official UHR study
+  material ("Sverige i fokus") or an EXTERNAL authority. Every non-UHR
+  question MUST show a clear, localized label/badge in the rendered UI
+  (SV+EN, e.g. "Extern kalla - utover UHR-materialet" / "External
+  source - beyond the UHR material") so the learner always knows which
+  questions come from the official study material vs supplementary
+  authoritative sources. UHR-origin questions are NOT given the external
+  label. This label is IN ADDITION to (never a replacement for) the
+  specific Kalla/Source citation line. Add/extend a test asserting:
+  (a) 100% of questions have a valid provenance value (uhr|external);
+  (b) every external-provenance question renders the external label in
+  the question UI; (c) no UHR question is mislabeled external. A non-UHR
+  question without the visible external label = P0, not shippable.
+  QUALITY (unchanged, all still enforced): original PARAPHRASED wording
+  (never verbatim source text), natural fluent language, SV+EN parity
+  now (then the EBOOK multilingual set), not-a-real-exam disclaimer, no
+  claimed official affiliation, DESIGN.md tokens, all content gates green.
+  PROCESS: incremental atoms (~25-50 fully-sourced verified questions per
+  atom), id-sequence continues, regenerate question-bank.csv, run
+  test:content each atom (never push red). Grow coverage; never dilute
+  accuracy or citation rigour to hit the count.
+
+FILL-GAPS [standing quality bar, operator 2026-05-17]: the user's bar is
+  "fill every gap, fill every detail of all aspects of the project."
+  Every lane (content, UI, monetization, ebook, tests, accessibility,
+  i18n) should actively hunt and close its own gaps each iteration, not
+  just touch a path. Partial/placeholder/TODO left behind = a defect to
+  log and burn down. Thoroughness and completeness are the standard.
 === END CONTENT OVERHAUL ===
 
 === P0 BUG — DO THIS FIRST, ahead of all cosmetic/design work ===
@@ -137,8 +193,18 @@ line-height, parchment), works great on the live web URL.
 HARD CONTENT RULES:
 - ORIGINAL, PARAPHRASED prose — do NOT copy UHR (or any source) text
   verbatim or near-verbatim. Rewrite naturally in our own words.
-- Natural, fluent language (not machine/literal). SV + EN parity now; the
-  SAME translated language set as the app (full multi-language = v1.1).
+- Natural, fluent language (not machine/literal). SV + EN parity now, then
+  EXPAND to the major languages spoken by immigrants in Sweden:
+  Arabic, Persian (Farsi/Dari), Somali, Tigrinya, Kurdish (Sorani +
+  Kurmanji), Bosnian/Croatian/Serbian, Polish, Turkish, Spanish, Russian,
+  Ukrainian, Thai, Mandarin, Finnish (prioritise by community size;
+  confirm/extend the set with quick public-data research).
+  NATIVE-QUALITY GATE (hard, per language): each translation must read as
+  if written by an educated NATIVE speaker — idiomatic, grammatically
+  perfect, culturally natural register, NOT machine/literal. A stilted or
+  MT-flavoured translation is a DEFECT, not shippable. Add a per-language
+  native-quality review lane/checklist; mark a language done only when it
+  passes that review. One language chapter-set per atom.
 - Each chapter cites its verifiable public source(s) at the end.
 - Keep legal-safety: no claimed official affiliation, not an official text,
   disclaimer present. Factually accurate & current; wrong = P0.
@@ -181,6 +247,15 @@ accurate & current, ORIGINAL paraphrased wording (never copied verbatim),
 natural fluent language, SV+EN parity now (full language set in v1.1), each
 fact cites a verifiable public source. Inaccurate fact = P0. Start ~30-50
 strong facts, expandable; rotate without immediate repeats.
+TONE (operator 2026-05-17, user directive): FACT-BUBBLE MUST carry a
+sense of Swedish humor — witty, warm, self-aware (lagom, fika, the
+queue ticket, jantelagen, weather complaints, Systembolaget, allemans-
+ratten quirks, etc.). Dry encyclopedic trivia is a MISS even if
+factually correct; the humor is the point and makes the app lively.
+Humor must land naturally in BOTH SV and EN (not a translated pun that
+dies in one language) and never undercut factual accuracy or the
+not-a-real-exam disclaimer. Aim: a Swede smiles in recognition; a
+learner abroad finds it charming and memorable.
 === END ===
 
 === PRIORITY: SWEDISH MASCOTS (Jellycat-style) + PICKER (operator 2026-05-17) ===
@@ -207,3 +282,35 @@ MASCOT-UPDATE (operator 2026-05-17): add "Skoglimpa" (Swedish dark rye/forest
 loaf) to the mascot set. FEATURE Kanelbulle + Skoglimpa as the highlighted
 "favourites" in the picker (top row / pre-selected default = Kanelbulle).
 Same Jellycat-inspired original SVG style + reactive animation rules.
+
+
+=== PRIORITY: UI-OVERHAUL (operator 2026-05-17, user directive) ===
+UI-OVERHAUL [P0, feature+design, repeatable atoms]: the app is functionally
+mostly there but "doesn't look like an app yet" — it feels thin. Make it
+feel like a rich, real, polished mobile/web app. ADDITIVE ambition: MORE
+buttons, MORE functions, more interactive surfaces and affordances, stronger
+app-like navigation (tab bar / clear primary actions / quick actions / empty
+states with CTAs / progress + streak surfaces / settings depth). This is
+DISTINCT from PANEL-OPT (declutter): screens should be dense and capable
+where it helps, not sparse — but still strong hierarchy, DESIGN.md tokens
+only, reduced-motion respected, mobile + web parity, SV+EN parity. Distil
+concretely from comparable best-in-class test-prep / language apps (ties to
+the competitive-distillation directive): identify specific patterns/screens
+they have that we lack, then build them. One screen/feature per atom; name
+it in the commit; keep all content/test gates green. Acceptance per atom:
+the screen gains a real, usable, app-grade capability (not decoration).
+=== END UI-OVERHAUL ===
+
+=== PRIORITY: MONETIZATION-OPT (operator 2026-05-17, user directive) ===
+MONETIZATION-OPT [P1, research+feature]: optimise monetisation WITHOUT
+hurting the learner. (a) RESEARCH (write findings to docs/, cite sources):
+how comparable test-prep / language / civic apps place ads and price
+upgrades; where ads are least disturbing. (b) AD-PLACEMENT POLICY: ads ONLY
+at natural breakpoints — results screen, between question sets, ebook
+chapter ends, home — and a hard rule + executable test asserting NO ad ever
+renders on the active exam/question screen. (c) OPTIMISE: Remove-Ads paywall
+placement & copy near (not on) ad surfaces, rewarded-ad value exchange,
+upgrade conversion. Reuse existing lib/monetization (ADS-*/IAP-*); keep
+adsDisabled/entitlement gating intact; tsc + npm test -- monetization clean.
+One atom per change; research atom first, then policy test, then tuning.
+=== END MONETIZATION-OPT ===
