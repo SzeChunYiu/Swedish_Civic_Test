@@ -145,3 +145,25 @@ HARD CONTENT RULES:
 - Cross-link: questions can reference the relevant ebook chapter.
 Ship SV+EN chapters incrementally (repeatable atoms), web reading UX first.
 === END EBOOK ===
+
+=== PRIORITY: PANEL-OPT + DEDICATED CRITICAL REVIEWER (operator 2026-05-17) ===
+PANEL-OPT [repeatable, P1]: optimize the information/panels on EVERY screen.
+Per screen: one primary focus + minimal supporting context. Remove clutter,
+redundant labels, empty/decorative panels, duplicated info. Strong hierarchy
+(title > primary action > support). Mobile + web. Token colors only, DESIGN.md
+§5, keep 7/7 green. One screen per atom; name the screen in the commit.
+
+CRITICAL-REVIEWER [dedicated standing lane, every iteration — Reviewer Contract]:
+A hostile, product-minded reviewer. Each iteration: pick ONE aspect of ONE
+screen/flow (UI, UX, layout, info density, copy, Swedish accuracy, English
+naturalness, answer correctness, a11y, perf, motion, the answer-shuffle, the
+source-citation) and ATTACK it as a demanding real user/expert. EVERY finding
+MUST be filed via /Users/billy/Desktop/projects/.shared/review-to-queue.sh
+(--team build/content --severity blocker|major|minor --kind user-sim|functional|
+data|language|a11y) so it becomes a must-fix queue item — NOT a markdown
+report (a report-only iteration is reverted like any audit-loop). Severities:
+wrong answer / missing translation / broken flow = blocker. The reviewer never
+accepts "looks fine" — it always finds the next concrete defect until the app
+is genuinely product-level. Findings route back to build/content and must be
+closed by a product fix, not prose.
+=== END ===
