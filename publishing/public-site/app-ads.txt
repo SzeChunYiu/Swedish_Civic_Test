@@ -1,0 +1,8 @@
+# app-ads.txt — Sweden Citizenship Test Prep
+# Spec: https://iabtechlab.com/app-ads-txt/
+# Hosted on the public GitHub Pages site (same site as support/privacy).
+# REAL-SWAP: replace pub-PENDINGADMOBID with the publisher ID AdMob assigns —
+# it is the pub-XXXXXXXXXXXXXXXX segment of your AdMob App ID
+# (ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY). Same ID for iOS and Android apps.
+# Then redeploy the public site. AdMob verifies this within ~24h.
+google.com, pub-PENDINGADMOBID, DIRECT, f08c47fec0942fa0
