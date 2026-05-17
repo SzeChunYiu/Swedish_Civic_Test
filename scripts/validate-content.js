@@ -617,6 +617,8 @@ const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
 const generateExam = examGeneratorModule.generateExam;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
+const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
+const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -646,6 +648,7 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
 let streakRulesValidated = 0;
@@ -696,6 +699,9 @@ if (!Array.isArray(generatedPublishedQuestions)) {
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
+if (typeof getChapterQuizSessionId !== 'function') {
+  fail('getChapterQuizSessionId export is not a function');
+}
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
 }
@@ -1054,6 +1060,55 @@ function validatePracticeScoringRules() {
 
   if (rulesAreValid && practiceScoringRulesValidated === cases.length) {
     practiceScoringRulesParityValidated = true;
+  }
+}
+
+function validateChapterQuizSessionParity() {
+  if (
+    !Array.isArray(chapters) ||
+    !Array.isArray(questions) ||
+    typeof getChapterQuizSessionId !== 'function'
+  ) {
+    return;
+  }
+
+  chapters.forEach((chapter) => {
+    const expectedQuestion = questions.find((question) => question.chapterId === chapter.id);
+    const sessionId = getChapterQuizSessionId(questions, chapter.id);
+    const sessionQuestion = questions.find((question) => question.id === sessionId);
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (!expectedQuestion) {
+      reject(`${chapter.id} has no question for chapter quiz session`);
+    } else if (sessionId !== expectedQuestion.id) {
+      reject(
+        `${chapter.id} chapter quiz session resolves to ${sessionId}, expected ${expectedQuestion.id}`,
+      );
+    }
+
+    if (!sessionQuestion) {
+      reject(`${chapter.id} chapter quiz session id ${sessionId} does not match a question`);
+    } else if (sessionQuestion.chapterId !== chapter.id) {
+      reject(
+        `${chapter.id} chapter quiz session id ${sessionId} belongs to ${sessionQuestion.chapterId}`,
+      );
+    } else if (sessionQuestion.reviewStatus !== 'published') {
+      reject(`${chapter.id} chapter quiz session id ${sessionId} is not published`);
+    }
+
+    if (valid) chapterQuizSessionParityValidated += 1;
+  });
+
+  if (getChapterQuizSessionId(questions, 'missing-chapter') !== null) {
+    fail('missing chapter quiz session should resolve to null');
+  }
+  if (getChapterQuizSessionId(questions, null) !== null) {
+    fail('null chapter quiz session should resolve to null');
   }
 }
 
@@ -2210,6 +2265,7 @@ validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
@@ -2254,6 +2310,7 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
       streakRulesValidated,
