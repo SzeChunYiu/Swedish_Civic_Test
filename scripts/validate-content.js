@@ -156,6 +156,15 @@ const EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS = [
 const EXPECTED_RELEASE_REAL_ADS_ENV_FLAG = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
+const EXPECTED_EXAM_ROUTE_HEADERS = [
+  { text: 'Mock exam', styleName: 'title', occurrences: 2 },
+  { text: 'Exam result', styleName: 'title', occurrences: 1 },
+  { text: 'Exam access', styleName: 'sectionTitle', occurrences: 1 },
+  { text: 'Next exam', styleName: 'sectionTitle', occurrences: 1 },
+  { text: 'Chapter breakdown', styleName: 'sectionTitle', occurrences: 1 },
+  { text: 'Question review', styleName: 'sectionTitle', occurrences: 1 },
+  { text: 'Progress', styleName: 'sectionTitle', occurrences: 1 },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -1034,6 +1043,10 @@ function jsonEqual(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function expectedGeneratedTags(sourceQuestion, convention) {
   return [
     ...new Set([...sourceQuestion.tags, 'published-variant', convention?.tag].filter(Boolean)),
@@ -1762,6 +1775,8 @@ let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
+let examRouteHeadersValidated = 0;
+let examRouteHeaderParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2790,6 +2805,58 @@ function validateExamSubmissionFinalityParity() {
   }
 
   if (valid) examSubmissionFinalityParityValidated = true;
+}
+
+function countExamRouteHeaderOccurrences(source, { styleName, text }) {
+  const headerPattern = new RegExp(
+    `<Text\\s+accessibilityRole="header"\\s+style=\\{styles\\.${styleName}\\}>\\s*${escapeRegExp(
+      text,
+    )}\\s*</Text>`,
+    'g',
+  );
+  return (source.match(headerPattern) || []).length;
+}
+
+function validateExamRouteHeaderParity() {
+  let valid = true;
+  let examRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/exam.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  const unheaderedRouteHeadings =
+    examRoute.match(/<Text style=\{styles\.(?:title|sectionTitle)\}>/g) || [];
+  if (unheaderedRouteHeadings.length > 0) {
+    reject('exam route title and sectionTitle text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_EXAM_ROUTE_HEADERS.forEach((expectedHeader) => {
+    const actualOccurrences = countExamRouteHeaderOccurrences(examRoute, expectedHeader);
+    if (actualOccurrences !== expectedHeader.occurrences) {
+      reject(
+        `exam route header "${expectedHeader.text}" appears ${actualOccurrences} times as a ${expectedHeader.styleName} header, expected ${expectedHeader.occurrences}`,
+      );
+      return;
+    }
+    examRouteHeadersValidated += actualOccurrences;
+  });
+
+  const expectedHeaderCount = EXPECTED_EXAM_ROUTE_HEADERS.reduce(
+    (sum, expectedHeader) => sum + expectedHeader.occurrences,
+    0,
+  );
+  if (valid && examRouteHeadersValidated === expectedHeaderCount) {
+    examRouteHeaderParityValidated = true;
+  }
 }
 
 function firstWrongOptionId(question) {
@@ -6783,6 +6850,7 @@ validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
+validateExamRouteHeaderParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -6856,6 +6924,8 @@ console.log(
       mockExamChapterBalanceParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
+      examRouteHeadersValidated,
+      examRouteHeaderParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
