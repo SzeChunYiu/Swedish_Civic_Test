@@ -37,17 +37,19 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q002',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Den nordligaste delen av Sverige ligger norr om polcirkeln.',
-    questionEn: 'True or false: The northernmost part of Sweden lies north of the Arctic Circle.',
+    questionSv:
+      'Sant eller falskt enligt UHR-materialet: Sveriges nordligaste del ligger norr om polcirkeln.',
+    questionEn:
+      "True or false according to the UHR material: Sweden's northernmost part lies north of the Arctic Circle.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Den nordligaste delen av Sverige ligger norr om polcirkeln i det arktiska området. Påståendet är därför sant.',
+      'UHR-avsnittet Geografi, klimat och natur beskriver att den nordligaste delen av landet ligger norr om polcirkeln, i det arktiska området. Därför är påståendet sant; alternativet Falskt motsäger källan.',
     explanationEn:
-      'The northernmost part of Sweden is north of the Arctic Circle in the Arctic area. The statement is therefore true.',
+      'The UHR section Geography, climate, and nature says the northernmost part of the country lies north of the Arctic Circle, in the Arctic area. Therefore the statement is true; the False option contradicts the source.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
