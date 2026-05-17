@@ -405,7 +405,7 @@ export const baseQuestions: PracticeQuestion[] = [
       {
         id: 'a',
         textSv: 'Rättssäkerhet',
-        textEn: 'Rule of law',
+        textEn: 'Legal certainty',
       },
       {
         id: 'b',
@@ -427,7 +427,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationSv:
       'UHR-avsnittet Demokrati betyder folkstyre säger att en viktig förutsättning för demokrati är att lagarna gäller för alla i Sverige och att ingen får dömas utan en rättvis rättegång. Materialet kallar detta rättssäkerhet; de andra alternativen beskriver andra begrepp.',
     explanationEn:
-      'The UHR section Democracy means rule by the people says an important condition for democracy is that laws apply to everyone in Sweden and that no one may be sentenced without a fair trial. The material calls this rule of law; the other alternatives describe different concepts.',
+      'The UHR section Democracy means rule by the people says an important condition for democracy is that laws apply to everyone in Sweden and that no one may be sentenced without a fair trial. The material calls this legal certainty; the other alternatives describe different concepts.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -435,7 +435,7 @@ export const baseQuestions: PracticeQuestion[] = [
     },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
-    tags: ['rule-of-law', 'democracy', 'fair-trial'],
+    tags: ['legal-certainty', 'democracy', 'fair-trial'],
   },
   {
     id: 'q015',
