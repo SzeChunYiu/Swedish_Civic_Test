@@ -1554,8 +1554,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Religionsfrihet',
       pageApprox: 42,
     },
-    'Vilken lag markerade enligt UHR-materialet religionsfrihetens slutliga genombrott 1951?',
-    'According to the UHR material, which law marked the final breakthrough for religious freedom in 1951?',
+    'Vilken lag från 1951 gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion?',
+    'Which 1951 law made it possible to choose a religion completely freely or not belong to any religion?',
     [
       ['Religionsfrihetslagen', 'The Religious Freedom Act'],
       ['Tryckfrihetsförordningen', 'The Freedom of the Press Act'],
