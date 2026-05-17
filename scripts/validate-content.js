@@ -55,6 +55,7 @@ const QUESTION_BANK_CSV_HEADER = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
+const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 
@@ -596,6 +597,8 @@ const deriveBadges = badgeModule.deriveBadges;
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+const streakModule = loadTs('lib/learning/streaks.ts');
+const calculateStreak = streakModule.calculateStreak;
 const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
@@ -617,6 +620,8 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
+let streakRulesValidated = 0;
+let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
@@ -668,6 +673,7 @@ if (!Array.isArray(spacedRepetitionSchedule)) {
   fail('spacedRepetitionSchedule export is not an array');
 }
 if (typeof getNextReviewAt !== 'function') fail('getNextReviewAt export is not a function');
+if (typeof calculateStreak !== 'function') fail('calculateStreak export is not a function');
 if (typeof calculateAnswerXp !== 'function') fail('calculateAnswerXp export is not a function');
 if (typeof calculateQuizCompletionXp !== 'function') {
   fail('calculateQuizCompletionXp export is not a function');
@@ -1052,6 +1058,73 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
+}
+
+function validateStreakRules() {
+  if (typeof calculateStreak !== 'function') return;
+
+  const today = '2026-05-15';
+  const cases = [
+    {
+      label: 'empty answer history',
+      actual: () => calculateStreak([], today),
+      expected: 0,
+    },
+    {
+      label: 'consecutive answer days through today',
+      actual: () =>
+        calculateStreak(['2026-05-13T09:00:00.000Z', '2026-05-14', '2026-05-15'], today),
+      expected: 3,
+    },
+    {
+      label: 'duplicate answer dates',
+      actual: () =>
+        calculateStreak(
+          ['2026-05-14', '2026-05-15T08:00:00.000Z', '2026-05-15T20:00:00.000Z'],
+          today,
+        ),
+      expected: 2,
+    },
+    {
+      label: 'missed today but answered yesterday',
+      actual: () => calculateStreak(['2026-05-13', '2026-05-14'], today),
+      expected: 2,
+    },
+    {
+      label: 'gap before today',
+      actual: () => calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], today),
+      expected: 1,
+    },
+    {
+      label: 'future-only answers',
+      actual: () => calculateStreak(['2026-05-16'], today),
+      expected: 0,
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actualValue !== expected) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} returned ${actualValue}, expected ${expected}`);
+    } else {
+      streakRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && streakRulesValidated === EXPECTED_STREAK_RULE_COUNT) {
+    streakRulesParityValidated = true;
+  }
 }
 
 function validateXpRules() {
@@ -1954,6 +2027,7 @@ validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
 validateSpacedRepetitionSchedule();
+validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
@@ -1995,6 +2069,8 @@ console.log(
       badgeMilestoneParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      streakRulesValidated,
+      streakRulesParityValidated,
       xpRulesValidated,
       xpRulesParityValidated,
       masteryRulesValidated,
