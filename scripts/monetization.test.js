@@ -333,6 +333,35 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
 
+test('ad placements hydrate persisted remove-ads entitlements by default', () => {
+  const webBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+  const nativeAdCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
+    'utf8',
+  );
+  const entitlementHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
+    'utf8',
+  );
+
+  assert.match(entitlementHookSource, /defaultWebPurchaseRuntimeOptions/);
+  assert.match(entitlementHookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
+  assert.match(entitlementHookSource, /useResolvedAdEntitlements/);
+  assert.match(webBannerSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(webBannerSource, /!entitlementsReady/);
+  assert.match(nativeBannerSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
+  assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(nativeAdCardSource, /!entitlementsReady/);
+});
+
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
   const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(

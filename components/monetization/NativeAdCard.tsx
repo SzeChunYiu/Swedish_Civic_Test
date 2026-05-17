@@ -1,17 +1,20 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { shouldShowAd } from '../../lib/monetization/ads';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 import { colors, space, typography } from '../../lib/theme';
 
 export function NativeAdCard({
-  entitlements = FREE_ENTITLEMENTS,
+  entitlements,
 }: {
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
-  if (!shouldShowAd('results_native', entitlements)) return null;
+  const { entitlements: resolvedEntitlements, entitlementsReady } =
+    useResolvedAdEntitlements(entitlements);
+
+  if (!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)) return null;
 
   return (
     <Card>
