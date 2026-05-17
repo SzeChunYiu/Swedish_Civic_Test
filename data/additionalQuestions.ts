@@ -225,8 +225,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q030',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Vilket krav gäller för att rösta i riksdagsvalet enligt UHR-materialet?',
-    'According to the UHR material, which requirement applies to voting in Riksdag elections?',
+    'Vilka krav gäller för att rösta i Sveriges riksdagsval?',
+    'Which requirements apply to voting in Sweden’s Riksdag election?',
     [
       [
         'Man måste vara svensk medborgare och ha fyllt 18 år',
