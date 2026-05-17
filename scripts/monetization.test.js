@@ -463,12 +463,26 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
 test('rewarded extra exam credit is granted only after an earned ad reward', async () => {
   const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
+  const { showRewardedExtraExamAd: showUnavailableRewardedExtraExamAd } = withEnv(
+    {
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: 'false',
+      EXPO_PUBLIC_REAL_ADS_ENABLED: undefined,
+    },
+    () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
+  );
   const defaultResult = await showRewardedExtraExamAd();
   const removeAdsResult = await showRewardedExtraExamAd({
     entitlements: { adsDisabled: true },
   });
+  const disabledAdsResult = await showUnavailableRewardedExtraExamAd({
+    entitlements: { adsDisabled: false },
+  });
   const nativeRewardedAdSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/rewardedAd.native.ts'),
+    'utf8',
+  );
+  const webRewardedAdSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedAd.ts'),
     'utf8',
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
@@ -481,6 +495,8 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     status: 'earned_reward',
   });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
+  assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
+  assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
   assert.match(nativeRewardedAdSource, /initializeGoogleMobileAdsAfterConsent/);
   assert.match(nativeRewardedAdSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
   assert.match(nativeRewardedAdSource, /RewardedAd\.createForAdRequest/);
