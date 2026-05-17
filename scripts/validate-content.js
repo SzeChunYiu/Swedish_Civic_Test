@@ -90,6 +90,9 @@ function loadTs(relativePath, exportName) {
   moduleCache.set(filePath, mod.exports);
 
   function localRequire(request) {
+    if (request === 'expo-speech') {
+      return { speak() {}, stop() {} };
+    }
     if (request.startsWith('.')) {
       const resolvedPath = resolveLocalModule(filePath, request);
       const relativeResolvedPath = path.relative(repoRoot, resolvedPath);
@@ -626,6 +629,8 @@ const scoreAnswers = scoringModule.scoreAnswers;
 const answerValidationModule = loadTs('lib/quiz/answerValidation.ts');
 const isCorrectAnswer = answerValidationModule.isCorrectAnswer;
 const getAnswerOptionFeedback = answerValidationModule.getAnswerOptionFeedback;
+const audioModule = loadTs('lib/audio/speak.ts');
+const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const badgeModule = loadTs('lib/learning/badges.ts');
@@ -666,6 +671,9 @@ let practiceScoringRulesParityValidated = false;
 let answerFeedbackQuestionsValidated = 0;
 let answerFeedbackOptionsValidated = 0;
 let answerFeedbackRuntimeParityValidated = false;
+let questionSpeechTextQuestionsValidated = 0;
+let questionSpeechTextOptionsValidated = 0;
+let questionSpeechTextParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
@@ -732,6 +740,9 @@ if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a funct
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
   fail('getAnswerOptionFeedback export is not a function');
+}
+if (typeof buildQuestionSpeechText !== 'function') {
+  fail('buildQuestionSpeechText export is not a function');
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
@@ -1493,6 +1504,88 @@ function validateAnswerFeedbackParity() {
 
   if (runtimeParityIsValid && answerFeedbackQuestionsValidated === questions.length) {
     answerFeedbackRuntimeParityValidated = true;
+  }
+}
+
+function speechOptionLetter(index) {
+  return String.fromCharCode('A'.charCodeAt(0) + index);
+}
+
+function expectedQuestionSpeechText(question) {
+  const options = Array.isArray(question.options) ? question.options : [];
+  const optionText = options
+    .map((option, index) => `Alternativ ${speechOptionLetter(index)}. ${option.textSv}.`)
+    .join(' ');
+
+  return `${question.questionSv} ${optionText}`.trim();
+}
+
+function validateQuestionSpeechTextParity() {
+  if (!Array.isArray(questions) || typeof buildQuestionSpeechText !== 'function') {
+    return;
+  }
+
+  let runtimeParityIsValid = true;
+  const expectedOptionCount = questions.reduce(
+    (count, question) => count + (Array.isArray(question.options) ? question.options.length : 0),
+    0,
+  );
+
+  questions.forEach((question, index) => {
+    const label = question.id || `question[${index}]`;
+    let questionIsValid = true;
+
+    function reject(message) {
+      questionIsValid = false;
+      runtimeParityIsValid = false;
+      fail(message);
+    }
+
+    if (!Array.isArray(question.options) || question.options.length === 0) {
+      reject(`${label} speech text cannot be built without answer options`);
+      return;
+    }
+
+    let speechText = '';
+    try {
+      speechText = buildQuestionSpeechText(question);
+    } catch (error) {
+      reject(`${label} buildQuestionSpeechText threw ${error.message}`);
+      return;
+    }
+
+    const expectedSpeechText = expectedQuestionSpeechText(question);
+    if (speechText !== expectedSpeechText) {
+      reject(
+        `${label} speech text is ${JSON.stringify(speechText)}, expected ${JSON.stringify(
+          expectedSpeechText,
+        )}`,
+      );
+    }
+
+    if (!speechText.startsWith(question.questionSv)) {
+      reject(`${label} speech text must start with the Swedish question prompt`);
+    }
+
+    question.options.forEach((option, optionIndex) => {
+      const expectedFragment = `Alternativ ${speechOptionLetter(optionIndex)}. ${option.textSv}.`;
+      if (!speechText.includes(expectedFragment)) {
+        reject(`${label} speech text is missing option fragment ${expectedFragment}`);
+      }
+    });
+
+    if (questionIsValid) {
+      questionSpeechTextQuestionsValidated += 1;
+      questionSpeechTextOptionsValidated += question.options.length;
+    }
+  });
+
+  if (
+    runtimeParityIsValid &&
+    questionSpeechTextQuestionsValidated === questions.length &&
+    questionSpeechTextOptionsValidated === expectedOptionCount
+  ) {
+    questionSpeechTextParityValidated = true;
   }
 }
 
@@ -2707,6 +2800,7 @@ validateUxBenchmarks();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
+validateQuestionSpeechTextParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateStreakRules();
@@ -2761,6 +2855,9 @@ console.log(
       answerFeedbackQuestionsValidated,
       answerFeedbackOptionsValidated,
       answerFeedbackRuntimeParityValidated,
+      questionSpeechTextQuestionsValidated,
+      questionSpeechTextOptionsValidated,
+      questionSpeechTextParityValidated,
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,

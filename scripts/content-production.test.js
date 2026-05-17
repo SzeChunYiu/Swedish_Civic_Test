@@ -30,6 +30,11 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.answerFeedbackQuestionsValidated, 500);
   assert.ok(summary.answerFeedbackOptionsValidated > summary.answerFeedbackQuestionsValidated);
   assert.equal(summary.answerFeedbackRuntimeParityValidated, true);
+  assert.equal(summary.questionSpeechTextQuestionsValidated, 500);
+  assert.ok(
+    summary.questionSpeechTextOptionsValidated > summary.questionSpeechTextQuestionsValidated,
+  );
+  assert.equal(summary.questionSpeechTextParityValidated, true);
   assert.equal(summary.chapterQuizSessionParityValidated, 13);
   assert.equal(summary.spacedRepetitionIntervalsValidated, 5);
   assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
