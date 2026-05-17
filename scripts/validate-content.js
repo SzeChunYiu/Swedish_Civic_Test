@@ -2167,6 +2167,16 @@ function questionTextFieldsAreNormalized(question) {
   return fields.every(textIsTrimmedSingleSpaced);
 }
 
+function textHasSentenceEnding(value) {
+  return typeof value === 'string' && /[.!?]$/.test(value.trim());
+}
+
+function questionSentenceEndingsAreComplete(question) {
+  return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
+    textHasSentenceEnding(question[field]),
+  );
+}
+
 function findQuestionAuthorityOverclaim(question) {
   const text = [
     question.questionSv,
@@ -2851,6 +2861,11 @@ function validateQuestionSchema(question, index) {
   ) {
     reject(`${label} explanationSv and explanationEn must be distinct bilingual text`);
   }
+  for (const field of ['questionSv', 'questionEn', 'explanationSv', 'explanationEn']) {
+    if (hasText(question[field]) && !textHasSentenceEnding(question[field])) {
+      reject(`${label} ${field} must end with sentence punctuation`);
+    }
+  }
 
   if (!Array.isArray(question.options) || ![2, 4].includes(question.options.length)) {
     reject(`${label} must have 2 or 4 options`);
@@ -3188,6 +3203,7 @@ let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
 let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
+let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -9520,6 +9536,9 @@ if (Array.isArray(questions)) {
       if (questionTextFieldsAreNormalized(question)) {
         questionTextFieldsNormalizedValidated += 1;
       }
+      if (questionSentenceEndingsAreComplete(question)) {
+        questionSentenceEndingsValidated += 1;
+      }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
@@ -9895,6 +9914,7 @@ console.log(
       questionOptionBilingualTextPairsValidated,
       questionExactSchemaKeysValidated,
       questionTextFieldsNormalizedValidated,
+      questionSentenceEndingsValidated,
       questionAuthorityBoundaryTextValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
