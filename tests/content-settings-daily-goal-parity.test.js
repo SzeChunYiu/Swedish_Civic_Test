@@ -27,5 +27,8 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsStore, /Math\.max\(1, Math\.min\(50, Math\.round\(dailyGoalAnswers\)\)\)/);
   assert.match(settingsRoute, /\[5, 10, 20\]\.map\(\(goal\) =>/);
   assert.match(settingsRoute, /Set daily goal to \$\{goal\} answers/);
-  assert.match(settingsRoute, /\{dailyGoalAnswers\} answers per day/);
+  assert.match(settingsRoute, /Ställ in dagligt mål till \$\{goal\} svar/);
+  assert.match(settingsRoute, /\$\{answerCount\} svar per dag/);
+  assert.match(settingsRoute, /\$\{answerCount\} answers per day/);
+  assert.match(settingsRoute, /\{copy\.dailyGoalSummary\(dailyGoalAnswers\)\}/);
 });

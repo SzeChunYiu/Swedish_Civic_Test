@@ -14,9 +14,9 @@ test('settings controls expose selected and checked state on web', async ({ page
     await closeLaunchSponsorAd.click();
   }
 
+  await page.getByLabel('Byt frågespråk till Engelskt stöd').click();
   const swedishLanguage = page.getByLabel('Set question language to Swedish');
   const englishLanguage = page.getByLabel('Set question language to English support');
-  await englishLanguage.click();
 
   await expect(englishLanguage).toHaveAttribute('aria-selected', 'true');
   await expect(swedishLanguage).toHaveAttribute('aria-selected', 'false');

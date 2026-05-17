@@ -6,6 +6,58 @@ import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
+type SettingsCopy = {
+  audioDisabledLabel: string;
+  audioEnabledLabel: string;
+  audioTitle: string;
+  backToProfile: string;
+  backToProfileAccessibilityLabel: string;
+  dailyGoalSummary: (answerCount: number) => string;
+  dailyGoalTitle: string;
+  disableAudioAccessibilityLabel: string;
+  enableAudioAccessibilityLabel: string;
+  languageAccessibilityLabel: (label: string) => string;
+  questionLanguageTitle: string;
+  setDailyGoalAccessibilityLabel: (goal: number) => string;
+  subtitle: string;
+  title: string;
+};
+
+const settingsCopy: Record<AppLanguage, SettingsCopy> = {
+  sv: {
+    audioDisabledLabel: 'Ljud avstängt',
+    audioEnabledLabel: 'Ljud på',
+    audioTitle: 'Ljud',
+    backToProfile: '← Tillbaka till profil',
+    backToProfileAccessibilityLabel: 'Tillbaka till profil',
+    dailyGoalSummary: (answerCount) => `${answerCount} svar per dag`,
+    dailyGoalTitle: 'Dagligt mål',
+    disableAudioAccessibilityLabel: 'Stäng av ljud',
+    enableAudioAccessibilityLabel: 'Slå på ljud',
+    languageAccessibilityLabel: (label) => `Byt frågespråk till ${label}`,
+    questionLanguageTitle: 'Frågespråk',
+    setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
+    subtitle: 'Styr studiespråk, ljud och ditt dagliga mål.',
+    title: 'Inställningar',
+  },
+  en: {
+    audioDisabledLabel: 'Audio disabled',
+    audioEnabledLabel: 'Audio enabled',
+    audioTitle: 'Audio',
+    backToProfile: '← Back to Profile',
+    backToProfileAccessibilityLabel: 'Back to profile',
+    dailyGoalSummary: (answerCount) => `${answerCount} answers per day`,
+    dailyGoalTitle: 'Daily goal',
+    disableAudioAccessibilityLabel: 'Disable audio',
+    enableAudioAccessibilityLabel: 'Enable audio',
+    languageAccessibilityLabel: (label) => `Set question language to ${label}`,
+    questionLanguageTitle: 'Question language',
+    setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
+    subtitle: 'Control study language, audio, and your daily goal.',
+    title: 'Settings',
+  },
+};
+
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
@@ -13,76 +65,86 @@ export default function Screen() {
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
+  const copy = settingsCopy[language];
 
-  const renderLanguageButton = (value: AppLanguage, label: string) => (
-    <Pressable
-      key={value}
-      aria-selected={language === value}
-      accessibilityLabel={`Set question language to ${label}`}
-      accessibilityRole="button"
-      accessibilityState={{ selected: language === value }}
-      onPress={() => setLanguage(value)}
-      style={[styles.pill, language === value ? styles.pillActive : null]}
-    >
-      <Text style={[styles.pillText, language === value ? styles.pillTextActive : null]}>
-        {label}
-      </Text>
-    </Pressable>
-  );
+  const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
+    const label = language === 'sv' ? labelSv : labelEn;
+
+    return (
+      <Pressable
+        key={value}
+        aria-selected={language === value}
+        accessibilityLabel={copy.languageAccessibilityLabel(label)}
+        accessibilityRole="button"
+        accessibilityState={{ selected: language === value }}
+        onPress={() => setLanguage(value)}
+        style={[styles.pill, language === value ? styles.pillActive : null]}
+      >
+        <Text style={[styles.pillText, language === value ? styles.pillTextActive : null]}>
+          {label}
+        </Text>
+      </Pressable>
+    );
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Link
-        accessibilityLabel="Back to profile"
+        accessibilityLabel={copy.backToProfileAccessibilityLabel}
         accessibilityRole="link"
         href="/(tabs)/profile"
         style={styles.backLink}
       >
-        ← Back to Profile
+        {copy.backToProfile}
       </Link>
       <Text accessibilityRole="header" style={styles.title}>
-        Settings
+        {copy.title}
       </Text>
-      <Text style={styles.subtitle}>Control study language, audio, and your daily goal.</Text>
+      <Text style={styles.subtitle}>{copy.subtitle}</Text>
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
-          Question language
+          {copy.questionLanguageTitle}
         </Text>
         <View style={styles.row}>
-          {[renderLanguageButton('sv', 'Swedish'), renderLanguageButton('en', 'English support')]}
+          {[
+            renderLanguageButton('sv', 'Swedish', 'Svenska'),
+            renderLanguageButton('en', 'English support', 'Engelskt stöd'),
+          ]}
         </View>
       </View>
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
-          Audio
+          {copy.audioTitle}
         </Text>
         <Pressable
           aria-checked={audioEnabled}
-          accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}
+          accessibilityLabel={
+            audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel
+          }
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
           onPress={() => setAudioEnabled(!audioEnabled)}
           style={styles.secondaryButton}
         >
           <Text style={styles.secondaryButtonText}>
-            {audioEnabled ? 'Audio enabled' : 'Audio disabled'}
+            {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
           </Text>
         </Pressable>
       </View>
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
-          Daily goal
+          {copy.dailyGoalTitle}
         </Text>
-        <Text style={styles.subtitle}>{dailyGoalAnswers} answers per day</Text>
+        <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
         <View style={styles.row}>
           {[5, 10, 20].map((goal) => (
             <Pressable
               key={goal}
               aria-selected={dailyGoalAnswers === goal}
-              accessibilityLabel={`Set daily goal to ${goal} answers`}
+              accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
               accessibilityRole="button"
               accessibilityState={{ selected: dailyGoalAnswers === goal }}
               onPress={() => setDailyGoalAnswers(goal)}

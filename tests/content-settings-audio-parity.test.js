@@ -28,6 +28,15 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsRoute, /accessibilityRole="switch"/);
   assert.match(settingsRoute, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(settingsRoute, /setAudioEnabled\(!audioEnabled\)/);
+  assert.match(
+    settingsRoute,
+    /audioEnabled \? copy\.disableAudioAccessibilityLabel : copy\.enableAudioAccessibilityLabel/,
+  );
+  assert.match(settingsRoute, /audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel/);
+  assert.match(settingsRoute, /Ljud på/);
+  assert.match(settingsRoute, /Ljud avstängt/);
+  assert.match(settingsRoute, /Stäng av ljud/);
+  assert.match(settingsRoute, /Slå på ljud/);
   assert.match(settingsRoute, /Audio enabled/);
   assert.match(settingsRoute, /Audio disabled/);
 });

@@ -36,8 +36,10 @@ test('language settings stay in parity with supported localization languages', (
 
   assert.deepEqual(supportedLanguages, expectedLanguages);
   assert.match(settingsStore, /export type AppLanguage = 'sv' \| 'en';/);
-  assert.match(settingsRoute, /renderLanguageButton\('sv', 'Swedish'\)/);
-  assert.match(settingsRoute, /renderLanguageButton\('en', 'English support'\)/);
+  assert.match(settingsRoute, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
+  assert.match(settingsRoute, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
+  assert.match(settingsRoute, /Byt frågespråk till \$\{label\}/);
+  assert.match(settingsRoute, /Set question language to \$\{label\}/);
   assert.equal(summary.supportedLanguagesValidated, expectedLanguages.length);
   assert.equal(summary.localizationStrings, Object.keys(strings).length);
   assert.equal(summary.localizationStringsValidated, Object.keys(strings).length);

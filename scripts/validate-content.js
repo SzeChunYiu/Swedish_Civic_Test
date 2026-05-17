@@ -660,22 +660,23 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
-    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Settings\s*<\/Text>/,
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
   {
     label: 'question language section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Question language\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.questionLanguageTitle\}\s*<\/Text>/,
   },
   {
     label: 'audio section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Audio\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.audioTitle\}\s*<\/Text>/,
   },
   {
     label: 'daily goal section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Daily goal\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
@@ -6150,6 +6151,12 @@ function validateLocalizationLanguageContract() {
     if (normalizedLabel) seenLabels.add(normalizedLabel);
   });
 
+  if (!settingsRoute.includes('Svenska') || !settingsRoute.includes('Engelskt stöd')) {
+    reject('app/settings.tsx must expose Swedish labels for language buttons in Swedish mode');
+  }
+  if (!settingsRoute.includes('Byt frågespråk till ${label}')) {
+    reject('app/settings.tsx language buttons must expose Swedish accessibility text');
+  }
   if (!settingsRoute.includes('Set question language to ${label}')) {
     reject('app/settings.tsx language buttons must expose label-derived accessibility text');
   }
@@ -6345,7 +6352,13 @@ function validateSettingsDailyGoalParity() {
   if (!settingsRoute.includes('Set daily goal to ${goal} answers')) {
     reject('app/settings.tsx daily goal buttons must expose goal-derived accessibility text');
   }
-  if (!settingsRoute.includes('{dailyGoalAnswers} answers per day')) {
+  if (!settingsRoute.includes('Ställ in dagligt mål till ${goal} svar')) {
+    reject('app/settings.tsx daily goal buttons must expose Swedish accessibility text');
+  }
+  if (!settingsRoute.includes('${answerCount} svar per dag')) {
+    reject('app/settings.tsx must render the Swedish persisted daily-goal count');
+  }
+  if (!settingsRoute.includes('${answerCount} answers per day')) {
     reject('app/settings.tsx must render the persisted daily-goal count');
   }
 
@@ -6433,14 +6446,16 @@ function validateSettingsAudioParity() {
     reject('app/settings.tsx audio switch must expose checked state from audioEnabled');
   }
   if (
-    !settingsRoute.includes("accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}")
+    !settingsRoute.includes(
+      'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
+    )
   ) {
     reject('app/settings.tsx audio switch must expose state-changing accessibility labels');
   }
   if (!settingsRoute.includes('onPress={() => setAudioEnabled(!audioEnabled)}')) {
     reject('app/settings.tsx audio switch must toggle persisted audio state');
   }
-  if (!settingsRoute.includes("{audioEnabled ? 'Audio enabled' : 'Audio disabled'}")) {
+  if (!settingsRoute.includes('audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel')) {
     reject('app/settings.tsx audio switch must render the current audio state label');
   }
 

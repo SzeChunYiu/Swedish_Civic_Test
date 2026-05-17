@@ -106,9 +106,14 @@ test('settings route exposes page and section titles as headers', () => {
   );
 
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /\{copy\.title\}/);
+  assert.match(source, /\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /Inställningar/);
+  assert.match(source, /Settings/);
+  assert.match(source, /Frågespråk/);
   assert.match(source, /Question language/);
+  assert.match(source, /Dagligt mål/);
   assert.match(source, /Audio/);
-  assert.match(source, /Daily goal/);
   assert.equal(sectionHeaderMatches?.length, 3);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -116,12 +121,28 @@ test('settings route exposes page and section titles as headers', () => {
 test('settings controls mirror selected and checked state to web aria attributes', () => {
   const source = read('app/settings.tsx');
 
+  assert.match(source, /type SettingsCopy =/);
+  assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy>/);
+  assert.match(source, /const copy = settingsCopy\[language\]/);
   assert.match(source, /aria-selected=\{language === value\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityState=\{\{ selected: language === value \}\}/);
   assert.match(source, /aria-checked=\{audioEnabled\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{\s*audioEnabled \? copy\.disableAudioAccessibilityLabel : copy\.enableAudioAccessibilityLabel\s*\}/,
+  );
+  assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
   assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
+  assert.match(source, /Svenska/);
+  assert.match(source, /Engelskt stöd/);
+  assert.match(source, /Byt frågespråk till \$\{label\}/);
+  assert.match(source, /Set question language to \$\{label\}/);
+  assert.match(source, /\$\{answerCount\} svar per dag/);
+  assert.match(source, /\$\{answerCount\} answers per day/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
