@@ -1590,8 +1590,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Kristendom',
       pageApprox: 43,
     },
-    'Vilken tradition säger UHR-materialet att Svenska kyrkan har historiska rötter i?',
-    'Which tradition does the UHR material say the Church of Sweden has historical roots in?',
+    'Vilken tradition har Svenska kyrkan historiska rötter i?',
+    'Which tradition does the Church of Sweden have historical roots in?',
     [
       ['Den lutherska, protestantiska traditionen', 'The Lutheran Protestant tradition'],
       ['Den buddhistiska traditionen', 'The Buddhist tradition'],
