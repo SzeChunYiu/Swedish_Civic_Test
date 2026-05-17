@@ -444,6 +444,59 @@ const EXPECTED_AD_CONSENT_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_MOBILE_ADS_CONSENT_INTERFACES = [
+  {
+    name: 'TrackingPermissionResult',
+    fields: [
+      { name: 'granted', type: 'boolean', optional: true },
+      { name: 'status', type: 'string', optional: true },
+    ],
+  },
+  {
+    name: 'UmpConsentResult',
+    fields: [
+      { name: 'canRequestAds', type: 'boolean', optional: true },
+      { name: 'status', type: 'string', optional: true },
+    ],
+  },
+  {
+    name: 'MobileAdsConsentRuntime',
+    fields: [
+      { name: 'getUmpConsentInfo', type: '() => Promise<UmpConsentResult>', optional: true },
+      { name: 'gatherUmpConsent', type: '() => Promise<UmpConsentResult>', optional: true },
+      {
+        name: 'getTrackingPermissionsAsync',
+        type: '() => Promise<TrackingPermissionResult>',
+        optional: true,
+      },
+      { name: 'initializeGoogleMobileAds', type: '() => Promise<unknown>', optional: true },
+      { name: 'platform', type: 'AdConsentPlatform | string', optional: false },
+      {
+        name: 'requestTrackingPermissionsAsync',
+        type: '() => Promise<TrackingPermissionResult>',
+        optional: true,
+      },
+    ],
+  },
+  {
+    name: 'MobileAdsConsentOptions',
+    fields: [
+      { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: false },
+      { name: 'googleMobileAdsEnabled', type: 'boolean', optional: true },
+      { name: 'realAdsEnabled', type: 'boolean', optional: true },
+      { name: 'region', type: 'AdConsentRegion', optional: true },
+      { name: 'runtime', type: 'MobileAdsConsentRuntime', optional: false },
+    ],
+  },
+  {
+    name: 'MobileAdsConsentInitializationResult',
+    fields: [
+      { name: 'decision', type: 'AdSdkInitializationDecision', optional: false },
+      { name: 'initialized', type: 'boolean', optional: false },
+      { name: 'state', type: 'AdConsentState', optional: false },
+    ],
+  },
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -1260,6 +1313,8 @@ let monetizationTypeSchemaParityValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
+let mobileAdsConsentTypeInterfacesValidated = 0;
+let mobileAdsConsentTypeSchemaParityValidated = false;
 let themeColorTokensValidated = 0;
 let themeSpaceTokensValidated = 0;
 let themeRadiusTokensValidated = 0;
@@ -2952,6 +3007,86 @@ function validateAdConsentTypeSchemaParity() {
     adConsentTypeInterfacesValidated === EXPECTED_AD_CONSENT_INTERFACES.length
   ) {
     adConsentTypeSchemaParityValidated = true;
+  }
+}
+
+function validateMobileAdsConsentTypeSchemaParity() {
+  let valid = true;
+  let mobileConsentSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mobileConsentSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      mobileConsentSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `lib/monetization/mobileAdsConsent.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `lib/monetization/mobileAdsConsent.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `lib/monetization/mobileAdsConsent.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `lib/monetization/mobileAdsConsent.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `lib/monetization/mobileAdsConsent.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) mobileAdsConsentTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    mobileAdsConsentTypeInterfacesValidated === EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.length
+  ) {
+    mobileAdsConsentTypeSchemaParityValidated = true;
   }
 }
 
@@ -4757,6 +4892,7 @@ validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
 validateAdConsentTypeSchemaParity();
+validateMobileAdsConsentTypeSchemaParity();
 validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
@@ -4819,6 +4955,8 @@ console.log(
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,
+      mobileAdsConsentTypeInterfacesValidated,
+      mobileAdsConsentTypeSchemaParityValidated,
       themeColorTokensValidated,
       themeSpaceTokensValidated,
       themeRadiusTokensValidated,

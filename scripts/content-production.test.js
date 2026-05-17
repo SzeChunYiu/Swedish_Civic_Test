@@ -38,6 +38,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.adConsentTypeUnionsValidated, 6);
   assert.equal(summary.adConsentTypeInterfacesValidated, 3);
   assert.equal(summary.adConsentTypeSchemaParityValidated, true);
+  assert.equal(summary.mobileAdsConsentTypeInterfacesValidated, 5);
+  assert.equal(summary.mobileAdsConsentTypeSchemaParityValidated, true);
   assert.equal(summary.themeColorTokensValidated, 29);
   assert.equal(summary.themeSpaceTokensValidated, 19);
   assert.equal(summary.themeRadiusTokensValidated, 7);
