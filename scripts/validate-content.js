@@ -108,6 +108,20 @@ function bilingualTextPairsAreDistinct(question) {
   );
 }
 
+function optionTextPairIsTranslatedOrInvariant(option) {
+  const textSv = normalizeComparableText(option?.textSv);
+  const textEn = normalizeComparableText(option?.textEn);
+  if (!textSv || !textEn || textSv !== textEn) return true;
+
+  const wordCount = normalizeOptionText(option.textSv).split(/\s+/).length;
+  return wordCount <= 2;
+}
+
+function optionBilingualTextPairsAreValid(question) {
+  if (!Array.isArray(question.options)) return false;
+  return question.options.every(optionTextPairIsTranslatedOrInvariant);
+}
+
 function questionTextFieldsAreNormalized(question) {
   const fields = [
     question.questionSv,
@@ -409,6 +423,9 @@ function validateQuestionSchema(question, index) {
       if (hasText(option.textEn) && !textIsTrimmedSingleSpaced(option.textEn)) {
         reject(`${optionLabel} textEn must be trimmed and single-spaced`);
       }
+      if (!optionTextPairIsTranslatedOrInvariant(option)) {
+        reject(`${optionLabel} textSv and textEn must be translated or a short invariant label`);
+      }
     });
     findDuplicateOptionTextLabels(question).forEach((duplicate) => {
       reject(`${label} has duplicate ${duplicate.field} option text "${duplicate.label}"`);
@@ -476,6 +493,7 @@ let chapterSchemasValidated = 0;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionBilingualTextPairsValidated = 0;
+let questionOptionBilingualTextPairsValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -1009,6 +1027,9 @@ if (Array.isArray(questions)) {
       if (bilingualTextPairsAreDistinct(question)) {
         questionBilingualTextPairsValidated += 1;
       }
+      if (optionBilingualTextPairsAreValid(question)) {
+        questionOptionBilingualTextPairsValidated += 1;
+      }
       if (questionTextFieldsAreNormalized(question)) {
         questionTextFieldsNormalizedValidated += 1;
       }
@@ -1131,6 +1152,7 @@ console.log(
       generatedAnswerTemplateParityValidated,
       questionSchemasValidated,
       questionBilingualTextPairsValidated,
+      questionOptionBilingualTextPairsValidated,
       questionTextFieldsNormalizedValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
