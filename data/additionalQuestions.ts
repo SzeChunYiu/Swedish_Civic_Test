@@ -385,8 +385,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q038',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Successionsordningen', pageApprox: 16 },
-    'Vilken fråga regleras av successionsordningen enligt materialet?',
-    'Which question is regulated by the Act of Succession according to the material?',
+    'Vad reglerar successionsordningen?',
+    'What does the Act of Succession regulate?',
     [
       [
         'Vem som ska bli kung eller drottning efter den nuvarande monarken',
@@ -397,8 +397,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Vilka varor som har moms', 'Which goods have VAT'],
     ],
     0,
-    'Materialet beskriver successionsordningen som en av Sveriges fyra grundlagar. Den bestämmer vem som ska bli kung eller drottning efter den nuvarande monarken, inte regler för arbetsmarknad, skola eller skatt.',
-    'The material describes the Act of Succession as one of Sweden’s four constitutional laws. It decides who will become king or queen after the current monarch, not rules for the labour market, schools, or tax.',
+    'UHR-avsnittet Successionsordningen beskriver den som grundlagen som bestämmer vem som ska bli kung eller drottning efter den nuvarande monarken. Därför handlar frågan om tronföljden, inte regler för arbetsmarknad, skola eller skatt.',
+    'The UHR section The Act of Succession describes it as the constitutional law that decides who will become king or queen after the current monarch. The question is therefore about succession to the throne, not rules for the labour market, schools, or tax.',
     ['succession', 'monarchy', 'constitution'],
   ),
   single(
