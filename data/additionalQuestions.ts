@@ -867,8 +867,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q061',
     'ch07',
     { chapter: 'Mänskliga rättigheter', section: 'Arbetet mot diskriminering', pageApprox: 26 },
-    'Vilken myndighet arbetar för allas lika rättigheter och ser till att diskrimineringslagen följs?',
-    'Which authority works for equal rights for all and ensures the Discrimination Act is followed?',
+    'Vilken statlig myndighet arbetar för allas lika rättigheter och ser till att diskrimineringslagen följs?',
+    'Which government agency works for equal rights for all and ensures the Discrimination Act is followed?',
     [
       ['Diskrimineringsombudsmannen', 'The Equality Ombudsman'],
       ['Kronofogdemyndigheten', 'The Enforcement Authority'],
@@ -876,9 +876,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Nordiska ministerrådet', 'The Nordic Council of Ministers'],
     ],
     0,
-    'Diskrimineringsombudsmannen, DO, arbetar med diskrimineringslagen.',
-    'The Equality Ombudsman, DO, works with the Discrimination Act.',
-    ['discrimination', 'do', 'rights'],
+    'UHR-avsnittet Arbetet mot diskriminering beskriver Diskrimineringsombudsmannen, DO, som en statlig myndighet som arbetar för allas lika rättigheter och möjligheter. DO ska se till att diskrimineringslagen följs, och lagen förbjuder att människor behandlas sämre av skäl som kön, religion, etnisk tillhörighet, funktionsnedsättning eller sexuell läggning.',
+    'The UHR section Work against discrimination describes the Equality Ombudsman, DO, as a government agency that works for equal rights and opportunities for all. DO ensures that the Discrimination Act is followed, and the law forbids treating people worse for reasons such as sex, religion, ethnicity, disability, or sexual orientation.',
+    ['equality-ombudsman', 'discrimination-act', 'rights'],
   ),
   single(
     'q062',
