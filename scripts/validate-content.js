@@ -214,6 +214,129 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
+const EXPECTED_HOME_ROUTE_COPY_LABELS = {
+  sv: [
+    'Studieöversikt',
+    'Studera lugnt, ett samhällsbegrepp i taget',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'Dagens mål',
+    'Repetera svaga kapitel',
+    'Starta en 5-minutersövning',
+    'Starta den rekommenderade övningen',
+    'Starta övning',
+    'Bläddra bland alla samhällskapitel',
+    'Bläddra bland kapitel',
+    'nivå',
+    'XP-baserad',
+    'dagars svit',
+    'daglig vana',
+    'svaga kapitel',
+    'behöver repetition',
+    'frågor',
+    '${count} kapitel',
+    '10 000 elevers återkoppling',
+    'UX-förbättringar från simulerade studier',
+    '10 000 simulerade elever bad om tydligare framsteg, sparade svåra frågor, källstödd repetition och annonser som hålls borta från prov. De förbättringarna finns nu i studieflödet.',
+    'Granska bokmärkta eller missade frågor',
+    'Repetera sparade frågor',
+    'Optimerat studieflöde',
+    'Lärdomar från framgångsrika samhällsprovs- och språkstudieappar: ett tydligt nästa steg, direkt återkoppling och synliga framsteg.',
+    'Börja med kort ämnesövning, tydliga sviter, XP, märken och väg tillbaka efter misstag.',
+    'Visa behärskning per område så att eleven ser vad som är klart, repeterat eller fortfarande svagt.',
+    'Kombinera realistiska tidsatta prov med flashcards, bokmärken, felspårning, ljud, offline-studier och tydliga redo-signaler.',
+    'Ge en snabb första vinst, en självklar nästa handling och varsam daglig vanefeedback utan att hindra seriösa studier.',
+  ],
+  en: [
+    'Study dashboard',
+    'Prepare calmly, one civic concept at a time',
+    'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
+    "Today's goal",
+    'Review weak chapters',
+    'Start a 5-minute practice set',
+    'Start the recommended practice session',
+    'Start practice',
+    'Browse all civic chapters',
+    'Browse chapters',
+    'level',
+    'XP-based',
+    'day streak',
+    'daily habit',
+    'weak chapters',
+    'needs review',
+    'questions',
+    '${count} chapters',
+    '10,000-learner feedback pass',
+    'UX updates from simulated study sessions',
+    '10,000 simulated learners asked for clearer progress, saved hard questions, source-backed review, and ads that stay out of exams. Those fixes are now built into the study loop.',
+    'Review bookmarked or missed questions',
+    'Review saved questions',
+    'Optimized study loop',
+    'Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress.',
+    'Lead with bite-sized topic practice, visible streaks, XP, badges, and mistake recovery.',
+    'Show mastery by skill area so learners know what is ready, reviewed, or still weak.',
+    'Combine realistic timed exams with flashcards, bookmarks, wrong-answer tracking, audio, offline study, and readiness indicators.',
+    'Give a fast first win, one obvious next action, and gentle daily habit feedback without blocking serious study.',
+  ],
+};
+const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
+  ['type HomeCopy = {', 'home route must define a typed copy contract'],
+  [
+    'const homeCopy: Record<AppLanguage, HomeCopy> = {',
+    'home route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'home route must read language from settings store',
+  ],
+  ['const copy = homeCopy[language];', 'home route must select copy from settings language'],
+  [
+    'const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;',
+    'home route next action must use localized copy',
+  ],
+  ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
+  ['title={copy.title}', 'home route title must render localized copy'],
+  ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
+  ['{copy.dailyGoalTitle}', 'home daily goal title must render localized copy'],
+  [
+    'accessibilityLabel={copy.startPracticeAccessibilityLabel}',
+    'home practice link must expose localized accessibility copy',
+  ],
+  ['{copy.startPractice}', 'home practice link must render localized copy'],
+  [
+    'accessibilityLabel={copy.browseChaptersAccessibilityLabel}',
+    'home chapter link must expose localized accessibility copy',
+  ],
+  ['{copy.browseChapters}', 'home chapter link must render localized copy'],
+  ['label={copy.levelMetric}', 'home level metric must render localized copy'],
+  ['helper={copy.xpBasedHelper}', 'home XP helper must render localized copy'],
+  ['label={copy.dayStreakMetric}', 'home streak metric must render localized copy'],
+  ['helper={copy.dayStreakHelper}', 'home streak helper must render localized copy'],
+  ['label={copy.weakChaptersMetric}', 'home weak-chapter metric must render localized copy'],
+  ['helper={copy.weakChaptersHelper}', 'home weak-chapter helper must render localized copy'],
+  ['label={copy.questionsMetric}', 'home question metric must render localized copy'],
+  [
+    'helper={copy.questionsHelper(chapters.length)}',
+    'home question helper must render localized copy',
+  ],
+  ['<Badge tone="blue">{copy.feedbackBadge}</Badge>', 'home feedback badge must localize'],
+  ['{copy.feedbackTitle}', 'home feedback title must render localized copy'],
+  [
+    '<Text style={styles.feedbackText}>{copy.feedbackText}</Text>',
+    'home feedback body must localize',
+  ],
+  [
+    'accessibilityLabel={copy.feedbackLinkAccessibilityLabel}',
+    'home feedback link must expose localized accessibility copy',
+  ],
+  ['{copy.feedbackLink}', 'home feedback link must render localized copy'],
+  ['title={copy.studyLoopTitle}', 'home study-loop title must render localized copy'],
+  ['subtitle={copy.studyLoopSubtitle}', 'home study-loop subtitle must render localized copy'],
+  [
+    '{copy.benchmarkLessons[item.product]}',
+    'home study-loop benchmark lessons must render localized copy',
+  ],
+];
 const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
@@ -457,21 +580,21 @@ const EXPECTED_PROFILE_ROUTE_HEADERS = [
 const EXPECTED_HOME_ROUTE_HEADERS = [
   {
     label: 'home route title',
-    pattern: /<ScreenShell[\s\S]*\btitle="Prepare calmly, one civic concept at a time"/,
+    pattern: /<ScreenShell[\s\S]*\btitle=\{copy\.title\}/,
   },
   {
     label: 'daily goal card title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.goalLabel\}>\s*Today&apos;s goal\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.goalLabel\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
   {
     label: 'feedback card title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.feedbackTitle\}>\s*UX updates from simulated study sessions\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.feedbackTitle\}>\s*\{copy\.feedbackTitle\}\s*<\/Text>/,
   },
   {
     label: 'study-loop section title',
-    pattern: /<SectionHeader[\s\S]*\btitle="Optimized study loop"/,
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.studyLoopTitle\}/,
   },
 ];
 const EXPECTED_MISTAKES_ROUTE_HEADERS = [
@@ -3062,6 +3185,8 @@ let profileRouteHeadersValidated = 0;
 let profileRouteHeaderParityValidated = false;
 let homeRouteHeadersValidated = 0;
 let homeRouteHeaderParityValidated = false;
+let homeRouteCopyLabelsValidated = 0;
+let homeRouteCopyParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -4717,6 +4842,58 @@ function validateHomeRouteHeaderParity() {
 
   if (valid && homeRouteHeadersValidated === EXPECTED_HOME_ROUTE_HEADERS.length) {
     homeRouteHeaderParityValidated = true;
+  }
+}
+
+function validateHomeRouteCopyParity() {
+  let valid = true;
+  let homeRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  } catch (error) {
+    reject(`home route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_HOME_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!homeRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`home route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!homeRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`home route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`home route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) homeRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_HOME_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && homeRouteCopyLabelsValidated === expectedLabelCount) {
+    homeRouteCopyParityValidated = true;
   }
 }
 
@@ -9638,6 +9815,7 @@ validateLearnRouteHeaderParity();
 validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
 validateHomeRouteHeaderParity();
+validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateLegalRouteHeaderParity();
@@ -9756,6 +9934,8 @@ console.log(
       profileRouteHeaderParityValidated,
       homeRouteHeadersValidated,
       homeRouteHeaderParityValidated,
+      homeRouteCopyLabelsValidated,
+      homeRouteCopyParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,

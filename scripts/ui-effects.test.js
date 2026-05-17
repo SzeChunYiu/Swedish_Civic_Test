@@ -655,16 +655,43 @@ test('home screen surfaces the 10000-learner feedback loop and review action', (
   const source = read('app/(tabs)/home.tsx');
 
   assert.match(source, /10,000-learner feedback pass/);
+  assert.match(source, /10 000 elevers återkoppling/);
   assert.match(source, /Review saved questions/);
+  assert.match(source, /Repetera sparade frågor/);
   assert.match(source, /href="\/mistakes"/);
+});
+
+test('home shell copy follows Swedish and English settings language', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /type HomeCopy =/);
+  assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
+  assert.match(source, /const copy = homeCopy\[language\]/);
+  assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.startPracticeAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}/);
+  assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
+  assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
+  assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
+  assert.match(source, /\{copy\.benchmarkLessons\[item\.product\]\}/);
+  assert.match(source, /Studieöversikt/);
+  assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
+  assert.match(source, /Starta den rekommenderade övningen/);
+  assert.match(source, /Optimerat studieflöde/);
+  assert.match(source, /Prepare calmly, one civic concept at a time/);
+  assert.match(source, /Start the recommended practice session/);
+  assert.match(source, /Optimized study loop/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('home screen exposes dashboard card titles as headers', () => {
   const source = read('app/(tabs)/home.tsx');
   const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
 
-  assert.match(source, /Today&apos;s goal/);
-  assert.match(source, /UX updates from simulated study sessions/);
+  assert.match(source, /\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.equal(headerMatches?.length, 2);
