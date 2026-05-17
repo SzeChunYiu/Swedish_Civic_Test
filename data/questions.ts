@@ -296,9 +296,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Demokrati betyder folkstyre säger att demokrati är ett politiskt system där makten utgår från folket. Det betyder att medborgarna har möjlighet att påverka beslut och att de som får makten ska kunna bytas ut.',
+      'UHR-avsnittet Demokrati betyder folkstyre säger att demokrati är ett politiskt system där makten utgår från folket. Det betyder att medborgarna kan påverka beslut, välja mellan flera politiska alternativ och byta ut dem som får makten.',
     explanationEn:
-      'The UHR section Democracy means rule by the people says democracy is a political system where power comes from the people. This means citizens can influence decisions and those who gain power must be able to be replaced.',
+      'The UHR section Democracy means rule by the people says democracy is a political system where power comes from the people. This means citizens can influence decisions, choose between several political alternatives, and replace those who are given power.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',

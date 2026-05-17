@@ -154,6 +154,34 @@ const EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS = [
   'Google UMP consent',
 ];
 const EXPECTED_RELEASE_REAL_ADS_ENV_FLAG = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
+const EXPECTED_ROUTE_AD_PLACEMENTS = [
+  {
+    file: 'app/(tabs)/home.tsx',
+    component: 'AdBanner',
+    placement: 'home_banner',
+    pattern:
+      /<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/learn.tsx',
+    component: 'AdBanner',
+    placement: 'chapter_list_banner',
+    pattern: /<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/practice.tsx',
+    component: 'AdBanner',
+    placement: 'quiz_completed_interstitial',
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/mistakes.tsx',
+    component: 'NativeAdCard',
+    placement: 'results_native',
+    pattern: /<NativeAdCard\s+\/>/,
+  },
+];
+const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -333,6 +361,37 @@ const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Prepare calmly for the civic test\s*<\/Text>/,
   },
 ];
+const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
+  {
+    label: 'ScrollView import',
+    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  },
+  {
+    label: 'scroll root container',
+    pattern:
+      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+  },
+  {
+    label: 'scroll root closing tag',
+    pattern: /<\/ScrollView>/,
+  },
+  {
+    label: 'page title header',
+    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>/,
+  },
+  {
+    label: 'section title header',
+    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/,
+  },
+  {
+    label: 'content vertical gap',
+    pattern: /content:\s*\{\s*gap:\s*space\[2\.25\],/,
+  },
+  {
+    label: 'bottom safe padding',
+    pattern: /paddingBottom:\s*space\[10\]/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
@@ -392,6 +451,65 @@ const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
   {
     label: 'scroll root closing tag',
     pattern: /<\/ScrollView>/,
+  },
+];
+const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
+  {
+    label: 'native Pressable root',
+    pattern: /<Pressable[\s\S]*>/,
+  },
+  {
+    label: 'default button role',
+    pattern: /accessibilityRole\s*=\s*'button'/,
+  },
+  {
+    label: 'explicit state merge',
+    pattern: /const mergedAccessibilityState = \{\s*\.\.\.accessibilityState,/,
+  },
+  {
+    label: 'disabled prop merged into accessibility state',
+    pattern: /\.\.\.\(disabled == null \? \{\} : \{ disabled \}\),/,
+  },
+  {
+    label: 'plain child label fallback',
+    pattern:
+      /typeof children === 'string' \|\| typeof children === 'number' \? String\(children\) : undefined/,
+  },
+  {
+    label: 'busy state mirrored to web aria',
+    pattern: /aria-busy=\{mergedAccessibilityState\.busy === true\}/,
+  },
+  {
+    label: 'checked state mirrored to web aria',
+    pattern: /aria-checked=\{mergedAccessibilityState\.checked\}/,
+  },
+  {
+    label: 'disabled state mirrored to web aria',
+    pattern: /aria-disabled=\{mergedAccessibilityState\.disabled === true\}/,
+  },
+  {
+    label: 'expanded state mirrored to web aria',
+    pattern: /aria-expanded=\{mergedAccessibilityState\.expanded\}/,
+  },
+  {
+    label: 'selected state mirrored to web aria',
+    pattern: /aria-selected=\{mergedAccessibilityState\.selected\}/,
+  },
+  {
+    label: 'label mirrored to web aria',
+    pattern: /aria-label=\{buttonAccessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{buttonAccessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
+  },
+  {
+    label: 'native accessibility state',
+    pattern: /accessibilityState=\{mergedAccessibilityState\}/,
   },
 ];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
@@ -1995,6 +2113,9 @@ let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
+let adPlacementRoutesValidated = 0;
+let noAdRoutesValidated = 0;
+let adPlacementRouteParityValidated = false;
 let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
@@ -2030,12 +2151,16 @@ let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
+let screenShellLayoutRulesValidated = 0;
+let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
 let onboardingRouteScrollParityValidated = false;
 let legalRouteScrollRulesValidated = 0;
 let legalRouteScrollParityValidated = false;
+let buttonAccessibilityRulesValidated = 0;
+let buttonAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2430,6 +2555,108 @@ function validateLaunchAdRouteSuppressionParity() {
     launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
   ) {
     launchAdRouteSuppressionParityValidated = true;
+  }
+}
+
+function validateAdPlacementRouteParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
+  const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
+    ? adsConfig.blockedPlacements
+    : [];
+
+  for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
+    let source = '';
+    let routeIsValid = true;
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, spec.file), 'utf8');
+    } catch (error) {
+      reject(`${spec.file} could not be read for ad placement parity: ${error.message}`);
+      continue;
+    }
+
+    if (!source.includes(`components/monetization/${spec.component}`)) {
+      reject(`${spec.file} must import ${spec.component} from the monetization components`);
+      routeIsValid = false;
+    }
+
+    if (!spec.pattern.test(source)) {
+      reject(`${spec.file} must render ${spec.component} placement ${spec.placement}`);
+      routeIsValid = false;
+    }
+
+    if (!safePlacements.includes(spec.placement)) {
+      reject(`adsConfig.safePlacements must include routed placement ${spec.placement}`);
+      routeIsValid = false;
+    }
+
+    if (typeof shouldShowAd === 'function') {
+      if (!shouldShowAd(spec.placement, { adsDisabled: false })) {
+        reject(`${spec.placement} must render for free users with test ad config`);
+        routeIsValid = false;
+      }
+      if (shouldShowAd(spec.placement, { adsDisabled: true })) {
+        reject(`${spec.placement} must be hidden after Remove Ads is active`);
+        routeIsValid = false;
+      }
+    }
+
+    if (spec.component === 'NativeAdCard') {
+      const nativeAdCardSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
+        'utf8',
+      );
+      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
+        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+        routeIsValid = false;
+      }
+    }
+
+    if (routeIsValid) adPlacementRoutesValidated += 1;
+  }
+
+  for (const file of EXPECTED_NO_AD_ROUTE_FILES) {
+    let source = '';
+    let routeIsValid = true;
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} could not be read for no-ad route parity: ${error.message}`);
+      continue;
+    }
+
+    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd/.test(source)) {
+      reject(`${file} must not import or render ad components`);
+      routeIsValid = false;
+    }
+
+    if (!blockedPlacements.includes('exam_screen')) {
+      reject('adsConfig.blockedPlacements must include exam_screen');
+      routeIsValid = false;
+    }
+
+    if (typeof shouldShowAd === 'function' && shouldShowAd('exam_screen', { adsDisabled: false })) {
+      reject('exam_screen must never render ads');
+      routeIsValid = false;
+    }
+
+    if (routeIsValid) noAdRoutesValidated += 1;
+  }
+
+  if (
+    valid &&
+    adPlacementRoutesValidated === EXPECTED_ROUTE_AD_PLACEMENTS.length &&
+    noAdRoutesValidated === EXPECTED_NO_AD_ROUTE_FILES.length
+  ) {
+    adPlacementRouteParityValidated = true;
   }
 }
 
@@ -3570,6 +3797,39 @@ function validateOnboardingRouteHeaderParity() {
   }
 }
 
+function validateScreenShellLayoutParity() {
+  let valid = true;
+  let screenShell = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/ScreenShell.tsx could not be read for layout parity: ${error.message}`);
+    return;
+  }
+
+  if (/<View\s+style=\{styles\.container\}>/.test(screenShell)) {
+    reject('ScreenShell must keep shared tab content inside ScrollView for mobile scrolling');
+  }
+
+  EXPECTED_SCREEN_SHELL_LAYOUT_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(screenShell)) {
+      reject(`ScreenShell missing ${expectedRule.label} for shared layout parity`);
+      return;
+    }
+    screenShellLayoutRulesValidated += 1;
+  });
+
+  if (valid && screenShellLayoutRulesValidated === EXPECTED_SCREEN_SHELL_LAYOUT_RULES.length) {
+    screenShellLayoutParityValidated = true;
+  }
+}
+
 function validateSettingsRouteScrollParity() {
   let valid = true;
   let settingsRoute = '';
@@ -3673,6 +3933,35 @@ function validateLegalRouteScrollParity() {
 
   if (valid && legalRouteScrollRulesValidated === EXPECTED_LEGAL_ROUTE_SCROLL_RULES.length) {
     legalRouteScrollParityValidated = true;
+  }
+}
+
+function validateButtonAccessibilityParity() {
+  let valid = true;
+  let buttonSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    buttonSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/Button.tsx could not be read for accessibility parity: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_BUTTON_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(buttonSource)) {
+      reject(`Button missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    buttonAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && buttonAccessibilityRulesValidated === EXPECTED_BUTTON_ACCESSIBILITY_RULES.length) {
+    buttonAccessibilityParityValidated = true;
   }
 }
 
@@ -7737,6 +8026,7 @@ validateMockExamConfig(
 );
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
@@ -7756,9 +8046,11 @@ validateMistakesRouteHeaderParity();
 validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
 validateOnboardingRouteHeaderParity();
+validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateLegalRouteScrollParity();
+validateButtonAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -7818,6 +8110,9 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      adPlacementRoutesValidated,
+      noAdRoutesValidated,
+      adPlacementRouteParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
       removeAdsEntitlementHookCasesValidated,
@@ -7855,12 +8150,16 @@ console.log(
       settingsRouteHeaderParityValidated,
       onboardingRouteHeadersValidated,
       onboardingRouteHeaderParityValidated,
+      screenShellLayoutRulesValidated,
+      screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,
       onboardingRouteScrollParityValidated,
       legalRouteScrollRulesValidated,
       legalRouteScrollParityValidated,
+      buttonAccessibilityRulesValidated,
+      buttonAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,

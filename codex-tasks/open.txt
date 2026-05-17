@@ -64,3 +64,61 @@ worklets, no JS-thread jank); colors via tokens only; all 7 acceptance steps
 stay green; NO motion on the exam screen that distracts; nothing janky on the
 web export. Folds into UIUX-POLISH. Tasteful-but-abundant, premium not noisy.
 === END MOTION PRIORITY ===
+
+=== PRIORITY: CONTENT & QUESTION-QUALITY OVERHAUL (operator 2026-05-17) ===
+Operator-authorized content-policy update. The factory follows THIS over the
+older CLAUDE.md content-rule #1/#5. KEEP the legal-safety subset unchanged.
+
+LEGAL-SAFETY (still NON-NEGOTIABLE, never relax):
+- Never claim official affiliation with UHR/Skolverket/Migrationsverket.
+- Never claim questions are real/official exam questions.
+- Disclaimer (not a real/official exam) visible on every question screen.
+- Every question MUST cite a specific, verifiable PUBLIC source.
+
+DIFFICULTY-1 [feature, v1.0]: add a difficulty setting (Lätt / Medel / Svår).
+  Schema: each question carries distractor tiers by plausibility. Quiz engine
+  picks distractors per chosen difficulty — harder = more plausible, closely
+  related, similar-looking wrong options for the SAME question. Ship selector
+  (Settings + pre-quiz) + engine + schema now; content lane backfills harder
+  distractors progressively. Easy must still be fair; Hard genuinely tricky.
+
+SOURCE-CITATION [v1.0, content+UI]: REMOVE "Enligt UHR/According to UHR" (and
+  similar) from question STEMS — it reads redundant and fake. Instead render a
+  small source citation line BELOW the question (e.g. "Källa/Source: Sverige i
+  fokus, s.X" localized). Stems read like natural standalone questions. Keep
+  the not-a-real-exam disclaimer (DIFFERENT from the source line).
+
+TRANSLATE-COMPLETE [v1.0, P0]: 100% SV+EN parity — validate:content FAILS if
+  any user-facing string or question field lacks both. Then a naturalness pass:
+  English must be natural, idiomatic, fluent (not literal/MT). Stilted English
+  = P0 defect via review-to-queue. Swedish must be correct & natural too.
+
+SOURCE-EXPANSION [content, ongoing]: question sets may now be EXPANDED beyond
+  UHR Sverige i fokus using OTHER authoritative public sources (official Swedish
+  civic/government public info, reputable civics references). Each new question
+  still cites its specific verifiable public source below it, is factually
+  correct & current, SV+EN parity, passes the legal-safety subset. Inaccurate
+  or unverifiable = P0 blocker. Grow coverage; do not dilute accuracy.
+=== END CONTENT OVERHAUL ===
+
+=== P0 BUG — DO THIS FIRST, ahead of all cosmetic/design work ===
+SHUFFLE-FIX [P0, correctness]: Single-choice answer options are NOT shuffled —
+data/questions.ts authored with correct answer mostly first (correctOptionId
+'a' dominant) and lib/content/derivedQuestions.ts normalizeSingleChoiceOptions
+maps by index with no randomization, so the correct answer is almost always A.
+This makes the quiz trivially gameable and looks broken.
+FIX (root cause, in the derivation/session pipeline, NOT a data-only patch):
+- Shuffle single-choice options with a SEEDED RNG keyed by (questionId +
+  sessionId) so order is randomized but STABLE within a quiz session/instance
+  (must NOT reshuffle on re-render or change mid-question), and reproducible
+  for review screens and tests.
+- Remap correctOptionId after shuffle; isCorrectAnswer must still resolve
+  correctly; explanations/option feedback follow the option, not the slot.
+- Exclude true_false from positional shuffle (keep true/false order fixed).
+- Interacts with DIFFICULTY-1: pick distractors by difficulty FIRST, then
+  shuffle the final option set.
+TESTS (add, must pass): over the full published bank, correct-answer display
+  position is ~uniform (no single position > 35%); shuffle stable within a
+  session; isCorrectAnswer correct post-shuffle. Keep all 7 acceptance steps
+  green. This is the highest-priority item in this file.
+=== END P0 ===

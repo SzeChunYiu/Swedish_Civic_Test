@@ -28,8 +28,12 @@ export function Button({
 
   return (
     <Pressable
-      aria-disabled={disabled === true}
+      aria-busy={mergedAccessibilityState.busy === true}
+      aria-checked={mergedAccessibilityState.checked}
+      aria-disabled={mergedAccessibilityState.disabled === true}
+      aria-expanded={mergedAccessibilityState.expanded}
       aria-label={buttonAccessibilityLabel}
+      aria-selected={mergedAccessibilityState.selected}
       accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}

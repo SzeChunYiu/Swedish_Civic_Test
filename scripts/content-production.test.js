@@ -17,6 +17,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.appConfigSchemaValidated, true);
   assert.equal(summary.launchAdSuppressedRoutesValidated, 6);
   assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
+  assert.equal(summary.adPlacementRoutesValidated, 4);
+  assert.equal(summary.noAdRoutesValidated, 1);
+  assert.equal(summary.adPlacementRouteParityValidated, true);
   assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 10);
   assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
   assert.equal(summary.removeAdsEntitlementHookCasesValidated, 5);
@@ -54,12 +57,16 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
+  assert.equal(summary.screenShellLayoutRulesValidated, 7);
+  assert.equal(summary.screenShellLayoutParityValidated, true);
   assert.equal(summary.settingsRouteScrollRulesValidated, 5);
   assert.equal(summary.settingsRouteScrollParityValidated, true);
   assert.equal(summary.onboardingRouteScrollRulesValidated, 5);
   assert.equal(summary.onboardingRouteScrollParityValidated, true);
   assert.equal(summary.legalRouteScrollRulesValidated, 3);
   assert.equal(summary.legalRouteScrollParityValidated, true);
+  assert.equal(summary.buttonAccessibilityRulesValidated, 14);
+  assert.equal(summary.buttonAccessibilityParityValidated, true);
   assert.equal(summary.examReviewItemsValidated, 20);
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);

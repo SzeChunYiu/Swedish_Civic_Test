@@ -61,8 +61,12 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /const buttonAccessibilityLabel =/);
   assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
   assert.match(source, /String\(children\)/);
-  assert.match(source, /aria-disabled=\{disabled === true\}/);
+  assert.match(source, /aria-busy=\{mergedAccessibilityState\.busy === true\}/);
+  assert.match(source, /aria-checked=\{mergedAccessibilityState\.checked\}/);
+  assert.match(source, /aria-disabled=\{mergedAccessibilityState\.disabled === true\}/);
+  assert.match(source, /aria-expanded=\{mergedAccessibilityState\.expanded\}/);
   assert.match(source, /aria-label=\{buttonAccessibilityLabel\}/);
+  assert.match(source, /aria-selected=\{mergedAccessibilityState\.selected\}/);
   assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
@@ -158,14 +162,21 @@ test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 
   assert.match(source, /accessible,/);
+  assert.match(source, /accessibilityHint,/);
   assert.match(source, /accessibilityLabel,/);
   assert.match(source, /accessibilityRole,/);
+  assert.match(source, /const cardAccessibilityHintId =/);
+  assert.match(source, /Platform\.OS === 'web'/);
   assert.match(source, /const groupedForAccessibility =/);
   assert.match(source, /accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\)/);
+  assert.match(source, /aria-describedby=\{cardAccessibilityHintId\}/);
   assert.match(source, /aria-label=\{accessibilityLabel\}/);
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
+  assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
+  assert.match(source, /nativeID=\{cardAccessibilityHintId\}/);
+  assert.match(source, /accessibilityHintText/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
