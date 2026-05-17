@@ -187,6 +187,29 @@ const EXPECTED_LEARN_ROUTE_HEADERS = [
     pattern: /<SectionHeader[\s\S]*\btitle="13 civic areas"/,
   },
 ];
+const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
+  {
+    label: 'ScrollView import',
+    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  },
+  {
+    label: 'scroll root container',
+    pattern:
+      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+  },
+  {
+    label: 'scroll root closing tag',
+    pattern: /<\/ScrollView>/,
+  },
+  {
+    label: 'growing scroll content',
+    pattern: /content:\s*\{\s*flexGrow:\s*1,/,
+  },
+  {
+    label: 'bottom safe padding',
+    pattern: /paddingBottom:\s*space\[10\]/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -1803,6 +1826,8 @@ let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
+let settingsRouteScrollRulesValidated = 0;
+let settingsRouteScrollParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2970,6 +2995,39 @@ function validateLearnRouteHeaderParity() {
 
   if (valid && learnRouteHeadersValidated === EXPECTED_LEARN_ROUTE_HEADERS.length) {
     learnRouteHeaderParityValidated = true;
+  }
+}
+
+function validateSettingsRouteScrollParity() {
+  let valid = true;
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/settings.tsx could not be read for scroll parity: ${error.message}`);
+    return;
+  }
+
+  if (/<View\s+style=\{styles\.container\}>/.test(settingsRoute)) {
+    reject('settings route must keep its root content inside ScrollView for mobile scrolling');
+  }
+
+  EXPECTED_SETTINGS_ROUTE_SCROLL_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(settingsRoute)) {
+      reject(`settings route missing ${expectedRule.label} for mobile scroll parity`);
+      return;
+    }
+    settingsRouteScrollRulesValidated += 1;
+  });
+
+  if (valid && settingsRouteScrollRulesValidated === EXPECTED_SETTINGS_ROUTE_SCROLL_RULES.length) {
+    settingsRouteScrollParityValidated = true;
   }
 }
 
@@ -6967,6 +7025,7 @@ validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
 validateLearnRouteHeaderParity();
+validateSettingsRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -7046,6 +7105,8 @@ console.log(
       quizRouteHeaderParityValidated,
       learnRouteHeadersValidated,
       learnRouteHeaderParityValidated,
+      settingsRouteScrollRulesValidated,
+      settingsRouteScrollParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
