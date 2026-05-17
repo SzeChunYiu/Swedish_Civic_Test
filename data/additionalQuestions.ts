@@ -1466,8 +1466,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q089',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Globalt samarbete', pageApprox: 39 },
-    'Vad säger UHR-materialet att Sida arbetar för?',
-    'According to the UHR material, what does Sida work to do?',
+    'Vad arbetar Sida för i Sveriges globala utvecklingssamarbete?',
+    'What does Sida work for in Sweden’s global development cooperation?',
     [
       [
         'Att minska fattigdom och förtryck i världen',
