@@ -467,8 +467,10 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q016',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Vad betyder det att Sverige är en parlamentarisk representativ demokrati?',
-    questionEn: 'What does it mean that Sweden is a parliamentary representative democracy?',
+    questionSv:
+      'Vad innebär det enligt UHR-materialet att Sverige är en parlamentarisk representativ demokrati?',
+    questionEn:
+      'According to the UHR material, what does it mean that Sweden is a parliamentary representative democracy?',
     options: [
       {
         id: 'a',
@@ -493,9 +495,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'I en parlamentarisk representativ demokrati väljer medborgarna representanter i allmänna val. I Sverige väljs ledamöter till riksdagen, som beslutar om lagar och budget.',
+      'UHR-avsnittet Staten säger att Sverige är en parlamentarisk representativ demokrati. Det innebär att medborgarna röstar i allmänna val och väljer ledamöter till riksdagen, som sedan fattar beslut om lagar och statens budget.',
     explanationEn:
-      'In a parliamentary representative democracy, citizens elect representatives in general elections. In Sweden, members of the Riksdag are elected, and they decide on laws and the budget.',
+      'The UHR section The state says Sweden is a parliamentary representative democracy. This means citizens vote in general elections and elect members of the Riksdag, which then makes decisions on laws and the state budget.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
