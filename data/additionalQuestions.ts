@@ -1449,8 +1449,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q088',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vad arbetar Europarådet för?',
-    'What does the Council of Europe work for?',
+    'Vad säger UHR-materialet att Europarådet arbetar för?',
+    'According to the UHR material, what does the Council of Europe work for?',
     [
       [
         'Mänskliga rättigheter, demokrati och rättsstatens principer',
