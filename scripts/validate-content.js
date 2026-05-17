@@ -53,6 +53,7 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
 ];
+const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -153,6 +154,10 @@ function questionTextFieldsAreNormalized(question) {
 
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+}
+
+function isSnakeCaseId(value) {
+  return /^[a-z0-9]+(?:_[a-z0-9]+)*$/.test(value);
 }
 
 function findDuplicateOptionTextLabels(question) {
@@ -577,15 +582,22 @@ const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+const badgeModule = loadTs('lib/learning/badges.ts');
+const badgeCatalog = badgeModule.badgeCatalog;
+const deriveBadges = badgeModule.deriveBadges;
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
+let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
+let badgesValidated = 0;
+let badgeMilestoneParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -617,12 +629,17 @@ let generatedTagTemplateParityValidated = 0;
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
+if (!Array.isArray(glossaryTerms)) fail('glossaryTerms export is not an array');
 if (!Array.isArray(questions)) fail('questions export is not an array');
 if (!Array.isArray(sourceQuestions)) fail('sourceQuestions export is not an array');
 if (!Array.isArray(generatedPublishedQuestions)) {
   fail('generatedPublishedQuestions export is not an array');
 }
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
+if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
+  fail('badgeCatalog export is not an object');
+}
+if (typeof deriveBadges !== 'function') fail('deriveBadges export is not a function');
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -709,6 +726,165 @@ function validateUxBenchmarks() {
 
     if (valid) uxBenchmarksValidated += 1;
   });
+}
+
+function validateGlossaryTerms() {
+  if (!Array.isArray(glossaryTerms)) return;
+
+  const seenIds = new Set();
+  const seenTermsSv = new Set();
+  const seenTermsEn = new Set();
+  const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
+
+  glossaryTerms.forEach((term, index) => {
+    const label = hasText(term?.id) ? term.id : `glossary term[${index}]`;
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (!term || typeof term !== 'object') {
+      reject(`glossary term[${index}] is not an object`);
+    } else {
+      for (const field of ['id', 'termSv', 'termEn', 'explanationSv', 'explanationEn']) {
+        if (!hasText(term[field])) {
+          reject(`${label} missing ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(term[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      if (hasText(term.id) && !isSlugTag(term.id)) {
+        reject(`${label} id must use lowercase kebab-case`);
+      }
+      if (hasText(term.id) && seenIds.has(term.id)) {
+        reject(`${label} duplicates glossary term id`);
+      }
+      if (hasText(term.id)) seenIds.add(term.id);
+
+      const normalizedTermSv = normalizeComparableText(term.termSv);
+      if (normalizedTermSv && seenTermsSv.has(normalizedTermSv)) {
+        reject(`${label} duplicates Swedish glossary term`);
+      }
+      if (normalizedTermSv) seenTermsSv.add(normalizedTermSv);
+
+      const normalizedTermEn = normalizeComparableText(term.termEn);
+      if (normalizedTermEn && seenTermsEn.has(normalizedTermEn)) {
+        reject(`${label} duplicates English glossary term`);
+      }
+      if (normalizedTermEn) seenTermsEn.add(normalizedTermEn);
+
+      if (!optionTextPairIsTranslatedOrInvariant({ textSv: term.termSv, textEn: term.termEn })) {
+        reject(`${label} termSv and termEn must be translated or a short invariant term`);
+      }
+      if (
+        normalizeComparableText(term.explanationSv) === normalizeComparableText(term.explanationEn)
+      ) {
+        reject(`${label} explanationSv and explanationEn must be distinct bilingual text`);
+      }
+
+      if (term.chapterId !== undefined) {
+        if (!hasText(term.chapterId)) {
+          reject(`${label} chapterId must be non-empty when present`);
+        } else if (!textIsTrimmedSingleSpaced(term.chapterId)) {
+          reject(`${label} chapterId must be trimmed and single-spaced`);
+        } else if (chapterIds.size && !chapterIds.has(term.chapterId)) {
+          reject(`${label} references unknown chapter ${term.chapterId}`);
+        }
+      }
+    }
+
+    if (valid) glossaryTermsValidated += 1;
+  });
+}
+
+function validateBadgeCatalog() {
+  if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) return;
+
+  const entries = Object.entries(badgeCatalog);
+  const expectedIds = new Set(EXPECTED_BADGE_IDS);
+  const catalogIds = entries.map(([key]) => key);
+  if (!jsonEqual(catalogIds, EXPECTED_BADGE_IDS)) {
+    fail(
+      `badgeCatalog ids are ${JSON.stringify(catalogIds)}, expected ${JSON.stringify(
+        EXPECTED_BADGE_IDS,
+      )}`,
+    );
+  }
+
+  const seenTitles = new Set();
+  const seenDescriptions = new Set();
+
+  entries.forEach(([key, badge], index) => {
+    const label = hasText(badge?.id) ? badge.id : `badge[${index}]`;
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (!badge || typeof badge !== 'object') {
+      reject(`badgeCatalog.${key} is not an object`);
+    } else {
+      if (badge.id !== key) reject(`${label} id must match catalog key ${key}`);
+      if (!expectedIds.has(badge.id)) reject(`${label} is not an expected badge id`);
+      if (hasText(badge.id) && !isSnakeCaseId(badge.id)) {
+        reject(`${label} id must use lowercase snake_case`);
+      }
+
+      for (const field of ['title', 'description']) {
+        if (!hasText(badge[field])) {
+          reject(`${label} missing ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      const normalizedTitle = normalizeComparableText(badge.title);
+      if (normalizedTitle && seenTitles.has(normalizedTitle)) {
+        reject(`${label} duplicates badge title`);
+      }
+      if (normalizedTitle) seenTitles.add(normalizedTitle);
+
+      const normalizedDescription = normalizeComparableText(badge.description);
+      if (normalizedDescription && seenDescriptions.has(normalizedDescription)) {
+        reject(`${label} duplicates badge description`);
+      }
+      if (normalizedDescription) seenDescriptions.add(normalizedDescription);
+    }
+
+    if (valid) badgesValidated += 1;
+  });
+
+  if (typeof deriveBadges === 'function') {
+    const noProgressBadgeIds = deriveBadges({
+      completedQuestionCount: 0,
+      currentStreak: 0,
+      level: 1,
+      wrongAnswerCount: 0,
+    }).map((badge) => badge.id);
+    const milestoneBadgeIds = deriveBadges({
+      completedQuestionCount: 1,
+      currentStreak: 3,
+      level: 2,
+      wrongAnswerCount: 1,
+    }).map((badge) => badge.id);
+
+    if (noProgressBadgeIds.length) {
+      fail(`deriveBadges returned badges before milestones: ${noProgressBadgeIds.join(', ')}`);
+    } else if (!jsonEqual(milestoneBadgeIds, EXPECTED_BADGE_IDS)) {
+      fail(
+        `deriveBadges milestone ids are ${JSON.stringify(
+          milestoneBadgeIds,
+        )}, expected ${JSON.stringify(EXPECTED_BADGE_IDS)}`,
+      );
+    } else {
+      badgeMilestoneParityValidated = true;
+    }
+  }
 }
 
 function validateQuestionBankCsvContract() {
@@ -1422,7 +1598,9 @@ validateMockExamConfig(
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0,
 );
+validateGlossaryTerms();
 validateUxBenchmarks();
+validateBadgeCatalog();
 validateQuestionBankCsvContract();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
@@ -1454,7 +1632,11 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       mockExamConfigValidated,
+      glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+      glossaryTermsValidated,
       uxBenchmarksValidated,
+      badgesValidated,
+      badgeMilestoneParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,

@@ -14,7 +14,10 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.chapterSchemasValidated, 13);
   assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
   assert.equal(summary.mockExamConfigValidated, true);
+  assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
+  assert.equal(summary.badgesValidated, 4);
+  assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.sourceQuestions, 100);
   assert.equal(summary.generatedPublishedQuestions, 400);
   assert.equal(summary.authoredSourceQuestionsValidated, 100);
