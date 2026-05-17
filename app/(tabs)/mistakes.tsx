@@ -24,7 +24,9 @@ export default function Screen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge tone="orange">Smart review</Badge>
-        <Text style={styles.title}>Mistakes</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Mistakes
+        </Text>
         <Text style={styles.subtitle}>
           Review wrong answers with the question, explanation, source reference, and repetition
           count in one place.
@@ -38,7 +40,9 @@ export default function Screen() {
         <View style={styles.list}>
           <View style={styles.sectionHeading}>
             <Badge tone="blue">Saved list</Badge>
-            <Text style={styles.sectionTitle}>Bookmarked questions</Text>
+            <Text accessibilityRole="header" style={styles.sectionTitle}>
+              Bookmarked questions
+            </Text>
           </View>
           {bookmarkedQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
@@ -55,7 +59,9 @@ export default function Screen() {
         <View style={styles.list}>
           <View style={styles.sectionHeading}>
             <Badge tone="orange">Mistake log</Badge>
-            <Text style={styles.sectionTitle}>Wrong answers to revisit</Text>
+            <Text accessibilityRole="header" style={styles.sectionTitle}>
+              Wrong answers to revisit
+            </Text>
           </View>
           {mistakenQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
@@ -70,7 +76,9 @@ export default function Screen() {
         </View>
       ) : bookmarkedQuestions.length === 0 ? (
         <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>No mistakes yet</Text>
+          <Text accessibilityRole="header" style={styles.emptyTitle}>
+            No mistakes yet
+          </Text>
           <Text style={styles.emptyText}>
             Answer a practice question incorrectly and it will appear here.
           </Text>
