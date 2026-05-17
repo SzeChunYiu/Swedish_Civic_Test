@@ -221,6 +221,27 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
     pattern: /<SectionHeader[\s\S]*\btitle="Optimized study loop"/,
   },
 ];
+const EXPECTED_MISTAKES_ROUTE_HEADERS = [
+  {
+    label: 'mistakes route title',
+    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Mistakes\s*<\/Text>/,
+  },
+  {
+    label: 'bookmarked questions section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Bookmarked questions\s*<\/Text>/,
+  },
+  {
+    label: 'wrong answers section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Wrong answers to revisit\s*<\/Text>/,
+  },
+  {
+    label: 'empty-state title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.emptyTitle\}>\s*No mistakes yet\s*<\/Text>/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
@@ -1891,6 +1912,8 @@ let profileRouteHeadersValidated = 0;
 let profileRouteHeaderParityValidated = false;
 let homeRouteHeadersValidated = 0;
 let homeRouteHeaderParityValidated = false;
+let mistakesRouteHeadersValidated = 0;
+let mistakesRouteHeaderParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
@@ -3168,6 +3191,41 @@ function validateHomeRouteHeaderParity() {
 
   if (valid && homeRouteHeadersValidated === EXPECTED_HOME_ROUTE_HEADERS.length) {
     homeRouteHeaderParityValidated = true;
+  }
+}
+
+function validateMistakesRouteHeaderParity() {
+  let valid = true;
+  let mistakesRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mistakesRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/mistakes.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  const unheaderedRouteHeadings =
+    mistakesRoute.match(/<Text\s+style=\{styles\.(?:title|sectionTitle|emptyTitle)\}>/g) || [];
+  if (unheaderedRouteHeadings.length > 0) {
+    reject('mistakes route title and section text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_MISTAKES_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(mistakesRoute)) {
+      reject(`mistakes route missing ${expectedHeader.label} as a header`);
+      return;
+    }
+    mistakesRouteHeadersValidated += 1;
+  });
+
+  if (valid && mistakesRouteHeadersValidated === EXPECTED_MISTAKES_ROUTE_HEADERS.length) {
+    mistakesRouteHeaderParityValidated = true;
   }
 }
 
@@ -7236,6 +7294,7 @@ validateQuizRouteHeaderParity();
 validateLearnRouteHeaderParity();
 validateProfileRouteHeaderParity();
 validateHomeRouteHeaderParity();
+validateMistakesRouteHeaderParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -7321,6 +7380,8 @@ console.log(
       profileRouteHeaderParityValidated,
       homeRouteHeadersValidated,
       homeRouteHeaderParityValidated,
+      mistakesRouteHeadersValidated,
+      mistakesRouteHeaderParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,

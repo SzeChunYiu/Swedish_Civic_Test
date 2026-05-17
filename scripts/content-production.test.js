@@ -42,6 +42,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.profileRouteHeaderParityValidated, true);
   assert.equal(summary.homeRouteHeadersValidated, 4);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
+  assert.equal(summary.mistakesRouteHeadersValidated, 4);
+  assert.equal(summary.mistakesRouteHeaderParityValidated, true);
   assert.equal(summary.settingsRouteScrollRulesValidated, 5);
   assert.equal(summary.settingsRouteScrollParityValidated, true);
   assert.equal(summary.onboardingRouteScrollRulesValidated, 5);
