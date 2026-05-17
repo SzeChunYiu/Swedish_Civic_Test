@@ -2093,6 +2093,7 @@ const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference')
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
+const EXPECTED_GLOSSARY_TERM_KEYS = expectedContentInterfaceKeys('GlossaryTerm');
 const EXPECTED_UHR_SECTION_MAP_SOURCE_KEYS = ['title', 'publisher', 'url', 'retrievedDate'];
 const EXPECTED_UHR_SECTION_MAP_CHAPTER_KEYS = ['id', 'chapter', 'startPage', 'endPage', 'sections'];
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
@@ -2869,6 +2870,10 @@ function chapterExactSchemaKeyFailures(chapter, label) {
   return schemaKeyFailures(chapter, EXPECTED_CHAPTER_KEYS, label, 'Chapter');
 }
 
+function glossaryTermExactSchemaKeyFailures(term, label) {
+  return schemaKeyFailures(term, EXPECTED_GLOSSARY_TERM_KEYS, label, 'GlossaryTerm');
+}
+
 function mockExamConfigExactSchemaKeyFailures(config, label) {
   return schemaKeyFailures(config, EXPECTED_MOCK_EXAM_CONFIG_KEYS, label, 'MockExamConfig');
 }
@@ -3583,6 +3588,7 @@ let examGeneratorTypeAliasesValidated = 0;
 let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
+let glossaryTermExactSchemaKeysValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -8426,9 +8432,16 @@ function validateGlossaryTerms() {
           reject(`${label} references unknown chapter ${term.chapterId}`);
         }
       }
+
+      for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
+        reject(failure);
+      }
     }
 
-    if (valid) glossaryTermsValidated += 1;
+    if (valid) {
+      glossaryTermsValidated += 1;
+      glossaryTermExactSchemaKeysValidated += 1;
+    }
   });
 }
 
@@ -10616,6 +10629,7 @@ console.log(
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
+      glossaryTermExactSchemaKeysValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:

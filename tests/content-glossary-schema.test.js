@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -31,6 +31,7 @@ test('glossary schema validates bundled glossary terms', () => {
   assert.ok(Array.isArray(glossaryTerms));
   assert.equal(summary.glossaryTerms, glossaryTerms.length);
   assert.equal(summary.glossaryTermsValidated, glossaryTerms.length);
+  assert.equal(summary.glossaryTermExactSchemaKeysValidated, glossaryTerms.length);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
   assert.equal(summary.contentTypeInterfacesValidated, 5);
   assert.equal(ids.size, glossaryTerms.length);
@@ -44,4 +45,45 @@ test('glossary terms use the shared content schema', () => {
   assert.doesNotMatch(glossarySource, /interface GlossaryTerm/);
   assert.match(contentTypeSource, /export interface GlossaryTerm/);
   assert.match(contentTypeSource, /chapterId\?: string;/);
+});
+
+test('glossary schema rejects extra runtime keys', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return [
+      "import type { GlossaryTerm } from '../types/content';",
+      '',
+      'export const glossaryTerms: GlossaryTerm[] = [',
+      '  {',
+      "    id: 'demokrati',",
+      "    termSv: 'Demokrati',",
+      "    termEn: 'Democracy',",
+      "    explanationSv: 'Folkstyre där invånare kan påverka gemensamma beslut.',",
+      "    explanationEn: 'Rule by the people where residents can influence shared decisions.',",
+      "    chapterId: 'ch03',",
+      "    editorNote: 'internal note',",
+      '  },',
+      '];',
+      '',
+    ].join('\\n');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /demokrati\.editorNote is not part of GlossaryTerm schema/);
 });
