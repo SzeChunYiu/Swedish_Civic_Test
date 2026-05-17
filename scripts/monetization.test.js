@@ -490,6 +490,10 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   assert.match(nativeRewardedAdSource, /status: 'closed_without_reward'/);
   assert.match(nativeRewardedAdSource, /status: 'earned_reward'/);
   assert.match(
+    nativeRewardedAdSource,
+    /try \{[\s\S]*RewardedAd\.createForAdRequest[\s\S]*rewardedAd\.load\(\);[\s\S]*\} catch \{[\s\S]*status: hasShown \? 'show_failed' : 'failed_to_load'/,
+  );
+  assert.match(
     examSource,
     /accessDecision\.canOfferRewardedAd \|\| accessDecision\.reason === 'consent_required'/,
   );
