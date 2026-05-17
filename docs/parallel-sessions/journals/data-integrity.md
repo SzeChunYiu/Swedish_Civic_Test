@@ -93,3 +93,11 @@ Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.te
 Verification: `npm run validate:content` passed and reported `uhrSourceMetadataValidated: true` with 500 published questions and 500 UHR references; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed.
 Blocked? no - the validator now rejects UHR section maps that are not tied to the expected `Sverige i fokus` UHR source URL, publisher, and ISO retrieved date.
 Next suggested validator action: review and accept this DATA-INTEGRITY UHR-reference atom, then keep `npm run validate:content` and `npm run test:content` as the nearest source-metadata regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Published question tag slug schema atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`.
+Verification: `npm run validate:content` passed and reported 500 `questionTagsValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed.
+Blocked? no - the content validator now rejects blank, duplicate, or non-lowercase-kebab-case tags before a question can count as schema-valid.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest tag-schema regression gates.

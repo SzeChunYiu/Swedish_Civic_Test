@@ -72,6 +72,10 @@ function normalizeOptionText(value) {
   return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
 }
 
+function isSlugTag(value) {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+}
+
 function findDuplicateOptionTextLabels(question) {
   if (!Array.isArray(question.options)) return [];
 
@@ -197,6 +201,9 @@ function validateQuestionSchema(question, index) {
     const tags = new Set();
     question.tags.forEach((tag, tagIndex) => {
       if (!hasText(tag)) reject(`${label} tag[${tagIndex}] is blank`);
+      if (hasText(tag) && !isSlugTag(tag)) {
+        reject(`${label} tag[${tagIndex}] must use lowercase kebab-case`);
+      }
       if (hasText(tag) && tags.has(tag)) reject(`${label} has duplicate tag ${tag}`);
       tags.add(tag);
     });
@@ -220,6 +227,7 @@ let questionSchemasValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
 let questionOptionIdConventionsValidated = 0;
+let questionTagsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let uhrSourceMetadataValidated = false;
@@ -549,6 +557,9 @@ if (Array.isArray(questions)) {
       if (optionIdsMatchQuestionType(question)) {
         questionOptionIdConventionsValidated += 1;
       }
+      if (question.tags.every(isSlugTag)) {
+        questionTagsValidated += 1;
+      }
     }
 
     if (
@@ -648,6 +659,7 @@ console.log(
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,
       questionOptionIdConventionsValidated,
+      questionTagsValidated,
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,

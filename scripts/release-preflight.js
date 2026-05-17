@@ -75,14 +75,8 @@ const evidenceRequirements = {
       'ad-supported Google Mobile Ads review',
       /Google Mobile Ads|react-native-google-mobile-ads|AdMob|ad-supported|real ads enabled/i,
     ],
-    [
-      'Remove Ads IAP review',
-      /Remove Ads|29 SEK|in-app purchase|non-consumable/i,
-    ],
-    [
-      'ATT/UMP consent review',
-      /App Tracking Transparency|ATT|UMP|consent|IDFA/i,
-    ],
+    ['Remove Ads IAP review', /Remove Ads|29 SEK|in-app purchase|non-consumable/i],
+    ['ATT/UMP consent review', /App Tracking Transparency|ATT|UMP|consent|IDFA/i],
   ],
   'device-screenshots': [
     ['screenshot evidence', /screenshot/i],
@@ -664,7 +658,9 @@ function validatePrivacyReviewEvidence(evidencePath) {
     errors.push('googleMobileAds.consentFlowReviewed must be true');
   }
   const googleMobileAdsGate = String(googleMobileAds.gate || '');
-  if (!/EXPO_PUBLIC_REAL_ADS_ENABLED=true|real ads enabled|ad-supported/i.test(googleMobileAdsGate)) {
+  if (
+    !/EXPO_PUBLIC_REAL_ADS_ENABLED=true|real ads enabled|ad-supported/i.test(googleMobileAdsGate)
+  ) {
     errors.push('googleMobileAds.gate must mention ad-supported real ads');
   }
   if (!/Remove Ads|29 SEK|in-app purchase|non-consumable/i.test(googleMobileAdsGate)) {

@@ -850,8 +850,7 @@ function createPrivacyReviewEvidence(options = {}) {
     },
     googleMobileAds: {
       consentFlowReviewed: true,
-      gate:
-        'EXPO_PUBLIC_REAL_ADS_ENABLED=true; Remove Ads non-consumable in-app purchase at 29 SEK; ATT and UMP consent reviewed.',
+      gate: 'EXPO_PUBLIC_REAL_ADS_ENABLED=true; Remove Ads non-consumable in-app purchase at 29 SEK; ATT and UMP consent reviewed.',
       realAdsEnabled: true,
       removeAdsIapReviewed: true,
       sdkPresent: true,
@@ -2065,6 +2064,46 @@ test('release preflight blocks local store record evidence without account owner
   }
 });
 
+test('release preflight blocks local store record evidence without AdMob app readiness', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-admob-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const storeEvidence = createStoreRecordEvidence({
+    evidence: {
+      adMob: {
+        status: 'deferred-real-ads-disabled',
+        note: 'legacy disabled-ad decision',
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-records': {
+        status: 'READY',
+        evidence: storeRecordReadyEvidence(`Reports in ${storeEvidence.relativePath}.`),
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const storeRecords = report.gates.find((gate) => gate.id === 'store-records');
+    assert.equal(storeRecords.status, 'BLOCKED');
+    assert.match(storeRecords.evidence, /adMob\.appId/i);
+    assert.match(storeRecords.evidence, /adMob\.status/i);
+    assert.match(storeRecords.evidence, /adMob\.realAdsEnabled/i);
+  } finally {
+    storeEvidence.cleanup();
+  }
+});
+
 test('release preflight accepts valid local store record evidence', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-store-record-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
@@ -2094,7 +2133,7 @@ test('release preflight accepts valid local store record evidence', () => {
   }
 });
 
-test('release preflight blocks privacy review evidence without binary and ad sdk posture', () => {
+test('release preflight blocks privacy review evidence without binary and ad-supported posture', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-privacy-review-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
 
@@ -2118,10 +2157,10 @@ test('release preflight blocks privacy review evidence without binary and ad sdk
   const privacyReview = report.gates.find((gate) => gate.id === 'privacy-review');
   assert.equal(privacyReview.status, 'BLOCKED');
   assert.match(privacyReview.evidence, /generated binary or build/i);
-  assert.match(privacyReview.evidence, /ad SDK/i);
+  assert.match(privacyReview.evidence, /ad-supported|Google Mobile Ads/i);
 });
 
-test('release preflight blocks local privacy review evidence with real ads enabled', () => {
+test('release preflight blocks local privacy review evidence with disabled-ad posture', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-privacy-json-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
   const privacyEvidence = createPrivacyReviewEvidence({
@@ -2129,8 +2168,14 @@ test('release preflight blocks local privacy review evidence with real ads enabl
       googleMobileAds: {
         sdkPresent: true,
         testAppIds: true,
-        realAdsEnabled: true,
-        gate: 'REAL_ADS_ENABLED_FOR_V1=true',
+        realAdsEnabled: false,
+        gate: 'REAL_ADS_ENABLED_FOR_V1=false',
+      },
+      disabledSdks: {
+        analytics: true,
+        crashReporting: true,
+        purchases: true,
+        realAds: true,
       },
     },
   });
@@ -2139,7 +2184,7 @@ test('release preflight blocks local privacy review evidence with real ads enabl
     writeAllReadyEvidence(evidencePath, {
       'privacy-review': {
         status: 'READY',
-        evidence: `Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled; reports in ${privacyEvidence.relativePath}.`,
+        evidence: privacyReviewReadyEvidence(`Reports in ${privacyEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -2157,6 +2202,7 @@ test('release preflight blocks local privacy review evidence with real ads enabl
     assert.equal(privacyReview.status, 'BLOCKED');
     assert.match(privacyReview.evidence, /local artifact content/i);
     assert.match(privacyReview.evidence, /realAdsEnabled/i);
+    assert.match(privacyReview.evidence, /disabledSdks\.realAds/i);
   } finally {
     privacyEvidence.cleanup();
   }
@@ -2180,7 +2226,7 @@ test('release preflight blocks local privacy review evidence without audit trail
     writeAllReadyEvidence(evidencePath, {
       'privacy-review': {
         status: 'READY',
-        evidence: `Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled; reports in ${privacyEvidence.relativePath}.`,
+        evidence: privacyReviewReadyEvidence(`Reports in ${privacyEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -2213,7 +2259,7 @@ test('release preflight accepts valid local privacy review evidence', () => {
     writeAllReadyEvidence(evidencePath, {
       'privacy-review': {
         status: 'READY',
-        evidence: `Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled; reports in ${privacyEvidence.relativePath}.`,
+        evidence: privacyReviewReadyEvidence(`Reports in ${privacyEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);

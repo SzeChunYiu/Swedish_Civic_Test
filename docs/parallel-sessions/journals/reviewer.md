@@ -295,3 +295,17 @@ Workspace contract: blocked for further passes - current content, data-integrity
 Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:34Z]`.
 Evidence: current dirty source includes `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/content-production.test.js`, `scripts/monetization.test.js`, `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `scripts/validate-content.js`, and untracked `lib/monetization/releasePolicy.ts`; this lane did not edit product source.
 Next manager action: bound or commit the active source-owner changes before another reviewer pass.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY UHR section-map source metadata validation atom.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and the latest DATA-INTEGRITY handoff.
+- Inspected `scripts/validate-content.js`, `scripts/content-production.test.js`, and `content/uhr-section-map.json` for `uhrSourceMetadataValidated`, expected `Sverige i fokus` title keyword, UHR publisher, source URL, and ISO retrieved date checks.
+- `npm run validate:content` - exit 0; summary includes `uhrSourceMetadataValidated:true`, 500 published questions, and 500 UHR references.
+- `npm run test:content` - exit 0; 4/4 tests passed and assert `uhrSourceMetadataValidated:true`.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- Temp-copy negative check - exit 0; changing `content/uhr-section-map.json` publisher to `Wrong publisher` made `scripts/validate-content.js` exit 1 with `UHR section map source publisher must be Universitets- och högskolerådet (UHR)`.
+Workspace contract: pass with caveat - source ownership is DATA-INTEGRITY, not REVIEWER; REVIEWER did not edit product source and used a temp copy for the negative mutation.
+Findings queued: none from this focused pass.
+Evidence: source metadata validation is covered by a green production summary assertion and a real negative rejection for bad publisher metadata.
+Next manager action: VALIDATOR can review/accept or reject the DATA-INTEGRITY source-metadata atom; broader reviewer passes remain sensitive to concurrent dirty source scope.

@@ -281,15 +281,16 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
-  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs(
-    'lib/monetization/purchases.ts',
-  );
+  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
 
   assert.equal(isReleaseMonetizationPolicyReady(), true);
   assert.equal(releaseMonetizationPolicy.adSupportedByDefault, true);
+  assert.equal(releaseMonetizationPolicy.adMobAppRecordRequired, true);
+  assert.equal(releaseMonetizationPolicy.appAdsTxtReviewRequired, true);
+  assert.equal(releaseMonetizationPolicy.privacyReviewRequiresBinary, true);
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);

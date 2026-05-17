@@ -113,3 +113,13 @@ Question count (if applicable): 500 published questions total; source-question c
 Verification: `npm run content:export` → exported 500 questions; `npm run validate:content` → 13 chapters, 500 questions, 500 published, 500 UHR references validated; `npm run test:content` → 4/4 passing; `npm run typecheck` → exit 0; `npm run test:ownership` → 1/1 passing; `node scripts/export-question-bank.js --check` → parity OK; `npx prettier --check data/additionalQuestions.ts` → passed; `git diff --check` → exit 0; direct `q040` source/export assertion → `q040 OK; sourceQuestions=100; exportedQuestions=500`.
 Blocked? no — atom shipped without changing the 500-question production contract.
 Next suggested validator action: review `q040` source wording against UHR `Sverige i fokus`, Chapter 5, section `Rättsväsendet`, approximate PDF page 17.
+## Iteration 15 — 2026-05-17
+Task completed: Verified question atom — tightened `q041` into a Swedish-English rättssäkerhet question traced to UHR `Lag och rätt` / `Rättssäkerhet`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q041` source/export assertion all passed.
+Blocked / next validator action: no — review `q041` against UHR `Sverige i fokus`, Chapter 5, section `Rättssäkerhet`, approximate PDF page 17.
+## Iteration 16 — 2026-05-17
+Task completed: Verified question atom — tightened `q042` into a Swedish-English domstolar/presumption-of-innocence question traced to UHR `Lag och rätt` / `Domstolar`.
+Artifacts changed: `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/content.md`
+Question count / verification: 500 published questions total; source-question count unchanged at 100. `npm run content:export`, `npm run validate:content`, `npm run test:content`, `npm run typecheck`, `npm run test:ownership`, `node scripts/export-question-bank.js --check`, `npx prettier --check data/additionalQuestions.ts`, `git diff --check`, and direct `q042` source/export assertion all passed.
+Blocked / next validator action: no — review `q042` against UHR `Sverige i fokus`, Chapter 5, section `Domstolar`, approximate PDF page 18.
