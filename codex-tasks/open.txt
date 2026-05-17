@@ -182,3 +182,23 @@ natural fluent language, SV+EN parity now (full language set in v1.1), each
 fact cites a verifiable public source. Inaccurate fact = P0. Start ~30-50
 strong facts, expandable; rotate without immediate repeats.
 === END ===
+
+=== PRIORITY: SWEDISH MASCOTS (Jellycat-style) + PICKER (operator 2026-05-17) ===
+MASCOT [feature+art, P1]: a selectable Swedish mascot companion.
+Art style: Jellycat-INSPIRED (soft rounded plush look, gentle bean shapes,
+simple friendly dot/curve faces, calm pastel fills tinted to DESIGN.md tokens)
+— ORIGINAL art, NOT copies of Jellycat's actual products/characters (style
+only, no IP infringement). Implement as scalable inline SVG React components
+(no external/binary assets, no AI-image dependency), token-colored, crisp at
+any size, animatable.
+Initial set (>=6, expandable): Dalahäst (Dala horse), Älg (moose),
+Kanelbulle (cinnamon bun), Skogskatt (Swedish forest cat), Igelkott
+(hedgehog), Räv (fox), Kräfta (crayfish), Lingon sprite.
+UX: a mascot PICKER screen/section (gallery, choose one, persisted in
+settings/entitlements store); chosen mascot appears as a friendly companion on
+home / results / streak / empty states / fact bubble — NEVER on the active
+exam/question screen. Reactive micro-animations tie into the MOTION priority
+(idle bob, happy bounce on correct answer / quiz complete / badge), respect
+prefers-reduced-motion, 60fps, token colors only, keep 7/7 acceptance green.
+Repeatable atoms: one mascot SVG or the picker per atom; name it in the commit.
+=== END ===
