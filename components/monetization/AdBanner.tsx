@@ -1,19 +1,22 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { colors, space, typography } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
 export function AdBanner({
   placement = 'home_banner',
-  entitlements = FREE_ENTITLEMENTS,
+  entitlements,
 }: {
   placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
-  if (!shouldShowAd(placement, entitlements)) return null;
+  const { entitlements: resolvedEntitlements, entitlementsReady } =
+    useResolvedAdEntitlements(entitlements);
+
+  if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;
 
   const unit = getAdUnit(placement);
   return (

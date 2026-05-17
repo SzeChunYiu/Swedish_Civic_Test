@@ -2,23 +2,26 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
+import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { colors, radius, space } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 
 export function AdBanner({
   placement = 'home_banner',
-  entitlements = FREE_ENTITLEMENTS,
+  entitlements,
 }: {
   placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
-  const mobileAdsConsent = useMobileAdsConsent(entitlements);
+  const { entitlements: resolvedEntitlements, entitlementsReady } =
+    useResolvedAdEntitlements(entitlements);
+  const mobileAdsConsent = useMobileAdsConsent(resolvedEntitlements);
   const unitId = getPlatformAdUnitId(placement, Platform.OS);
   const visible =
+    entitlementsReady &&
     mobileAdsConsent.initialized &&
-    shouldShowAd(placement, entitlements, mobileAdsConsent.decision.consentDecision);
+    shouldShowAd(placement, resolvedEntitlements, mobileAdsConsent.decision.consentDecision);
 
   if (!visible || !unitId) return null;
 
