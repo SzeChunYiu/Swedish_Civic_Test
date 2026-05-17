@@ -209,6 +209,19 @@ test('chapter card groups title, translation, status, and description into an ac
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('learn route chapter links announce chapter progress', () => {
+  const source = read('app/(tabs)/learn.tsx');
+
+  assert.match(source, /function getChapterLinkAccessibilityLabel/);
+  assert.match(source, /Open chapter \$\{nameSv\}/);
+  assert.match(source, /English name: \$\{nameEn\}/);
+  assert.match(source, /Progress: \$\{progressLabel\}/);
+  assert.match(source, /\$\{completedCount\} of \$\{questionCount\} questions practiced/);
+  assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
+  assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('quiz feedback cards expose accessible summaries', () => {
   const explanationSource = read('components/quiz/ExplanationPanel.tsx');
   const referenceSource = read('components/quiz/UHRReferenceCard.tsx');

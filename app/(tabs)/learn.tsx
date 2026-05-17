@@ -20,6 +20,25 @@ function completedCountForChapter(chapterId: string, completedQuestionIds: strin
   ).length;
 }
 
+function getChapterLinkAccessibilityLabel({
+  nameSv,
+  nameEn,
+  completedCount,
+  questionCount,
+}: {
+  nameSv: string;
+  nameEn: string;
+  completedCount: number;
+  questionCount: number;
+}) {
+  const progressLabel =
+    questionCount > 0
+      ? `${completedCount} of ${questionCount} questions practiced`
+      : 'content queued';
+
+  return `Open chapter ${nameSv}. English name: ${nameEn}. Progress: ${progressLabel}.`;
+}
+
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
 
@@ -40,7 +59,12 @@ export default function Screen() {
           return (
             <Link
               key={chapter.id}
-              accessibilityLabel={`Open chapter ${chapter.nameSv}`}
+              accessibilityLabel={getChapterLinkAccessibilityLabel({
+                nameSv: chapter.nameSv,
+                nameEn: chapter.nameEn,
+                completedCount,
+                questionCount,
+              })}
               accessibilityRole="link"
               href={`/chapter/${chapter.id}`}
               style={styles.link}
