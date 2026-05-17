@@ -5,10 +5,11 @@ import { colors, typography } from '../../lib/theme';
 
 const disclaimerText =
   'Independent study tool. Not official or affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Practice questions are created for learning and are not real exam questions.';
+const disclaimerAccessibilityLabel = `Study disclaimer: ${disclaimerText}`;
 
 export function QuestionDisclaimer() {
   return (
-    <Card>
+    <Card accessibilityLabel={disclaimerAccessibilityLabel}>
       <Text style={styles.text}>{disclaimerText}</Text>
     </Card>
   );

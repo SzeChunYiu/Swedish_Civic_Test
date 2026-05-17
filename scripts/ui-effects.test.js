@@ -153,6 +153,18 @@ test('quiz feedback cards expose accessible summaries', () => {
   assert.doesNotMatch(referenceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('question disclaimer exposes the non-official warning as an accessible summary', () => {
+  const source = read('components/quiz/QuestionDisclaimer.tsx');
+
+  assert.match(source, /const disclaimerAccessibilityLabel =/);
+  assert.match(source, /`Study disclaimer: \$\{disclaimerText\}`/);
+  assert.match(source, /<Card accessibilityLabel=\{disclaimerAccessibilityLabel\}>/);
+  assert.match(source, /Independent study tool/);
+  assert.match(source, /Not official/);
+  assert.match(source, /not real exam questions/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
