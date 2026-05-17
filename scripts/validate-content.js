@@ -1757,6 +1757,7 @@ let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let mockExamTimerParityValidated = false;
+let examSubmissionFinalityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2678,6 +2679,47 @@ function validateMockExamTimerParity(config) {
   }
 
   if (valid) mockExamTimerParityValidated = true;
+}
+
+function validateExamSubmissionFinalityParity() {
+  let valid = true;
+  let examRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/exam.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  if (
+    !examRoute.includes('Submitted results are final. Start another mock exam for a fresh attempt.')
+  ) {
+    reject('exam result screen must tell users submitted results are final');
+  }
+  if (examRoute.includes('Back to exam answers') || examRoute.includes('Back to answers')) {
+    reject('exam result screen must not offer a back-to-answers control after submission');
+  }
+  if (examRoute.includes('onPress={() => setSubmitted(false)}')) {
+    reject('exam result screen must not directly reopen submitted answers');
+  }
+  if (
+    !examRoute.includes(
+      'disabled: !completionRecorded || !canStartAccessibleExam || startingAccessibleExam',
+    ) ||
+    !examRoute.includes(
+      'disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}',
+    )
+  ) {
+    reject('next-exam control must stay disabled until the submitted completion is stored');
+  }
+
+  if (valid) examSubmissionFinalityParityValidated = true;
 }
 
 function firstWrongOptionId(question) {
@@ -6588,6 +6630,7 @@ validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
+validateExamSubmissionFinalityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -6657,6 +6700,7 @@ console.log(
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
       mockExamTimerParityValidated,
+      examSubmissionFinalityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
