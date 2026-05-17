@@ -70,8 +70,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q021',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Landet styrs på olika nivåer', pageApprox: 12 },
-    'Vilka tre nivåer delar enligt UHR-materialet det politiska ansvaret i Sverige?',
-    'According to the UHR material, which three levels share political responsibility in Sweden?',
+    'Vilka tre nivåer delar det politiska ansvaret i Sverige?',
+    'Which three levels share political responsibility in Sweden?',
     [
       ['Stat, regioner och kommuner', 'The state, regions, and municipalities'],
       ['Kung, kyrka och adel', 'The king, church, and nobility'],
