@@ -19,6 +19,7 @@ export function MetricCard({
 
   return (
     <View
+      aria-label={metricAccessibilityLabel}
       accessible
       accessibilityLabel={metricAccessibilityLabel}
       style={[styles.card, tone === 'blue' ? styles.blueCard : null]}

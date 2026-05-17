@@ -17,6 +17,7 @@ export function Card({
 
   return (
     <View
+      aria-label={accessibilityLabel}
       accessible={groupedForAccessibility}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole={accessibilityRole}

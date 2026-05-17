@@ -27,6 +27,7 @@ test('metric card groups value, label, and helper into one accessible summary', 
   assert.match(source, /const metricAccessibilityLabel =/);
   assert.match(source, /accessibilityLabel \?\? `\$\{label\}: \$\{value\}/);
   assert.match(source, /accessible/);
+  assert.match(source, /aria-label=\{metricAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{metricAccessibilityLabel\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -151,6 +152,7 @@ test('card scaffold groups labelled surfaces for accessibility', () => {
   assert.match(source, /accessibilityRole,/);
   assert.match(source, /const groupedForAccessibility =/);
   assert.match(source, /accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\)/);
+  assert.match(source, /aria-label=\{accessibilityLabel\}/);
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
