@@ -192,8 +192,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q008',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv: 'Vilka är Sveriges tre största sjöar enligt materialet?',
-    questionEn: "Which are Sweden's three largest lakes according to the material?",
+    questionSv: 'Enligt UHR-materialet, vilka är Sveriges tre största sjöar?',
+    questionEn: "According to the UHR material, which are Sweden's three largest lakes?",
     options: [
       { id: 'a', textSv: 'Vänern, Vättern och Mälaren', textEn: 'Vänern, Vättern, and Mälaren' },
       {
@@ -210,9 +210,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'De tre största sjöarna är Vänern, Vättern och Mälaren. De andra alternativen blandar ihop hav, öar eller städer med sjöar.',
+      'UHR-avsnittet Skogar, sjöar och öar säger att Sverige har många sjöar spridda över hela landet och att de tre största är Vänern, Vättern och Mälaren. Alternativen med hav, öar eller städer blandar ihop andra geografiska begrepp med sjöar.',
     explanationEn:
-      'The three largest lakes are Vänern, Vättern, and Mälaren. The other alternatives confuse seas, islands, or cities with lakes.',
+      'The UHR section Forests, lakes, and islands says Sweden has many lakes spread throughout the country and that the three largest are Vänern, Vättern, and Mälaren. The alternatives with seas, islands, or cities confuse other geographical concepts with lakes.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Skogar, sjöar och öar', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
