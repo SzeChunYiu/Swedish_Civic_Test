@@ -324,6 +324,9 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
 
   for (const field of ['nameSv', 'nameEn', 'descriptionSv', 'descriptionEn']) {
     if (!hasText(chapter[field])) reject(`${label} missing ${field}`);
+    if (hasText(chapter[field]) && !textIsTrimmedSingleSpaced(chapter[field])) {
+      reject(`${label} ${field} must be trimmed and single-spaced`);
+    }
   }
 
   if (normalizeComparableText(chapter.nameSv) === normalizeComparableText(chapter.nameEn)) {
@@ -353,6 +356,12 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
   }
 
   return valid;
+}
+
+function chapterTextFieldsAreNormalized(chapter) {
+  return ['id', 'nameSv', 'nameEn', 'descriptionSv', 'descriptionEn'].every((field) =>
+    textIsTrimmedSingleSpaced(chapter[field]),
+  );
 }
 
 function validateQuestionSchema(question, index) {
@@ -496,6 +505,7 @@ const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
 let chapterSchemasValidated = 0;
+let chapterTextFieldsNormalizedValidated = 0;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -989,6 +999,9 @@ if (Array.isArray(chapters)) {
   chapters.forEach((chapter, index) => {
     if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
       chapterSchemasValidated += 1;
+      if (chapterTextFieldsAreNormalized(chapter)) {
+        chapterTextFieldsNormalizedValidated += 1;
+      }
     }
   });
 }
@@ -1179,6 +1192,7 @@ console.log(
     {
       chapters: chapters.length,
       chapterSchemasValidated,
+      chapterTextFieldsNormalizedValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
