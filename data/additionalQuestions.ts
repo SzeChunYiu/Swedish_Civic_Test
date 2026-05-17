@@ -1220,8 +1220,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Inga svenskar utvandrade', 'No Swedes emigrated'],
     ],
     0,
-    'Materialet anger att över en miljon svenskar utvandrade till USA under perioden.',
-    'The material states that more than one million Swedes emigrated to the United States during the period.',
+    'UHR-avsnittet Befolkningsökning säger att Sverige fortfarande var fattigt och att många hade svårt att få arbete. Därför valde många att lämna Sverige, och över en miljon svenskar utvandrade till USA mellan 1850 och 1920 i hopp om ett bättre liv.',
+    'The UHR section Population growth says Sweden was still poor and many people had difficulty finding work. Therefore many chose to leave Sweden, and more than one million Swedes emigrated to the United States between 1850 and 1920 in hope of a better life.',
     ['emigration', 'usa', 'history'],
   ),
   single(
