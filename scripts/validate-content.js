@@ -796,6 +796,41 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /return language === 'en' \? option\.textEn : option\.textSv;/,
   },
 ];
+const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
+  {
+    label: 'optional bilingual explanation props',
+    pattern: /explanationEn\?: string;[\s\S]*explanationSv\?: string;/,
+  },
+  {
+    label: 'language prop contract',
+    pattern: /language\?: 'sv' \| 'en';/,
+  },
+  {
+    label: 'release-safe Swedish fallback',
+    pattern: /explanationSv = 'Explanation unavailable for this question\.'/,
+  },
+  {
+    label: 'language-specific explanation selection',
+    pattern:
+      /const explanation = language === 'en' && explanationEn \? explanationEn : explanationSv;/,
+  },
+  {
+    label: 'explanation in accessibility summary',
+    pattern: /const panelAccessibilityLabel = `Explanation: \$\{explanation\}`;/,
+  },
+  {
+    label: 'Card receives accessibility summary',
+    pattern: /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/,
+  },
+  {
+    label: 'explanation header text',
+    pattern: /<Text accessibilityRole="header" style=\{styles\.title\}>/,
+  },
+  {
+    label: 'visible selected explanation',
+    pattern: /<Text style=\{styles\.body\}>\{explanation\}<\/Text>/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2460,6 +2495,8 @@ let questionCardAccessibilityRulesValidated = 0;
 let questionCardAccessibilityParityValidated = false;
 let answerOptionAccessibilityRulesValidated = 0;
 let answerOptionAccessibilityParityValidated = false;
+let explanationPanelAccessibilityRulesValidated = 0;
+let explanationPanelAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4464,6 +4501,44 @@ function validateAnswerOptionAccessibilityParity() {
     answerOptionAccessibilityRulesValidated === EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES.length
   ) {
     answerOptionAccessibilityParityValidated = true;
+  }
+}
+
+function validateExplanationPanelAccessibilityParity() {
+  let valid = true;
+  let explanationPanelSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    explanationPanelSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/ExplanationPanel.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/ExplanationPanel.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(explanationPanelSource)) {
+      reject(`ExplanationPanel missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    explanationPanelAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    explanationPanelAccessibilityRulesValidated ===
+      EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.length
+  ) {
+    explanationPanelAccessibilityParityValidated = true;
   }
 }
 
@@ -8559,6 +8634,7 @@ validateMetricCardAccessibilityParity();
 validateBadgeAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
+validateExplanationPanelAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8680,6 +8756,8 @@ console.log(
       questionCardAccessibilityParityValidated,
       answerOptionAccessibilityRulesValidated,
       answerOptionAccessibilityParityValidated,
+      explanationPanelAccessibilityRulesValidated,
+      explanationPanelAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
