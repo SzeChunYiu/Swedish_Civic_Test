@@ -57,6 +57,7 @@ const architectureExpectedExports = {
   'lib/storage/progressStore.ts': ['QuestionProgress', 'useProgressStore'],
   'lib/storage/settingsStore.ts': ['AppLanguage', 'useSettingsStore'],
   'lib/audio/speak.ts': ['buildQuestionSpeechText', 'speakSwedish', 'stopSpeech'],
+  'lib/content/derivedQuestions.ts': ['derivePublishedQuestions', 'publishQuestions'],
   'lib/monetization/ads.ts': [
     'adsConfig',
     'getAdUnit',
