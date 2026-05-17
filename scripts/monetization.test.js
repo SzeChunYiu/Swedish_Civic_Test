@@ -98,15 +98,44 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       assert.match(getPlatformAdUnitId('home_banner', 'ios'), /^ca-app-pub-/);
       assert.match(getPlatformAdUnitId('app_open_launch', 'android'), /9257395921$/);
       assert.match(getPlatformAdUnitId('app_open_launch', 'ios'), /5575463023$/);
+      assert.match(getPlatformAdUnitId('rewarded_extra_exam', 'android'), /5224354917$/);
+      assert.match(getPlatformAdUnitId('rewarded_extra_exam', 'ios'), /1712485313$/);
     },
   );
+});
+
+test('every ad placement has a configured unit and real-unit env slot', () => {
+  const { TEST_AD_UNITS, adsConfig, getAdUnit } = loadTs('lib/monetization/ads.ts');
+  const expectedPlacements = [
+    'home_banner',
+    'chapter_list_banner',
+    'quiz_completed_interstitial',
+    'results_native',
+    'rewarded_extra_exam',
+    'app_open_launch',
+  ];
+
+  assert.deepEqual(
+    TEST_AD_UNITS.map((unit) => unit.placement).sort(),
+    [...expectedPlacements].sort(),
+  );
+  assert.deepEqual([...adsConfig.safePlacements].sort(), [...expectedPlacements].sort());
+
+  for (const placement of expectedPlacements) {
+    assert.ok(getAdUnit(placement), `${placement} should resolve a configured unit`);
+    assert.match(adsConfig.realUnitEnvKeys[placement].android, /^EXPO_PUBLIC_ADMOB_ANDROID_/);
+    assert.match(adsConfig.realUnitEnvKeys[placement].ios, /^EXPO_PUBLIC_ADMOB_IOS_/);
+  }
 });
 
 test('real ad units are selected from env when the real ads flag is enabled', () => {
   withEnv(
     {
       EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/1111111111',
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
+        'ca-app-pub-1234567890123456/3333333333',
       EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/2222222222',
+      EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID: 'ca-app-pub-1234567890123456/4444444444',
       EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
       EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
     },
@@ -133,6 +162,18 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
       );
       assert.equal(
         shouldShowAd('home_banner', { adsDisabled: false }, { adServingAllowed: true }),
+        true,
+      );
+      assert.equal(
+        getPlatformAdUnitId('rewarded_extra_exam', 'android'),
+        'ca-app-pub-1234567890123456/3333333333',
+      );
+      assert.equal(
+        getPlatformAdUnitId('rewarded_extra_exam', 'ios'),
+        'ca-app-pub-1234567890123456/4444444444',
+      );
+      assert.equal(
+        shouldShowAd('rewarded_extra_exam', { adsDisabled: false }, { adServingAllowed: true }),
         true,
       );
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);

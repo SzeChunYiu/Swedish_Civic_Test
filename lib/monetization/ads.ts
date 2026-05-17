@@ -89,6 +89,13 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
     testOnly: true,
   },
   {
+    placement: 'rewarded_extra_exam',
+    iosUnitId: 'ca-app-pub-3940256099942544/1712485313',
+    androidUnitId: 'ca-app-pub-3940256099942544/5224354917',
+    enabled: true,
+    testOnly: true,
+  },
+  {
     placement: 'app_open_launch',
     iosUnitId: 'ca-app-pub-3940256099942544/5575463023',
     androidUnitId: 'ca-app-pub-3940256099942544/9257395921',
@@ -177,6 +184,7 @@ export const adsConfig = {
     'chapter_list_banner',
     'quiz_completed_interstitial',
     'results_native',
+    'rewarded_extra_exam',
     'app_open_launch',
   ],
   blockedPlacements: ['exam_screen'],
