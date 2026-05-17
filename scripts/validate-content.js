@@ -171,6 +171,47 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.tryAgain}', 'try-again action must render localized copy'],
 ];
+const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
+  sv: [
+    'innehåll planerat',
+    '${completedCount} av ${questionCount} frågor besvarade',
+    'Öppna kapitel ${nameSv}. Engelskt namn: ${nameEn}. Framsteg: ${progressLabel}.',
+  ],
+  en: [
+    'content queued',
+    '${completedCount} of ${questionCount} questions practiced',
+    'Open chapter ${nameSv}. English name: ${nameEn}. Progress: ${progressLabel}.',
+  ],
+};
+const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'learn route must import AppLanguage from settings'],
+  ['type ChapterLinkCopy = {', 'learn route must define a typed chapter-link copy contract'],
+  [
+    'const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {',
+    'learn route chapter-link copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'learn route must read language from settings store',
+  ],
+  [
+    'const copy = chapterLinkCopy[language];',
+    'learn route must select chapter-link copy from settings language',
+  ],
+  [
+    'questionCount > 0 ? copy.progressLabel(completedCount, questionCount) : copy.contentQueued',
+    'learn route must choose localized progress or queued copy',
+  ],
+  [
+    'return copy.accessibilityLabel({ nameSv, nameEn, progressLabel });',
+    'learn route must build chapter link accessibility labels from localized copy',
+  ],
+  [
+    'accessibilityLabel={getChapterLinkAccessibilityLabel({',
+    'learn route chapter links must expose localized accessibility labels',
+  ],
+  ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
+];
 const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
@@ -2905,6 +2946,8 @@ let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
 let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
+let learnRouteLinkCopyLabelsValidated = 0;
+let learnRouteLinkCopyParityValidated = false;
 let settingsStoreFieldsValidated = 0;
 let settingsStoreSchemaParityValidated = false;
 let settingsDailyGoalOptionsValidated = 0;
@@ -4194,6 +4237,58 @@ function validatePracticeRouteCopyParity() {
   );
   if (valid && practiceRouteCopyLabelsValidated === expectedLabelCount) {
     practiceRouteCopyParityValidated = true;
+  }
+}
+
+function validateLearnRouteLinkCopyParity() {
+  let valid = true;
+  let learnRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    learnRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+  } catch (error) {
+    reject(`learn route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!learnRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`learn route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!learnRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`learn route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`learn route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) learnRouteLinkCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && learnRouteLinkCopyLabelsValidated === expectedLabelCount) {
+    learnRouteLinkCopyParityValidated = true;
   }
 }
 
@@ -9254,6 +9349,7 @@ validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateChapterRouteHeaderParity();
 validateLearnRouteHeaderParity();
+validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
 validateHomeRouteHeaderParity();
 validateMistakesRouteHeaderParity();
@@ -9366,6 +9462,8 @@ console.log(
       chapterRouteHeaderParityValidated,
       learnRouteHeadersValidated,
       learnRouteHeaderParityValidated,
+      learnRouteLinkCopyLabelsValidated,
+      learnRouteLinkCopyParityValidated,
       profileRouteHeadersValidated,
       profileRouteHeaderParityValidated,
       homeRouteHeadersValidated,
