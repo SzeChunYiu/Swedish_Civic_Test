@@ -1,6 +1,28 @@
-import type { Difficulty, PracticeQuestion, UHRReference } from '../types/content';
+import { withDefaultQuestionSourceMetadata } from '../lib/content/derivedQuestions';
+import type {
+  AuthoredPracticeQuestion,
+  Difficulty,
+  PublicSourceReference,
+  UHRReference,
+} from '../types/content';
 
 type OptionText = [textSv: string, textEn: string];
+
+const RIKSDAGEN_TASKS_SOURCE: PublicSourceReference = {
+  title: 'Riksdagens uppgifter',
+  publisher: 'Sveriges riksdag',
+  url: 'https://www.riksdagen.se/sv/sa-fungerar-riksdagen/riksdagens-uppgifter/',
+  locator: 'Sidan Riksdagens uppgifter, avsnitten Beslutar om lagar och Beslutar om statens budget',
+  retrievedDate: '2026-05-17',
+};
+
+const RIKSDAGEN_CONTROL_SOURCE: PublicSourceReference = {
+  title: 'Kontrollerar regeringen',
+  publisher: 'Sveriges riksdag',
+  url: 'https://www.riksdagen.se/sv/sa-fungerar-riksdagen/riksdagens-uppgifter/kontrollerar-regeringen/',
+  locator: 'Sidan Kontrollerar regeringen, avsnitten Kontrollmakt och Ledamöterna ställer frågor',
+  retrievedDate: '2026-05-17',
+};
 
 function single(
   id: string,
@@ -14,7 +36,8 @@ function single(
   explanationEn: string,
   tags: string[],
   difficulty: Difficulty = 'medium',
-): PracticeQuestion {
+  sourceReference?: PublicSourceReference,
+): AuthoredPracticeQuestion {
   const optionIds = ['a', 'b', 'c', 'd'] as const;
   return {
     id,
@@ -27,6 +50,7 @@ function single(
     explanationSv,
     explanationEn,
     uhrReference: ref,
+    ...(sourceReference ? { provenance: 'external', sourceReference } : {}),
     difficulty,
     reviewStatus: 'reviewed',
     tags,
@@ -44,7 +68,8 @@ function trueFalse(
   explanationEn: string,
   tags: string[],
   difficulty: Difficulty = 'easy',
-): PracticeQuestion {
+  sourceReference?: PublicSourceReference,
+): AuthoredPracticeQuestion {
   return {
     id,
     chapterId,
@@ -59,13 +84,14 @@ function trueFalse(
     explanationSv,
     explanationEn,
     uhrReference: ref,
+    ...(sourceReference ? { provenance: 'external', sourceReference } : {}),
     difficulty,
     reviewStatus: 'reviewed',
     tags,
   };
 }
 
-export const additionalQuestions: PracticeQuestion[] = [
+const authoredAdditionalQuestions: AuthoredPracticeQuestion[] = [
   single(
     'q021',
     'ch03',
@@ -1719,4 +1745,76 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['lucia', 'december-13', 'light', 'traditions'],
     'easy',
   ),
+  single(
+    'q101',
+    'ch03',
+    { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
+    'Vilken uppgift beskriver Sveriges riksdag som en av riksdagens viktigaste?',
+    'Which task does the Swedish Parliament describe as one of the Riksdag’s most important?',
+    [
+      ['Att besluta om lagar', 'Making laws'],
+      ['Att döma i brottmål', 'Judging criminal cases'],
+      ['Att sköta regionernas sjukvård', 'Running regional health care'],
+      ['Att leda kommunernas skolor', 'Managing municipal schools'],
+    ],
+    0,
+    'Sveriges riksdag beskriver arbetet med lagar som en av riksdagens viktigaste uppgifter. Det ligger inom samma område som UHR-avsnittet Staten, där riksdagen beskrivs som den folkvalda församling som fattar beslut om lagar.',
+    'The Swedish Parliament describes making laws as one of the Riksdag’s most important tasks. This fits the same topic as the UHR section The state, where the Riksdag is described as the elected assembly that decides on laws.',
+    ['external-source', 'riksdag', 'laws', 'state'],
+    'medium',
+    RIKSDAGEN_TASKS_SOURCE,
+  ),
+  single(
+    'q102',
+    'ch03',
+    { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
+    'Vad beslutar riksdagen om i statens budget?',
+    'What does the Riksdag decide on in the central government budget?',
+    [
+      ['Statens utgifter och inkomster', 'Central government expenditure and revenue'],
+      ['Varje kommuns skolbudget', 'Every municipality’s school budget'],
+      ['Domstolarnas domar i enskilda mål', 'Court judgments in individual cases'],
+      ['Vilka partier som får ställa upp i val', 'Which parties may stand in elections'],
+    ],
+    0,
+    'Sveriges riksdag anger att riksdagen beslutar om statens utgifter och inkomster i statens budget. Frågan fördjupar samma UHR-område om riksdagens ansvar för lagar och statens budget.',
+    'The Swedish Parliament states that the Riksdag decides central government expenditure and revenue in the central government budget. The question deepens the same UHR topic about the Riksdag’s responsibility for laws and the state budget.',
+    ['external-source', 'riksdag', 'state-budget', 'public-finance'],
+    'medium',
+    RIKSDAGEN_TASKS_SOURCE,
+  ),
+  trueFalse(
+    'q103',
+    'ch03',
+    { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
+    'Sant eller falskt: Riksdagens kontrollmakt handlar om att kontrollera hur regeringen och myndigheterna sköter sitt arbete.',
+    'True or false: The Riksdag’s power of scrutiny is about checking how the Government and public agencies carry out their work.',
+    true,
+    'Sveriges riksdag förklarar att kontrollmakten innebär att riksdagen kontrollerar hur regeringen och myndigheterna sköter sitt arbete. Detta kompletterar UHR-området om hur staten styrs och hur riksdagen granskar regeringens arbete.',
+    'The Swedish Parliament explains that the power of scrutiny means the Riksdag checks how the Government and public agencies carry out their work. This supplements the UHR topic on how the state is governed and how the Riksdag scrutinizes the Government’s work.',
+    ['external-source', 'riksdag', 'scrutiny', 'government'],
+    'medium',
+    RIKSDAGEN_CONTROL_SOURCE,
+  ),
+  single(
+    'q104',
+    'ch03',
+    { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
+    'Vad kallas en skriftlig fråga från en riksdagsledamot till en minister som ministern besvarar muntligt i kammaren?',
+    'What is a written question from a member of the Riksdag to a minister called when the minister answers it orally in the Chamber?',
+    [
+      ['Interpellation', 'Interpellation'],
+      ['Folkomröstning', 'Referendum'],
+      ['Kommunal budget', 'Municipal budget'],
+      ['Domstolsförhandling', 'Court hearing'],
+    ],
+    0,
+    'Sveriges riksdag beskriver en interpellation som en skriftlig fråga från en riksdagsledamot till en minister, där ministern svarar muntligt i kammaren och svaret följs av debatt. Frågan hör till samma demokratiska område som UHR:s beskrivning av riksdagens granskande roll.',
+    'The Swedish Parliament describes an interpellation as a written question from a member of the Riksdag to a minister, with the minister answering orally in the Chamber and the answer followed by debate. The question belongs to the same democratic topic as the UHR description of the Riksdag’s scrutiny role.',
+    ['external-source', 'riksdag', 'interpellation', 'scrutiny'],
+    'hard',
+    RIKSDAGEN_CONTROL_SOURCE,
+  ),
 ];
+
+export const additionalQuestions = withDefaultQuestionSourceMetadata(authoredAdditionalQuestions);

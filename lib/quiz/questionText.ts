@@ -1,8 +1,10 @@
-import type { UHRReference } from '../../types/content';
+import type { PublicSourceReference, QuestionProvenance, UHRReference } from '../../types/content';
 
 type QuestionTextSource = {
+  provenance?: QuestionProvenance;
   questionEn?: string;
   questionSv?: string;
+  sourceReference?: PublicSourceReference;
   uhrReference?: UHRReference;
 };
 
@@ -55,7 +57,17 @@ export function getQuestionTranslationText(question?: QuestionTextSource): strin
   return translation || undefined;
 }
 
+export function getQuestionProvenanceLabel(question?: QuestionTextSource): string | undefined {
+  if (question?.provenance !== 'external') return undefined;
+  return 'Extern källa - utöver UHR-materialet / External source - beyond the UHR material';
+}
+
 export function getQuestionSourceCitation(question?: QuestionTextSource): string {
+  if (question?.sourceReference) {
+    const { locator, publisher, title, url } = question.sourceReference;
+    return `Källa/Source: ${title}, ${publisher}, ${locator}, ${url}`;
+  }
+
   if (!question?.uhrReference) return 'Source citation unavailable';
 
   const { chapter, pageApprox, section } = question.uhrReference;

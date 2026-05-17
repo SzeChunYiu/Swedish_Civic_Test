@@ -14,7 +14,7 @@ function validateContentSummary() {
 test('authored source question files keep their bounded source partitions', () => {
   const summary = validateContentSummary();
 
-  assert.equal(summary.authoredSourcePartitionQuestionsValidated, 100);
+  assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
 });
 
@@ -31,8 +31,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "\\n];\\n\\nexport const sourceQuestions",
-      "\\n  additionalQuestions[0],\\n];\\n\\nexport const sourceQuestions",
+      "\\n];\\n\\nexport const baseQuestions",
+      "\\n  additionalQuestions[0],\\n];\\n\\nexport const baseQuestions",
     );
   }
   return contents;

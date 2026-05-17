@@ -104,7 +104,7 @@ export default function Screen() {
                 explanationSv={question.explanationSv}
                 language={language}
               />
-              <UHRReferenceCard language={language} reference={question.uhrReference} />
+              <UHRReferenceCard language={language} question={question} />
             </View>
           ))}
         </View>
@@ -129,7 +129,7 @@ export default function Screen() {
                 explanationSv={question.explanationSv}
                 language={language}
               />
-              <UHRReferenceCard language={language} reference={question.uhrReference} />
+              <UHRReferenceCard language={language} question={question} />
             </View>
           ))}
         </View>

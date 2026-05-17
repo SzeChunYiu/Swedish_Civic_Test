@@ -18,7 +18,7 @@ function readValidationSummary() {
 test('published question prompts and explanations end as complete sentences', () => {
   const summary = readValidationSummary();
 
-  assert.equal(summary.questionSentenceEndingsValidated, 500);
+  assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
   assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
 });
 

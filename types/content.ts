@@ -4,10 +4,20 @@ export type QuestionType = 'single_choice' | 'true_false' | 'flashcard';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+export type QuestionProvenance = 'uhr' | 'external';
+
 export interface UHRReference {
   chapter: string;
   section: string;
   pageApprox: number;
+}
+
+export interface PublicSourceReference {
+  title: string;
+  publisher: string;
+  url: string;
+  locator: string;
+  retrievedDate: string;
 }
 
 export interface QuestionOption {
@@ -27,10 +37,15 @@ export interface PracticeQuestion {
   explanationSv: string;
   explanationEn: string;
   uhrReference: UHRReference;
+  provenance: QuestionProvenance;
+  sourceReference: PublicSourceReference;
   difficulty: Difficulty;
   reviewStatus: ReviewStatus;
   tags: string[];
 }
+
+export type AuthoredPracticeQuestion = Omit<PracticeQuestion, 'provenance' | 'sourceReference'> &
+  Partial<Pick<PracticeQuestion, 'provenance' | 'sourceReference'>>;
 
 export interface Chapter {
   id: string;

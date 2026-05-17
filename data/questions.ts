@@ -1,8 +1,12 @@
 import { additionalQuestions } from './additionalQuestions';
-import { derivePublishedQuestions, publishQuestions } from '../lib/content/derivedQuestions';
-import type { PracticeQuestion } from '../types/content';
+import {
+  derivePublishedQuestions,
+  publishQuestions,
+  withDefaultQuestionSourceMetadata,
+} from '../lib/content/derivedQuestions';
+import type { AuthoredPracticeQuestion, PracticeQuestion } from '../types/content';
 
-export const baseQuestions: PracticeQuestion[] = [
+const authoredBaseQuestions: AuthoredPracticeQuestion[] = [
   {
     id: 'q001',
     chapterId: 'ch01',
@@ -37,10 +41,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q002',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-    questionEn:
-      "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
+    questionSv: 'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
+    questionEn: "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -63,10 +65,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q003',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv:
-      'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
-    questionEn:
-      'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    questionSv: 'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+    questionEn: 'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
     options: [
       { id: 'a', textSv: 'Cirka 160 kilometer', textEn: 'About 160 kilometres' },
       { id: 'b', textSv: 'Cirka 1 600 kilometer', textEn: 'About 1,600 kilometres' },
@@ -92,8 +92,7 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'single_choice',
     questionSv: 'Vad heter havet vid Sveriges östra kust?',
-    questionEn:
-      "What is the sea along Sweden's eastern coast called?",
+    questionEn: "What is the sea along Sweden's eastern coast called?",
     options: [
       { id: 'a', textSv: 'Nordsjön', textEn: 'The North Sea' },
       { id: 'b', textSv: 'Medelhavet', textEn: 'The Mediterranean Sea' },
@@ -441,10 +440,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q015',
     chapterId: 'ch02',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Ett lågt valdeltagande kan påverka demokratin.',
-    questionEn:
-      'True or false: A low voter turnout can affect democracy.',
+    questionSv: 'Sant eller falskt: Ett lågt valdeltagande kan påverka demokratin.',
+    questionEn: 'True or false: A low voter turnout can affect democracy.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -467,10 +464,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q016',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv:
-      'Vad innebär det att Sverige är en parlamentarisk representativ demokrati?',
-    questionEn:
-      'What does it mean that Sweden is a parliamentary representative democracy?',
+    questionSv: 'Vad innebär det att Sverige är en parlamentarisk representativ demokrati?',
+    questionEn: 'What does it mean that Sweden is a parliamentary representative democracy?',
     options: [
       {
         id: 'a',
@@ -552,8 +547,7 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch04',
     type: 'single_choice',
     questionSv: 'Hur gammal måste man ha fyllt för att ha rösträtt?',
-    questionEn:
-      'How old must a person be to have the right to vote?',
+    questionEn: 'How old must a person be to have the right to vote?',
     options: [
       { id: 'a', textSv: '16 år', textEn: '16 years old' },
       { id: 'b', textSv: '18 år', textEn: '18 years old' },
@@ -578,8 +572,7 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q020',
     chapterId: 'ch04',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Folkomröstningar i Sverige är rådgivande.',
+    questionSv: 'Sant eller falskt: Folkomröstningar i Sverige är rådgivande.',
     questionEn: 'True or false: Referendums in Sweden are advisory.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
@@ -601,6 +594,9 @@ export const baseQuestions: PracticeQuestion[] = [
   },
 ];
 
+export const baseQuestions: PracticeQuestion[] =
+  withDefaultQuestionSourceMetadata(authoredBaseQuestions);
+
 export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
   ...additionalQuestions,
@@ -608,7 +604,7 @@ export const sourceQuestions: PracticeQuestion[] = publishQuestions([
 
 export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
-  101,
+  sourceQuestions.length + 1,
 );
 
 export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];

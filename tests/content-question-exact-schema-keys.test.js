@@ -10,7 +10,7 @@ test('published question objects keep exact runtime schema keys', () => {
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionExactSchemaKeysValidated, 500);
+  assert.equal(summary.questionExactSchemaKeysValidated, summary.publishedQuestions);
   assert.equal(summary.questionExactSchemaKeysValidated, summary.publishedQuestions);
 });
 

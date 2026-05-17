@@ -1,4 +1,17 @@
-import type { PracticeQuestion, QuestionOption } from '../../types/content';
+import type {
+  AuthoredPracticeQuestion,
+  PracticeQuestion,
+  PublicSourceReference,
+  QuestionOption,
+  UHRReference,
+} from '../../types/content';
+
+const UHR_SOURCE_REFERENCE = {
+  title: 'Sverige i fokus',
+  publisher: 'Universitets- och högskolerådet (UHR)',
+  url: 'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
+  retrievedDate: '2026-05-17',
+} as const;
 
 const UNKNOWN_OPTION: QuestionOption = {
   id: 'unknown',
@@ -18,6 +31,23 @@ function nextId(startId: number, offset: number): string {
   return `q${String(startId + offset).padStart(3, '0')}`;
 }
 
+export function buildUhrSourceReference(reference: UHRReference): PublicSourceReference {
+  return {
+    ...UHR_SOURCE_REFERENCE,
+    locator: `${reference.chapter}, ${reference.section}, s. ${reference.pageApprox}`,
+  };
+}
+
+export function withDefaultQuestionSourceMetadata(
+  questions: AuthoredPracticeQuestion[],
+): PracticeQuestion[] {
+  return questions.map((question) => ({
+    ...question,
+    provenance: question.provenance ?? 'uhr',
+    sourceReference: question.sourceReference ?? buildUhrSourceReference(question.uhrReference),
+  }));
+}
+
 function correctOption(question: PracticeQuestion): QuestionOption {
   return (
     question.options.find((option) => option.id === question.correctOptionId) ?? question.options[0]
@@ -30,8 +60,9 @@ function wrongOption(question: PracticeQuestion): QuestionOption {
   );
 }
 
-function publishedCopy(question: PracticeQuestion): PracticeQuestion {
-  return { ...question, reviewStatus: 'published' };
+function publishedCopy(question: AuthoredPracticeQuestion): PracticeQuestion {
+  const [withSourceMetadata] = withDefaultQuestionSourceMetadata([question]);
+  return { ...withSourceMetadata, reviewStatus: 'published' };
 }
 
 function uniqueTags(tags: string[]): string[] {
@@ -82,6 +113,8 @@ function withSharedFields(
     explanationSv: source.explanationSv,
     explanationEn: source.explanationEn,
     uhrReference: source.uhrReference,
+    provenance: source.provenance,
+    sourceReference: source.sourceReference,
     difficulty: source.difficulty,
     reviewStatus: 'published',
     tags: uniqueTags([...source.tags, ...extraTags]),
@@ -159,8 +192,8 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
     source,
     id,
     'single_choice',
-    `Vilket alternativ motsvarar rätt bedömning av påståendet? ${source.questionSv}`,
-    `Which option gives the correct judgment of the statement? ${source.questionEn}`,
+    `Vilket alternativ ger det rätta svaret? ${source.questionSv}`,
+    `Which option gives the correct answer? ${source.questionEn}`,
     options,
     correct.id,
     ['published-variant', 'judgement'],

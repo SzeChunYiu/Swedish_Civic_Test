@@ -64,8 +64,8 @@ function assertQuestionSourceExportWiring(source) {
   );
   assert.match(
     source,
-    /import \{ derivePublishedQuestions, publishQuestions \} from '\.\.\/lib\/content\/derivedQuestions';/,
-    'questions source must use the derived content helpers',
+    /import \{[\s\S]*derivePublishedQuestions,[\s\S]*publishQuestions,[\s\S]*withDefaultQuestionSourceMetadata,[\s\S]*\} from '\.\.\/lib\/content\/derivedQuestions';/,
+    'questions source must use the derived content and default source metadata helpers',
   );
   assert.ok(
     source.includes(
@@ -80,10 +80,10 @@ function assertQuestionSourceExportWiring(source) {
     source.includes(
       `export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
-  101,
+  sourceQuestions.length + 1,
 );`,
     ),
-    'generatedPublishedQuestions export must derive from sourceQuestions at q101',
+    'generatedPublishedQuestions export must derive from the next source question id',
   );
   assert.ok(
     source.includes(

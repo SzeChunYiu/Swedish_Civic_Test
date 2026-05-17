@@ -37,7 +37,7 @@ require('./scripts/validate-content.js');
 test('published question UHR references stay in section and page parity with the UHR map', () => {
   const summary = parseValidationSummary();
 
-  assert.equal(summary.uhrReferencesValidated, 500);
+  assert.equal(summary.uhrReferencesValidated, summary.publishedQuestions);
   assert.equal(summary.uhrReferencesValidated, summary.publishedQuestions);
   assert.equal(summary.questionChapterReferenceParityValidated, summary.publishedQuestions);
 });

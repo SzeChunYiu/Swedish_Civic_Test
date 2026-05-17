@@ -519,3 +519,67 @@ Workspace contract: blocked - current product-source changes are ambiguous for R
 Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:58Z]`.
 Evidence: REVIEWER did not edit product source; queue/journal updates only.
 Next manager action: provide source-owner handoffs or a clean commit/boundary for the current paywall and data-integrity diffs before the next reviewer pass.
+
+Lane: REVIEWER-content
+Artifact reviewed: current content schema/export/rendering surface for CONTENT-VERIFY provenance/source-label requirements.
+Checks run:
+- Read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`, `codex-tasks/P0.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- Verified current tracked product source boundary with `git status --short`; only untracked `codex-prompts-civic-content.txt` was present before queue edits.
+- Checked official UHR source page/PDF for `Sverige i fokus`; the UHR page links the PDF and describes it as preparation material for basic knowledge about Swedish society.
+- Inspected `types/content.ts`, `data/questions.ts`, `data/additionalQuestions.ts`, `content/question-bank.csv`, `lib/quiz/questionText.ts`, `components/quiz/QuestionCard.tsx`, `components/quiz/UHRReferenceCard.tsx`, `components/quiz/QuestionDisclaimer.tsx`, and relevant content parity tests.
+- Static provenance audit: `types/content.ts`, data files, derived questions, rendered question/source components, CSV export, and `scripts/validate-content.js` all returned 0 matches for `provenance|External source|Extern källa|utöver UHR|beyond the UHR`.
+- CSV audit: `content/question-bank.csv` has 500 rows and no `provenance` or source-origin column.
+- Citation/disclaimer inspection: `QuestionCard` renders `Källa/Source: Sverige i fokus...`, `UHRReferenceCard` renders chapter/section/page metadata, and `QuestionDisclaimer` renders the independent-study/not-official warning on question surfaces covered by tests.
+- Manual UHR traceability and answer-correctness spot check for `q001`-`q010`: official `Sverige i fokus` PDF lines 77-88, 104-114, and 140-148 support the checked facts for Sweden's location, Arctic Circle, north-south distance, Baltic Sea, Gotland/Öland, Gulf Stream/North Atlantic Current, Kebnekaise, the three largest lakes, almost 11 million residents, and listed natural resources. No `q001`-`q010` answer or SV+EN parity defect was found in this spot check.
+- `npm run validate:content` - exit 1 before content assertions: `Cannot find module 'typescript'`.
+- `npm run test:content` - exit 1 before meaningful assertions for the same missing dependency.
+- `npm ci` - exit 1 with npm `ENOENT` extraction errors; removed the partial `node_modules` tree created by this failed install.
+Workspace contract: pass with caveat - no product source edited; queue/journal only. The dependency install failure blocks acceptance-grade validator output in this workspace.
+Findings queued: `codex-tasks/P0.md` item `CONTENT-PROVENANCE-LABEL`; `codex-tasks/validator.txt` item `REVIEWER-CONTENT-PROVENANCE-1`.
+Evidence: provenance is absent from schema, authored data, generated data path, CSV export, validator, and rendered UI. Existing UHR citation/disclaimer implementation does not satisfy the separate provenance-label requirement.
+Next manager action: assign a DATA-INTEGRITY/CONTENT atom to add required `uhr|external` provenance across schema, data, generation, export, validator/tests, and visible external-source label rendering.
+
+Lane: REVIEWER-content
+Artifact reviewed: moving provenance/sourceReference source-owner changes after the initial P0 queue entry.
+Checks run:
+- Re-ran `npm run validate:content` after `node_modules` became usable - first passed on the pre-change artifact, then failed after concurrent source-owner edits.
+- Re-ran `npm run test:content` - exit 1 after concurrent provenance/sourceReference edits appeared.
+- Inspected current dirty product source: `components/quiz/QuestionCard.tsx`, `data/additionalQuestions.ts`, `data/chapters.ts`, `data/questions.ts`, `lib/content/derivedQuestions.ts`, `lib/quiz/questionText.ts`, and `types/content.ts` now contain partial provenance/sourceReference changes outside REVIEWER ownership.
+Workspace contract: blocked - product source moved during the reviewer pass; REVIEWER did not edit product source.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONTENT-PROVENANCE-1 update`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T21:27Z]`.
+Evidence: current `npm run validate:content` exits 1 with `additionalQuestions has 84 rows, expected 80`, `expected 100 authored source questions, found 104`, `q021.provenance/sourceReference is not part of PracticeQuestion schema` through the authored bank, and CSV export/id-sequence drift because new `q101`-`q104` are not reconciled with generated/export expectations. `npm run test:content` also exits 1 with repeated schema/parity failures.
+Next manager action: source owner should finish or revert/bound the provenance atom; reviewer should not run more acceptance-grade passes on the moving dirty artifact.
+
+Lane: REVIEWER-content
+Artifact reviewed: CONTENT-VERIFY pass on current provenance/sourceReference checkout, focused on external questions q101-q104 and generated external rows q505-q520.
+Checks run:
+- Read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`, `codex-tasks/P0.md`, `GOAL.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked current queue history to avoid re-filing the already queued missing-provenance defect.
+- `npm run validate:content` - exit 0; summary reports 520 questions, 104 source questions, 416 generated questions, 500 UHR provenance questions, 20 external provenance questions, 520 source references, and `externalProvenanceUiLabelParityValidated:true`.
+- `npm run test:content` - exit 1; 197/202 passing, 5 failing tests: stale QuestionCard/UHRReferenceCard expected rule counts, stale question-source export wiring string guard, stale question-source export guard negative assertion, and stale authored-source partition negative mutation.
+- `npm run typecheck` - exit 0.
+- `node scripts/export-question-bank.js --check` - exit 0 with 520-question parity.
+- Inspected `types/content.ts`, `data/additionalQuestions.ts`, `data/questions.ts`, `lib/content/derivedQuestions.ts`, `lib/quiz/questionText.ts`, `components/quiz/QuestionCard.tsx`, `components/quiz/UHRReferenceCard.tsx`, `content/question-bank.csv`, and relevant content tests.
+- Opened the cited Sveriges riksdag source pages. `Riksdagens uppgifter` supports q101/q102 facts about lawmaking and the central government budget; `Kontrollerar regeringen` supports q103/q104 facts about scrutiny and interpellations.
+- Direct external batch assertion - exit 0 for q101, q102, q103, q104, q505, and q520: all carry `provenance:"external"`, concrete sourceReference metadata, the localized external label helper output, and a visible citation string; correct options align to the cited source.
+Workspace contract: blocked for acceptance-grade continuation - REVIEWER did not edit product source, but current broad dirty source/test changes are outside this lane and `npm run test:content` is red.
+Findings queued: `codex-tasks/validator.txt` items `REVIEWER-CONTENT-PROVENANCE-2` and `REVIEWER-CONTENT-GENERATED-TF-NATURALNESS-1`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T21:35Z]`.
+Evidence: provenance/sourceReference data and helper rendering now exist and direct external q101-q104 answers are source-supported, but the executable content test gate is still red. Generated variants from true/false sources such as q513-q516 produce nested "Sant eller falskt" / "True or false" prompts, which fails the naturalness bar even when the factual answer is correct.
+Next manager action: assign source owners to make the provenance/sourceReference content tests green and fix true/false generated variant wording before accepting CONTENT-PROVENANCE-LABEL or TRANSLATE-COMPLETE progress.
+
+Lane: REVIEWER-content
+Artifact reviewed: current CONTENT-PROVENANCE-LABEL/sourceReference artifact after gates returned green; focused CONTENT-VERIFY on q052-q061 and generated judgement variants.
+Checks run:
+- Read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`, `codex-tasks/P0.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `npm run validate:content` - exit 0, 520 questions, 520 source references, 500 UHR provenance rows, 20 external provenance rows, external label parity true.
+- `npm run test:content` - exit 0, 202/202.
+- `npm run typecheck` - exit 0.
+- `node scripts/export-question-bank.js --check` - exit 0, 520-question parity.
+- UHR PDF spot-check for q052-q061 source facts: q052-q055 match UHR lines on the 1948 declaration, gender-equality policy, gender-related violence/oppression, and the sex-purchase law; q056-q057 match UHR child-rights lines on the convention being Swedish law since 2020 and the 1979 corporal-punishment ban; q058-q061 match UHR lines on national minorities, Sametinget, same-sex marriage, and DO/discrimination-law duties. CSV rows q052-q061 carry UHR citation fields and `provenance:"uhr"`.
+- `rg -n "rätt bedömning av påståendet\\?|correct judgment of the statement\\?" content/question-bank.csv | wc -l` - 104 generated rows.
+- `rg -n "rätt bedömning av påståendet\\?|correct judgment of the statement\\?" lib/content/derivedQuestions.ts scripts/validate-content.js content/question-bank.csv` - template and generated rows all use the statement wording.
+- `rg -n "UHR-källa|UHR reference|sourceCitation|sourceReference|provenance" components/quiz app lib/quiz/questionText.ts tests scripts/validate-content.js` - external source citations and badges exist, but `UHRReferenceCard` and tests still hardcode the card title/accessibility prefix as UHR-specific.
+Workspace contract: pass with caveat - no product source edited; the checkout remains broadly dirty from source-owner work outside this lane. The requested `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` paths are absent, so the finding was queued directly in `codex-tasks/validator.txt` under the reviewer contract.
+Findings queued: `codex-tasks/validator.txt` items `REVIEWER-CONTENT-GENERATED-JUDGEMENT-NATURALNESS-1` and `REVIEWER-CONTENT-EXTERNAL-SOURCE-CARD-LABEL-1`.
+Evidence: q052-q061 passed the manual UHR/source/citation/provenance spot-check, but generated judgement rows such as q108, q148, and q508 say `påståendet` / `statement` and then append an actual question, for example `Which option gives the correct judgment of the statement? Where is Sweden located?`. This is a full-bank SV+EN naturalness defect even though the answers and citations remain traceable. External rows such as q101-q104/q505-q520 can also render an external-source badge and non-UHR citation inside a card still titled `UHR reference`, which makes the provenance UI contradictory.
+Next manager action: assign DATA-INTEGRITY/CONTENT derived-content work to rewrite or suppress the judgement variant template and add a regression gate; assign SETUP/CONTENT rendering work to make the source card title/accessibility prefix provenance-aware in SV+EN; keep TRANSLATE-COMPLETE and CONTENT-PROVENANCE-LABEL open until both are fixed.

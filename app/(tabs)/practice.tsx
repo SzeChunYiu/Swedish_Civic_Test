@@ -179,7 +179,7 @@ export default function Screen() {
             explanationSv={question.explanationSv}
             language={language}
           />
-          <UHRReferenceCard language={language} reference={question.uhrReference} />
+          <UHRReferenceCard language={language} question={question} />
           <AdBanner placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Pressable

@@ -39,6 +39,8 @@ export type ExamReviewItem = {
   explanationSv: string;
   explanationEn: string;
   uhrReference: PracticeQuestion['uhrReference'];
+  provenance: PracticeQuestion['provenance'];
+  sourceReference: PracticeQuestion['sourceReference'];
 };
 
 export type ExamAutoSubmitState = {
@@ -168,6 +170,8 @@ export function buildExamReviewItems(
       explanationSv: question.explanationSv,
       explanationEn: question.explanationEn,
       uhrReference: question.uhrReference,
+      provenance: question.provenance,
+      sourceReference: question.sourceReference,
     };
   });
 }

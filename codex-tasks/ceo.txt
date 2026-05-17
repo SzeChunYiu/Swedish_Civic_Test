@@ -1,0 +1,38 @@
+2. SHUFFLE-FIX and TRANSLATE-COMPLETE remain open P0s after the provenance gate is bounded.
+3. UIUX polish, release polish, and non-P0 content expansion stay held for acceptance unless their commits directly advance an open P0.
+Team decisions:
+- VALIDATOR / manager-build remains the convergence owner for acceptance, leases, and dirty-worktree boundary.
+- DATA-INTEGRITY + CONTENT should finish or explicitly reject the in-progress provenance/sourceReference atom across schema, authored data, generated questions, export, validation, and UI rendering.
+- SETUP may touch app/components only where required to render the provenance/source labels and clear type/content gates; no unrelated screen polish while P0s are open.
+- REVIEWER should pause acceptance-grade passes until VALIDATOR defines a clean artifact boundary and `npm run validate:content`, `npm run test:content`, and `npm run typecheck` are no longer red for the active atom.
+- UIUX managers/workers should hold non-P0 styling/motion/component work. If kept active, only accept work that directly helps P0 provenance display or source-label accessibility.
+Staffing evidence:
+- `csup steward civic-test --sample-secs=5` returned `STEWARD summary total=0` and recommended keeping current staffing while auditing acceptance evidence.
+- `csup factory-audit civic-test` by project name returned RED with `docs=missing:project_config`; the local checkout has `.codex-supervisor.toml`, so this appears to be a csup project-lookup/bootstrap issue rather than missing local file.
+- `csup staff --scenario=resume --dry-run` and `csup staff --scenario=resume --apply` both reported STAFF-DOWN/no_queued_work for configured LUNARC hosts because `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks` has no task queue files from csup's perspective.
+Staffing decision: HOLD - no new workers. Do not rely on LUNARC team staffing until the remote project queue/bootstrap path is reconciled. Work should continue only through the active manager-owned local/known artifact boundary.
+Escalations:
+- Infra: remote LUNARC project path queue files are invisible/missing to `csup staff`; operator/GM should sync or bootstrap `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks` before trying to add staff.
+- Quality: current content/type gates are red. `npm run validate:content` reports expected 500 questions but found 520, missing `sourceReference` and invalid `provenance` on generated questions, and stale CSV shape. `npm run typecheck` fails because `derivedQuestions.ts` returns `PracticeQuestion` without `provenance` and `sourceReference`.
+
+CEO-CYCLE-2026-05-17T21:39Z
+Objective: keep the civic-test train acceptance-bounded while P0 content policy work converges.
+Team decisions:
+- Keep VALIDATOR / manager-build as convergence owner for acceptance, leases, commits, and dirty-worktree boundary.
+- CONTENT + DATA-INTEGRITY own the provenance/sourceReference and generated true/false naturalness fixes; SETUP may support only the visible provenance/source-label UI surface.
+- REVIEWER may resume focused passes only after VALIDATOR declares a stable artifact boundary; UIUX/release polish remains held unless it directly advances an open P0.
+Priority order:
+1. VALIDATOR reviews the now-green CONTENT-PROVENANCE-LABEL dirty atom and accepts/rejects it with source-owner evidence.
+2. Fix generated variants from true/false source questions; current CSV still has nested `Sant eller falskt` / `True or false` wording in generated prompts, blocking TRANSLATE-COMPLETE naturalness.
+3. Then proceed to SHUFFLE-FIX and remaining P0s before ordinary UI/release/content polish.
+Staffing evidence:
+- `csup steward civic-test --sample-secs=5` returned `STEWARD summary total=0`.
+- `csup staff civic-test --scenario=resume --dry-run` failed project lookup despite local `.codex-supervisor.toml`.
+- cwd-based `csup staff --scenario=resume --dry-run` and `--apply` both returned STAFF-DOWN/no_queued_work for all configured LUNARC hosts because remote `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks` has no visible queue files.
+Local gate evidence:
+- `npm run validate:content` passed with 520 questions, 500 UHR provenance questions, 20 external provenance questions, 520 source references, and `externalProvenanceUiLabelParityValidated:true`.
+- `npm run test:content` passed 202/202; `npm run typecheck`, export parity, ownership, `git diff --check`, and targeted Prettier for changed source files passed.
+Staffing decision: HOLD - do not add remote workers until queue bootstrap/project lookup is fixed; do not stop sessions without manager confirmation.
+Escalations:
+- Infra: remote LUNARC queue/bootstrap remains broken for staffing.
+- Quality: provenance is gate-green but not accepted; generated true/false-derived prompt naturalness remains a P0 language defect.

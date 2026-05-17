@@ -26,7 +26,7 @@ export const chapters: Chapter[] = [
       'Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick.',
     descriptionEn:
       "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
-    questionCount: 55,
+    questionCount: 75,
   },
   {
     id: 'ch04',

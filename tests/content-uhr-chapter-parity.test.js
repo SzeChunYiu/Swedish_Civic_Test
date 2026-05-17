@@ -10,6 +10,6 @@ test('question chapter ids stay in parity with UHR reference chapters', () => {
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionChapterReferenceParityValidated, 500);
+  assert.equal(summary.questionChapterReferenceParityValidated, summary.publishedQuestions);
   assert.equal(summary.questionChapterReferenceParityValidated, summary.publishedQuestions);
 });

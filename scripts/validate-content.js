@@ -18,12 +18,14 @@ const speechMock = {
 const QUESTION_TYPE_VALUES = ['single_choice', 'true_false', 'flashcard'];
 const REVIEW_STATUS_VALUES = ['draft', 'reviewed', 'published'];
 const DIFFICULTY_VALUES = ['easy', 'medium', 'hard'];
+const QUESTION_PROVENANCE_VALUES = ['uhr', 'external'];
 const QUESTION_TYPES = new Set(QUESTION_TYPE_VALUES);
 const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
+const QUESTION_PROVENANCES = new Set(QUESTION_PROVENANCE_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 100;
+const EXPECTED_SOURCE_QUESTIONS = 104;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
@@ -62,6 +64,12 @@ const QUESTION_BANK_CSV_HEADER = [
   'questionSv',
   'questionEn',
   'correctOptionId',
+  'provenance',
+  'sourceTitle',
+  'sourcePublisher',
+  'sourceUrl',
+  'sourceLocator',
+  'sourceRetrievedDate',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
@@ -1625,8 +1633,16 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /const questionText = getQuestionDisplayText\(question, 'sv'\);/,
   },
   {
+    label: 'external provenance label lookup',
+    pattern: /const provenanceLabel = getQuestionProvenanceLabel\(question\);/,
+  },
+  {
     label: 'difficulty in accessibility summary',
     pattern: /`Difficulty: \$\{difficulty\}`/,
+  },
+  {
+    label: 'external provenance in accessibility summary only when present',
+    pattern: /provenanceLabel \? `Source scope: \$\{provenanceLabel\}` : null/,
   },
   {
     label: 'Swedish question in accessibility summary',
@@ -1643,6 +1659,11 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'visible difficulty label',
     pattern: /<Text style=\{styles\.label\}>\{difficulty\}<\/Text>/,
+  },
+  {
+    label: 'visible external provenance label',
+    pattern:
+      /\{provenanceLabel \? <Text style=\{styles\.provenanceLabel\}>\{provenanceLabel\}<\/Text> : null\}/,
   },
   {
     label: 'question header text',
@@ -1757,6 +1778,10 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /reference\?: UHRReference/,
   },
   {
+    label: 'optional source-backed question prop contract',
+    pattern: /question\?: SourceBackedQuestion;/,
+  },
+  {
     label: 'language prop contract',
     pattern: /language\?: AppLanguage;/,
   },
@@ -1767,17 +1792,17 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'chapter and section source label',
     pattern:
-      /const label = reference\s*\?\s*`\$\{reference\.chapter\} · \$\{reference\.section\}`\s*:\s*copy\.unavailable;/,
+      /const resolvedReference = reference \?\? question\?\.uhrReference;[\s\S]*const label = resolvedReference[\s\S]*`\$\{resolvedReference\.chapter\} · \$\{resolvedReference\.section\}`[\s\S]*copy\.unavailable;/,
   },
   {
     label: 'localized approximate page source label',
     pattern:
-      /const pageLabel = reference\?\.pageApprox[\s\S]*\? `\$\{copy\.approximatePage\} \$\{reference\.pageApprox\}`[\s\S]*: null;/,
+      /const pageLabel = resolvedReference\?\.pageApprox[\s\S]*\? `\$\{copy\.approximatePage\} \$\{resolvedReference\.pageApprox\}`[\s\S]*: null;/,
   },
   {
-    label: 'localized page-aware accessibility label',
+    label: 'source citation in accessibility label',
     pattern:
-      /const referenceAccessibilityLabel = pageLabel[\s\S]*\? `\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{pageLabel\}`[\s\S]*: `\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}`;/,
+      /const referenceAccessibilityLabel = pageLabel[\s\S]*sourceCitation[\s\S]*: `\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{sourceCitation\}`;/,
   },
   {
     label: 'Card receives UHR accessibility label',
@@ -1793,8 +1818,17 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /<Text style=\{styles\.body\}>\{label\}<\/Text>/,
   },
   {
+    label: 'visible external provenance label',
+    pattern:
+      /\{provenanceLabel \? <Text style=\{styles\.provenanceLabel\}>\{provenanceLabel\}<\/Text> : null\}/,
+  },
+  {
     label: 'visible approximate page label',
     pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
+  },
+  {
+    label: 'visible source citation line',
+    pattern: /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/,
   },
 ];
 const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
@@ -2096,6 +2130,7 @@ const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
   { typeName: 'Difficulty', values: DIFFICULTY_VALUES },
+  { typeName: 'QuestionProvenance', values: QUESTION_PROVENANCE_VALUES },
 ];
 const EXPECTED_CONTENT_INTERFACES = [
   {
@@ -2104,6 +2139,16 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'chapter', type: 'string', optional: false },
       { name: 'section', type: 'string', optional: false },
       { name: 'pageApprox', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'PublicSourceReference',
+    fields: [
+      { name: 'title', type: 'string', optional: false },
+      { name: 'publisher', type: 'string', optional: false },
+      { name: 'url', type: 'string', optional: false },
+      { name: 'locator', type: 'string', optional: false },
+      { name: 'retrievedDate', type: 'string', optional: false },
     ],
   },
   {
@@ -2127,6 +2172,8 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
       { name: 'uhrReference', type: 'UHRReference', optional: false },
+      { name: 'provenance', type: 'QuestionProvenance', optional: false },
+      { name: 'sourceReference', type: 'PublicSourceReference', optional: false },
       { name: 'difficulty', type: 'Difficulty', optional: false },
       { name: 'reviewStatus', type: 'ReviewStatus', optional: false },
       { name: 'tags', type: 'string[]', optional: false },
@@ -2160,6 +2207,7 @@ function expectedContentInterfaceKeys(interfaceName) {
   return interfaceSpec ? interfaceSpec.fields.map((field) => field.name) : [];
 }
 const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference');
+const EXPECTED_SOURCE_REFERENCE_KEYS = expectedContentInterfaceKeys('PublicSourceReference');
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
@@ -2227,6 +2275,8 @@ const EXPECTED_EXAM_GENERATOR_INTERFACES = [
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
       { name: 'uhrReference', type: "PracticeQuestion['uhrReference']", optional: false },
+      { name: 'provenance', type: "PracticeQuestion['provenance']", optional: false },
+      { name: 'sourceReference', type: "PracticeQuestion['sourceReference']", optional: false },
     ],
   },
   {
@@ -2688,6 +2738,11 @@ function questionTextFieldsAreNormalized(question) {
     question.explanationEn,
     question.uhrReference?.chapter,
     question.uhrReference?.section,
+    question.sourceReference?.title,
+    question.sourceReference?.publisher,
+    question.sourceReference?.url,
+    question.sourceReference?.locator,
+    question.sourceReference?.retrievedDate,
     ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
   ];
 
@@ -2702,6 +2757,39 @@ function questionSentenceEndingsAreComplete(question) {
   return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
     textHasSentenceEnding(question[field]),
   );
+}
+
+function questionProvenanceIsValid(question) {
+  return QUESTION_PROVENANCES.has(question?.provenance);
+}
+
+function sourceReferenceIsValid(question) {
+  const reference = question?.sourceReference;
+  if (!isObjectRecord(reference)) return false;
+  if (
+    !['title', 'publisher', 'url', 'locator', 'retrievedDate'].every(
+      (field) => hasText(reference[field]) && textIsTrimmedSingleSpaced(reference[field]),
+    )
+  ) {
+    return false;
+  }
+  if (!isHttpsUrl(reference.url) || !isIsoDate(reference.retrievedDate)) return false;
+  if (new Date(`${reference.retrievedDate}T00:00:00Z`) > new Date()) return false;
+  if (question.provenance === 'uhr') {
+    return (
+      reference.url === EXPECTED_UHR_SOURCE.url &&
+      reference.title.includes(EXPECTED_UHR_SOURCE.titleKeyword)
+    );
+  }
+  if (question.provenance === 'external') {
+    const publisher = normalizeComparableText(reference.publisher);
+    return (
+      reference.url !== EXPECTED_UHR_SOURCE.url &&
+      !publisher.includes('uhr') &&
+      !publisher.includes('universitets- och högskolerådet')
+    );
+  }
+  return false;
 }
 
 function findQuestionAuthorityOverclaim(question) {
@@ -2807,8 +2895,8 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   }
 
   return {
-    questionSv: `Vilket alternativ motsvarar rätt bedömning av påståendet? ${sourceQuestion.questionSv}`,
-    questionEn: `Which option gives the correct judgment of the statement? ${sourceQuestion.questionEn}`,
+    questionSv: `Vilket alternativ ger det rätta svaret? ${sourceQuestion.questionSv}`,
+    questionEn: `Which option gives the correct answer? ${sourceQuestion.questionEn}`,
   };
 }
 
@@ -2930,6 +3018,14 @@ function questionExactSchemaKeyFailures(question, label) {
       EXPECTED_UHR_REFERENCE_KEYS,
       `${label} uhrReference`,
       'UHRReference',
+    ),
+  );
+  failures.push(
+    ...schemaKeyFailures(
+      question?.sourceReference,
+      EXPECTED_SOURCE_REFERENCE_KEYS,
+      `${label} sourceReference`,
+      'PublicSourceReference',
     ),
   );
 
@@ -3385,6 +3481,9 @@ function validateQuestionSchema(question, index) {
   if (!REVIEW_STATUSES.has(question.reviewStatus)) {
     reject(`${label} has invalid reviewStatus ${question.reviewStatus}`);
   }
+  if (!QUESTION_PROVENANCES.has(question.provenance)) {
+    reject(`${label} has invalid provenance ${question.provenance}`);
+  }
   if (
     normalizeComparableText(question.questionSv) === normalizeComparableText(question.questionEn)
   ) {
@@ -3473,6 +3572,55 @@ function validateQuestionSchema(question, index) {
         !textIsTrimmedSingleSpaced(question.uhrReference[field])
       ) {
         reject(`${label} uhrReference.${field} must be trimmed and single-spaced`);
+      }
+    }
+  }
+
+  if (!isObjectRecord(question.sourceReference)) {
+    reject(`${label} sourceReference must be a PublicSourceReference object`);
+  } else {
+    for (const field of ['title', 'publisher', 'url', 'locator', 'retrievedDate']) {
+      if (!hasText(question.sourceReference[field])) {
+        reject(`${label} sourceReference.${field} missing`);
+      } else if (!textIsTrimmedSingleSpaced(question.sourceReference[field])) {
+        reject(`${label} sourceReference.${field} must be trimmed and single-spaced`);
+      }
+    }
+
+    if (hasText(question.sourceReference.url) && !isHttpsUrl(question.sourceReference.url)) {
+      reject(`${label} sourceReference.url must be an HTTPS public URL`);
+    }
+    if (
+      hasText(question.sourceReference.retrievedDate) &&
+      !isIsoDate(question.sourceReference.retrievedDate)
+    ) {
+      reject(`${label} sourceReference.retrievedDate must use YYYY-MM-DD`);
+    } else if (isIsoDate(question.sourceReference.retrievedDate)) {
+      const retrievedDate = new Date(`${question.sourceReference.retrievedDate}T00:00:00Z`);
+      if (retrievedDate > new Date()) {
+        reject(`${label} sourceReference.retrievedDate must not be in the future`);
+      }
+    }
+
+    if (question.provenance === 'uhr') {
+      if (question.sourceReference.url !== EXPECTED_UHR_SOURCE.url) {
+        reject(`${label} UHR provenance must cite the Sverige i fokus PDF URL`);
+      }
+      if (!question.sourceReference.title.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
+        reject(`${label} UHR provenance source title must reference Sverige i fokus`);
+      }
+    }
+    if (question.provenance === 'external') {
+      if (question.sourceReference.url === EXPECTED_UHR_SOURCE.url) {
+        reject(`${label} external provenance must cite a non-UHR public authority source`);
+      }
+      if (
+        normalizeComparableText(question.sourceReference.publisher).includes('uhr') ||
+        normalizeComparableText(question.sourceReference.publisher).includes(
+          'universitets- och högskolerådet',
+        )
+      ) {
+        reject(`${label} external provenance publisher must not be UHR`);
       }
     }
   }
@@ -3759,6 +3907,12 @@ let questionOptionIdConventionsValidated = 0;
 let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
+let questionProvenanceValidated = 0;
+let uhrProvenanceQuestions = 0;
+let externalProvenanceQuestions = 0;
+let sourceReferencesValidated = 0;
+let externalSourceReferencesValidated = 0;
+let externalProvenanceUiLabelParityValidated = false;
 let questionBankCsvRowsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -6287,6 +6441,60 @@ function validateUhrReferenceCardAccessibilityParity() {
   }
 }
 
+function validateExternalProvenanceUiLabelParity() {
+  let valid = true;
+  let questionTextSource = '';
+  let questionCardSource = '';
+  let uhrReferenceCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    questionTextSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
+    questionCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/QuestionCard.tsx'),
+      'utf8',
+    );
+    uhrReferenceCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/UHRReferenceCard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`external provenance UI label sources could not be read: ${error.message}`);
+    return;
+  }
+
+  if (!questionTextSource.includes("question?.provenance !== 'external'")) {
+    reject('external provenance label must only be returned for external-provenance questions');
+  }
+  if (
+    !questionTextSource.includes(
+      'Extern källa - utöver UHR-materialet / External source - beyond the UHR material',
+    )
+  ) {
+    reject('external provenance label must include localized Swedish and English copy');
+  }
+  if (!questionCardSource.includes('getQuestionProvenanceLabel(question)')) {
+    reject('QuestionCard must look up the external provenance label');
+  }
+  if (!questionCardSource.includes('{provenanceLabel ? <Text style={styles.provenanceLabel}>')) {
+    reject('QuestionCard must visibly render the external provenance label');
+  }
+  if (!uhrReferenceCardSource.includes('getQuestionProvenanceLabel(question)')) {
+    reject('UHRReferenceCard must look up the external provenance label');
+  }
+  if (
+    !uhrReferenceCardSource.includes('{provenanceLabel ? <Text style={styles.provenanceLabel}>')
+  ) {
+    reject('UHRReferenceCard must visibly render the external provenance label');
+  }
+
+  if (valid) externalProvenanceUiLabelParityValidated = true;
+}
+
 function validateCelebrationBurstAccessibilityParity() {
   let valid = true;
   let celebrationBurstSource = '';
@@ -6385,6 +6593,12 @@ function validateExamReviewSourceParity(config) {
     }
     if (!jsonEqual(item.uhrReference, question.uhrReference)) {
       rejectItem(`${label} review UHR reference drifted`);
+    }
+    if (item.provenance !== question.provenance) {
+      rejectItem(`${label} review provenance drifted`);
+    }
+    if (!jsonEqual(item.sourceReference, question.sourceReference)) {
+      rejectItem(`${label} review source reference drifted`);
     }
     if (item.selectedOptionTextSv !== selectedOption?.textSv) {
       rejectItem(`${label} review selected answer text drifted`);
@@ -9669,6 +9883,12 @@ function validateQuestionBankCsvContract() {
       question.questionSv,
       question.questionEn,
       question.correctOptionId,
+      question.provenance,
+      question.sourceReference?.title,
+      question.sourceReference?.publisher,
+      question.sourceReference?.url,
+      question.sourceReference?.locator,
+      question.sourceReference?.retrievedDate,
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
@@ -9702,6 +9922,8 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'explanationSv',
   'explanationEn',
   'uhrReference',
+  'provenance',
+  'sourceReference',
   'difficulty',
   'tags',
 ];
@@ -9957,6 +10179,8 @@ function validateGeneratedSourceMetadataParity() {
         'explanationSv',
         'explanationEn',
         'uhrReference',
+        'provenance',
+        'sourceReference',
       ]) {
         if (!jsonEqual(variant[field], sourceQuestion[field])) {
           reject(`${label} ${field} does not match source question`);
@@ -10338,7 +10562,11 @@ if (Array.isArray(chapters)) {
 }
 
 if (Array.isArray(questions)) {
-  if (questions.length !== 500) fail(`expected 500 questions, found ${questions.length}`);
+  const expectedPublishedQuestionCount =
+    EXPECTED_SOURCE_QUESTIONS * (GENERATED_VARIANTS_PER_SOURCE + 1);
+  if (questions.length !== expectedPublishedQuestionCount) {
+    fail(`expected ${expectedPublishedQuestionCount} questions, found ${questions.length}`);
+  }
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
   const promptTexts = {
     questionSv: new Map(),
@@ -10453,6 +10681,15 @@ if (Array.isArray(questions)) {
       if (question.tags.every(isSlugTag)) {
         questionTagsValidated += 1;
       }
+      if (questionProvenanceIsValid(question)) {
+        questionProvenanceValidated += 1;
+        if (question.provenance === 'uhr') uhrProvenanceQuestions += 1;
+        if (question.provenance === 'external') externalProvenanceQuestions += 1;
+      }
+      if (sourceReferenceIsValid(question)) {
+        sourceReferencesValidated += 1;
+        if (question.provenance === 'external') externalSourceReferencesValidated += 1;
+      }
     }
 
     if (
@@ -10500,6 +10737,25 @@ if (Array.isArray(questions)) {
     if (question.reviewStatus !== 'published')
       fail(`${label} reviewStatus is ${question.reviewStatus}`);
   });
+
+  if (externalProvenanceQuestions < GENERATED_VARIANTS_PER_SOURCE + 1) {
+    fail('expected at least one external-provenance source question and its generated variants');
+  }
+  if (questionProvenanceValidated !== questions.length) {
+    fail(
+      `validated provenance for ${questionProvenanceValidated} questions, expected ${questions.length}`,
+    );
+  }
+  if (sourceReferencesValidated !== questions.length) {
+    fail(
+      `validated source references for ${sourceReferencesValidated} questions, expected ${questions.length}`,
+    );
+  }
+  if (externalSourceReferencesValidated !== externalProvenanceQuestions) {
+    fail(
+      `validated external source references for ${externalSourceReferencesValidated} questions, expected ${externalProvenanceQuestions}`,
+    );
+  }
 }
 
 validateMockExamConfig(
@@ -10554,6 +10810,7 @@ validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
+validateExternalProvenanceUiLabelParity();
 validateCelebrationBurstAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
@@ -10830,6 +11087,12 @@ console.log(
       trueFalseQuestions,
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
+      questionProvenanceValidated,
+      uhrProvenanceQuestions,
+      externalProvenanceQuestions,
+      sourceReferencesValidated,
+      externalSourceReferencesValidated,
+      externalProvenanceUiLabelParityValidated,
       questionBankCsvRowsValidated,
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,

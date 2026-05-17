@@ -22,23 +22,43 @@ test('quiz UHRReferenceCard keeps source metadata in visible and accessibility p
     'utf8',
   );
 
-  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 10);
+  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 13);
   assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
   assert.match(source, /reference\?: UHRReference/);
+  assert.match(source, /question\?: SourceBackedQuestion;/);
   assert.match(source, /language\?: AppLanguage;/);
   assert.match(source, /const uhrReferenceCardCopy: Record<AppLanguage, UHRReferenceCardCopy>/);
   assert.match(source, /UHR-källa/);
   assert.match(source, /Ungefär sida/);
-  assert.match(source, /`\$\{reference\.chapter\} · \$\{reference\.section\}`/);
-  assert.match(source, /`\$\{copy\.approximatePage\} \$\{reference\.pageApprox\}`/);
+  assert.match(source, /const resolvedReference = reference \?\? question\?\.uhrReference;/);
+  assert.match(source, /`\$\{resolvedReference\.chapter\} · \$\{resolvedReference\.section\}`/);
+  assert.match(source, /`\$\{copy\.approximatePage\} \$\{resolvedReference\.pageApprox\}`/);
   assert.match(source, /const referenceAccessibilityLabel = pageLabel/);
+  assert.match(source, /sourceCitation/);
   assert.match(source, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /\{copy\.title\}/);
+  assert.match(
+    source,
+    /\{provenanceLabel \? <Text style=\{styles\.provenanceLabel\}>\{provenanceLabel\}<\/Text> : null\}/,
+  );
   assert.match(source, /<Text style=\{styles\.body\}>\{label\}<\/Text>/);
   assert.match(
     source,
     /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
+  );
+  assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
+  // Provenance-aware title/prefix: external questions must not be UHR-titled.
+  assert.match(
+    source,
+    /const externalReferenceCardCopy: Record<AppLanguage, UHRReferenceCardCopy>/,
+  );
+  assert.match(source, /title: 'Källa'/);
+  assert.match(source, /title: 'Source'/);
+  assert.match(source, /const isExternalProvenance = question\?\.provenance === 'external';/);
+  assert.match(
+    source,
+    /const copy = isExternalProvenance\s*\?\s*externalReferenceCardCopy\[language\]\s*:\s*uhrReferenceCardCopy\[language\];/,
   );
 });
 

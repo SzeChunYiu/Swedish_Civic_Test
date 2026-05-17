@@ -173,7 +173,7 @@ export default function QuizSessionScreen() {
             explanationSv={question.explanationSv}
             language={language}
           />
-          <UHRReferenceCard language={language} reference={question.uhrReference} />
+          <UHRReferenceCard language={language} question={question} />
           <View style={styles.actions}>
             <Pressable
               accessibilityLabel={copy.tryAgainAccessibilityLabel}

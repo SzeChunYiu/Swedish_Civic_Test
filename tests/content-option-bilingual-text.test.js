@@ -14,7 +14,7 @@ test('published question answer options are translated or intentional invariant 
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionOptionBilingualTextPairsValidated, 500);
+  assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
 });
 

@@ -369,7 +369,7 @@ export default function Screen() {
               explanationSv={item.explanationSv}
               language={language}
             />
-            <UHRReferenceCard language={language} reference={item.uhrReference} />
+            <UHRReferenceCard language={language} question={item} />
           </View>
         ))}
       </ScrollView>
