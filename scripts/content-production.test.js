@@ -36,6 +36,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.ok(summary.trueFalseQuestions > 0);
   assert.equal(summary.trueFalseOptionLabelsValidated, summary.trueFalseQuestions);
   assert.equal(summary.questionTagsValidated, 500);
+  assert.equal(summary.questionBankCsvRowsValidated, 500);
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);
   assert.equal(summary.uhrMapSectionsValidated, 110);

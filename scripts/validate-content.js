@@ -39,6 +39,20 @@ const EXPECTED_UHR_SOURCE = {
   publisher: 'Universitets- och högskolerådet (UHR)',
   url: 'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
 };
+const QUESTION_BANK_CSV_HEADER = [
+  'id',
+  'chapterId',
+  'type',
+  'questionSv',
+  'questionEn',
+  'correctOptionId',
+  'uhrChapter',
+  'uhrSection',
+  'uhrPageApprox',
+  'difficulty',
+  'reviewStatus',
+  'tags',
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -299,6 +313,58 @@ function isHttpsUrl(value) {
   }
 }
 
+function parseCsvRows(csv) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+
+  for (let index = 0; index < csv.length; index += 1) {
+    const character = csv[index];
+
+    if (inQuotes) {
+      if (character === '"') {
+        if (csv[index + 1] === '"') {
+          cell += '"';
+          index += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        cell += character;
+      }
+      continue;
+    }
+
+    if (character === '"') {
+      if (cell.length) {
+        throw new Error('unexpected quote inside unquoted cell');
+      }
+      inQuotes = true;
+    } else if (character === ',') {
+      row.push(cell);
+      cell = '';
+    } else if (character === '\n') {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+    } else if (character !== '\r') {
+      cell += character;
+    }
+  }
+
+  if (inQuotes) {
+    throw new Error('unterminated quoted cell');
+  }
+  if (cell.length || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
 function optionIdsMatchQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   const optionIds = question.options.map((option) => option?.id);
@@ -533,6 +599,7 @@ let questionOptionIdConventionsValidated = 0;
 let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
+let questionBankCsvRowsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
@@ -641,6 +708,88 @@ function validateUxBenchmarks() {
     }
 
     if (valid) uxBenchmarksValidated += 1;
+  });
+}
+
+function validateQuestionBankCsvContract() {
+  if (!Array.isArray(questions)) return;
+
+  const csvPath = path.join(repoRoot, 'content/question-bank.csv');
+  let rows = [];
+  try {
+    rows = parseCsvRows(fs.readFileSync(csvPath, 'utf8'));
+  } catch (error) {
+    fail(`content/question-bank.csv could not be parsed: ${error.message}`);
+    return;
+  }
+
+  if (!rows.length) {
+    fail('content/question-bank.csv is empty');
+    return;
+  }
+
+  const [header, ...dataRows] = rows;
+  if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
+    fail(
+      `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
+        QUESTION_BANK_CSV_HEADER,
+      )}`,
+    );
+  }
+
+  if (dataRows.length !== questions.length) {
+    fail(
+      `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
+    );
+  }
+
+  dataRows.forEach((row, index) => {
+    const question = questions[index];
+    const rowNumber = index + 2;
+    const label = question?.id || `CSV row ${rowNumber}`;
+    let rowIsValid = true;
+
+    function reject(message) {
+      rowIsValid = false;
+      fail(message);
+    }
+
+    if (row.length !== QUESTION_BANK_CSV_HEADER.length) {
+      reject(
+        `content/question-bank.csv row ${rowNumber} has ${row.length} columns, expected ${QUESTION_BANK_CSV_HEADER.length}`,
+      );
+    }
+    if (!question) {
+      reject(`content/question-bank.csv row ${rowNumber} has no matching question`);
+      return;
+    }
+
+    const expectedRow = [
+      question.id,
+      question.chapterId,
+      question.type,
+      question.questionSv,
+      question.questionEn,
+      question.correctOptionId,
+      question.uhrReference?.chapter,
+      question.uhrReference?.section,
+      String(question.uhrReference?.pageApprox),
+      question.difficulty,
+      question.reviewStatus,
+      Array.isArray(question.tags) ? question.tags.join('|') : '',
+    ];
+
+    QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
+      if (row[fieldIndex] !== expectedRow[fieldIndex]) {
+        reject(
+          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+            row[fieldIndex],
+          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+        );
+      }
+    });
+
+    if (rowIsValid) questionBankCsvRowsValidated += 1;
   });
 }
 
@@ -1274,6 +1423,7 @@ validateMockExamConfig(
     : 0,
 );
 validateUxBenchmarks();
+validateQuestionBankCsvContract();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 const disclaimer = fs.readFileSync(
@@ -1330,6 +1480,7 @@ console.log(
       trueFalseQuestions,
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
+      questionBankCsvRowsValidated,
       uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
