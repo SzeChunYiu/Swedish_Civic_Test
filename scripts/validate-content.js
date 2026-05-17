@@ -512,6 +512,160 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /accessibilityState=\{mergedAccessibilityState\}/,
   },
 ];
+const EXPECTED_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'native View root',
+    pattern: /<View[\s\S]*>/,
+  },
+  {
+    label: 'explicit accessibility grouping prop',
+    pattern: /accessible,/,
+  },
+  {
+    label: 'label-or-role grouping fallback',
+    pattern:
+      /const groupedForAccessibility =\s*accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\);/,
+  },
+  {
+    label: 'stable hint id',
+    pattern: /const hintId = useId\(\);/,
+  },
+  {
+    label: 'web-only hint id',
+    pattern: /accessibilityHint && Platform\.OS === 'web'/,
+  },
+  {
+    label: 'hint id prefix',
+    pattern: /`card-hint-\$\{hintId\.replace\(\/:\/g, ''\)\}`/,
+  },
+  {
+    label: 'hint mirrored to web aria-describedby',
+    pattern: /aria-describedby=\{cardAccessibilityHintId\}/,
+  },
+  {
+    label: 'label mirrored to web aria',
+    pattern: /aria-label=\{accessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility grouping',
+    pattern: /accessible=\{groupedForAccessibility\}/,
+  },
+  {
+    label: 'native accessibility hint',
+    pattern: /accessibilityHint=\{accessibilityHint\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{accessibilityLabel\}/,
+  },
+  {
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
+  },
+  {
+    label: 'hidden hint text node',
+    pattern:
+      /<Text\s+nativeID=\{cardAccessibilityHintId\}\s+style=\{styles\.accessibilityHintText\}>/,
+  },
+  {
+    label: 'visually hidden hint style',
+    pattern:
+      /accessibilityHintText:\s*\{\s*height:\s*1,[\s\S]*position:\s*'absolute',[\s\S]*width:\s*1,/,
+  },
+];
+const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
+  {
+    label: 'clamped progress source',
+    pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
+  },
+  {
+    label: 'percent value derived from clamped progress',
+    pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
+  },
+  {
+    label: 'readable progress label',
+    pattern: /const progressAccessibilityLabel = `\$\{progressPercent\} percent complete`;/,
+  },
+  {
+    label: 'web aria label',
+    pattern: /aria-label=\{progressAccessibilityLabel\}/,
+  },
+  {
+    label: 'web aria max value',
+    pattern: /aria-valuemax=\{100\}/,
+  },
+  {
+    label: 'web aria min value',
+    pattern: /aria-valuemin=\{0\}/,
+  },
+  {
+    label: 'web aria current value',
+    pattern: /aria-valuenow=\{progressPercent\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
+  },
+  {
+    label: 'native progressbar role',
+    pattern: /accessibilityRole="progressbar"/,
+  },
+  {
+    label: 'native clamped accessibility value',
+    pattern: /accessibilityValue=\{\{ min: 0, max: 100, now: progressPercent \}\}/,
+  },
+  {
+    label: 'animated fill uses clamped source',
+    pattern: /new Animated\.Value\(clampedProgress\)/,
+  },
+  {
+    label: 'visual fill uses percent interpolation bounds',
+    pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
+  },
+];
+const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'native View root',
+    pattern: /<View[\s\S]*>/,
+  },
+  {
+    label: 'explicit accessibility label prop',
+    pattern: /accessibilityLabel\?: string;/,
+  },
+  {
+    label: 'label value helper summary',
+    pattern:
+      /accessibilityLabel \?\? `\$\{label\}: \$\{value\}\$\{helper \? `\. \$\{helper\}` : ''\}`;/,
+  },
+  {
+    label: 'web aria label',
+    pattern: /aria-label=\{metricAccessibilityLabel\}/,
+  },
+  {
+    label: 'native grouped surface',
+    pattern: /\s+accessible\s+/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{metricAccessibilityLabel\}/,
+  },
+  {
+    label: 'visible value text',
+    pattern: /<Text\s+style=\{styles\.value\}>\{value\}<\/Text>/,
+  },
+  {
+    label: 'visible label text',
+    pattern: /<Text\s+style=\{styles\.label\}>\{label\}<\/Text>/,
+  },
+  {
+    label: 'visible helper text',
+    pattern: /\{helper \? <Text style=\{styles\.helper\}>\{helper\}<\/Text> : null\}/,
+  },
+  {
+    label: 'blue tone style path',
+    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2161,6 +2315,12 @@ let legalRouteScrollRulesValidated = 0;
 let legalRouteScrollParityValidated = false;
 let buttonAccessibilityRulesValidated = 0;
 let buttonAccessibilityParityValidated = false;
+let cardAccessibilityRulesValidated = 0;
+let cardAccessibilityParityValidated = false;
+let progressBarAccessibilityRulesValidated = 0;
+let progressBarAccessibilityParityValidated = false;
+let metricCardAccessibilityRulesValidated = 0;
+let metricCardAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -3962,6 +4122,106 @@ function validateButtonAccessibilityParity() {
 
   if (valid && buttonAccessibilityRulesValidated === EXPECTED_BUTTON_ACCESSIBILITY_RULES.length) {
     buttonAccessibilityParityValidated = true;
+  }
+}
+
+function validateCardAccessibilityParity() {
+  let valid = true;
+  let cardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    cardSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Card.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/Card.tsx could not be read for accessibility parity: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(cardSource)) {
+      reject(`Card missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    cardAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && cardAccessibilityRulesValidated === EXPECTED_CARD_ACCESSIBILITY_RULES.length) {
+    cardAccessibilityParityValidated = true;
+  }
+}
+
+function validateProgressBarAccessibilityParity() {
+  let valid = true;
+  let progressBarSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    progressBarSource = fs.readFileSync(
+      path.join(repoRoot, 'components/ui/ProgressBar.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/ui/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(progressBarSource)) {
+      reject(`ProgressBar missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    progressBarAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    progressBarAccessibilityRulesValidated === EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length
+  ) {
+    progressBarAccessibilityParityValidated = true;
+  }
+}
+
+function validateMetricCardAccessibilityParity() {
+  let valid = true;
+  let metricCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    metricCardSource = fs.readFileSync(path.join(repoRoot, 'components/ui/MetricCard.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `components/ui/MetricCard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(metricCardSource)) {
+      reject(`MetricCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    metricCardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    metricCardAccessibilityRulesValidated === EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES.length
+  ) {
+    metricCardAccessibilityParityValidated = true;
   }
 }
 
@@ -8051,6 +8311,9 @@ validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateLegalRouteScrollParity();
 validateButtonAccessibilityParity();
+validateCardAccessibilityParity();
+validateProgressBarAccessibilityParity();
+validateMetricCardAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8160,6 +8423,12 @@ console.log(
       legalRouteScrollParityValidated,
       buttonAccessibilityRulesValidated,
       buttonAccessibilityParityValidated,
+      cardAccessibilityRulesValidated,
+      cardAccessibilityParityValidated,
+      progressBarAccessibilityRulesValidated,
+      progressBarAccessibilityParityValidated,
+      metricCardAccessibilityRulesValidated,
+      metricCardAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,

@@ -17,7 +17,9 @@ export function QuestionCard({ question }: { question?: PracticeQuestion }) {
   return (
     <Card accessibilityLabel={questionAccessibilityLabel}>
       <Text style={styles.label}>{difficulty}</Text>
-      <Text style={styles.question}>{questionText}</Text>
+      <Text accessibilityRole="header" style={styles.question}>
+        {questionText}
+      </Text>
       {question?.questionEn ? <Text style={styles.translation}>{question.questionEn}</Text> : null}
     </Card>
   );

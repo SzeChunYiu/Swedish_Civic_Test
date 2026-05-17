@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
-import type { PropsWithChildren } from 'react';
+import { useId, type PropsWithChildren } from 'react';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
@@ -9,6 +9,7 @@ type ButtonProps = PropsWithChildren<
 >;
 
 export function Button({
+  accessibilityHint,
   accessibilityLabel,
   children,
   style,
@@ -25,15 +26,22 @@ export function Button({
   const buttonAccessibilityLabel =
     accessibilityLabel ??
     (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
+  const hintId = useId();
+  const buttonAccessibilityHintId =
+    accessibilityHint && Platform.OS === 'web'
+      ? `button-hint-${hintId.replace(/:/g, '')}`
+      : undefined;
 
   return (
     <Pressable
       aria-busy={mergedAccessibilityState.busy === true}
       aria-checked={mergedAccessibilityState.checked}
+      aria-describedby={buttonAccessibilityHintId}
       aria-disabled={mergedAccessibilityState.disabled === true}
       aria-expanded={mergedAccessibilityState.expanded}
       aria-label={buttonAccessibilityLabel}
       aria-selected={mergedAccessibilityState.selected}
+      accessibilityHint={accessibilityHint}
       accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
@@ -44,6 +52,11 @@ export function Button({
       <Text style={[styles.label, variant === 'primary' ? styles.primaryLabel : styles.darkLabel]}>
         {children}
       </Text>
+      {buttonAccessibilityHintId ? (
+        <Text nativeID={buttonAccessibilityHintId} style={styles.accessibilityHintText}>
+          {accessibilityHint}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }
@@ -91,6 +104,13 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     lineHeight: typography.navButton.lineHeight,
+  },
+  accessibilityHintText: {
+    height: 1,
+    left: -10000,
+    overflow: 'hidden',
+    position: 'absolute',
+    width: 1,
   },
   primaryLabel: {
     color: colors.surface,

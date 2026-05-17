@@ -16,7 +16,9 @@ export function ExplanationPanel({
 
   return (
     <Card accessibilityLabel={panelAccessibilityLabel}>
-      <Text style={styles.title}>Explanation</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        Explanation
+      </Text>
       <Text style={styles.body}>{explanation}</Text>
     </Card>
   );

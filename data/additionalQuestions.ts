@@ -1454,7 +1454,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     [
       [
         'Mänskliga rättigheter, demokrati och rättsstatens principer',
-        'Human rights, democracy, and the rule of law',
+        'Human rights, democracy, and rule-of-law principles',
       ],
       ['Endast jordbrukspolitik', 'Only agricultural policy'],
       ['Sveriges kommunala budgetar', 'Sweden’s municipal budgets'],
@@ -1462,7 +1462,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'UHR-avsnittet EU och Europarådet säger att Sverige är medlem i Europarådet, en europeisk organisation som bildades 1949. Organisationen arbetar för mänskliga rättigheter, demokrati och rättsstatens principer, och Europadomstolen finns där.',
-    'The UHR section EU and the Council of Europe says Sweden is a member of the Council of Europe, a European organization formed in 1949. The organization works for human rights, democracy, and the rule of law, and the European Court of Human Rights is part of it.',
+    'The UHR section EU and the Council of Europe says Sweden is a member of the Council of Europe, a European organization formed in 1949. The organization works for human rights, democracy, and rule-of-law principles, and the European Court of Human Rights is part of it.',
     ['council-of-europe', 'human-rights', 'democracy'],
   ),
   single(
@@ -1557,8 +1557,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Religionsfrihet',
       pageApprox: 42,
     },
-    'Vilken lag gav enligt UHR-materialet det slutliga genombrottet för religionsfriheten 1951?',
-    'According to the UHR material, which law gave religious freedom its final breakthrough in 1951?',
+    'Vilken lag markerade enligt UHR-materialet religionsfrihetens slutliga genombrott 1951?',
+    'According to the UHR material, which law marked the final breakthrough for religious freedom in 1951?',
     [
       ['Religionsfrihetslagen', 'The Religious Freedom Act'],
       ['Tryckfrihetsförordningen', 'The Freedom of the Press Act'],
@@ -1566,8 +1566,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Semesterlagen', 'The Annual Leave Act'],
     ],
     0,
-    'UHR-avsnittet Religionsfrihet säger att det slutliga genombrottet för religionsfriheten kom med religionsfrihetslagen 1951. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls.',
-    'The UHR section Religious freedom says the final breakthrough for religious freedom came with the Religious Freedom Act in 1951. The law made it possible to choose a religion completely freely or not belong to any religion at all.',
+    'UHR-avsnittet Religionsfrihet säger att religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls.',
+    'The UHR section Religious freedom says the Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.',
     ['religious-freedom', '1951', 'law'],
   ),
   trueFalse(
@@ -1578,11 +1578,11 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Religionsfrihet',
       pageApprox: 42,
     },
-    'Sant eller falskt enligt UHR-materialet: När staten och Svenska kyrkan skildes åt år 2000 blev Svenska kyrkan ett av flera trossamfund.',
-    'True or false according to the UHR material: When the state and the Church of Sweden separated in 2000, the Church of Sweden became one faith community among several.',
+    'Sant eller falskt enligt UHR-materialet: År 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt.',
+    'True or false according to the UHR material: In 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated.',
     true,
-    'UHR-avsnittet Religionsfrihet säger att staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, även om den fortfarande är det största kristna samfundet i Sverige.',
-    'The UHR section Religious freedom says the state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, although it is still the largest Christian faith community in Sweden.',
+    'UHR-avsnittet Religionsfrihet säger att staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, och materialet tillägger att Svenska kyrkan fortfarande är Sveriges största kristna samfund.',
+    "The UHR section Religious freedom says the state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, and the material adds that it is still Sweden's largest Christian faith community.",
     ['church-of-sweden', 'religious-freedom', '2000'],
   ),
   single(

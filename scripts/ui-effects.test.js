@@ -58,18 +58,25 @@ test('button derives an accessibility label from plain text children by default'
   const source = read('components/ui/Button.tsx');
 
   assert.match(source, /accessibilityLabel,/);
+  assert.match(source, /accessibilityHint,/);
   assert.match(source, /const buttonAccessibilityLabel =/);
+  assert.match(source, /const buttonAccessibilityHintId =/);
+  assert.match(source, /Platform\.OS === 'web'/);
   assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
   assert.match(source, /String\(children\)/);
   assert.match(source, /aria-busy=\{mergedAccessibilityState\.busy === true\}/);
   assert.match(source, /aria-checked=\{mergedAccessibilityState\.checked\}/);
+  assert.match(source, /aria-describedby=\{buttonAccessibilityHintId\}/);
   assert.match(source, /aria-disabled=\{mergedAccessibilityState\.disabled === true\}/);
   assert.match(source, /aria-expanded=\{mergedAccessibilityState\.expanded\}/);
   assert.match(source, /aria-label=\{buttonAccessibilityLabel\}/);
   assert.match(source, /aria-selected=\{mergedAccessibilityState\.selected\}/);
+  assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
+  assert.match(source, /nativeID=\{buttonAccessibilityHintId\}/);
+  assert.match(source, /accessibilityHintText/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -232,6 +239,18 @@ test('practice locks answer options after feedback is visible', () => {
   assert.match(practiceSource, /disabled=\{hasSelectedAnswer\}/);
 });
 
+test('practice and routed quiz answer options expose selected state', () => {
+  const answerOptionSource = read('components/quiz/AnswerOption.tsx');
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const routedQuizSource = read('app/quiz/[sessionId].tsx');
+
+  assert.match(answerOptionSource, /selected = false/);
+  assert.match(answerOptionSource, /selected\?: boolean/);
+  assert.match(answerOptionSource, /accessibilityState=\{\{ disabled, selected \}\}/);
+  assert.match(practiceSource, /selected=\{hasSelectedAnswer && selectedOptionId === option\.id\}/);
+  assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
+});
+
 test('answer option feedback remains available in the accessibility label', () => {
   const source = read('components/quiz/AnswerOption.tsx');
 
@@ -252,6 +271,7 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(source, /`Question: \$\{questionText\}`/);
   assert.match(source, /English translation:/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -294,11 +314,13 @@ test('quiz feedback cards expose accessible summaries', () => {
   assert.match(explanationSource, /const panelAccessibilityLabel =/);
   assert.match(explanationSource, /`Explanation: \$\{explanation\}`/);
   assert.match(explanationSource, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
+  assert.match(explanationSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.doesNotMatch(explanationSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 
   assert.match(referenceSource, /const referenceAccessibilityLabel =/);
   assert.match(referenceSource, /`UHR reference: \$\{label\}\. \$\{pageLabel\}`/);
   assert.match(referenceSource, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
+  assert.match(referenceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.doesNotMatch(referenceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
