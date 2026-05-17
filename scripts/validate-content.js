@@ -368,6 +368,13 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'toggleBookmark', type: '(questionId: string) => void', optional: false },
   { name: 'resetProgress', type: '() => void', optional: false },
 ];
+const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
+  { name: 'activeQuestionId', type: 'string | null', optional: false },
+  { name: 'selectedOptionId', type: 'string | null', optional: false },
+  { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
+  { name: 'resetSelection', type: '() => void', optional: false },
+  { name: 'advanceQuestion', type: '() => void', optional: false },
+];
 const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
@@ -1582,6 +1589,8 @@ const audioModule = loadTs('lib/audio/speak.ts');
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
+const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
+const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -1698,6 +1707,9 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let practiceSessionStoreFieldsValidated = 0;
+let practiceSessionStoreSchemaParityValidated = false;
+let practiceSessionStoreRuntimeParityValidated = false;
 let answerFeedbackQuestionsValidated = 0;
 let answerFeedbackOptionsValidated = 0;
 let answerFeedbackRuntimeParityValidated = false;
@@ -1786,6 +1798,13 @@ if (typeof buildQuestionSpeechText !== 'function') {
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
+}
+if (
+  !usePracticeSessionStore ||
+  typeof usePracticeSessionStore.getState !== 'function' ||
+  typeof usePracticeSessionStore.setState !== 'function'
+) {
+  fail('usePracticeSessionStore export is not a Zustand store');
 }
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
@@ -4586,6 +4605,125 @@ function validatePracticeScoringRules() {
   }
 }
 
+function validatePracticeSessionStoreParity() {
+  let valid = true;
+  let runtimeValid = true;
+  let practiceSessionStoreSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function rejectRuntime(message) {
+    runtimeValid = false;
+    reject(message);
+  }
+
+  try {
+    practiceSessionStoreSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/quiz/practiceSessionStore.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`practice session store schema source could not be read: ${error.message}`);
+    return;
+  }
+
+  const actualFields = extractObjectTypePropertiesFromTs(
+    practiceSessionStoreSource,
+    'PracticeSessionState',
+  );
+  if (!Array.isArray(actualFields)) {
+    reject('lib/quiz/practiceSessionStore.ts PracticeSessionState type could not be read');
+    return;
+  }
+
+  const actualNames = actualFields.map((field) => field.name);
+  const expectedNames = EXPECTED_PRACTICE_SESSION_STORE_FIELDS.map((field) => field.name);
+  if (!arrayEquals(actualNames, expectedNames)) {
+    reject(
+      `PracticeSessionState fields are ${JSON.stringify(actualNames)}, expected ${JSON.stringify(
+        expectedNames,
+      )}`,
+    );
+  }
+
+  const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+  EXPECTED_PRACTICE_SESSION_STORE_FIELDS.forEach((expectedField) => {
+    let fieldIsValid = true;
+    const actualField = actualFieldsByName.get(expectedField.name);
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!actualField) {
+      rejectField(`PracticeSessionState missing ${expectedField.name}`);
+      return;
+    }
+    if (actualField.type !== expectedField.type) {
+      rejectField(
+        `PracticeSessionState.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+      );
+    }
+    if (actualField.optional !== expectedField.optional) {
+      rejectField(
+        `PracticeSessionState.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+      );
+    }
+
+    if (fieldIsValid) practiceSessionStoreFieldsValidated += 1;
+  });
+
+  if (
+    usePracticeSessionStore &&
+    typeof usePracticeSessionStore.getState === 'function' &&
+    typeof usePracticeSessionStore.setState === 'function'
+  ) {
+    usePracticeSessionStore.setState({
+      activeQuestionId: null,
+      selectedOptionId: null,
+    });
+
+    usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
+    let state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
+      rejectRuntime('practice session selectOption must lock question id and selected option id');
+    }
+
+    usePracticeSessionStore.getState().resetSelection();
+    state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== null) {
+      rejectRuntime(
+        'practice session resetSelection must keep active question while clearing answer',
+      );
+    }
+
+    usePracticeSessionStore.getState().advanceQuestion();
+    state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== null || state.selectedOptionId !== null) {
+      rejectRuntime(
+        'practice session advanceQuestion must clear active question and selected answer',
+      );
+    }
+
+    usePracticeSessionStore.setState({
+      activeQuestionId: null,
+      selectedOptionId: null,
+    });
+  }
+
+  if (
+    valid &&
+    practiceSessionStoreFieldsValidated === EXPECTED_PRACTICE_SESSION_STORE_FIELDS.length
+  ) {
+    practiceSessionStoreSchemaParityValidated = true;
+  }
+  if (valid && runtimeValid) practiceSessionStoreRuntimeParityValidated = true;
+}
+
 function validateAnswerFeedbackParity() {
   if (
     !Array.isArray(questions) ||
@@ -6003,6 +6141,7 @@ validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validatePracticeSessionStoreParity();
 validateAnswerFeedbackParity();
 validateQuestionSpeechTextParity();
 validateChapterQuizSessionParity();
@@ -6106,6 +6245,9 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      practiceSessionStoreFieldsValidated,
+      practiceSessionStoreSchemaParityValidated,
+      practiceSessionStoreRuntimeParityValidated,
       answerFeedbackQuestionsValidated,
       answerFeedbackOptionsValidated,
       answerFeedbackRuntimeParityValidated,
