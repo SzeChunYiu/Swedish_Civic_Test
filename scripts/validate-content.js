@@ -573,6 +573,56 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
       /accessibilityHintText:\s*\{\s*height:\s*1,[\s\S]*position:\s*'absolute',[\s\S]*width:\s*1,/,
   },
 ];
+const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
+  {
+    label: 'clamped progress source',
+    pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
+  },
+  {
+    label: 'percent value derived from clamped progress',
+    pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
+  },
+  {
+    label: 'readable progress label',
+    pattern: /const progressAccessibilityLabel = `\$\{progressPercent\} percent complete`;/,
+  },
+  {
+    label: 'web aria label',
+    pattern: /aria-label=\{progressAccessibilityLabel\}/,
+  },
+  {
+    label: 'web aria max value',
+    pattern: /aria-valuemax=\{100\}/,
+  },
+  {
+    label: 'web aria min value',
+    pattern: /aria-valuemin=\{0\}/,
+  },
+  {
+    label: 'web aria current value',
+    pattern: /aria-valuenow=\{progressPercent\}/,
+  },
+  {
+    label: 'native accessibility label',
+    pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
+  },
+  {
+    label: 'native progressbar role',
+    pattern: /accessibilityRole="progressbar"/,
+  },
+  {
+    label: 'native clamped accessibility value',
+    pattern: /accessibilityValue=\{\{ min: 0, max: 100, now: progressPercent \}\}/,
+  },
+  {
+    label: 'animated fill uses clamped source',
+    pattern: /new Animated\.Value\(clampedProgress\)/,
+  },
+  {
+    label: 'visual fill uses percent interpolation bounds',
+    pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2224,6 +2274,8 @@ let buttonAccessibilityRulesValidated = 0;
 let buttonAccessibilityParityValidated = false;
 let cardAccessibilityRulesValidated = 0;
 let cardAccessibilityParityValidated = false;
+let progressBarAccessibilityRulesValidated = 0;
+let progressBarAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4054,6 +4106,43 @@ function validateCardAccessibilityParity() {
 
   if (valid && cardAccessibilityRulesValidated === EXPECTED_CARD_ACCESSIBILITY_RULES.length) {
     cardAccessibilityParityValidated = true;
+  }
+}
+
+function validateProgressBarAccessibilityParity() {
+  let valid = true;
+  let progressBarSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    progressBarSource = fs.readFileSync(
+      path.join(repoRoot, 'components/ui/ProgressBar.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/ui/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(progressBarSource)) {
+      reject(`ProgressBar missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    progressBarAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    progressBarAccessibilityRulesValidated === EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length
+  ) {
+    progressBarAccessibilityParityValidated = true;
   }
 }
 
@@ -8144,6 +8233,7 @@ validateOnboardingRouteScrollParity();
 validateLegalRouteScrollParity();
 validateButtonAccessibilityParity();
 validateCardAccessibilityParity();
+validateProgressBarAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8255,6 +8345,8 @@ console.log(
       buttonAccessibilityParityValidated,
       cardAccessibilityRulesValidated,
       cardAccessibilityParityValidated,
+      progressBarAccessibilityRulesValidated,
+      progressBarAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
