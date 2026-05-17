@@ -90,6 +90,87 @@ const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
 };
+const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
+  sv: [
+    '5-minutersövning',
+    'Bokmärk',
+    'Bokmärkt',
+    'Ta bort bokmärket från den här frågan',
+    'Bokmärk den här frågan',
+    'Besvarade frågor: ${count}',
+    'Det finns inga övningsfrågor ännu.',
+    'Nästa fråga',
+    'Gå till nästa övningsfråga',
+    'Fråga ${questionNumber}',
+    'Poäng',
+    'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
+    'Försök igen',
+    'Försök igen med den här övningsfrågan',
+  ],
+  en: [
+    '5-minute practice',
+    'Bookmark',
+    'Bookmarked',
+    'Remove this question bookmark',
+    'Bookmark this question',
+    'Completed questions: ${count}',
+    'No practice questions are available yet.',
+    'Next question',
+    'Move to the next practice question',
+    'Question ${questionNumber}',
+    'Score',
+    'Answer, get instant feedback, then review the UHR source before moving on.',
+    'Try again',
+    'Try this practice question again',
+  ],
+};
+const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'practice route must import AppLanguage from settings'],
+  ['type PracticeCopy = {', 'practice route must define a typed copy contract'],
+  [
+    'const practiceCopy: Record<AppLanguage, PracticeCopy> = {',
+    'practice route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'practice route must read language from settings store',
+  ],
+  [
+    'const copy = practiceCopy[language];',
+    'practice route must select copy from settings language',
+  ],
+  ['<Text>{copy.emptyTitle}</Text>', 'empty state must render localized copy'],
+  ['<Badge>{copy.badge}</Badge>', 'practice badge must render localized copy'],
+  ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
+  ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
+  [
+    '{copy.completedQuestions(completedQuestionIds.length)}',
+    'completed-question metadata must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}',
+    'bookmark action must expose localized accessibility copy',
+  ],
+  [
+    '{isBookmarked ? copy.bookmarked : copy.bookmark}',
+    'bookmark action must render localized state copy',
+  ],
+  ['language={language}', 'practice answer components must receive the settings language'],
+  [
+    '{copy.scoreLabel}: {currentScore.correct}/{currentScore.total}',
+    'score label must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.nextQuestionAccessibilityLabel}',
+    'next-question action must expose localized accessibility copy',
+  ],
+  ['{copy.nextQuestion}', 'next-question action must render localized copy'],
+  [
+    'accessibilityLabel={copy.tryAgainAccessibilityLabel}',
+    'try-again action must expose localized accessibility copy',
+  ],
+  ['{copy.tryAgain}', 'try-again action must render localized copy'],
+];
 const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
@@ -2822,6 +2903,8 @@ let contentTypeSchemaParityValidated = false;
 let supportedLanguagesValidated = 0;
 let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
+let practiceRouteCopyLabelsValidated = 0;
+let practiceRouteCopyParityValidated = false;
 let settingsStoreFieldsValidated = 0;
 let settingsStoreSchemaParityValidated = false;
 let settingsDailyGoalOptionsValidated = 0;
@@ -4059,6 +4142,58 @@ function validatePracticeRouteHeaderParity() {
 
   if (valid && practiceRouteHeadersValidated === EXPECTED_PRACTICE_ROUTE_HEADERS.length) {
     practiceRouteHeaderParityValidated = true;
+  }
+}
+
+function validatePracticeRouteCopyParity() {
+  let valid = true;
+  let practiceRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    practiceRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  } catch (error) {
+    reject(`practice route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!practiceRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_PRACTICE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`practice ${language} label ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!practiceRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`practice route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`practice route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) practiceRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_PRACTICE_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && practiceRouteCopyLabelsValidated === expectedLabelCount) {
+    practiceRouteCopyParityValidated = true;
   }
 }
 
@@ -9116,6 +9251,7 @@ validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateQuizRouteHeaderParity();
 validatePracticeRouteHeaderParity();
+validatePracticeRouteCopyParity();
 validateChapterRouteHeaderParity();
 validateLearnRouteHeaderParity();
 validateProfileRouteHeaderParity();
@@ -9224,6 +9360,8 @@ console.log(
       quizRouteHeaderParityValidated,
       practiceRouteHeadersValidated,
       practiceRouteHeaderParityValidated,
+      practiceRouteCopyLabelsValidated,
+      practiceRouteCopyParityValidated,
       chapterRouteHeadersValidated,
       chapterRouteHeaderParityValidated,
       learnRouteHeadersValidated,
