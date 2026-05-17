@@ -87,8 +87,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q022',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
-    'Vilken uppgift har riksdagen enligt UHR-avsnittet Staten?',
-    'What task does the Riksdag have according to the UHR section The state?',
+    'Vilken av följande uppgifter har riksdagen?',
+    'Which of the following tasks belongs to the Riksdag?',
     [
       ['Att sköta regionernas kollektivtrafik', 'To manage regional public transport'],
       ['Att vara Sveriges statschef', "To be Sweden's head of state"],
@@ -108,8 +108,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q023',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
-    'Sant eller falskt enligt UHR-materialet: Riksdagen väljer statsminister.',
-    'True or false according to the UHR material: The Riksdag chooses the prime minister.',
+    'Sant eller falskt: Riksdagen väljer statsminister.',
+    'True or false: The Riksdag chooses the prime minister.',
     true,
     'UHR-avsnittet Staten säger att riksdagen väljer statsminister, som får i uppdrag att bilda regering. Avsnittet säger också att statsministern därefter väljer ministrarna i regeringen.',
     'The UHR section The state says the Riksdag chooses the prime minister, who is given the task of forming a government. It also says the prime minister then chooses the government ministers.',
@@ -119,8 +119,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q024',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Myndigheter', pageApprox: 13 },
-    'Vilket påstående beskriver statliga myndigheter enligt UHR-materialet?',
-    'Which statement describes government agencies according to the UHR material?',
+    'Vilket påstående beskriver statliga myndigheter?',
+    'Which statement describes government agencies?',
     [
       ['De ersätter domstolarna i brottmål', 'They replace courts in criminal cases'],
       [
@@ -139,8 +139,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q025',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Regioner och kommuner', pageApprox: 13 },
-    'Vilken är regionernas främsta uppgift enligt UHR-materialet?',
-    'What is the main task of the regions according to the UHR material?',
+    'Vilken är regionernas främsta uppgift i Sverige?',
+    "What is the foremost task of Sweden's regions?",
     [
       ['Att ansvara för hälso- och sjukvården', 'To be responsible for health care'],
       ['Att döma i brottmål', 'To judge criminal cases'],
@@ -156,8 +156,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q026',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Kommunernas ansvar', pageApprox: 13 },
-    'Vilket exempel beskriver kommunernas ansvar enligt UHR-materialet?',
-    'Which example describes municipal responsibilities according to the UHR material?',
+    'Vilket exempel beskriver kommunernas ansvar?',
+    'Which example describes municipal responsibilities?',
     [
       [
         'Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning',
@@ -176,8 +176,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q027',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Sveriges statsskick', pageApprox: 13 },
-    'Vad betyder konstitutionell monarki enligt UHR-materialet?',
-    'According to the UHR material, what does constitutional monarchy mean?',
+    'Vad betyder det att Sverige är en konstitutionell monarki?',
+    'What does it mean that Sweden is a constitutional monarchy?',
     [
       ['Att monarken har all politisk makt', 'That the monarch has all political power'],
       [
@@ -196,8 +196,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q028',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
-    'Sant eller falskt enligt UHR-materialet: Oppositionen ska granska regeringens arbete och föreslå annan politik.',
-    'True or false according to the UHR material: The opposition should scrutinize the government’s work and propose alternative policies.',
+    'Sant eller falskt: Oppositionen ska granska regeringens arbete och föreslå annan politik.',
+    'True or false: The opposition should scrutinize the government’s work and propose alternative policies.',
     true,
     'UHR-avsnittet Staten säger att partier som inte stödjer regeringen kallas opposition. Oppositionens uppgift är att granska regeringens arbete och föreslå en annan politik.',
     'The UHR section The state says parties that do not support the government are called the opposition. The opposition’s task is to scrutinize the government’s work and propose alternative policies.',

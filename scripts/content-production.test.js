@@ -41,10 +41,14 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.quizRouteHeaderParityValidated, true);
   assert.equal(summary.practiceRouteHeadersValidated, 1);
   assert.equal(summary.practiceRouteHeaderParityValidated, true);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 28);
+  assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.chapterRouteHeadersValidated, 3);
   assert.equal(summary.chapterRouteHeaderParityValidated, true);
   assert.equal(summary.learnRouteHeadersValidated, 2);
   assert.equal(summary.learnRouteHeaderParityValidated, true);
+  assert.equal(summary.learnRouteLinkCopyLabelsValidated, 6);
+  assert.equal(summary.learnRouteLinkCopyParityValidated, true);
   assert.equal(summary.profileRouteHeadersValidated, 3);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
   assert.equal(summary.homeRouteHeadersValidated, 4);
@@ -191,6 +195,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.questionIdSequencesValidated, 500);
   assert.equal(summary.questionBilingualTextPairsValidated, 500);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, 500);
+  assert.equal(summary.questionExactSchemaKeysValidated, 500);
   assert.equal(summary.questionTextFieldsNormalizedValidated, 500);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, 500);
   assert.equal(summary.questionPromptTextUniquenessValidated, 500);

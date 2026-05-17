@@ -5,6 +5,8 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const practiceQuestionTitleHeaderPattern =
+  /<Text accessibilityRole="header" style=\{styles\.title\}>\s*(?:Question \{questionNumber\}|\{copy\.questionTitle\(questionNumber\)\})\s*<\/Text>/;
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -22,10 +24,7 @@ test('practice route question title stays exposed as an accessibility header', (
   assert.equal(summary.practiceRouteHeadersValidated, 1);
   assert.equal(summary.practiceRouteHeaderParityValidated, true);
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
-  assert.match(
-    source,
-    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*Question \{questionNumber\}\s*<\/Text>/,
-  );
+  assert.match(source, practiceQuestionTitleHeaderPattern);
 });
 
 test('practice route header parity rejects dropped title header roles', () => {
@@ -42,7 +41,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '<Text accessibilityRole="header" style={styles.title}>\\n          Question {questionNumber}\\n        </Text>',
+        /<Text accessibilityRole="header" style=\\{styles\\.title\\}>\\s*(?:Question \\{questionNumber\\}|\\{copy\\.questionTitle\\(questionNumber\\)\\})\\s*<\\/Text>/,
         '<Text style={styles.title}>Question {questionNumber}</Text>',
       );
   }

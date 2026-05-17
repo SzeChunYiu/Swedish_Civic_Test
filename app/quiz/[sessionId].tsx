@@ -16,8 +16,45 @@ import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerV
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+type QuizSessionCopy = {
+  backToPractice: string;
+  backToPracticeAccessibilityLabel: string;
+  badge: string;
+  emptyTitle: string;
+  scoreLabel: string;
+  sessionSubtitle: string;
+  sessionTitle: (sessionId: string) => string;
+  tryAgain: string;
+  tryAgainAccessibilityLabel: string;
+};
+
+const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
+  sv: {
+    backToPractice: 'Tillbaka till övning',
+    backToPracticeAccessibilityLabel: 'Tillbaka till övning',
+    badge: 'Quizpass',
+    emptyTitle: 'Det finns inga quizfrågor ännu.',
+    scoreLabel: 'Poäng',
+    sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
+    sessionTitle: (currentSessionId) => `Quizpass ${currentSessionId}`,
+    tryAgain: 'Försök igen',
+    tryAgainAccessibilityLabel: 'Försök igen med den här quizfrågan',
+  },
+  en: {
+    backToPractice: 'Back to Practice',
+    backToPracticeAccessibilityLabel: 'Back to practice',
+    badge: 'Quiz session',
+    emptyTitle: 'No quiz questions are available yet.',
+    scoreLabel: 'Score',
+    sessionSubtitle: 'Answer the routed question, then review the source-backed feedback.',
+    sessionTitle: (currentSessionId) => `Session ${currentSessionId}`,
+    tryAgain: 'Try again',
+    tryAgainAccessibilityLabel: 'Try this quiz question again',
+  },
+};
 
 function normalizeSessionId(sessionId: string | string[] | undefined): string {
   if (Array.isArray(sessionId)) return sessionId[0] ?? 'practice';
@@ -53,6 +90,7 @@ export default function QuizSessionScreen() {
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const copy = quizSessionCopy[language];
 
   useEffect(() => {
     setSelectedOptionId(null);
@@ -62,15 +100,15 @@ export default function QuizSessionScreen() {
     return (
       <View style={styles.emptyContainer}>
         <Text accessibilityRole="header" style={styles.title}>
-          No quiz questions are available yet.
+          {copy.emptyTitle}
         </Text>
         <Link
-          accessibilityLabel="Back to practice"
+          accessibilityLabel={copy.backToPracticeAccessibilityLabel}
           accessibilityRole="link"
           href="/practice"
           style={styles.link}
         >
-          Back to Practice
+          {copy.backToPractice}
         </Link>
       </View>
     );
@@ -88,13 +126,11 @@ export default function QuizSessionScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Badge>Quiz session</Badge>
+        <Badge>{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
-          Session {normalizedSessionId}
+          {copy.sessionTitle(normalizedSessionId)}
         </Text>
-        <Text style={styles.subtitle}>
-          Answer the routed question, then review the source-backed feedback.
-        </Text>
+        <Text style={styles.subtitle}>{copy.sessionSubtitle}</Text>
         <ProgressBar progress={hasSelectedAnswer ? 1 : 0} />
       </View>
 
@@ -129,7 +165,7 @@ export default function QuizSessionScreen() {
         <View style={styles.feedback}>
           {score ? (
             <Text style={styles.score}>
-              Score: {score.correct}/{score.total}
+              {copy.scoreLabel}: {score.correct}/{score.total}
             </Text>
           ) : null}
           <ExplanationPanel
@@ -140,21 +176,21 @@ export default function QuizSessionScreen() {
           <UHRReferenceCard reference={question.uhrReference} />
           <View style={styles.actions}>
             <Pressable
-              accessibilityLabel="Try this quiz question again"
+              accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               accessibilityState={{ disabled: false }}
               onPress={() => setSelectedOptionId(null)}
               style={styles.secondaryButton}
             >
-              <Text style={styles.secondaryButtonText}>Try again</Text>
+              <Text style={styles.secondaryButtonText}>{copy.tryAgain}</Text>
             </Pressable>
             <Link
-              accessibilityLabel="Back to practice"
+              accessibilityLabel={copy.backToPracticeAccessibilityLabel}
               accessibilityRole="link"
               href="/practice"
               style={styles.linkButton}
             >
-              Back to Practice
+              {copy.backToPractice}
             </Link>
           </View>
         </View>

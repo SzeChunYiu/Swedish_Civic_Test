@@ -204,12 +204,56 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   );
 
   assert.match(practiceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
-  assert.match(practiceSource, /Question \{questionNumber\}/);
+  assert.match(practiceSource, /\{copy\.questionTitle\(questionNumber\)\}/);
   assert.equal(quizHeaderMatches?.length, 2);
-  assert.match(routedQuizSource, /No quiz questions are available yet\./);
-  assert.match(routedQuizSource, /Session \{normalizedSessionId\}/);
+  assert.match(practiceSource, /type PracticeCopy =/);
+  assert.match(practiceSource, /const practiceCopy: Record<AppLanguage, PracticeCopy>/);
+  assert.match(practiceSource, /Fråga \$\{questionNumber\}/);
+  assert.match(practiceSource, /Question \$\{questionNumber\}/);
+  assert.match(routedQuizSource, /type QuizSessionCopy =/);
+  assert.match(routedQuizSource, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy>/);
+  assert.match(routedQuizSource, /Det finns inga quizfrågor ännu\./);
+  assert.match(routedQuizSource, /Quizpass \$\{currentSessionId\}/);
+  assert.match(routedQuizSource, /\{copy\.emptyTitle\}/);
+  assert.match(routedQuizSource, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
   assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(routedQuizSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('practice shell copy follows Swedish and English settings language', () => {
+  const source = read('app/(tabs)/practice.tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /const copy = practiceCopy\[language\]/);
+  assert.match(source, /5-minutersövning/);
+  assert.match(source, /Besvarade frågor: \$\{count\}/);
+  assert.match(source, /Bokmärk den här frågan/);
+  assert.match(source, /Ta bort bokmärket från den här frågan/);
+  assert.match(source, /Poäng/);
+  assert.match(source, /Nästa fråga/);
+  assert.match(source, /Försök igen med den här övningsfrågan/);
+  assert.match(source, /5-minute practice/);
+  assert.match(source, /Completed questions: \$\{count\}/);
+  assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.nextQuestionAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.tryAgainAccessibilityLabel\}/);
+});
+
+test('routed quiz shell copy follows Swedish and English settings language', () => {
+  const source = read('app/quiz/[sessionId].tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /const copy = quizSessionCopy\[language\]/);
+  assert.match(source, /Tillbaka till övning/);
+  assert.match(source, /Besvara frågan och gå sedan igenom den källbaserade återkopplingen\./);
+  assert.match(source, /Poäng/);
+  assert.match(source, /Försök igen med den här quizfrågan/);
+  assert.match(source, /Back to Practice/);
+  assert.match(source, /Answer the routed question, then review the source-backed feedback\./);
+  assert.match(source, /\{copy\.scoreLabel\}: \{score\.correct\}\/\{score\.total\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.tryAgainAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}/);
 });
 
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
@@ -228,6 +272,7 @@ test('practice answer flow requires explicit next question after feedback', () =
   assert.match(source, /selectOption\(question\.id,\s*optionId\)/);
   assert.match(source, /advanceQuestion/);
   assert.match(source, /Next question/);
+  assert.match(source, /\{copy\.nextQuestion\}/);
 });
 
 test('practice locks answer options after feedback is visible', () => {
@@ -295,11 +340,35 @@ test('chapter card groups title, translation, status, and description into an ac
 test('learn route chapter links announce chapter progress', () => {
   const source = read('app/(tabs)/learn.tsx');
 
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /type LearnRouteCopy =/);
+  assert.match(source, /const learnRouteCopy: Record<AppLanguage, LearnRouteCopy>/);
+  assert.match(source, /const routeCopy = learnRouteCopy\[language\]/);
+  assert.match(source, /Studieväg/);
+  assert.match(source, /Bläddra bland kapitel med tydliga nästa steg/);
+  assert.match(source, /13 samhällsområden/);
+  assert.match(source, /Learning path/);
+  assert.match(source, /Browse chapters with a clear next step/);
+  assert.match(source, /13 civic areas/);
+  assert.match(source, /eyebrow=\{routeCopy\.eyebrow\}/);
+  assert.match(source, /title=\{routeCopy\.title\}/);
+  assert.match(source, /subtitle=\{routeCopy\.subtitle\}/);
+  assert.match(source, /title=\{routeCopy\.sectionTitle\}/);
+  assert.match(source, /subtitle=\{routeCopy\.sectionSubtitle\}/);
+  assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy>/);
+  assert.match(source, /const copy = chapterLinkCopy\[language\]/);
   assert.match(source, /function getChapterLinkAccessibilityLabel/);
+  assert.match(source, /Öppna kapitel \$\{nameSv\}/);
+  assert.match(source, /Engelskt namn: \$\{nameEn\}/);
+  assert.match(source, /Framsteg: \$\{progressLabel\}/);
+  assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
   assert.match(source, /Open chapter \$\{nameSv\}/);
   assert.match(source, /English name: \$\{nameEn\}/);
   assert.match(source, /Progress: \$\{progressLabel\}/);
   assert.match(source, /\$\{completedCount\} of \$\{questionCount\} questions practiced/);
+  assert.match(source, /copy: ChapterLinkCopy/);
+  assert.match(source, /copy\.progressLabel\(completedCount, questionCount\)/);
+  assert.match(source, /copy\.accessibilityLabel\(\{ nameSv, nameEn, progressLabel \}\)/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
