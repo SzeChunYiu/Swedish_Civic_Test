@@ -497,6 +497,43 @@ const EXPECTED_MOBILE_ADS_CONSENT_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_REWARDED_AD_TYPE_UNIONS = [
+  {
+    typeName: 'RewardedExtraExamAdStatus',
+    values: [
+      'closed_without_reward',
+      'earned_reward',
+      'failed_to_load',
+      'show_failed',
+      'timed_out',
+      'unavailable',
+    ],
+  },
+];
+const EXPECTED_REWARDED_AD_INTERFACES = [
+  {
+    name: 'RewardedExtraExamReward',
+    fields: [
+      { name: 'amount', type: 'number', optional: false },
+      { name: 'type', type: 'string', optional: false },
+    ],
+  },
+  {
+    name: 'RewardedExtraExamAdResult',
+    fields: [
+      { name: 'reward', type: 'RewardedExtraExamReward', optional: true },
+      { name: 'status', type: 'RewardedExtraExamAdStatus', optional: false },
+    ],
+  },
+  {
+    name: 'RewardedExtraExamAdOptions',
+    fields: [
+      { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: true },
+      { name: 'requestNonPersonalizedAdsOnly', type: 'boolean', optional: true },
+      { name: 'timeoutMs', type: 'number', optional: true },
+    ],
+  },
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -1315,6 +1352,9 @@ let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
+let rewardedAdTypeUnionsValidated = 0;
+let rewardedAdTypeInterfacesValidated = 0;
+let rewardedAdTypeSchemaParityValidated = false;
 let themeColorTokensValidated = 0;
 let themeSpaceTokensValidated = 0;
 let themeRadiusTokensValidated = 0;
@@ -3087,6 +3127,104 @@ function validateMobileAdsConsentTypeSchemaParity() {
     mobileAdsConsentTypeInterfacesValidated === EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.length
   ) {
     mobileAdsConsentTypeSchemaParityValidated = true;
+  }
+}
+
+function validateRewardedAdTypeSchemaParity() {
+  let valid = true;
+  let rewardedAdSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    rewardedAdSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/rewardedAd.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/rewardedAd.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_REWARDED_AD_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(rewardedAdSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`lib/monetization/rewardedAd.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `lib/monetization/rewardedAd.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    rewardedAdTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_REWARDED_AD_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      rewardedAdSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `lib/monetization/rewardedAd.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `lib/monetization/rewardedAd.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `lib/monetization/rewardedAd.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `lib/monetization/rewardedAd.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `lib/monetization/rewardedAd.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) rewardedAdTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    rewardedAdTypeUnionsValidated === EXPECTED_REWARDED_AD_TYPE_UNIONS.length &&
+    rewardedAdTypeInterfacesValidated === EXPECTED_REWARDED_AD_INTERFACES.length
+  ) {
+    rewardedAdTypeSchemaParityValidated = true;
   }
 }
 
@@ -4893,6 +5031,7 @@ validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
+validateRewardedAdTypeSchemaParity();
 validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
@@ -4957,6 +5096,9 @@ console.log(
       adConsentTypeSchemaParityValidated,
       mobileAdsConsentTypeInterfacesValidated,
       mobileAdsConsentTypeSchemaParityValidated,
+      rewardedAdTypeUnionsValidated,
+      rewardedAdTypeInterfacesValidated,
+      rewardedAdTypeSchemaParityValidated,
       themeColorTokensValidated,
       themeSpaceTokensValidated,
       themeRadiusTokensValidated,
