@@ -1677,6 +1677,7 @@ const getAnswerOptionFeedback = answerValidationModule.getAnswerOptionFeedback;
 const audioModule = loadTs('lib/audio/speak.ts');
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
+const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -1799,6 +1800,8 @@ let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
+let practiceFlowCasesValidated = 0;
+let practiceFlowParityValidated = false;
 let practiceSessionStoreFieldsValidated = 0;
 let practiceSessionStoreSchemaParityValidated = false;
 let practiceSessionStoreRuntimeParityValidated = false;
@@ -1890,6 +1893,9 @@ if (typeof getAnswerOptionFeedback !== 'function') {
 }
 if (typeof buildQuestionSpeechText !== 'function') {
   fail('buildQuestionSpeechText export is not a function');
+}
+if (typeof getPracticeQuestionForSession !== 'function') {
+  fail('getPracticeQuestionForSession export is not a function');
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
@@ -4791,6 +4797,105 @@ function validatePracticeScoringRules() {
   }
 }
 
+function validatePracticeFlowParity() {
+  if (!Array.isArray(questions) || typeof getPracticeQuestionForSession !== 'function') {
+    return;
+  }
+
+  const publishedQuestions = questions.filter((question) => question.reviewStatus === 'published');
+  if (publishedQuestions.length < 3) {
+    fail('practice flow parity needs at least three published questions');
+    return;
+  }
+
+  const [firstQuestion, secondQuestion, thirdQuestion] = publishedQuestions;
+  const completedAllQuestionIds = publishedQuestions.map((question) => question.id);
+  const cases = [
+    {
+      label: 'empty question bank',
+      questions: [],
+      completedQuestionIds: [],
+      activeQuestionId: null,
+      expectedId: undefined,
+    },
+    {
+      label: 'first unanswered question',
+      questions: publishedQuestions,
+      completedQuestionIds: [],
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+    },
+    {
+      label: 'active question remains locked',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id],
+      activeQuestionId: firstQuestion.id,
+      expectedId: firstQuestion.id,
+    },
+    {
+      label: 'stale active question falls back to completed-count rotation',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id],
+      activeQuestionId: 'missing-question-id',
+      expectedId: secondQuestion.id,
+    },
+    {
+      label: 'two completed questions advance to the third question',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id, secondQuestion.id],
+      activeQuestionId: null,
+      expectedId: thirdQuestion.id,
+    },
+    {
+      label: 'completed question count wraps to the first question',
+      questions: publishedQuestions,
+      completedQuestionIds: completedAllQuestionIds,
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+    },
+  ];
+
+  let valid = true;
+
+  cases.forEach((testCase) => {
+    const {
+      label,
+      questions: caseQuestions,
+      completedQuestionIds,
+      activeQuestionId,
+      expectedId,
+    } = testCase;
+    let actualQuestion;
+    try {
+      actualQuestion = getPracticeQuestionForSession(
+        caseQuestions,
+        completedQuestionIds,
+        activeQuestionId,
+      );
+    } catch (error) {
+      valid = false;
+      fail(`practice flow ${label} threw ${error.message}`);
+      return;
+    }
+
+    const actualId = actualQuestion?.id;
+    if (actualId !== expectedId) {
+      valid = false;
+      fail(
+        `practice flow ${label} returned ${JSON.stringify(actualId)}, expected ${JSON.stringify(
+          expectedId,
+        )}`,
+      );
+    } else {
+      practiceFlowCasesValidated += 1;
+    }
+  });
+
+  if (valid && practiceFlowCasesValidated === cases.length) {
+    practiceFlowParityValidated = true;
+  }
+}
+
 function validatePracticeSessionStoreParity() {
   let valid = true;
   let runtimeValid = true;
@@ -6422,6 +6527,7 @@ validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
+validatePracticeFlowParity();
 validatePracticeSessionStoreParity();
 validateAnswerValidationTypeSchemaParity();
 validateAnswerFeedbackParity();
@@ -6530,6 +6636,8 @@ console.log(
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
+      practiceFlowCasesValidated,
+      practiceFlowParityValidated,
       practiceSessionStoreFieldsValidated,
       practiceSessionStoreSchemaParityValidated,
       practiceSessionStoreRuntimeParityValidated,

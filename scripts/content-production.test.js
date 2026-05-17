@@ -85,6 +85,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
+  assert.equal(summary.practiceFlowCasesValidated, 6);
+  assert.equal(summary.practiceFlowParityValidated, true);
   assert.equal(summary.practiceSessionStoreFieldsValidated, 5);
   assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
   assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
