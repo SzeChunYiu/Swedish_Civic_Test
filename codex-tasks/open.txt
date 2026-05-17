@@ -167,3 +167,18 @@ accepts "looks fine" — it always finds the next concrete defect until the app
 is genuinely product-level. Findings route back to build/content and must be
 closed by a product fix, not prose.
 === END ===
+
+=== PRIORITY: "DID YOU KNOW?" FACT BUBBLE (operator 2026-05-17) ===
+FACT-BUBBLE [feature+content, P1]: a delightful "Visste du? / Did you know?"
+bubble showing a short interesting fact / 冷知識 about Sweden (history, society,
+nature, culture, quirky civic trivia). Show at non-distracting moments: home,
+between questions / loading, quiz-results, ebook chapter ends — NEVER on the
+active exam/question screen. Tasteful gold-accent bubble per DESIGN.md (gold =
+highlight token), gentle entrance motion (respects reduced-motion), dismiss /
+"another one" affordance.
+CONTENT RULES (same as questions): curated facts dataset; each fact factually
+accurate & current, ORIGINAL paraphrased wording (never copied verbatim),
+natural fluent language, SV+EN parity now (full language set in v1.1), each
+fact cites a verifiable public source. Inaccurate fact = P0. Start ~30-50
+strong facts, expandable; rotate without immediate repeats.
+=== END ===
