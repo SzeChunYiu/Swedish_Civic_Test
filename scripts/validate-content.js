@@ -165,6 +165,18 @@ const EXPECTED_EXAM_ROUTE_HEADERS = [
   { text: 'Question review', styleName: 'sectionTitle', occurrences: 1 },
   { text: 'Progress', styleName: 'sectionTitle', occurrences: 1 },
 ];
+const EXPECTED_QUIZ_ROUTE_HEADERS = [
+  {
+    label: 'empty quiz title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*No quiz questions are available yet\.\s*<\/Text>/,
+  },
+  {
+    label: 'session title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Session\s*\{normalizedSessionId\}\s*<\/Text>/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -1777,6 +1789,8 @@ let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
+let quizRouteHeadersValidated = 0;
+let quizRouteHeaderParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -2856,6 +2870,40 @@ function validateExamRouteHeaderParity() {
   );
   if (valid && examRouteHeadersValidated === expectedHeaderCount) {
     examRouteHeaderParityValidated = true;
+  }
+}
+
+function validateQuizRouteHeaderParity() {
+  let valid = true;
+  let quizRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    quizRoute = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/quiz/[sessionId].tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  const unheaderedRouteTitles = quizRoute.match(/<Text style=\{styles\.title\}>/g) || [];
+  if (unheaderedRouteTitles.length > 0) {
+    reject('quiz route title text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_QUIZ_ROUTE_HEADERS.forEach((expectedHeader) => {
+    if (!expectedHeader.pattern.test(quizRoute)) {
+      reject(`quiz route missing ${expectedHeader.label} as a title header`);
+      return;
+    }
+    quizRouteHeadersValidated += 1;
+  });
+
+  if (valid && quizRouteHeadersValidated === EXPECTED_QUIZ_ROUTE_HEADERS.length) {
+    quizRouteHeaderParityValidated = true;
   }
 }
 
@@ -6851,6 +6899,7 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
+validateQuizRouteHeaderParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -6926,6 +6975,8 @@ console.log(
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,
+      quizRouteHeadersValidated,
+      quizRouteHeaderParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
