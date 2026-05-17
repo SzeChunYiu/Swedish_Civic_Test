@@ -354,6 +354,20 @@ const EXPECTED_PROGRESS_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_PROGRESS_STORE_FIELDS = [
+  { name: 'completedQuestionIds', type: 'string[]', optional: false },
+  { name: 'questionProgress', type: 'Record<string, QuestionProgress>', optional: false },
+  { name: 'totalXp', type: 'number', optional: false },
+  { name: 'answerDates', type: 'string[]', optional: false },
+  { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
+  {
+    name: 'recordAnswer',
+    type: '(questionId: string, isCorrect: boolean) => void',
+    optional: false,
+  },
+  { name: 'toggleBookmark', type: '(questionId: string) => void', optional: false },
+  { name: 'resetProgress', type: '() => void', optional: false },
+];
 const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
@@ -1654,6 +1668,8 @@ let progressQuestionSchemaParityValidated = false;
 let progressTypeUnionsValidated = 0;
 let progressTypeInterfacesValidated = 0;
 let progressTypeSchemaParityValidated = false;
+let progressStoreFieldsValidated = 0;
+let progressStoreSchemaParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -3423,6 +3439,106 @@ function validateProgressTypeSchemaParity() {
     progressTypeInterfacesValidated === EXPECTED_PROGRESS_INTERFACES.length
   ) {
     progressTypeSchemaParityValidated = true;
+  }
+}
+
+function validateProgressStoreSchemaParity() {
+  let valid = true;
+  let progressStoreSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    progressStoreSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/storage/progressStore.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`progress store schema source could not be read: ${error.message}`);
+    return;
+  }
+
+  const actualFields = extractObjectTypePropertiesFromTs(progressStoreSource, 'ProgressState');
+  if (!Array.isArray(actualFields)) {
+    reject('lib/storage/progressStore.ts ProgressState type could not be read');
+    return;
+  }
+
+  const actualNames = actualFields.map((field) => field.name);
+  const expectedNames = EXPECTED_PROGRESS_STORE_FIELDS.map((field) => field.name);
+  if (!arrayEquals(actualNames, expectedNames)) {
+    reject(
+      `ProgressState fields are ${JSON.stringify(actualNames)}, expected ${JSON.stringify(
+        expectedNames,
+      )}`,
+    );
+  }
+
+  const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+  EXPECTED_PROGRESS_STORE_FIELDS.forEach((expectedField) => {
+    let fieldIsValid = true;
+    const actualField = actualFieldsByName.get(expectedField.name);
+
+    function rejectField(message) {
+      fieldIsValid = false;
+      reject(message);
+    }
+
+    if (!actualField) {
+      rejectField(`ProgressState missing ${expectedField.name}`);
+      return;
+    }
+    if (actualField.type !== expectedField.type) {
+      rejectField(
+        `ProgressState.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+      );
+    }
+    if (actualField.optional !== expectedField.optional) {
+      rejectField(
+        `ProgressState.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+      );
+    }
+
+    if (fieldIsValid) progressStoreFieldsValidated += 1;
+  });
+
+  const progressStateKey = extractStringConstantFromTs(progressStoreSource, 'progressStateKey');
+  if (progressStateKey !== 'progressState') {
+    reject(`progressStateKey is ${JSON.stringify(progressStateKey)}, expected "progressState"`);
+  }
+
+  const normalizedProgressStore = progressStoreSource.replace(/\s+/g, ' ');
+  const requiredSnippets = [
+    ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
+    [
+      'const rawProgress = progressStorage?.getString(progressStateKey);',
+      'readProgress must read persisted JSON through progressStateKey',
+    ],
+    [
+      'return normalizeProgress(JSON.parse(rawProgress));',
+      'readProgress must normalize parsed persisted JSON',
+    ],
+    [
+      'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
+      'writeProgress must persist JSON through progressStateKey',
+    ],
+    ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
+    ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
+    ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
+    ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
+  ];
+
+  requiredSnippets.forEach(([snippet, message]) => {
+    if (!normalizedProgressStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  if (valid && progressStoreFieldsValidated === EXPECTED_PROGRESS_STORE_FIELDS.length) {
+    progressStoreSchemaParityValidated = true;
   }
 }
 
@@ -5884,6 +6000,7 @@ validateSettingsDailyGoalParity();
 validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
+validateProgressStoreSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validateAnswerFeedbackParity();
@@ -5983,6 +6100,8 @@ console.log(
       progressTypeUnionsValidated,
       progressTypeInterfacesValidated,
       progressTypeSchemaParityValidated,
+      progressStoreFieldsValidated,
+      progressStoreSchemaParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       practiceScoringRulesValidated,
