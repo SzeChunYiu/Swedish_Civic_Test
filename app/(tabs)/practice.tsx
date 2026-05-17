@@ -30,6 +30,7 @@ export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+  const language = useSettingsStore((state) => state.language);
   const question = getPracticeQuestionForSession(questions, completedQuestionIds, activeQuestionId);
 
   if (!question) {
@@ -95,6 +96,7 @@ export default function Screen() {
             <AnswerOption
               key={option.id}
               disabled={hasSelectedAnswer}
+              language={language}
               option={option}
               onPress={() => handleSelectOption(option.id)}
               resultLabel={feedback.resultLabel}
@@ -111,7 +113,11 @@ export default function Screen() {
               Score: {currentScore.correct}/{currentScore.total}
             </Text>
           ) : null}
-          <ExplanationPanel explanationSv={question.explanationSv} />
+          <ExplanationPanel
+            explanationEn={question.explanationEn}
+            explanationSv={question.explanationSv}
+            language={language}
+          />
           <UHRReferenceCard reference={question.uhrReference} />
           <AdBanner placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>

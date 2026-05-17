@@ -27,11 +27,15 @@ export type ExamChapterBreakdownItem = ExamChapterResult & {
 export type ExamReviewItem = {
   questionId: string;
   questionSv: string;
+  questionEn: string;
   chapterId: string;
   selectedOptionTextSv: string;
+  selectedOptionTextEn: string;
   correctOptionTextSv: string;
+  correctOptionTextEn: string;
   isCorrect: boolean;
   explanationSv: string;
+  explanationEn: string;
   uhrReference: PracticeQuestion['uhrReference'];
 };
 
@@ -152,11 +156,15 @@ export function buildExamReviewItems(
     return {
       questionId: question.id,
       questionSv: question.questionSv,
+      questionEn: question.questionEn,
       chapterId: question.chapterId,
       selectedOptionTextSv: selectedOption?.textSv ?? 'Not answered',
+      selectedOptionTextEn: selectedOption?.textEn ?? 'Not answered',
       correctOptionTextSv: correctOption?.textSv ?? 'Correct answer missing',
+      correctOptionTextEn: correctOption?.textEn ?? 'Correct answer missing',
       isCorrect: answers[question.id] === question.correctOptionId,
       explanationSv: question.explanationSv,
+      explanationEn: question.explanationEn,
       uhrReference: question.uhrReference,
     };
   });

@@ -209,6 +209,9 @@ test('practice locks answer options after feedback is visible', () => {
 test('answer option feedback remains available in the accessibility label', () => {
   const source = read('components/quiz/AnswerOption.tsx');
 
+  assert.match(source, /language = 'sv'/);
+  assert.match(source, /function getOptionLabel/);
+  assert.match(source, /language === 'en' \? option\.textEn : option\.textSv/);
   assert.match(source, /const accessibilityLabel = resultLabel/);
   assert.match(source, /\$\{label\}, \$\{resultLabel\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
@@ -256,8 +259,14 @@ test('quiz feedback cards expose accessible summaries', () => {
   const explanationSource = read('components/quiz/ExplanationPanel.tsx');
   const referenceSource = read('components/quiz/UHRReferenceCard.tsx');
 
+  assert.match(explanationSource, /explanationEn/);
+  assert.match(explanationSource, /language = 'sv'/);
+  assert.match(
+    explanationSource,
+    /const explanation = language === 'en' && explanationEn \? explanationEn : explanationSv;/,
+  );
   assert.match(explanationSource, /const panelAccessibilityLabel =/);
-  assert.match(explanationSource, /`Explanation: \$\{explanationSv\}`/);
+  assert.match(explanationSource, /`Explanation: \$\{explanation\}`/);
   assert.match(explanationSource, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
   assert.doesNotMatch(explanationSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 
@@ -457,6 +466,38 @@ test('exam results include per-question explanations and UHR sources', () => {
   assert.match(source, /Correct answer/);
   assert.match(source, /<ExplanationPanel/);
   assert.match(source, /<UHRReferenceCard/);
+});
+
+test('English support reaches quiz options, explanations, and exam review text', () => {
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const quizSource = read('app/quiz/[sessionId].tsx');
+  const examSource = read('app/(tabs)/exam.tsx');
+  const examGeneratorSource = read('lib/quiz/examGenerator.ts');
+
+  assert.match(
+    practiceSource,
+    /const language = useSettingsStore\(\(state\) => state\.language\);/,
+  );
+  assert.match(practiceSource, /language=\{language\}[\s\S]*option=\{option\}/);
+  assert.match(practiceSource, /explanationEn=\{question\.explanationEn\}/);
+
+  assert.match(quizSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(quizSource, /language=\{language\}[\s\S]*option=\{option\}/);
+  assert.match(quizSource, /explanationEn=\{question\.explanationEn\}/);
+
+  assert.match(examSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(examSource, /language === 'en' \? option\.textEn : option\.textSv/);
+  assert.match(examSource, /language === 'en' \? item\.questionEn : item\.questionSv/);
+  assert.match(
+    examSource,
+    /language === 'en' \? item\.selectedOptionTextEn : item\.selectedOptionTextSv/,
+  );
+  assert.match(examSource, /explanationEn=\{item\.explanationEn\}/);
+
+  assert.match(examGeneratorSource, /questionEn: question\.questionEn/);
+  assert.match(examGeneratorSource, /selectedOptionTextEn: selectedOption\?\.textEn/);
+  assert.match(examGeneratorSource, /correctOptionTextEn: correctOption\?\.textEn/);
+  assert.match(examGeneratorSource, /explanationEn: question\.explanationEn/);
 });
 
 test('exam route exposes page and review section headings as headers', () => {
