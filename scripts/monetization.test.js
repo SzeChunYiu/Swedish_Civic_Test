@@ -341,6 +341,10 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
 });
 
 test('mock exam access persistence stores daily completions and rewarded credits', async () => {
+  const rewardedExamSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
+    'utf8',
+  );
   const {
     FREE_MOCK_EXAM_DAILY_LIMIT,
     MOCK_EXAM_ACCESS_STORAGE_KEY,
@@ -356,6 +360,8 @@ test('mock exam access persistence stores daily completions and rewarded credits
   } = loadTs('lib/monetization/rewardedExam.ts');
   const storage = createMemoryMockExamAccessStorage();
 
+  assert.match(rewardedExamSource, /import \{ getLocalDateKey \} from '\.\.\/learning\/streaks';/);
+  assert.doesNotMatch(rewardedExamSource, /function formatLocalDateKey/);
   assert.equal(FREE_MOCK_EXAM_DAILY_LIMIT, 1);
   assert.equal(MOCK_EXAM_ACCESS_STORAGE_KEY, 'monetization.mockExamAccess.v1');
   assert.equal(getMockExamAccessDateKey(new Date(2026, 4, 17, 0, 30)), '2026-05-17');
