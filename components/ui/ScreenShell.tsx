@@ -20,7 +20,9 @@ export function ScreenShell({
       <View style={styles.hero}>
         <View style={styles.heroCopy}>
           {eyebrow ? <Badge>{eyebrow}</Badge> : null}
-          <Text style={styles.title}>{title}</Text>
+          <Text accessibilityRole="header" style={styles.title}>
+            {title}
+          </Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
         {rightSlot ? <View style={styles.rightSlot}>{rightSlot}</View> : null}
@@ -33,7 +35,9 @@ export function ScreenShell({
 export function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <View style={styles.sectionHeader}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        {title}
+      </Text>
       {subtitle ? <Text style={styles.sectionSubtitle}>{subtitle}</Text> : null}
     </View>
   );

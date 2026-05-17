@@ -56,6 +56,14 @@ test('button derives an accessibility label from plain text children by default'
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('screen scaffold exposes page and section titles as headers', () => {
+  const source = read('components/ui/ScreenShell.tsx');
+
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('practice screen adds bookmark controls backed by progress storage', () => {
   const source = read('app/(tabs)/practice.tsx');
 
