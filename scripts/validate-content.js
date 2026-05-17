@@ -333,6 +333,37 @@ const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Prepare calmly for the civic test\s*<\/Text>/,
   },
 ];
+const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
+  {
+    label: 'ScrollView import',
+    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  },
+  {
+    label: 'scroll root container',
+    pattern:
+      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+  },
+  {
+    label: 'scroll root closing tag',
+    pattern: /<\/ScrollView>/,
+  },
+  {
+    label: 'page title header',
+    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>/,
+  },
+  {
+    label: 'section title header',
+    pattern: /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/,
+  },
+  {
+    label: 'content vertical gap',
+    pattern: /content:\s*\{\s*gap:\s*space\[2\.25\],/,
+  },
+  {
+    label: 'bottom safe padding',
+    pattern: /paddingBottom:\s*space\[10\]/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
@@ -2030,6 +2061,8 @@ let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
+let screenShellLayoutRulesValidated = 0;
+let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
 let settingsRouteScrollParityValidated = false;
 let onboardingRouteScrollRulesValidated = 0;
@@ -3567,6 +3600,39 @@ function validateOnboardingRouteHeaderParity() {
 
   if (valid && onboardingRouteHeadersValidated === EXPECTED_ONBOARDING_ROUTE_HEADERS.length) {
     onboardingRouteHeaderParityValidated = true;
+  }
+}
+
+function validateScreenShellLayoutParity() {
+  let valid = true;
+  let screenShell = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/ui/ScreenShell.tsx could not be read for layout parity: ${error.message}`);
+    return;
+  }
+
+  if (/<View\s+style=\{styles\.container\}>/.test(screenShell)) {
+    reject('ScreenShell must keep shared tab content inside ScrollView for mobile scrolling');
+  }
+
+  EXPECTED_SCREEN_SHELL_LAYOUT_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(screenShell)) {
+      reject(`ScreenShell missing ${expectedRule.label} for shared layout parity`);
+      return;
+    }
+    screenShellLayoutRulesValidated += 1;
+  });
+
+  if (valid && screenShellLayoutRulesValidated === EXPECTED_SCREEN_SHELL_LAYOUT_RULES.length) {
+    screenShellLayoutParityValidated = true;
   }
 }
 
@@ -7756,6 +7822,7 @@ validateMistakesRouteHeaderParity();
 validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
 validateOnboardingRouteHeaderParity();
+validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
 validateLegalRouteScrollParity();
@@ -7855,6 +7922,8 @@ console.log(
       settingsRouteHeaderParityValidated,
       onboardingRouteHeadersValidated,
       onboardingRouteHeaderParityValidated,
+      screenShellLayoutRulesValidated,
+      screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
       settingsRouteScrollParityValidated,
       onboardingRouteScrollRulesValidated,
