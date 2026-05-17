@@ -2,18 +2,27 @@ import { StyleSheet, Text, View } from 'react-native';
 import { colors, radius, shadows, space, typography } from '../../lib/theme';
 
 export function MetricCard({
+  accessibilityLabel,
   label,
   value,
   helper,
   tone = 'warm',
 }: {
+  accessibilityLabel?: string;
   label: string;
   value: string | number;
   helper?: string;
   tone?: 'warm' | 'blue';
 }) {
+  const metricAccessibilityLabel =
+    accessibilityLabel ?? `${label}: ${value}${helper ? `. ${helper}` : ''}`;
+
   return (
-    <View style={[styles.card, tone === 'blue' ? styles.blueCard : null]}>
+    <View
+      accessible
+      accessibilityLabel={metricAccessibilityLabel}
+      style={[styles.card, tone === 'blue' ? styles.blueCard : null]}
+    >
       <Text style={styles.value}>{value}</Text>
       <Text style={styles.label}>{label}</Text>
       {helper ? <Text style={styles.helper}>{helper}</Text> : null}

@@ -76,6 +76,16 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+const EXPECTED_APP_CONFIG_PLUGINS = [
+  'expo-router',
+  'react-native-google-mobile-ads',
+  'expo-secure-store',
+  'react-native-iap',
+  'expo-tracking-transparency',
+];
+const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.swedishcivictest';
+const EXPECTED_TRACKING_PERMISSION =
+  'This identifier may be used to deliver relevant study app ads after consent.';
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -202,6 +212,46 @@ const EXPECTED_CONTENT_INTERFACES = [
     ],
   },
 ];
+const EXPECTED_MONETIZATION_TYPE_UNIONS = [
+  {
+    typeName: 'AdPlacement',
+    values: [
+      'home_banner',
+      'chapter_list_banner',
+      'quiz_completed_interstitial',
+      'results_native',
+      'rewarded_extra_exam',
+      'app_open_launch',
+    ],
+  },
+];
+const EXPECTED_MONETIZATION_INTERFACES = [
+  {
+    name: 'AdUnitConfig',
+    fields: [
+      { name: 'placement', type: 'AdPlacement', optional: false },
+      { name: 'iosUnitId', type: 'string', optional: true },
+      { name: 'androidUnitId', type: 'string', optional: true },
+      { name: 'enabled', type: 'boolean', optional: false },
+      { name: 'testOnly', type: 'boolean', optional: false },
+    ],
+  },
+  {
+    name: 'PremiumEntitlements',
+    fields: [
+      { name: 'adsDisabled', type: 'boolean', optional: false },
+      { name: 'unlimitedMockExams', type: 'boolean', optional: false },
+      { name: 'fullMistakeReview', type: 'boolean', optional: false },
+    ],
+  },
+  {
+    name: 'MonetizationState',
+    fields: [
+      { name: 'premium', type: 'PremiumEntitlements', optional: false },
+      { name: 'adUnits', type: 'AdUnitConfig[]', optional: false },
+    ],
+  },
+];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -245,6 +295,10 @@ function loadTs(relativePath, exportName) {
   new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
   moduleCache.set(filePath, mod.exports);
   return exportName ? mod.exports[exportName] : mod.exports;
+}
+
+function loadJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8'));
 }
 
 function fail(message) {
@@ -950,11 +1004,13 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
-const uhrSectionMap = JSON.parse(
-  fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
-);
+const packageMetadata = loadJson('package.json');
+const appConfig = loadJson('app.json');
+const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
+let appConfigPluginsValidated = 0;
+let appConfigSchemaValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -980,6 +1036,9 @@ let progressQuestionSchemaParityValidated = false;
 let progressTypeUnionsValidated = 0;
 let progressTypeInterfacesValidated = 0;
 let progressTypeSchemaParityValidated = false;
+let monetizationTypeUnionsValidated = 0;
+let monetizationTypeInterfacesValidated = 0;
+let monetizationTypeSchemaParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -1090,6 +1149,113 @@ if (typeof calculateChapterMastery !== 'function') {
   fail('calculateChapterMastery export is not a function');
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
+
+function getExpoPluginEntry(plugins, pluginName) {
+  return plugins.find((plugin) => {
+    if (typeof plugin === 'string') return plugin === pluginName;
+    if (Array.isArray(plugin)) return plugin[0] === pluginName;
+    return false;
+  });
+}
+
+function getPluginConfig(pluginEntry) {
+  return Array.isArray(pluginEntry) && pluginEntry[1] && typeof pluginEntry[1] === 'object'
+    ? pluginEntry[1]
+    : undefined;
+}
+
+function validateAppConfigSchema() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const expo = appConfig?.expo;
+  if (!expo || typeof expo !== 'object' || Array.isArray(expo)) {
+    reject('app.json expo config is missing');
+    return;
+  }
+
+  if (expo.name !== 'Sweden Citizenship Test Prep') {
+    reject('app.json expo.name must identify the release app');
+  }
+  if (expo.slug !== 'swedish-civic-test') {
+    reject('app.json expo.slug must be swedish-civic-test');
+  }
+  if (expo.scheme !== expo.slug) {
+    reject('app.json expo.scheme must match expo.slug');
+  }
+  if (expo.version !== packageMetadata.version) {
+    reject(
+      `app.json expo.version ${expo.version} must match package.json version ${packageMetadata.version}`,
+    );
+  }
+  if (expo.orientation !== 'portrait') {
+    reject('app.json expo.orientation must be portrait');
+  }
+  if (expo.userInterfaceStyle !== 'light') {
+    reject('app.json expo.userInterfaceStyle must be light');
+  }
+  if (expo.newArchEnabled !== true) {
+    reject('app.json expo.newArchEnabled must be true');
+  }
+  if (expo.ios?.bundleIdentifier !== EXPECTED_APP_NATIVE_IDENTIFIER) {
+    reject(`app.json ios.bundleIdentifier must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
+  }
+  if (expo.android?.package !== EXPECTED_APP_NATIVE_IDENTIFIER) {
+    reject(`app.json android.package must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
+  }
+
+  const plugins = expo.plugins;
+  if (!Array.isArray(plugins)) {
+    reject('app.json expo.plugins must be an array');
+  } else {
+    for (const pluginName of EXPECTED_APP_CONFIG_PLUGINS) {
+      const pluginEntry = getExpoPluginEntry(plugins, pluginName);
+      if (!pluginEntry) {
+        reject(`app.json missing required plugin ${pluginName}`);
+      } else {
+        appConfigPluginsValidated += 1;
+      }
+    }
+
+    const googleAdsConfig = getPluginConfig(
+      getExpoPluginEntry(plugins, 'react-native-google-mobile-ads'),
+    );
+    if (!googleAdsConfig) {
+      reject('app.json react-native-google-mobile-ads plugin must include config');
+    } else {
+      const adMobAppIdPattern = /^ca-app-pub-\d{16}~\d{10}$/;
+      if (!adMobAppIdPattern.test(String(googleAdsConfig.androidAppId ?? ''))) {
+        reject('app.json react-native-google-mobile-ads androidAppId must be configured');
+      }
+      if (!adMobAppIdPattern.test(String(googleAdsConfig.iosAppId ?? ''))) {
+        reject('app.json react-native-google-mobile-ads iosAppId must be configured');
+      }
+      if (googleAdsConfig.delayAppMeasurementInit !== true) {
+        reject('app.json react-native-google-mobile-ads must delay app measurement initialization');
+      }
+      if (googleAdsConfig.userTrackingUsageDescription !== EXPECTED_TRACKING_PERMISSION) {
+        reject('app.json Google ads tracking usage description must match ATT permission copy');
+      }
+    }
+
+    const trackingConfig = getPluginConfig(
+      getExpoPluginEntry(plugins, 'expo-tracking-transparency'),
+    );
+    if (!trackingConfig) {
+      reject('app.json expo-tracking-transparency plugin must include config');
+    } else if (trackingConfig.userTrackingPermission !== EXPECTED_TRACKING_PERMISSION) {
+      reject('app.json ATT permission copy must match Google ads tracking usage description');
+    }
+  }
+
+  if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
+    appConfigSchemaValidated = true;
+  }
+}
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -2155,6 +2321,101 @@ function validateContentTypeSchemaParity() {
     contentTypeInterfacesValidated === EXPECTED_CONTENT_INTERFACES.length
   ) {
     contentTypeSchemaParityValidated = true;
+  }
+}
+
+function validateMonetizationTypeSchemaParity() {
+  let valid = true;
+  let monetizationTypesSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    monetizationTypesSource = fs.readFileSync(path.join(repoRoot, 'types/monetization.ts'), 'utf8');
+  } catch (error) {
+    reject(`types/monetization.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_MONETIZATION_TYPE_UNIONS.forEach(({ typeName, values }) => {
+    const actualValues = extractStringUnionTypeFromTs(monetizationTypesSource, typeName);
+    if (!Array.isArray(actualValues)) {
+      reject(`types/monetization.ts ${typeName} union could not be read`);
+      return;
+    }
+    if (!arrayEquals(actualValues, values)) {
+      reject(
+        `types/monetization.ts ${typeName} values are ${JSON.stringify(
+          actualValues,
+        )}, expected ${JSON.stringify(values)}`,
+      );
+      return;
+    }
+    monetizationTypeUnionsValidated += 1;
+  });
+
+  EXPECTED_MONETIZATION_INTERFACES.forEach((expectedInterface) => {
+    const actualFields = extractObjectTypePropertiesFromTs(
+      monetizationTypesSource,
+      expectedInterface.name,
+    );
+    let interfaceIsValid = true;
+
+    function rejectInterface(message) {
+      interfaceIsValid = false;
+      reject(message);
+    }
+
+    if (!Array.isArray(actualFields)) {
+      rejectInterface(
+        `types/monetization.ts ${expectedInterface.name} interface could not be read`,
+      );
+      return;
+    }
+
+    const actualNames = actualFields.map((field) => field.name);
+    const expectedNames = expectedInterface.fields.map((field) => field.name);
+    if (!arrayEquals(actualNames, expectedNames)) {
+      rejectInterface(
+        `types/monetization.ts ${expectedInterface.name} fields are ${JSON.stringify(
+          actualNames,
+        )}, expected ${JSON.stringify(expectedNames)}`,
+      );
+    }
+
+    const actualFieldsByName = new Map(actualFields.map((field) => [field.name, field]));
+    expectedInterface.fields.forEach((expectedField) => {
+      const actualField = actualFieldsByName.get(expectedField.name);
+      if (!actualField) {
+        rejectInterface(
+          `types/monetization.ts ${expectedInterface.name} missing ${expectedField.name}`,
+        );
+        return;
+      }
+      if (actualField.type !== expectedField.type) {
+        rejectInterface(
+          `types/monetization.ts ${expectedInterface.name}.${expectedField.name} type is ${actualField.type}, expected ${expectedField.type}`,
+        );
+      }
+      if (actualField.optional !== expectedField.optional) {
+        rejectInterface(
+          `types/monetization.ts ${expectedInterface.name}.${expectedField.name} optional=${actualField.optional}, expected ${expectedField.optional}`,
+        );
+      }
+    });
+
+    if (interfaceIsValid) monetizationTypeInterfacesValidated += 1;
+  });
+
+  if (
+    valid &&
+    monetizationTypeUnionsValidated === EXPECTED_MONETIZATION_TYPE_UNIONS.length &&
+    monetizationTypeInterfacesValidated === EXPECTED_MONETIZATION_INTERFACES.length
+  ) {
+    monetizationTypeSchemaParityValidated = true;
   }
 }
 
@@ -3738,11 +3999,13 @@ validateMockExamConfig(
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0,
 );
+validateAppConfigSchema();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateContentTypeSchemaParity();
+validateMonetizationTypeSchemaParity();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
@@ -3790,6 +4053,8 @@ console.log(
       chapters: chapters.length,
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
+      appConfigPluginsValidated,
+      appConfigSchemaValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
@@ -3801,6 +4066,9 @@ console.log(
       contentTypeUnionsValidated,
       contentTypeInterfacesValidated,
       contentTypeSchemaParityValidated,
+      monetizationTypeUnionsValidated,
+      monetizationTypeInterfacesValidated,
+      monetizationTypeSchemaParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,

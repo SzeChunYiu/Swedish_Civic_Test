@@ -20,6 +20,42 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('metric card groups value, label, and helper into one accessible summary', () => {
+  const source = read('components/ui/MetricCard.tsx');
+
+  assert.match(source, /accessibilityLabel\?: string/);
+  assert.match(source, /const metricAccessibilityLabel =/);
+  assert.match(source, /accessibilityLabel \?\? `\$\{label\}: \$\{value\}/);
+  assert.match(source, /accessible/);
+  assert.match(source, /accessibilityLabel=\{metricAccessibilityLabel\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('badge preserves a readable accessibility label when visual text is uppercased', () => {
+  const source = read('components/ui/Badge.tsx');
+
+  assert.match(source, /accessibilityLabel\?: string/);
+  assert.match(source, /const badgeAccessibilityLabel =/);
+  assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
+  assert.match(source, /String\(children\)/);
+  assert.match(source, /accessibilityLabel=\{badgeAccessibilityLabel\}/);
+  assert.match(source, /textTransform: 'uppercase'/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('button derives an accessibility label from plain text children by default', () => {
+  const source = read('components/ui/Button.tsx');
+
+  assert.match(source, /accessibilityLabel,/);
+  assert.match(source, /const buttonAccessibilityLabel =/);
+  assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
+  assert.match(source, /String\(children\)/);
+  assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
+  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
+  assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('practice screen adds bookmark controls backed by progress storage', () => {
   const source = read('app/(tabs)/practice.tsx');
 
@@ -45,6 +81,15 @@ test('practice locks answer options after feedback is visible', () => {
   assert.match(answerOptionSource, /disabled\?: boolean/);
   assert.match(answerOptionSource, /disabled=\{disabled\}/);
   assert.match(practiceSource, /disabled=\{hasSelectedAnswer\}/);
+});
+
+test('answer option feedback remains available in the accessibility label', () => {
+  const source = read('components/quiz/AnswerOption.tsx');
+
+  assert.match(source, /const accessibilityLabel = resultLabel/);
+  assert.match(source, /\$\{label\}, \$\{resultLabel\}/);
+  assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);
 });
 
 test('mistakes screen has a bookmarked-question review section', () => {

@@ -13,6 +13,8 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.publishedQuestions, 500);
   assert.equal(summary.chapterSchemasValidated, 13);
   assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
+  assert.equal(summary.appConfigPluginsValidated, 5);
+  assert.equal(summary.appConfigSchemaValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
@@ -24,6 +26,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.contentTypeUnionsValidated, 3);
   assert.equal(summary.contentTypeInterfacesValidated, 4);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
+  assert.equal(summary.monetizationTypeUnionsValidated, 1);
+  assert.equal(summary.monetizationTypeInterfacesValidated, 3);
+  assert.equal(summary.monetizationTypeSchemaParityValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.uxBenchmarksValidated, 4);
   assert.equal(summary.supportedLanguagesValidated, 2);
