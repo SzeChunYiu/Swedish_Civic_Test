@@ -863,8 +863,61 @@ const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
   {
     label: 'onboarding route title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Prepare calmly for the civic test\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
+];
+const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
+  sv: [
+    'Justera inställningar',
+    'Öppna inställningar',
+    'Välkommen',
+    'Börja studera',
+    'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
+    'Öva med UHR-refererade frågor och förklaringar.',
+    'Följ framsteg lokalt på din enhet utan konto.',
+    'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
+    'Förbered dig lugnt för samhällskunskapsprovet',
+  ],
+  en: [
+    'Adjust settings',
+    'Welcome',
+    'Start studying',
+    'Study Swedish civic concepts with English support when needed.',
+    'Practice with UHR-referenced questions and explanations.',
+    'Track progress locally on your device without an account.',
+    'A small, independent study companion for daily practice, mock exams, and mistake review.',
+    'Prepare calmly for the civic test',
+  ],
+};
+const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'onboarding route must import AppLanguage from settings'],
+  ['type OnboardingCopy = {', 'onboarding route must define a typed copy contract'],
+  [
+    'const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {',
+    'onboarding route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'onboarding route must read language from settings store',
+  ],
+  [
+    'const copy = onboardingCopy[language];',
+    'onboarding route must select copy from settings language',
+  ],
+  ['{copy.eyebrow}', 'onboarding eyebrow must render localized copy'],
+  ['{copy.title}', 'onboarding title must render localized copy'],
+  ['{copy.subtitle}', 'onboarding subtitle must render localized copy'],
+  ['{copy.steps.map((step, index) => (', 'onboarding steps must render localized copy'],
+  [
+    'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
+    'onboarding start link must expose localized accessibility copy',
+  ],
+  ['{copy.startStudying}', 'onboarding start link must render localized copy'],
+  [
+    'accessibilityLabel={copy.adjustSettingsAccessibilityLabel}',
+    'onboarding settings link must expose localized accessibility copy',
+  ],
+  ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -3386,6 +3439,8 @@ let settingsRouteCopyLabelsValidated = 0;
 let settingsRouteCopyParityValidated = false;
 let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
+let onboardingRouteCopyLabelsValidated = 0;
+let onboardingRouteCopyParityValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -5381,6 +5436,58 @@ function validateOnboardingRouteHeaderParity() {
 
   if (valid && onboardingRouteHeadersValidated === EXPECTED_ONBOARDING_ROUTE_HEADERS.length) {
     onboardingRouteHeaderParityValidated = true;
+  }
+}
+
+function validateOnboardingRouteCopyParity() {
+  let valid = true;
+  let onboardingRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+  } catch (error) {
+    reject(`onboarding route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!onboardingRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_ONBOARDING_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`onboarding route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!onboardingRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`onboarding route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`onboarding route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) onboardingRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_ONBOARDING_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
+    onboardingRouteCopyParityValidated = true;
   }
 }
 
@@ -10137,6 +10244,7 @@ validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
+validateOnboardingRouteCopyParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -10267,6 +10375,8 @@ console.log(
       settingsRouteCopyParityValidated,
       onboardingRouteHeadersValidated,
       onboardingRouteHeaderParityValidated,
+      onboardingRouteCopyLabelsValidated,
+      onboardingRouteCopyParityValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
