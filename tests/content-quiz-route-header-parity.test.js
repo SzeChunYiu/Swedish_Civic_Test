@@ -22,8 +22,8 @@ test('routed quiz titles stay exposed as accessibility headers', () => {
   assert.equal(summary.quizRouteHeadersValidated, 2);
   assert.equal(summary.quizRouteHeaderParityValidated, true);
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
-  assert.match(source, /No quiz questions are available yet\./);
-  assert.match(source, /Session \{normalizedSessionId\}/);
+  assert.match(source, /\{copy\.emptyTitle\}/);
+  assert.match(source, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
   assert.equal(
     source.match(/<Text accessibilityRole="header" style=\{styles\.title\}>/g)?.length,
     2,
@@ -44,8 +44,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '<Text accessibilityRole="header" style={styles.title}>\\n          Session {normalizedSessionId}\\n        </Text>',
-        '<Text style={styles.title}>Session {normalizedSessionId}</Text>'
+        '<Text accessibilityRole="header" style={styles.title}>\\n          {copy.sessionTitle(normalizedSessionId)}\\n        </Text>',
+        '<Text style={styles.title}>{copy.sessionTitle(normalizedSessionId)}</Text>'
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

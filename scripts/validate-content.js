@@ -198,12 +198,12 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
     label: 'empty quiz title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*No quiz questions are available yet\.\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.emptyTitle\}\s*<\/Text>/,
   },
   {
     label: 'session title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Session\s*\{normalizedSessionId\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.sessionTitle\(normalizedSessionId\)\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_PRACTICE_ROUTE_HEADERS = [

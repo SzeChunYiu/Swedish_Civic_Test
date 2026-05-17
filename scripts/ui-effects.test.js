@@ -206,10 +206,30 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   assert.match(practiceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(practiceSource, /Question \{questionNumber\}/);
   assert.equal(quizHeaderMatches?.length, 2);
-  assert.match(routedQuizSource, /No quiz questions are available yet\./);
-  assert.match(routedQuizSource, /Session \{normalizedSessionId\}/);
+  assert.match(routedQuizSource, /type QuizSessionCopy =/);
+  assert.match(routedQuizSource, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy>/);
+  assert.match(routedQuizSource, /Det finns inga quizfrågor ännu\./);
+  assert.match(routedQuizSource, /Quizpass \$\{currentSessionId\}/);
+  assert.match(routedQuizSource, /\{copy\.emptyTitle\}/);
+  assert.match(routedQuizSource, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
   assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(routedQuizSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('routed quiz shell copy follows Swedish and English settings language', () => {
+  const source = read('app/quiz/[sessionId].tsx');
+
+  assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /const copy = quizSessionCopy\[language\]/);
+  assert.match(source, /Tillbaka till övning/);
+  assert.match(source, /Besvara frågan och gå sedan igenom den källbaserade återkopplingen\./);
+  assert.match(source, /Poäng/);
+  assert.match(source, /Försök igen med den här quizfrågan/);
+  assert.match(source, /Back to Practice/);
+  assert.match(source, /Answer the routed question, then review the source-backed feedback\./);
+  assert.match(source, /\{copy\.scoreLabel\}: \{score\.correct\}\/\{score\.total\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.tryAgainAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}/);
 });
 
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
