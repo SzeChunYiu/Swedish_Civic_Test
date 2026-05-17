@@ -1130,8 +1130,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q073',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
-    'Vilka exempel på kommunal välfärd listar UHR-materialet?',
-    'Which examples of municipal welfare does the UHR material list?',
+    'Vilket svar ger exempel på kommunal välfärd?',
+    'Which answer gives examples of municipal welfare?',
     [
       [
         'Barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst',
