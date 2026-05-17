@@ -17,6 +17,9 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.appConfigSchemaValidated, true);
   assert.equal(summary.launchAdSuppressedRoutesValidated, 6);
   assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
+  assert.equal(summary.adPlacementRoutesValidated, 4);
+  assert.equal(summary.noAdRoutesValidated, 1);
+  assert.equal(summary.adPlacementRouteParityValidated, true);
   assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 10);
   assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
   assert.equal(summary.removeAdsEntitlementHookCasesValidated, 5);

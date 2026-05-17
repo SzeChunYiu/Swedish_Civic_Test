@@ -154,6 +154,34 @@ const EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS = [
   'Google UMP consent',
 ];
 const EXPECTED_RELEASE_REAL_ADS_ENV_FLAG = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
+const EXPECTED_ROUTE_AD_PLACEMENTS = [
+  {
+    file: 'app/(tabs)/home.tsx',
+    component: 'AdBanner',
+    placement: 'home_banner',
+    pattern:
+      /<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/learn.tsx',
+    component: 'AdBanner',
+    placement: 'chapter_list_banner',
+    pattern: /<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/practice.tsx',
+    component: 'AdBanner',
+    placement: 'quiz_completed_interstitial',
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/mistakes.tsx',
+    component: 'NativeAdCard',
+    placement: 'results_native',
+    pattern: /<NativeAdCard\s+\/>/,
+  },
+];
+const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -2085,6 +2113,9 @@ let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
+let adPlacementRoutesValidated = 0;
+let noAdRoutesValidated = 0;
+let adPlacementRouteParityValidated = false;
 let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
@@ -2524,6 +2555,108 @@ function validateLaunchAdRouteSuppressionParity() {
     launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
   ) {
     launchAdRouteSuppressionParityValidated = true;
+  }
+}
+
+function validateAdPlacementRouteParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
+  const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
+    ? adsConfig.blockedPlacements
+    : [];
+
+  for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
+    let source = '';
+    let routeIsValid = true;
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, spec.file), 'utf8');
+    } catch (error) {
+      reject(`${spec.file} could not be read for ad placement parity: ${error.message}`);
+      continue;
+    }
+
+    if (!source.includes(`components/monetization/${spec.component}`)) {
+      reject(`${spec.file} must import ${spec.component} from the monetization components`);
+      routeIsValid = false;
+    }
+
+    if (!spec.pattern.test(source)) {
+      reject(`${spec.file} must render ${spec.component} placement ${spec.placement}`);
+      routeIsValid = false;
+    }
+
+    if (!safePlacements.includes(spec.placement)) {
+      reject(`adsConfig.safePlacements must include routed placement ${spec.placement}`);
+      routeIsValid = false;
+    }
+
+    if (typeof shouldShowAd === 'function') {
+      if (!shouldShowAd(spec.placement, { adsDisabled: false })) {
+        reject(`${spec.placement} must render for free users with test ad config`);
+        routeIsValid = false;
+      }
+      if (shouldShowAd(spec.placement, { adsDisabled: true })) {
+        reject(`${spec.placement} must be hidden after Remove Ads is active`);
+        routeIsValid = false;
+      }
+    }
+
+    if (spec.component === 'NativeAdCard') {
+      const nativeAdCardSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
+        'utf8',
+      );
+      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
+        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+        routeIsValid = false;
+      }
+    }
+
+    if (routeIsValid) adPlacementRoutesValidated += 1;
+  }
+
+  for (const file of EXPECTED_NO_AD_ROUTE_FILES) {
+    let source = '';
+    let routeIsValid = true;
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} could not be read for no-ad route parity: ${error.message}`);
+      continue;
+    }
+
+    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd/.test(source)) {
+      reject(`${file} must not import or render ad components`);
+      routeIsValid = false;
+    }
+
+    if (!blockedPlacements.includes('exam_screen')) {
+      reject('adsConfig.blockedPlacements must include exam_screen');
+      routeIsValid = false;
+    }
+
+    if (typeof shouldShowAd === 'function' && shouldShowAd('exam_screen', { adsDisabled: false })) {
+      reject('exam_screen must never render ads');
+      routeIsValid = false;
+    }
+
+    if (routeIsValid) noAdRoutesValidated += 1;
+  }
+
+  if (
+    valid &&
+    adPlacementRoutesValidated === EXPECTED_ROUTE_AD_PLACEMENTS.length &&
+    noAdRoutesValidated === EXPECTED_NO_AD_ROUTE_FILES.length
+  ) {
+    adPlacementRouteParityValidated = true;
   }
 }
 
@@ -7893,6 +8026,7 @@ validateMockExamConfig(
 );
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
@@ -7976,6 +8110,9 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      adPlacementRoutesValidated,
+      noAdRoutesValidated,
+      adPlacementRouteParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
       removeAdsEntitlementHookCasesValidated,
