@@ -701,6 +701,104 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /textTransform:\s*'uppercase'/,
   },
 ];
+const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'optional Chapter prop contract',
+    pattern: /chapter\?: Chapter;/,
+  },
+  {
+    label: 'content-queued status fallback',
+    pattern:
+      /const status =[\s\S]*questionCount > 0 \? `\$\{completedCount\}\/\$\{questionCount\} practiced` : 'Content queued';/,
+  },
+  {
+    label: 'chapter title fallback',
+    pattern: /const title = chapter\?\.nameSv \?\? 'Chapter unavailable';/,
+  },
+  {
+    label: 'chapter accessibility summary variable',
+    pattern: /const chapterAccessibilityLabel =/,
+  },
+  {
+    label: 'Swedish title in accessibility summary',
+    pattern: /`Chapter: \$\{title\}`/,
+  },
+  {
+    label: 'English title in accessibility summary',
+    pattern: /chapter\?\.nameEn \? `English name: \$\{chapter\.nameEn\}` : null/,
+  },
+  {
+    label: 'progress status in accessibility summary',
+    pattern: /`Status: \$\{status\}`/,
+  },
+  {
+    label: 'description in accessibility summary',
+    pattern: /chapter\?\.descriptionSv \? `Description: \$\{chapter\.descriptionSv\}` : null/,
+  },
+  {
+    label: 'Card receives chapter accessibility summary',
+    pattern:
+      /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated style=\{styles\.card\}>/,
+  },
+  {
+    label: 'visible chapter title',
+    pattern: /<Text style=\{styles\.title\}>\{title\}<\/Text>/,
+  },
+  {
+    label: 'visible progress bar',
+    pattern: /<ProgressBar progress=\{progress\} \/>/,
+  },
+];
+const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'optional front/back prop contract',
+    pattern: /front\?: string; back\?: string/,
+  },
+  {
+    label: 'release-safe prompt fallback',
+    pattern: /const fallbackPrompt = 'Study prompt unavailable';/,
+  },
+  {
+    label: 'release-safe answer fallback',
+    pattern: /const fallbackAnswer = 'Answer unavailable';/,
+  },
+  {
+    label: 'trimmed text helper',
+    pattern: /function cleanText\(value: string \| undefined, fallback: string\): string/,
+  },
+  {
+    label: 'prompt derived through fallback helper',
+    pattern: /const prompt = cleanText\(front, fallbackPrompt\);/,
+  },
+  {
+    label: 'answer derived through fallback helper',
+    pattern: /const answer = cleanText\(back, fallbackAnswer\);/,
+  },
+  {
+    label: 'prompt and answer accessibility summary',
+    pattern:
+      /<Card\s+accessibilityLabel=\{`Study flashcard\. Prompt: \$\{prompt\}\. Answer: \$\{answer\}\.`\}/,
+  },
+  {
+    label: 'visible flashcard badge',
+    pattern: /<Badge tone="warm">Flashcard<\/Badge>/,
+  },
+  {
+    label: 'prompt header text',
+    pattern:
+      /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*Prompt[\s\S]*<\/Text>/,
+  },
+  {
+    label: 'answer header text',
+    pattern:
+      /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*Answer[\s\S]*<\/Text>/,
+  },
+  {
+    label: 'visible prompt and answer text',
+    pattern:
+      /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>[\s\S]*<Text style=\{styles\.answer\}>\{answer\}<\/Text>/,
+  },
+];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'PracticeQuestion prop contract',
@@ -829,6 +927,44 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
   {
     label: 'visible selected explanation',
     pattern: /<Text style=\{styles\.body\}>\{explanation\}<\/Text>/,
+  },
+];
+const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'optional UHRReference prop contract',
+    pattern: /reference\?: UHRReference/,
+  },
+  {
+    label: 'chapter and section source label',
+    pattern:
+      /const label = reference\s*\?\s*`\$\{reference\.chapter\} · \$\{reference\.section\}`\s*:\s*'Source reference unavailable';/,
+  },
+  {
+    label: 'approximate page source label',
+    pattern:
+      /const pageLabel = reference\?\.pageApprox \? `Approx\. page \$\{reference\.pageApprox\}` : null;/,
+  },
+  {
+    label: 'page-aware accessibility label',
+    pattern:
+      /const referenceAccessibilityLabel = pageLabel[\s\S]*\? `UHR reference: \$\{label\}\. \$\{pageLabel\}`[\s\S]*: `UHR reference: \$\{label\}`;/,
+  },
+  {
+    label: 'Card receives UHR accessibility label',
+    pattern: /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/,
+  },
+  {
+    label: 'UHR title header text',
+    pattern:
+      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*UHR reference[\s\S]*<\/Text>/,
+  },
+  {
+    label: 'visible chapter-section source label',
+    pattern: /<Text style=\{styles\.body\}>\{label\}<\/Text>/,
+  },
+  {
+    label: 'visible approximate page label',
+    pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
   },
 ];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
@@ -2491,12 +2627,18 @@ let metricCardAccessibilityRulesValidated = 0;
 let metricCardAccessibilityParityValidated = false;
 let badgeAccessibilityRulesValidated = 0;
 let badgeAccessibilityParityValidated = false;
+let chapterCardAccessibilityRulesValidated = 0;
+let chapterCardAccessibilityParityValidated = false;
+let flashcardAccessibilityRulesValidated = 0;
+let flashcardAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
 let questionCardAccessibilityParityValidated = false;
 let answerOptionAccessibilityRulesValidated = 0;
 let answerOptionAccessibilityParityValidated = false;
 let explanationPanelAccessibilityRulesValidated = 0;
 let explanationPanelAccessibilityParityValidated = false;
+let uhrReferenceCardAccessibilityRulesValidated = 0;
+let uhrReferenceCardAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4430,6 +4572,80 @@ function validateBadgeAccessibilityParity() {
   }
 }
 
+function validateChapterCardAccessibilityParity() {
+  let valid = true;
+  let chapterCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    chapterCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/ChapterCard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/learning/ChapterCard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(chapterCardSource)) {
+      reject(`ChapterCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    chapterCardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    chapterCardAccessibilityRulesValidated === EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES.length
+  ) {
+    chapterCardAccessibilityParityValidated = true;
+  }
+}
+
+function validateFlashcardAccessibilityParity() {
+  let valid = true;
+  let flashcardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    flashcardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/Flashcard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/learning/Flashcard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_FLASHCARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(flashcardSource)) {
+      reject(`Flashcard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    flashcardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    flashcardAccessibilityRulesValidated === EXPECTED_FLASHCARD_ACCESSIBILITY_RULES.length
+  ) {
+    flashcardAccessibilityParityValidated = true;
+  }
+}
+
 function validateQuestionCardAccessibilityParity() {
   let valid = true;
   let questionCardSource = '';
@@ -4539,6 +4755,44 @@ function validateExplanationPanelAccessibilityParity() {
       EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.length
   ) {
     explanationPanelAccessibilityParityValidated = true;
+  }
+}
+
+function validateUhrReferenceCardAccessibilityParity() {
+  let valid = true;
+  let uhrReferenceCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    uhrReferenceCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/UHRReferenceCard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/UHRReferenceCard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(uhrReferenceCardSource)) {
+      reject(`UHRReferenceCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    uhrReferenceCardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    uhrReferenceCardAccessibilityRulesValidated ===
+      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length
+  ) {
+    uhrReferenceCardAccessibilityParityValidated = true;
   }
 }
 
@@ -8632,9 +8886,12 @@ validateCardAccessibilityParity();
 validateProgressBarAccessibilityParity();
 validateMetricCardAccessibilityParity();
 validateBadgeAccessibilityParity();
+validateChapterCardAccessibilityParity();
+validateFlashcardAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
+validateUhrReferenceCardAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8752,12 +9009,18 @@ console.log(
       metricCardAccessibilityParityValidated,
       badgeAccessibilityRulesValidated,
       badgeAccessibilityParityValidated,
+      chapterCardAccessibilityRulesValidated,
+      chapterCardAccessibilityParityValidated,
+      flashcardAccessibilityRulesValidated,
+      flashcardAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
       questionCardAccessibilityParityValidated,
       answerOptionAccessibilityRulesValidated,
       answerOptionAccessibilityParityValidated,
       explanationPanelAccessibilityRulesValidated,
       explanationPanelAccessibilityParityValidated,
+      uhrReferenceCardAccessibilityRulesValidated,
+      uhrReferenceCardAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
