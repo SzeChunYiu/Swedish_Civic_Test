@@ -95,6 +95,20 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPageSource, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
   assert.match(complianceLinksSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(complianceLinksSource, /type ComplianceLinksCopy =/);
+  assert.match(
+    complianceLinksSource,
+    /const complianceLinksCopy: Record<AppLanguage, ComplianceLinksCopy>/,
+  );
+  assert.match(
+    complianceLinksSource,
+    /const copy = complianceLinksCopy\[language \?\? settingsLanguage\]/,
+  );
+  assert.match(complianceLinksSource, /Juridik och källor/);
+  assert.match(complianceLinksSource, /Legal and sources/);
+  assert.match(complianceLinksSource, /Öppna \$\{label\}/);
+  assert.match(complianceLinksSource, /Open \$\{label\}/);
+  assert.match(complianceLinksSource, /accessibilityLabel=\{copy\.openLabel\(link\.label\)\}/);
   assert.doesNotMatch(legalPageSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

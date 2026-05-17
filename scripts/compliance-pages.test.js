@@ -45,5 +45,8 @@ test('compliance pages and source links are present', () => {
   assert.match(supportRoute, /<Link[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
   assert.match(supportRoute, /accessibilityLabel="Open public support page"/);
   assert.doesNotMatch(supportRoute, /release checklist items/i);
-  assert.match(read('components/compliance/ComplianceLinks.tsx'), /Support/);
+  const complianceLinks = read('components/compliance/ComplianceLinks.tsx');
+  assert.match(complianceLinks, /Juridik och källor/);
+  assert.match(complianceLinks, /Legal and sources/);
+  assert.match(complianceLinks, /Support/);
 });
