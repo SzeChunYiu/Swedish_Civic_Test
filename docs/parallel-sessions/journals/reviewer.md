@@ -309,3 +309,92 @@ Workspace contract: pass with caveat - source ownership is DATA-INTEGRITY, not R
 Findings queued: none from this focused pass.
 Evidence: source metadata validation is covered by a green production summary assertion and a real negative rejection for bad publisher metadata.
 Next manager action: VALIDATOR can review/accept or reject the DATA-INTEGRITY source-metadata atom; broader reviewer passes remain sensitive to concurrent dirty source scope.
+
+Lane: REVIEWER
+Artifact reviewed: current release-policy / release-preflight monetization gate patch.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current release/monetization diffs.
+- Inspected `lib/monetization/releasePolicy.ts`, `scripts/monetization.test.js`, `scripts/release-preflight.js`, and `scripts/release-preflight.test.js` for ad-supported v1.0, AdMob app, app-ads.txt, privacy binary review, Remove Ads 29 SEK, and ATT/UMP evidence expectations.
+- `npm run test:monetization` - exit 0, 12/12 tests passed.
+- `node --test scripts/release-preflight.test.js --test-name-pattern 'AdMob|privacy review|ad-supported|disabled-ad|valid local store record|valid local privacy'` - exit 0, 44/44 tests reported passed.
+- Stale disabled-ads grep across `scripts publishing reports app lib components tests` - exit 0; remaining old-contract hits are in publishing/report artifacts and `scripts/publishing.test.js`, plus one negative release-preflight fixture.
+- `npm run release:preflight -- --json` - exit 1; `local-validation` is blocked by `npm run test:a11y-labels`, and store/privacy gate evidence still mentions disabled real ads.
+- `npm run test:a11y-labels` - exit 1; `app/quiz/[sessionId].tsx:111` is missing `accessibilityState` on the Try again `Pressable`.
+Workspace contract: pass for this bounded verifier pass, then blocked for further passes because dirty source scope expanded outside REVIEWER ownership.
+Findings queued: `REVIEWER-RELEASE-GATES-1 update`, `REVIEWER-A11Y-QUIZ-STATE-1`, and `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update`.
+Evidence: release-preflight unit coverage is green for the updated policy checks, but release publishing/report gates still contain disabled-ad wording and full preflight local validation is red on the routed quiz a11y check.
+Next manager action: finish the release-gate publishing/report cleanup, assign the quiz a11y source fix, and bound or commit the active source-owner changes before the next reviewer functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT CNT11 q041 rättssäkerhet question and exported CSV rows.
+Checks run:
+- Re-read current `TEAM_PLAN` CNT11 acceptance row and CONTENT journal handoff.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for `q041` plus generated rows `q261`-`q264`.
+- Checked official UHR `Sverige i fokus` PDF section `Rättssäkerhet`; lines 478-483 state equal treatment before law, fair trial, evidence/fact review, independent courts, no government/Riksdag control over judgments, defense with lawyer, and appeal rights.
+- `npm run validate:content` - exit 0; 13 chapters, 500 questions, 500 published questions, 500 UHR references, and `uhrSourceMetadataValidated:true`.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run test:content` - exit 0; 4/4 tests passed.
+- Direct q041 assertion - first run exit 1 due an over-strict reviewer regex on the English distractor, corrected rerun exit 0 with `q041 OK; exported rows q041/q261-q264 present`.
+Workspace contract: pass - no product source edited; only reviewer journal was updated.
+Findings queued: none from this focused pass.
+Evidence: q041 is source-aligned, has a non-debatable correct answer, keeps Swedish/English wording coherent, exports generated variants, and content validators remain green.
+Next manager action: no q041 defect; continue with the next bounded product atom after current queue/doc updates are settled.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the q041 content pass.
+Checks run:
+- `git status --short --branch` and `git diff --name-status` - source dirty scope changed again.
+- Inspected current `scripts/validate-content.js` / `scripts/content-production.test.js` diff and TEAM_PLAN/Data-Integrity handoff context.
+Workspace contract: blocked - no further functional pass run because current DATA-INTEGRITY source edits are outside REVIEWER ownership and not yet bounded by a matching handoff row.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:41Z]`.
+Evidence: dirty source files are `scripts/content-production.test.js` and `scripts/validate-content.js`; their diff adds `generatedSourceMetadataParityValidated`, while TEAM_PLAN currently records accepted DI13 tag-slug work rather than this new generated-source-metadata atom.
+Next manager action: GM/VALIDATOR should bound, accept/reject, or commit the new DATA-INTEGRITY source changes before another reviewer pass.
+
+Lane: REVIEWER
+Artifact reviewed: moving workspace contract state after blocker recording.
+Checks run:
+- `git diff --name-status` - current dirty source now includes `app/quiz/[sessionId].tsx`, `scripts/content-production.test.js`, and `scripts/validate-content.js`.
+- Inspected the latest diff enough to identify an a11y-state change in the quiz route and a DATA-INTEGRITY generated source-metadata parity handoff.
+Workspace contract: blocked - no further functional pass run because source-owner changes are actively moving.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:42Z]`.
+Evidence: app quiz a11y source and data-integrity validation source are dirty outside REVIEWER ownership; REVIEWER has not edited product source.
+Next manager action: accept/reject or commit the setup/a11y fix and DATA-INTEGRITY atom, then hand REVIEWER a stable artifact boundary.
+
+Lane: REVIEWER
+Artifact reviewed: final moving-worktree snapshot before stopping.
+Checks run:
+- `git diff --name-status` - source dirty scope now includes `app/quiz/[sessionId].tsx`, `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/content-production.test.js`, and `scripts/validate-content.js`.
+Workspace contract: blocked - current source-owner changes are actively moving and include app, content, and data-integrity surfaces outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:42Z-current]`.
+Evidence: REVIEWER did not edit product source; queue/journal updates only.
+Next manager action: provide a stable accepted/committed artifact boundary before resuming REVIEWER.
+
+Lane: REVIEWER
+Artifact reviewed: SETUP Iteration 22 routed quiz a11y-state fix.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and the SETUP handoff.
+- Inspected `app/quiz/[sessionId].tsx:111-115`; the `Try again` `Pressable` now has `accessibilityLabel`, `accessibilityRole`, and `accessibilityState`.
+- `npm run test:a11y-labels` - exit 0.
+- `npm run typecheck` - exit 0.
+- `npm run lint` - exit 0.
+- `npm run test:ownership` - exit 0.
+- `npx prettier --check app/quiz/[sessionId].tsx` - exit 0.
+- `git diff --check -- app/quiz/[sessionId].tsx docs/parallel-sessions/journals/setup.md` - exit 0.
+Workspace contract: pass with caveat - source ownership is SETUP, not REVIEWER; REVIEWER did not edit product source.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-A11Y-QUIZ-STATE-1 update [2026-05-17 08:43Z]`.
+Evidence: the previously failing a11y verifier now passes against the changed routed quiz control.
+Next manager action: VALIDATOR can accept or reject the SETUP a11y atom; release preflight should be rerun separately after unrelated release/content gates settle.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT Iteration 17 q043 police-role question and exported CSV rows.
+Checks run:
+- Re-read current CONTENT handoff for q043 and inspected `data/additionalQuestions.ts` / `content/question-bank.csv`.
+- Checked official UHR `Sverige i fokus` PDF section `Polisen`; lines 500-507 state that police maintain law and order, prevent and investigate crimes, cooperate with schools/municipalities/companies/associations/other authorities for safety, help people exposed to crime or needing protection, and issue passports/national ID cards/permits.
+- `npm run validate:content` - exit 0; summary includes 500 questions, 500 UHR references, and 400 `generatedSourceMetadataParityValidated`.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run test:content` - exit 0; 4/4 tests passed.
+- Direct q043 assertion - exit 0 with `q043 OK; exported rows q043/q269-q272 present`.
+Workspace contract: pass with caveat - source ownership is CONTENT, not REVIEWER; REVIEWER did not edit product source.
+Findings queued: none from this focused pass.
+Evidence: q043 has a non-debatable correct answer aligned to the UHR `Polisen` section, coherent Swedish/English wording, expected source tags, and exported generated rows.
+Next manager action: VALIDATOR can review/accept or reject the CONTENT q043 atom; no reviewer defect from this pass.

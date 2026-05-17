@@ -111,6 +111,7 @@ export default function QuizSessionScreen() {
             <Pressable
               accessibilityLabel="Try this quiz question again"
               accessibilityRole="button"
+              accessibilityState={{ disabled: false }}
               onPress={() => setSelectedOptionId(null)}
               style={styles.secondaryButton}
             >

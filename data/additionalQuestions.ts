@@ -509,8 +509,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q043',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Polisen', pageApprox: 18 },
-    'Vilken uppgift har polisen?',
-    'What task does the police have?',
+    'Vilket påstående beskriver polisens uppgift enligt materialet?',
+    'Which statement describes the police role according to the material?',
     [
       [
         'Att upprätthålla lag och ordning samt förebygga och utreda brott',
@@ -521,9 +521,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Att finansiera public service', 'To finance public service broadcasting'],
     ],
     0,
-    'Polisen ska upprätthålla lag och ordning samt förebygga och utreda brott.',
-    'The police maintain law and order and prevent and investigate crimes.',
-    ['police', 'crime', 'law'],
+    'Avsnittet Polisen säger att polisens uppgift är att upprätthålla lag och ordning samt att förebygga och utreda brott. Det beskriver också att polisen samarbetar med andra aktörer för trygghet och kan hjälpa personer som utsatts för brott eller behöver skydd.',
+    'The Police section says the police role is to maintain law and order and to prevent and investigate crimes. It also describes police cooperation with other actors for safety and help for people exposed to crime or needing protection.',
+    ['police', 'law-and-order', 'crime-prevention'],
   ),
   single(
     'q044',

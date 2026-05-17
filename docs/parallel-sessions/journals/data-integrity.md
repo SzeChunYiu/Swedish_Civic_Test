@@ -101,3 +101,11 @@ Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.te
 Verification: `npm run validate:content` passed and reported 500 `questionTagsValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed.
 Blocked? no - the content validator now rejects blank, duplicate, or non-lowercase-kebab-case tags before a question can count as schema-valid.
 Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest tag-schema regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Generated question source-metadata parity atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`.
+Verification: `npm run validate:content` passed and reported 400 `generatedSourceMetadataParityValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js` passed.
+Blocked? no - the content validator now rejects generated variants that drift from their source question chapter, difficulty, explanations, UHR reference, required source tags, or generated-variant convention tags.
+Next suggested validator action: review and accept this DATA-INTEGRITY parity atom, then keep `npm run validate:content` and `npm run test:content` as the nearest generated-source metadata regression gates.

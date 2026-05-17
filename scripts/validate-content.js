@@ -13,6 +13,12 @@ const EXPECTED_SOURCE_QUESTIONS = 100;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
+const GENERATED_VARIANT_CONVENTIONS = [
+  { type: 'single_choice', tag: 'section-practice' },
+  { type: 'true_false', tag: 'true-false' },
+  { type: 'true_false', tag: 'false-statement' },
+  { type: 'single_choice', tag: 'judgement' },
+];
 const EXPECTED_UHR_SOURCE = {
   titleKeyword: 'Sverige i fokus',
   publisher: 'Universitets- och högskolerådet (UHR)',
@@ -101,6 +107,10 @@ function optionCountMatchesQuestionType(question) {
 
 function arrayEquals(left, right) {
   return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function jsonEqual(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
 }
 
 function isIsoDate(value) {
@@ -235,6 +245,7 @@ let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
 let generationParityValidated = false;
+let generatedSourceMetadataParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
@@ -370,6 +381,79 @@ function validateGenerationParity() {
 }
 
 validateGenerationParity();
+
+function validateGeneratedSourceMetadataParity() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return;
+  }
+
+  sourceQuestions.forEach((sourceQuestion, sourceIndex) => {
+    const variants = generatedPublishedQuestions.slice(
+      sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+      (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+    );
+    if (variants.length !== GENERATED_VARIANTS_PER_SOURCE) {
+      fail(
+        `${sourceQuestion.id} has ${variants.length} generated variants, expected ${GENERATED_VARIANTS_PER_SOURCE}`,
+      );
+    }
+
+    variants.forEach((variant, variantIndex) => {
+      if (!variant) return;
+      let variantIsValid = true;
+      const convention = GENERATED_VARIANT_CONVENTIONS[variantIndex];
+      const expectedId = `q${String(
+        EXPECTED_SOURCE_QUESTIONS + 1 + sourceIndex * GENERATED_VARIANTS_PER_SOURCE + variantIndex,
+      ).padStart(3, '0')}`;
+      const label = `${sourceQuestion.id} generated variant[${variantIndex}]`;
+
+      function reject(message) {
+        variantIsValid = false;
+        fail(message);
+      }
+
+      if (variant.id !== expectedId)
+        reject(`${label} has id ${variant.id}, expected ${expectedId}`);
+      if (variant.reviewStatus !== 'published') {
+        reject(`${label} reviewStatus is ${variant.reviewStatus}, expected published`);
+      }
+      if (convention && variant.type !== convention.type) {
+        reject(`${label} type is ${variant.type}, expected ${convention.type}`);
+      }
+
+      for (const field of [
+        'chapterId',
+        'difficulty',
+        'explanationSv',
+        'explanationEn',
+        'uhrReference',
+      ]) {
+        if (!jsonEqual(variant[field], sourceQuestion[field])) {
+          reject(`${label} ${field} does not match source question`);
+        }
+      }
+
+      if (!Array.isArray(variant.tags)) {
+        reject(`${label} tags is not an array`);
+      } else {
+        const variantTags = new Set(variant.tags);
+        sourceQuestion.tags.forEach((tag) => {
+          if (!variantTags.has(tag)) reject(`${label} is missing source tag ${tag}`);
+        });
+        if (!variantTags.has('published-variant')) {
+          reject(`${label} is missing published-variant tag`);
+        }
+        if (convention && !variantTags.has(convention.tag)) {
+          reject(`${label} is missing ${convention.tag} tag`);
+        }
+      }
+
+      if (variantIsValid) generatedSourceMetadataParityValidated += 1;
+    });
+  });
+}
+
+validateGeneratedSourceMetadataParity();
 
 function buildUhrReferenceChapters() {
   validateUhrSourceMetadata();
@@ -655,6 +739,7 @@ console.log(
       authoredSourceQuestionsValidated,
       sourcePublicationParityValidated,
       generationParityValidated,
+      generatedSourceMetadataParityValidated,
       questionSchemasValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,

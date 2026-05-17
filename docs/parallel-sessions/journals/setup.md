@@ -148,3 +148,10 @@ Artifacts changed: `lib/monetization/releasePolicy.ts`, `scripts/monetization.te
 Verification: `npm run test:monetization` exit 0; `node --test scripts/release-preflight.test.js --test-name-pattern "store record|privacy review"` exit 0 with 44/44 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check lib/monetization/releasePolicy.ts scripts/monetization.test.js scripts/release-preflight.js scripts/release-preflight.test.js` exit 0; `git diff --check -- lib/monetization/releasePolicy.ts scripts/monetization.test.js scripts/release-preflight.js scripts/release-preflight.test.js docs/parallel-sessions/journals/setup.md` exit 0.
 Blocked? no — the release gate now rejects disabled-ad AdMob/privacy evidence and requires the product policy to record AdMob app, app-ads.txt, binary privacy review, Remove Ads IAP, and consent requirements.
 Next suggested validator action: inspect the preflight `store-records` and `privacy-review` schema updates, then rerun `npm run test:monetization` and the release-preflight store/privacy subset.
+
+## Iteration 22 — 2026-05-17
+Task completed: Tooling/product atom — fixed the routed quiz retry control so the a11y verifier accepts its explicit interactive state.
+Artifacts changed: `app/quiz/[sessionId].tsx`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:a11y-labels` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check app/quiz/[sessionId].tsx` exit 0; `git diff --check -- app/quiz/[sessionId].tsx docs/parallel-sessions/journals/setup.md` exit 0.
+Blocked? no — the routed quiz screen no longer triggers the missing `accessibilityState` failure on the `Try again` control.
+Next suggested validator action: rerun `npm run test:a11y-labels` and, if release preflight is next, check whether local validation now advances past the quiz a11y gate.
