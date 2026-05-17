@@ -85,11 +85,17 @@ DIFFICULTY-1 [feature, v1.0]: add a difficulty setting (Lätt / Medel / Svår).
   (Settings + pre-quiz) + engine + schema now; content lane backfills harder
   distractors progressively. Easy must still be fair; Hard genuinely tricky.
 
-SOURCE-CITATION [v1.0, content+UI]: REMOVE "Enligt UHR/According to UHR" (and
-  similar) from question STEMS — it reads redundant and fake. Instead render a
-  small source citation line BELOW the question (e.g. "Källa/Source: Sverige i
-  fokus, s.X" localized). Stems read like natural standalone questions. Keep
-  the not-a-real-exam disclaimer (DIFFERENT from the source line).
+SOURCE-CITATION [DONE 2026-05-17 — commit d73f546 / PR #109]: The "Enligt
+  UHR-materialet, ..." / "According to the UHR material, ..." connective has
+  been stripped from ALL question stems (61 base literals) and from the
+  derived single-choice variant template (lib/content/derivedQuestions.ts).
+  UHR is now cited only via the uhrChapter/uhrSection/uhrPage fields (the
+  Källa/Source line), never in the stem. Enforced by an executable gate:
+  tests/content-uhr-source-citation-stem.test.js (wired into test:content) —
+  fails if any stem carries the connective. question-bank.csv offenders
+  228 -> 0; full test:content 202/202 green. DO NOT re-queue per-question
+  UHR-strip work; the gate keeps this done. (The not-a-real-exam disclaimer
+  is separate and unchanged.)
 
 TRANSLATE-COMPLETE [v1.0, P0]: 100% SV+EN parity — validate:content FAILS if
   any user-facing string or question field lacks both. Then a naturalness pass:
