@@ -492,6 +492,7 @@ const uhrSectionMap = JSON.parse(
 let chapterSchemasValidated = 0;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
+let questionIdSequencesValidated = 0;
 let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
@@ -970,6 +971,7 @@ if (Array.isArray(questions)) {
     questionSv: new Map(),
     questionEn: new Map(),
   };
+  const questionIds = new Set();
   const counts = questions.reduce((acc, question) => {
     acc[question.chapterId] = (acc[question.chapterId] || 0) + 1;
     return acc;
@@ -993,11 +995,21 @@ if (Array.isArray(questions)) {
   if ((counts.ch02 || 0) < 10)
     fail(`expected at least 10 ch02 questions, found ${counts.ch02 || 0}`);
 
-  const ids = new Set();
   questions.forEach((question, index) => {
     const label = question.id || `question[${index}]`;
-    if (ids.has(question.id)) fail(`duplicate question id ${question.id}`);
-    if (hasText(question.id)) ids.add(question.id);
+    let questionIdSequenceIsValid = true;
+    const expectedId = `q${String(index + 1).padStart(3, '0')}`;
+    if (question.id !== expectedId) {
+      questionIdSequenceIsValid = false;
+      fail(`${label} expected sequential id ${expectedId}`);
+    }
+    if (questionIds.has(question.id)) {
+      questionIdSequenceIsValid = false;
+      fail(`duplicate question id ${question.id}`);
+    }
+    if (hasText(question.id)) questionIds.add(question.id);
+    if (questionIdSequenceIsValid) questionIdSequencesValidated += 1;
+
     if (chapterIds.size && !chapterIds.has(question.chapterId)) {
       fail(`${label} references unknown chapter ${question.chapterId}`);
     }
@@ -1151,6 +1163,7 @@ console.log(
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
       questionSchemasValidated,
+      questionIdSequencesValidated,
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
       questionTextFieldsNormalizedValidated,
