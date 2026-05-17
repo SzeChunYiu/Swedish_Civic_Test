@@ -501,11 +501,13 @@ const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
+let mockExamConfigValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -540,6 +542,42 @@ if (!Array.isArray(questions)) fail('questions export is not an array');
 if (!Array.isArray(sourceQuestions)) fail('sourceQuestions export is not an array');
 if (!Array.isArray(generatedPublishedQuestions)) {
   fail('generatedPublishedQuestions export is not an array');
+}
+
+function validateMockExamConfig(config, publishedQuestionCount) {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!config || typeof config !== 'object') {
+    reject('defaultMockExamConfig export is not an object');
+  } else {
+    if (!Number.isInteger(config.questionCount) || config.questionCount < 1) {
+      reject('defaultMockExamConfig questionCount must be a positive integer');
+    } else if (config.questionCount > publishedQuestionCount) {
+      reject(
+        `defaultMockExamConfig questionCount ${config.questionCount} exceeds ${publishedQuestionCount} published questions`,
+      );
+    }
+
+    if (!Number.isInteger(config.durationMinutes) || config.durationMinutes < 1) {
+      reject('defaultMockExamConfig durationMinutes must be a positive integer');
+    }
+    if (config.sourceScope !== 'uhr_based') {
+      reject('defaultMockExamConfig sourceScope must be uhr_based');
+    }
+    if (config.showExplanationsDuringExam !== false) {
+      reject('defaultMockExamConfig must not show explanations during the exam');
+    }
+    if (config.adsAllowedDuringExam !== false) {
+      reject('defaultMockExamConfig must not allow ads during the exam');
+    }
+  }
+
+  if (valid) mockExamConfigValidated = true;
 }
 
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
@@ -1165,6 +1203,13 @@ if (Array.isArray(questions)) {
   });
 }
 
+validateMockExamConfig(
+  defaultMockExamConfig,
+  Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0,
+);
+
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 const disclaimer = fs.readFileSync(
   path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
@@ -1193,6 +1238,7 @@ console.log(
       chapters: chapters.length,
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
+      mockExamConfigValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
