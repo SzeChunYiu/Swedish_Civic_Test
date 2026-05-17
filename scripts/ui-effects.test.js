@@ -327,12 +327,20 @@ test('question card groups prompt and translation into an accessible summary', (
 test('chapter card groups title, translation, status, and description into an accessible summary', () => {
   const source = read('components/learning/ChapterCard.tsx');
 
-  assert.match(source, /const title = chapter\?\.nameSv \?\? 'Chapter unavailable'/);
+  assert.match(source, /type ChapterCardCopy =/);
+  assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy>/);
+  assert.match(source, /language = 'sv'/);
+  assert.match(source, /const copy = chapterCardCopy\[language\]/);
+  assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} besvarade/);
+  assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} practiced/);
+  assert.match(source, /innehåll planerat/);
+  assert.match(source, /Content queued/);
+  assert.match(source, /const title = chapter\?\.nameSv \?\? copy\.chapterUnavailable/);
   assert.match(source, /const chapterAccessibilityLabel =/);
-  assert.match(source, /`Chapter: \$\{title\}`/);
-  assert.match(source, /`English name: \$\{chapter\.nameEn\}`/);
-  assert.match(source, /`Status: \$\{status\}`/);
-  assert.match(source, /`Description: \$\{chapter\.descriptionSv\}`/);
+  assert.match(source, /copy\.accessibilityLabel\.chapter\(title\)/);
+  assert.match(source, /copy\.accessibilityLabel\.englishName\(chapter\.nameEn\)/);
+  assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
+  assert.match(source, /copy\.accessibilityLabel\.description\(chapter\.descriptionSv\)/);
   assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -370,6 +378,7 @@ test('learn route chapter links announce chapter progress', () => {
   assert.match(source, /copy\.progressLabel\(completedCount, questionCount\)/);
   assert.match(source, /copy\.accessibilityLabel\(\{ nameSv, nameEn, progressLabel \}\)/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
+  assert.match(source, /language=\{language\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

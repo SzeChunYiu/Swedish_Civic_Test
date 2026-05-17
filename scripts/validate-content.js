@@ -211,6 +211,7 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
     'learn route chapter links must expose localized accessibility labels',
   ],
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
+  ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
 const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
@@ -825,17 +826,45 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
 ];
 const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   {
+    label: 'settings language type import',
+    pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
+  },
+  {
+    label: 'localized ChapterCard copy contract',
+    pattern: /type ChapterCardCopy = \{/,
+  },
+  {
+    label: 'localized ChapterCard copy map',
+    pattern: /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/,
+  },
+  {
+    label: 'settings language prop default',
+    pattern: /language = 'sv'/,
+  },
+  {
     label: 'optional Chapter prop contract',
     pattern: /chapter\?: Chapter;/,
   },
   {
+    label: 'optional language prop contract',
+    pattern: /language\?: AppLanguage;/,
+  },
+  {
+    label: 'Swedish practiced status copy',
+    pattern: /\$\{completedCount\}\/\$\{questionCount\} besvarade/,
+  },
+  {
+    label: 'English practiced status copy',
+    pattern: /\$\{completedCount\}\/\$\{questionCount\} practiced/,
+  },
+  {
     label: 'content-queued status fallback',
     pattern:
-      /const status =[\s\S]*questionCount > 0 \? `\$\{completedCount\}\/\$\{questionCount\} practiced` : 'Content queued';/,
+      /const status =[\s\S]*questionCount > 0 \? copy\.practicedStatus\(completedCount, questionCount\) : copy\.contentQueued;/,
   },
   {
     label: 'chapter title fallback',
-    pattern: /const title = chapter\?\.nameSv \?\? 'Chapter unavailable';/,
+    pattern: /const title = chapter\?\.nameSv \?\? copy\.chapterUnavailable;/,
   },
   {
     label: 'chapter accessibility summary variable',
@@ -843,19 +872,20 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'Swedish title in accessibility summary',
-    pattern: /`Chapter: \$\{title\}`/,
+    pattern: /copy\.accessibilityLabel\.chapter\(title\)/,
   },
   {
     label: 'English title in accessibility summary',
-    pattern: /chapter\?\.nameEn \? `English name: \$\{chapter\.nameEn\}` : null/,
+    pattern: /chapter\?\.nameEn \? copy\.accessibilityLabel\.englishName\(chapter\.nameEn\) : null/,
   },
   {
     label: 'progress status in accessibility summary',
-    pattern: /`Status: \$\{status\}`/,
+    pattern: /copy\.accessibilityLabel\.status\(status\)/,
   },
   {
     label: 'description in accessibility summary',
-    pattern: /chapter\?\.descriptionSv \? `Description: \$\{chapter\.descriptionSv\}` : null/,
+    pattern:
+      /chapter\?\.descriptionSv \? copy\.accessibilityLabel\.description\(chapter\.descriptionSv\) : null/,
   },
   {
     label: 'Card receives chapter accessibility summary',

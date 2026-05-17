@@ -29,6 +29,7 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
   assert.match(source, /\$\{completedCount\} of \$\{questionCount\} questions practiced/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel\(\{/);
+  assert.match(source, /language=\{language\}/);
 });
 
 test('learn route chapter-link copy parity rejects bypassing the settings language', () => {

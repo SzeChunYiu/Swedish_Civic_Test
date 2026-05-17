@@ -127,6 +127,7 @@ export default function Screen() {
               <ChapterCard
                 chapter={chapter}
                 completedCount={completedCount}
+                language={language}
                 questionCount={questionCount}
               />
             </Link>
