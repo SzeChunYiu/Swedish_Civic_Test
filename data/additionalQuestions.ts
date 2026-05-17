@@ -1110,8 +1110,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q072',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 },
-    'Vad ska Sveriges 21 regioner enligt UHR-materialet bland annat erbjuda?',
-    "According to the UHR material, what should Sweden's 21 regions provide, among other things?",
+    'Vad ska Sveriges 21 regioner bland annat erbjuda?',
+    "What should Sweden's 21 regions provide, among other things?",
     [
       ['Hälso- och sjukvård till alla', 'Health and medical care for everyone'],
       ['Pensioner och studiestöd till alla', 'Pensions and study support to everyone'],
@@ -1130,8 +1130,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q073',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
-    'Vilka exempel på kommunal välfärd listar UHR-materialet?',
-    'Which examples of municipal welfare does the UHR material list?',
+    'Vilket svar ger exempel på kommunal välfärd?',
+    'Which answer gives examples of municipal welfare?',
     [
       [
         'Barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst',
@@ -1156,8 +1156,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q074',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
-    'Sant eller falskt enligt UHR-materialet: Kommuner ska erbjuda äldre stöd och hjälp.',
-    'True or false according to the UHR material: Municipalities must offer elderly people support and help.',
+    'Sant eller falskt: Sveriges kommuner ska erbjuda äldre personer stöd och hjälp.',
+    'True or false: Swedish municipalities must offer older people support and help.',
     true,
     'UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunen ansvarar för att gamla och sjuka kan få hjälp när de inte klarar vardagen på egen hand. Under äldreomsorg står det att svensk lag kräver att kommuner erbjuder äldre stöd och hjälp, till exempel vård och service i hemmet.',
     'The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.',
@@ -1171,8 +1171,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Från jordbrukssamhälle till industrisamhälle',
       pageApprox: 32,
     },
-    'Hur beskriver UHR-materialet Sverige för tvåhundra år sedan?',
-    'How does the UHR material describe Sweden two hundred years ago?',
+    'Vilket påstående beskriver Sverige för tvåhundra år sedan?',
+    'Which statement describes Sweden two hundred years ago?',
     [
       [
         'Som ett typiskt jordbruksland där nästan alla bodde på landet',

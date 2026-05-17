@@ -56,12 +56,42 @@ const expectedLegalRoutes = [
   },
   {
     file: 'app/terms.tsx',
+    requiredSnippets: [
+      'const termsCopy: Record<AppLanguage, TermsRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = termsCopy[language];',
+      'Användarvillkor',
+      'Studieändamål',
+      'Terms of use',
+      'Study purpose',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+    ],
     title: 'Terms of use',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Study purpose', 'No guarantee', 'Respect source material'],
   },
   {
     file: 'app/sources.tsx',
+    requiredSnippets: [
+      'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = sourcesCopy[language];',
+      'Källor',
+      'Primärt studiematerial',
+      'Sources',
+      'Primary study material',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}>/,
+    ],
     title: 'Sources',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {

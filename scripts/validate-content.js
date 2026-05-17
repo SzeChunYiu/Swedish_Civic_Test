@@ -837,12 +837,42 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
   },
   {
     file: 'app/terms.tsx',
+    requiredSnippets: [
+      'const termsCopy: Record<AppLanguage, TermsRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = termsCopy[language];',
+      'Användarvillkor',
+      'Studieändamål',
+      'Terms of use',
+      'Study purpose',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+    ],
     title: 'Terms of use',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Study purpose', 'No guarantee', 'Respect source material'],
   },
   {
     file: 'app/sources.tsx',
+    requiredSnippets: [
+      'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = sourcesCopy[language];',
+      'Källor',
+      'Primärt studiematerial',
+      'Sources',
+      'Primary study material',
+    ],
+    sectionPatterns: [
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}>/,
+    ],
     title: 'Sources',
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {
@@ -1876,9 +1906,12 @@ const EXPECTED_THEME_SPACE_VALUES = {
   micro: 3,
   0: 0,
   0.5: 4,
+  0.625: 5,
   0.75: 6,
+  0.875: 7,
   1: 8,
   1.25: 10,
+  1.375: 11,
   1.5: 12,
   1.75: 14,
   2: 16,
@@ -1887,7 +1920,9 @@ const EXPECTED_THEME_SPACE_VALUES = {
   4: 32,
   5: 40,
   6: 48,
+  7: 56,
   8: 64,
+  9: 72,
   10: 80,
   12: 96,
   15: 120,
@@ -10210,8 +10245,16 @@ function validateUhrSourceMaterialLinkParity() {
   if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
     reject('app/sources.tsx must render the UHR material URL through an Expo Link');
   }
-  if (!sourcesRoute.includes('accessibilityLabel="Open UHR education material"')) {
-    reject('app/sources.tsx UHR material link needs the expected accessibility label');
+  if (!sourcesRoute.includes('accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}')) {
+    reject('app/sources.tsx UHR material link needs the localized accessibility label');
+  }
+  if (
+    !sourcesRoute.includes(
+      "openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial'",
+    ) ||
+    !sourcesRoute.includes("openEducationMaterialAccessibilityLabel: 'Open UHR education material'")
+  ) {
+    reject('app/sources.tsx UHR material link needs Swedish and English accessibility labels');
   }
 
   if (valid) uhrSourceMaterialLinkParityValidated = true;
