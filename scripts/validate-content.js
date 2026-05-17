@@ -585,6 +585,8 @@ const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQue
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
+const generateExam = examGeneratorModule.generateExam;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -594,6 +596,7 @@ const uhrSectionMap = JSON.parse(
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
+let mockExamRuntimeParityValidated = false;
 let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
@@ -636,6 +639,7 @@ if (!Array.isArray(generatedPublishedQuestions)) {
   fail('generatedPublishedQuestions export is not an array');
 }
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
+if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
 }
@@ -675,6 +679,64 @@ function validateMockExamConfig(config, publishedQuestionCount) {
   }
 
   if (valid) mockExamConfigValidated = true;
+}
+
+function validateMockExamRuntimeParity(config) {
+  if (!config || typeof config !== 'object' || !Array.isArray(questions)) return;
+  if (typeof generateExam !== 'function') return;
+
+  const examQuestions = generateExam(questions, { questionCount: config.questionCount });
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Array.isArray(examQuestions)) {
+    reject('generateExam did not return an array for defaultMockExamConfig');
+    return;
+  }
+
+  if (examQuestions.length !== config.questionCount) {
+    reject(
+      `default mock exam generated ${examQuestions.length} questions, expected ${config.questionCount}`,
+    );
+  }
+
+  const examQuestionIds = new Set();
+  const expectedChapterCoverage = Math.min(
+    Array.isArray(chapters) ? chapters.length : 0,
+    config.questionCount,
+  );
+  const coveredChapters = new Set();
+  examQuestions.forEach((question, index) => {
+    const label = question?.id || `mock exam question[${index}]`;
+
+    if (!question || typeof question !== 'object') {
+      reject(`mock exam question[${index}] is not an object`);
+      return;
+    }
+    if (examQuestionIds.has(question.id)) {
+      reject(`default mock exam repeats question ${question.id}`);
+    }
+    if (hasText(question.id)) examQuestionIds.add(question.id);
+    if (question.reviewStatus !== 'published') {
+      reject(`${label} mock exam reviewStatus is ${question.reviewStatus}, expected published`);
+    }
+    if (!question.uhrReference?.chapter || !question.uhrReference?.section) {
+      reject(`${label} mock exam question is missing a UHR reference`);
+    }
+    if (hasText(question.chapterId)) coveredChapters.add(question.chapterId);
+  });
+
+  if (expectedChapterCoverage > 0 && coveredChapters.size !== expectedChapterCoverage) {
+    reject(
+      `default mock exam covers ${coveredChapters.size} chapters, expected ${expectedChapterCoverage}`,
+    );
+  }
+
+  if (valid) mockExamRuntimeParityValidated = true;
 }
 
 function validateUxBenchmarks() {
@@ -1598,6 +1660,7 @@ validateMockExamConfig(
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0,
 );
+validateMockExamRuntimeParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
@@ -1632,6 +1695,7 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       mockExamConfigValidated,
+      mockExamRuntimeParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       uxBenchmarksValidated,
