@@ -6,6 +6,32 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
+
+function storeRecordReadyEvidence(extra = '') {
+  return [
+    `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest.`,
+    `Support URL ${supportUrl} and Privacy Policy URL ${privacyUrl} entered in both stores.`,
+    `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
+    extra,
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function privacyReviewReadyEvidence(extra = '') {
+  return [
+    'Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0.',
+    'Google Mobile Ads SDK real-ad path and EXPO_PUBLIC_REAL_ADS_ENABLED=true verified.',
+    'Remove Ads non-consumable in-app purchase at 29 SEK reviewed.',
+    'App Tracking Transparency and UMP consent disclosures reviewed.',
+    extra,
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
 
 function runPreflight(options = {}) {
   const result = spawnSync(
@@ -95,8 +121,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           },
           'store-records': {
             status: 'READY',
-            evidence:
-              'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred.',
+            evidence: storeRecordReadyEvidence(),
           },
           'store-credentials': {
             status: 'READY',
@@ -110,8 +135,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
           },
           'privacy-review': {
             status: 'READY',
-            evidence:
-              'Apple privacy labels and Google Play Data safety reviewed against EAS build version 1.0.0; Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false verified; no analytics, crash reporting, purchases, or real ads enabled.',
+            evidence: privacyReviewReadyEvidence(),
           },
           'public-urls': {
             status: 'READY',
@@ -578,8 +602,11 @@ function createStoreRecordEvidence(options = {}) {
       googlePackageNameReviewed: true,
     },
     adMob: {
-      status: 'deferred-real-ads-disabled',
-      note: 'REAL_ADS_ENABLED_FOR_V1=false',
+      appAdsTxtReviewed: true,
+      appId: adMobAppId,
+      note: 'AdMob app is configured for ad-supported v1.0 with app-ads.txt reviewed.',
+      realAdsEnabled: true,
+      status: 'ready',
     },
     listingMetadata: {
       appStoreListingReviewed: true,
@@ -822,16 +849,17 @@ function createPrivacyReviewEvidence(options = {}) {
       matchesBinary: true,
     },
     googleMobileAds: {
+      consentFlowReviewed: true,
+      gate:
+        'EXPO_PUBLIC_REAL_ADS_ENABLED=true; Remove Ads non-consumable in-app purchase at 29 SEK; ATT and UMP consent reviewed.',
+      realAdsEnabled: true,
+      removeAdsIapReviewed: true,
       sdkPresent: true,
       testAppIds: true,
-      realAdsEnabled: false,
-      gate: 'REAL_ADS_ENABLED_FOR_V1=false',
     },
     disabledSdks: {
       analytics: true,
       crashReporting: true,
-      purchases: true,
-      realAds: true,
     },
     ...options.evidence,
   };
@@ -1302,7 +1330,7 @@ test('release preflight blocks store records without support and privacy URL ent
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; real ads deferred.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; AdMob app configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
@@ -1889,7 +1917,7 @@ test('release preflight blocks store record evidence without exact public URLs',
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; real ads deferred.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
@@ -1930,7 +1958,7 @@ test('release preflight blocks local store record evidence missing store URLs', 
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: storeRecordReadyEvidence(`Reports in ${storeEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -1973,7 +2001,7 @@ test('release preflight blocks local store record evidence without listing metad
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: storeRecordReadyEvidence(`Reports in ${storeEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -2014,7 +2042,7 @@ test('release preflight blocks local store record evidence without account owner
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: storeRecordReadyEvidence(`Reports in ${storeEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -2046,7 +2074,7 @@ test('release preflight accepts valid local store record evidence', () => {
     writeAllReadyEvidence(evidencePath, {
       'store-records': {
         status: 'READY',
-        evidence: `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ entered in both stores; real ads deferred; reports in ${storeEvidence.relativePath}.`,
+        evidence: storeRecordReadyEvidence(`Reports in ${storeEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);

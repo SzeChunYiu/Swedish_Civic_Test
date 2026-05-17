@@ -13,6 +13,11 @@ const EXPECTED_SOURCE_QUESTIONS = 100;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
+const EXPECTED_UHR_SOURCE = {
+  titleKeyword: 'Sverige i fokus',
+  publisher: 'Universitets- och högskolerådet (UHR)',
+  url: 'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
+};
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -92,6 +97,12 @@ function optionCountMatchesQuestionType(question) {
 
 function arrayEquals(left, right) {
   return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function isIsoDate(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }
 
 function optionIdsMatchQuestionType(question) {
@@ -211,6 +222,7 @@ let questionTypeOptionCountsValidated = 0;
 let questionOptionIdConventionsValidated = 0;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
+let uhrSourceMetadataValidated = false;
 let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
@@ -352,7 +364,7 @@ function validateGenerationParity() {
 validateGenerationParity();
 
 function buildUhrReferenceChapters() {
-  if (!uhrSectionMap?.source?.url) fail('UHR section map missing source URL');
+  validateUhrSourceMetadata();
   if (!Array.isArray(uhrSectionMap?.chapters)) {
     fail('UHR section map chapters is not an array');
     return new Map();
@@ -443,6 +455,35 @@ function buildUhrReferenceChapters() {
   });
 
   return new Map(chapterEntries.map((chapter) => [chapter.chapter, chapter]));
+}
+
+function validateUhrSourceMetadata() {
+  const source = uhrSectionMap?.source;
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!source || typeof source !== 'object') {
+    reject('UHR section map missing source metadata');
+  } else {
+    if (!hasText(source.title) || !source.title.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
+      reject(`UHR section map source title must reference ${EXPECTED_UHR_SOURCE.titleKeyword}`);
+    }
+    if (source.publisher !== EXPECTED_UHR_SOURCE.publisher) {
+      reject(`UHR section map source publisher must be ${EXPECTED_UHR_SOURCE.publisher}`);
+    }
+    if (source.url !== EXPECTED_UHR_SOURCE.url) {
+      reject(`UHR section map source URL must be ${EXPECTED_UHR_SOURCE.url}`);
+    }
+    if (!isIsoDate(source.retrievedDate)) {
+      reject('UHR section map source retrievedDate must use YYYY-MM-DD');
+    }
+  }
+
+  if (valid) uhrSourceMetadataValidated = true;
 }
 
 const uhrReferenceChapters = buildUhrReferenceChapters();
@@ -607,6 +648,7 @@ console.log(
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,
       questionOptionIdConventionsValidated,
+      uhrSourceMetadataValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
       questionChapterReferenceParityValidated,

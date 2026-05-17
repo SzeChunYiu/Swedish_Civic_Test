@@ -280,6 +280,28 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
   assert.equal(result.entitlements.adsDisabled, false);
 });
 
+test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
+  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
+  const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
+    'lib/monetization/releasePolicy.ts',
+  );
+
+  assert.equal(isReleaseMonetizationPolicyReady(), true);
+  assert.equal(releaseMonetizationPolicy.adSupportedByDefault, true);
+  assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
+  assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
+  assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
+  assert.ok(releaseMonetizationPolicy.noAdPlacements.includes('exam_screen'));
+  assert.deepEqual(releaseMonetizationPolicy.consentPromptsRequired, [
+    'app_tracking_transparency',
+    'ump_consent_form',
+  ]);
+  assert.match(releaseMonetizationPolicy.storeDisclosureTopics.join('\n'), /Google Mobile Ads/);
+  assert.match(releaseMonetizationPolicy.storeDisclosureTopics.join('\n'), /Remove Ads/);
+});
+
 test('ad consent decision covers ATT and UMP prompts before real ad serving', () => {
   const consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');

@@ -249,3 +249,49 @@ Workspace contract: blocked - no new functional pass run because the current art
 Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:29Z]`.
 Evidence: dirty product/source files include `content/question-bank.csv`, `data/additionalQuestions.ts`, `lib/content/derivedQuestions.ts`, `lib/monetization/ads.ts`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `scripts/monetization.test.js`, and `scripts/validate-content.js`, plus `TEAM_PLAN` and worker journals; this lane did not edit product source.
 Next manager action: bound or clear the source-owner changes before handing REVIEWER another functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: accepted `CONSENT2` real-ad consent gate.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- `rg -n "getAdConsentDecision|AdConsentDecision|consent|canRequestPersonalizedAds|consentDecision|adServingAllowed|requiresConsentDecision" lib/monetization/ads.ts scripts/monetization.test.js app components lib -S` - `lib/monetization/ads.ts` now takes a consent decision and blocks real ads unless `adServingAllowed` is true.
+- `npm run test:monetization` - exit 0, 11/11 tests passed.
+- Direct real-ad env check with home-banner and app-open unit IDs - exit 0; real ads were blocked without consent, blocked when consent denied, allowed when consent allowed, still blocked when `adsDisabled`, and still blocked on `exam_screen`.
+- `test -f publishing/public-site/app-ads.txt` - exit 1; `publishing/admob-iap-setup-runbook.md` exists; consent text grep in `lib app` exits 0.
+Workspace contract: pass - no product source edited; only existing reviewer finding updated.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1 update [2026-05-17 08:33Z]`.
+Evidence: `CONSENT2` clears the real-ad gate portion of the prior reviewer defect, but `publishing/public-site/app-ads.txt` is still absent and app/component native prompt wiring remains explicitly separate in TEAM_PLAN.
+Next manager action: assign the remaining compliance/prompt surface work without re-opening the already verified real-ad consent gate.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the `CONSENT2` review pass.
+Checks run:
+- `git diff --name-status` - product-source dirty scope reappeared after the pass.
+Workspace contract: blocked for further passes - current content-source changes are outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:32Z]`.
+Evidence: current dirty product/source files are `content/question-bank.csv` and `data/additionalQuestions.ts`, plus `TEAM_PLAN` and reviewer/validator notes; this lane did not edit product source.
+Next manager action: have CONTENT/VALIDATOR bound or clear the content-source changes before another reviewer pass.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT Iteration 14 q040 rättsväsendet-authorities question and exported CSV rows.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and the latest CONTENT journal handoff.
+- Inspected `data/additionalQuestions.ts` and `content/question-bank.csv` for `q040` plus generated rows `q257`-`q260`.
+- `npm run validate:content` - exit 0; 13 chapters, 500 questions, 500 published questions, 500 UHR references, and 500 option-id conventions validated.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `npm run test:content` - exit 0; 4/4 content tests passed.
+- Direct q040 assertion - exit 0; `q040` is `ch05`, section `Rättsväsendet`, `pageApprox:17`, has 4 options, correct option lists Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten, and Kriminalvården, and CSV tags are `justice-system|authorities|law`.
+- UHR source check: official `Sverige i fokus` PDF section `Rättsväsendet` lists those same five justice-system authorities on PDF page 17 / extracted lines 465-476.
+Workspace contract: pass with caveat - source ownership is CONTENT, not REVIEWER; REVIEWER did not edit product source and treated this as a focused verifier pass on the latest handoff.
+Findings queued: none from this focused pass.
+Evidence: q040 is source-aligned, has non-debatable Swedish/English wording, exports to CSV, and keeps content validators green.
+Next manager action: VALIDATOR can review/accept or reject CONTENT Iteration 14 from the existing dirty content scope; keep broader reviewer passes paused until that source-owner boundary is settled.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state after the q040 review pass.
+Checks run:
+- `git status --short --branch` and `git diff --name-status` - product-source dirty scope expanded again while reviewer was recording the pass.
+Workspace contract: blocked for further passes - current content, data-integrity, monetization, and release-preflight source changes are outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17T08:34Z]`.
+Evidence: current dirty source includes `content/question-bank.csv`, `data/additionalQuestions.ts`, `scripts/content-production.test.js`, `scripts/monetization.test.js`, `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `scripts/validate-content.js`, and untracked `lib/monetization/releasePolicy.ts`; this lane did not edit product source.
+Next manager action: bound or commit the active source-owner changes before another reviewer pass.

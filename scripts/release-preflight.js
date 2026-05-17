@@ -72,8 +72,16 @@ const evidenceRequirements = {
     ['Google Play Data safety review', /Google Play Data safety|Data safety/i],
     ['generated binary or build evidence', /binary|build|EAS|TestFlight|APK|AAB|IPA|version/i],
     [
-      'disabled ad SDK posture',
-      /Google Mobile Ads|react-native-google-mobile-ads|REAL_ADS_ENABLED_FOR_V1=false|real ads disabled/i,
+      'ad-supported Google Mobile Ads review',
+      /Google Mobile Ads|react-native-google-mobile-ads|AdMob|ad-supported|real ads enabled/i,
+    ],
+    [
+      'Remove Ads IAP review',
+      /Remove Ads|29 SEK|in-app purchase|non-consumable/i,
+    ],
+    [
+      'ATT/UMP consent review',
+      /App Tracking Transparency|ATT|UMP|consent|IDFA/i,
     ],
   ],
   'device-screenshots': [
@@ -381,18 +389,17 @@ function validateStoreRecordEvidence(evidencePath) {
   const adMob = evidence.adMob || {};
   const adMobStatus = String(adMob.status || '');
   const adMobAppId = String(adMob.appId || '');
-  if (adMobStatus !== 'deferred-real-ads-disabled' && !/^ca-app-pub-/i.test(adMobAppId)) {
-    errors.push('adMob must record deferred-real-ads-disabled status or a concrete AdMob app ID');
+  if (!/^ca-app-pub-\d{16}~\d{10}$/i.test(adMobAppId)) {
+    errors.push('adMob.appId must be a concrete AdMob app ID');
   }
-  if (
-    adMobStatus === 'deferred-real-ads-disabled' &&
-    !/REAL_ADS_ENABLED_FOR_V1=false|real ads disabled/i.test(
-      `${adMob.note || ''} ${evidence.adMobDecision || ''}`,
-    )
-  ) {
-    errors.push(
-      'deferred AdMob decision must mention REAL_ADS_ENABLED_FOR_V1=false or real ads disabled',
-    );
+  if (adMobStatus && !/^(ready|created|configured)$/i.test(adMobStatus)) {
+    errors.push('adMob.status must be ready, created, or configured');
+  }
+  if (adMob.realAdsEnabled !== true) {
+    errors.push('adMob.realAdsEnabled must be true for ad-supported v1.0');
+  }
+  if (adMob.appAdsTxtReviewed !== true) {
+    errors.push('adMob.appAdsTxtReviewed must be true');
   }
 
   const listingMetadata = evidence.listingMetadata || {};
@@ -647,19 +654,35 @@ function validatePrivacyReviewEvidence(evidencePath) {
   if (googleMobileAds.testAppIds !== true) {
     errors.push('googleMobileAds.testAppIds must be true');
   }
-  if (googleMobileAds.realAdsEnabled !== false) {
-    errors.push('googleMobileAds.realAdsEnabled must be false');
+  if (googleMobileAds.realAdsEnabled !== true) {
+    errors.push('googleMobileAds.realAdsEnabled must be true');
   }
-  if (!/REAL_ADS_ENABLED_FOR_V1=false|real ads disabled/i.test(googleMobileAds.gate || '')) {
-    errors.push(
-      'googleMobileAds.gate must mention REAL_ADS_ENABLED_FOR_V1=false or real ads disabled',
-    );
+  if (googleMobileAds.removeAdsIapReviewed !== true) {
+    errors.push('googleMobileAds.removeAdsIapReviewed must be true');
+  }
+  if (googleMobileAds.consentFlowReviewed !== true) {
+    errors.push('googleMobileAds.consentFlowReviewed must be true');
+  }
+  const googleMobileAdsGate = String(googleMobileAds.gate || '');
+  if (!/EXPO_PUBLIC_REAL_ADS_ENABLED=true|real ads enabled|ad-supported/i.test(googleMobileAdsGate)) {
+    errors.push('googleMobileAds.gate must mention ad-supported real ads');
+  }
+  if (!/Remove Ads|29 SEK|in-app purchase|non-consumable/i.test(googleMobileAdsGate)) {
+    errors.push('googleMobileAds.gate must mention Remove Ads IAP and 29 SEK');
+  }
+  if (!/App Tracking Transparency|ATT|UMP|consent|IDFA/i.test(googleMobileAdsGate)) {
+    errors.push('googleMobileAds.gate must mention ATT/UMP consent review');
   }
 
   const disabledSdks = evidence.disabledSdks || {};
-  for (const sdk of ['analytics', 'crashReporting', 'purchases', 'realAds']) {
+  for (const sdk of ['analytics', 'crashReporting']) {
     if (disabledSdks[sdk] !== true) {
       errors.push(`disabledSdks.${sdk} must be true`);
+    }
+  }
+  for (const sdk of ['purchases', 'realAds']) {
+    if (disabledSdks[sdk] === true) {
+      errors.push(`disabledSdks.${sdk} must not be true for ad-supported v1.0`);
     }
   }
 
@@ -1204,8 +1227,8 @@ function buildReport() {
       manualEvidence,
       'store-records',
       'Apple/Google store records',
-      'No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0.',
-      'Create Apple/Google account/app records and copy URLs into a release evidence file.',
+      'No App Store Connect, Google Play Console, and AdMob app record evidence is recorded for the ad-supported v1.0 release.',
+      'Create Apple/Google account/app records, create the AdMob app record, review app-ads.txt, and copy URLs/IDs into release evidence.',
     ),
     evidenceGate(
       manualEvidence,
@@ -1226,7 +1249,7 @@ function buildReport() {
       'privacy-review',
       'Store privacy questionnaire review against binary',
       'No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded.',
-      'After EAS build and store records exist, review Apple privacy labels and Google Play Data safety against the generated binary, including Google Mobile Ads SDK test configuration and real-ads-disabled posture.',
+      'After EAS build and store records exist, review Apple privacy labels and Google Play Data safety against the generated binary, including Google Mobile Ads, Remove Ads IAP, and ATT/UMP consent disclosures.',
     ),
     evidenceGate(
       manualEvidence,

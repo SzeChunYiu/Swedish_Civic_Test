@@ -431,12 +431,12 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q040',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättsväsendet', pageApprox: 17 },
-    'Vilka delar ingår i rättsväsendet enligt materialets exempel?',
-    'Which parts are included in the justice system according to the material’s examples?',
+    'Vilken lista innehåller myndigheter som materialet nämner som delar av rättsväsendet?',
+    'Which list contains authorities the material names as parts of the justice system?',
     [
       [
-        'Polis, åklagare, domstolar och Kriminalvården',
-        'Police, prosecutors, courts, and the Prison and Probation Service',
+        'Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten och Kriminalvården',
+        'The Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service',
       ],
       [
         'Riksdag, regering, regioner och kommuner',
@@ -446,20 +446,38 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Fackförbund, banker och företag', 'Unions, banks, and companies'],
     ],
     0,
-    'Rättsväsendet omfattar myndigheter som utreder brott, åtalar, dömer och verkställer straff.',
-    'The justice system includes authorities that investigate crimes, prosecute, judge, and enforce sentences.',
-    ['justice-system', 'police', 'courts'],
+    'Avsnittet listar flera myndigheter i rättsväsendet: Polisen, Åklagarmyndigheten, domstolarna, Brottsoffermyndigheten och Kriminalvården. De andra alternativen blandar politiska nivåer, medier eller arbetsmarknadsaktörer.',
+    'The section lists several justice-system authorities: the Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service. The other options mix political levels, media, or labour-market actors.',
+    ['justice-system', 'authorities', 'law'],
   ),
-  trueFalse(
+  single(
     'q041',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättssäkerhet', pageApprox: 17 },
-    'Sant eller falskt: Rättssäkerhet innebär bland annat att alla har rätt till en rättvis rättegång.',
-    'True or false: Rule of law includes the right to a fair trial.',
-    true,
-    'Rättssäkerhet betyder att alla behandlas lika inför lagen och får en rättvis rättegång.',
-    'Rule of law means everyone is treated equally before the law and receives a fair trial.',
-    ['rule-of-law', 'fair-trial', 'justice'],
+    'Vilket påstående om rättssäkerhet stämmer enligt materialet?',
+    'Which statement about rule of law is correct according to the material?',
+    [
+      [
+        'Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom',
+        'Courts are independent, and everyone has the right to defend themselves and appeal a judgment',
+      ],
+      [
+        'Regering eller riksdag kan bestämma hur domstolar ska döma',
+        'The government or Riksdag can decide how courts should judge cases',
+      ],
+      [
+        'En person kan dömas utan att bevis och fakta granskas',
+        'A person can be sentenced without evidence and facts being reviewed',
+      ],
+      [
+        'Rättssäkerhet betyder att vissa personer står över lagen',
+        'Rule of law means that some people are above the law',
+      ],
+    ],
+    0,
+    'Materialet beskriver rättssäkerhet som lika behandling inför lagen, rättvis rättegång och noggrann granskning av bevis och fakta. Det betonar också att domstolarna är oberoende och att alla har rätt att försvara sig med advokat och kan överklaga en dom.',
+    'The material describes rule of law as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.',
+    ['rule-of-law', 'independent-courts', 'appeal'],
   ),
   single(
     'q042',
