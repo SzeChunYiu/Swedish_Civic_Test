@@ -24,6 +24,32 @@ type ChapterLinkCopy = {
   }) => string;
 };
 
+type LearnRouteCopy = {
+  eyebrow: string;
+  sectionSubtitle: string;
+  sectionTitle: string;
+  subtitle: string;
+  title: string;
+};
+
+const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
+  sv: {
+    eyebrow: 'Studieväg',
+    sectionSubtitle: 'Studera med källnära kapitel och öva sedan på samma material.',
+    sectionTitle: '13 samhällsområden',
+    subtitle: 'Varje kapitel visar omfång och lokal progression så att du kan fokusera studierna.',
+    title: 'Bläddra bland kapitel med tydliga nästa steg',
+  },
+  en: {
+    eyebrow: 'Learning path',
+    sectionSubtitle: 'Study in source-aligned chapters, then practice from the same material.',
+    sectionTitle: '13 civic areas',
+    subtitle:
+      'Each chapter shows scope and local completion so you can focus study instead of guessing what to open next.',
+    title: 'Browse chapters with a clear next step',
+  },
+};
+
 const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
   sv: {
     contentQueued: 'innehåll planerat',
@@ -74,18 +100,12 @@ function getChapterLinkAccessibilityLabel({
 export default function Screen() {
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const language = useSettingsStore((state) => state.language);
+  const routeCopy = learnRouteCopy[language];
   const copy = chapterLinkCopy[language];
 
   return (
-    <ScreenShell
-      eyebrow="Learning path"
-      title="Browse chapters with a clear next step"
-      subtitle="Each chapter shows scope and local completion so you can focus study instead of guessing what to open next."
-    >
-      <SectionHeader
-        title="13 civic areas"
-        subtitle="Study in source-aligned chapters, then practice from the same material."
-      />
+    <ScreenShell eyebrow={routeCopy.eyebrow} title={routeCopy.title} subtitle={routeCopy.subtitle}>
+      <SectionHeader title={routeCopy.sectionTitle} subtitle={routeCopy.sectionSubtitle} />
       <View style={styles.list}>
         {chapters.map((chapter) => {
           const questionCount = questionCountForChapter(chapter.id);

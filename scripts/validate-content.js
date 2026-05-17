@@ -355,11 +355,11 @@ const EXPECTED_CHAPTER_ROUTE_HEADERS = [
 const EXPECTED_LEARN_ROUTE_HEADERS = [
   {
     label: 'learn route title',
-    pattern: /<ScreenShell[\s\S]*\btitle="Browse chapters with a clear next step"/,
+    pattern: /<ScreenShell[\s\S]*\btitle=\{routeCopy\.title\}/,
   },
   {
     label: 'chapter-list section title',
-    pattern: /<SectionHeader[\s\S]*\btitle="13 civic areas"/,
+    pattern: /<SectionHeader[\s\S]*\btitle=\{routeCopy\.sectionTitle\}/,
   },
 ];
 const EXPECTED_PROFILE_ROUTE_HEADERS = [

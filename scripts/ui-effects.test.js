@@ -341,6 +341,20 @@ test('learn route chapter links announce chapter progress', () => {
   const source = read('app/(tabs)/learn.tsx');
 
   assert.match(source, /useSettingsStore, type AppLanguage/);
+  assert.match(source, /type LearnRouteCopy =/);
+  assert.match(source, /const learnRouteCopy: Record<AppLanguage, LearnRouteCopy>/);
+  assert.match(source, /const routeCopy = learnRouteCopy\[language\]/);
+  assert.match(source, /Studieväg/);
+  assert.match(source, /Bläddra bland kapitel med tydliga nästa steg/);
+  assert.match(source, /13 samhällsområden/);
+  assert.match(source, /Learning path/);
+  assert.match(source, /Browse chapters with a clear next step/);
+  assert.match(source, /13 civic areas/);
+  assert.match(source, /eyebrow=\{routeCopy\.eyebrow\}/);
+  assert.match(source, /title=\{routeCopy\.title\}/);
+  assert.match(source, /subtitle=\{routeCopy\.subtitle\}/);
+  assert.match(source, /title=\{routeCopy\.sectionTitle\}/);
+  assert.match(source, /subtitle=\{routeCopy\.sectionSubtitle\}/);
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy>/);
   assert.match(source, /const copy = chapterLinkCopy\[language\]/);
   assert.match(source, /function getChapterLinkAccessibilityLabel/);

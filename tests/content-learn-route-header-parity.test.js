@@ -22,8 +22,9 @@ test('learn route title and chapter-list heading stay on shared header component
 
   assert.equal(summary.learnRouteHeadersValidated, 2);
   assert.equal(summary.learnRouteHeaderParityValidated, true);
-  assert.match(source, /<ScreenShell[\s\S]*title="Browse chapters with a clear next step"/);
-  assert.match(source, /<SectionHeader[\s\S]*title="13 civic areas"/);
+  assert.match(source, /<ScreenShell[\s\S]*title=\{routeCopy\.title\}/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{routeCopy\.sectionTitle\}/);
+  assert.match(source, /const routeCopy = learnRouteCopy\[language\]/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
@@ -42,7 +43,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/learn.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('title="13 civic areas"', 'subtitle="13 civic areas"');
+      .replace('title={routeCopy.sectionTitle}', 'subtitle={routeCopy.sectionTitle}');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
