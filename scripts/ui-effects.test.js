@@ -315,8 +315,10 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   const source = read('components/monetization/PremiumBanner.tsx');
 
   assert.match(source, /const statusMessage = getStatusMessage/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /accessibilityLabel=\{`Remove Ads status: \$\{statusMessage\}`\}/);
   assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /aria-live="polite"/);
   assert.match(source, /Ads are disabled on this device\./);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
