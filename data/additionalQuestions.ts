@@ -993,8 +993,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q067',
     'ch08',
     { chapter: 'Arbetsmarknad och privatekonomi', section: 'A-kassan', pageApprox: 29 },
-    'Vad är arbetslöshetskassan (A-kassan) enligt UHR-materialet?',
-    'According to the UHR material, what is the unemployment insurance fund (A-kassan)?',
+    'Vad är arbetslöshetskassan (A-kassan)?',
+    'What is the unemployment insurance fund (A-kassan)?',
     [
       [
         'En ekonomisk förening som betalar ut pengar till arbetslösa medlemmar',
