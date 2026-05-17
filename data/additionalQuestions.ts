@@ -225,8 +225,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q030',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Vilket krav gäller för att rösta i riksdagsvalet?',
-    'Which requirement applies to voting in Riksdag elections?',
+    'Vilket krav gäller för att rösta i riksdagsvalet enligt UHR-materialet?',
+    'According to the UHR material, which requirement applies to voting in Riksdag elections?',
     [
       [
         'Man måste vara svensk medborgare och ha fyllt 18 år',
@@ -237,9 +237,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Man måste ha fyllt 16 år', 'You must be at least 16 years old'],
     ],
     0,
-    'För riksdagsval krävs rösträttsålder och svenskt medborgarskap.',
-    'Riksdag elections require voting age and Swedish citizenship.',
-    ['voting-rights', 'citizenship', 'riksdag'],
+    'UHR-avsnittet Val och röstning säger att man ska ha fyllt 18 år för att ha rösträtt. För att rösta i riksdagsvalet måste man också vara svensk medborgare.',
+    'The UHR section Elections and voting says a person must have turned 18 to have voting rights. To vote in the Riksdag election, a person must also be a Swedish citizen.',
+    ['voting-rights', 'citizenship', 'riksdag-election'],
   ),
   trueFalse(
     'q031',
