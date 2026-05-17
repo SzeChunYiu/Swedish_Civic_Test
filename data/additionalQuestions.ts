@@ -637,8 +637,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q050',
     'ch06',
     { chapter: 'Mediernas roll', section: 'Källkritik', pageApprox: 21 },
-    'Vad betyder det att vara källkritisk enligt materialet?',
-    'According to the material, what does it mean to be source-critical?',
+    'Vad betyder det att vara källkritisk?',
+    'What does it mean to be source-critical?',
     [
       [
         'Att ifrågasätta och kontrollera om information är korrekt',
