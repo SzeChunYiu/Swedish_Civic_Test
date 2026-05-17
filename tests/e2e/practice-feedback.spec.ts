@@ -39,3 +39,23 @@ test('practice flow answers a question, shows source feedback, and advances', as
 
   expect(consoleErrors).toEqual([]);
 });
+
+test('practice feedback reveals the correct option after a wrong answer', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+
+  await page.getByLabel('Select answer I södra Europa').click();
+
+  await expect(page.getByText('I södra Europa — Fel')).toBeVisible();
+  await expect(page.getByText('I Norden i norra Europa — Rätt svar')).toBeVisible();
+  await expect(page.getByText('Score: 0/1')).toBeVisible();
+  await expect(page.getByText(/Sverige ligger i Norden/)).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});

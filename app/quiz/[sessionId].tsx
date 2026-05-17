@@ -10,7 +10,7 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { colors, radius, space, typography } from '../../lib/theme';
@@ -83,7 +83,11 @@ export default function QuizSessionScreen() {
 
       <View style={styles.options}>
         {question.options.map((option) => {
-          const isSelected = selectedOptionId === option.id;
+          const feedback = getAnswerOptionFeedback(
+            question,
+            option.id,
+            hasSelectedAnswer ? selectedOptionId : null,
+          );
 
           return (
             <AnswerOption
@@ -91,8 +95,8 @@ export default function QuizSessionScreen() {
               disabled={hasSelectedAnswer}
               option={option}
               onPress={() => handleSelectOption(option.id)}
-              resultLabel={isSelected ? (selectedIsCorrect ? 'Rätt' : 'Fel') : undefined}
-              tone={isSelected ? (selectedIsCorrect ? 'correct' : 'incorrect') : 'idle'}
+              resultLabel={feedback.resultLabel}
+              tone={feedback.tone}
             />
           );
         })}

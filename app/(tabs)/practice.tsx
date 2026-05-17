@@ -11,7 +11,7 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
-import { isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -83,7 +83,11 @@ export default function Screen() {
 
       <View style={styles.options}>
         {question.options.map((option) => {
-          const isSelected = hasSelectedAnswer && selectedOptionId === option.id;
+          const feedback = getAnswerOptionFeedback(
+            question,
+            option.id,
+            hasSelectedAnswer ? selectedOptionId : null,
+          );
 
           return (
             <AnswerOption
@@ -91,8 +95,8 @@ export default function Screen() {
               disabled={hasSelectedAnswer}
               option={option}
               onPress={() => handleSelectOption(option.id)}
-              resultLabel={isSelected ? (selectedIsCorrect ? 'Rätt' : 'Fel') : undefined}
-              tone={isSelected ? (selectedIsCorrect ? 'correct' : 'incorrect') : 'idle'}
+              resultLabel={feedback.resultLabel}
+              tone={feedback.tone}
             />
           );
         })}
