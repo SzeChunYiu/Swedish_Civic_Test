@@ -126,6 +126,21 @@ test('onboarding route exposes its primary title as a header', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('onboarding route remains scrollable on narrow mobile viewports', () => {
+  const source = read('app/onboarding.tsx');
+
+  assert.match(source, /import \{ ScrollView, StyleSheet, Text, View \}/);
+  assert.match(
+    source,
+    /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
+  );
+  assert.match(source, /<\/ScrollView>/);
+  assert.match(source, /content: \{\n\s+flexGrow: 1,/);
+  assert.match(source, /paddingBottom: space\[10\]/);
+  assert.doesNotMatch(source, /<View style=\{styles\.container\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 
