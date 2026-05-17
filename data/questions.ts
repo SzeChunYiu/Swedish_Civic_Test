@@ -354,32 +354,36 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q013',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vilket alternativ är ett exempel på hur man kan påverka och delta i samhället?',
+    questionSv: 'Vad nämner UHR-materialet som ett sätt att påverka och delta i samhället?',
     questionEn:
-      'Which option is an example of how a person can influence and participate in society?',
+      'What does the UHR material mention as a way to influence and participate in society?',
     options: [
       {
         id: 'a',
-        textSv: 'Kontakta politiker eller demonstrera',
-        textEn: 'Contact politicians or demonstrate',
+        textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
+        textEn: 'Contact politicians, demonstrate, or sign a petition',
       },
-      { id: 'b', textSv: 'Förbjuda andra från att rösta', textEn: 'Ban others from voting' },
+      {
+        id: 'b',
+        textSv: 'Förbjuda andra från att rösta i politiska val',
+        textEn: 'Ban others from voting in political elections',
+      },
       {
         id: 'c',
-        textSv: 'Tvinga journalister att skriva en viss sak',
-        textEn: 'Force journalists to write a certain thing',
+        textSv: 'Tvinga journalister att skriva vissa åsikter',
+        textEn: 'Force journalists to write certain opinions',
       },
       {
         id: 'd',
-        textSv: 'Stoppa fria diskussioner om politik',
-        textEn: 'Stop free discussions about politics',
+        textSv: 'Stoppa människor från att prata om politik',
+        textEn: 'Stop people from talking about politics',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Materialet ger flera exempel på deltagande, till exempel att kontakta politiker, demonstrera och skriva på namninsamlingar. De andra alternativen skulle begränsa demokratiska friheter.',
+      'UHR-avsnittet En stark demokrati listar flera sätt att påverka och delta i samhället, bland annat att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. Därför är alternativet med politiker, demonstrationer och namninsamlingar rätt; de andra alternativen skulle begränsa demokratiskt deltagande.',
     explanationEn:
-      'The material gives several examples of participation, such as contacting politicians, demonstrating, and signing petitions. The other alternatives would restrict democratic freedoms.',
+      'The UHR section A strong democracy lists several ways to influence and participate in society, including contacting politicians, demonstrating, and starting or signing a petition. Therefore the option about politicians, demonstrations, and petitions is correct; the other options would restrict democratic participation.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'En stark demokrati',
@@ -393,35 +397,37 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q014',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vad betyder rättssäkerhet i materialets beskrivning?',
-    questionEn: "What does rule of law mean in the material's description?",
+    questionSv:
+      'Vad kallar UHR-materialet att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång?',
+    questionEn:
+      'What does the UHR material call it when laws apply to everyone and no one may be sentenced without a fair trial?',
     options: [
       {
         id: 'a',
-        textSv: 'Att lagarna gäller för alla och att ingen döms utan en rättvis rättegång',
-        textEn: 'That laws apply to everyone and no one is sentenced without a fair trial',
+        textSv: 'Rättssäkerhet',
+        textEn: 'Rule of law',
       },
       {
         id: 'b',
-        textSv: 'Att myndigheter får döma utan lagar',
-        textEn: 'That authorities may sentence people without laws',
+        textSv: 'Censur',
+        textEn: 'Censorship',
       },
       {
         id: 'c',
-        textSv: 'Att bara vissa grupper skyddas av lagen',
-        textEn: 'That only some groups are protected by law',
+        textSv: 'Segregation',
+        textEn: 'Segregation',
       },
       {
         id: 'd',
-        textSv: 'Att politiker kan ändra domar själva',
-        textEn: 'That politicians can change court judgments themselves',
+        textSv: 'Monarki',
+        textEn: 'Monarchy',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Rättssäkerhet innebär att lagarna gäller för alla och att människor har rätt till en rättvis rättegång. Det stärker demokratin eftersom makt inte ska användas godtyckligt.',
+      'UHR-avsnittet Demokrati betyder folkstyre säger att en viktig förutsättning för demokrati är att lagarna gäller för alla i Sverige och att ingen får dömas utan en rättvis rättegång. Materialet kallar detta rättssäkerhet; de andra alternativen beskriver andra begrepp.',
     explanationEn:
-      'Rule of law means that laws apply to everyone and that people have the right to a fair trial. It strengthens democracy because power should not be used arbitrarily.',
+      'The UHR section Democracy means rule by the people says an important condition for democracy is that laws apply to everyone in Sweden and that no one may be sentenced without a fair trial. The material calls this rule of law; the other alternatives describe different concepts.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -435,17 +441,19 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q015',
     chapterId: 'ch02',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Ett lågt valdeltagande kan vara ett problem för demokratin.',
-    questionEn: 'True or false: Low voter turnout can be a problem for democracy.',
+    questionSv:
+      'Sant eller falskt enligt UHR-materialet: Ett lågt valdeltagande kan påverka demokratin.',
+    questionEn:
+      'True or false according to the UHR material: Low voter turnout can affect democracy.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Materialet nämner lågt valdeltagande som ett problem som kan påverka demokratin. Det kan göra att människor får mindre möjlighet att påverka beslut i sin vardag.',
+      'UHR-avsnittet Hot mot demokratin säger att lågt valdeltagande är ett problem som kan påverka demokratin. Det kan leda till att människor får mindre möjlighet att påverka politiska beslut i sin vardag och kan öka skillnaderna mellan grupper i samhället.',
     explanationEn:
-      'The material mentions low voter turnout as a problem that can affect democracy. It can give people fewer opportunities to influence decisions in their everyday lives.',
+      'The UHR section Threats to democracy says low voter turnout is a problem that can affect democracy. It can give people fewer opportunities to influence political decisions in everyday life and can increase differences between groups in society.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Hot mot demokratin',
@@ -459,8 +467,10 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q016',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Vad betyder det att Sverige är en parlamentarisk representativ demokrati?',
-    questionEn: 'What does it mean that Sweden is a parliamentary representative democracy?',
+    questionSv:
+      'Vad innebär det enligt UHR-materialet att Sverige är en parlamentarisk representativ demokrati?',
+    questionEn:
+      'According to the UHR material, what does it mean that Sweden is a parliamentary representative democracy?',
     options: [
       {
         id: 'a',
@@ -485,9 +495,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'I en parlamentarisk representativ demokrati väljer medborgarna representanter i allmänna val. I Sverige väljs ledamöter till riksdagen, som beslutar om lagar och budget.',
+      'UHR-avsnittet Staten säger att Sverige är en parlamentarisk representativ demokrati. Det innebär att medborgarna röstar i allmänna val och väljer ledamöter till riksdagen, som sedan fattar beslut om lagar och statens budget.',
     explanationEn:
-      'In a parliamentary representative democracy, citizens elect representatives in general elections. In Sweden, members of the Riksdag are elected, and they decide on laws and the budget.',
+      'The UHR section The state says Sweden is a parliamentary representative democracy. This means citizens vote in general elections and elect members of the Riksdag, which then makes decisions on laws and the state budget.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
@@ -497,8 +507,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q017',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Hur många ledamöter har riksdagen?',
-    questionEn: 'How many members does the Riksdag have?',
+    questionSv: 'Enligt UHR-materialet, hur många ledamöter har riksdagen?',
+    questionEn: 'According to the UHR material, how many members does the Riksdag have?',
     options: [
       { id: 'a', textSv: '21', textEn: '21' },
       { id: 'b', textSv: '290', textEn: '290' },
@@ -507,9 +517,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Riksdagen har 349 ledamöter som väljs vart fjärde år. Siffrorna 21 och 290 hör i materialet ihop med regioner och kommuner, inte riksdagens ledamöter.',
+      'UHR-avsnittet Staten säger att riksdagen har 349 ledamöter som väljs vart fjärde år. Siffrorna 21 och 290 hör i materialet ihop med regioner och kommuner, inte med riksdagens ledamöter.',
     explanationEn:
-      'The Riksdag has 349 members who are elected every four years. The numbers 21 and 290 are connected in the material to regions and municipalities, not members of the Riksdag.',
+      'The UHR section The state says the Riksdag has 349 members who are elected every four years. The numbers 21 and 290 are connected in the material to regions and municipalities, not to members of the Riksdag.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -519,8 +529,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q018',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Vem väljer statsministern enligt materialet?',
-    questionEn: 'Who chooses the prime minister according to the material?',
+    questionSv: 'Vem väljer statsministern enligt UHR-materialet?',
+    questionEn: 'Who chooses the prime minister according to the UHR material?',
     options: [
       { id: 'a', textSv: 'Riksdagen', textEn: 'The Riksdag' },
       { id: 'b', textSv: 'Kungen ensam', textEn: 'The king alone' },
@@ -529,9 +539,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Riksdagen väljer statsminister, och statsministern får uppdraget att bilda regering. Statsministern väljer därefter ministrarna i regeringen.',
+      'UHR-avsnittet Staten säger att riksdagen väljer statsminister, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna i regeringen.',
     explanationEn:
-      'The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.',
+      'The UHR section The state says the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
@@ -541,8 +551,9 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q019',
     chapterId: 'ch04',
     type: 'single_choice',
-    questionSv: 'Hur gammal måste man ha fyllt för att ha rätt att rösta?',
-    questionEn: 'How old must a person be to have the right to vote?',
+    questionSv: 'Enligt UHR-materialet, hur gammal måste man ha fyllt för att ha rösträtt?',
+    questionEn:
+      'According to the UHR material, how old must a person be to have the right to vote?',
     options: [
       { id: 'a', textSv: '16 år', textEn: '16 years old' },
       { id: 'b', textSv: '18 år', textEn: '18 years old' },
@@ -551,9 +562,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'För att ha rätt att rösta ska man ha fyllt 18 år. För riksdagsval gäller dessutom kravet att man måste vara svensk medborgare.',
+      'UHR-avsnittet Val och röstning säger att man ska ha fyllt 18 år för att ha rösträtt. För att rösta i riksdagsvalet måste man dessutom vara svensk medborgare.',
     explanationEn:
-      'To have the right to vote, a person must have turned 18. For elections to the Riksdag, there is also a requirement to be a Swedish citizen.',
+      'The UHR section Elections and voting says a person must have turned 18 to have the right to vote. To vote in a Riksdag election, a person must also be a Swedish citizen.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Val och röstning',
@@ -567,17 +578,18 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q020',
     chapterId: 'ch04',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Folkomröstningar i Sverige är rådgivande enligt materialet.',
-    questionEn: 'True or false: Referendums in Sweden are advisory according to the material.',
+    questionSv:
+      'Sant eller falskt enligt UHR-materialet: Folkomröstningar i Sverige är rådgivande.',
+    questionEn: 'True or false according to the UHR material: Referendums in Sweden are advisory.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Materialet beskriver folkomröstningar som rådgivande. Det betyder att politikerna inte måste följa resultatet, även om resultatet kan få politisk betydelse.',
+      'UHR-avsnittet Folkomröstningar säger att folkomröstningar kan hållas nationellt, i en region eller i en kommun. Avsnittet säger också att de är rådgivande, vilket betyder att politikerna inte måste följa resultatet.',
     explanationEn:
-      'The material describes referendums as advisory. This means politicians do not have to follow the result, even though the result may have political importance.',
+      'The UHR section Referendums says referendums can be held nationally, in a region, or in a municipality. It also says they are advisory, which means politicians do not have to follow the result.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Folkomröstningar',

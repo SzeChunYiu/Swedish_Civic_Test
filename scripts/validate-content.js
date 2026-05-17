@@ -59,6 +59,18 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
 ];
+const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
+  /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
+  /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
+  /\b(?:uhr|government|authority)[-\s]?approved\b/i,
+  /\bquality[-\s]?controlled\s+by\s+(?:uhr|an?\s+authority|the\s+government)\b/i,
+  /\bguarantee[sd]?\s+(?:a\s+)?(?:pass|passing|approval)\b/i,
+  /\bofficiell(?:a|t)?\s+(?:prov|test|fr[aå]ga|fr[aå]gor|[oö]vning|[oö]vningar)\b/i,
+  /\briktiga\s+provfr[aå]gor\b/i,
+  /\b(?:uhr|myndighets|regerings)[-\s]?godk[aä]nd(?:a|t)?\b/i,
+  /\bkvalitets(?:granskad|granskade|granskat)\s+av\s+(?:uhr|myndighet|regeringen)\b/i,
+  /\bgaranter(?:ar|ad|at)?\s+(?:godk[aä]nt|att\s+klara)\b/i,
+];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -333,6 +345,17 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
       { name: 'questionCount', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'GlossaryTerm',
+    fields: [
+      { name: 'id', type: 'string', optional: false },
+      { name: 'termSv', type: 'string', optional: false },
+      { name: 'termEn', type: 'string', optional: false },
+      { name: 'explanationSv', type: 'string', optional: false },
+      { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'chapterId', type: 'string', optional: true },
     ],
   },
 ];
@@ -717,6 +740,18 @@ function questionTextFieldsAreNormalized(question) {
   ];
 
   return fields.every(textIsTrimmedSingleSpaced);
+}
+
+function findQuestionAuthorityOverclaim(question) {
+  const text = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  return QUESTION_AUTHORITY_OVERCLAIM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function isSlugTag(value) {
@@ -1481,6 +1516,7 @@ let questionIdSequencesValidated = 0;
 let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
+let questionAuthorityBoundaryTextValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
@@ -5120,6 +5156,12 @@ if (Array.isArray(questions)) {
       if (questionTextFieldsAreNormalized(question)) {
         questionTextFieldsNormalizedValidated += 1;
       }
+      const authorityOverclaim = findQuestionAuthorityOverclaim(question);
+      if (authorityOverclaim) {
+        fail(`${label} appears to overclaim official status or exam certainty`);
+      } else {
+        questionAuthorityBoundaryTextValidated += 1;
+      }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
       }
@@ -5184,17 +5226,6 @@ if (Array.isArray(questions)) {
     }
     if (question.reviewStatus !== 'published')
       fail(`${label} reviewStatus is ${question.reviewStatus}`);
-
-    const text = [
-      question.questionSv,
-      question.questionEn,
-      question.explanationSv,
-      question.explanationEn,
-      ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
-    ].join(' ');
-    if (/official|officiell|real exam|riktiga provfrågor|guaranteed|garanterad/i.test(text)) {
-      fail(`${label} appears to overclaim official status or exam certainty`);
-    }
   });
 }
 
@@ -5355,6 +5386,7 @@ console.log(
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
       questionTextFieldsNormalizedValidated,
+      questionAuthorityBoundaryTextValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,

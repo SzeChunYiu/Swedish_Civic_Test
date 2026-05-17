@@ -25,8 +25,14 @@ export function AdBanner({
 
   if (!visible || !unitId) return null;
 
+  const placementLabel = placement.replaceAll('_', ' ');
+
   return (
-    <View accessibilityLabel={`Google AdMob banner for ${placement}`} style={styles.nativeSlot}>
+    <View
+      accessible
+      accessibilityLabel={`Google AdMob banner: ${placementLabel}`}
+      style={styles.nativeSlot}
+    >
       <BannerAd
         requestOptions={{
           requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,

@@ -153,6 +153,29 @@ test('quiz feedback cards expose accessible summaries', () => {
   assert.doesNotMatch(referenceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('question disclaimer exposes the non-official warning as an accessible summary', () => {
+  const source = read('components/quiz/QuestionDisclaimer.tsx');
+
+  assert.match(source, /const disclaimerAccessibilityLabel =/);
+  assert.match(source, /`Study disclaimer: \$\{disclaimerText\}`/);
+  assert.match(source, /<Card accessibilityLabel=\{disclaimerAccessibilityLabel\}>/);
+  assert.match(source, /Independent study tool/);
+  assert.match(source, /Not official/);
+  assert.match(source, /not real exam questions/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('celebration burst keeps decorative particles out of the accessibility tree', () => {
+  const source = read('components/quiz/CelebrationBurst.tsx');
+
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(source, /pointerEvents="none"/);
+  assert.match(source, /Animated\.timing/);
+  assert.match(source, /motion\.duration\.slow \* 2/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
 
@@ -176,8 +199,22 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(webSource, /web preview/);
+  assert.match(webSource, /const placementLabel = placement\.replaceAll\('_', ' '\);/);
+  assert.match(webSource, /<Card accessibilityLabel=\{`Google AdMob: \$\{placementLabel\}/);
   assert.match(nativeSource, /react-native-google-mobile-ads/);
+  assert.match(nativeSource, /accessible/);
+  assert.match(nativeSource, /accessibilityLabel=\{`Google AdMob banner: \$\{placementLabel\}`\}/);
   assert.match(nativeSource, /<BannerAd/);
+});
+
+test('native ad preview card exposes a grouped accessibility summary', () => {
+  const source = read('components/monetization/NativeAdCard.tsx');
+
+  assert.match(
+    source,
+    /<Card accessibilityLabel="Test native ad: Sponsored study placement\. AdMob test placement preview\. Keep out of timed exams\.">/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('user-facing scaffold fallbacks do not expose placeholder copy', () => {

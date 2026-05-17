@@ -19,13 +19,16 @@ export function AdBanner({
   if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;
 
   const unit = getAdUnit(placement);
+  const placementLabel = placement.replaceAll('_', ' ');
+  const adStatusLabel = unit?.testOnly
+    ? 'AdMob test unit active · web preview'
+    : 'AdMob placement active';
+
   return (
-    <Card>
+    <Card accessibilityLabel={`Google AdMob: ${placementLabel}. ${adStatusLabel}`}>
       <Text style={styles.eyebrow}>Google AdMob</Text>
-      <Text style={styles.title}>{placement.replaceAll('_', ' ')}</Text>
-      <Text style={styles.meta}>
-        {unit?.testOnly ? 'AdMob test unit active · web preview' : 'AdMob placement active'}
-      </Text>
+      <Text style={styles.title}>{placementLabel}</Text>
+      <Text style={styles.meta}>{adStatusLabel}</Text>
     </Card>
   );
 }
