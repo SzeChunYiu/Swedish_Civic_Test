@@ -1682,17 +1682,29 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q099',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Midsommar', pageApprox: 46 },
-    'När säger UHR-materialet att midsommarafton alltid firas?',
-    'When does the UHR material say Midsummer Eve is always celebrated?',
+    'Vilket svar stämmer enligt UHR-materialet om midsommar?',
+    'Which answer matches the UHR material about Midsummer?',
     [
-      ['Alltid på en fredag mellan 19 och 25 juni', 'Always on a Friday between 19 and 25 June'],
-      ['Alltid den 31 december', 'Always on 31 December'],
-      ['Alltid den 13 december', 'Always on 13 December'],
-      ['Alltid första söndagen i advent', 'Always on the first Sunday of Advent'],
+      [
+        'Midsommar välkomnar sommaren och ljuset, och midsommarafton firas på en fredag mellan 19 och 25 juni',
+        'Midsummer welcomes summer and light, and Midsummer Eve is celebrated on a Friday between 19 and 25 June',
+      ],
+      [
+        'Midsommar är alltid den 31 december, när det nya året firas med fyrverkerier',
+        'Midsummer is always on 31 December, when the new year is celebrated with fireworks',
+      ],
+      [
+        'Midsommar firas på första maj, då arbetarrörelsen arrangerar demonstrationer',
+        'Midsummer is celebrated on 1 May, when the labour movement arranges demonstrations',
+      ],
+      [
+        'Midsommar är den 13 december och handlar främst om att sprida ljus när året är mörkast',
+        'Midsummer is on 13 December and is mainly about spreading light at the darkest time of year',
+      ],
     ],
     0,
-    'UHR-avsnittet Midsommar säger att midsommarafton alltid firas på en fredag mellan 19 och 25 juni. Avsnittet beskriver midsommar som en gammal tradition för att välkomna sommaren och ljuset, med utomhusfester, blomsterkransar, dans runt midsommarstång och mat som sill, färskpotatis och jordgubbar.',
-    'The UHR section Midsummer says Midsummer Eve is always celebrated on a Friday between 19 and 25 June. It describes Midsummer as an old tradition for welcoming summer and light, with outdoor parties, flower wreaths, dancing around a midsummer pole, and food such as herring, new potatoes, and strawberries.',
+    'UHR-avsnittet Midsommar säger att firandet handlar om att välkomna sommaren och ljuset och att midsommarafton alltid firas på en fredag mellan 19 juni och 25 juni. Avsnittet beskriver också midsommar som en gammal tradition från tiden före kristendomen, med utomhusfester, blomsterkransar, midsommarstång, sill, färskpotatis och jordgubbar.',
+    'The UHR section Midsummer says the celebration is about welcoming summer and light and that Midsummer Eve is always celebrated on a Friday between 19 and 25 June. It also describes Midsummer as an old pre-Christian tradition with outdoor parties, flower wreaths, a midsummer pole, herring, new potatoes, and strawberries.',
     ['midsummer', 'midsummer-eve', 'june', 'traditions'],
   ),
   single(
