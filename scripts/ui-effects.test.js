@@ -43,6 +43,19 @@ test('badge preserves a readable accessibility label when visual text is upperca
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('button derives an accessibility label from plain text children by default', () => {
+  const source = read('components/ui/Button.tsx');
+
+  assert.match(source, /accessibilityLabel,/);
+  assert.match(source, /const buttonAccessibilityLabel =/);
+  assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
+  assert.match(source, /String\(children\)/);
+  assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
+  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
+  assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('practice screen adds bookmark controls backed by progress storage', () => {
   const source = read('app/(tabs)/practice.tsx');
 

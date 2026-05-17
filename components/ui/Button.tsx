@@ -9,6 +9,7 @@ type ButtonProps = PropsWithChildren<
 >;
 
 export function Button({
+  accessibilityLabel,
   children,
   style,
   accessibilityRole = 'button',
@@ -21,9 +22,13 @@ export function Button({
     ...accessibilityState,
     ...(disabled == null ? {} : { disabled }),
   };
+  const buttonAccessibilityLabel =
+    accessibilityLabel ??
+    (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
 
   return (
     <Pressable
+      accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
       disabled={disabled}
