@@ -1855,6 +1855,7 @@ const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'showExplanationsDuringExam', type: 'boolean', optional: false },
   { name: 'adsAllowedDuringExam', type: 'boolean', optional: false },
 ];
+const EXPECTED_MOCK_EXAM_CONFIG_KEYS = EXPECTED_MOCK_EXAM_CONFIG_FIELDS.map((field) => field.name);
 const EXPECTED_EXAM_GENERATOR_TYPE_ALIASES = [
   { typeName: 'ExamAnswerMap', type: 'Record<string, string>' },
 ];
@@ -2621,6 +2622,10 @@ function chapterExactSchemaKeyFailures(chapter, label) {
   return schemaKeyFailures(chapter, EXPECTED_CHAPTER_KEYS, label, 'Chapter');
 }
 
+function mockExamConfigExactSchemaKeyFailures(config, label) {
+  return schemaKeyFailures(config, EXPECTED_MOCK_EXAM_CONFIG_KEYS, label, 'MockExamConfig');
+}
+
 function uhrSectionMapSourceExactSchemaKeyFailures(source, label) {
   return schemaKeyFailures(
     source,
@@ -3251,6 +3256,7 @@ let questionDisclaimerRoutesValidated = 0;
 let questionDisclaimerCopyValidated = false;
 let mockExamConfigTypeFieldsValidated = 0;
 let mockExamConfigTypeSchemaParityValidated = false;
+let mockExamConfigExactSchemaKeysValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
@@ -4240,6 +4246,8 @@ function validateMockExamConfig(config, publishedQuestionCount) {
   if (!config || typeof config !== 'object') {
     reject('defaultMockExamConfig export is not an object');
   } else {
+    mockExamConfigExactSchemaKeyFailures(config, 'defaultMockExamConfig').forEach(reject);
+
     if (!Number.isInteger(config.questionCount) || config.questionCount < 1) {
       reject('defaultMockExamConfig questionCount must be a positive integer');
     } else if (config.questionCount > publishedQuestionCount) {
@@ -4262,7 +4270,10 @@ function validateMockExamConfig(config, publishedQuestionCount) {
     }
   }
 
-  if (valid) mockExamConfigValidated = true;
+  if (valid) {
+    mockExamConfigExactSchemaKeysValidated = true;
+    mockExamConfigValidated = true;
+  }
 }
 
 function validateMockExamRuntimeParity(config) {
@@ -10065,6 +10076,7 @@ console.log(
       questionDisclaimerCopyValidated,
       mockExamConfigTypeFieldsValidated,
       mockExamConfigTypeSchemaParityValidated,
+      mockExamConfigExactSchemaKeysValidated,
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,

@@ -30,6 +30,7 @@ test('default mock exam config stays UHR-based and ad-free during exams', () => 
 
   assert.equal(summary.mockExamConfigTypeFieldsValidated, 5);
   assert.equal(summary.mockExamConfigTypeSchemaParityValidated, true);
+  assert.equal(summary.mockExamConfigExactSchemaKeysValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.match(configSource, /export interface MockExamConfig/);
   assert.match(configSource, /sourceScope: 'uhr_based';/);
@@ -70,5 +71,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /MockExamConfig\.durationMinutes optional=true, expected false/,
+  );
+});
+
+test('mock exam config exact schema rejects internal field leakage', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/data/mockExamConfig.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '  adsAllowedDuringExam: false,\\n};',
+        "  adsAllowedDuringExam: false,\\n  debugNotes: 'internal QA field',\\n};",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /defaultMockExamConfig\.debugNotes is not part of MockExamConfig schema/,
   );
 });

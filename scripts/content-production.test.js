@@ -31,6 +31,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.questionDisclaimerCopyValidated, true);
   assert.equal(summary.mockExamConfigTypeFieldsValidated, 5);
   assert.equal(summary.mockExamConfigTypeSchemaParityValidated, true);
+  assert.equal(summary.mockExamConfigExactSchemaKeysValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
