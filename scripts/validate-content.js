@@ -967,6 +967,52 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
   },
 ];
+const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
+  {
+    label: 'active prop contract',
+    pattern: /active: boolean;/,
+  },
+  {
+    label: 'inactive animation reset',
+    pattern: /if \(!active\) \{\s*progress\.setValue\(0\);\s*return;\s*\}/,
+  },
+  {
+    label: 'active animation restarts from zero',
+    pattern: /progress\.setValue\(0\);\s*Animated\.timing\(progress,/,
+  },
+  {
+    label: 'tokenized animation duration',
+    pattern: /duration:\s*motion\.duration\.slow \* 2,/,
+  },
+  {
+    label: 'standard easing path',
+    pattern: /easing:\s*Easing\.out\(Easing\.cubic\),/,
+  },
+  {
+    label: 'native-driver animation',
+    pattern: /useNativeDriver:\s*true,/,
+  },
+  {
+    label: 'inactive render returns null',
+    pattern: /if \(!active\) return null;/,
+  },
+  {
+    label: 'decorative animation hidden from accessibility tree',
+    pattern: /accessibilityElementsHidden/,
+  },
+  {
+    label: 'descendant accessibility hidden',
+    pattern: /importantForAccessibility="no-hide-descendants"/,
+  },
+  {
+    label: 'non-interactive pointer behavior',
+    pattern: /pointerEvents="none"/,
+  },
+  {
+    label: 'result pill remains visible',
+    pattern: /<View style=\{styles\.pill\}>[\s\S]*<Text style=\{styles\.pillText\}>/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2639,6 +2685,8 @@ let explanationPanelAccessibilityRulesValidated = 0;
 let explanationPanelAccessibilityParityValidated = false;
 let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
+let celebrationBurstAccessibilityRulesValidated = 0;
+let celebrationBurstAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4793,6 +4841,44 @@ function validateUhrReferenceCardAccessibilityParity() {
       EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length
   ) {
     uhrReferenceCardAccessibilityParityValidated = true;
+  }
+}
+
+function validateCelebrationBurstAccessibilityParity() {
+  let valid = true;
+  let celebrationBurstSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    celebrationBurstSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/CelebrationBurst.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/CelebrationBurst.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(celebrationBurstSource)) {
+      reject(`CelebrationBurst missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    celebrationBurstAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    celebrationBurstAccessibilityRulesValidated ===
+      EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES.length
+  ) {
+    celebrationBurstAccessibilityParityValidated = true;
   }
 }
 
@@ -8892,6 +8978,7 @@ validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
+validateCelebrationBurstAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -9021,6 +9108,8 @@ console.log(
       explanationPanelAccessibilityParityValidated,
       uhrReferenceCardAccessibilityRulesValidated,
       uhrReferenceCardAccessibilityParityValidated,
+      celebrationBurstAccessibilityRulesValidated,
+      celebrationBurstAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
