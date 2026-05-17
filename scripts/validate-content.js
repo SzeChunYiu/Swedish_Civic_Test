@@ -842,6 +842,10 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /language = 'sv'/,
   },
   {
+    label: 'settings language copy selection',
+    pattern: /const copy = chapterCardCopy\[language\];/,
+  },
+  {
     label: 'optional Chapter prop contract',
     pattern: /chapter\?: Chapter;/,
   },
