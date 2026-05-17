@@ -272,8 +272,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['För att bara vissa väljare ska kunna rösta', 'So only some voters can vote'],
     ],
     0,
-    'Materialet beskriver att valen är hemliga. Därför röstar väljare bakom en skärm så att ingen annan kan se vilket val de gör.',
-    'The material describes elections as secret. Voters therefore vote behind a screen so no one else can see which choice they make.',
+    'UHR-avsnittet Så här går det till att rösta säger att valen är hemliga. Avsnittet säger också att alla röstar bakom en skärm så att ingen annan kan se vilket val man gör.',
+    'The UHR section How voting works says elections are secret. It also says everyone votes behind a screen so no one else can see which choice they make.',
     ['secret-ballot', 'polling-station', 'voting'],
   ),
   single(
