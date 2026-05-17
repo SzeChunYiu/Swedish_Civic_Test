@@ -1191,8 +1191,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q076',
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Befolkningsökning', pageApprox: 32 },
-    'Enligt UHR-materialet, varför ökade Sveriges befolkning under 1800-talet?',
-    'According to the UHR material, why did Sweden’s population grow during the 19th century?',
+    'Varför ökade Sveriges befolkning under 1800-talet?',
+    'Why did Sweden’s population grow during the 19th century?',
     [
       [
         'Bättre jordbruksmetoder och medicinska framsteg',
