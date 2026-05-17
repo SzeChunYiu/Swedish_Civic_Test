@@ -9,6 +9,7 @@ const moduleCache = new Map();
 const QUESTION_TYPES = new Set(['single_choice', 'true_false', 'flashcard']);
 const DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const REVIEW_STATUSES = new Set(['draft', 'reviewed', 'published']);
+const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 100;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
@@ -289,6 +290,15 @@ function isIsoDate(value) {
   return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }
 
+function isHttpsUrl(value) {
+  if (!hasText(value)) return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 function optionIdsMatchQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   const optionIds = question.options.map((option) => option?.id);
@@ -501,6 +511,7 @@ const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
@@ -508,6 +519,7 @@ const uhrSectionMap = JSON.parse(
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let mockExamConfigValidated = false;
+let uxBenchmarksValidated = 0;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -543,6 +555,7 @@ if (!Array.isArray(sourceQuestions)) fail('sourceQuestions export is not an arra
 if (!Array.isArray(generatedPublishedQuestions)) {
   fail('generatedPublishedQuestions export is not an array');
 }
+if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -578,6 +591,57 @@ function validateMockExamConfig(config, publishedQuestionCount) {
   }
 
   if (valid) mockExamConfigValidated = true;
+}
+
+function validateUxBenchmarks() {
+  if (!Array.isArray(uxBenchmarks)) return;
+
+  if (uxBenchmarks.length !== EXPECTED_UX_BENCHMARKS) {
+    fail(`expected ${EXPECTED_UX_BENCHMARKS} UX benchmarks, found ${uxBenchmarks.length}`);
+  }
+
+  const seenProducts = new Set();
+  const seenSources = new Set();
+
+  uxBenchmarks.forEach((benchmark, index) => {
+    const label = hasText(benchmark?.product) ? benchmark.product : `ux benchmark[${index}]`;
+    let valid = true;
+
+    function reject(message) {
+      valid = false;
+      fail(message);
+    }
+
+    if (!benchmark || typeof benchmark !== 'object') {
+      reject(`ux benchmark[${index}] is not an object`);
+    } else {
+      for (const field of ['product', 'lesson', 'source']) {
+        if (!hasText(benchmark[field])) {
+          reject(`${label} missing ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(benchmark[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      const normalizedProduct = normalizeComparableText(benchmark.product);
+      if (normalizedProduct && seenProducts.has(normalizedProduct)) {
+        reject(`${label} duplicates UX benchmark product`);
+      }
+      if (normalizedProduct) seenProducts.add(normalizedProduct);
+
+      if (hasText(benchmark.source)) {
+        if (!isHttpsUrl(benchmark.source)) {
+          reject(`${label} source must be an HTTPS URL`);
+        }
+        if (seenSources.has(benchmark.source)) {
+          reject(`${label} duplicates UX benchmark source`);
+        }
+        seenSources.add(benchmark.source);
+      }
+    }
+
+    if (valid) uxBenchmarksValidated += 1;
+  });
 }
 
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
@@ -1209,6 +1273,7 @@ validateMockExamConfig(
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0,
 );
+validateUxBenchmarks();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 const disclaimer = fs.readFileSync(
@@ -1239,6 +1304,7 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       mockExamConfigValidated,
+      uxBenchmarksValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
