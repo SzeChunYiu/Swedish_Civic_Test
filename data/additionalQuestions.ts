@@ -1402,8 +1402,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q086',
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
-    'Vilket år säger UHR-materialet att Sverige blev medlem i EU?',
-    'According to the UHR material, in what year did Sweden become a member of the EU?',
+    'Vilket år blev Sverige medlem i EU?',
+    'In what year did Sweden become a member of the EU?',
     [
       ['1949', '1949'],
       ['1995', '1995'],
