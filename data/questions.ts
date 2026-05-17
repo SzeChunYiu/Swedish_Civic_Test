@@ -529,8 +529,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q018',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv: 'Vem väljer statsministern enligt materialet?',
-    questionEn: 'Who chooses the prime minister according to the material?',
+    questionSv: 'Vem väljer statsministern enligt UHR-materialet?',
+    questionEn: 'Who chooses the prime minister according to the UHR material?',
     options: [
       { id: 'a', textSv: 'Riksdagen', textEn: 'The Riksdag' },
       { id: 'b', textSv: 'Kungen ensam', textEn: 'The king alone' },
@@ -539,9 +539,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Riksdagen väljer statsminister, och statsministern får uppdraget att bilda regering. Statsministern väljer därefter ministrarna i regeringen.',
+      'UHR-avsnittet Staten säger att riksdagen väljer statsminister, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna i regeringen.',
     explanationEn:
-      'The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.',
+      'The UHR section The state says the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
