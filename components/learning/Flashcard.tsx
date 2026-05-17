@@ -21,9 +21,13 @@ export function Flashcard({ front, back }: { front?: string; back?: string }) {
       style={styles.card}
     >
       <Badge tone="warm">Flashcard</Badge>
-      <Text style={styles.label}>Prompt</Text>
+      <Text accessibilityRole="header" style={styles.label}>
+        Prompt
+      </Text>
       <Text style={styles.prompt}>{prompt}</Text>
-      <Text style={styles.label}>Answer</Text>
+      <Text accessibilityRole="header" style={styles.label}>
+        Answer
+      </Text>
       <Text style={styles.answer}>{answer}</Text>
     </Card>
   );
