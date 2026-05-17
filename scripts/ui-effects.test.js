@@ -61,8 +61,10 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /const buttonAccessibilityLabel =/);
   assert.match(source, /typeof children === 'string' \|\| typeof children === 'number'/);
   assert.match(source, /String\(children\)/);
+  assert.match(source, /aria-busy=\{mergedAccessibilityState\.busy === true\}/);
   assert.match(source, /aria-checked=\{mergedAccessibilityState\.checked\}/);
   assert.match(source, /aria-disabled=\{mergedAccessibilityState\.disabled === true\}/);
+  assert.match(source, /aria-expanded=\{mergedAccessibilityState\.expanded\}/);
   assert.match(source, /aria-label=\{buttonAccessibilityLabel\}/);
   assert.match(source, /aria-selected=\{mergedAccessibilityState\.selected\}/);
   assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
