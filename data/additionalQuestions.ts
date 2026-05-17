@@ -1174,8 +1174,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Från jordbrukssamhälle till industrisamhälle',
       pageApprox: 32,
     },
-    'Hur beskrivs Sverige för ungefär tvåhundra år sedan?',
-    'How is Sweden described about two hundred years ago?',
+    'Enligt UHR-materialet, hur beskrivs Sverige för ungefär tvåhundra år sedan?',
+    'According to the UHR material, how is Sweden described about two hundred years ago?',
     [
       ['Som ett fattigt jordbruksland', 'As a poor agricultural country'],
       ['Som ett högteknologiskt informationssamhälle', 'As a high-tech information society'],
@@ -1183,8 +1183,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Som ett land utan städer', 'As a country without cities'],
     ],
     0,
-    'Materialet beskriver Sverige då som ett typiskt jordbruksland och fattigt jämfört med andra europeiska länder.',
-    'The material describes Sweden then as a typical agricultural country and poor compared with other European countries.',
+    'UHR-avsnittet Från jordbrukssamhälle till industrisamhälle säger att Sverige för tvåhundra år sedan var ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet, och Sverige var då fattigt jämfört med andra länder i Europa.',
+    'The UHR section From agricultural society to industrial society says Sweden was a typical agricultural country two hundred years ago. Almost the whole population lived in the countryside, and Sweden was poor at that time compared with other countries in Europe.',
     ['modern-history', 'agriculture', 'industrialization'],
   ),
   single(
