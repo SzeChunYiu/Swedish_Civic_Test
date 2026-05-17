@@ -484,11 +484,15 @@ test('chapter detail route exposes page and question section headings as headers
   const source = read('app/chapter/[chapterId].tsx');
   const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
 
+  assert.match(source, /Kapitlet hittades inte/);
+  assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
   assert.match(source, /Chapter not found/);
-  assert.match(source, /Practice questions/);
+  assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.equal(headerMatches?.length, 3);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+  assert.match(source, /\{copy\.missingTitle\}/);
+  assert.match(source, /\{copy\.practiceQuestionsTitle\(chapterQuestions\.length\)\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -547,13 +551,35 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
 
 test('premium banner announces Remove Ads purchase status changes', () => {
   const source = read('components/monetization/PremiumBanner.tsx');
+  const homeSource = read('app/(tabs)/home.tsx');
+  const profileSource = read('app/(tabs)/profile.tsx');
 
+  assert.match(source, /type PremiumBannerCopy =/);
+  assert.match(source, /const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy>/);
+  assert.match(source, /language = 'sv'/);
+  assert.match(source, /const copy = premiumBannerCopy\[language\]/);
   assert.match(source, /const statusMessage = getStatusMessage/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
-  assert.match(source, /accessibilityLabel=\{`Remove Ads status: \$\{statusMessage\}`\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)\}/,
+  );
+  assert.match(source, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(source, /accessibilityLiveRegion="polite"/);
   assert.match(source, /aria-live="polite"/);
+  assert.match(source, /Ta bort annonser/);
+  assert.match(source, /Köp Ta bort annonser för \$\{price\}/);
+  assert.match(source, /Återställ köp av Ta bort annonser/);
+  assert.match(source, /Annonser är avstängda på den här enheten\./);
+  assert.match(source, /Remove Ads/);
+  assert.match(source, /Buy Remove Ads for \$\{price\}/);
+  assert.match(source, /Restore Remove Ads purchase/);
   assert.match(source, /Ads are disabled on this device\./);
+  assert.match(homeSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(homeSource, /language=\{language\}/);
+  assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(profileSource, /language=\{language\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

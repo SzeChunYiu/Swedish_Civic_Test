@@ -214,6 +214,82 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
+const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
+  sv: [
+    'Smart repetition',
+    'Sparat',
+    'Sparad för fokuserad repetition',
+    'Bokmärkta frågor',
+    'Öva svåra frågor',
+    'Starta övning',
+    'Svara fel på en övningsfråga så visas den här.',
+    'Inga misstag ännu',
+    'Fellogg',
+    'Fel svar att repetera',
+    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+    'Misstag',
+    'Fel svar: ${count}',
+  ],
+  en: [
+    'Smart review',
+    'Saved list',
+    'Saved for focused review',
+    'Bookmarked questions',
+    'Practice weak questions',
+    'Start practice',
+    'Answer a practice question incorrectly and it will appear here.',
+    'No mistakes yet',
+    'Mistake log',
+    'Wrong answers to revisit',
+    'Review wrong answers with the question, explanation, source reference, and repetition count in one place.',
+    'Mistakes',
+    'Wrong answers: ${count}',
+  ],
+};
+const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
+  ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
+  [
+    'const mistakesCopy: Record<AppLanguage, MistakesCopy> = {',
+    'mistakes route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'mistakes route must read language from settings store',
+  ],
+  [
+    'const copy = mistakesCopy[language];',
+    'mistakes route must select copy from settings language',
+  ],
+  ['<Badge tone="orange">{copy.badge}</Badge>', 'mistakes badge must render localized copy'],
+  ['{copy.title}', 'mistakes title must render localized copy'],
+  [
+    '<Text style={styles.subtitle}>{copy.subtitle}</Text>',
+    'mistakes subtitle must render localized copy',
+  ],
+  [
+    '<Badge tone="blue">{copy.bookmarkedBadge}</Badge>',
+    'bookmarked badge must render localized copy',
+  ],
+  ['{copy.bookmarkedTitle}', 'bookmarked title must render localized copy'],
+  ['{copy.bookmarkedMeta}', 'bookmarked metadata must render localized copy'],
+  ['<Badge tone="orange">{copy.mistakeBadge}</Badge>', 'mistake badge must render localized copy'],
+  ['{copy.mistakeTitle}', 'mistake title must render localized copy'],
+  [
+    '{copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}',
+    'wrong-count metadata must render localized copy',
+  ],
+  ['{copy.emptyTitle}', 'empty title must render localized copy'],
+  [
+    '<Text style={styles.emptyText}>{copy.emptyText}</Text>',
+    'empty text must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.emptyPracticeAccessibilityLabel}',
+    'empty practice link must expose localized accessibility copy',
+  ],
+  ['{copy.emptyPracticeLink}', 'empty practice link must render localized copy'],
+];
 const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
@@ -341,17 +417,17 @@ const EXPECTED_CHAPTER_ROUTE_HEADERS = [
   {
     label: 'missing chapter title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*Chapter not found\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.missingTitle\}\s*<\/Text>/,
   },
   {
     label: 'chapter title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{chapter\.nameSv\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{chapterTitle\}\s*<\/Text>/,
   },
   {
     label: 'practice questions section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*Practice questions \(\{chapterQuestions\.length\}\)\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.practiceQuestionsTitle\(chapterQuestions\.length\)\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_LEARN_ROUTE_HEADERS = [
@@ -1561,6 +1637,7 @@ function expectedContentInterfaceKeys(interfaceName) {
 const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference');
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
+const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'questionCount', type: 'number', optional: false },
   { name: 'durationMinutes', type: 'number', optional: false },
@@ -2320,6 +2397,10 @@ function questionExactSchemaKeyFailures(question, label) {
   return failures;
 }
 
+function chapterExactSchemaKeyFailures(chapter, label) {
+  return schemaKeyFailures(chapter, EXPECTED_CHAPTER_KEYS, label, 'Chapter');
+}
+
 function isColorToken(value) {
   return (
     typeof value === 'string' && (/^#[0-9a-fA-F]{6}$/.test(value) || /^rgba?\(.+\)$/.test(value))
@@ -2632,13 +2713,17 @@ function trueFalseOptionLabelsMatchConvention(question) {
 
 function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn) {
   const expectedId = `ch${String(index + 1).padStart(2, '0')}`;
-  const label = hasText(chapter.id) ? chapter.id : `chapter[${index}]`;
+  const label = hasText(chapter?.id) ? chapter.id : `chapter[${index}]`;
   let valid = true;
 
   function reject(message) {
     valid = false;
     fail(message);
   }
+
+  chapterExactSchemaKeyFailures(chapter, label).forEach(reject);
+
+  if (!isObjectRecord(chapter)) return false;
 
   if (chapter.id !== expectedId) reject(`expected chapter ${expectedId}, found ${chapter.id}`);
   if (hasText(chapter.id) && seenChapterIds.has(chapter.id)) {
@@ -2905,6 +2990,7 @@ const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
+let chapterExactSchemaKeysValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
@@ -3002,6 +3088,8 @@ let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
+let mistakesRouteCopyLabelsValidated = 0;
+let mistakesRouteCopyParityValidated = false;
 let settingsStoreFieldsValidated = 0;
 let settingsStoreSchemaParityValidated = false;
 let settingsDailyGoalOptionsValidated = 0;
@@ -4344,6 +4432,58 @@ function validateLearnRouteLinkCopyParity() {
   );
   if (valid && learnRouteLinkCopyLabelsValidated === expectedLabelCount) {
     learnRouteLinkCopyParityValidated = true;
+  }
+}
+
+function validateMistakesRouteCopyParity() {
+  let valid = true;
+  let mistakesRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mistakesRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+  } catch (error) {
+    reject(`mistakes route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!mistakesRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_MISTAKES_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`mistakes route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!mistakesRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`mistakes route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`mistakes route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) mistakesRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_MISTAKES_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && mistakesRouteCopyLabelsValidated === expectedLabelCount) {
+    mistakesRouteCopyParityValidated = true;
   }
 }
 
@@ -9249,6 +9389,9 @@ if (Array.isArray(chapters)) {
   chapters.forEach((chapter, index) => {
     if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
       chapterSchemasValidated += 1;
+      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
+        chapterExactSchemaKeysValidated += 1;
+      }
       if (chapterTextFieldsAreNormalized(chapter)) {
         chapterTextFieldsNormalizedValidated += 1;
       }
@@ -9445,6 +9588,7 @@ validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
 validateHomeRouteHeaderParity();
 validateMistakesRouteHeaderParity();
+validateMistakesRouteCopyParity();
 validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
 validateOnboardingRouteHeaderParity();
@@ -9520,6 +9664,7 @@ console.log(
       chapters: chapters.length,
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
+      chapterExactSchemaKeysValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
@@ -9562,6 +9707,8 @@ console.log(
       homeRouteHeaderParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
+      mistakesRouteCopyLabelsValidated,
+      mistakesRouteCopyParityValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       settingsRouteHeadersValidated,

@@ -272,16 +272,16 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['För att bara vissa väljare ska kunna rösta', 'So only some voters can vote'],
     ],
     0,
-    'Materialet beskriver att valen är hemliga. Därför röstar väljare bakom en skärm så att ingen annan kan se vilket val de gör.',
-    'The material describes elections as secret. Voters therefore vote behind a screen so no one else can see which choice they make.',
+    'UHR-avsnittet Så här går det till att rösta säger att valen är hemliga. Avsnittet säger också att alla röstar bakom en skärm så att ingen annan kan se vilket val man gör.',
+    'The UHR section How voting works says elections are secret. It also says everyone votes behind a screen so no one else can see which choice they make.',
     ['secret-ballot', 'polling-station', 'voting'],
   ),
   single(
     'q033',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Politiska partier', pageApprox: 15 },
-    'Vad samlar politiska partier människor kring enligt materialet?',
-    'According to the material, what do political parties gather people around?',
+    'Vad har människor i ett politiskt parti gemensamt?',
+    'What do people in a political party have in common?',
     [
       [
         'Gemensamma idéer om hur samhället ska styras',
@@ -295,8 +295,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['De bestämmer alla löner direkt', 'They directly decide all wages'],
     ],
     0,
-    'Materialet beskriver politiska partier som grupper som samlar människor med gemensamma idéer om hur samhället ska styras. Partier föreslår lösningar, driver frågor och ger väljare olika politiska alternativ.',
-    'The material describes political parties as groups that gather people with shared ideas about how society should be governed. Parties propose solutions, promote issues, and give voters different political alternatives.',
+    'Avsnittet Politiska partier beskriver partier som grupper som samlar människor med gemensamma idéer om hur samhället ska styras. Partier föreslår lösningar, driver frågor och ger väljare olika politiska alternativ.',
+    'The Political parties section describes parties as groups that gather people with shared ideas about how society should be governed. Parties propose solutions, promote issues, and give voters different political alternatives.',
     ['political-parties', 'shared-ideas', 'democratic-choice'],
   ),
   single(

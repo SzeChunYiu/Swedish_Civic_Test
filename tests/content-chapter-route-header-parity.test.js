@@ -21,18 +21,27 @@ test('chapter route title, missing state, and question section stay accessible a
 
   assert.equal(summary.chapterRouteHeadersValidated, 3);
   assert.equal(summary.chapterRouteHeaderParityValidated, true);
+  assert.match(source, /type ChapterRouteCopy =/);
+  assert.match(source, /const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy>/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(source, /const copy = chapterRouteCopy\[language\];/);
+  assert.match(source, /Kapitlet hittades inte/);
+  assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
+  assert.match(source, /Chapter not found/);
+  assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*Chapter not found\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.missingTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{chapter\.nameSv\}\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{chapterTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*Practice questions \(\{chapterQuestions\.length\}\)\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.practiceQuestionsTitle\(chapterQuestions\.length\)\}\s*<\/Text>/,
   );
+  assert.match(source, /UHRReferenceCard language=\{language\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
 });
 
