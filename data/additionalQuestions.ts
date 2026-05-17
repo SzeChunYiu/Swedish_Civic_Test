@@ -119,8 +119,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q024',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Myndigheter', pageApprox: 13 },
-    'Vilket påstående beskriver statliga myndigheter bäst?',
-    'Which statement best describes government agencies?',
+    'Vilket påstående beskriver statliga myndigheter enligt UHR-materialet?',
+    'Which statement describes government agencies according to the UHR material?',
     [
       ['De ersätter domstolarna i brottmål', 'They replace courts in criminal cases'],
       [
@@ -131,8 +131,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['De skriver partiernas valprogram', 'They write parties’ election platforms'],
     ],
     1,
-    'Regeringen styr med hjälp av myndigheter, och myndigheterna måste följa lagen och sina instruktioner.',
-    'The government governs with agencies, and agencies must follow the law and their instructions.',
+    'UHR-avsnittet Myndigheter säger att regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna måste följa lagen och de instruktioner de har fått av regeringen.',
+    'The UHR section Government agencies says the government governs the country with the help of government agencies. Agencies must follow the law and the instructions they have received from the government.',
     ['agencies', 'government', 'law'],
   ),
   single(
