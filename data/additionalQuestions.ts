@@ -1658,8 +1658,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q099',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Midsommar', pageApprox: 46 },
-    'När firas midsommarafton?',
-    'When is Midsummer Eve celebrated?',
+    'När säger UHR-materialet att midsommarafton alltid firas?',
+    'When does the UHR material say Midsummer Eve is always celebrated?',
     [
       ['Alltid på en fredag mellan 19 och 25 juni', 'Always on a Friday between 19 and 25 June'],
       ['Alltid den 31 december', 'Always on 31 December'],
@@ -1667,9 +1667,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Alltid första söndagen i advent', 'Always on the first Sunday of Advent'],
     ],
     0,
-    'Materialet anger att midsommarafton alltid firas på en fredag mellan 19 och 25 juni.',
-    'The material states that Midsummer Eve is always celebrated on a Friday between 19 and 25 June.',
-    ['midsummer', 'june', 'traditions'],
+    'UHR-avsnittet Midsommar säger att midsommarafton alltid firas på en fredag mellan 19 och 25 juni. Avsnittet beskriver midsommar som en gammal tradition för att välkomna sommaren och ljuset, med utomhusfester, blomsterkransar, dans runt midsommarstång och mat som sill, färskpotatis och jordgubbar.',
+    'The UHR section Midsummer says Midsummer Eve is always celebrated on a Friday between 19 and 25 June. It describes Midsummer as an old tradition for welcoming summer and light, with outdoor parties, flower wreaths, dancing around a midsummer pole, and food such as herring, new potatoes, and strawberries.',
+    ['midsummer', 'midsummer-eve', 'june', 'traditions'],
   ),
   single(
     'q100',
