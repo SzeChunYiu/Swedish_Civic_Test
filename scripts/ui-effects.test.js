@@ -89,6 +89,18 @@ test('settings route exposes page and section titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('settings controls mirror selected and checked state to web aria attributes', () => {
+  const source = read('app/settings.tsx');
+
+  assert.match(source, /aria-selected=\{language === value\}/);
+  assert.match(source, /accessibilityState=\{\{ selected: language === value \}\}/);
+  assert.match(source, /aria-checked=\{audioEnabled\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
+  assert.match(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('onboarding route exposes its primary title as a header', () => {
   const source = read('app/onboarding.tsx');
 
