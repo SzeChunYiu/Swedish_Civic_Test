@@ -28,6 +28,7 @@ export function Button({
 
   return (
     <Pressable
+      aria-disabled={disabled === true}
       accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
