@@ -1557,8 +1557,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Religionsfrihet',
       pageApprox: 42,
     },
-    'Vilken lag gav enligt UHR-materialet det slutliga genombrottet för religionsfriheten 1951?',
-    'According to the UHR material, which law gave religious freedom its final breakthrough in 1951?',
+    'Vilken lag markerade enligt UHR-materialet religionsfrihetens slutliga genombrott 1951?',
+    'According to the UHR material, which law marked the final breakthrough for religious freedom in 1951?',
     [
       ['Religionsfrihetslagen', 'The Religious Freedom Act'],
       ['Tryckfrihetsförordningen', 'The Freedom of the Press Act'],
@@ -1566,8 +1566,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Semesterlagen', 'The Annual Leave Act'],
     ],
     0,
-    'UHR-avsnittet Religionsfrihet säger att det slutliga genombrottet för religionsfriheten kom med religionsfrihetslagen 1951. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls.',
-    'The UHR section Religious freedom says the final breakthrough for religious freedom came with the Religious Freedom Act in 1951. The law made it possible to choose a religion completely freely or not belong to any religion at all.',
+    'UHR-avsnittet Religionsfrihet säger att religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls.',
+    'The UHR section Religious freedom says the Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.',
     ['religious-freedom', '1951', 'law'],
   ),
   trueFalse(
