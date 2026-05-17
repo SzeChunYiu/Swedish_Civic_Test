@@ -831,6 +831,44 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
     pattern: /<Text style=\{styles\.body\}>\{explanation\}<\/Text>/,
   },
 ];
+const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
+  {
+    label: 'optional UHRReference prop contract',
+    pattern: /reference\?: UHRReference/,
+  },
+  {
+    label: 'chapter and section source label',
+    pattern:
+      /const label = reference\s*\?\s*`\$\{reference\.chapter\} · \$\{reference\.section\}`\s*:\s*'Source reference unavailable';/,
+  },
+  {
+    label: 'approximate page source label',
+    pattern:
+      /const pageLabel = reference\?\.pageApprox \? `Approx\. page \$\{reference\.pageApprox\}` : null;/,
+  },
+  {
+    label: 'page-aware accessibility label',
+    pattern:
+      /const referenceAccessibilityLabel = pageLabel[\s\S]*\? `UHR reference: \$\{label\}\. \$\{pageLabel\}`[\s\S]*: `UHR reference: \$\{label\}`;/,
+  },
+  {
+    label: 'Card receives UHR accessibility label',
+    pattern: /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/,
+  },
+  {
+    label: 'UHR title header text',
+    pattern:
+      /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*UHR reference[\s\S]*<\/Text>/,
+  },
+  {
+    label: 'visible chapter-section source label',
+    pattern: /<Text style=\{styles\.body\}>\{label\}<\/Text>/,
+  },
+  {
+    label: 'visible approximate page label',
+    pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
+  },
+];
 const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
   {
     exportName: 'FREE_ENTITLEMENTS',
@@ -2497,6 +2535,8 @@ let answerOptionAccessibilityRulesValidated = 0;
 let answerOptionAccessibilityParityValidated = false;
 let explanationPanelAccessibilityRulesValidated = 0;
 let explanationPanelAccessibilityParityValidated = false;
+let uhrReferenceCardAccessibilityRulesValidated = 0;
+let uhrReferenceCardAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -4539,6 +4579,44 @@ function validateExplanationPanelAccessibilityParity() {
       EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.length
   ) {
     explanationPanelAccessibilityParityValidated = true;
+  }
+}
+
+function validateUhrReferenceCardAccessibilityParity() {
+  let valid = true;
+  let uhrReferenceCardSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    uhrReferenceCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/UHRReferenceCard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/UHRReferenceCard.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(uhrReferenceCardSource)) {
+      reject(`UHRReferenceCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    uhrReferenceCardAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    uhrReferenceCardAccessibilityRulesValidated ===
+      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length
+  ) {
+    uhrReferenceCardAccessibilityParityValidated = true;
   }
 }
 
@@ -8635,6 +8713,7 @@ validateBadgeAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
+validateUhrReferenceCardAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -8758,6 +8837,8 @@ console.log(
       answerOptionAccessibilityParityValidated,
       explanationPanelAccessibilityRulesValidated,
       explanationPanelAccessibilityParityValidated,
+      uhrReferenceCardAccessibilityRulesValidated,
+      uhrReferenceCardAccessibilityParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
