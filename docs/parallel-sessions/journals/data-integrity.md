@@ -214,3 +214,11 @@ Artifacts changed: `tests/content-question-bank-csv-contract.test.js`, `docs/par
 Verification: `node --test tests/content-question-bank-csv-contract.test.js` passed 2/2 including the in-memory header-drift rejection; `npm run validate:content` passed and reported 500 `questionBankCsvRowsValidated`; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npx prettier --check tests/content-question-bank-csv-contract.test.js` passed; `git diff --check -- tests/content-question-bank-csv-contract.test.js` passed; `npm run test:content -- --test-concurrency=1` passed 202/202; `npm run typecheck` passed; `npm run test:ownership` passed.
 Blocked? no - the dedicated CSV contract test now proves the validator rejects drift in the committed public question-bank header, not only row-count/data happy path parity.
 Next suggested validator action: review and accept this DATA-INTEGRITY parity coverage atom, then keep `tests/content-question-bank-csv-contract.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest CSV contract regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Generated question tag-template exact parity negative coverage atom.
+Artifacts changed: `tests/content-generated-tag-parity.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `node --test tests/content-generated-tag-parity.test.js` passed 2/2 including the extra generated-only tag rejection; `npm run validate:content` passed and reported 400 `generatedTagTemplateParityValidated`, 400 `generatedSourceMetadataParityValidated`, and 500 published questions; `npm run test:content -- --test-concurrency=1` passed 203/203; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npx prettier --check tests/content-generated-tag-parity.test.js` passed; `git diff --check -- tests/content-generated-tag-parity.test.js` passed.
+Blocked? no - the dedicated generated-tag parity test now proves the validator rejects extra generated-only tags, not just missing source or convention tags.
+Next suggested validator action: review and accept this DATA-INTEGRITY parity coverage atom, then keep `tests/content-generated-tag-parity.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest generated tag-template regression gates.
