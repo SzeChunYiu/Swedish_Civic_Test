@@ -1637,6 +1637,7 @@ function expectedContentInterfaceKeys(interfaceName) {
 const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference');
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
+const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'questionCount', type: 'number', optional: false },
   { name: 'durationMinutes', type: 'number', optional: false },
@@ -2396,6 +2397,10 @@ function questionExactSchemaKeyFailures(question, label) {
   return failures;
 }
 
+function chapterExactSchemaKeyFailures(chapter, label) {
+  return schemaKeyFailures(chapter, EXPECTED_CHAPTER_KEYS, label, 'Chapter');
+}
+
 function isColorToken(value) {
   return (
     typeof value === 'string' && (/^#[0-9a-fA-F]{6}$/.test(value) || /^rgba?\(.+\)$/.test(value))
@@ -2708,13 +2713,17 @@ function trueFalseOptionLabelsMatchConvention(question) {
 
 function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn) {
   const expectedId = `ch${String(index + 1).padStart(2, '0')}`;
-  const label = hasText(chapter.id) ? chapter.id : `chapter[${index}]`;
+  const label = hasText(chapter?.id) ? chapter.id : `chapter[${index}]`;
   let valid = true;
 
   function reject(message) {
     valid = false;
     fail(message);
   }
+
+  chapterExactSchemaKeyFailures(chapter, label).forEach(reject);
+
+  if (!isObjectRecord(chapter)) return false;
 
   if (chapter.id !== expectedId) reject(`expected chapter ${expectedId}, found ${chapter.id}`);
   if (hasText(chapter.id) && seenChapterIds.has(chapter.id)) {
@@ -2981,6 +2990,7 @@ const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
+let chapterExactSchemaKeysValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
@@ -9379,6 +9389,9 @@ if (Array.isArray(chapters)) {
   chapters.forEach((chapter, index) => {
     if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
       chapterSchemasValidated += 1;
+      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
+        chapterExactSchemaKeysValidated += 1;
+      }
       if (chapterTextFieldsAreNormalized(chapter)) {
         chapterTextFieldsNormalizedValidated += 1;
       }
@@ -9651,6 +9664,7 @@ console.log(
       chapters: chapters.length,
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
+      chapterExactSchemaKeysValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
