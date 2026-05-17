@@ -234,6 +234,7 @@ const uhrSectionMap = JSON.parse(
 );
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
+let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
 let questionOptionIdConventionsValidated = 0;
@@ -597,6 +598,10 @@ if (Array.isArray(chapters)) {
 if (Array.isArray(questions)) {
   if (questions.length !== 500) fail(`expected 500 questions, found ${questions.length}`);
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
+  const promptTexts = {
+    questionSv: new Map(),
+    questionEn: new Map(),
+  };
   const counts = questions.reduce((acc, question) => {
     acc[question.chapterId] = (acc[question.chapterId] || 0) + 1;
     return acc;
@@ -629,9 +634,28 @@ if (Array.isArray(questions)) {
       fail(`${label} references unknown chapter ${question.chapterId}`);
     }
 
+    let promptTextIsUnique = true;
+    for (const field of Object.keys(promptTexts)) {
+      const text = normalizeOptionText(question[field]);
+      if (!text) {
+        promptTextIsUnique = false;
+        continue;
+      }
+      const previousQuestionId = promptTexts[field].get(text);
+      if (previousQuestionId) {
+        promptTextIsUnique = false;
+        fail(`${label} duplicates ${field} text from ${previousQuestionId}`);
+      } else {
+        promptTexts[field].set(text, label);
+      }
+    }
+
     const questionSchemaIsValid = validateQuestionSchema(question, index);
     if (questionSchemaIsValid) {
       questionSchemasValidated += 1;
+      if (promptTextIsUnique) {
+        questionPromptTextUniquenessValidated += 1;
+      }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
       }
@@ -741,6 +765,7 @@ console.log(
       generationParityValidated,
       generatedSourceMetadataParityValidated,
       questionSchemasValidated,
+      questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,
       questionOptionIdConventionsValidated,

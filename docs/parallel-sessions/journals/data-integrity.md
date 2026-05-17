@@ -109,3 +109,19 @@ Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.te
 Verification: `npm run validate:content` passed and reported 400 `generatedSourceMetadataParityValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js` passed.
 Blocked? no - the content validator now rejects generated variants that drift from their source question chapter, difficulty, explanations, UHR reference, required source tags, or generated-variant convention tags.
 Next suggested validator action: review and accept this DATA-INTEGRITY parity atom, then keep `npm run validate:content` and `npm run test:content` as the nearest generated-source metadata regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Generated question source-metadata parity atom verification addendum.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `npm run validate:content` passed and reported 400 `generatedSourceMetadataParityValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` passed; in-memory negative check against `scripts/validate-content.js` passed by rejecting a generated-variant difficulty drift with `generated variant[0] difficulty does not match source question`.
+Blocked? no - the atom is verified against both positive content gates and a targeted negative drift case.
+Next suggested validator action: review and accept this DATA-INTEGRITY parity atom as the next DI row, then keep `npm run validate:content` and `npm run test:content` as the nearest generated-source metadata regression gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local/main
+Task/checklist item: Published question prompt uniqueness schema atom.
+Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification: `npm run validate:content` passed and reported 500 `questionPromptTextUniquenessValidated`; `npm run test:content` passed 4/4; `node scripts/export-question-bank.js --check` passed with 500-question parity; `npm run typecheck` passed; `npm run test:ownership` passed; `npx prettier --check data/additionalQuestions.ts scripts/validate-content.js scripts/content-production.test.js` passed; `git diff --check -- scripts/validate-content.js scripts/content-production.test.js data/additionalQuestions.ts content/question-bank.csv docs/parallel-sessions/journals/data-integrity.md` passed; temp-copy negative check passed by rejecting duplicated q022/q017 Swedish and English prompt text.
+Blocked? no - the content validator now rejects duplicate published question prompts in either Swedish or English, and q022 was moved from a duplicate Riksdag member-count prompt to a separate UHR `Staten` law-and-budget role prompt before regenerating the CSV export.
+Next suggested validator action: review and accept this DATA-INTEGRITY schema atom, then keep `npm run validate:content` and `npm run test:content` as the nearest prompt-uniqueness regression gates.

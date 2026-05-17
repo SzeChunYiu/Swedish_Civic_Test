@@ -398,3 +398,33 @@ Workspace contract: pass with caveat - source ownership is CONTENT, not REVIEWER
 Findings queued: none from this focused pass.
 Evidence: q043 has a non-debatable correct answer aligned to the UHR `Polisen` section, coherent Swedish/English wording, expected source tags, and exported generated rows.
 Next manager action: VALIDATOR can review/accept or reject the CONTENT q043 atom; no reviewer defect from this pass.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY generated question source-metadata parity atom.
+Checks run:
+- Re-read the DATA-INTEGRITY handoff and inspected `scripts/validate-content.js` / `scripts/content-production.test.js` for `generatedSourceMetadataParityValidated`.
+- `npm run validate:content` - exit 0; summary includes `generatedSourceMetadataParityValidated:400`.
+- `npm run test:content` - exit 0; 4/4 tests passed and assert the generated-source metadata count.
+- `node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `git diff --check -- scripts/validate-content.js scripts/content-production.test.js docs/parallel-sessions/journals/data-integrity.md` - exit 0.
+- Temp-copy negative check - first attempt failed for the wrong reason because the copied temp repo lacked `app/`; rerun with `app/`, `components/`, `content/`, `data/`, `lib/`, `scripts/`, and `types/` copied exited 0 for the reviewer command by confirming `scripts/validate-content.js` rejected generated variant difficulty drift with status 1 and messages like `q001 generated variant[0] difficulty does not match source question`.
+Workspace contract: pass with caveat - source ownership is DATA-INTEGRITY, not REVIEWER; REVIEWER did not edit product source and mutated only a temp copy.
+Findings queued: none from this focused pass.
+Evidence: the validator now counts all 400 generated variants and rejects generated metadata drift against source questions.
+Next manager action: VALIDATOR can review/accept or reject the DATA-INTEGRITY generated-source metadata parity atom.
+
+Lane: REVIEWER
+Artifact reviewed: current `app/chapter/[chapterId].tsx` quiz-entry control for the learn-chapter defect.
+Checks run:
+- Inspected the diff adding `getChapterQuizSessionId`, `Start quiz for ${chapter.nameSv}`, and the `/quiz/${quizSessionId}` link in `app/chapter/[chapterId].tsx`.
+- `npm run typecheck` - exit 0.
+- `npm run lint` - exit 0.
+- `npm run test:practice` - exit 0; 3/3 tests passed including chapter quiz session id resolution.
+- `git diff --check -- app/chapter/[chapterId].tsx` - exit 0.
+- `CI=1 timeout 120s npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts --workers=1` - exit 1 before app interaction due missing cached Chromium at the known Playwright path.
+- `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` - exit 0.
+- Exported-web system-Chrome smoke - exit 0 after closing the launch sponsor ad; `/chapter/ch01` showed `Start quiz for Landet Sverige`, link `href` was `/quiz/q001`, clicking it opened `/quiz/q001`, and `Session q001` plus `Var ligger Sverige?` were visible with no console errors.
+Workspace contract: pass with caveat - source ownership is not REVIEWER; REVIEWER did not edit product source and used system Chrome because official Playwright cache is still missing.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LEARN-CHAPTER-1 update [2026-05-17 08:47Z]`.
+Evidence: the missing chapter start-quiz affordance is now present and navigates to the routed quiz session in exported web.
+Next manager action: VALIDATOR can close the reviewer defect after accepting the source atom; keep the official Playwright-cache blocker open separately.

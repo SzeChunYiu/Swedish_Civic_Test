@@ -155,3 +155,10 @@ Artifacts changed: `app/quiz/[sessionId].tsx`, `docs/parallel-sessions/journals/
 Verification: `npm run test:a11y-labels` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check app/quiz/[sessionId].tsx` exit 0; `git diff --check -- app/quiz/[sessionId].tsx docs/parallel-sessions/journals/setup.md` exit 0.
 Blocked? no — the routed quiz screen no longer triggers the missing `accessibilityState` failure on the `Try again` control.
 Next suggested validator action: rerun `npm run test:a11y-labels` and, if release preflight is next, check whether local validation now advances past the quiz a11y gate.
+
+## Iteration 23 — 2026-05-17
+Task completed: Tooling/product atom — wired chapter detail screens to the routed quiz session helper with a visible `Start quiz` link for chapters that have questions.
+Artifacts changed: `app/chapter/[chapterId].tsx`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:practice` exit 0; `npm run test:a11y-labels` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check app/chapter/[chapterId].tsx` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0; system-Chrome Playwright smoke on exported web passed `/learn` → `/chapter/ch01` → `Start quiz for Landet Sverige` → `/quiz/q001` with zero console errors; `git diff --check -- app/chapter/[chapterId].tsx app/quiz/[sessionId].tsx docs/parallel-sessions/journals/setup.md` exit 0. Official `CI=1 timeout 120s npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts --workers=1` still fails before app interaction because the configured cached Playwright browser is missing.
+Blocked? no — the chapter start route is implemented and locally smoke-verified; acceptance-grade official e2e remains blocked by the existing browser-cache infrastructure issue.
+Next suggested validator action: inspect `app/chapter/[chapterId].tsx`, rerun the focused checks above, then rerun the official learn-navigation e2e after restoring the configured Playwright browser cache.
