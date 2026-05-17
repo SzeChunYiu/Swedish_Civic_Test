@@ -70,6 +70,9 @@ const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
 const EXPECTED_DAILY_GOAL_MAX = 50;
+const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
+const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
+const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -859,6 +862,8 @@ let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
 let settingsDailyGoalOptionsValidated = 0;
 let settingsDailyGoalParityValidated = false;
+let settingsAudioLabelsValidated = 0;
+let settingsAudioParityValidated = false;
 let progressQuestionFieldsValidated = 0;
 let progressQuestionSchemaParityValidated = false;
 let badgesValidated = 0;
@@ -1629,6 +1634,127 @@ function validateSettingsDailyGoalParity() {
 
   if (valid && settingsDailyGoalOptionsValidated === EXPECTED_DAILY_GOAL_OPTIONS.length) {
     settingsDailyGoalParityValidated = true;
+  }
+}
+
+function validateSettingsAudioParity() {
+  let valid = true;
+  let settingsStore = '';
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings audio parity source could not be read: ${error.message}`);
+    return;
+  }
+
+  const audioEnabledKey = extractStringConstantFromTs(settingsStore, 'audioEnabledKey');
+  if (audioEnabledKey !== EXPECTED_AUDIO_SETTING_KEY) {
+    reject(
+      `audioEnabledKey is ${JSON.stringify(audioEnabledKey)}, expected ${JSON.stringify(
+        EXPECTED_AUDIO_SETTING_KEY,
+      )}`,
+    );
+  }
+
+  const settingsFields = extractObjectTypePropertiesFromTs(settingsStore, 'SettingsState') || [];
+  const settingsFieldsByName = new Map(settingsFields.map((field) => [field.name, field]));
+  const audioEnabledField = settingsFieldsByName.get('audioEnabled');
+  const setAudioEnabledField = settingsFieldsByName.get('setAudioEnabled');
+  if (!audioEnabledField || audioEnabledField.type !== 'boolean' || audioEnabledField.optional) {
+    reject('SettingsState.audioEnabled must be a required boolean');
+  }
+  if (
+    !setAudioEnabledField ||
+    setAudioEnabledField.type !== '(enabled: boolean) => void' ||
+    setAudioEnabledField.optional
+  ) {
+    reject('SettingsState.setAudioEnabled must accept a boolean enabled value');
+  }
+
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  if (
+    !normalizedSettingsStore.includes(
+      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
+    )
+  ) {
+    reject('readAudioEnabled must read the persisted audioEnabled boolean');
+  }
+  if (!normalizedSettingsStore.includes('return storedValue ?? true;')) {
+    reject('readAudioEnabled must default audio to enabled');
+  }
+  if (!normalizedSettingsStore.includes('audioEnabled: readAudioEnabled()')) {
+    reject('SettingsState must initialize audioEnabled from persisted storage');
+  }
+  if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
+    reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
+  }
+
+  if (
+    !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')
+  ) {
+    reject('app/settings.tsx must read audioEnabled from useSettingsStore');
+  }
+  if (
+    !settingsRoute.includes(
+      'const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);',
+    )
+  ) {
+    reject('app/settings.tsx must read setAudioEnabled from useSettingsStore');
+  }
+  if (!settingsRoute.includes('accessibilityRole="switch"')) {
+    reject('app/settings.tsx audio control must expose switch accessibility role');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: audioEnabled }}')) {
+    reject('app/settings.tsx audio switch must expose checked state from audioEnabled');
+  }
+  if (
+    !settingsRoute.includes("accessibilityLabel={audioEnabled ? 'Disable audio' : 'Enable audio'}")
+  ) {
+    reject('app/settings.tsx audio switch must expose state-changing accessibility labels');
+  }
+  if (!settingsRoute.includes('onPress={() => setAudioEnabled(!audioEnabled)}')) {
+    reject('app/settings.tsx audio switch must toggle persisted audio state');
+  }
+  if (!settingsRoute.includes("{audioEnabled ? 'Audio enabled' : 'Audio disabled'}")) {
+    reject('app/settings.tsx audio switch must render the current audio state label');
+  }
+
+  const seenLabels = new Set();
+  EXPECTED_AUDIO_LABELS.forEach((label) => {
+    let labelIsValid = true;
+    if (!textIsTrimmedSingleSpaced(label)) {
+      labelIsValid = false;
+      reject(`audio label ${JSON.stringify(label)} must be trimmed and single-spaced`);
+    }
+    if (!settingsRoute.includes(label)) {
+      labelIsValid = false;
+      reject(`app/settings.tsx is missing audio label ${JSON.stringify(label)}`);
+    }
+    const normalizedLabel = normalizeComparableText(label);
+    if (seenLabels.has(normalizedLabel)) {
+      labelIsValid = false;
+      reject(`audio label ${JSON.stringify(label)} is duplicated`);
+    }
+    if (normalizedLabel) seenLabels.add(normalizedLabel);
+    if (labelIsValid) settingsAudioLabelsValidated += 1;
+  });
+
+  EXPECTED_AUDIO_ACCESSIBILITY_LABELS.forEach((label) => {
+    if (!settingsRoute.includes(label)) {
+      reject(`app/settings.tsx is missing audio accessibility label ${JSON.stringify(label)}`);
+    }
+  });
+
+  if (valid && settingsAudioLabelsValidated === EXPECTED_AUDIO_LABELS.length) {
+    settingsAudioParityValidated = true;
   }
 }
 
@@ -3322,6 +3448,7 @@ validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
 validateSettingsDailyGoalParity();
+validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
@@ -3385,6 +3512,8 @@ console.log(
       languageSettingsParityValidated,
       settingsDailyGoalOptionsValidated,
       settingsDailyGoalParityValidated,
+      settingsAudioLabelsValidated,
+      settingsAudioParityValidated,
       progressQuestionFieldsValidated,
       progressQuestionSchemaParityValidated,
       badgesValidated,
