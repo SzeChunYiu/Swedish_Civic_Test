@@ -24,6 +24,7 @@ export interface UmpConsentResult {
 }
 
 export interface MobileAdsConsentRuntime {
+  getUmpConsentInfo?: () => Promise<UmpConsentResult>;
   gatherUmpConsent?: () => Promise<UmpConsentResult>;
   getTrackingPermissionsAsync?: () => Promise<TrackingPermissionResult>;
   initializeGoogleMobileAds?: () => Promise<unknown>;
@@ -122,7 +123,11 @@ async function resolveUmpConsentStatus(
   realAdsEnabled: boolean,
 ): Promise<UmpConsentStatus> {
   if (!realAdsEnabled) return 'not_required';
-  return mapUmpConsentStatus(await runtime.gatherUmpConsent?.());
+  try {
+    return mapUmpConsentStatus(await runtime.gatherUmpConsent?.());
+  } catch {
+    return mapUmpConsentStatus(await runtime.getUmpConsentInfo?.());
+  }
 }
 
 export async function collectMobileAdsConsentState({
@@ -181,6 +186,10 @@ export function createNativeMobileAdsConsentRuntime(platform: string): MobileAds
     async gatherUmpConsent() {
       const { AdsConsent } = await getAdsModule();
       return AdsConsent.gatherConsent();
+    },
+    async getUmpConsentInfo() {
+      const { AdsConsent } = await getAdsModule();
+      return AdsConsent.getConsentInfo();
     },
     async getTrackingPermissionsAsync() {
       const trackingTransparency = await getTrackingModule();

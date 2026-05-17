@@ -667,6 +667,32 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(canRequestAdsResult.state.umpConsentStatus, 'obtained');
   assert.equal(canRequestAdsResult.decision.canInitializeGoogleMobileAds, true);
   assert.deepEqual(canRequestAdsCalls, ['ump', 'ads:init']);
+
+  const consentInfoFallbackCalls = [];
+  const consentInfoFallbackResult = await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    runtime: {
+      async gatherUmpConsent() {
+        consentInfoFallbackCalls.push('ump');
+        throw new Error('UMP unavailable');
+      },
+      async getUmpConsentInfo() {
+        consentInfoFallbackCalls.push('ump:cached-info');
+        return { canRequestAds: true, status: 'UNKNOWN' };
+      },
+      async initializeGoogleMobileAds() {
+        consentInfoFallbackCalls.push('ads:init');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(consentInfoFallbackResult.initialized, true);
+  assert.equal(consentInfoFallbackResult.state.umpConsentStatus, 'obtained');
+  assert.equal(consentInfoFallbackResult.decision.canInitializeGoogleMobileAds, true);
+  assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
 });
 
 test('exam screen does not import ad components', () => {
