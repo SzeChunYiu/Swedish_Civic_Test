@@ -176,8 +176,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q027',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Sveriges statsskick', pageApprox: 13 },
-    'Vad betyder det att Sverige är en konstitutionell monarki?',
-    'What does it mean that Sweden is a constitutional monarchy?',
+    'Vad betyder konstitutionell monarki enligt UHR-materialet?',
+    'According to the UHR material, what does constitutional monarchy mean?',
     [
       ['Att monarken har all politisk makt', 'That the monarch has all political power'],
       [
@@ -188,9 +188,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Att kommunerna styrs av kungahuset', 'That municipalities are governed by the royal house'],
     ],
     1,
-    'Kungen är statschef och symbol för Sverige, men har ingen politisk makt.',
-    'The king is head of state and a symbol of Sweden, but has no political power.',
-    ['monarchy', 'head-of-state', 'constitution'],
+    'UHR-avsnittet Sveriges statsskick säger att Sverige är en konstitutionell monarki. Det betyder att statschefen är en kung eller drottning utan politisk makt, och materialet beskriver kungen som en symbol för Sverige.',
+    'The UHR section Sweden’s form of government says Sweden is a constitutional monarchy. This means the head of state is a king or queen without political power, and the material describes the king as a symbol of Sweden.',
+    ['monarchy', 'head-of-state', 'constitutional-monarchy'],
   ),
   trueFalse(
     'q028',
