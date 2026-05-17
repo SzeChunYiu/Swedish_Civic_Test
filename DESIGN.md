@@ -1,75 +1,56 @@
-# Design System: Claude (Anthropic) — civic adaptation
+# Design System: Swedish (clean Scandinavian)
 
-Adopted 2026-05-17 (operator). Replaces the prior Notion system. The app is
-token-driven (lib/theme/colors.ts is the ONLY color source; zero hardcoded
-colors in app/ or components/ — keep it that way, acceptance step 6).
+Adopted 2026-05-17 (operator). Flag-inspired but premium & accessible — NOT
+garish primary flag colours. Token-driven (lib/theme/colors.ts is the only
+color source; zero hardcoded colors in app/ or components/).
 
 ## 1. Atmosphere
-Warm, unhurried, quietly intellectual — a literary salon, not a cold tech UI.
-A parchment canvas that feels like premium paper, warm earthy terracotta accent,
-exclusively warm-toned neutrals (every gray has a yellow-brown undertone),
-serif headlines for gravitas, generous radii and breathing room.
+Calm, trustworthy, Scandinavian. Cool light canvas, confident Swedish blue as
+the single primary, warm gold reserved for reward/highlight moments (XP,
+streaks, badges, selected). Crisp type hierarchy, generous whitespace, subtle
+depth — feels like a well-made Nordic civic product, not a flag.
 
-## 2. Color tokens (authoritative — lib/theme/colors.ts values)
+## 2. Color tokens (authoritative — lib/theme/colors.ts)
 | token | value | role |
 |-------|-------|------|
-| canvas | #f5f4ed | page background (Parchment) |
-| surface | #faf9f5 | cards/elevated (Ivory) |
-| surfaceWarm | #e8e6dc | prominent interactive surface (Warm Sand) |
-| surfaceMuted | rgba(20,20,19,0.05) | warm translucent secondary |
-| text | #141413 | primary text (Near Black, warm) |
-| textSoft | #3d3d3a | emphasized secondary |
-| textSecondary | #5e5d59 | body secondary (Olive Gray) |
-| textDisclaimer | #87867f | captions/disclaimer (Stone Gray) |
-| textMuted | #5e5d59 | muted labels |
-| textPlaceholder | #b0aea5 | placeholder (Warm Silver) |
-| warmDark | #30302e | dark surfaces |
-| accent | #c96442 | PRIMARY brand/CTA/correct-highlight (Terracotta) |
-| accentActive | #b5502f | pressed accent |
-| focus | #3898ec | focus ring ONLY (the single intentional cool color) |
-| focusSoft | #f3e7e1 | soft focus fill (warm terracotta tint) |
-| badgeBlueBg | #f0eee6 | badge background (warm cream) |
-| badgeBlueText | #c96442 | badge text (terracotta) |
-| border | #e8e6dc | standard warm border |
-| success | #4f7a52 | confirmation (muted warm green) |
-| successSoft | #eef2ea | correct-answer background |
-| correctBg | #eef2ea | correct background |
-| warning | #c8742f | time/warning (warm amber) |
-| warningSoft | #f6ece0 | incorrect-answer background |
-| incorrectBg | #f6ece0 | incorrect background |
-| teal | #4f7a72 | muted teal accent |
-| navy | #30302e | secondary dark brand |
-| purple | #6b4f63 | muted premium accent |
-| pink | #c08293 | muted decorative |
-| brown | #523410 | earthy warm accent |
+| canvas | #f5f7fa | page background (cool light) |
+| surface | #ffffff | cards |
+| surfaceWarm | #eaf0f7 | panels / secondary surface |
+| text | #0b1f33 | primary text (deep navy near-black) |
+| textSecondary | #44586b | secondary text |
+| textDisclaimer | #6b7c8c | disclaimer/caption |
+| textPlaceholder | #9aa9b6 | placeholder |
+| accent | #006aa7 | PRIMARY (Swedish blue) — CTAs, correct, progress, links |
+| accentActive | #00537f | pressed primary |
+| focus | #2f80ed | focus ring |
+| badgeBlueBg / badgeBlueText | #fff3cf / #8a6a00 | GOLD accent — XP/streak/badges |
+| border | #dbe3ec | standard border |
+| success/correctBg | #1e874b / #e6f4ec | correct answer |
+| warning/incorrectBg | #c77700 / #fdf0dd | incorrect (amber, distinct from gold) |
+| navy | #003a5c | deep blue, secondary brand / headers |
 
-Rule: NO cool blue-grays anywhere except `focus`. No saturated colors beyond
-terracotta. Pure white is never a page background.
+Rules: blue is the ONLY primary; gold ONLY for reward/highlight (never body
+text — fails contrast); all text >= WCAG AA on its background; never pure-black
+text; no hardcoded colors anywhere.
 
 ## 3. Typography
-- Headings: a serif (RN/Expo: load a serif e.g. Georgia/"Tinos"/"Lora" via
-  expo-font; fallback serif). Single weight 500 for all headings — no 700.
-- Body / UI: system sans (Inter/system-ui). Code: monospace ONLY for code.
-- Relaxed body line-height 1.6 (literary); tight heading line-height 1.1–1.3.
-- Scale (pt approx): hero 32–40 / section 26–28 / card title 20–22 /
-  body 16 / caption 14 / label 12 (letter-spacing +0.12).
+Clean sans (Inter/system-ui) for everything; strong size/weight hierarchy
+(hero 30-38 / section 24-26 / card 19-21 / body 16 / caption 13-14). Optional
+serif allowed for large display headings only. Body line-height ~1.55.
 
 ## 4. Shape & depth
-- Radius: cards 8–12, primary buttons 12, pills 9999, hero/media 16–24.
-- Depth via warm ring shadows `0 0 0 1px` (warm gray) + whisper drop
-  `rgba(0,0,0,0.05) 0 4px 24px` for elevated cards. No heavy shadows.
-- Borders are cream/warm-sand, whisper weight.
+Radius: cards 12-16, buttons 10-12, pills 9999. Soft elevation: 1px border
+(#dbe3ec) + whisper shadow rgba(11,31,51,0.06) 0 6px 20px for raised cards.
+No heavy/dark shadows. Tap targets >= 44px.
 
-## 5. Components
-- Primary CTA: Terracotta (`accent`) bg, Ivory text, radius 12, ring shadow.
-- Secondary: Warm Sand (`surfaceWarm`) bg, `textSoft` text, radius 8.
-- Cards: `surface` bg, `border` 1px, radius 8–12, whisper shadow when elevated.
-- Quiz correct = `accent`/`correctBg`; incorrect = `warning`/`incorrectBg`.
-- Disclaimer text uses `textDisclaimer`, always present on question screens.
-- Tap targets >= 44px. a11y labels mandatory (regression bar).
+## 5. Per-screen information
+Each screen shows ONE primary thing + minimal supporting context. Remove
+clutter, redundant labels, decorative-but-empty panels. Strong visual
+hierarchy: title > primary action > supporting. Disclaimer compact but present
+on question screens. (See PANEL-OPT priority in codex-tasks.)
 
 ## 6. Do / Don't
-DO: parchment canvas, terracotta only for primary signal, warm neutrals,
-serif headings weight 500, generous radius, ring/whisper shadows, 1.6 body.
-DON'T: cool grays (except focus), bold serif, saturated extra colors, sharp
-(<6px) corners, heavy drop shadows, pure-white page bg, hardcoded colors.
+DO: blue primary, gold sparingly for reward, AA contrast, generous spacing,
+soft depth, tokenized colors, motion per motion priority (a11y-safe).
+DON'T: large flat #FECC02/#006AA7 flag blocks, gold text, pure-black text,
+hardcoded colors, clutter, heavy shadows, sharp (<8px) corners.

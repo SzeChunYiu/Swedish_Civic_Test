@@ -3,37 +3,37 @@ type RgbaColor = `rgba(${string})`;
 
 export type ColorToken = HexColor | RgbaColor;
 
-// Claude (Anthropic) warm-parchment system — values are authoritative in DESIGN.md §2.
-// Token KEYS are stable; the whole app restyles via these values (zero hardcoded colors).
-const canvas = '#f5f4ed' satisfies ColorToken;
-const surface = '#faf9f5' satisfies ColorToken;
-const surfaceWarm = '#e8e6dc' satisfies ColorToken;
-const surfaceMuted = 'rgba(20, 20, 19, 0.05)' satisfies ColorToken;
-const text = '#141413' satisfies ColorToken;
-const textSoft = '#3d3d3a' satisfies ColorToken;
-const textSecondary = '#5e5d59' satisfies ColorToken;
-const textDisclaimer = '#87867f' satisfies ColorToken;
-const textMuted = '#5e5d59' satisfies ColorToken;
-const textPlaceholder = '#b0aea5' satisfies ColorToken;
-const warmDark = '#30302e' satisfies ColorToken;
-const accent = '#c96442' satisfies ColorToken;
-const accentActive = '#b5502f' satisfies ColorToken;
-const focus = '#3898ec' satisfies ColorToken;
-const focusSoft = '#f3e7e1' satisfies ColorToken;
-const badgeBlueBg = '#f0eee6' satisfies ColorToken;
-const badgeBlueText = '#c96442' satisfies ColorToken;
-const border = '#e8e6dc' satisfies ColorToken;
-const success = '#4f7a52' satisfies ColorToken;
-const successSoft = '#eef2ea' satisfies ColorToken;
+// Swedish system — clean Scandinavian: flag blue primary, gold accent.
+// Values authoritative in DESIGN.md §2. Stable KEYS; whole app restyles here.
+const canvas = '#f5f7fa' satisfies ColorToken;
+const surface = '#ffffff' satisfies ColorToken;
+const surfaceWarm = '#eaf0f7' satisfies ColorToken;
+const surfaceMuted = 'rgba(11, 31, 51, 0.05)' satisfies ColorToken;
+const text = '#0b1f33' satisfies ColorToken;
+const textSoft = '#22384c' satisfies ColorToken;
+const textSecondary = '#44586b' satisfies ColorToken;
+const textDisclaimer = '#6b7c8c' satisfies ColorToken;
+const textMuted = '#5a6b7a' satisfies ColorToken;
+const textPlaceholder = '#9aa9b6' satisfies ColorToken;
+const warmDark = '#0b1f33' satisfies ColorToken;
+const accent = '#006aa7' satisfies ColorToken;
+const accentActive = '#00537f' satisfies ColorToken;
+const focus = '#2f80ed' satisfies ColorToken;
+const focusSoft = '#dbeafe' satisfies ColorToken;
+const badgeBlueBg = '#fff3cf' satisfies ColorToken;
+const badgeBlueText = '#8a6a00' satisfies ColorToken;
+const border = '#dbe3ec' satisfies ColorToken;
+const success = '#1e874b' satisfies ColorToken;
+const successSoft = '#e6f4ec' satisfies ColorToken;
 const correctBg = successSoft;
-const warning = '#c8742f' satisfies ColorToken;
-const warningSoft = '#f6ece0' satisfies ColorToken;
+const warning = '#c77700' satisfies ColorToken;
+const warningSoft = '#fdf0dd' satisfies ColorToken;
 const incorrectBg = warningSoft;
-const teal = '#4f7a72' satisfies ColorToken;
-const navy = '#30302e' satisfies ColorToken;
-const purple = '#6b4f63' satisfies ColorToken;
-const pink = '#c08293' satisfies ColorToken;
-const brown = '#523410' satisfies ColorToken;
+const teal = '#0e7c8a' satisfies ColorToken;
+const navy = '#003a5c' satisfies ColorToken;
+const purple = '#4b3f7a' satisfies ColorToken;
+const pink = '#b5527a' satisfies ColorToken;
+const brown = '#6b4a1f' satisfies ColorToken;
 
 export const colors = {
   canvas,
