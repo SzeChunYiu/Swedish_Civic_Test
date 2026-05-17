@@ -87,7 +87,9 @@ export function PremiumBanner({
   return (
     <Card style={styles.card}>
       <Text style={styles.eyebrow}>{adsDisabled ? 'Remove Ads active' : 'Remove Ads'}</Text>
-      <Text style={styles.title}>{adsDisabled ? 'Ad-free study is active' : 'Remove Ads'}</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        {adsDisabled ? 'Ad-free study is active' : 'Remove Ads'}
+      </Text>
       <Text style={styles.meta}>
         Free study keeps AdMob ads on. Pay {REMOVE_ADS_PRICE_LABEL} once to remove ads from study
         screens while exams stay ad-free.
@@ -116,6 +118,7 @@ export function PremiumBanner({
         </Button>
       </View>
       <Text
+        aria-live="polite"
         accessibilityLabel={`Remove Ads status: ${statusMessage}`}
         accessibilityLiveRegion="polite"
         style={styles.status}

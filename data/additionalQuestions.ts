@@ -1114,9 +1114,9 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 },
     'Vad ska Sveriges 21 regioner enligt UHR-materialet bland annat erbjuda?',
-    "According to the UHR material, what should Sweden's 21 regions offer, among other things?",
+    "According to the UHR material, what should Sweden's 21 regions provide, among other things?",
     [
-      ['Hälso- och sjukvård till alla', 'Health care to everyone'],
+      ['Hälso- och sjukvård till alla', 'Health and medical care for everyone'],
       ['Pensioner och studiestöd till alla', 'Pensions and study support to everyone'],
       [
         'Grundskolor och äldreomsorg i varje kommun',
@@ -1126,7 +1126,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'UHR-avsnittet Regionerna ansvarar för sjukvården säger att Sveriges 21 regioner tar ut skatt av sina invånare och bland annat ska erbjuda hälso- och sjukvård till alla. För att kunna göra det driver och finansierar regionerna sjukhus och vårdcentraler.',
-    'The UHR section Regions are responsible for health care says that Sweden’s 21 regions tax their residents and should offer health care to everyone, among other things. To do this, the regions run and finance hospitals and health centres.',
+    'The UHR section Regions are responsible for health care says that Sweden’s 21 regions tax their residents and should provide health and medical care for everyone, among other things. To do this, the regions run and finance hospitals and health centres.',
     ['regions', 'health-care', 'welfare'],
   ),
   single(
@@ -1351,7 +1351,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'UHR-avsnittet Sverige blir ett invandrarland säger att den snabba inflyttningen till städerna skapade brist på bostäder. För att lösa problemet startade staten miljonprogrammet under 1960-talet med målet att bygga en miljon bostäder på tio år.',
-    'The UHR section Sweden becomes an immigration country says rapid movement into cities created a housing shortage. To solve the problem, the state started the Million Programme during the 1960s with the goal of building one million homes in ten years.',
+    'The UHR section Sweden becomes a country of immigration says rapid movement into cities created a housing shortage. To solve the problem, the state started the Million Programme during the 1960s with the goal of building one million homes in ten years.',
     ['million-programme', 'housing', '1960s'],
   ),
   single(

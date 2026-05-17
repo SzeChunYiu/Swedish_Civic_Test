@@ -44,7 +44,9 @@ export default function Screen() {
       subtitle="A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations."
       rightSlot={
         <View style={styles.goalCard}>
-          <Text style={styles.goalLabel}>Today&apos;s goal</Text>
+          <Text accessibilityRole="header" style={styles.goalLabel}>
+            Today&apos;s goal
+          </Text>
           <Text style={styles.goalMetric}>
             {completedToday}/{dailyGoalAnswers}
           </Text>
@@ -87,7 +89,9 @@ export default function Screen() {
 
       <Card style={styles.feedbackCard}>
         <Badge tone="blue">10,000-learner feedback pass</Badge>
-        <Text style={styles.feedbackTitle}>UX updates from simulated study sessions</Text>
+        <Text accessibilityRole="header" style={styles.feedbackTitle}>
+          UX updates from simulated study sessions
+        </Text>
         <Text style={styles.feedbackText}>
           10,000 simulated learners asked for clearer progress, saved hard questions, source-backed
           review, and ads that stay out of exams. Those fixes are now built into the study loop.

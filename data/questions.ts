@@ -444,7 +444,7 @@ export const baseQuestions: PracticeQuestion[] = [
     questionSv:
       'Sant eller falskt enligt UHR-materialet: Ett lågt valdeltagande kan påverka demokratin.',
     questionEn:
-      'True or false according to the UHR material: Low voter turnout can affect democracy.',
+      'True or false according to the UHR material: A low voter turnout can affect democracy.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -453,7 +453,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationSv:
       'UHR-avsnittet Hot mot demokratin säger att lågt valdeltagande är ett problem som kan påverka demokratin. Det kan leda till att människor får mindre möjlighet att påverka politiska beslut i sin vardag och kan öka skillnaderna mellan grupper i samhället.',
     explanationEn:
-      'The UHR section Threats to democracy says low voter turnout is a problem that can affect democracy. It can give people fewer opportunities to influence political decisions in everyday life and can increase differences between groups in society.',
+      'The UHR section Threats to democracy says a low voter turnout is a problem that can affect democracy. It can give people fewer opportunities to influence political decisions in everyday life and can increase differences between groups in society.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Hot mot demokratin',
@@ -461,7 +461,7 @@ export const baseQuestions: PracticeQuestion[] = [
     },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
-    tags: ['democracy', 'voter-turnout', 'true-false'],
+    tags: ['democracy', 'voter-turnout', 'threats-to-democracy', 'true-false'],
   },
   {
     id: 'q016',

@@ -209,6 +209,19 @@ test('chapter card groups title, translation, status, and description into an ac
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('learn route chapter links announce chapter progress', () => {
+  const source = read('app/(tabs)/learn.tsx');
+
+  assert.match(source, /function getChapterLinkAccessibilityLabel/);
+  assert.match(source, /Open chapter \$\{nameSv\}/);
+  assert.match(source, /English name: \$\{nameEn\}/);
+  assert.match(source, /Progress: \$\{progressLabel\}/);
+  assert.match(source, /\$\{completedCount\} of \$\{questionCount\} questions practiced/);
+  assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
+  assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('quiz feedback cards expose accessible summaries', () => {
   const explanationSource = read('components/quiz/ExplanationPanel.tsx');
   const referenceSource = read('components/quiz/UHRReferenceCard.tsx');
@@ -315,8 +328,10 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   const source = read('components/monetization/PremiumBanner.tsx');
 
   assert.match(source, /const statusMessage = getStatusMessage/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /accessibilityLabel=\{`Remove Ads status: \$\{statusMessage\}`\}/);
   assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /aria-live="polite"/);
   assert.match(source, /Ads are disabled on this device\./);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -370,6 +385,18 @@ test('home screen surfaces the 10000-learner feedback loop and review action', (
   assert.match(source, /10,000-learner feedback pass/);
   assert.match(source, /Review saved questions/);
   assert.match(source, /href="\/mistakes"/);
+});
+
+test('home screen exposes dashboard card titles as headers', () => {
+  const source = read('app/(tabs)/home.tsx');
+  const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
+
+  assert.match(source, /Today&apos;s goal/);
+  assert.match(source, /UX updates from simulated study sessions/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
+  assert.equal(headerMatches?.length, 2);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('launch popup ad has native app-open implementation and safe web preview', () => {

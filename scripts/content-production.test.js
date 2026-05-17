@@ -32,6 +32,10 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.mockExamChapterBalanceParityValidated, true);
   assert.equal(summary.mockExamTimerParityValidated, true);
   assert.equal(summary.examSubmissionFinalityParityValidated, true);
+  assert.equal(summary.examRouteHeadersValidated, 8);
+  assert.equal(summary.examRouteHeaderParityValidated, true);
+  assert.equal(summary.quizRouteHeadersValidated, 2);
+  assert.equal(summary.quizRouteHeaderParityValidated, true);
   assert.equal(summary.examReviewItemsValidated, 20);
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);
