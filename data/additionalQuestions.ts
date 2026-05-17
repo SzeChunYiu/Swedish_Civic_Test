@@ -405,8 +405,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q039',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Allemansrätten', pageApprox: 17 },
-    'Vad säger materialet om allemansrätten?',
-    'What does the material say about the right of public access?',
+    'Vad innebär allemansrätten?',
+    'What does the right of public access mean?',
     [
       [
         'Den ger alla möjlighet att vara i naturen, men man måste visa ansvar',
@@ -423,8 +423,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Den gäller bara personer som äger mark', 'It applies only to people who own land'],
     ],
     0,
-    'Avsnittet säger att allemansrätten är skyddad i regeringsformen och ger alla möjlighet att vara i naturen oavsett vem som äger marken. Samtidigt måste man vara ansvarsfull: man får inte skada naturen, störa markägaren, gå på åkrar, gå in i trädgårdar eller kasta skräp.',
-    'The section says the right of public access is protected in the Instrument of Government and gives everyone the opportunity to be in nature regardless of who owns the land. At the same time, people must act responsibly: they may not damage nature, disturb landowners, walk on fields, enter private gardens, or throw litter.',
+    'UHR-avsnittet Allemansrätten säger att rätten är skyddad i regeringsformen och ger alla möjlighet att vara i naturen oavsett vem som äger marken. Samtidigt måste man vara ansvarsfull: man får inte skada naturen, störa markägaren, gå på åkrar, gå in i trädgårdar eller kasta skräp.',
+    'The UHR Right of public access section says this right is protected in the Instrument of Government and gives everyone the opportunity to be in nature regardless of who owns the land. At the same time, people must act responsibly: they may not damage nature, disturb landowners, walk on fields, enter private gardens, or throw litter.',
     ['right-of-public-access', 'nature', 'responsibility'],
   ),
   single(
