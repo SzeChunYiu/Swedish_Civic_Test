@@ -1286,7 +1286,7 @@ test('web export script is available for local production bundle smoke', () => {
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
-  assert.equal(pkg.scripts['postbuild:web:export'], 'cp dist-web/index.html dist-web/404.html');
+  assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
     pkg.scripts['release:web-export-smoke'],
     'rm -rf dist-web && npm run build:web:export',
@@ -1294,9 +1294,63 @@ test('web export script is available for local production bundle smoke', () => {
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
   assert.match(workflow, /npm run build:web:export/);
+  assert.match(workflow, /node scripts\/prepare-web-export\.js --check dist-web/);
   assert.match(workflow, /actions\/upload-artifact@v6/);
   assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
+});
+
+test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-postbuild-'));
+  const outputDir = path.join(tmpDir, 'dist-web');
+  const bundleDir = path.join(outputDir, '_expo/static/js/web');
+  fs.mkdirSync(bundleDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(outputDir, 'index.html'),
+    [
+      '<!DOCTYPE html>',
+      '<html>',
+      '<head><title>Export</title></head>',
+      '<body>',
+      '<div id="root"></div>',
+      '<script src="/_expo/static/js/web/entry-test.js" defer></script>',
+      '</body>',
+      '</html>',
+      '',
+    ].join('\n'),
+  );
+  fs.writeFileSync(
+    path.join(bundleDir, 'entry-test.js'),
+    'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}}; const icon = {uri:"/assets/icon.png"};',
+  );
+
+  const result = spawnSync(process.execPath, ['scripts/prepare-web-export.js', outputDir], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const index = fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8');
+  const fallback = fs.readFileSync(path.join(outputDir, '404.html'), 'utf8');
+  const bundle = fs.readFileSync(path.join(bundleDir, 'entry-test.js'), 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(index, /data-web-export-loader="true"/);
+  assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
+  assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
+  assert.doesNotMatch(index, /src="\/_expo\//);
+  assert.equal(fallback, index);
+  assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
+  assert.match(bundle, /uri:"assets\/icon\.png"/);
+
+  const checkResult = spawnSync(
+    process.execPath,
+    ['scripts/prepare-web-export.js', '--check', outputDir],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
 test('native appearance config has its required Expo module', () => {
