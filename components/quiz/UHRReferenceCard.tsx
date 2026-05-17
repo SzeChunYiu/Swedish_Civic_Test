@@ -14,7 +14,9 @@ export function UHRReferenceCard({ reference }: { reference?: UHRReference }) {
 
   return (
     <Card accessibilityLabel={referenceAccessibilityLabel}>
-      <Text style={styles.title}>UHR reference</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        UHR reference
+      </Text>
       <Text style={styles.body}>{label}</Text>
       {pageLabel ? <Text style={styles.meta}>{pageLabel}</Text> : null}
     </Card>

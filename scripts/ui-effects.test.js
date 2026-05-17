@@ -259,6 +259,7 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(source, /`Question: \$\{questionText\}`/);
   assert.match(source, /English translation:/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -301,11 +302,13 @@ test('quiz feedback cards expose accessible summaries', () => {
   assert.match(explanationSource, /const panelAccessibilityLabel =/);
   assert.match(explanationSource, /`Explanation: \$\{explanation\}`/);
   assert.match(explanationSource, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
+  assert.match(explanationSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.doesNotMatch(explanationSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 
   assert.match(referenceSource, /const referenceAccessibilityLabel =/);
   assert.match(referenceSource, /`UHR reference: \$\{label\}\. \$\{pageLabel\}`/);
   assert.match(referenceSource, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
+  assert.match(referenceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.doesNotMatch(referenceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
