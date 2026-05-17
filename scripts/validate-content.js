@@ -55,7 +55,9 @@ const QUESTION_BANK_CSV_HEADER = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
+const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
+const EXPECTED_MASTERY_RULE_COUNT = 7;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -589,16 +591,24 @@ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
 const generateExam = examGeneratorModule.generateExam;
+const scoringModule = loadTs('lib/quiz/scoring.ts');
+const scoreAnswers = scoringModule.scoreAnswers;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+const streakModule = loadTs('lib/learning/streaks.ts');
+const calculateStreak = streakModule.calculateStreak;
 const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
 const calculateLevel = xpModule.calculateLevel;
+const masteryModule = loadTs('lib/learning/mastery.ts');
+const calculateMastery = masteryModule.calculateMastery;
+const calculateChapterMastery = masteryModule.calculateChapterMastery;
+const findWeakChapterIds = masteryModule.findWeakChapterIds;
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
 );
@@ -610,10 +620,16 @@ let glossaryTermsValidated = 0;
 let uxBenchmarksValidated = 0;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
+let practiceScoringRulesValidated = 0;
+let practiceScoringRulesParityValidated = false;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
+let streakRulesValidated = 0;
+let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
+let masteryRulesValidated = 0;
+let masteryRulesParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let questionIdSequencesValidated = 0;
@@ -653,6 +669,7 @@ if (!Array.isArray(generatedPublishedQuestions)) {
 }
 if (!Array.isArray(uxBenchmarks)) fail('uxBenchmarks export is not an array');
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
+if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
 }
@@ -661,11 +678,17 @@ if (!Array.isArray(spacedRepetitionSchedule)) {
   fail('spacedRepetitionSchedule export is not an array');
 }
 if (typeof getNextReviewAt !== 'function') fail('getNextReviewAt export is not a function');
+if (typeof calculateStreak !== 'function') fail('calculateStreak export is not a function');
 if (typeof calculateAnswerXp !== 'function') fail('calculateAnswerXp export is not a function');
 if (typeof calculateQuizCompletionXp !== 'function') {
   fail('calculateQuizCompletionXp export is not a function');
 }
 if (typeof calculateLevel !== 'function') fail('calculateLevel export is not a function');
+if (typeof calculateMastery !== 'function') fail('calculateMastery export is not a function');
+if (typeof calculateChapterMastery !== 'function') {
+  fail('calculateChapterMastery export is not a function');
+}
+if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
 
 function validateMockExamConfig(config, publishedQuestionCount) {
   let valid = true;
@@ -971,6 +994,43 @@ function validateBadgeCatalog() {
   }
 }
 
+function validatePracticeScoringRules() {
+  if (typeof scoreAnswers !== 'function') return;
+
+  const cases = [
+    { label: 'default empty results', input: undefined, expected: { correct: 0, total: 0 } },
+    { label: 'empty results', input: [], expected: { correct: 0, total: 0 } },
+    { label: 'all wrong results', input: [false, false], expected: { correct: 0, total: 2 } },
+    { label: 'mixed results', input: [true, false, true], expected: { correct: 2, total: 3 } },
+    { label: 'all correct results', input: [true, true], expected: { correct: 2, total: 2 } },
+  ];
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, input, expected }) => {
+    let actual;
+    try {
+      actual = input === undefined ? scoreAnswers() : scoreAnswers(input);
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`practice scoring rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actual, expected)) {
+      rulesAreValid = false;
+      fail(
+        `practice scoring rule ${label} returned ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      practiceScoringRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && practiceScoringRulesValidated === cases.length) {
+    practiceScoringRulesParityValidated = true;
+  }
+}
+
 function isoDaysAfter(baseIso, days) {
   const dayInMs = 24 * 60 * 60 * 1000;
   return new Date(new Date(baseIso).getTime() + days * dayInMs).toISOString();
@@ -1040,6 +1100,73 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
+}
+
+function validateStreakRules() {
+  if (typeof calculateStreak !== 'function') return;
+
+  const today = '2026-05-15';
+  const cases = [
+    {
+      label: 'empty answer history',
+      actual: () => calculateStreak([], today),
+      expected: 0,
+    },
+    {
+      label: 'consecutive answer days through today',
+      actual: () =>
+        calculateStreak(['2026-05-13T09:00:00.000Z', '2026-05-14', '2026-05-15'], today),
+      expected: 3,
+    },
+    {
+      label: 'duplicate answer dates',
+      actual: () =>
+        calculateStreak(
+          ['2026-05-14', '2026-05-15T08:00:00.000Z', '2026-05-15T20:00:00.000Z'],
+          today,
+        ),
+      expected: 2,
+    },
+    {
+      label: 'missed today but answered yesterday',
+      actual: () => calculateStreak(['2026-05-13', '2026-05-14'], today),
+      expected: 2,
+    },
+    {
+      label: 'gap before today',
+      actual: () => calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], today),
+      expected: 1,
+    },
+    {
+      label: 'future-only answers',
+      actual: () => calculateStreak(['2026-05-16'], today),
+      expected: 0,
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actualValue !== expected) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} returned ${actualValue}, expected ${expected}`);
+    } else {
+      streakRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && streakRulesValidated === EXPECTED_STREAK_RULE_COUNT) {
+    streakRulesParityValidated = true;
+  }
 }
 
 function validateXpRules() {
@@ -1115,6 +1242,114 @@ function validateXpRules() {
 
   if (rulesAreValid && xpRulesValidated === EXPECTED_XP_RULE_COUNT) {
     xpRulesParityValidated = true;
+  }
+}
+
+function validateMasteryRules() {
+  if (
+    typeof calculateMastery !== 'function' ||
+    typeof calculateChapterMastery !== 'function' ||
+    typeof findWeakChapterIds !== 'function'
+  ) {
+    return;
+  }
+
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch01' },
+    { id: 'q3', chapterId: 'ch02' },
+  ];
+  const progress = {
+    q1: { correctCount: 0, seenCount: 2, wrongCount: 2 },
+    q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
+    q3: { correctCount: 3, seenCount: 3, wrongCount: 0 },
+  };
+  const cases = [
+    {
+      label: 'no progress mastery',
+      actual: () =>
+        calculateMastery({
+          correctCount: 0,
+          seenCount: 0,
+          totalQuestions: 20,
+          recent: false,
+        }),
+      expected: 0,
+    },
+    {
+      label: 'weighted accuracy coverage and recency',
+      actual: () =>
+        calculateMastery({
+          correctCount: 8,
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: true,
+        }),
+      expected: 0.75,
+    },
+    {
+      label: 'mastery clamps oversampled counts',
+      actual: () =>
+        calculateMastery({
+          correctCount: 20,
+          seenCount: 10,
+          totalQuestions: 5,
+          recent: false,
+        }),
+      expected: 0.8,
+    },
+    {
+      label: 'mastery without recency bonus',
+      actual: () =>
+        calculateMastery({
+          correctCount: 5,
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: false,
+        }),
+      expected: 0.4,
+    },
+    {
+      label: 'chapter mastery aggregate',
+      actual: () => calculateChapterMastery('ch01', questions, progress),
+      expected: 0.67,
+    },
+    {
+      label: 'unknown chapter mastery',
+      actual: () => calculateChapterMastery('ch99', questions, progress),
+      expected: 0,
+    },
+    {
+      label: 'weak chapter ids',
+      actual: () => findWeakChapterIds(questions, progress, 0.7),
+      expected: ['ch01'],
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`mastery rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `mastery rule ${label} returned ${JSON.stringify(actualValue)}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      masteryRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && masteryRulesValidated === EXPECTED_MASTERY_RULE_COUNT) {
+    masteryRulesParityValidated = true;
   }
 }
 
@@ -1833,8 +2068,11 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateBadgeCatalog();
+validatePracticeScoringRules();
 validateSpacedRepetitionSchedule();
+validateStreakRules();
 validateXpRules();
+validateMasteryRules();
 validateQuestionBankCsvContract();
 
 const practiceScreen = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
@@ -1872,10 +2110,16 @@ console.log(
       uxBenchmarksValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
+      practiceScoringRulesValidated,
+      practiceScoringRulesParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      streakRulesValidated,
+      streakRulesParityValidated,
       xpRulesValidated,
       xpRulesParityValidated,
+      masteryRulesValidated,
+      masteryRulesParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
