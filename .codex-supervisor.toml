@@ -130,30 +130,30 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-design"]
-disabled = true
+disabled = false
 ssh = "lunarc"
-session = "civic-team-design-local"
-prompts = "codex-prompts-civic-team-uiux-design.txt"
+session = "civic-team-delight-local"
+prompts = "codex-prompts-civic-delight.txt"
 tasks_dir = "codex-tasks"
 role = "team"
 project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-runtime"]
-disabled = true
+disabled = false
 ssh = "lunarc"
-session = "civic-team-runtime-local"
-prompts = "codex-prompts-civic-team-uiux-runtime.txt"
+session = "civic-team-mascot-local"
+prompts = "codex-prompts-civic-mascot.txt"
 tasks_dir = "codex-tasks"
 role = "team"
 project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-qa"]
-disabled = true
+disabled = false
 ssh = "lunarc"
-session = "civic-team-qa-local"
-prompts = "codex-prompts-civic-team-qa.txt"
+session = "civic-team-verify-local"
+prompts = "codex-prompts-civic-verify.txt"
 tasks_dir = "codex-tasks"
 role = "team"
 project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
@@ -170,10 +170,10 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-content"]
-disabled = true
+disabled = false
 ssh = "lunarc"
-session = "civic-team-content-local"
-prompts = "codex-prompts-civic-content.txt"
+session = "civic-team-research-local"
+prompts = "codex-prompts-civic-research.txt"
 tasks_dir = "codex-tasks"
 role = "team"
 project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"

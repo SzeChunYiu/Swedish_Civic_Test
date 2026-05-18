@@ -1,0 +1,10 @@
+# MASCOT-ART lane queue. Vector SVG, license-clean, optimized. No data/ or logic.
+styleguide:docs/design/mascot-style-guide.md v1 (palette from tokens, principles)
+primary:design primary mascot — base SVG + expressions idle/happy/oops/think/celebrate
+secondary:design a second supporting mascot/character, consistent style
+component:components/mascot/ render component + expression API (typed)
+replace:swap placeholder/ugly mascot art in current app screens
+replace:swap mascot art on the static landing site (site/)
+icons:cohesive icon/illustration touches matching the mascot style
+optimize:minify all mascot SVGs, sane viewBox, sizes documented
+# Ramp: per-screen art polish; keep assets small + consistent with style guide.

@@ -1,0 +1,5 @@
+/goal You are PANE 0, lane MANAGER-research. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/research.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 1, lane RESEARCH. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/research.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 2, lane RESEARCH. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/research.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 3, lane RESEARCH. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/research.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 4, lane RESEARCH. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/research.md, then iterate per the protocol until rate-limited.

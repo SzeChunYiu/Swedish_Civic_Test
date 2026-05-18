@@ -1,0 +1,11 @@
+# DELIGHT lane queue. Playful UX/FX. Reduced-motion safe. No data/ or logic.
+answer-result: satisfying correct/incorrect micro-animation (reduced-motion safe)
+streaks: daily streak counter + milestone confetti (opt-in sound, default off)
+progress: citizenship-readiness meter with gentle celebratory moments
+gamify: XP/levels + topic-mastery badges (presentation only)
+empty-states: playful loading/empty/error states with FACT-BUBBLE humor
+site-fx: tasteful hero/transition effects in site/ (reduced-motion safe, fast)
+mascot-react: wire MASCOT-ART expression set to answer events (idle/happy/oops)
+sound: opt-in sound system, muted by default, remembered preference
+easter-eggs: 1-2 tasteful hidden delights
+# Ramp: more juice per screen; keep perf + a11y budgets.
