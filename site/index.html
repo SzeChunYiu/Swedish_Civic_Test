@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sveriges Medborgartest — Study, fika, pass.</title>
+  <meta name="description" content="A friendly, unofficial study app for the Swedish citizenship test. Quiz, learn, mock-exam — all in lagom-sized chapters." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<!-- ============================================================ TOP NAV -->
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="#/" data-route="/">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span data-i18n="brand">Sveriges Medborgartest</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#/" data-route="/" data-i18n="nav.home">Home</a>
+      <a href="#/practice" data-route="/practice" data-i18n="nav.practice">Practice</a>
+      <a href="#/ebook" data-route="/ebook" data-i18n="nav.ebook">Ebook</a>
+      <a href="#/support" data-route="/support" data-i18n="nav.support">Support</a>
+    </nav>
+    <div class="topbar__tools">
+      <button class="icon-btn" id="signin-open" aria-label="Sign in">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path>
+        </svg>
+        <span data-i18n="nav.signin">Sign in</span>
+      </button>
+      <button class="icon-btn icon-btn--square" id="settings-open" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>
+        </svg>
+      </button>
+    </div>
+    <a class="cta-pill" href="#/" data-i18n="nav.cta" style="display:none">Get the app ↗</a>
+  </div>
+</header>
+
+<!-- ============================================================ HOME -->
+<main data-screen-label="01 Home" data-page="/" class="is-active">
+
+  <!-- HERO -->
+  <section class="hero" data-screen-label="01.1 Hero">
+    <div class="hero__cross" aria-hidden="true"></div>
+    <div class="hero__inner">
+      <div class="hero__col">
+        <span class="hero__eyebrow"><i class="dot"></i><span data-i18n="hero.eyebrow">Unofficial study app for medborgarskapsprovet</span></span>
+        <h1>
+          <span data-i18n="hero.h1a">Pass the test.</span><br />
+          <em data-i18n="hero.h1c">Brag at midsommar.</em>
+        </h1>
+        <p class="lede" data-i18n="hero.lede">
+          A quiet, unofficial study app for Sweden's citizenship test. Twelve short chapters,
+          a smart practice mode, and a mock exam that feels less scary than your neighbour's small talk.
+        </p>
+        <div class="hero__ctas">
+          <a class="btn btn--gold" href="#/practice" data-i18n="hero.cta1">Try a practice round →</a>
+          <a class="btn btn--ghost" href="#try" data-i18n="hero.cta2">One quick question</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRY A QUESTION -->
+  <section id="try" class="band demo" data-screen-label="01.2 Try a question">
+    <div class="wrap wrap--narrow">
+      <span class="eyebrow" data-i18n="demo.eyebrow">Try a question</span>
+      <h2 class="headline">
+        <span data-i18n="demo.h1">No textbooks.</span> <em data-i18n="demo.h2">Just clicks.</em>
+      </h2>
+      <p class="deck" data-i18n="demo.deck">
+        Every question has a plain-language explanation and a link to the source.
+        Wrong? It comes back later. Right? Move on, pour another coffee.
+      </p>
+
+      <div class="qcard" id="qcard">
+        <span class="qcard__chip" data-i18n="qcard.chip">Chapter 3 · Q47</span>
+        <div class="qcard__q" data-i18n="qcard.q">Which Swedish principle gives everyone the right to walk, swim, and pick berries on most land in nature?</div>
+        <div class="qcard__opts">
+          <button class="qopt" data-correct="false"><span class="key">A</span><span data-i18n="qcard.a">Jantelagen — the law of staying humble</span></button>
+          <button class="qopt" data-correct="true"><span class="key">B</span><span data-i18n="qcard.b">Allemansrätten — the right of public access</span></button>
+          <button class="qopt" data-correct="false"><span class="key">C</span><span data-i18n="qcard.c">Lagom — the doctrine of just-enough</span></button>
+          <button class="qopt" data-correct="false"><span class="key">D</span><span data-i18n="qcard.d">Fika — the constitutional coffee break</span></button>
+        </div>
+        <div class="qcard__explain">
+          <p><b data-i18n="qcard.ex.b">Allemansrätten</b><span data-i18n="qcard.ex.p"> — "everyone's right" — lets you walk, swim, ski, camp, and forage on most land in Sweden. The catch: be considerate, and don't pitch a tent in someone's flowerbed.</span></p>
+        </div>
+        <div class="qcard__meta">
+          <span data-i18n="qcard.src">Source · § Grundlagarna</span>
+          <button id="qreset" data-i18n="qcard.again">Try again →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S INSIDE — quiet list -->
+  <section class="band quiet" data-screen-label="01.3 What's inside">
+    <div class="wrap wrap--narrow">
+      <span class="eyebrow" data-i18n="chap.eyebrow">What's inside</span>
+      <h2 class="headline">
+        <span data-i18n="chap.h1">From kanelbullar to</span> <em data-i18n="chap.h2">Karl XIV Johan.</em>
+      </h2>
+      <p class="deck" data-i18n="chap.deck">
+        Twelve chapters, lagom-sized. Each one mixes the official material with the kind of
+        context you'd actually get from a Swedish friend over coffee.
+      </p>
+
+      <ol class="list-quiet">
+        <li><span class="list-quiet__n">01</span><span data-i18n="chap.1.t">A very short history of Sweden</span></li>
+        <li><span class="list-quiet__n">02</span><span data-i18n="chap.2.t">How Sweden is governed</span></li>
+        <li><span class="list-quiet__n">03</span><span data-i18n="chap.3.t">Rights, freedoms &amp; the four basic laws</span></li>
+        <li><span class="list-quiet__n">04</span><span data-i18n="chap.4.t">Work, taxes &amp; the welfare state</span></li>
+        <li><span class="list-quiet__n">05</span><span data-i18n="chap.5.t">Equality &amp; the modern household</span></li>
+        <li><span class="list-quiet__n">06</span><span data-i18n="chap.6.t">Society, school &amp; healthcare</span></li>
+        <li><span class="list-quiet__n">07</span><span data-i18n="chap.7.t">Nature, climate &amp; allemansrätten</span></li>
+        <li><span class="list-quiet__n">08</span><span data-i18n="chap.8.t">Culture, traditions &amp; the calendar</span></li>
+        <li><span class="list-quiet__n">09</span><span data-i18n="chap.9.t">Money, banks &amp; BankID</span></li>
+        <li><span class="list-quiet__n">10</span><span data-i18n="chap.10.t">Sweden, the EU &amp; the world</span></li>
+        <li><span class="list-quiet__n">11</span><span data-i18n="chap.11.t">Migration, residence &amp; citizenship</span></li>
+        <li><span class="list-quiet__n">12</span><span data-i18n="chap.12.t">Mock exam &amp; survival guide</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- AD SLOT — single inline between sections, only on landing -->
+  <aside class="ad-slot ad-slot--inline" data-ad-slot="inline" hidden>
+    <div class="ad-slot__inner">
+      <span class="ad-slot__label" data-i18n="ad.label">Sponsored</span>
+      <div class="ad-slot__frame">
+        <!-- Replace ca-pub-XXX and the data-ad-slot value with your AdSense IDs -->
+        <ins class="adsbygoogle"
+             style="display:block; width:100%; min-height:120px;"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="0000000001"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <div class="ad-slot__placeholder" data-i18n="ad.placeholder">Your AdSense slot will render here.</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- FAQ -->
+  <section class="band faq" data-screen-label="01.4 FAQ">
+    <div class="wrap wrap--narrow">
+      <span class="eyebrow" data-i18n="faq.eyebrow">Honestly asked</span>
+      <h2 class="headline"><span data-i18n="faq.h1">Questions you'd ask</span> <em data-i18n="faq.h2">over coffee.</em></h2>
+
+      <div class="faq__list">
+        <details class="faq__item" open>
+          <summary data-i18n="faq.1.q">Is this the official Swedish citizenship test?</summary>
+          <p data-i18n="faq.1.a">No. We're independent — not affiliated with UHR, Skolverket, Migrationsverket, or anyone who decides who becomes a citizen. We make a study tool. They run the exam.</p>
+        </details>
+        <details class="faq__item">
+          <summary data-i18n="faq.3.q">Do I need an account?</summary>
+          <p data-i18n="faq.3.a">No. Zero registration. No email, no phone number. Progress lives on your device.</p>
+        </details>
+        <details class="faq__item">
+          <summary data-i18n="faq.4.q">Is it free?</summary>
+          <p data-i18n="faq.4.a">Free to start, free to take the mock exam, free forever for the core 500 questions.</p>
+        </details>
+        <details class="faq__item">
+          <summary data-i18n="faq.6.q">Is my data shared with anyone?</summary>
+          <p data-i18n="faq.6.a">No. The current build collects nothing and shares nothing. See the <a href="#/privacy">privacy page</a> for the full, deliberately boring version.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================ PRACTICE -->
+<main data-screen-label="06 Practice" data-page="/practice">
+  <section class="practice">
+    <div class="practice__inner">
+      <div class="practice__head">
+        <span class="eyebrow" data-i18n="practice.kicker">Practice round</span>
+        <h1 class="practice__title">
+          <span data-i18n="practice.title">Ten questions.</span>
+          <em data-i18n="practice.subtitle">No pressure.</em>
+        </h1>
+      </div>
+
+      <div class="quiz" id="quiz">
+        <div class="quiz__stage" id="quiz-stage">
+          <!-- progress + question + options + feedback get rendered here by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================ EBOOK -->
+<main data-screen-label="07 Ebook" data-page="/ebook">
+  <section class="ebook">
+    <aside class="ebook__sidebar" id="ebook-sidebar" aria-label="Chapters">
+      <div class="ebook__brand">
+        <span class="ebook__brand-mark" aria-hidden="true"></span>
+        <span data-i18n="ebook.title">The Field Guide</span>
+      </div>
+      <p class="ebook__sub" data-i18n="ebook.sub">An unofficial companion to the citizenship test.</p>
+      <nav class="ebook__nav" aria-label="Ebook chapters">
+        <a href="#/ebook?c=intro" data-eb="intro" class="is-active"><span class="ebook__nav-n">00</span><span data-i18n="ebook.ch.intro.title">How to read this book</span></a>
+        <a href="#/ebook?c=1" data-eb="1"><span class="ebook__nav-n">01</span><span data-i18n="ebook.ch.1.title">A very short history of Sweden</span></a>
+        <a href="#/ebook?c=2" data-eb="2"><span class="ebook__nav-n">02</span><span data-i18n="ebook.ch.2.title">How Sweden is governed</span></a>
+        <a href="#/ebook?c=3" data-eb="3"><span class="ebook__nav-n">03</span><span data-i18n="ebook.ch.3.title">Rights &amp; the four basic laws</span></a>
+        <a href="#/ebook?c=4" data-eb="4"><span class="ebook__nav-n">04</span><span data-i18n="ebook.ch.4.title">Work, taxes &amp; the welfare state</span></a>
+        <a href="#/ebook?c=5" data-eb="5"><span class="ebook__nav-n">05</span><span data-i18n="ebook.ch.5.title">Equality &amp; the household</span></a>
+        <a href="#/ebook?c=6" data-eb="6"><span class="ebook__nav-n">06</span><span data-i18n="ebook.ch.6.title">Society, school &amp; healthcare</span></a>
+        <a href="#/ebook?c=7" data-eb="7"><span class="ebook__nav-n">07</span><span data-i18n="ebook.ch.7.title">Nature &amp; allemansrätten</span></a>
+        <a href="#/ebook?c=8" data-eb="8"><span class="ebook__nav-n">08</span><span data-i18n="ebook.ch.8.title">Culture, traditions &amp; calendar</span></a>
+        <a href="#/ebook?c=9" data-eb="9"><span class="ebook__nav-n">09</span><span data-i18n="ebook.ch.9.title">Money, banks &amp; BankID</span></a>
+        <a href="#/ebook?c=10" data-eb="10"><span class="ebook__nav-n">10</span><span data-i18n="ebook.ch.10.title">Sweden, the EU &amp; the world</span></a>
+        <a href="#/ebook?c=11" data-eb="11"><span class="ebook__nav-n">11</span><span data-i18n="ebook.ch.11.title">Migration &amp; citizenship</span></a>
+        <a href="#/ebook?c=12" data-eb="12"><span class="ebook__nav-n">12</span><span data-i18n="ebook.ch.12.title">Mock exam &amp; survival</span></a>
+      </nav>
+    </aside>
+    <article class="ebook__reader" id="ebook-reader">
+      <!-- chapter content rendered here by JS -->
+    </article>
+  </section>
+</main>
+
+<!-- ============================================================ PRIVACY -->
+<main data-screen-label="02 Privacy" data-page="/privacy">
+  <section class="doc">
+    <div class="doc__inner">
+      <div class="doc__back"><a href="#/" data-i18n="doc.back">← Back to home</a></div>
+      <div class="doc__kicker" data-i18n="privacy.kicker">Privacy policy</div>
+      <h1>
+        <span data-i18n="privacy.h1a">Your data</span>
+        <em data-i18n="privacy.h1b">stays on your phone.</em>
+      </h1>
+      <p class="doc__lede" data-i18n="privacy.lede">
+        Sveriges Medborgartest is an independent study app. We don't ask for an account, we don't
+        run analytics, and we don't sell anything. This page exists so you can verify all of that
+        in writing.
+      </p>
+      <div class="doc__meta">
+        <span><b data-i18n="privacy.meta1.b">Effective</b> <span data-i18n="privacy.meta1.v">2026-05-15</span></span>
+        <span><b data-i18n="privacy.meta2.b">Version</b> <span data-i18n="privacy.meta2.v">1.0 MVP</span></span>
+        <span><b data-i18n="privacy.meta3.b">Reading time</b> <span data-i18n="privacy.meta3.v">~3 min</span></span>
+      </div>
+
+      <div class="doc__body">
+        <aside class="doc__nav">
+          <h5 data-i18n="privacy.toc">In this policy</h5>
+          <ol>
+            <li><a href="#p1" data-i18n="privacy.s1.t">Independence</a></li>
+            <li><a href="#p2" data-i18n="privacy.s2.t">No account required</a></li>
+            <li><a href="#p3" data-i18n="privacy.s3.t">Local progress</a></li>
+            <li><a href="#p4" data-i18n="privacy.s4.t">Current data posture</a></li>
+            <li><a href="#p5" data-i18n="privacy.s5.t">Ads &amp; purchases</a></li>
+            <li><a href="#p6" data-i18n="privacy.s6.t">Changes &amp; contact</a></li>
+          </ol>
+        </aside>
+        <div class="doc__main">
+          <h2 id="p1" data-i18n="privacy.s1.t">Independence</h2>
+          <p data-i18n="privacy.s1.p">Sveriges Medborgartest is an independent study app for Swedish civic knowledge practice. It is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Anything you read here represents what <em>this app</em> does — nothing more.</p>
+
+          <h2 id="p2" data-i18n="privacy.s2.t">No account required</h2>
+          <p data-i18n="privacy.s2.p">The MVP requires no account, email address, phone number, or profile registration. You open the app, you study, you close the app. That's the deal.</p>
+
+          <h2 id="p3" data-i18n="privacy.s3.t">Local study progress</h2>
+          <p data-i18n="privacy.s3.p">Study progress, settings, mistakes, XP, streaks, badges, bookmarks, and audio preferences are stored locally on your device. They never leave it. If you uninstall the app, that data is gone — fair warning.</p>
+
+          <h2 id="p4" data-i18n="privacy.s4.t">Current data-collection posture</h2>
+          <div class="callout">
+            <p><b data-i18n="privacy.s4.callout.b">In plain Swedish:</b> <span data-i18n="privacy.s4.callout.p">the current MVP collects no user data and shares no user data.</span></p>
+          </div>
+          <p data-i18n="privacy.s4.p">No analytics SDKs. No crash reporters that ping home. No third-party trackers. If a future build adds anything that <em>does</em> talk to a server, we'll update this page <em>before</em> the build ships — and the change will be obvious, not buried in legalese.</p>
+
+          <h2 id="p5" data-i18n="privacy.s5.t">Ads and purchases</h2>
+          <p data-i18n="privacy.s5.p">We show ads in two places: <em>on this website</em> (Google AdSense) and <em>inside the app</em> (Google Mobile Ads). Both honour your consent choice — accept all for personalised ads, or accept the minimum for non-personalised ads. We don't run other SDKs (no analytics, no crash reporters, no support tools) and we'll update this page <em>before</em> shipping anything that does.</p>
+          <h3 data-i18n="privacy.s5.web.t">Ads on this website</h3>
+          <p data-i18n="privacy.s5.web.p">This website uses <b>Google AdSense</b>. AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We don't run AdSense until you tap <em>Accept all</em> on the cookie banner. If you tap <em>Necessary only</em>, ads still appear but in a non-personalised form. You can change your choice by clearing site data for this domain.</p>
+          <h3 data-i18n="privacy.s5.app.t">Ads in the mobile app</h3>
+          <p data-i18n="privacy.s5.app.p">The mobile app uses <b>Google Mobile Ads (AdMob)</b>. On first launch the app shows Google's official consent screen (via the <em>User Messaging Platform</em> SDK), where you can pick personalised, non-personalised, or — in regions where the choice is available — opt out. Ads keep the app free. We never use ads to collect your study answers or progress.</p>
+
+          <h2 id="p6" data-i18n="privacy.s6.t">Changes &amp; contact</h2>
+          <p data-i18n="privacy.s6.p">If this policy changes, the effective date at the top of this page will change with it. Questions, concerns, or "wait, what does this actually mean?" — head over to the <a href="#/support">support page</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================ SUPPORT -->
+<main data-screen-label="03 Support" data-page="/support">
+  <section class="doc">
+    <div class="doc__inner">
+      <div class="doc__back"><a href="#/" data-i18n="doc.back">← Back to home</a></div>
+      <div class="doc__kicker" data-i18n="support.kicker">Support</div>
+      <h1>
+        <span data-i18n="support.h1a">Something broken?</span>
+        <em data-i18n="support.h1b">Let us fix it.</em>
+      </h1>
+      <p class="doc__lede" data-i18n="support.lede">
+        We can help with app bugs, content errors, broken audio, and confusing Swedish wording.
+        We can't tell you the answers to the real exam, give immigration advice, or speed up
+        Migrationsverket. Sorry.
+      </p>
+      <div class="doc__meta">
+        <span><b data-i18n="support.meta1.b">Reply time</b> <span data-i18n="support.meta1.v">~2 business days</span></span>
+        <span><b data-i18n="support.meta2.b">Language</b> <span data-i18n="support.meta2.v">English or Swedish</span></span>
+        <span><b data-i18n="support.meta3.b">Cost</b> <span data-i18n="support.meta3.v">Free</span></span>
+      </div>
+
+      <div class="doc__body">
+        <aside class="doc__nav">
+          <h5 data-i18n="support.toc">On this page</h5>
+          <ol>
+            <li><a href="#s1" data-i18n="support.s1.t">What we can help with</a></li>
+            <li><a href="#s2" data-i18n="support.s2.t">What to include</a></li>
+            <li><a href="#s3" data-i18n="support.s3.t">Sensitive info</a></li>
+            <li><a href="#s4" data-i18n="support.s4.t">What we can't do</a></li>
+            <li><a href="#s5" data-i18n="support.s5.t">Contact</a></li>
+          </ol>
+        </aside>
+        <div class="doc__main">
+          <h2 id="s1" data-i18n="support.s1.t">What we can help with</h2>
+          <p data-i18n="support.s1.p">Email us if you find:</p>
+          <ul>
+            <li data-i18n="support.s1.li1">A content issue — a wrong answer, an outdated reference, a typo with attitude.</li>
+            <li data-i18n="support.s1.li2">Confusing Swedish wording in a question or explanation.</li>
+            <li data-i18n="support.s1.li3">A broken source link or missing citation.</li>
+            <li data-i18n="support.s1.li4">An audio problem — clip cutting off, wrong pronunciation, silence where speech should be.</li>
+            <li data-i18n="support.s1.li5">A study-flow bug — progress that didn't save, a streak that broke for no reason, an unfinishable mock exam.</li>
+            <li data-i18n="support.s1.li6">A store or build issue — crash on launch, billing weirdness, a download that won't.</li>
+          </ul>
+
+          <h2 id="s2" data-i18n="support.s2.t">What to include</h2>
+          <p data-i18n="support.s2.p">Help us help you faster:</p>
+          <ul>
+            <li data-i18n="support.s2.li1">Device + OS version (Pixel 7, Android 14 / iPhone 13, iOS 17).</li>
+            <li data-i18n="support.s2.li2">App version (Settings → About).</li>
+            <li data-i18n="support.s2.li3">What you did, what you expected, what happened instead.</li>
+            <li data-i18n="support.s2.li4">A screenshot, if it's a visual bug.</li>
+          </ul>
+
+          <h2 id="s3" data-i18n="support.s3.t">Please don't include sensitive info</h2>
+          <div class="callout">
+            <p><b data-i18n="support.s3.callout.b">No personal data, please.</b> <span data-i18n="support.s3.callout.p">Don't send government identifiers (personnummer, samordningsnummer), immigration case details, passport scans, financial info, or anything you wouldn't write on a postcard.</span></p>
+          </div>
+
+          <h2 id="s4" data-i18n="support.s4.t">What we can't do</h2>
+          <p data-i18n="support.s4.p">We can fix app functionality and content corrections. We can't:</p>
+          <ul>
+            <li data-i18n="support.s4.li1">Provide official exam answers or leaked content.</li>
+            <li data-i18n="support.s4.li2">Give migration or legal advice.</li>
+            <li data-i18n="support.s4.li3">Speak for any government agency.</li>
+            <li data-i18n="support.s4.li4">Predict when your case will be decided. (Nobody can.)</li>
+          </ul>
+
+          <h2 id="s5" data-i18n="support.s5.t">Contact</h2>
+          <p data-i18n="support.s5.p">Email <a href="mailto:support@medborgartest.app">support@medborgartest.app</a>. We read everything. We answer almost everything. Privacy details live on the <a href="#/privacy">privacy page</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================ TERMS -->
+<main data-screen-label="04 Terms" data-page="/terms">
+  <section class="doc">
+    <div class="doc__inner">
+      <div class="doc__back"><a href="#/" data-i18n="doc.back">← Back to home</a></div>
+      <div class="doc__kicker" data-i18n="terms.kicker">Terms of use</div>
+      <h1>
+        <span data-i18n="terms.h1a">Plain rules,</span>
+        <em data-i18n="terms.h1b">plainly written.</em>
+      </h1>
+      <p class="doc__lede" data-i18n="terms.lede">
+        Using the app means you agree to these terms. They are short on purpose. If anything here
+        feels unclear, the support page is one tap away.
+      </p>
+      <div class="doc__meta">
+        <span><b data-i18n="terms.meta1.b">Effective</b> <span data-i18n="terms.meta1.v">2026-05-15</span></span>
+        <span><b data-i18n="terms.meta2.b">Governing law</b> <span data-i18n="terms.meta2.v">Sweden</span></span>
+        <span><b data-i18n="terms.meta3.b">Length</b> <span data-i18n="terms.meta3.v">~2 min read</span></span>
+      </div>
+
+      <div class="doc__body">
+        <aside class="doc__nav">
+          <h5 data-i18n="terms.toc">In these terms</h5>
+          <ol>
+            <li><a href="#t1" data-i18n="terms.s1.t">What this is</a></li>
+            <li><a href="#t2" data-i18n="terms.s2.t">Acceptable use</a></li>
+            <li><a href="#t3" data-i18n="terms.s3.t">Content &amp; accuracy</a></li>
+            <li><a href="#t4" data-i18n="terms.s4.t">No guarantees</a></li>
+            <li><a href="#t5" data-i18n="terms.s5.t">Liability</a></li>
+            <li><a href="#t6" data-i18n="terms.s6.t">Changes</a></li>
+          </ol>
+        </aside>
+        <div class="doc__main">
+          <h2 id="t1" data-i18n="terms.s1.t">What this is</h2>
+          <p data-i18n="terms.s1.p">Sveriges Medborgartest is an unofficial study app. It is not the exam, it is not run by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score here does not grant citizenship.</p>
+
+          <h2 id="t2" data-i18n="terms.s2.t">Acceptable use</h2>
+          <p data-i18n="terms.s2.p">Use the app to study. Don't scrape it, reverse-engineer it, or rebrand it as your own product. Don't use it to harass anyone. Treat the app the way you'd treat a borrowed bicycle: well.</p>
+
+          <h2 id="t3" data-i18n="terms.s3.t">Content &amp; accuracy</h2>
+          <p data-i18n="terms.s3.p">Questions are written from public sources — Riksdagen, Skolverket, statistical reports — and reviewed by humans. Humans miss things. If you find an error, the <a href="#/support">support page</a> is the fastest fix.</p>
+
+          <h2 id="t4" data-i18n="terms.s4.t">No guarantees</h2>
+          <p data-i18n="terms.s4.p">We don't guarantee you'll pass the official test. We don't guarantee the app works perfectly on every device on every day. We do guarantee we'll keep trying.</p>
+
+          <h2 id="t5" data-i18n="terms.s5.t">Liability</h2>
+          <div class="callout callout--blue">
+            <p data-i18n="terms.s5.callout"><b>Short version:</b> the app is provided "as is", to the maximum extent permitted by Swedish law. We are not liable for missed deadlines, denied applications, fika injuries, or any decision an actual government agency makes about your case.</p>
+          </div>
+
+          <h2 id="t6" data-i18n="terms.s6.t">Changes</h2>
+          <p data-i18n="terms.s6.p">If these terms change materially, the effective date above will change and the app will surface a notice on next launch. Continued use after that means you accept the new terms.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================ SOURCES -->
+<main data-screen-label="05 Sources" data-page="/sources">
+  <section class="doc">
+    <div class="doc__inner">
+      <div class="doc__back"><a href="#/" data-i18n="doc.back">← Back to home</a></div>
+      <div class="doc__kicker" data-i18n="sources.kicker">Sources &amp; method</div>
+      <h1>
+        <span data-i18n="sources.h1a">Where the answers</span>
+        <em data-i18n="sources.h1b">actually come from.</em>
+      </h1>
+      <p class="doc__lede" data-i18n="sources.lede">
+        Every question in the app is grounded in a public source. We don't have a back-channel
+        to UHR. We just read carefully and cite obsessively.
+      </p>
+      <div class="doc__meta">
+        <span><b data-i18n="sources.meta1.b">Primary sources</b> <span data-i18n="sources.meta1.v">8</span></span>
+        <span><b data-i18n="sources.meta2.b">Last review</b> <span data-i18n="sources.meta2.v">2026-05</span></span>
+        <span><b data-i18n="sources.meta3.b">Open data</b> <span data-i18n="sources.meta3.v">CC-licensed where possible</span></span>
+      </div>
+
+      <div class="doc__body">
+        <aside class="doc__nav">
+          <h5 data-i18n="sources.toc">Categories</h5>
+          <ol>
+            <li><a href="#src1" data-i18n="sources.s1.t">Government</a></li>
+            <li><a href="#src2" data-i18n="sources.s2.t">Education</a></li>
+            <li><a href="#src3" data-i18n="sources.s3.t">Statistics</a></li>
+            <li><a href="#src4" data-i18n="sources.s4.t">History &amp; culture</a></li>
+            <li><a href="#src5" data-i18n="sources.s5.t">Editorial method</a></li>
+          </ol>
+        </aside>
+        <div class="doc__main">
+          <h2 id="src1" data-i18n="sources.s1.t">Government &amp; constitutional</h2>
+          <ul>
+            <li data-i18n="sources.s1.li1"><b>Riksdagen</b> — the four basic laws (grundlagarna), parliamentary procedure, voting rules.</li>
+            <li data-i18n="sources.s1.li2"><b>Regeringen.se</b> — government structure, ministerial roles.</li>
+            <li data-i18n="sources.s1.li3"><b>Migrationsverket</b> — citizenship requirements, residence permits, the legal path.</li>
+          </ul>
+
+          <h2 id="src2" data-i18n="sources.s2.t">Education &amp; civic curriculum</h2>
+          <ul>
+            <li data-i18n="sources.s2.li1"><b>Skolverket</b> — civic-knowledge framework and curriculum guidance.</li>
+            <li data-i18n="sources.s2.li2"><b>UHR</b> — the agency administering the official test. Public documentation only.</li>
+          </ul>
+
+          <h2 id="src3" data-i18n="sources.s3.t">Statistics &amp; facts</h2>
+          <ul>
+            <li data-i18n="sources.s3.li1"><b>SCB (Statistiska centralbyrån)</b> — demographics, population, labour-market figures.</li>
+            <li data-i18n="sources.s3.li2"><b>Folkhälsomyndigheten</b> — public-health and welfare references.</li>
+          </ul>
+
+          <h2 id="src4" data-i18n="sources.s4.t">History, geography &amp; culture</h2>
+          <ul>
+            <li data-i18n="sources.s4.li1"><b>Nationalencyklopedin</b> — historical timelines and biographies.</li>
+            <li data-i18n="sources.s4.li2"><b>Institutet för språk och folkminnen</b> — traditions, dialects, calendar customs.</li>
+          </ul>
+
+          <h2 id="src5" data-i18n="sources.s5.t">Editorial method</h2>
+          <div class="callout">
+            <p><b data-i18n="sources.s5.callout.b">House rule:</b> <span data-i18n="sources.s5.callout.p">if it can't be cited to a public source, it doesn't make the question bank.</span></p>
+          </div>
+          <p data-i18n="sources.s5.p">Every question goes through draft → source-check → plain-language pass → native-Swedish review. When a source updates (a new election, a law amendment, a renamed agency), the affected questions get a refresh tag and re-enter review.</p>
+          <p data-i18n="sources.s5.p2">See a question that disagrees with its cited source? <a href="#/support">Tell us</a> — corrections are usually live within a week.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================ FOOTER (every page) -->
+<footer class="footer">
+  <div class="footer__inner">
+
+    <div class="footer__hero">
+      <div class="footer__brag">
+        <a class="footer__brand" href="#/">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span data-i18n="brand">Sveriges Medborgartest</span>
+        </a>
+        <h3 class="footer__tagline">
+          <span data-i18n="footer.t1">Pass the test.</span><br />
+          <em data-i18n="footer.t2">Brag at midsommar.</em>
+        </h3>
+        <p class="footer__honest" data-i18n="footer.honest.p">
+          Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government.
+        </p>
+      </div>
+
+      <svg class="footer__scene" viewBox="0 0 600 320" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="ftr-aurora-a" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(78,220,170,.55)" />
+            <stop offset="100%" stop-color="rgba(78,220,170,0)" />
+          </linearGradient>
+          <linearGradient id="ftr-aurora-b" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(180,140,220,.42)" />
+            <stop offset="100%" stop-color="rgba(180,140,220,0)" />
+          </linearGradient>
+          <radialGradient id="ftr-sun">
+            <stop offset="0%"  stop-color="#fecc00" />
+            <stop offset="100%" stop-color="#b8860a" stop-opacity=".0" />
+          </radialGradient>
+        </defs>
+        <ellipse cx="200" cy="0"  rx="240" ry="120" fill="url(#ftr-aurora-a)" />
+        <ellipse cx="430" cy="20" rx="180" ry="80"  fill="url(#ftr-aurora-b)" />
+        <g fill="#ffffff" opacity=".55">
+          <circle cx="60"  cy="40" r="1"/>
+          <circle cx="118" cy="22" r=".8"/>
+          <circle cx="198" cy="62" r="1"/>
+          <circle cx="276" cy="32" r=".8"/>
+          <circle cx="332" cy="14" r=".8"/>
+          <circle cx="378" cy="50" r="1"/>
+          <circle cx="440" cy="22" r="1"/>
+          <circle cx="524" cy="38" r=".8"/>
+          <circle cx="80"  cy="88" r=".6"/>
+          <circle cx="160" cy="100" r=".8"/>
+        </g>
+        <!-- low sun behind forest -->
+        <circle cx="490" cy="170" r="34" fill="url(#ftr-sun)" />
+        <!-- forest silhouette -->
+        <g fill="#040d18">
+          <path d="M 40 240 L 60 180 L 50 188 L 64 150 L 56 158 L 70 118 L 84 158 L 76 150 L 90 188 L 80 180 L 100 240 Z"/>
+          <path d="M 130 240 L 144 200 L 138 206 L 148 170 L 142 176 L 152 140 L 162 176 L 156 170 L 166 206 L 160 200 L 174 240 Z"/>
+          <path d="M 195 240 L 207 208 L 202 213 L 211 188 L 207 192 L 215 170 L 222 192 L 218 188 L 226 213 L 222 208 L 234 240 Z"/>
+          <path d="M 250 240 L 268 195 L 260 203 L 274 160 L 266 168 L 280 126 L 294 168 L 286 160 L 300 203 L 292 195 L 310 240 Z"/>
+          <path d="M 338 240 L 352 200 L 346 206 L 356 170 L 350 176 L 360 140 L 370 176 L 364 170 L 374 206 L 368 200 L 382 240 Z"/>
+          <path d="M 540 240 L 548 215 L 544 219 L 550 198 L 546 202 L 552 178 L 558 202 L 554 198 L 560 219 L 556 215 L 564 240 Z"/>
+        </g>
+        <!-- maypole in clearing -->
+        <line x1="425" y1="158" x2="425" y2="240" stroke="#040d18" stroke-width="3"/>
+        <line x1="411" y1="172" x2="439" y2="172" stroke="#040d18" stroke-width="2"/>
+        <circle cx="411" cy="186" r="6" fill="none" stroke="#1e6a40" stroke-width="1.6"/>
+        <circle cx="439" cy="186" r="6" fill="none" stroke="#1e6a40" stroke-width="1.6"/>
+        <g fill="#fecc00">
+          <circle cx="411" cy="170" r="2.4"/>
+          <circle cx="439" cy="170" r="2.4"/>
+          <circle cx="425" cy="160" r="2.6"/>
+        </g>
+        <!-- lake -->
+        <path d="M 0 240 L 600 240 L 600 320 L 0 320 Z" fill="#02121f"/>
+        <g stroke="#0a3050" stroke-width="1" opacity=".6">
+          <line x1="60"  y1="262" x2="180" y2="262"/>
+          <line x1="240" y1="278" x2="360" y2="278"/>
+          <line x1="420" y1="266" x2="540" y2="266"/>
+          <line x1="120" y1="296" x2="220" y2="296"/>
+          <line x1="380" y1="300" x2="500" y2="300"/>
+        </g>
+        <!-- dala horse on the shore -->
+        <g transform="translate(78,236) scale(.42)">
+          <path d="M12 56Q6 56 6 64Q6 70 12 70Q18 66 22 62Z" fill="#c92733"/>
+          <path d="M18 56L70 56Q76 56 76 60L76 68Q76 70 74 70L22 70Q18 70 18 68Z" fill="#c92733"/>
+          <path d="M64 50L80 22Q84 18 88 24L84 28L68 56Z" fill="#c92733"/>
+          <path d="M80 20Q88 18 92 20L92 28Q88 32 82 30L76 26Z" fill="#c92733"/>
+          <path d="M84 16L86 12L90 18Z" fill="#c92733"/>
+          <rect x="58" y="68" width="6" height="22" fill="#c92733"/>
+          <rect x="48" y="68" width="6" height="22" fill="#c92733"/>
+          <rect x="34" y="68" width="6" height="22" fill="#c92733"/>
+          <rect x="24" y="68" width="6" height="22" fill="#c92733"/>
+          <rect x="38" y="56" width="22" height="10" fill="#006aa7"/>
+        </g>
+      </svg>
+    </div>
+
+    <nav class="footer__cols" aria-label="Footer">
+      <div>
+        <h4 data-i18n="footer.h.study">Study</h4>
+        <ul>
+          <li><a href="#/" data-i18n="nav.home">Home</a></li>
+          <li><a href="#/practice" data-i18n="nav.practice">Practice</a></li>
+          <li><a href="#/ebook" data-i18n="nav.ebook">Ebook</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="footer.h.legal">Fine print</h4>
+        <ul>
+          <li><a href="#/privacy" data-i18n="nav.privacy">Privacy</a></li>
+          <li><a href="#/terms" data-i18n="nav.terms">Terms</a></li>
+          <li><a href="#/sources" data-i18n="nav.sources">Sources</a></li>
+          <li><a href="#/support" data-i18n="nav.support">Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="footer.h.about">About</h4>
+        <p data-i18n="footer.about.p">An independent study tool, built by people who've taken the test themselves. Free for the core 500 questions, always.</p>
+      </div>
+      <div>
+        <h4 data-i18n="footer.h.fika">Mood</h4>
+        <p class="footer__fikahint" data-i18n="footer.fika.p">Type <kbd>fika</kbd> anywhere for a coffee break.</p>
+      </div>
+    </nav>
+
+    <div class="footer__bottom">
+      <span data-i18n="footer.copyright">© 2026 Sveriges Medborgartest. Made with kanelbullar in Stockholm.</span>
+      <span data-i18n="footer.fika">Lagom built · Fika tested</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================ SETTINGS PANEL -->
+<div class="modal" id="settings-modal" hidden role="dialog" aria-modal="true" aria-labelledby="settings-title">
+  <div class="modal__backdrop" data-close="settings"></div>
+  <div class="modal__panel modal__panel--settings">
+    <header class="modal__head">
+      <h2 id="settings-title" class="modal__title">
+        <span data-i18n="settings.title">Settings</span>
+      </h2>
+      <button class="modal__close" data-close="settings" aria-label="Close">✕</button>
+    </header>
+    <div class="modal__body">
+
+      <div class="set-group">
+        <h3 class="set-group__h" data-i18n="settings.theme">Theme</h3>
+        <div class="set-segment" data-set="theme">
+          <button data-val="light"><span data-i18n="settings.theme.light">Light</span></button>
+          <button data-val="dark"><span data-i18n="settings.theme.dark">Dark</span></button>
+          <button data-val="auto"><span data-i18n="settings.theme.auto">Auto</span></button>
+        </div>
+      </div>
+
+      <div class="set-group">
+        <h3 class="set-group__h" data-i18n="settings.palette">Color palette</h3>
+        <p class="set-group__sub" data-i18n="settings.palette.sub">Pick a Swedish flavour.</p>
+        <div class="set-palettes" data-set="palette">
+          <button data-val="flag" class="set-palette">
+            <span class="set-palette__chips"><i style="background:#006aa7"></i><i style="background:#fecc00"></i><i style="background:#faf6ec"></i><i style="background:#0b1f33"></i></span>
+            <span class="set-palette__name">Sverigeflaggan</span>
+            <span class="set-palette__hint" data-i18n="palette.flag.hint">Blue + gold, the original</span>
+          </button>
+          <button data-val="midsommar" class="set-palette">
+            <span class="set-palette__chips"><i style="background:#3e7c52"></i><i style="background:#f4c542"></i><i style="background:#fbf6e6"></i><i style="background:#1d3324"></i></span>
+            <span class="set-palette__name">Midsommar</span>
+            <span class="set-palette__hint" data-i18n="palette.midsommar.hint">Pasture green + flower yellow</span>
+          </button>
+          <button data-val="falu" class="set-palette">
+            <span class="set-palette__chips"><i style="background:#8c1a2b"></i><i style="background:#e9b94a"></i><i style="background:#fbf3e7"></i><i style="background:#2a0b11"></i></span>
+            <span class="set-palette__name">Falu Rödfärg</span>
+            <span class="set-palette__hint" data-i18n="palette.falu.hint">The red of every Swedish barn</span>
+          </button>
+          <button data-val="skargard" class="set-palette">
+            <span class="set-palette__chips"><i style="background:#2f4a5c"></i><i style="background:#ffd166"></i><i style="background:#f5f2eb"></i><i style="background:#10212c"></i></span>
+            <span class="set-palette__name">Skärgården</span>
+            <span class="set-palette__hint" data-i18n="palette.skargard.hint">Slate sea + low summer sun</span>
+          </button>
+          <button data-val="norrsken" class="set-palette">
+            <span class="set-palette__chips"><i style="background:#2b6a86"></i><i style="background:#9be7c4"></i><i style="background:#0e1726"></i><i style="background:#e8f4ff"></i></span>
+            <span class="set-palette__name">Norrsken</span>
+            <span class="set-palette__hint" data-i18n="palette.norrsken.hint">Northern lights — best with dark theme</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="set-group">
+        <h3 class="set-group__h" data-i18n="settings.buddy">Study buddy</h3>
+        <p class="set-group__sub" data-i18n="settings.buddy.sub">Pick a Swedish companion. They'll cheer you on with tips and trivia.</p>
+        <div class="set-buddies" id="buddy-picker"></div>
+        <label class="set-row">
+          <span data-i18n="settings.buddy.show">Show study buddy</span>
+          <input type="checkbox" data-set="buddyshow" checked />
+        </label>
+      </div>
+
+      <div class="set-group">
+        <h3 class="set-group__h" data-i18n="settings.language">Language</h3>
+        <div class="set-segment" data-set="language">
+          <button data-val="en">English</button>
+          <button data-val="sv">Svenska</button>
+        </div>
+      </div>
+
+      <div class="set-group">
+        <h3 class="set-group__h" data-i18n="settings.text">Text size</h3>
+        <div class="set-segment" data-set="textsize">
+          <button data-val="90"><span data-i18n="settings.text.s">Small</span></button>
+          <button data-val="100"><span data-i18n="settings.text.m">Regular</span></button>
+          <button data-val="115"><span data-i18n="settings.text.l">Large</span></button>
+        </div>
+      </div>
+
+      <div class="set-group">
+        <h3 class="set-group__h" data-i18n="settings.misc">Other</h3>
+        <label class="set-row">
+          <span data-i18n="settings.motion">Reduce motion</span>
+          <input type="checkbox" data-set="motion" />
+        </label>
+        <label class="set-row">
+          <span data-i18n="settings.aurora">Aurora in dark mode</span>
+          <input type="checkbox" data-set="aurora" checked />
+        </label>
+        <label class="set-row">
+          <span data-i18n="settings.flag">Show flag cross in hero</span>
+          <input type="checkbox" data-set="flagcross" checked />
+        </label>
+        <button class="set-link" id="reset-consent" data-i18n="settings.consent.reset">Reset cookie / ad consent…</button>
+      </div>
+
+    </div>
+    <footer class="modal__foot">
+      <span class="modal__hint" data-i18n="settings.savedHint">Changes save automatically.</span>
+      <button class="btn btn--ink btn--sm" data-close="settings" data-i18n="settings.done">Done</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ============================================================ SIGN-IN MODAL -->
+<div class="modal" id="signin-modal" hidden role="dialog" aria-modal="true" aria-labelledby="signin-title">
+  <div class="modal__backdrop" data-close="signin"></div>
+  <div class="modal__panel modal__panel--signin">
+    <button class="modal__close" data-close="signin" aria-label="Close">✕</button>
+    <div class="signin__head">
+      <span class="brand__mark" aria-hidden="true" style="width:46px;height:32px"></span>
+      <h2 id="signin-title" class="signin__title" data-i18n="signin.title">Sync your progress.</h2>
+      <p class="signin__lede" data-i18n="signin.lede">Optional, always free. Sign in to keep streaks, bookmarks, and mistakes across devices. The MVP runs perfectly fine without an account.</p>
+    </div>
+    <div class="signin__providers">
+      <button class="signin__btn signin__btn--google" type="button">
+        <span class="signin__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.92c-.26 1.36-1.04 2.51-2.21 3.28v2.72h3.57c2.09-1.93 3.29-4.76 3.29-8.03z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.72c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.85A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.15A6.6 6.6 0 0 1 5.47 12c0-.75.13-1.47.37-2.15V6.99H2.16A11 11 0 0 0 1 12c0 1.77.42 3.45 1.16 4.94l3.68-2.79z"/><path fill="#EA4335" d="M12 5.39c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.13 14.97 1 12 1A11 11 0 0 0 2.16 7l3.68 2.85C6.71 7.32 9.14 5.39 12 5.39z"/></svg>
+        </span>
+        <span data-i18n="signin.google">Continue with Google</span>
+      </button>
+      <button class="signin__btn signin__btn--apple" type="button">
+        <span class="signin__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.65c-.02-2.18 1.78-3.22 1.86-3.27-1.01-1.48-2.59-1.68-3.16-1.7-1.35-.13-2.63.79-3.31.79-.69 0-1.74-.77-2.86-.75-1.47.02-2.83.85-3.59 2.17-1.53 2.65-.39 6.58 1.1 8.74.73 1.05 1.59 2.24 2.72 2.2 1.1-.05 1.51-.71 2.84-.71 1.33 0 1.71.71 2.87.69 1.19-.02 1.94-1.08 2.66-2.13.84-1.22 1.19-2.41 1.21-2.47-.03-.01-2.32-.89-2.34-3.56zm-2.21-6.55c.6-.74 1.01-1.76.9-2.78-.87.04-1.95.6-2.57 1.33-.55.66-1.04 1.71-.91 2.71.97.08 1.97-.5 2.58-1.26z"/></svg>
+        </span>
+        <span data-i18n="signin.apple">Continue with Apple</span>
+      </button>
+      <div class="signin__or"><span data-i18n="signin.or">or</span></div>
+      <label class="signin__field">
+        <span data-i18n="signin.email">Email</span>
+        <input type="email" placeholder="you@example.com" />
+      </label>
+      <button class="btn btn--gold btn--full" type="button" data-i18n="signin.magic">Send magic link</button>
+    </div>
+    <p class="signin__fine" data-i18n="signin.fine">By signing in you agree to our <a href="#/terms">terms</a> and <a href="#/privacy">privacy policy</a>. No password — we email a one-time link.</p>
+    <p class="signin__soon" data-i18n="signin.soon"><b>Beta:</b> accounts are rolling out gradually. The app works fully without one.</p>
+  </div>
+</div>
+
+<!-- ============================================================ ANCHOR AD (mobile, dismissible) -->
+<div class="ad-anchor" data-ad-slot="anchor" hidden>
+  <button class="ad-anchor__close" id="ad-anchor-close" aria-label="Close ad">✕</button>
+  <span class="ad-anchor__label" data-i18n="ad.label">Sponsored</span>
+  <div class="ad-anchor__frame">
+    <ins class="adsbygoogle"
+         style="display:block; width:100%; min-height:60px;"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="0000000002"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <div class="ad-anchor__placeholder" data-i18n="ad.anchor.placeholder">Anchor ad slot</div>
+  </div>
+</div>
+
+<!-- ============================================================ COOKIE CONSENT -->
+<div class="consent" id="consent" hidden>
+  <div class="consent__inner">
+    <div class="consent__copy">
+      <b data-i18n="consent.title">Cookies, lagom-style.</b>
+      <span data-i18n="consent.body">We use Google AdSense to show a couple of ads. AdSense sets cookies and may use them for ad personalisation. You can accept all, accept only what's needed, or read the <a href="#/privacy">privacy page</a>.</span>
+    </div>
+    <div class="consent__actions">
+      <button class="btn btn--ghost btn--sm" id="consent-min" data-i18n="consent.min">Necessary only</button>
+      <button class="btn btn--gold btn--sm" id="consent-all" data-i18n="consent.all">Accept all</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ DALA — STUDY BUDDY -->
+<div class="dala-buddy" id="dala-buddy" hidden>
+  <div class="dala-bubble" id="dala-bubble" hidden role="status">
+    <button class="dala-bubble__close" id="dala-bubble-close" aria-label="Close">✕</button>
+    <span class="dala-bubble__name" id="dala-name">Buddy</span>
+    <div class="dala-bubble__msg" id="dala-msg"></div>
+  </div>
+  <div id="dala-figure" role="button" tabindex="0" aria-label="Study buddy"></div>
+</div>
+
+<!-- ============================================================ SCRIPTS -->
+<script src="app.js"></script>
+<script src="fx.js"></script>
+<script src="signin.js"></script>
+<script src="settings.js"></script>
+<script src="buddies.js"></script>
+<script src="extras.js"></script>
+<script src="ebook.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks.jsx"></script>
+
+</body>
+</html>
