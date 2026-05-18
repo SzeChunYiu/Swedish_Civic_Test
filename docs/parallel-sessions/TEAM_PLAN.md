@@ -189,4 +189,6 @@ Practice width parity, then static account-scope before lower-priority work.
 `bab3190`: source expansions have moved canonical content beyond the 705
 questions still in `site/questions.js` (715 at the 15:36 audit). SETUP must sync
 the static bank from current canonical content first, then resume live-deploy
-stale work with dynamic/current count smoke expectations.
+stale work with dynamic/current count smoke expectations. PR #321 added a
+deploy harness but is not live-deploy closure until its 705-count default is
+fixed and production deploy evidence exists.

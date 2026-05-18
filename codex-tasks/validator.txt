@@ -363,3 +363,13 @@ MANAGER-build correction 2026-05-18T15:36+02:00
   frozen 710-question task. DATA-INTEGRITY/SETUP must fetch/rebase, regenerate
   `site/questions.js` from the latest canonical content, and keep count checks
   derived from canonical data.
+
+MANAGER-build review 2026-05-18T15:39+02:00
+- PR #321 / `3a323ff` landed a useful deploy workflow and
+  `scripts/check-live-site.js` harness, but do not close
+  `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` from this evidence. The handoff only
+  tested local assets at 705 questions, `check-live-site` defaults to 705, and
+  no production deploy run/live URL evidence is recorded.
+- Keep `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` first. Its repair must
+  regenerate `site/questions.js` from current canonical content and fix the
+  live-smoke count expectation so it cannot pass or require stale 705 output.

@@ -61,7 +61,8 @@ second, Practice width parity third, account-scope fourth.
 
 1. `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`
    - Scope: `site/questions.js`, static question-bank generator/parity tests,
-     and any focused static/live smoke count assertions.
+     `scripts/check-live-site.js`, `scripts/check-live-site.test.js`, and any
+     focused static/live smoke count assertions.
    - Required behavior: regenerate the deployed static bank from current
      canonical content so all latest generated variants are present and static
      site question count matches the canonical published count. Do not hard-code
@@ -84,6 +85,11 @@ second, Practice width parity third, account-scope fourth.
    - Required gates: deploy run or Vercel evidence for current main, live smoke
      assertions for the checks above, relevant syntax/build checks for changed
      files, `npm run test:ownership`, and `git diff --check`.
+   - Current caveat: PR #321 / `3a323ff` landed a useful deploy workflow and
+     live-smoke harness, but it is not accepted as live-deploy closure because
+     there is no production deploy evidence yet and the live-smoke default still
+     accepts/requires 705 questions. The static-bank repair above must fix that
+     count behavior before this atom can close.
 
 3. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
    - Scope: `site/index.html`, `site/styles.css`, and focused site layout
