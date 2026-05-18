@@ -42,8 +42,8 @@ const GENERATED_VARIANT_CONVENTIONS = [
 ];
 const UNKNOWN_OPTION = {
   id: 'unknown',
-  textSv: 'Det går inte att avgöra av materialet',
-  textEn: 'It cannot be determined from the material',
+  textSv: 'Alla alternativen är korrekta',
+  textEn: 'All of the options are correct',
 };
 const SOMETIMES_OPTION = {
   id: 'sometimes',
@@ -137,6 +137,10 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bTrue or false:.*\bOne reason is that so\b/i,
   /\bTrue or false:.*\bhave\s+[^.?!]*\bin common\b/i,
   /\bSant eller falskt:.*\bhar\s+[^.?!]*\bgemensamt\b/i,
+];
+const QUESTION_GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [
+  /\bmaterialet\b/i,
+  /\bfrom\s+the\s+material\b/i,
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
@@ -3233,6 +3237,14 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findGeneratedOptionSourceMaterialReference(question) {
+  const text = (question.options || [])
+    .flatMap((option) => [option.textSv, option.textEn])
+    .join(' ');
+
+  return QUESTION_GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -4896,6 +4908,7 @@ let chapterGenerationParityValidated = 0;
 let generatedSourceMetadataParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
+let generatedOptionSourceMaterialTextValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
@@ -11547,6 +11560,7 @@ function validateGeneratedAnswerTemplateParity() {
 
       let variantIsValid = true;
       const expected = expectedGeneratedAnswerShape(sourceQuestion, variantIndex);
+      const sourceMaterialOption = findGeneratedOptionSourceMaterialReference(variant);
 
       if (!jsonEqual(variant.options, expected.options)) {
         variantIsValid = false;
@@ -11555,6 +11569,12 @@ function validateGeneratedAnswerTemplateParity() {
       if (variant.correctOptionId !== expected.correctOptionId) {
         variantIsValid = false;
         fail(`${label} correctOptionId does not match generated answer template`);
+      }
+      if (sourceMaterialOption) {
+        variantIsValid = false;
+        fail(`${label} option text uses source-material wording`);
+      } else {
+        generatedOptionSourceMaterialTextValidated += 1;
       }
 
       if (variantIsValid) generatedAnswerTemplateParityValidated += 1;
@@ -12359,6 +12379,7 @@ console.log(
       generatedSourceMetadataParityValidated,
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
+      generatedOptionSourceMaterialTextValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
       publishedQuestionTypesValidated,

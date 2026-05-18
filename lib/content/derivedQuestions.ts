@@ -2,8 +2,8 @@ import type { PracticeQuestion, QuestionOption } from '../../types/content';
 
 const UNKNOWN_OPTION: QuestionOption = {
   id: 'unknown',
-  textSv: 'Det går inte att avgöra av materialet',
-  textEn: 'It cannot be determined from the material',
+  textSv: 'Alla alternativen är korrekta',
+  textEn: 'All of the options are correct',
 };
 
 const SOMETIMES_OPTION: QuestionOption = {

@@ -117,6 +117,12 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
 
   assert.ok(singleChoiceVariants.length > 0);
   assert.ok(singleChoiceVariants.every((question) => question.options.length === 4));
+  const generatedOptionText = singleChoiceVariants
+    .flatMap((question) => question.options.flatMap((option) => [option.textSv, option.textEn]))
+    .join('\n');
+  assert.match(generatedOptionText, /Alla alternativen är korrekta/);
+  assert.match(generatedOptionText, /All of the options are correct/);
+  assert.doesNotMatch(generatedOptionText, /materialet|from the material/i);
   singleChoiceVariants.forEach((question) => {
     assert.deepEqual(
       question.options.map((option) => option.id),
