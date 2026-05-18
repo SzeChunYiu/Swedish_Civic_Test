@@ -132,8 +132,107 @@ Accepted P0 SETUP atoms:
       because `node_modules` was absent, then passed after dependency linking;
       broad `npm run test:build-config` hung in this temp environment and is
       not counted as manager acceptance evidence.
+15. `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1` accepted for the original
+    Practice-feedback and Mock-review scope via commit `1db08b3`.
+    - Clean manager verification on current `origin/main` `c9a3074` passed
+      `npm run test:static-site-question-feedback` 2/2,
+      `node --test tests/content-static-site-source-citation-parity.test.js`
+      3/3, `npm run validate:content`, `npm run typecheck -- --pretty false`,
+      `npm run lint`, `npm run test:ownership`, `node --check` for
+      `site/app.js`, `site/practice.js`, and
+      `scripts/static-site-question-feedback.test.js`, plus `git diff --check
+      1db08b3^..1db08b3`. Keep the focused active-Mock
+      question disclaimer follow-up open below; this acceptance does not close
+      every question-screen disclaimer gap.
+16. `REVIEWER-SITE-ANSWER-SHUFFLE-1` accepted via PR #515 / `cac0c85` plus
+    handoff PR #517 / `c9a3074`.
+    - Clean manager verification on current `origin/main` `c9a3074` passed
+      `npm run test:static-site-answer-shuffle` 4/4, `npm run
+      test:answer-shuffle` 7/7, `npm run validate:content` at 720 questions
+      with `answerShuffleDistributionParityValidated:true` and
+      `staticSiteQuestionBankParityValidated:true`, `npm run typecheck --
+      --pretty false`, `npm run lint`, `npm run test:ownership`, `node
+      --check` for `site/app.js`, `site/practice.js`, and
+      `scripts/static-site-answer-shuffle.test.js`, and `git diff --check
+      cac0c85^..cac0c85` all exit 0.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
+
+1. `REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1`
+   - Scope: deployed static `site/` active Mock exam question surface before
+     submission.
+   - Required behavior: every active Mock exam question screen must show the
+     independent-study / not-a-real-exam disclaimer alongside the visible source
+     citation, not only after submission in the review accordion.
+   - Required gates: focused static browser or DOM guard proving an active
+     `#/mock?run=1` question renders both source and disclaimer before
+     submission; regression coverage must keep existing Practice feedback and
+     Mock review citation/disclaimer checks green; `node --check` for changed
+     `site/` scripts; `npm run validate:content`; typecheck; lint; ownership;
+     targeted Prettier/diff checks; journal handoff; PR/merge evidence.
+   - Reviewer evidence: after commit `1db08b3`, Practice feedback and Mock
+     review are green, but the active Mock exam question surface still reported
+     `hasSource:true` and `hasDisclaimer:false`.
+
+2. `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`
+   - Scope: deployed static `site/` Settings language changes while a Practice
+     chapter quiz or Mock exam is active.
+   - Required behavior: changing language through Settings must immediately
+     rerender the active Practice question surface and Mock landing/exam/result
+     surfaces, not only save `localStorage` or update global chrome. The
+     Settings path and the existing inline language controls must share the
+     same rerender behavior.
+   - Required gates: static browser guard for Settings EN-to-SV on
+     `#/practice?c=1` and `#/mock?run=1`, proving active question/UI labels
+     switch language without a full reload; `node --check` for changed `site/`
+     scripts; typecheck; lint; ownership; targeted Prettier/diff checks;
+     journal handoff; PR/merge evidence.
+   - Reviewer evidence: Settings -> Language -> Svenska set `{doc:"sv",
+     saved:"sv"}`, but active Practice still showed `Where is Sweden located?`
+     plus English answers, and active Mock still showed `MOCK EXAM`,
+     `TIME LEFT`, `Submit`, and English navigation labels.
+
+3. `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`
+   - Scope: deployed static `site/` completed Practice result breakdown.
+   - Required behavior: Practice completion result labels must be localized and
+     spaced in Swedish and English; the Swedish result must not render
+     hardcoded `score` or glued text such as `70%score`.
+   - Required gates: static browser or DOM guard for completed Practice results
+     in `sv` and `en`, `node --check` for changed `site/` scripts, typecheck,
+     lint, ownership, targeted Prettier/diff checks, journal handoff, and
+     PR/merge evidence.
+   - Reviewer evidence: Swedish `#/practice?c=mix` completion rendered rows
+     `["7Rätt","3Fel","70%score"]` with `hasEnglishScore:true`.
+
+4. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
+   - Scope: deployed static `site/` mobile header/navigation at <=390px width.
+   - Required behavior: Practice, Mock exam, Ebook, Support, and Settings must
+     be reachable without horizontal overflow or hidden 0x0 nav links.
+   - Required gates: static mobile viewport guard proving required destinations
+     are visible or reachable through an accessible menu at <=390px width, no
+     document/body horizontal overflow, `node --check` for changed `site/`
+     scripts, typecheck, lint, ownership, targeted Prettier/diff checks,
+     journal handoff, and PR/merge evidence.
+   - Reviewer evidence: current-main mobile smoke measured 448px document/body
+     scroll width in a 390px viewport, visible nav only `Home` and `Practice`,
+     hidden `Mock exam`, `Ebook`, and `Support`, and no menu button.
+
+5. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
+   - Scope: deployed static `site/` user-visible question-count/product-count
+     copy in `site/index.html`, `site/i18n-extras.js`, and any related static
+     copy surface.
+   - Required behavior: visible copy must not promise a stale "core 500"
+     question set while `site/questions.js` exports 720 questions. Prefer
+     deriving count copy from the static bank or using non-numeric wording that
+     cannot drift across localized variants.
+   - Required gates: static copy guard comparing visible count claims against
+     `window.SMT_QUESTIONS.length` or rejecting stale hardcoded counts, static
+     question-bank parity, `node --check` for changed `site/` scripts,
+     typecheck, lint, ownership, targeted Prettier/diff checks, journal handoff,
+     and PR/merge evidence.
+   - Reviewer evidence: current static site exports 720 questions, but the
+     footer still says "Free for the core 500 questions, always." and
+     `site/i18n-extras.js` repeats `500` in extra-language footer strings.
 
 MANAGER-build note 2026-05-18T15:25+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
@@ -350,59 +449,12 @@ or `lib/supabase.ts`, and the native account-scope guard plus router,
 architecture, compliance, content, lint, monetization, ownership, and parity
 checks passed as recorded above. Do not duplicate this SETUP atom.
 
-Active unblocked P0 SETUP source atoms while live deploy is externally blocked:
-
-3. `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1`
-   - Scope: deployed static `site/` Practice and Mock review question feedback.
-   - Required behavior: static Practice feedback and Mock result review must
-     render localized UHR source citations from `q.source` and the independent
-     study / not-a-real-exam disclaimer for each reviewed question. The copy
-     must match the product stance used by the app question flows and must not
-     claim official authority.
-   - Required gates: focused static browser or DOM guard proving the citation
-     and disclaimer appear after answering Practice and inside Mock review;
-     `node --check` for changed `site/` scripts; static question-bank parity if
-     `site/questions.js` changes; `npm run validate:content`; typecheck;
-     ownership; targeted Prettier/diff checks; journal handoff; PR/merge
-     evidence.
-   - Reviewer evidence: `site/questions.js` carries `q.source`, but
-     `site/app.js`/`site/practice.js` feedback renders question, answer, and
-     `q.why` only. Local Chrome against `site/` showed
-     `practiceAfterHasCitation:false`, `practiceAfterHasDisclaimer:false`,
-     `mockReviewHasCitation:false`, and `mockReviewHasDisclaimer:false`.
-
-4. `REVIEWER-SITE-ANSWER-SHUFFLE-1`
-   - Scope: deployed static `site/` Practice and Mock option display, scoring,
-     and review.
-   - Required behavior: static Practice and Mock must not render answer options
-     in stored bank order for single-choice questions. Add deterministic
-     per-session/per-question answer-option shuffling, remap scoring/review to
-     the displayed order, and keep true/false ordering stable if the worker
-     documents that product decision.
-   - Required gates: static-site guard rejecting correct-position concentration
-     above 35% for single-choice display order; focused Practice and Mock
-     runtime tests proving shuffled labels score and review correctly; `node
-     --check` for changed `site/` scripts; typecheck; ownership; targeted
-     Prettier/diff checks; journal handoff; PR/merge evidence.
-   - Reviewer evidence: direct `site/questions.js` VM load counted 705 static
-     questions with answer indexes `[533,160,12,0]`, so slot A is correct for
-     75.6% of the static bank. `site/app.js` and `site/practice.js` both render
-     `q.opts.map(...)` in stored order.
-
-5. `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`
-   - Scope: deployed static `site/` Settings language changes while a Practice
-     chapter quiz or Mock exam is active.
-   - Required behavior: changing language through Settings must immediately
-     rerender the active Practice question surface and Mock landing/exam/result
-     surfaces, not only save `localStorage` or update global chrome. The
-     Settings path and the existing inline language controls must share the
-     same rerender behavior.
-   - Required gates: static browser guard for Settings EN-to-SV on
-     `#/practice?c=1` and `#/mock?run=1`, proving active question/UI labels
-     switch language without a full reload; `node --check` for changed `site/`
-     scripts; typecheck; ownership; targeted Prettier/diff checks; journal
-     handoff; PR/merge evidence.
-   - Reviewer evidence: Settings -> Language -> Svenska set `{doc:"sv",
-     saved:"sv"}`, but active Practice still showed `Where is Sweden located?`
-     plus English answers, and active Mock still showed `MOCK EXAM`,
-     `TIME LEFT`, `Submit`, and English navigation labels.
+MANAGER-build acceptance 2026-05-18T19:05+02:00:
+`REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1` is accepted for its original
+Practice-feedback and Mock-review scope via `1db08b3`, and
+`REVIEWER-SITE-ANSWER-SHUFFLE-1` is accepted via PR #515 / `cac0c85` plus
+handoff PR #517 / `c9a3074`. Do not duplicate either source atom. The active
+SETUP/site order is now the active-Mock question disclaimer follow-up,
+Settings language rerender, Practice result i18n, then mobile nav reachability;
+question-count copy follows those P0 surface defects. Live deploy freshness
+remains externally blocked on production deploy capacity.
