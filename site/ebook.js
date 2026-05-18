@@ -1,6 +1,6 @@
 /* Sveriges Medborgartest — Ebook reader
-   Intro + 12 study chapters with EN reader text and SV study briefs.
-   Hash: #/ebook?c=intro|1|2|...|12
+   Intro + 13 study chapters with EN reader text and SV study briefs.
+   Hash: #/ebook?c=intro|1|2|...|13
 */
 
 (function () {
@@ -516,9 +516,57 @@
         ),
       },
     },
+
+    "13": {
+      kicker: { en: "Chapter 13 · Traditions", sv: "Kapitel 13 · Traditioner" },
+      title:  { en: "Traditions,", sv: "Traditioner," },
+      title_em: { en: "holidays, and change.", sv: "högtider och förändring." },
+      lede: {
+        en: "Swedish traditions are not museum pieces. Some are old, some are borrowed, and most are just ways people mark the year together.",
+        sv: "Svenska traditioner är inte museiföremål. Vissa är gamla, vissa har kommit hit senare, och de flesta hjälper människor att känna igen året tillsammans.",
+      },
+      body: {
+        en: `
+          <h2>Traditions change</h2>
+          <p>A tradition is a habit shared by a group: a holiday, a song, food, clothes, a ceremony, or a way to gather. Traditions can be old without being frozen. People move, families mix, and new customs become part of everyday Sweden.</p>
+          <p>That is why this chapter is not a list of "real" and "not real" Swedishness. It is a calendar of common reference points: the holidays and rituals that appear in school, work, public life, and civic-study material.</p>
+          <h2>National Day and civic ceremonies</h2>
+          <p>Sweden's National Day is 6 June. It is connected to Gustav Vasa's election as king in 1523 and the 1809 Instrument of Government. Today flags are raised, speeches are held, and many municipalities welcome new Swedish citizens in ceremonies.</p>
+          <h2>Spring and summer</h2>
+          <ul>
+            <li><b>Easter</b> falls in March or April and has Christian roots, though many people celebrate it as a family and spring holiday.</li>
+            <li><b>Walpurgis Night</b>, 30 April, often means bonfires and songs welcoming spring.</li>
+            <li><b>First of May</b> is International Workers' Day, marked by demonstrations and political speeches.</li>
+            <li><b>Midsummer Eve</b> is always a Friday between 19 and 25 June, with outdoor gatherings, flower wreaths, a midsummer pole, herring, new potatoes, and strawberries.</li>
+          </ul>
+          <h2>Autumn and winter</h2>
+          <ul>
+            <li><b>All Saints' Day</b> is when many people light candles at graves to remember relatives and friends who have died.</li>
+            <li><b>Advent</b> is the four Sundays before Christmas Day. Many homes use Advent candles, stars, or calendars.</li>
+            <li><b>Lucia</b>, 13 December, is about light in the darkest part of the year, often with processions, candles, and singing.</li>
+            <li><b>Christmas</b> has Christian roots and is also a major family holiday. In Sweden the main celebration is usually Christmas Eve, 24 December.</li>
+            <li><b>New Year's Eve</b>, 31 December, is commonly celebrated with dinners, parties, and fireworks at midnight.</li>
+          </ul>
+          <h2>New traditions</h2>
+          <p>Migration has added more visible traditions to Swedish public life. Eid al-Fitr, Nouruz, Newroz, Diwali, and other celebrations may appear in schools, workplaces, neighbourhoods, and city events. The important pattern is simple: traditions can travel and adapt.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>National Day: June 6 · Walpurgis Night: April 30 · Midsummer Eve: Friday between June 19 and 25 · Lucia: December 13 · Christmas Eve: December 24.</p></div>
+        `,
+        sv: svStudyBrief(
+          [
+            "Traditioner är vanor och högtider som människor delar. De kan vara gamla, nya, religiösa, sekulära, lokala eller komma från människor som flyttat till Sverige.",
+            "Nationaldagen firas den 6 juni. Dagen kopplas till Gustav Vasa 1523 och 1809 års regeringsform, och många kommuner välkomnar nya medborgare.",
+            "Året innehåller många återkommande högtider: påsk, valborg, första maj, midsommar, alla helgons dag, advent, lucia, jul och nyår.",
+            "Många kristna högtider är också kultur- och familjehögtider för personer som inte ser sig som religiösa.",
+            "Nya traditioner, till exempel id al-fitr, Nouruz och Newroz, visar att traditioner kan tas med, delas och förändras.",
+          ],
+          "Nationaldag: 6 juni · Valborg: 30 april · Midsommarafton: fredag 19-25 juni · Lucia: 13 december · Julafton: 24 december.",
+          "Läs kapitlet tillsammans med övningen för traditioner och högtider. Datum, handlingar och vad högtiderna betyder är vanligare än detaljfrågor om exakt hur varje familj firar.",
+        ),
+      },
+    },
   };
 
-  const ORDER = ["intro", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+  const ORDER = ["intro", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
 
   function getLang() {
     try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
@@ -542,6 +590,7 @@
     "10": { href: "#/practice?c=11", en: "Practice EU and world", sv: "Öva EU och omvärld" },
     "11": { href: "#/practice?c=mix", en: "Practice mixed questions", sv: "Öva blandade frågor" },
     "12": { href: "#/mock", en: "Start mock exam", sv: "Starta provexempel" },
+    "13": { href: "#/practice?c=13", en: "Practice traditions", sv: "Öva traditioner" },
   };
   function practiceLink(id) {
     return PRACTICE_LINKS[id] || { href: "#/practice", en: "Open practice", sv: "Öppna övning" };
@@ -577,7 +626,7 @@
     const prev = idx > 0 ? ORDER[idx - 1] : null;
     const next = idx < ORDER.length - 1 ? ORDER[idx + 1] : null;
     const practice = practiceLink(id);
-    const progressLabel = id === "intro" ? (sv ? "Guide" : "Guide") : `${idx} / 12`;
+    const progressLabel = id === "intro" ? (sv ? "Guide" : "Guide") : `${idx} / ${ORDER.length - 1}`;
     const actions = `
       <aside class="ebook__study-actions" aria-label="${sv ? "Nästa steg" : "Next study steps"}">
         <div>
