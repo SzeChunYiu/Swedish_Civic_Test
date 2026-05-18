@@ -195,10 +195,11 @@ fixed and production deploy evidence exists.
 
 2026-05-18T15:52:00+02:00: CEO cycle decision remains HOLD/add-none. Required
 CEO/operating docs were read from the supervisor repo fallback plus this board;
-the requested project-local operating docs remain absent. Current `origin/main`
-is `d86717e`: static-bank drift is accepted via PR #324 / `d4ffd91`,
-live-smoke count derivation is accepted via PR #328 / `11b2b96`, and q108
-landed via `d86717e`. `csup staff --scenario=resume --dry-run` still reports
+the requested project-local operating docs remain absent. Decision baseline
+included q108 on `origin/main` via `d86717e`; `origin/main` then advanced
+through component-only `9023506` before this CEO update merged. Static-bank
+drift is accepted via PR #324 / `d4ffd91`, and live-smoke count derivation is
+accepted via PR #328 / `11b2b96`. `csup staff --scenario=resume --dry-run` still reports
 queued work but all configured LUNARC/remote hosts hold with
 `reason=lunarc_requires_slurm_station`; local tmux shows only
 `civic-content`, so no staffing change and no `--apply`. Active SETUP order is

@@ -112,10 +112,11 @@ Cycle update 2026-05-18T15:52:00+02:00
 Objective: keep the factory on SITE-P0 burn-down. Required CEO/operating docs
 were read earlier this cycle from the supervisor repo fallback plus this board;
 the requested project-local operating docs and `/home/billy/docs/...` CEO path
-were absent. Current `origin/main` is `d86717e`: static site question-bank drift
-is accepted via PR #324 / `d4ffd91`, live-smoke count derivation is accepted via
-PR #328 / `11b2b96`, and q108 landed via `d86717e`. Do not reopen those atoms
-or duplicate q108.
+were absent. Decision baseline included q108 on `origin/main` via `d86717e`;
+`origin/main` then advanced through component-only `9023506` before this CEO
+update merged. Static site question-bank drift is accepted via PR #324 /
+`d4ffd91`, and live-smoke count derivation is accepted via PR #328 /
+`11b2b96`. Do not reopen those atoms or duplicate q108.
 Teams: HOLD/add-none. Live tmux still shows only `_csup_sentinel_` plus
 `civic-content` with six panes. `/home/billy/bin/csup staff --scenario=resume
 --dry-run` reports queued work for configured hosts, but every LUNARC/remote
