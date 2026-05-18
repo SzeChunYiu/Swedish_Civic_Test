@@ -147,16 +147,258 @@
       },
     },
 
-    // Stubs for the rest
-    "4":  { kicker: { en: "Chapter 04 · Work & taxes", sv: "Kapitel 04 · Arbete & skatt" } },
-    "5":  { kicker: { en: "Chapter 05 · Equality", sv: "Kapitel 05 · Jämställdhet" } },
-    "6":  { kicker: { en: "Chapter 06 · Society", sv: "Kapitel 06 · Samhälle" } },
-    "7":  { kicker: { en: "Chapter 07 · Nature", sv: "Kapitel 07 · Natur" } },
-    "8":  { kicker: { en: "Chapter 08 · Culture", sv: "Kapitel 08 · Kultur" } },
-    "9":  { kicker: { en: "Chapter 09 · Money", sv: "Kapitel 09 · Pengar" } },
-    "10": { kicker: { en: "Chapter 10 · EU & world", sv: "Kapitel 10 · EU & världen" } },
-    "11": { kicker: { en: "Chapter 11 · Migration", sv: "Kapitel 11 · Migration" } },
-    "12": { kicker: { en: "Chapter 12 · Mock exam", sv: "Kapitel 12 · Provexempel" } },
+    "4": {
+      kicker: { en: "Chapter 04 · Work & taxes", sv: "Kapitel 04 · Arbete & skatt" },
+      title:  { en: "Work,", sv: "Arbete," },
+      title_em: { en: "taxes, and the welfare state.", sv: "skatt och välfärdsstaten." },
+      lede: {
+        en: "Sweden takes a lot of your salary and gives most of it back. The trick is knowing what it's paying for.",
+        sv: "Sverige tar mycket av din lön och ger tillbaka det mesta. Knepet är att veta vad det går till.",
+      },
+      body: {
+        en: `
+          <h2>The labour market</h2>
+          <p>Salaries and conditions in Sweden are mostly set by <em>collective agreements</em> (kollektivavtal) — negotiated between unions and employer organisations. There is no legal minimum wage, but the agreed minimum in any given sector is usually well above the cost of living.</p>
+          <p>Membership in a union is voluntary. About 65% of workers belong to one. Joining usually includes unemployment insurance (<em>a-kassa</em>).</p>
+          <h2>Taxes</h2>
+          <p>Taxes fund the welfare state. Most people pay roughly 30% of their salary in municipal income tax. People earning above the state-tax threshold (~613 900 SEK in 2024) pay an additional 20% on the income above that line. Capital gains are taxed at 30%. VAT (<em>moms</em>) is 25% on most goods, 12% on food, 6% on books and culture.</p>
+          <h2>Skatteverket</h2>
+          <p>Skatteverket — the Swedish Tax Agency — is also the population registry. Your <em>personnummer</em> (personal number) ties you to taxes, healthcare, schools, and your address. Move? Tell them within a week.</p>
+          <h2>The welfare state</h2>
+          <p>For your taxes you get: tax-funded healthcare (with small fees), schools and university (free for citizens and permanent residents), parental leave (480 days per child, split between parents), unemployment benefit (via your a-kassa), sickness benefit, and a basic state pension.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "5": {
+      kicker: { en: "Chapter 05 · Equality", sv: "Kapitel 05 · Jämställdhet" },
+      title:  { en: "Equality", sv: "Jämställdhet" },
+      title_em: { en: "and the modern household.", sv: "och det moderna hemmet." },
+      lede: {
+        en: "Sweden is a quiet feminist project. The laws are clearer than the dinner-table conversations, but both are worth knowing.",
+        sv: "Sverige är ett tyst feministiskt projekt. Lagarna är tydligare än middagsbordssamtalen — men båda är värda att kunna.",
+      },
+      body: {
+        en: `
+          <h2>Equal in law</h2>
+          <p>The Discrimination Act (<em>diskrimineringslagen</em>, 2008) protects against discrimination on seven grounds: sex, gender identity or expression, ethnicity, religion or belief, disability, sexual orientation, and age. It applies in work, education, healthcare, housing, and public services.</p>
+          <h2>Same-sex marriage and rainbow families</h2>
+          <p>Same-sex marriage has been legal since 2009. Same-sex couples may adopt and access fertility treatment on equal terms. Transgender people may change their legal gender without medical requirements.</p>
+          <h2>Parental leave</h2>
+          <p>480 days per child, of which 90 are reserved for each parent (the "pappamånader") and cannot be transferred. The aim: both parents stay home. A child's first birthday in Sweden is usually celebrated by two slightly-tired adults, not one.</p>
+          <h2>Household responsibilities</h2>
+          <p>Cooking, cleaning, childcare, and household admin are not gendered tasks in Sweden — at least not officially. Surveys show this is the country with the most equal time spent on housework. (Statistics, like teenagers, lie a little.)</p>
+          <h2>Women and work</h2>
+          <p>Women's labour-force participation is among the world's highest (~80%). The gender pay gap is real (~10–12%) but shrinking. Maternal mortality is among the world's lowest.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "6": {
+      kicker: { en: "Chapter 06 · Society", sv: "Kapitel 06 · Samhälle" },
+      title:  { en: "Society, school,", sv: "Samhälle, skola," },
+      title_em: { en: "and healthcare.", sv: "och vård." },
+      lede: {
+        en: "Sweden runs the boring parts of life — school, healthcare, eldercare — through the public sector, and is largely on first-name terms with its bureaucrats.",
+        sv: "Sverige sköter livets tråkiga delar — skola, vård, äldreomsorg — i offentlig regi, och är på förnamn med byråkraterna.",
+      },
+      body: {
+        en: `
+          <h2>School</h2>
+          <p>Compulsory school (<em>grundskolan</em>) is ten years, from age 6 (förskoleklass) through 9th grade. After that, three years of upper secondary (<em>gymnasium</em>) — academic or vocational tracks, both free. University is also free for citizens, EU/EEA residents, and people with a Swedish residence permit.</p>
+          <p>The Education Act guarantees equal access regardless of background, gender, or where you live. Private and "free" schools (<em>friskolor</em>) exist but cannot charge tuition.</p>
+          <h2>Healthcare</h2>
+          <p>Healthcare is mostly tax-funded and runs at the regional level (21 regions). You pay a small fee (typically 100–400 SEK) per visit to a doctor, and prescription drugs and hospital fees are capped per year (the <em>högkostnadsskydd</em>). Children's healthcare is free.</p>
+          <p>1177 is the national health hotline and website. Routine care goes through your <em>vårdcentral</em>; emergencies through <em>akutmottagning</em>; mental and dental care exist but with different fee rules.</p>
+          <h2>Eldercare</h2>
+          <p>The municipality runs eldercare — home help (<em>hemtjänst</em>), special accommodation, and emergency alarms. The principle is the right to live independently for as long as possible; the practice is uneven by municipality.</p>
+          <h2>Social services</h2>
+          <p>Socialtjänsten supports anyone unable to support themselves — financial assistance (försörjningsstöd), child welfare, addiction support, family help. They also have legal obligations to intervene where a child is at risk.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "7": {
+      kicker: { en: "Chapter 07 · Nature", sv: "Kapitel 07 · Natur" },
+      title:  { en: "Nature, climate,", sv: "Natur, klimat," },
+      title_em: { en: "and allemansrätten.", sv: "och allemansrätten." },
+      lede: {
+        en: "Sweden is mostly forest, and the forest is mostly open to you. The rule is simple: don't disturb, don't destroy.",
+        sv: "Sverige är mest skog, och skogen är mest öppen för dig. Regeln är enkel: stör inte, förstör inte.",
+      },
+      body: {
+        en: `
+          <h2>The right of public access (allemansrätten)</h2>
+          <p>Almost any land in Sweden — forest, field, shore — is open to walking, picking berries, swimming, foraging, camping (one night), and quiet enjoyment. It is a custom, not a written law, but it is taken seriously.</p>
+          <p>The catch: <em>"Inte störa, inte förstöra"</em> — do not disturb, do not destroy. You may not enter private gardens or pitch a tent in someone's view. You may not light fires when there's a fire ban. You may not take downed wood for sale, or pick protected species.</p>
+          <h2>Geography</h2>
+          <p>Sweden is the fifth-largest country in Europe. 69% is forest, 9% lake, the rest a mix of mountain, agricultural land, and 35 000 km of coastline (including islands). The longest river is Klarälven–Göta älv (about 720 km). The largest lake is Vänern.</p>
+          <h2>Climate and seasons</h2>
+          <p>Four full seasons, dramatic in the north. Winter is dark; summer has midnight sun above the Arctic Circle. Climate change is making winters warmer and summers wetter; the government has committed to net-zero emissions by 2045.</p>
+          <h2>Recycling and the everyday environment</h2>
+          <p>Sweden recycles obsessively. Glass, metal, paper, plastic, food waste, batteries, and electronics all go to dedicated bins, often at the local <em>återvinningscentral</em>. Bottle and can returns (<em>pant</em>) come back as a small cash refund.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Allemansrätten — the right of public access · Net-zero target year: 2045 · Largest lake: Vänern · Coastline incl. islands: ~35 000 km.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "8": {
+      kicker: { en: "Chapter 08 · Culture", sv: "Kapitel 08 · Kultur" },
+      title:  { en: "Culture, traditions,", sv: "Kultur, traditioner," },
+      title_em: { en: "and the Swedish calendar.", sv: "och svenska kalendern." },
+      lede: {
+        en: "If you don't know when midsummer is, you'll get a polite explanation. If you don't know what fika is, you'll get one whether you want it or not.",
+        sv: "Vet du inte när midsommar är får du en artig förklaring. Vet du inte vad fika är får du en — vare sig du vill eller inte.",
+      },
+      body: {
+        en: `
+          <h2>The big four</h2>
+          <ul>
+            <li><b>Midsommar</b> — third Friday in June. Maypole, herring, schnapps, dancing like frogs. The actual day-off Sweden looks forward to all year.</li>
+            <li><b>Påsk (Easter)</b> — eggs and feather decorations, kids dressed as Easter witches (<em>påskkärringar</em>) trading drawings for candy.</li>
+            <li><b>Lucia (13 December)</b> — children in white robes, candles, the song "Sankta Lucia". Lights against the dark.</li>
+            <li><b>Jul (Christmas Eve)</b> — the meal is on the 24th, not the 25th. Donald Duck cartoons on TV at 3pm, every year. Don't ask.</li>
+          </ul>
+          <h2>Fika</h2>
+          <p>Fika is not a coffee break — it is a social institution. Coffee or tea, usually with a sweet bun (kanelbulle, kardemummabulle). Often twice a day at work. Refusing fika is socially possible but emotionally unwise.</p>
+          <h2>National day</h2>
+          <p>June 6 — Sveriges nationaldag — marks Gustav Vasa's election in 1523 and the constitutional revision of 1809. A public holiday only since 2005, and still settling into the role.</p>
+          <h2>New traditions</h2>
+          <p>Sweden has long absorbed new traditions through migration: Eid al-Fitr (Muslim), Nouruz (Persian New Year), Newroz (Kurdish New Year, also 21 March), Diwali, and others. These are increasingly part of public life — celebrated in schools, workplaces, and city squares.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "9": {
+      kicker: { en: "Chapter 09 · Money", sv: "Kapitel 09 · Pengar" },
+      title:  { en: "Money,", sv: "Pengar," },
+      title_em: { en: "banks, and BankID.", sv: "banker och BankID." },
+      lede: {
+        en: "Sweden is one of the least cash-dependent countries on earth. Almost every transaction now passes through one little app.",
+        sv: "Sverige är ett av världens minst kontantberoende länder. Nästan varje transaktion går genom en liten app.",
+      },
+      body: {
+        en: `
+          <h2>The Swedish krona (SEK)</h2>
+          <p>Sweden voted against adopting the euro in 2003 and uses the krona (kr). The Riksbank — Sweden's central bank, founded 1668, the world's oldest — sets monetary policy and prints the cash that almost nobody uses.</p>
+          <h2>Cards and apps</h2>
+          <p>Cash is rare. Most shops accept only card. Person-to-person payment runs through <em>Swish</em> — a mobile payment app built jointly by the banks. You enter a phone number, the amount, a note, and tap.</p>
+          <h2>BankID</h2>
+          <p>BankID is Sweden's national digital identity. It's a private system (built by the banks), but is treated as legal proof of identity for tax filing, signing leases, voting in elections, opening accounts, and almost any government service. Getting a BankID is one of the first practical steps a new resident takes.</p>
+          <h2>Banks and accounts</h2>
+          <p>To open a Swedish bank account you typically need a personnummer or coordination number, an ID, and proof of residence. Major banks: Swedbank, Handelsbanken, SEB, Nordea. Online-only options include Avanza and Nordnet.</p>
+          <h2>Pension</h2>
+          <p>Three layers: state pension (allmän pension), occupational pension via your employer (tjänstepension), and any private savings. The state pension covers the basics; the rest matters more than people expect.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Currency: Swedish krona (SEK) · Riksbank: world's oldest central bank (1668) · Voted against euro: 2003 · Payment app: Swish · Digital ID: BankID.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "10": {
+      kicker: { en: "Chapter 10 · EU & world", sv: "Kapitel 10 · EU & världen" },
+      title:  { en: "Sweden,", sv: "Sverige," },
+      title_em: { en: "the EU, and the world.", sv: "EU och världen." },
+      lede: {
+        en: "Sweden spent two centuries avoiding war and one decade rapidly joining alliances. The pattern is the same — be useful, stay out of trouble.",
+        sv: "Sverige tillbringade två sekel med att undvika krig och ett årtionde med att snabbt gå med i allianser. Mönstret är detsamma — gör nytta, undvik bråk.",
+      },
+      body: {
+        en: `
+          <h2>The European Union</h2>
+          <p>Sweden joined the EU on 1 January 1995 after a referendum in 1994 (52% yes, 47% no). It uses the krona, not the euro. It has 21 seats in the European Parliament. EU law has precedence over Swedish law in areas the EU has competence over — trade, agriculture, fisheries, environment, free movement.</p>
+          <h2>Schengen</h2>
+          <p>Sweden is part of the Schengen Area — open internal borders with most of the EU, plus Norway, Iceland, Switzerland, and Liechtenstein. You can travel without passport checks; you may still be asked for ID.</p>
+          <h2>NATO</h2>
+          <p>Sweden was militarily non-aligned for over 200 years, neutral through both World Wars and the Cold War. After Russia's invasion of Ukraine, Sweden applied to join NATO in May 2022 and formally joined on 7 March 2024.</p>
+          <h2>The United Nations and aid</h2>
+          <p>Sweden joined the UN in 1946. It is among the world's largest donors of development aid per capita, and historically commits ~1% of GNI to international assistance. Dag Hammarskjöld, UN Secretary-General 1953–1961, was Swedish.</p>
+          <h2>Defence</h2>
+          <p>Conscription (<em>värnplikt</em>) was reactivated in 2017 and applies to both men and women born 1999 onwards. Not everyone is called up — selection is based on tests and motivation. Service is typically 9–12 months.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Joined EU: 1995 · Voted against euro: 2003 · Joined NATO: 2024 · UN member since: 1946 · Conscription reactivated: 2017.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "11": {
+      kicker: { en: "Chapter 11 · Migration", sv: "Kapitel 11 · Migration" },
+      title:  { en: "Migration, residence,", sv: "Migration, uppehåll," },
+      title_em: { en: "and citizenship.", sv: "och medborgarskap." },
+      lede: {
+        en: "Becoming a Swedish citizen is a process more than an event. The paperwork is long, but the rules are unusually clear.",
+        sv: "Att bli svensk medborgare är mer en process än ett ögonblick. Pappersarbetet är långt, men reglerna är ovanligt tydliga.",
+      },
+      body: {
+        en: `
+          <h2>Who is who</h2>
+          <ul>
+            <li><b>Migrationsverket</b> — the Migration Agency. Decides residence permits, asylum, family reunification, work permits, and citizenship.</li>
+            <li><b>Skatteverket</b> — gives you your personnummer once you have a residence permit and are registered as living in Sweden.</li>
+            <li><b>Polisen</b> — handles passports and some ID matters.</li>
+          </ul>
+          <h2>Routes to permanent residence</h2>
+          <p>You can come to Sweden as: a worker (with a job offer above a minimum wage), a student, a researcher, a family member of a resident, an EU citizen exercising freedom of movement, or an asylum seeker. After a period of legal residence — typically four to five years — you may apply for permanent residence (<em>permanent uppehållstillstånd</em>) or, for EU citizens, permanent right of residence.</p>
+          <h2>Becoming Swedish</h2>
+          <p>To apply for Swedish citizenship by naturalisation, you generally need to:</p>
+          <ul>
+            <li>Be at least 18 years old (children are usually included with a parent's application).</li>
+            <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
+            <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
+            <li>Have led an orderly life — no significant criminal record.</li>
+            <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
+          </ul>
+          <h2>Dual citizenship</h2>
+          <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Citizenship test starts: 6 June 2026 · Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
+
+    "12": {
+      kicker: { en: "Chapter 12 · Mock exam", sv: "Kapitel 12 · Provexempel" },
+      title:  { en: "Mock exam", sv: "Provexempel" },
+      title_em: { en: "and survival guide.", sv: "och överlevnadsguide." },
+      lede: {
+        en: "You've read the whole book. Now do twenty questions, take a fika, and book the real test.",
+        sv: "Du har läst hela boken. Nu gör du tjugo frågor, tar en fika, och bokar det riktiga provet.",
+      },
+      body: {
+        en: `
+          <h2>Format of the real test</h2>
+          <p>The Swedish citizenship test (medborgarskapsprovet) is delivered by UHR — the same agency that runs Högskoleprovet (the university entrance exam). The test covers civic knowledge from the official study material <em>Sverige i fokus</em>. It is multiple-choice and timed.</p>
+          <p>The Swedish-language test runs in parallel: comprehension, reading, and writing at an A2/B1 level. There are exemptions for some applicants — check Migrationsverket and UHR for the current rules.</p>
+          <h2>How to study</h2>
+          <ol>
+            <li>Read this ebook end-to-end at least once. Use the Practice tab to drill what you forget.</li>
+            <li>For every fact you get wrong twice, write it on a card and stick it on the fridge. Embarrassment is a great teacher.</li>
+            <li>Skim the official <em>Sverige i fokus</em> PDF (free download from UHR) the week before the test. Don't try to memorise it.</li>
+            <li>Sleep, eat, do not cram the night before. Sweden does not reward last-minute heroics.</li>
+          </ol>
+          <h2>On the day</h2>
+          <ul>
+            <li>Bring valid ID (BankID, passport, or Swedish driver's licence).</li>
+            <li>Arrive 30 minutes early. The test centre is strict.</li>
+            <li>If you don't know an answer, eliminate the most obviously wrong options first.</li>
+            <li>Multiple-choice: every question is a chance, not a trap.</li>
+          </ul>
+          <h2>If you fail</h2>
+          <p>You may retake the test. There is a small fee. Treat the result as a study guide: the topics you missed are the chapters you re-read.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Test provider: UHR · Official material: Sverige i fokus · Language requirement: A2–B1 (separate test) · Retakes: allowed.</p></div>
+        `,
+        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+      },
+    },
   };
 
   const ORDER = ["intro", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];

@@ -1194,12 +1194,12 @@ p.deck {
   100% { transform: translate3d(-5%, 0, 0) skewX( 3deg) scaleY(.96); }
 }
 
-/* global brighten/dim pulse */
+/* global brighten/dim pulse — dimmed so dark-mode text stays readable */
 @keyframes aurora-pulse {
-  0%   { opacity: .55; }
-  35%  { opacity: 1;   }
-  65%  { opacity: .7;  }
-  100% { opacity: .9;  }
+  0%   { opacity: .22; }
+  35%  { opacity: .42; }
+  65%  { opacity: .28; }
+  100% { opacity: .38; }
 }
 
 /* Aurora kill-switch via settings toggle */
