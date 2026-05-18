@@ -828,6 +828,34 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sverige och Finland valde att nästan samtidigt ansöka om medlemskap i Nato efter Rysslands attack mot Ukraina 2022.',
       "Sweden and Finland chose to apply for NATO membership at almost the same time after Russia's attack on Ukraine in 2022.",
     ],
+    q526: [
+      'Islam beskrivs som den näst största religionen i Sverige.',
+      'Islam is described as the second-largest religion in Sweden.',
+    ],
+    q527: [
+      'Judendom beskrivs som den näst största religionen i Sverige.',
+      'Judaism is described as the second-largest religion in Sweden.',
+    ],
+    q530: [
+      'På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier.',
+      'On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.',
+    ],
+    q531: [
+      'På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger.',
+      'On New Year’s Eve, 31 December, large bonfires and spring songs are common.',
+    ],
+    q535: [
+      'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer.',
+      'On Sweden’s National Day, 6 June, the labour movement arranges demonstrations.',
+    ],
+    q542: [
+      'Luciafirandet handlar mycket om att sprida ljus när året är som mörkast.',
+      'The Lucia celebration is largely about spreading light when the year is at its darkest.',
+    ],
+    q543: [
+      'Luciafirandet handlar mycket om att välkomna våren med stora brasor.',
+      'The Lucia celebration is largely about welcoming spring with large bonfires.',
+    ],
     q550: [
       'Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
       'Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
@@ -867,7 +895,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
   );
   assert.doesNotMatch(
     residualText,

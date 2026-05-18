@@ -169,6 +169,11 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bhas changed only how\b/i,
   /\barbetar för endast\b/i,
   /\bworks for only\b/i,
+  /\b(?:den näst största i Sverige|the second largest in Sweden)\b/i,
+  /,\s*,/,
+  /\bit is common to large bonfires\b/i,
+  /\bbrukar\s+\S+\s+arrangerar\b/i,
+  /\b(?:spreadinging|welcominging)\b/i,
 ];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -3447,9 +3452,36 @@ function englishGerundPhrase(value) {
   if (!first) return phrase;
   const lower = first.toLowerCase();
   let gerund = `${lower}ing`;
-  if (/ie$/i.test(lower)) gerund = `${lower.slice(0, -2)}ying`;
+  if (/ing$/i.test(lower)) gerund = lower;
+  else if (/ie$/i.test(lower)) gerund = `${lower.slice(0, -2)}ying`;
   else if (/[^aeiou]e$/i.test(lower)) gerund = `${lower.slice(0, -1)}ing`;
   return [gerund, ...rest].join(' ');
+}
+function swedishCommonToDoStatement(timePhrase, answer) {
+  const activity = lowerFirst(stripLeadingPurposeSv(answer));
+  if (
+    /^(?:fira|äta|tända|öppna|hålla|bära|bjuda|välkomna|arrangera|samlas|dansa|sjunga)\b/i.test(
+      activity,
+    )
+  ) {
+    return `På ${timePhrase} är det vanligt att ${activity}`;
+  }
+  return `På ${timePhrase} är det vanligt med ${activity}`;
+}
+function englishCommonToDoStatement(timePhrase, answer) {
+  const time = stripTrailingComma(timePhrase);
+  const activity = lowerFirst(stripLeadingPurposeEn(answer));
+  if (
+    /^(?:celebrate|eat|light|open|hold|wear|serve|welcome|arrange|gather|dance|sing)\b/i.test(
+      activity,
+    )
+  ) {
+    return `On ${time}, it is common to ${activity}`;
+  }
+  return `On ${time}, ${activity} are common`;
+}
+function swedishHabitualPredicate(answer) {
+  return lowerFirst(answer).replace(/\barrangerar\b/i, 'arrangera');
 }
 function englishCommonActivity(value) {
   return stripLeadingPurposeEn(value)
@@ -3970,14 +4002,19 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vilken tradition har (.+?) historiska rötter i$/i);
   if (match) return `${upperFirst(match[1])} har historiska rötter i ${lowerFirst(answer)}`;
   match = q.match(/^Vilken religion beskrivs som (.+)$/i);
-  if (match) return `${answer} beskrivs som ${match[1]}`;
+  if (match) {
+    const description =
+      match[1].toLocaleLowerCase('sv-SE') === 'den näst största i sverige'
+        ? 'den näst största religionen i Sverige'
+        : match[1];
+    return `${answer} beskrivs som ${description}`;
+  }
   match = q.match(/^Vad är vanligt att göra på (.+?) i Sverige$/i);
-  if (match)
-    return `På ${match[1]} är det vanligt att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) return swedishCommonToDoStatement(match[1], answer);
   match = q.match(/^Vad är vanligt att familjer gör på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} brukar familjer ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad brukar hända på (.+)$/i);
-  if (match) return `På ${match[1]} brukar ${lowerFirst(answer)}`;
+  if (match) return `På ${match[1]} brukar ${swedishHabitualPredicate(answer)}`;
   match = q.match(/^Vad handlar (.+?) mycket om i Sverige$/i);
   if (match) return `${upperFirst(match[1])} handlar mycket om ${swedishPurposeClause(answer)}`;
   match = q.match(/^Vad är typiskt för (.+?) i Sverige$/i);
@@ -4255,16 +4292,22 @@ function civicStatementEn(source, option) {
   match = q.match(/^Which tradition does (.+?) have historical roots in$/i);
   if (match) return `${upperFirst(match[1])} has historical roots in ${lowerFirst(answer)}`;
   match = q.match(/^Which religion is described as (.+)$/i);
-  if (match) return `${answer} is described as ${match[1]}`;
+  if (match) {
+    const description =
+      match[1].toLowerCase() === 'the second largest in sweden'
+        ? 'the second-largest religion in Sweden'
+        : match[1];
+    return `${answer} is described as ${description}`;
+  }
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
-  if (match) return `On ${match[1]}, it is common to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) return englishCommonToDoStatement(match[1], answer);
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)
     return `On ${stripTrailingComma(match[1])}, families commonly ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What usually happens on (.+)$/i);
   if (match) return `On ${match[1]}, ${lowerFirst(answer)}`;
   match = q.match(/^What is the (.+?) largely about in Sweden$/i);
-  if (match) return `${upperFirst(match[1])} is largely about ${englishGerundPhrase(answer)}`;
+  if (match) return `The ${match[1]} is largely about ${englishGerundPhrase(answer)}`;
   match = q.match(/^What is typical of (.+) in Sweden$/i);
   if (match) return `${upperFirst(answer)} are typical of ${stripTrailingComma(match[1])}`;
   match = q.match(/^When does (.+?) occur in Sweden$/i);

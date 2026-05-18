@@ -22896,8 +22896,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Islam is described as the second largest in Sweden.",
-      "sv": "Islam beskrivs som den näst största i Sverige."
+      "en": "Islam is described as the second-largest religion in Sweden.",
+      "sv": "Islam beskrivs som den näst största religionen i Sverige."
     },
     "opts": [
       {
@@ -22935,8 +22935,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Judaism is described as the second largest in Sweden.",
-      "sv": "Judendom beskrivs som den näst största i Sverige."
+      "en": "Judaism is described as the second-largest religion in Sweden.",
+      "sv": "Judendom beskrivs som den näst största religionen i Sverige."
     },
     "opts": [
       {
@@ -23068,7 +23068,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On New Year’s Eve, 31 December,, it is common to celebrate with parties and dinners and at night with fireworks.",
+      "en": "On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.",
       "sv": "På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier."
     },
     "opts": [
@@ -23107,8 +23107,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On New Year’s Eve, 31 December,, it is common to large bonfires and spring songs.",
-      "sv": "På nyårsafton den 31 december är det vanligt att stora brasor och vårsånger."
+      "en": "On New Year’s Eve, 31 December, large bonfires and spring songs are common.",
+      "sv": "På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger."
     },
     "opts": [
       {
@@ -23282,7 +23282,7 @@
     "type": "true_false",
     "q": {
       "en": "On Sweden’s National Day, 6 June, the labour movement arranges demonstrations.",
-      "sv": "På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangerar demonstrationer."
+      "sv": "På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer."
     },
     "opts": [
       {
@@ -23593,7 +23593,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Lucia celebration is largely about spreadinging light when the year is at its darkest.",
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest.",
       "sv": "Luciafirandet handlar mycket om att sprida ljus när året är som mörkast."
     },
     "opts": [
@@ -23633,7 +23633,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Lucia celebration is largely about welcominging spring with large bonfires.",
+      "en": "The Lucia celebration is largely about welcoming spring with large bonfires.",
       "sv": "Luciafirandet handlar mycket om att välkomna våren med stora brasor."
     },
     "opts": [
