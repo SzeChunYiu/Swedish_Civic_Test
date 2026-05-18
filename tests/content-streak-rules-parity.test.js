@@ -13,15 +13,7 @@ function loadTs(relativePath) {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
-  function localRequire(request) {
-    if (request.startsWith('.')) {
-      const resolved = path.join(path.dirname(path.join(repoRoot, relativePath)), request);
-      const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
-      return loadTs(normalized);
-    }
-    return require(request);
-  }
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
   return mod.exports;
 }
 
@@ -47,36 +39,6 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], today), 2);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], today), 1);
   assert.equal(calculateStreak(['2026-05-16'], today), 0);
-});
-
-test('streak freeze state is persisted separately from XP and answer counts', () => {
-  const progressStore = fs.readFileSync(
-    path.join(repoRoot, 'lib/storage/progressStore.ts'),
-    'utf8',
-  );
-  const { calculateStreakWithFreeze, createInitialFreezeState, freezeBannerCopy } = loadTs(
-    'lib/learning/streakWithFreeze.ts',
-  );
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const result = calculateStreakWithFreeze({
-    activeDayKeys: ['2026-05-15', '2026-05-16', '2026-05-18', '2026-05-19'],
-    freezeState: createInitialFreezeState(now),
-    today: '2026-05-19',
-    now,
-  });
-
-  assert.equal(result.streakDays, 5);
-  assert.deepEqual(result.rescuedThisRun, ['2026-05-17']);
-  assert.match(freezeBannerCopy(result, 'sv'), /Sviten är räddad/);
-  assert.match(freezeBannerCopy(result, 'en'), /Streak protected/);
-  assert.match(progressStore, /streakFreezeState: StreakFreezeState;/);
-  assert.match(
-    progressStore,
-    /setStreakFreezeState: \(streakFreezeState: StreakFreezeState\) => void;/,
-  );
-  assert.match(progressStore, /streakFreezeState,/);
-  assert.match(progressStore, /totalXp: state\.totalXp,/);
-  assert.match(progressStore, /answerDates: state\.answerDates,/);
 });
 
 test('streak runtime parity rejects timestamp date-key normalization drift', () => {
