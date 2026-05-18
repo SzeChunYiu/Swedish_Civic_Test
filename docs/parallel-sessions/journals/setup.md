@@ -779,3 +779,11 @@ Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-mobile-n
 PR: pending from `task/setup/mobile-nav-reachability-1779126895` at handoff commit time.
 Blocked? no - this closes the unblocked mobile navigation reachability source atom; production deploy freshness remains externally blocked and no Vercel CLI was run.
 Next suggested validator action: inspect the mobile nav toggle and rerun `npm run test:static-site-mobile-nav` plus the standard site/source gates before accepting `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`.
+
+## Iteration 217 - 2026-05-18
+Task completed: REVIEWER-SITE-QUESTION-COUNT-COPY-1 - removed stale static "core 500" and "500+" product-count claims from hero/footer copy and added a guard for future drift.
+Artifacts changed: `site/app.js`, `site/index.html`, `site/i18n-extras.js`, `scripts/static-site-question-count-copy.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-count-copy` exit 0 with 2/2 passing; `node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `node --check site/app.js && node --check site/i18n-extras.js && node --check scripts/static-site-question-count-copy.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-copy` exit 0 with 2/2 passing; targeted Prettier for `scripts/static-site-question-count-copy.test.js` and `package.json` exit 0; `git diff --check` exit 0.
+PR: #585 pending from `task/setup/question-count-copy-1779127810` at handoff commit time.
+Blocked? no - this closes the unblocked static question-count copy source atom without touching content-owned data or running Vercel CLI.
+Next suggested validator action: inspect the non-numeric hero/footer copy and rerun `npm run test:static-site-question-count-copy` plus the standard static/source gates before accepting `REVIEWER-SITE-QUESTION-COUNT-COPY-1`.
