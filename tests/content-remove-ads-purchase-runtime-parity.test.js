@@ -22,12 +22,14 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 7);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 8);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/);
   assert.match(purchaseSource, /restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/);
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
+  assert.match(purchaseSource, /purchaseMatchesProductId\(candidate, productId\)/);
+  assert.match(purchaseSource, /productIds\.some\(\(productId\) =>/);
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
