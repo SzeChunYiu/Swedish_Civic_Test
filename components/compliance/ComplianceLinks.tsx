@@ -19,14 +19,7 @@ type ComplianceLinksCopy = {
   links: Record<ComplianceLinkKey, string>;
 };
 
-const linkKeys = [
-  'aboutTheTest',
-  'disclaimer',
-  'privacy',
-  'terms',
-  'sources',
-  'support',
-] as const;
+const linkKeys = ['aboutTheTest', 'disclaimer', 'privacy', 'terms', 'sources', 'support'] as const;
 
 const linkHrefs: Record<ComplianceLinkKey, ComplianceHref> = {
   disclaimer: '/disclaimer',
