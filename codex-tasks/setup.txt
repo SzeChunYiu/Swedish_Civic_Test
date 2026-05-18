@@ -164,6 +164,15 @@ active SITE-P0 order is now production deploy evidence only.
      PR #328 / `11b2b96` fixed the current-count live-smoke behavior, but this
      is not accepted as live-deploy closure until production serves current
      `origin/main` and live smoke passes with the hash guard.
+   - Latest manager recheck, 2026-05-18T16:53+02:00: current `origin/main`
+     is `034fe61`; local `check-live-site.test.js` and `validate:content` pass,
+     but `node scripts/check-live-site.js
+     https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` fails on
+     `static question bank content` (`expected 3c425f0ad2c7, found
+     5d2710bebf7e`). Scheduled deploy run `26040937449` for `f5454ba` failed
+     before any steps; job `76552054427` reports the GitHub Actions account
+     payment/spending-limit blocker. This remains external deployment capacity,
+     not a source-readiness task.
 
 Existing P0 SETUP atoms behind the live-site P0 queue:
 
