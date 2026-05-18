@@ -3,16 +3,56 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '../../lib/auth/AuthContext';
 import { deriveDisplayInfo } from '../../lib/auth/displayName';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { Avatar } from './Avatar';
 
-export function AccountHeader() {
+type AccountHeaderCopy = {
+  loadingLabel: string;
+  signInLabel: string;
+  signInAccessibilityLabel: string;
+  syncedLabel: string;
+  accountFallback: string;
+  accountAccessibilityLabel: (name: string) => string;
+};
+
+const accountHeaderCopy: Record<AppLanguage, AccountHeaderCopy> = {
+  sv: {
+    loadingLabel: 'Kontot laddas',
+    signInLabel: 'Logga in',
+    signInAccessibilityLabel: 'Logga in för att synkronisera dina framsteg',
+    syncedLabel: 'Synkat',
+    accountFallback: 'ditt konto',
+    accountAccessibilityLabel: (name) => `Öppna konto för ${name}`,
+  },
+  en: {
+    loadingLabel: 'Loading account',
+    signInLabel: 'Sign in',
+    signInAccessibilityLabel: 'Sign in to sync your progress',
+    syncedLabel: 'Synced',
+    accountFallback: 'your account',
+    accountAccessibilityLabel: (name) => `Open account for ${name}`,
+  },
+};
+
+/**
+ * Header account affordance. Defaults to the current settings language unless
+ * a caller provides `languageOverride` for previews or focused tests.
+ */
+export interface AccountHeaderProps {
+  languageOverride?: AppLanguage;
+}
+
+export function AccountHeader({ languageOverride }: AccountHeaderProps = {}) {
   const { status, user } = useAuth();
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = accountHeaderCopy[language];
   const info = deriveDisplayInfo(user);
 
   if (status === 'loading') {
     return (
-      <View style={styles.row} accessibilityRole="header">
+      <View accessibilityLabel={copy.loadingLabel} accessibilityRole="header" style={styles.row}>
         <View style={styles.skeletonAvatar} />
         <View style={styles.skeletonText} />
       </View>
@@ -22,19 +62,21 @@ export function AccountHeader() {
   if (status === 'anonymous' || !user) {
     return (
       <Link
-        accessibilityLabel="Sign in to sync your progress"
+        accessibilityLabel={copy.signInAccessibilityLabel}
         accessibilityRole="link"
         href="/(auth)/sign-in"
         style={styles.signInPill}
       >
-        Sign in
+        {copy.signInLabel}
       </Link>
     );
   }
 
+  const accountName = info.name ?? info.email ?? copy.accountFallback;
+
   return (
     <Link
-      accessibilityLabel={`Open account for ${info.name ?? info.email ?? 'your account'}`}
+      accessibilityLabel={copy.accountAccessibilityLabel(accountName)}
       accessibilityRole="link"
       href="/account"
       style={styles.row}
@@ -45,7 +87,7 @@ export function AccountHeader() {
           {info.firstName ?? info.email}
         </Text>
         <Text numberOfLines={1} style={styles.subtext}>
-          Synced
+          {copy.syncedLabel}
         </Text>
       </View>
     </Link>
