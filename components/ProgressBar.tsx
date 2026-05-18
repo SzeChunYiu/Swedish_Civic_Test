@@ -3,17 +3,32 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 import type { ComponentProps } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, space } from '../lib/theme';
+
+type ProgressBarCopy = {
+  progressLabel: (progressPercent: number) => string;
+};
+
+const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = {
+  sv: {
+    progressLabel: (progressPercent) => `${progressPercent} procent klart`,
+  },
+  en: {
+    progressLabel: (progressPercent) => `${progressPercent} percent complete`,
+  },
+};
 
 /**
  * Defaults: `progress=0`, `animated=true`, `accessibilityRole="progressbar"`,
- * and a rounded accent fill over a warm tokenized track. Pass
- * `accessibilityLabel` when the default percentage copy and native progress
- * value text should be localized.
+ * localized percentage copy from settings, and a rounded accent fill over a
+ * warm tokenized track. Pass `accessibilityLabel` when the default percentage
+ * copy and native progress value text need a screen-specific phrase.
  */
 export interface ProgressBarProps extends Omit<ComponentProps<typeof View>, 'style'> {
   animated?: boolean;
   fillStyle?: StyleProp<ViewStyle>;
+  languageOverride?: AppLanguage;
   progress?: number;
   style?: StyleProp<ViewStyle>;
 }
@@ -28,13 +43,16 @@ export function ProgressBar({
   accessibilityValue,
   animated = true,
   fillStyle,
+  languageOverride,
   progress = 0,
   style,
   ...viewProps
 }: ProgressBarProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
   const clampedProgress = clampProgress(progress);
   const progressPercent = Math.round(clampedProgress * 100);
-  const defaultAccessibilityText = `${progressPercent} percent complete`;
+  const defaultAccessibilityText = progressBarCopy[language].progressLabel(progressPercent);
   const resolvedAccessibilityLabel = accessibilityLabel ?? defaultAccessibilityText;
   const animatedProgress = useRef(new Animated.Value(clampedProgress)).current;
 
