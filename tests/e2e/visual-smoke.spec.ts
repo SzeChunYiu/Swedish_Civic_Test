@@ -1,8 +1,20 @@
 import { expect, test } from '@playwright/test';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import type { Page } from '@playwright/test';
 
 const screenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+type RouteCapture = {
+  name: string;
+  route: string;
+  file: string;
+  bytes: number;
+  sha256: string;
+  launchOverlayDismissed: boolean;
+  launchOverlayVisibleAfterDismissal: boolean;
+};
+
 const routes = [
   ['index', '/'],
   ['onboarding', '/onboarding'],
@@ -21,11 +33,62 @@ const routes = [
   ['support', '/support'],
 ] as const;
 
+const explainedDuplicateScreenshotGroups = [
+  {
+    names: ['home', 'index'],
+    reason: 'The root route is a redirect to /home, so it may match the Home screenshot exactly.',
+  },
+] as const;
+
+async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
+
+  if (
+    await closeLaunchAd
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
+    await closeLaunchAd.first().click();
+    await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+    return true;
+  }
+
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+  return false;
+}
+
+function sha256File(filePath: string): string {
+  return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
+}
+
+function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[] {
+  const namesByHash = new Map<string, string[]>();
+
+  for (const capture of captures) {
+    const names = namesByHash.get(capture.sha256) ?? [];
+    names.push(capture.name);
+    namesByHash.set(capture.sha256, names);
+  }
+
+  return [...namesByHash.entries()]
+    .filter(([, names]) => names.length > 1)
+    .filter(([, names]) => {
+      const sortedNames = [...names].sort();
+      return !explainedDuplicateScreenshotGroups.some(
+        (group) => JSON.stringify([...group.names].sort()) === JSON.stringify(sortedNames),
+      );
+    })
+    .map(([hash, names]) => `${hash}: ${names.sort().join(', ')}`);
+}
+
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
   fs.rmSync(screenshotDir, { force: true, recursive: true });
   fs.mkdirSync(screenshotDir, { recursive: true });
   const consoleErrors: string[] = [];
-  const manifest: Array<{ name: string; route: string; file: string; bytes: number }> = [];
+  const manifest: RouteCapture[] = [];
 
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text());
@@ -34,15 +97,33 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
 
   for (const [name, route] of routes) {
     await page.goto(route, { waitUntil: 'networkidle' });
+    const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
     await expect(page.locator('body')).not.toContainText('Not Found');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
     const file = `${name}.png`;
     const filePath = path.join(screenshotDir, file);
     await page.screenshot({ path: filePath, fullPage: true });
     const bytes = fs.statSync(filePath).size;
+    const sha256 = sha256File(filePath);
+    const launchOverlayVisibleAfterDismissal =
+      (await page.locator('[role="dialog"][aria-modal="true"]').count()) > 0;
     expect(bytes, `${file} should not be empty`).toBeGreaterThan(10_000);
-    manifest.push({ name, route, file, bytes });
+    expect(launchOverlayVisibleAfterDismissal, `${file} should not show launch overlay`).toBe(
+      false,
+    );
+    manifest.push({
+      name,
+      route,
+      file,
+      bytes,
+      sha256,
+      launchOverlayDismissed,
+      launchOverlayVisibleAfterDismissal,
+    });
   }
+
+  const unexplainedDuplicateScreenshots = findUnexplainedDuplicateScreenshots(manifest);
+  expect(unexplainedDuplicateScreenshots).toEqual([]);
 
   fs.writeFileSync(
     path.join(screenshotDir, 'manifest.json'),
@@ -51,6 +132,11 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
         capturedAt: new Date().toISOString(),
         viewport: 'iPhone 12 via Playwright project config',
         source: 'dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs',
+        launchOverlayPolicy:
+          'Visual smoke dismisses the launch sponsor overlay before every screenshot and rejects visible overlays.',
+        duplicatePolicy:
+          'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
+        duplicateExplanations: explainedDuplicateScreenshotGroups,
         routes: manifest,
       },
       null,

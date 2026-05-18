@@ -683,3 +683,11 @@ Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern '
 PR: opened from `task/setup/submit-guard-1779116704`; merge pending at handoff commit time.
 Blocked? no for the submit-guard verifier atom. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external production deployment capacity, not source readiness.
 Next suggested validator action: inspect the submit-guard test assertion, rerun the focused build-config pattern plus `npm run test:build-config`, then keep production deploy evidence as the remaining site-live closure item.
+
+## Iteration 205 - 2026-05-18
+Task completed: REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1 - hardened the Expo web visual-smoke capture so launch sponsor overlays are dismissed before screenshots, duplicate screenshot hashes are rejected unless explicitly explained, and the committed report can be verified without a browser.
+Artifacts changed: `tests/e2e/visual-smoke.spec.ts`, `scripts/visual-smoke-report.test.js`, `package.json`, `reports/2026-05-15-uiux-screenshots/*`, `docs/parallel-sessions/journals/setup.md`.
+Verification: pre-fix `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/visual-smoke-report.test.js` failed on missing overlay/hash evidence; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:screenshot-manifest` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check` exit 0.
+PR: pending from `task/setup/visual-smoke-overlay-1779117800` at handoff commit time.
+Blocked? no - this closes the unblocked visual-smoke source/evidence atom; production deploy freshness remains externally blocked by Actions billing/spending capacity.
+Next suggested validator action: inspect the visual-smoke manifest hash/overlay fields, rerun `npm run test:screenshot-manifest`, and rerun the focused visual-smoke e2e when browser capacity is available.
