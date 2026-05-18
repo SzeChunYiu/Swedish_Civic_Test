@@ -205,9 +205,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Skogar, sjöar och öar säger att Sverige har många sjöar spridda över hela landet och att de tre största är Vänern, Vättern och Mälaren. Alternativen med hav, öar eller städer blandar ihop andra geografiska begrepp med sjöar.',
+      'Sverige har många sjöar spridda över hela landet, och de tre största är Vänern, Vättern och Mälaren. De andra alternativen räknar upp havsområden, öar eller städer i stället för sjöar.',
     explanationEn:
-      'The UHR section Forests, lakes, and islands says Sweden has many lakes spread throughout the country and that the three largest are Vänern, Vättern, and Mälaren. The alternatives with seas, islands, or cities confuse other geographical concepts with lakes.',
+      'Sweden has many lakes throughout the country, and the three largest are Vänern, Vättern, and Mälaren. The other choices list sea areas, islands, or cities instead of lakes.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Skogar, sjöar och öar', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
