@@ -710,25 +710,30 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Edit goal, language, and audio',
+    'Open settings',
+    'First practice',
+    'Level 2',
+    'Mistake reviewer',
+    'Three-day streak',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
+  ['deriveBadges, getBadgeTitle', 'profile route must import bilingual badge title helper'],
   ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
   [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
   [
-    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
-    'profile route must define localized badge-title overrides',
-  ],
-  [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
   ],
   ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
+  [
+    'getBadgeTitle(badge, language)',
+    'profile route must render badge titles from the bilingual badge catalog',
+  ],
   [
     '<ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>',
     'profile shell must render localized copy',
@@ -9763,6 +9768,7 @@ function validateProfileRouteHeaderParity() {
 function validateProfileRouteCopyParity() {
   let valid = true;
   let profileRoute = '';
+  let badgeCatalogSource = '';
 
   function reject(message) {
     valid = false;
@@ -9771,6 +9777,7 @@ function validateProfileRouteCopyParity() {
 
   try {
     profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+    badgeCatalogSource = fs.readFileSync(path.join(repoRoot, 'lib/learning/badges.ts'), 'utf8');
   } catch (error) {
     reject(`profile route copy source could not be read: ${error.message}`);
     return;
@@ -9788,7 +9795,7 @@ function validateProfileRouteCopyParity() {
         labelIsValid = false;
         reject(`profile route ${language} copy ${JSON.stringify(label)} must be normalized`);
       }
-      if (!profileRoute.includes(label)) {
+      if (!`${profileRoute}\n${badgeCatalogSource}`.includes(label)) {
         labelIsValid = false;
         reject(`profile route is missing ${language} copy ${JSON.stringify(label)}`);
       }
@@ -14079,8 +14086,10 @@ function validateBadgeCatalog() {
     );
   }
 
-  const seenTitles = new Set();
-  const seenDescriptions = new Set();
+  const seenTitlesSv = new Set();
+  const seenTitlesEn = new Set();
+  const seenDescriptionsSv = new Set();
+  const seenDescriptionsEn = new Set();
 
   entries.forEach(([key, badge], index) => {
     const label = hasText(badge?.id) ? badge.id : `badge[${index}]`;
@@ -14100,7 +14109,7 @@ function validateBadgeCatalog() {
         reject(`${label} id must use lowercase snake_case`);
       }
 
-      for (const field of ['title', 'description']) {
+      for (const field of ['titleSv', 'titleEn', 'descriptionSv', 'descriptionEn']) {
         if (!hasText(badge[field])) {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
@@ -14108,17 +14117,30 @@ function validateBadgeCatalog() {
         }
       }
 
-      const normalizedTitle = normalizeComparableText(badge.title);
-      if (normalizedTitle && seenTitles.has(normalizedTitle)) {
-        reject(`${label} duplicates badge title`);
+      if (normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)) {
+        reject(`${label} titleSv and titleEn must be distinct bilingual text`);
       }
-      if (normalizedTitle) seenTitles.add(normalizedTitle);
+      if (
+        normalizeComparableText(badge.descriptionSv) ===
+        normalizeComparableText(badge.descriptionEn)
+      ) {
+        reject(`${label} descriptionSv and descriptionEn must be distinct bilingual text`);
+      }
 
-      const normalizedDescription = normalizeComparableText(badge.description);
-      if (normalizedDescription && seenDescriptions.has(normalizedDescription)) {
-        reject(`${label} duplicates badge description`);
-      }
-      if (normalizedDescription) seenDescriptions.add(normalizedDescription);
+      const duplicateChecks = [
+        ['titleSv', seenTitlesSv, 'Swedish badge title'],
+        ['titleEn', seenTitlesEn, 'English badge title'],
+        ['descriptionSv', seenDescriptionsSv, 'Swedish badge description'],
+        ['descriptionEn', seenDescriptionsEn, 'English badge description'],
+      ];
+
+      duplicateChecks.forEach(([field, seen, duplicateLabel]) => {
+        const normalized = normalizeComparableText(badge[field]);
+        if (normalized && seen.has(normalized)) {
+          reject(`${label} duplicates ${duplicateLabel}`);
+        }
+        if (normalized) seen.add(normalized);
+      });
     }
 
     if (valid) badgesValidated += 1;
