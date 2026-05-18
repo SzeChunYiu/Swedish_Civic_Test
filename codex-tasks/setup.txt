@@ -42,6 +42,17 @@ Accepted P0 SETUP atoms:
      `npm run test:ownership`, `git diff --check HEAD~2..HEAD`, and static-site
      Chrome smoke for English and Swedish Ebook, notes host, chapter practice
      navigation, and no console/page errors all exit 0.
+5. `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` accepted via PR #324 /
+   `d4ffd91`.
+   - Clean manager verification on current `origin/main`: `node
+     scripts/export-site-question-bank.js --check` passed with 715 questions
+     and 13 chapters; `node --test
+     tests/content-static-site-question-bank-parity.test.js` passed 2/2;
+     `node scripts/export-question-bank.js --check`; `npm run
+     validate:content` at 715 questions; `node --check site/questions.js`;
+     direct VM inspection found q142, q143, q715, and 715 static questions;
+     `npm run typecheck -- --pretty false`; `npm run test:ownership`; and
+     `git diff --check` all exit 0.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
@@ -59,21 +70,28 @@ still exports 705. Do not deploy current `site/` until this sync is repaired.
 The active order is now: current static-bank drift first, live deploy stale
 second, Practice width parity third, account-scope fourth.
 
-1. `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`
-   - Scope: `site/questions.js`, static question-bank generator/parity tests,
-     `scripts/check-live-site.js`, `scripts/check-live-site.test.js`, and any
-     focused static/live smoke count assertions.
-   - Required behavior: regenerate the deployed static bank from current
-     canonical content so all latest generated variants are present and static
-     site question count matches the canonical published count. Do not hard-code
-     stale 705/710-question expectations; derive the expected count or update it
-     to the current canonical count at execution time.
-   - Required gates: `node scripts/export-site-question-bank.js --check`,
-     `node --test tests/content-static-site-question-bank-parity.test.js`,
-     `node scripts/export-question-bank.js --check`, `npm run validate:content`,
-     `node --check site/questions.js`, relevant static smoke through Practice
-     and Mock using the current count, `npm run test:ownership`, and
-     `git diff --check`.
+MANAGER-build acceptance 2026-05-18T15:41+02:00:
+PR #324 closed the current static bank drift, but local `npm run
+test:site-live` still fails by default because `scripts/check-live-site.js`
+expects 705 questions while current `site/questions.js` has 715. The active
+order is now: live-smoke count default first, production deploy evidence
+second, Practice width parity third, account-scope fourth.
+
+1. `REVIEWER-SITE-LIVE-SMOKE-COUNT-1`
+   - Scope: `scripts/check-live-site.js`, `scripts/check-live-site.test.js`,
+     `.github/workflows/scheduled-deploy.yml` only if needed, and focused
+     static/live smoke count assertions.
+   - Required behavior: live-site smoke must derive or require the current
+     expected static question count instead of silently accepting/requiring
+     stale 705 output. The default local current-site smoke should pass against
+     current `site/` without setting `SITE_LIVE_REQUIRED_QUESTION_COUNT=715`,
+     and stale 57/705 deployments must still fail when canonical content is
+     715.
+   - Required gates: `node --test scripts/check-live-site.test.js`, local
+     `SITE_LIVE_URL=http://127.0.0.1:<port> npm run test:site-live` against
+     current `site/` with no count override, static-bank parity, `npm run
+     validate:content`, `npm run typecheck -- --pretty false`, `npm run
+     test:ownership`, and `git diff --check`.
 
 2. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
@@ -88,8 +106,8 @@ second, Practice width parity third, account-scope fourth.
    - Current caveat: PR #321 / `3a323ff` landed a useful deploy workflow and
      live-smoke harness, but it is not accepted as live-deploy closure because
      there is no production deploy evidence yet and the live-smoke default still
-     accepts/requires 705 questions. The static-bank repair above must fix that
-     count behavior before this atom can close.
+     accepts/requires 705 questions. Close `REVIEWER-SITE-LIVE-SMOKE-COUNT-1`
+     first.
 
 3. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
    - Scope: `site/index.html`, `site/styles.css`, and focused site layout

@@ -16,6 +16,12 @@ The `ANSWER-OPTION-OPTIONCARD-PARITY-1` stop-line gate is green on current
 `npm run validate:content`, focused AnswerOption parity tests, typecheck,
 ownership, and `git diff --check`.
 
+RESOLVED 2026-05-18T15:41+02:00:
+`REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` static-bank sync is green on current
+`origin/main` `d4ffd91` after PR #324. `site/questions.js` now exports 715
+questions and passes static-bank parity. The remaining count issue is the
+separate live-smoke default in `scripts/check-live-site.js`.
+
 STANDING POLICY (operator, hard — read every cycle):
 1. A dirty worktree from OTHER lanes' in-scope work is NORMAL in this
    parallel factory and is NOT a blocker. Lanes have disjoint write scope.
@@ -37,7 +43,7 @@ STANDING POLICY (operator, hard — read every cycle):
 # SITE-P0-3 is accepted via PR #264 / 19a420e; SITE-P0-4 is accepted via
 # PR #279 / 9def23a plus handoff PR #280 / 41a6bcb. SITE-P0-5 reviewer audit
 # is complete via PR #296 / 82291b1 and queued the concrete defects below.
-REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1: static `site/questions.js` is stale after source expansions; regenerate from current canonical content and update/derive static plus live-smoke count expectations
+REVIEWER-SITE-LIVE-SMOKE-COUNT-1: `scripts/check-live-site.js` still defaults to 705; derive or require current canonical/static count before accepting live-deploy closure
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1: production deploy is stale; PR #321 added the harness, but closure still needs current-count smoke behavior plus production deploy evidence
 REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1: port the wide Practice hub layout from the draft and guard the desktop width
 REVIEWER-ACCOUNT-SCOPE-1: static `site/` still needs no-account MVP cleanup for Sign in/OAuth/magic-link and local Ebook notes/highlights
