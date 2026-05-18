@@ -521,56 +521,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q498 | true-false | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | 38cb692 | ok | rolling-source-slice |
 | q499 | false-statement | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | 38cb692 | ok | rolling-source-slice |
 | q500 | judgement | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | 38cb692 | ok | rolling-source-slice |
-| q501 | section-practice | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | d372521 | ok | rolling-source-slice |
-| q502 | true-false | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | d372521 | defect | queued-data-integrity-residual |
-| q503 | false-statement | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | d372521 | defect | queued-data-integrity-residual |
-| q504 | judgement | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | d372521 | defect | queued-data-integrity-unknown-option |
-| q505 | section-practice | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | d372521 | defect | queued-data-integrity-unknown-option |
-| q506 | true-false | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | d372521 | defect | queued-data-integrity-residual |
-| q507 | false-statement | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | 476afdb | defect | queued-data-integrity-post600-negative-meta |
-| q508 | judgement | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | d372521 | defect | queued-data-integrity-unknown-option |
-| q509 | section-practice | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | ok | rolling-source-slice |
-| q510 | true-false | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | ok | rolling-source-slice |
-| q511 | false-statement | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | ok | rolling-source-slice |
-| q512 | judgement | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-unknown-option |
-| q513 | section-practice | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | ok | rolling-source-slice |
-| q514 | true-false | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-residual |
-| q515 | false-statement | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-residual |
-| q516 | judgement | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-unknown-option |
-| q517 | section-practice | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-unknown-option |
-| q518 | true-false | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-residual |
-| q519 | false-statement | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 476afdb | defect | queued-data-integrity-post600-negative-meta |
-| q520 | judgement | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-unknown-option |
-| q521 | section-practice | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | d372521 | ok | rolling-source-slice |
-| q522 | true-false | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | d372521 | defect | queued-data-integrity-residual |
-| q523 | false-statement | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | d372521 | defect | queued-data-integrity-residual |
-| q524 | judgement | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | d372521 | defect | queued-data-integrity-unknown-option |
-| q525 | section-practice | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | d372521 | ok | rolling-source-slice |
-| q526 | true-false | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | d372521 | defect | queued-data-integrity-residual |
-| q527 | false-statement | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | d372521 | defect | queued-data-integrity-residual |
-| q528 | judgement | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | d372521 | defect | queued-data-integrity-unknown-option |
-| q529 | section-practice | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | d372521 | ok | rolling-source-slice |
-| q530 | true-false | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | d372521 | defect | queued-data-integrity-residual |
-| q531 | false-statement | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | d372521 | defect | queued-data-integrity-residual |
-| q532 | judgement | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | d372521 | defect | queued-data-integrity-unknown-option |
-| q533 | section-practice | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | d372521 | ok | rolling-source-slice |
-| q534 | true-false | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | d372521 | ok | rolling-source-slice |
-| q535 | false-statement | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | d372521 | ok | rolling-source-slice |
-| q536 | judgement | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | d372521 | defect | queued-data-integrity-unknown-option |
-| q537 | section-practice | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | d372521 | ok | rolling-source-slice |
-| q538 | true-false | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | d372521 | ok | rolling-source-slice |
-| q539 | false-statement | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | d372521 | ok | rolling-source-slice |
-| q540 | judgement | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | d372521 | defect | queued-data-integrity-unknown-option |
-| q541 | section-practice | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d372521 | ok | rolling-source-slice |
-| q542 | true-false | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d372521 | defect | queued-data-integrity-residual |
-| q543 | false-statement | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d372521 | defect | queued-data-integrity-residual |
-| q544 | judgement | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d372521 | defect | queued-data-integrity-unknown-option |
-| q545 | section-practice | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | d372521 | ok | rolling-source-slice |
-| q546 | true-false | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | d372521 | defect | queued-data-integrity-residual |
-| q547 | false-statement | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | d372521 | defect | queued-data-integrity-residual |
-| q548 | judgement | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | d372521 | defect | queued-data-integrity-unknown-option |
-| q549 | section-practice | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | d372521 | ok | rolling-source-slice |
-| q550 | true-false | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | d372521 | defect | queued-data-integrity-residual |
+| q501 | section-practice | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | 85fe297 | ok | rolling-source-slice |
+| q502 | true-false | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | 85fe297 | ok | rolling-source-slice |
+| q503 | false-statement | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | 85fe297 | ok | rolling-source-slice |
+| q504 | judgement | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | 85fe297 | ok | rolling-source-slice |
+| q505 | section-practice | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | 85fe297 | ok | rolling-source-slice |
+| q506 | true-false | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | 85fe297 | ok | rolling-source-slice |
+| q507 | false-statement | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | 85fe297 | ok | rolling-source-slice |
+| q508 | judgement | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | 85fe297 | ok | rolling-source-slice |
+| q509 | section-practice | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q510 | true-false | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q511 | false-statement | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q512 | judgement | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q513 | section-practice | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q514 | true-false | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q515 | false-statement | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q516 | judgement | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q517 | section-practice | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q518 | true-false | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q519 | false-statement | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q520 | judgement | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 85fe297 | ok | rolling-source-slice |
+| q521 | section-practice | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 85fe297 | ok | rolling-source-slice |
+| q522 | true-false | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 85fe297 | ok | rolling-source-slice |
+| q523 | false-statement | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 85fe297 | ok | rolling-source-slice |
+| q524 | judgement | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 85fe297 | ok | rolling-source-slice |
+| q525 | section-practice | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 85fe297 | ok | rolling-source-slice |
+| q526 | true-false | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 85fe297 | defect | queued-data-integrity-q501-q550-current |
+| q527 | false-statement | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 85fe297 | defect | queued-data-integrity-q501-q550-current |
+| q528 | judgement | q096 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 85fe297 | ok | rolling-source-slice |
+| q529 | section-practice | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | 85fe297 | ok | rolling-source-slice |
+| q530 | true-false | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | 85fe297 | defect | queued-data-integrity-q501-q550-current |
+| q531 | false-statement | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | 85fe297 | defect | queued-data-integrity-q501-q550-current |
+| q532 | judgement | q097 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nyår | 45 | 85fe297 | ok | rolling-source-slice |
+| q533 | section-practice | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | 85fe297 | ok | rolling-source-slice |
+| q534 | true-false | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | 85fe297 | ok | rolling-source-slice |
+| q535 | false-statement | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | 85fe297 | defect | queued-data-integrity-q501-q550-current |
+| q536 | judgement | q098 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | 85fe297 | ok | rolling-source-slice |
+| q537 | section-practice | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | 85fe297 | ok | rolling-source-slice |
+| q538 | true-false | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | 85fe297 | ok | rolling-source-slice |
+| q539 | false-statement | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | 85fe297 | ok | rolling-source-slice |
+| q540 | judgement | q099 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | 85fe297 | ok | rolling-source-slice |
+| q541 | section-practice | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 85fe297 | ok | rolling-source-slice |
+| q542 | true-false | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 85fe297 | defect | queued-data-integrity-q501-q550-current |
+| q543 | false-statement | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 85fe297 | defect | queued-data-integrity-q501-q550-current |
+| q544 | judgement | q100 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 85fe297 | ok | rolling-source-slice |
+| q545 | section-practice | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 85fe297 | ok | rolling-source-slice |
+| q546 | true-false | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 85fe297 | ok | rolling-source-slice |
+| q547 | false-statement | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 85fe297 | ok | rolling-source-slice |
+| q548 | judgement | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 85fe297 | ok | rolling-source-slice |
+| q549 | section-practice | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | 85fe297 | ok | rolling-source-slice |
+| q550 | true-false | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | 85fe297 | ok | rolling-source-slice |
 | q551 | false-statement | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | 8e15381 | defect | queued-data-integrity-residual |
 | q552 | judgement | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | 8e15381 | defect | queued-data-integrity-unknown-option |
 | q553 | section-practice | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | 8e15381 | ok | rolling-source-slice |
