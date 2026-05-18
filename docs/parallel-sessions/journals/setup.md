@@ -667,3 +667,11 @@ Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-
 PR: #368 opened from `task/setup/privacy-copy-1779114396`; merge pending at handoff commit time.
 Blocked? no - this closes the static privacy/monetization copy source atom; production deployment freshness remains separate external live-site evidence work.
 Next suggested validator action: inspect the new static privacy-copy guard and rerun `npm run test:static-site-privacy-copy` before accepting the reviewer copy defect.
+
+## Iteration 203 - 2026-05-18
+Task completed: REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1 - added a pull-request-to-main trigger to the release-validation workflow while preserving manual dispatch and version-tag validation.
+Artifacts changed: `.github/workflows/release-validation.yml`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'GitHub release validation workflow runs safe validation and blocker evidence checks' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `./node_modules/.bin/prettier --check .github/workflows/release-validation.yml` exit 0; `git diff --check origin/main..HEAD` exit 0. Broad `npm run test:build-config` was attempted and remains red on the separate queued `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1` failure, so this atom used the focused release-validation gate.
+PR: #388 squash-merged to `main` as `11e60ac`.
+Blocked? no for the PR-trigger source atom. The PR-triggered remote Release validation run fired, but GitHub Actions still fails before exposing steps/logs under the existing runner/spending-cap blocker; production deploy evidence remains separate.
+Next suggested validator action: inspect `.github/workflows/release-validation.yml`, rerun the focused build-config release-validation test, then keep `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1` as the next release-config atom and `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` blocked on external deploy capacity.
