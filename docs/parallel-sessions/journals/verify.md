@@ -308,3 +308,13 @@ Verification (commands + result): Current baseline was the rebased current `orig
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: route the queued SETUP/site ebook source-coverage atom or explicitly defer it; keep q501-q550 with its existing CONTENT-VERIFY owner and keep the chapter-record audit with its active owner.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q551-q600-pane3-1779136262`, branch `task/content-verify/q551-q600-pane3-1779136262`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-q451/q501 rolling current-output refresh for `verify:data/questions.ts q551-q600`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q551-q600-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL, inspected with `pdfinfo`, and extracted with `pdftotext` for printed pages 42-47; q551-q600 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current output at `origin/main` `e0f379a` clears the older q551-q600 fragment, prefix, meta-wrapper, false-explanation, and unknown-material fallback defects. Current remaining generated-output defects are `q563`, `q574`, `q598`, and `q599`: `q563` needs `on a Saturday`; `q574` lowercases `buddhist`; `q598` has subject/verb disagreement; and `q599` remains a stilted `That ... is mentioned...` true/false stem. Focused CSV/static/ledger/report/queue assertion passed with 50 checked rows, 25 true/false rows, 4 current defects, zero stale prefix/meta/old-unknown-option hits, no missing static rows, and no static text mismatches.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-Q551-Q600-CURRENT-1` to DATA-INTEGRITY after q501-q550, then continue rolling VERIFY with q601-q650 or the next current changed/due slice.

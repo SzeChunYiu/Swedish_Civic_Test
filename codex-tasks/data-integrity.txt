@@ -1035,3 +1035,25 @@ route is q501-q550 for q526/q527/q530/q531/q535/q542/q543 from reviewer
 evidence in `99c0960`; q551-q600 evidence from PR #700 / `8e46b3b` and
 handoff commit `5a9fd78` stays behind q501-q550 unless VALIDATOR explicitly
 reorders.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T22:33:09+02:00
+`VERIFY-GENERATED-TF-Q551-Q600-CURRENT-1` [product defect][P0
+TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on
+current `origin/main` `e0f379a` supersedes the older broad q551-q600 residual
+report from `8e15381`. The slice has 50 rows, 25 true/false rows, zero
+`Sant eller falskt:` / `True or false:` prefixes, zero true/false meta-wrapper
+stems, and zero old `Det går inte att avgöra av materialet` /
+`It cannot be determined from the material` fallback options in both
+`content/question-bank.csv` and `site/questions.js`. Current remaining defects
+are four generated English naturalness issues: `q563` says `Advent occurs a
+Saturday...`; `q574` lowercases `buddhist` in `buddhist and Hindu`; `q598`
+has subject/verb disagreement (`Travel to Asia and increased interest... is
+mentioned...`); and `q599` remains a stilted `That ... is mentioned...`
+true/false stem. Facts, citations, answer keys, explanations, and ordinary
+distractors remain supported by UHR `Sverige i fokus` printed pages 42-47.
+Own this as a generated true/false naturalness follow-up after q501-q550.
+Acceptance requires generator and validator mirror coverage, regenerated
+`content/question-bank.csv` and `site/questions.js`, export/static parity,
+`validate:content`, `test:derived-content`, focused content gates, typecheck,
+lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
+checks for the four named rows.
