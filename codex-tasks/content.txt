@@ -293,3 +293,17 @@ validator/export evidence, and handoff. Generated true/false naturalness is
 DATA-INTEGRITY-owned, not CONTENT hand editing. Fresh content audits are useful
 only when they file bounded P0 defects with UHR locator evidence and do not
 create data-only branches that leave the static site stale.
+
+MANAGER-content 2026-05-18T18:00:55+02:00
+Current `origin/main` includes manager-build acceptance of
+`CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1` via PR #456 / `67847d4`, with
+acceptance evidence recorded by `340e6f7`. Treat q124 as accepted and
+duplicate-guarded: the authored q124 option and generated `site/questions.js`
+mirror no longer contain the rejected `Midsommarafton började alltid firas på
+en fredag` / `Midsummer Eve began always being celebrated on a Friday` wording,
+and the UHR `Traditioner och högtider` / `Sveriges nationaldag`, printed page
+46 locator is preserved. Do not open another q124 data or static-mirror branch.
+Fresh CONTENT capacity should not implement generated-output fixes; the active
+non-content implementation route is `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`
+for DATA-INTEGRITY, followed only by bounded current-main P0 audits if they add
+new evidence with UHR locators and no `site/**` or generated-template edits.
