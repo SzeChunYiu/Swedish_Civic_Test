@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "test -d site || (echo 'ERROR: site/ missing from deployment upload. Do NOT run \"vercel\" CLI from this repo — production deploys are driven by the GitHub Action scheduled-deploy.yml firing the Vercel Deploy Hook. See AGENTS.md.' && exit 1) && echo 'Static landing site ready'",
+  "buildCommand": "test -d site || (echo 'site/ missing from upload' && exit 1)",
   "outputDirectory": "site",
   "framework": null,
   "cleanUrls": true,
