@@ -2537,3 +2537,24 @@ Verification (commands + result):
 PR (number + merged?): #281 / merged yes via squash commit `b919f0c`
 Accepted by worker? yes
 Next suggested validator action: include `site/` in `REVIEWER-ACCOUNT-SCOPE-1`; remove or hide static Sign in/OAuth/magic-link/account-sync UI, make ebook highlights/notes local-only or defer them without account prompts, and add a static-site guard rejecting reachable account/auth copy.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-origin-main` / `task/reviewer/site-p0-5-live-audit-1779108980`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 live deployed static-site audit vs `docs/design/drafts/practice-mockexam-2026-05-18/`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer/setup queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on another lane branch with unrelated dirty queue/report/release files.
+- Duplicate scan for `DEPLOYMENT`, `STALE`, `PRODUCTION.*SITE`, `PRACTICE-WIDTH`, `practice__inner--wide`, and `1080px` found no existing reviewer queue rows.
+- GitHub workflows API: `Scheduled Vercel deploy` is active as workflow `278713304`, but `actions/workflows/278713304/runs` returned `total 0`.
+- GitHub deployments API: latest Production success is deployment `4726822421` from `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`; latest Preview deployment `4728409781` failed with `Deployment was blocked`; latest successful Preview `4727923786` is `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`.
+- System-Chrome live Production smoke exited 0 as evidence collection, but observed product failure: `/practice` had `qCount:0`, `hubCards:0`, and no mock nav; `#/mock` fell back to active page `/` with no `#mock-stage`; Swedish `#/ebook?c=1` still showed `Svenska översättningen kommer i v1.1`.
+- System-Chrome latest successful Preview smoke exited 0 as evidence collection, but observed stale output: 57 questions and the same old Swedish ebook placeholder.
+- Served clean `origin/main` `site/` locally with `python3 -m http.server 8210 --bind 127.0.0.1`; local smoke showed 705 questions, 13 Practice cards, `#/mock`, and Swedish ebook chapter 1 with no placeholder.
+- Source parity diff against the draft showed the draft uses `practice__inner practice__inner--wide` plus `.practice__inner--wide { max-width: 1080px; }`, while current `site/index.html` uses only `practice__inner`.
+- System-Chrome layout probe at 1440px on current `origin/main` returned `hasWideClass:false`, `innerClientWidth:720`, `innerMaxWidth:"720px"`, grid columns `353px 353px`, and card widths `353`; the latest successful Preview returned the same 720px container.
+- `git diff --check` - exit 0 after queue/journal edits.
+PR (number + merged?): #296 / pending
+Accepted by worker? yes
+Next suggested validator action: route `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` before more local-only SITE closure, then route `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` to SETUP/UI for the draft wide Practice layout.
