@@ -24,12 +24,14 @@ type PremiumBannerCopy = {
   bodyIdle: (price: string) => string;
   buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
+  buyHint: string;
   buyIdle: (price: string) => string;
   buying: string;
   eyebrowActive: string;
   eyebrowIdle: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
+  restoreHint: string;
   restoreIdle: string;
   restoring: string;
   statusAccessibilityLabel: (message: string) => string;
@@ -40,13 +42,10 @@ type PremiumBannerCopy = {
 
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
-    bodyActive:
-      'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen.',
-    bodyIdle: (price) =>
-      `Hela frågebanken är gratis och annonser finansierar studieskärmar. Betala ${price} en gång för att ta bort annonser från studieskärmar; det låser inte upp frågor. Tidsatta övningsprov är redan annonsfria.`,
-    buyAccessibilityHint:
-      'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
+    body: (price) =>
+      `Ta bort annonser för ${price} en gång. Ingen prenumeration, och provet är alltid annonsfritt.`,
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
+    buyHint: 'Startar ett engångsköp som tar bort annonser från studieskärmar.',
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
@@ -54,6 +53,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     restoreAccessibilityHint:
       'Kontrollerar om Ta bort annonser redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
+    restoreHint: 'Kontrollerar om Ta bort annonser redan har köpts.',
     restoreIdle: 'Återställ',
     restoring: 'Återställer...',
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
@@ -69,13 +69,10 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     titleIdle: 'Ta bort annonser',
   },
   en: {
-    bodyActive:
-      'Purchase confirmed. Study ads are disabled on this device, and Restore stays available if this store account needs to be checked again.',
-    bodyIdle: (price) =>
-      `The full question bank stays free and ads support study screens. Pay ${price} once to remove ads from study screens; it does not unlock questions. Exams stay ad-free.`,
-    buyAccessibilityHint:
-      'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
+    body: (price) =>
+      `Remove ads forever for ${price}, one time. No subscription, and exams stay ad-free.`,
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
+    buyHint: 'Starts a one-time purchase that removes ads from study screens.',
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
@@ -83,6 +80,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     restoreAccessibilityHint:
       'Checks whether Remove Ads was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
+    restoreHint: 'Checks whether Remove Ads has already been purchased.',
     restoreIdle: 'Restore',
     restoring: 'Restoring...',
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
@@ -103,9 +101,15 @@ function getStatusMessage(status: PurchaseUiStatus, copy: PremiumBannerCopy): st
   return copy.statusMessages[status];
 }
 
-function getVisibleStatus(adsDisabled: boolean, status: PurchaseUiStatus): PurchaseUiStatus {
-  if (!adsDisabled) return status;
-  return status === 'restored' ? 'restored' : 'purchased';
+/**
+ * Defaults: Swedish copy, local purchase runtime derived from the current
+ * `adsDisabled` entitlement, and visible Buy/Restore actions.
+ */
+export interface PremiumBannerProps {
+  entitlements: PremiumEntitlements;
+  language?: AppLanguage;
+  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
+  runtimeOptions?: PurchaseRuntimeOptions;
 }
 
 export function PremiumBanner({
@@ -113,12 +117,7 @@ export function PremiumBanner({
   language = 'sv',
   onEntitlementsChange,
   runtimeOptions,
-}: {
-  entitlements: PremiumEntitlements;
-  language?: AppLanguage;
-  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
-  runtimeOptions?: PurchaseRuntimeOptions;
-}) {
+}: PremiumBannerProps) {
   const copy = premiumBannerCopy[language];
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(() => {
     if (runtimeOptions) return runtimeOptions;
@@ -184,7 +183,18 @@ export function PremiumBanner({
           </Button>
         ) : null}
         <Button
-          accessibilityHint={copy.restoreAccessibilityHint}
+          accessibilityHint={copy.buyHint}
+          accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: activeAction !== null || adsDisabled }}
+          disabled={activeAction !== null || adsDisabled}
+          onPress={() => void runPurchaseAction('buy')}
+          style={styles.actionButton}
+        >
+          {activeAction === 'buy' ? copy.buying : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
+        </Button>
+        <Button
+          accessibilityHint={copy.restoreHint}
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
           accessibilityState={{ disabled: activeAction !== null }}
@@ -237,7 +247,7 @@ const styles = StyleSheet.create({
     marginTop: space[0.5],
   },
   actionButton: {
-    minWidth: 128,
+    minWidth: space[15],
   },
   status: {
     color: colors.textMuted,
