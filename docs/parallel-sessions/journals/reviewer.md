@@ -3426,3 +3426,27 @@ Evidence: current product source has ad-supported and Remove Ads/IAP paths, whil
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route RELEASE or SETUP/COMPLY to update publishing privacy/data-safety docs and `scripts/publishing.test.js` to the current Google Mobile Ads, Remove Ads non-consumable IAP, and ATT/UMP consent posture.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-CLKukA/wt` / `task/reviewer/generated-tf-standalone-current-1779133210`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated true/false standalone-stem recheck after DATA-INTEGRITY landed q301-q350 wording cleanup.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/setup/data-integrity/open queues, blockers, and reviewer journal context before queueing.
+- Used a clean branch worktree on source baseline `origin/main` `120d440`; subsequent rebases only added queue/journal/verify docs, and a repeated VM spot scan found the same static-bank counts.
+- Direct VM inspection of `site/questions.js` found `720` total questions, `299` true-false questions, `0` true/false prefix offenders, `0` true/false stem meta offenders, and `0` false-answer explanation offenders.
+- q301-q350 known true/false rows now publish standalone propositions; q151/q167/q235/q255/q331/q339/q439/q507/q715 false-answer explanation mismatches are no longer current.
+- q351 is now standalone, but q358/q359 remain non-standalone in Swedish (`Det...`), and q398/q399 remain non-standalone in Swedish and English (`De` / `They`) because they do not name the referent.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionFalseAnswerExplanationsValidated:720`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 27/27 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing generated true/false evidence narrowed instead of filing a duplicate broad defect.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q351-Q400-CURRENT-1 update [2026-05-18 21:42 CEST]`.
+Evidence: current main closes q301-q350 standalone-stem issues and false-answer explanations, but four q351-q400 standalone-referent stems still pass green validators.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept the q301-q350/false-explanation portions only with DATA-INTEGRITY source evidence, then route q358/q359/q398/q399 as the focused remaining q351-q400 standalone-stem DATA-INTEGRITY atom.
