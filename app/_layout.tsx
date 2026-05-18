@@ -28,6 +28,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
         <Stack.Screen name="account" />
+        <Stack.Screen name="search" />
         <Stack.Screen name="+not-found" />
       </Stack>
       {!suppressLaunchPopupAd && entitlementsReady ? (
