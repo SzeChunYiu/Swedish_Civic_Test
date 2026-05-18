@@ -1,5 +1,31 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route correction - 2026-05-18T23:25+02:00
+
+Current `origin/main` is `9f585d4`. q601-q650 DATA-INTEGRITY cleanup is
+accepted, q651-q700 VERIFY is landed via `58732d6`, q701-q720 VERIFY is landed
+via `e3fe9dd`, q698 capitalization source repair plus handoff are now on main
+via `c26e7c1` and `9f585d4`, and the broad generated judgement/filler plus
+single-choice filler-options reviewer queues are landed via `0e94a31` and
+`ffb2ba2`. Do not duplicate q601, q651, q698, or q701 branches unless
+VALIDATOR rejects the landed evidence with precise current-main residuals.
+
+CONTENT remains handoff-only for source implementation. DATA-INTEGRITY is
+currently usage-limited per `39585c0`; q698 should be inspected/accepted or
+rejected from `c26e7c1`/`9f585d4`, while any q663/q670/q671 follow-up from the
+landed q651 VERIFY evidence remains DATA-INTEGRITY/VALIDATOR-owned, not
+CONTENT-owned.
+The whole-bank generated judgement/filler cleanup follows q651 acceptance or
+rejection and supersedes the older q701-only judgement route; the ordinary
+single-choice filler-options cleanup can be bundled with it only if VALIDATOR
+keeps the acceptance checks separate.
+
+Do not edit `data/**`, `content/question-bank.csv`, `site/**`, generator
+templates, validator mirrors, or regenerated static mirrors from CONTENT.
+`CONTENT-AUTHORED-TF-PREFIX-1` remains unleased and may only proceed as an
+explicit bundled authored-data plus generated CSV/static mirror plus guard
+cleanup.
+
 MANAGER-content current-route correction - 2026-05-18T23:06+02:00
 
 Current `origin/main` is `b7fde22`. q701-q720 maintained VERIFY is now on
