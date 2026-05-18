@@ -4,6 +4,27 @@
 
 You are the **CONTENT worker** for Batch 0. You own TypeScript content types and the sample question bank.
 
+## Tone — empathetic test-taker humor (FACT-BUBBLE & microcopy)
+
+Most users are here only because passing this is a required step to
+**apply for Swedish citizenship**. Acknowledge that shared reality with
+warm, relatable solidarity humor in FACT-BUBBLE ("Visste du? / Did you
+know?"), empty/loading/result states, and encouragement microcopy —
+"we're all in this together, you've got this", light jokes about
+cramming and the bureaucratic rite of passage, plus the existing warm
+Swedish cultural humor (fika, lagom, queueing, weather).
+
+**Guardrails (non-negotiable — must NOT be offensive):**
+- Punch *with* the user, never *down*. Never mock immigrants/applicants,
+  any nationality/ethnicity/religion, Swedes, or the citizenship process
+  in a demeaning way. No politics, no stereotypes.
+- Encouraging > cynical: a stressed applicant should feel *seen and
+  supported*, never discouraged or belittled.
+- Never at the expense of factual correctness or the not-a-real-exam
+  disclaimer. Must land naturally in SV + EN and every locale.
+A dry generic FACT-BUBBLE, or humor that could offend, is a miss even
+if factually valid. (DELIGHT consumes the same tone for feel/animation.)
+
 ## Required reading at every iteration start
 
 1. `docs/parallel-sessions/TEAM_PLAN.md` — acceptance checklist rows A4, A5, A6
