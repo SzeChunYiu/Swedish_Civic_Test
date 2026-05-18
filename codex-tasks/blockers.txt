@@ -26,8 +26,8 @@ STANDING POLICY (operator, hard — read every cycle):
 # === P0 STOP-THE-LINE 2026-05-18: deployed site/ is starved ===
 # Vercel serves ONLY site/. Factory built into app/ + docs/design/drafts/,
 # so the LIVE site lacked Practice & Mock-exam and a thin ebook. SITE-P0-1 is
-# accepted via PR #242 / c4404d8; SITE-P0-2 is accepted via PR #252 / 5e834b9.
-# Remaining SITE-P0 items stay highest priority until site/ is the full product.
-SITE-P0-3: sync site/questions.js from data/questions.ts (canonical bank) and keep them from drifting
+# accepted via PR #242 / c4404d8; SITE-P0-2 is accepted via PR #252 / 5e834b9;
+# SITE-P0-3 is accepted via PR #264 / 19a420e. Remaining SITE-P0 items stay
+# highest priority until site/ is the full product.
 SITE-P0-4: ebook page in site/ — keep the richer #154 site/ebook.js, improve writing quality per CONTENT/LANGUAGE voice; never regress
 SITE-P0-5: REVIEWER audit the LIVE deployed site vs the draft mockups; queue parity defects until site/ is the full well-written product
