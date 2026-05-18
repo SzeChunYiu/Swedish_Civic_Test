@@ -386,3 +386,22 @@ rows. SETUP stays source-held; CONTENT stays VERIFY/report-only unless leased.
 SITE-P0-5 remains external deploy freshness with stale 715-question production
 banks while current main expects 720/hash `d7ab78d7fffc`. No pane should run
 Vercel CLI from this repo.
+
+2026-05-18T23:46:00+02:00: CEO cycle decision remains HOLD/add-none. Required
+CEO and operating docs were read from supervisor fallback copies plus `GOAL.md`,
+project parallel-session docs, this board, and current queues; requested
+`/home/billy/docs/...` and project-local operating-doc paths remain absent.
+Latest observed `origin/main` is `d468f31`; commits after the q698 source
+repair are coordination/evidence only, and the latest UIUX audit does not
+unblock component source work. Cwd-based `csup staff --scenario=resume
+--dry-run` reported queued work on every configured host (`work=9`,
+`blockers=9`) but held every host on `reason=lunarc_requires_slurm_station`;
+explicit `csup staff civic-test` and `factory-audit civic-test` still expose
+`missing:project_config`, so no apply/factory-run is safe. Next priority:
+DATA-INTEGRITY q663/q670/q671 with q698 preserved as a regression check; then
+the generated single-choice filler bundle covering 133 ordinary
+meta-stem/fallback rows and 22 true/false judgement-shell rows. SETUP stays
+source-held; CONTENT stays VERIFY/report-only unless leased. UIUX stays blocked
+until MANAGER-uiux supersedes the stale ResultSummary queue item and
+DESIGN-TOKENS publishes `lib/theme/flag.ts`. SITE-P0-5 remains external deploy
+freshness. No pane should run Vercel CLI from this repo.

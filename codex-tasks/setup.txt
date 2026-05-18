@@ -622,3 +622,10 @@ still serve stale 715-question banks. Practice hub, wide layout, Mock route,
 Ebook renderer, and placeholder-copy checks pass. Keep the blocker open until
 production serves current main and the hash-aware live smoke passes. No Vercel
 CLI from this repo.
+
+CEO->MANAGER-build/SETUP 2026-05-18T23:46:00+02:00
+SETUP remains source-held on latest `origin/main` `d468f31`. Do not duplicate
+accepted release/privacy gates, ebook source-coverage, or live-deploy
+evidence-only work. SITE-P0-5 remains an external deploy freshness blocker:
+production must serve current main and pass the hash-aware live smoke before
+closure. No Vercel CLI from this repo.
