@@ -134,9 +134,7 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
-  const includeSupplementary = useSettingsStore(
-    (state) => state.includeSupplementaryQuestions,
-  );
+  const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
   );
@@ -218,16 +216,10 @@ export default function Screen() {
             includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
           }
           onPress={() => setIncludeSupplementary(!includeSupplementary)}
-          style={[
-            styles.bookmarkButton,
-            includeSupplementary ? styles.bookmarkButtonActive : null,
-          ]}
+          style={[styles.bookmarkButton, includeSupplementary ? styles.bookmarkButtonActive : null]}
         >
           <Text
-            style={[
-              styles.bookmarkText,
-              includeSupplementary ? styles.bookmarkTextActive : null,
-            ]}
+            style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
           >
             {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
           </Text>
@@ -235,9 +227,7 @@ export default function Screen() {
         <Pressable
           accessibilityRole="button"
           accessibilityState={{ expanded: aboutSourcesOpen }}
-          accessibilityLabel={
-            aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow
-          }
+          accessibilityLabel={aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
           onPress={() => setAboutSourcesOpen((value) => !value)}
           style={styles.aboutSourcesTrigger}
         >
@@ -249,12 +239,8 @@ export default function Screen() {
           <View accessibilityRole="text" style={styles.aboutSourcesPanel}>
             <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesUhrTitle}</Text>
             <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesUhrBody}</Text>
-            <Text style={styles.aboutSourcesItemTitle}>
-              {copy.aboutSourcesSupplementaryTitle}
-            </Text>
-            <Text style={styles.aboutSourcesItemBody}>
-              {copy.aboutSourcesSupplementaryBody}
-            </Text>
+            <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesSupplementaryTitle}</Text>
+            <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesSupplementaryBody}</Text>
             <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesEditorialTitle}</Text>
             <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesEditorialBody}</Text>
           </View>
