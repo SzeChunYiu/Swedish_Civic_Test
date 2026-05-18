@@ -3759,6 +3759,6 @@ Verification (commands + result):
 Workspace contract: pass - no product source edited; existing q651-q700 reviewer finding updated instead of filing a duplicate.
 Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1 follow-up [2026-05-18 23:39 CEST]`.
 Evidence: current main closes q698 but still leaves q663/q670/q671 naturalness defects while the focused guards stay green.
-PR (number + merged?): pending at handoff commit time.
+PR (number + merged?): #771 merged yes, squash `39aba02`.
 Accepted by worker? yes
 Next suggested validator action: keep q651-q700 open only for q663/q670/q671, require generator/validator/static-mirror coverage, and keep q698 closed unless a fresh regression appears.
