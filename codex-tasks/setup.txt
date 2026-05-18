@@ -109,6 +109,15 @@ Accepted P0 SETUP atoms:
       full `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config`,
       typecheck, ownership, workflow Prettier, and `git diff --check
       11e60ac^..11e60ac` all exit 0.
+13. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1` accepted via PR #407 /
+    `0572be8`.
+    - Clean manager verification on current `origin/main`: PR diff touched only
+      `scripts/build-config.test.js` and the SETUP journal, not `eas.json`;
+      focused build-config slice passed 2/2, full
+      `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` passed 38/38,
+      `npm run typecheck -- --pretty false`, `npm run test:ownership`,
+      Prettier for `scripts/build-config.test.js`, and `git diff --check
+      0572be8^..0572be8` all exit 0.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
@@ -181,6 +190,13 @@ still failed before steps due the Actions payment/spending-limit blocker. Keep
 live deploy open, and route SETUP to the next unblocked source atom:
 production submit guard.
 
+MANAGER-build acceptance 2026-05-18T17:15+02:00:
+PR #407 / `0572be8` closed production submit guard ordering. The earlier
+local-only `eas.json` fake-identifier diff did not enter the PR; the merged
+diff only tightened `scripts/build-config.test.js` and recorded the SETUP
+handoff. The next unblocked P0 SETUP source atom is visual-smoke launch-overlay
+evidence while live deploy freshness remains externally blocked.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
@@ -209,24 +225,7 @@ production submit guard.
 
 Next unblocked P0 SETUP source atoms while live deploy is externally blocked:
 
-2. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
-   - Scope: release-config/tooling.
-   - Required behavior: `submit-production-guard --check-only` reports
-     placeholder Apple submit identifiers (`appleId`, `ascAppId`,
-     `appleTeamId`, `TBD`) before release-preflight blockers can mask them.
-   - Required gates: focused
-     `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/build-config.test.js --test-name-pattern 'EAS build and submit profiles are configured|production submit guard blocks placeholder Apple identifiers'`,
-     then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
-     nearest release validation gate, plus `git diff --check`.
-   - Manager QA note, 2026-05-18T17:10+02:00: local SETUP branch
-     `task/setup/submit-guard-1779116704` is not accepted yet because no PR is
-     open and the uncommitted diff includes an unlisted `eas.json` change with
-     fake submit identifiers. Acceptance requires a PR/merge and either removing
-     `eas.json` from this atom or explicitly listing and justifying the
-     release-config change with the focused build-config gates, full
-     `test:build-config`, typecheck, ownership, Prettier, and whitespace checks.
-
-3. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+2. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
