@@ -3404,3 +3404,25 @@ Evidence: current main closes the missing static Ebook chapter 13 nav, order, re
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: use this as behavioral-resolution evidence, but require the SETUP formatting follow-up and targeted Prettier evidence recorded in `codex-tasks/setup.txt` before fully accepting `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1`; keep live deploy freshness and generated false-answer explanation alignment open separately.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-release-privacy-1779141100` / `task/reviewer/release-privacy-current-1779141100`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main release/privacy publishing-gate recheck for `REVIEWER-RELEASE-GATES-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active setup/data-integrity/validator queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `dff1c24`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Queue helper `/home/billy/Desktop/projects/.shared/review-to-queue.sh` was absent, so REVIEWER appended directly to `codex-tasks/validator.txt` as in prior lane fallback.
+- `grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts && ! grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts` - exit 0.
+- `rg -n "Remove Ads|removeAds|29 SEK|restorePurchases|restore" app components lib` - exit 0 with Remove Ads, 29 SEK, restore, and persisted entitlement paths in product source.
+- `rg -n "Data Not Collected|No user data collected|No user data shared|real ads disabled|REAL_ADS_ENABLED_FOR_V1|test app IDs|Current MVP|purchase SDK|Current answer" publishing/privacy-labels.md publishing/google-play-data-safety.md scripts/publishing.test.js` - exit 0, showing the stale disabled-ads/no-data publishing contract.
+- `npm run test:publishing` - exit 0, 7/7 passing while asserting the stale contract.
+- The broad GOAL step-7 grep exits 0, but only because generic words such as `tracking` / `advertising` are present; it does not verify the required ad-supported + Remove Ads IAP disclosure posture.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing release-gates finding updated instead of filing a duplicate.
+Findings queued: `REVIEWER-RELEASE-GATES-1 update [2026-05-18 21:34 CEST]`.
+Evidence: current product source has ad-supported and Remove Ads/IAP paths, while publishing privacy/data-safety docs and the green publishing test still encode disabled real ads and no data collection.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route RELEASE or SETUP/COMPLY to update publishing privacy/data-safety docs and `scripts/publishing.test.js` to the current Google Mobile Ads, Remove Ads non-consumable IAP, and ATT/UMP consent posture.
