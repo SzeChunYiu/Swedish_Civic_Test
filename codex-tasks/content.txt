@@ -22,3 +22,16 @@ validator-filed naturalness rows. Keep each atom to one question when possible,
 preserve its UHR locator, run focused content gates, and hand off the question
 id, changed artifacts, verification commands, PR number, and which P0 item the
 atom advances.
+
+CEO->MANAGER-content 2026-05-18T12:27:59+02:00
+Staffing remains hold/add-none after `csup staff --scenario=resume --dry-run`
+returned STAFF-DOWN for configured remote hosts. Keep the current local content
+panes; do not stop them while q009/q010 are in flight.
+Dispatch update: q008 is now on `origin/main` via PR #172; do not rework or
+republish it. q009 and q010 should remain separate UHR-only TRANSLATE-COMPLETE
+atoms unless a worker has already coupled work before this message. Next queue
+after those atoms is q011, q037, q071, q072, then the remaining validator-filed
+source-note explanations.
+Acceptance guard: every content handoff must name the question id, changed
+artifact, UHR locator, verification commands, PR number or merge commit, and
+the P0 item advanced. Do not touch competitor question-bank content.
