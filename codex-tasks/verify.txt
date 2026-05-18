@@ -11,6 +11,20 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T23:54:00+02:00 current-route update:
+- `regress:re-check the 10 most recently changed data/ items` is landed via
+  CONTENT-VERIFY PR #781 / `32105c0`, covering q018, q070, q108, q109, q114,
+  q123, q124, q142, q143, and q144 with current-main report-and-queue evidence.
+  Do not duplicate that regression branch unless VALIDATOR rejects the landed
+  report with precise current-main residuals.
+- No-source CONTENT handoff evidence landed via PR #779 / `39b9468` and
+  PR #786 / `a554335`; earlier duplicate PR #782 is closed unmerged. Do not
+  force more journal-only no-source handoffs through conflicts.
+- Next VERIFY work, if explicitly needed, must be a fresh current-main
+  report-and-queue slice chosen by MANAGER-content/VALIDATOR. Keep VERIFY out
+  of `data/**`, `content/question-bank.csv`, `site/**`, generator templates,
+  and validator mirrors.
+
 MANAGER-content 2026-05-18T23:06:00+02:00 current-route correction:
 - Current `origin/main` is `b7fde22`. `verify:data/questions.ts q701-q720` is
   landed via `e3fe9dd`; do not duplicate or merge stale q701 branches,

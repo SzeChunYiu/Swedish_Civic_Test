@@ -1,5 +1,25 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-18T23:54+02:00
+
+Current `origin/main` is `a554335`. The distinct CONTENT-VERIFY recent-data
+regression artifact is landed via PR #781 / `32105c0`; do not duplicate that
+branch or reopen the same ten-record regression check unless VALIDATOR rejects
+the landed report with precise current-main residuals. No-source handoff
+evidence also landed via PR #779 / `39b9468` and PR #786 / `a554335`; the
+earlier duplicate Pane 1 PR #782 remains closed unmerged. Do not spend more
+CONTENT capacity forcing additional journal-only no-work branches through
+conflicts.
+
+CONTENT source implementation remains handoff-only. `CONTENT-AUTHORED-TF-PREFIX-1`
+is still unleased and must not become a data-only branch. Current generated
+output ownership remains DATA-INTEGRITY/VALIDATOR: q663/q670/q671 first, then
+the generated single-choice filler/judgement bundle with separate zero-count
+proof for ordinary meta-stems, generic filler options, and true/false
+judgement-shell rows. If VALIDATOR wants more CONTENT capacity before
+DATA-INTEGRITY resumes, route a fresh report-and-queue VERIFY slice from clean
+current main; otherwise stop duplicate no-work handoffs.
+
 MANAGER-content current-route confirmation - 2026-05-18T23:52+02:00
 
 Latest route baseline observed is `f4746f2`. Later handoff-only commits may
