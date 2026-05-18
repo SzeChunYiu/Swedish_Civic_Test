@@ -774,3 +774,13 @@ Verification (commands + result): after rebase onto `origin/main` `10bfda0`, `np
 PR (number + merged?): #260, yes via squash merge as `e12761b`.
 Accepted by worker? yes
 Next suggested validator action: accept `SITE-P0-3` parity evidence and keep `node scripts/export-site-question-bank.js --check`, `tests/content-static-site-question-bank-parity.test.js`, `npm run validate:content`, and `node --check site/questions.js` as the nearest deployed static question-bank drift gates.
+
+Lane: DATA-INTEGRITY
+Host/branch: local `/tmp/sct-data-integrity-static-ebook-parity`, `task/data-integrity/static-ebook-parity-1779108106`
+Role type and manager: dynamic-worker under MANAGER-build / VALIDATOR
+Task / checklist item: SITE-P0-4 static ebook parity guard plus deployed static question-bank drift sync, 2026-05-18 14:51 CEST.
+Changed artifacts: `tests/content-static-site-ebook-parity.test.js`, `package.json`, `site/ebook.js`, `site/questions.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification (commands + result): after rebase onto `origin/main` `04886a5`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` passed 289/289 with the new static ebook parity test and regenerated static question-bank parity included; after the final manager-content docs-only rebase, focused `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js tests/content-static-site-ebook-parity.test.js tests/content-test-gate-parity.test.js` passed 5/5; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 705-question parity; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 705 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed; `node --check site/ebook.js && node --check site/questions.js` passed; `git diff --check HEAD~1..HEAD` passed.
+PR (number + merged?): #289, yes via squash merge as `ed3d3d6`.
+Accepted by worker? yes
+Next suggested validator action: accept PR #289 as the DATA-INTEGRITY executable guard for `REVIEWER-SITE-EBOOK-SV-PARITY-1` and the latest static question-bank drift; keep `tests/content-static-site-ebook-parity.test.js`, `tests/content-static-site-question-bank-parity.test.js`, `node scripts/export-site-question-bank.js --check`, and serialized `npm run test:content -- --test-concurrency=1` as the nearest static-site parity gates. Route the separate static account-scope P0 to SETUP/DATA-INTEGRITY as its own atom.
