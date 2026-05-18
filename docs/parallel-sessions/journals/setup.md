@@ -627,3 +627,11 @@ Verification: `node --check site/ebook.js` exit 0; `node --check site/ebook-tool
 PR: #288 squash-merged to `main` as `ea3c8dd`.
 Blocked? no - SITE-P0-4 navigation semantics are corrected on latest `origin/main`; this handoff was committed from an isolated SETUP worktree and did not stage unrelated dirty files from the shared checkout.
 Next suggested validator action: rerun the static Ebook smoke and then route SITE-P0-5 reviewer audit against the live deployed static site.
+
+## Iteration 198 - 2026-05-18
+Task completed: REVIEWER-SITE-LIVE-DEPLOY-STALE-1 source atom - added a controlled site-only main push trigger for the Vercel production deploy and a live static-site smoke gate that rejects stale deployed Practice, Mock, Ebook, and question-bank assets.
+Artifacts changed: `.github/workflows/scheduled-deploy.yml`, `scripts/check-live-site.js`, `scripts/check-live-site.test.js`, `scripts/build-config.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0 after `npm ci` in the isolated worktree; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy' scripts/build-config.test.js` exit 0; `SITE_LIVE_URL=http://127.0.0.1:8234 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live` exit 0 against local current `site/` with 705 questions, Practice hub assets, Mock stage assets, Ebook renderer assets, and no stale placeholder copy; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0; targeted `git diff --check` exit 0.
+PR: #321 opened from `task/setup/live-deploy-1779110950`; merge/deploy evidence pending after the branch update lands.
+Blocked? no for the source gate - production freshness still needs the post-merge workflow run and `test:site-live` evidence against the deployed URL before VALIDATOR closes the live-deploy blocker.
+Next suggested validator action: after #321 is squash-merged, confirm the `Scheduled Vercel deploy` push run completes and rerun `SITE_LIVE_URL=<production-url> npm run test:site-live`.

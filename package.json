@@ -44,6 +44,7 @@
     "test:e2e": "playwright test",
     "test:a11y-labels": "node --test scripts/accessibility-labels.test.js",
     "test:public-urls": "node --test scripts/check-public-urls.test.js",
+    "test:site-live": "node scripts/check-live-site.js",
     "test:ui-effects": "node --test scripts/ui-effects.test.js",
     "simulate:ux-users": "node scripts/simulate-ux-users.js",
     "test:ux-simulation": "node --test scripts/ux-simulation.test.js",

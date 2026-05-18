@@ -1,17 +1,21 @@
 name: Scheduled Vercel deploy
 
-# The fast factory merges many PRs/hour. Per-branch/per-commit Vercel git
-# auto-deploy blew the Hobby plan's hard 100-deploys/day cap (hundreds of
-# preview deploys/day -> cap exhausted -> NO production deploy could land
-# -> live site frozen). Git auto-deploy is now disabled in vercel.json
-# ("git": {"deploymentEnabled": false}); this scheduled job is the SOLE
-# deploy path: one production deploy of the static site/ every 15 min via
-# the Vercel CLI + token = 96/day, safely under 100, site <=15 min stale.
-# (10 min = 144/day would exceed the cap; 15 min is the tightest safe cadence.)
+# The fast factory merges many PRs/hour. Vercel git auto-deploy is disabled in
+# vercel.json to avoid preview-deploy cap exhaustion. This workflow is the
+# controlled deploy path: scheduled production deploys, manual dispatch, and
+# site-only main pushes for urgent deployed-site fixes.
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: '*/15 * * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/scheduled-deploy.yml'
+      - 'scripts/check-live-site.js'
+      - 'site/**'
+      - 'vercel.json'
   workflow_dispatch:
 
 concurrency:
@@ -39,13 +43,21 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+          VERCEL_PRODUCTION_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
         run: |
           set -e
           if [ -n "$VERCEL_TOKEN" ]; then
             mkdir -p .vercel
             printf '%s' '{"projectId":"prj_vcIMvYMI7UhysjdP32HsREXyLoil","orgId":"team_TmhR7bmC3MrdyIbVtzAHTQTx"}' > .vercel/project.json
             echo "Deploying static site/ to production via Vercel CLI..."
-            npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
+            deploy_output="$(npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN")"
+            printf '%s\n' "$deploy_output"
+            deployment_url="$(printf '%s\n' "$deploy_output" | awk '/^https:\/\// { url=$0 } END { print url }')"
+            if [ -z "$deployment_url" ]; then
+              echo "::error::Vercel CLI did not print a deployment URL."
+              exit 1
+            fi
+            node scripts/check-live-site.js "$deployment_url"
             echo "Production deploy triggered."
           elif [ -n "$HOOK" ]; then
             echo "VERCEL_TOKEN not set; falling back to Deploy Hook."
@@ -55,6 +67,12 @@ jobs:
               2*) echo "Deploy triggered." ;;
               *)  echo "::error::Deploy hook failed (HTTP $code)"; exit 1 ;;
             esac
+            if [ -z "$VERCEL_PRODUCTION_URL" ]; then
+              echo "::error::VERCEL_PRODUCTION_URL is required to verify deploy-hook production output."
+              exit 1
+            fi
+            sleep 30
+            node scripts/check-live-site.js "$VERCEL_PRODUCTION_URL"
           else
             echo "::error::Neither VERCEL_TOKEN nor VERCEL_DEPLOY_HOOK set."
             exit 1
