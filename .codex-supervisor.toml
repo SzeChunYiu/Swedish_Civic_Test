@@ -4,15 +4,103 @@ schema_version = 1
 name = "civic-test"
 description = "Sweden Citizenship Test Prep — React Native + Expo + TypeScript"
 
-# FLAT autonomous swarm. No CEO/MANAGER. Every host below is an autonomous
-# worker that follows docs/parallel-sessions.md (THINK next -> LEARN the skill
-# -> PLAN -> build -> VALIDATE+TEST -> ship a product PR; CI gate + operator
-# pr-meta-guard are the only acceptance). Dead AI-factory-csup-* host blocks
-# removed 2026-05-19 (never ran; poisoned `csup station/stop` targeting). Host
-# names match the live `civic-sup` SLURM stanzas in ~/.config/csup/hosts.toml.
+# ── LUNARC scale-up DISABLED 2026-05-18 ──────────────────────────────
+# The ChatGPT/codex ACCOUNT is usage-capped until 2026-05-23 23:11, so
+# every LUNARC civic-sup allocation produces ZERO real codex output —
+# it only burned HPC allocation and spammed origin/main with empty
+# "factory: lunarc civic WIP" flushes. All LUNARC host blocks below are
+# `disabled = true` so multi-watchdog.sh skips them (it greps this very
+# key). Productive civic runs on the laptop. To re-enable after the
+# account resets: flip every `disabled = true` to `false` and re-PR.
+# Reusable infra persists on fs9 (node-env.sh, civic.sif).
+# ─────────────────────────────────────────────────────────────────────
+
+[hosts."civic-meta-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-meta"
+prompts = "codex-prompts-meta.txt"
+tasks_dir = "codex-tasks"
+role = "ceo"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-build-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-team-build"
+prompts = "codex-prompts-team-build.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-uiux-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-team-uiux"
+prompts = "codex-prompts-team-uiux.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-uiux-design-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-team-uiux-design"
+prompts = "codex-prompts-civic-team-uiux-design.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-uiux-runtime-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-team-uiux-runtime"
+prompts = "codex-prompts-civic-team-uiux-runtime.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-qa-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-team-qa"
+prompts = "codex-prompts-civic-team-qa.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."civic-team-release-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-team-release"
+prompts = "codex-prompts-civic-team-release.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+# Legacy host kept for compatibility — superseded by civic-team-build-lunarc.
+[hosts."civic-lunarc"]
+disabled = true
+ssh = "lunarc"
+session = "civic-test"
+prompts = "codex-prompts.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+# fs10-free LUNARC scale-up (1 lu48 node, fs9 worktree, node-local codex
+# scratch, GitHub-durable). SLURM/remote_env live in ~/.config/csup/hosts.toml.
 
 [hosts."lunarc-civic-local"]
-disabled = false
+disabled = true
 ssh = "lunarc"
 session = "civic-team-build-local"
 prompts = "codex-prompts-team-build.txt"
@@ -22,17 +110,17 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-ceo"]
-disabled = false
+disabled = true
 ssh = "lunarc"
 session = "civic-meta-local"
 prompts = "codex-prompts-meta.txt"
 tasks_dir = "codex-tasks"
-role = "team"
+role = "ceo"
 project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-uiux"]
-disabled = false
+disabled = true
 ssh = "lunarc"
 session = "civic-team-uiux-local"
 prompts = "codex-prompts-team-uiux.txt"

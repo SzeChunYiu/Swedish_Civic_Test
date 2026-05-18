@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------
-   Almost Swedish — site behaviour
+   Sveriges Medborgartest — site behaviour
    - hash routing (/, /privacy, /support, /terms, /sources)
    - language toggle (EN/SV) with localStorage persistence
    - try-a-question demo card
@@ -85,7 +85,7 @@ window.addEventListener("smt:languagechange", () => {
 
 const i18n = window.i18n = {
   en: {
-    "brand": "Almost Swedish",
+    "brand": "Sveriges Medborgartest",
     "nav.home": "Home",
     "nav.practice": "Practice",
     "nav.mock": "Mock exam",
@@ -231,7 +231,7 @@ const i18n = window.i18n = {
     "privacy.kicker": "Privacy policy",
     "privacy.h1a": "Your data",
     "privacy.h1b": "stays on your phone.",
-    "privacy.lede": "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
+    "privacy.lede": "Sveriges Medborgartest is an independent study app. We don't ask for an account, and study progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
     "privacy.meta1.b": "Effective",
     "privacy.meta1.v": "2026-05-15",
     "privacy.meta2.b": "Version",
@@ -240,7 +240,7 @@ const i18n = window.i18n = {
     "privacy.meta3.v": "~3 min",
     "privacy.toc": "In this policy",
     "privacy.s1.t": "Independence",
-    "privacy.s1.p": "Almost Swedish is an independent study app for Swedish civic knowledge practice. It is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Anything you read here represents what <em>this app</em> does — nothing more.",
+    "privacy.s1.p": "Sveriges Medborgartest is an independent study app for Swedish civic knowledge practice. It is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Anything you read here represents what <em>this app</em> does — nothing more.",
     "privacy.s2.t": "No account required",
     "privacy.s2.p": "The MVP requires no account, email address, phone number, or profile registration. You open the app, you study, you close the app. That's the deal.",
     "privacy.s3.t": "Local study progress",
@@ -303,7 +303,7 @@ const i18n = window.i18n = {
     "terms.meta3.v": "~2 min read",
     "terms.toc": "In these terms",
     "terms.s1.t": "What this is",
-    "terms.s1.p": "Almost Swedish is an unofficial study app. It is not the exam, it is not run by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score here does not grant citizenship.",
+    "terms.s1.p": "Sveriges Medborgartest is an unofficial study app. It is not the exam, it is not run by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score here does not grant citizenship.",
     "terms.s2.t": "Acceptable use",
     "terms.s2.p": "Use the app to study. Don't scrape it, reverse-engineer it, or rebrand it as your own product. Don't use it to harass anyone. Treat the app the way you'd treat a borrowed bicycle: well.",
     "terms.s3.t": "Content & accuracy",
@@ -357,7 +357,7 @@ const i18n = window.i18n = {
     "footer.about.p": "An independent study tool, built by people who've taken the test themselves. Free to start, study, and take mock exams.",
     "footer.h.honest": "Honest disclaimer",
     "footer.honest.p": "Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. We just really like helping people study.",
-    "footer.copyright": "© 2026 Almost Swedish. Made with kanelbullar in Stockholm.",
+    "footer.copyright": "© 2026 Sveriges Medborgartest. Made with kanelbullar in Stockholm.",
     "footer.fika": "Lagom built. Fika tested.",
 
     "ad.label": "Sponsored",
@@ -379,7 +379,7 @@ const i18n = window.i18n = {
   },
 
   sv: {
-    "brand": "Almost Swedish",
+    "brand": "Sveriges Medborgartest",
     "nav.home": "Hem",
     "nav.practice": "Öva",
     "nav.mock": "Provexempel",
@@ -525,7 +525,7 @@ const i18n = window.i18n = {
     "privacy.kicker": "Integritetspolicy",
     "privacy.h1a": "Dina data",
     "privacy.h1b": "stannar i telefonen.",
-    "privacy.lede": "Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.",
+    "privacy.lede": "Sveriges Medborgartest är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.",
     "privacy.meta1.b": "Gäller från",
     "privacy.meta1.v": "2026-05-15",
     "privacy.meta2.b": "Version",
@@ -534,7 +534,7 @@ const i18n = window.i18n = {
     "privacy.meta3.v": "~3 min",
     "privacy.toc": "I denna policy",
     "privacy.s1.t": "Oberoende",
-    "privacy.s1.p": "Almost Swedish är en fristående studieapp för övning av svensk samhällskunskap. Den är inte officiell och inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Allt du läser här gäller bara vad <em>denna app</em> gör — inget mer.",
+    "privacy.s1.p": "Sveriges Medborgartest är en fristående studieapp för övning av svensk samhällskunskap. Den är inte officiell och inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Allt du läser här gäller bara vad <em>denna app</em> gör — inget mer.",
     "privacy.s2.t": "Inget konto krävs",
     "privacy.s2.p": "MVP:n kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.",
     "privacy.s3.t": "Lokala studieframsteg",
@@ -597,7 +597,7 @@ const i18n = window.i18n = {
     "terms.meta3.v": "~2 min läsning",
     "terms.toc": "I villkoren",
     "terms.s1.t": "Vad det här är",
-    "terms.s1.p": "Almost Swedish är en inofficiell studieapp. Det är inte provet, det drivs inte av UHR, Skolverket, Migrationsverket eller svenska staten, och full pott här ger inte medborgarskap.",
+    "terms.s1.p": "Sveriges Medborgartest är en inofficiell studieapp. Det är inte provet, det drivs inte av UHR, Skolverket, Migrationsverket eller svenska staten, och full pott här ger inte medborgarskap.",
     "terms.s2.t": "Acceptabel användning",
     "terms.s2.p": "Använd appen för att plugga. Skrapa den inte, reverse-engineera den inte, bygg inte om den och kalla den din. Använd den inte för att trakassera någon. Behandla appen som du behandlar en lånad cykel: väl.",
     "terms.s3.t": "Innehåll & korrekthet",
@@ -651,7 +651,7 @@ const i18n = window.i18n = {
     "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.",
     "footer.h.honest": "Ärlig friskrivning",
     "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
-    "footer.copyright": "© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.",
+    "footer.copyright": "© 2026 Sveriges Medborgartest. Gjort med kanelbullar i Stockholm.",
     "footer.fika": "Lagom byggt. Fika-testat.",
 
     "ad.label": "Annons",

@@ -3,7 +3,6 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import { getNextReviewAt } from '../learning/spacedRepetition';
-import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp } from '../learning/xp';
 
@@ -16,14 +15,6 @@ export type QuestionProgress = {
   lastAnsweredAt?: string;
   nextReviewAt?: string;
   bookmarked?: boolean;
-};
-
-export type MockExamProgress = {
-  sessionId: string;
-  score: number;
-  completedAt: string;
-  correctCount: number;
-  totalCount: number;
 };
 
 const progressStateKey = 'progressState';
@@ -41,8 +32,6 @@ type PersistedProgress = {
   questionProgress: Record<string, QuestionProgress>;
   totalXp: number;
   answerDates: string[];
-  mockExamSessions: MockExamProgress[];
-  streakFreezeState: StreakFreezeState;
 };
 
 const emptyProgress: PersistedProgress = {
@@ -50,45 +39,7 @@ const emptyProgress: PersistedProgress = {
   questionProgress: {},
   totalXp: 0,
   answerDates: [],
-  mockExamSessions: [],
-  streakFreezeState: createInitialFreezeState(),
 };
-
-type MockExamProgressInput = {
-  sessionId: string;
-  score: number;
-  completedAt?: string;
-  correctCount?: number;
-  totalCount?: number;
-};
-
-function clampScore(value: number): number {
-  if (!Number.isFinite(value)) return 0;
-  return Math.max(0, Math.min(1, value));
-}
-
-function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
-  const fallback = createInitialFreezeState();
-  if (!value || typeof value !== 'object') return fallback;
-
-  const candidate = value as Partial<StreakFreezeState>;
-  const rescuedDayKeys = Array.isArray(candidate.rescuedDayKeys)
-    ? [...new Set(candidate.rescuedDayKeys.filter((day): day is string => typeof day === 'string'))]
-    : [];
-
-  return {
-    available: Math.max(0, Math.min(4, Math.round(candidate.available ?? fallback.available))),
-    lastEarnedAt:
-      typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt : fallback.lastEarnedAt,
-    lifetimeEarned: Math.max(0, Math.round(candidate.lifetimeEarned ?? fallback.lifetimeEarned)),
-    lifetimeSpent: Math.max(0, Math.round(candidate.lifetimeSpent ?? fallback.lifetimeSpent)),
-    rescuedDayKeys,
-  };
-}
-
-function streakFreezeStatesEqual(a: StreakFreezeState, b: StreakFreezeState): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
 
 function normalizeProgress(value: unknown): PersistedProgress {
   if (!value || typeof value !== 'object') return emptyProgress;
@@ -100,7 +51,6 @@ function normalizeProgress(value: unknown): PersistedProgress {
   const answerDates = Array.isArray(candidate.answerDates)
     ? [...new Set(candidate.answerDates.filter((day): day is string => typeof day === 'string'))]
     : [];
-  const mockExamSessions: MockExamProgress[] = [];
   const questionProgress: Record<string, QuestionProgress> = {};
 
   if (candidate.questionProgress && typeof candidate.questionProgress === 'object') {
@@ -120,28 +70,11 @@ function normalizeProgress(value: unknown): PersistedProgress {
     }
   }
 
-  if (Array.isArray(candidate.mockExamSessions)) {
-    for (const session of candidate.mockExamSessions) {
-      if (!session || typeof session !== 'object') continue;
-      const item = session as Partial<MockExamProgress>;
-      if (typeof item.sessionId !== 'string' || typeof item.completedAt !== 'string') continue;
-      mockExamSessions.push({
-        sessionId: item.sessionId,
-        score: clampScore(item.score ?? 0),
-        completedAt: item.completedAt,
-        correctCount: Math.max(0, item.correctCount ?? 0),
-        totalCount: Math.max(0, item.totalCount ?? 0),
-      });
-    }
-  }
-
   return {
     completedQuestionIds,
     questionProgress,
     totalXp: Math.max(0, candidate.totalXp ?? 0),
     answerDates,
-    mockExamSessions,
-    streakFreezeState: normalizeStreakFreezeState(candidate.streakFreezeState),
   };
 }
 
@@ -163,8 +96,6 @@ function writeProgress(progress: PersistedProgress): void {
 type ProgressState = PersistedProgress & {
   markQuestionCompleted: (questionId: string) => void;
   recordAnswer: (questionId: string, isCorrect: boolean) => void;
-  recordMockExamSession: (session: MockExamProgressInput) => void;
-  setStreakFreezeState: (streakFreezeState: StreakFreezeState) => void;
   toggleBookmark: (questionId: string) => void;
   resetProgress: () => void;
 };
@@ -182,8 +113,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
-        mockExamSessions: state.mockExamSessions,
-        streakFreezeState: state.streakFreezeState,
       };
       writeProgress(nextProgress);
 
@@ -224,49 +153,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
         answerDates,
-        mockExamSessions: state.mockExamSessions,
-        streakFreezeState: state.streakFreezeState,
-      };
-      writeProgress(nextProgress);
-
-      return nextProgress;
-    }),
-  recordMockExamSession: (session) =>
-    set((state) => {
-      const completedAt = session.completedAt ?? new Date().toISOString();
-      const nextSession: MockExamProgress = {
-        sessionId: session.sessionId,
-        score: clampScore(session.score),
-        completedAt,
-        correctCount: Math.max(0, session.correctCount ?? 0),
-        totalCount: Math.max(0, session.totalCount ?? 0),
-      };
-      const otherSessions = state.mockExamSessions.filter(
-        (item) => item.sessionId !== nextSession.sessionId,
-      );
-      const nextProgress = {
-        completedQuestionIds: state.completedQuestionIds,
-        questionProgress: state.questionProgress,
-        totalXp: state.totalXp,
-        answerDates: state.answerDates,
-        mockExamSessions: [...otherSessions, nextSession],
-        streakFreezeState: state.streakFreezeState,
-      };
-      writeProgress(nextProgress);
-
-      return nextProgress;
-    }),
-  setStreakFreezeState: (streakFreezeState) =>
-    set((state) => {
-      if (streakFreezeStatesEqual(state.streakFreezeState, streakFreezeState)) return state;
-
-      const nextProgress = {
-        completedQuestionIds: state.completedQuestionIds,
-        questionProgress: state.questionProgress,
-        totalXp: state.totalXp,
-        answerDates: state.answerDates,
-        mockExamSessions: state.mockExamSessions,
-        streakFreezeState,
       };
       writeProgress(nextProgress);
 
@@ -289,8 +175,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp,
         answerDates: state.answerDates,
-        mockExamSessions: state.mockExamSessions,
-        streakFreezeState: state.streakFreezeState,
       };
       writeProgress(nextProgress);
 

@@ -6,7 +6,6 @@ import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
-import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -15,8 +14,6 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
-import { calculateStreak } from '../../lib/learning/streaks';
-import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
@@ -25,9 +22,7 @@ import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
-
-type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 type PracticeCopy = {
   badge: string;
@@ -136,19 +131,16 @@ export default function Screen() {
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const totalXp = useProgressStore((state) => state.totalXp);
-  const answerDates = useProgressStore((state) => state.answerDates);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
-  const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
+  const includeSupplementary = useSettingsStore(
+    (state) => state.includeSupplementaryQuestions,
+  );
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
   );
   const [aboutSourcesOpen, setAboutSourcesOpen] = useState(false);
-  const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
-    null,
-  );
   const copy = practiceCopy[language];
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
@@ -178,12 +170,6 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
-  const answerXp = hasSelectedAnswer
-    ? calculateAnswerXp({ isCorrect: selectedIsCorrect, explanationRead: true })
-    : 0;
-  const streakDays = calculateStreak(answerDates);
-  const level = calculateLevel(totalXp);
-  const correctStreak = questionProgress[question.id]?.correctStreak ?? 0;
   const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
@@ -213,78 +199,62 @@ export default function Screen() {
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
         <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
-        <View style={styles.headerControls}>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-selected={isBookmarked}
-            accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isBookmarked }}
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('bookmark')}
-            onPress={() => toggleBookmark(question.id)}
-            style={({ pressed }) => [
-              styles.bookmarkButton,
-              isBookmarked ? styles.bookmarkButtonActive : null,
-              focusedHeaderControl === 'bookmark' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
+        <Pressable
+          aria-selected={isBookmarked}
+          accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: isBookmarked }}
+          onPress={() => toggleBookmark(question.id)}
+          style={[styles.bookmarkButton, isBookmarked ? styles.bookmarkButtonActive : null]}
+        >
+          <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
+            {isBookmarked ? copy.bookmarked : copy.bookmark}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="switch"
+          accessibilityState={{ checked: includeSupplementary }}
+          accessibilityLabel={
+            includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+          }
+          onPress={() => setIncludeSupplementary(!includeSupplementary)}
+          style={[
+            styles.bookmarkButton,
+            includeSupplementary ? styles.bookmarkButtonActive : null,
+          ]}
+        >
+          <Text
+            style={[
+              styles.bookmarkText,
+              includeSupplementary ? styles.bookmarkTextActive : null,
             ]}
           >
-            <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
-              {isBookmarked ? copy.bookmarked : copy.bookmark}
-            </Text>
-          </Pressable>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            accessibilityRole="switch"
-            accessibilityState={{ checked: includeSupplementary }}
-            accessibilityLabel={
-              includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
-            }
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('supplementary')}
-            onPress={() => setIncludeSupplementary(!includeSupplementary)}
-            style={({ pressed }) => [
-              styles.bookmarkButton,
-              includeSupplementary ? styles.bookmarkButtonActive : null,
-              focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
-          >
-            <Text
-              style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
-            >
-              {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
-            </Text>
-          </Pressable>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            accessibilityRole="button"
-            accessibilityState={{ expanded: aboutSourcesOpen }}
-            accessibilityLabel={aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('sources')}
-            onPress={() => setAboutSourcesOpen((value) => !value)}
-            style={({ pressed }) => [
-              styles.aboutSourcesTrigger,
-              focusedHeaderControl === 'sources' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
-          >
-            <Text style={styles.aboutSourcesTriggerText}>
-              {aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
-            </Text>
-          </Pressable>
-        </View>
+            {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ expanded: aboutSourcesOpen }}
+          accessibilityLabel={
+            aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow
+          }
+          onPress={() => setAboutSourcesOpen((value) => !value)}
+          style={styles.aboutSourcesTrigger}
+        >
+          <Text style={styles.aboutSourcesTriggerText}>
+            {aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
+          </Text>
+        </Pressable>
         {aboutSourcesOpen ? (
           <View accessibilityRole="text" style={styles.aboutSourcesPanel}>
             <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesUhrTitle}</Text>
             <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesUhrBody}</Text>
-            <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesSupplementaryTitle}</Text>
-            <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesSupplementaryBody}</Text>
+            <Text style={styles.aboutSourcesItemTitle}>
+              {copy.aboutSourcesSupplementaryTitle}
+            </Text>
+            <Text style={styles.aboutSourcesItemBody}>
+              {copy.aboutSourcesSupplementaryBody}
+            </Text>
             <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesEditorialTitle}</Text>
             <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesEditorialBody}</Text>
           </View>
@@ -324,16 +294,6 @@ export default function Screen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
-          <PostAnswerRewardPanel
-            answerXp={answerXp}
-            correctStreak={correctStreak}
-            isCorrect={selectedIsCorrect}
-            language={language}
-            level={level}
-            question={question}
-            streakDays={streakDays}
-            totalXp={totalXp}
-          />
           {currentScore ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
@@ -433,22 +393,12 @@ const styles = StyleSheet.create({
   },
   aboutSourcesTrigger: {
     alignSelf: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    maxWidth: '100%',
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
+    paddingHorizontal: space[0.5],
+    paddingVertical: space[0.5],
   },
   aboutSourcesTriggerText: {
     color: colors.accent,
     fontSize: typography.caption.fontSize,
-    textAlign: 'center',
     textDecorationLine: 'underline',
   },
   aboutSourcesPanel: {
@@ -470,31 +420,12 @@ const styles = StyleSheet.create({
     lineHeight: typography.caption.lineHeight,
     marginBottom: space[0.5],
   },
-  headerControls: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  headerControlFocused: {
-    borderColor: colors.focus,
-  },
-  headerControlPressed: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
   bookmarkButton: {
     alignSelf: 'flex-start',
-    alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    maxWidth: '100%',
-    minHeight: space[6],
-    minWidth: space[6],
     paddingHorizontal: space[1.5],
     paddingVertical: space[0.75],
   },
@@ -507,7 +438,6 @@ const styles = StyleSheet.create({
     fontSize: typography.badge.fontSize,
     fontWeight: typography.badge.fontWeight,
     letterSpacing: typography.badge.letterSpacing,
-    textAlign: 'center',
     textTransform: 'uppercase',
   },
   bookmarkTextActive: {

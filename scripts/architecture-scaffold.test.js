@@ -128,7 +128,6 @@ const designSystemSupportComponentFiles = [
 const themeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
-  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',
@@ -500,7 +499,7 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
   assert.equal(typeof packageJson.dependencies['react-native-mmkv'], 'string');
   assert.equal(typeof packageJson.dependencies['expo-speech'], 'string');
   assert.equal(appJson.plugins.includes('expo-router'), true);
-  assert.equal(appJson.scheme, 'almost-swedish');
+  assert.equal(appJson.scheme, 'swedish-civic-test');
   assert.equal(tsconfig.extends, 'expo/tsconfig.base');
   assert.equal(tsconfig.compilerOptions.strict, true);
   assert.match(babelConfig, /babel-preset-expo/);

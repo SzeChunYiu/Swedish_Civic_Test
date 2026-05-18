@@ -1,5 +1,4 @@
 import { Link } from 'expo-router';
-import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
@@ -9,7 +8,7 @@ import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { deriveBadges } from '../../lib/learning/badges';
-import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
+import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -21,7 +20,6 @@ type ProfileCopy = {
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
-  dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
   languageBadge: string;
@@ -30,7 +28,6 @@ type ProfileCopy = {
   openSettings: string;
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
-  streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -44,7 +41,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
-    dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
     languageBadge: 'Svenska',
@@ -53,7 +49,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettings: 'Öppna inställningar',
     openSettingsAccessibilityLabel: 'Öppna inställningar',
     questionsHelper: 'frågor',
-    streakFreezeBadge: 'Svitskydd',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -66,7 +61,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
-    dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',
     languageBadge: 'English support',
@@ -75,7 +69,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettings: 'Open settings',
     openSettingsAccessibilityLabel: 'Open settings',
     questionsHelper: 'questions',
-    streakFreezeBadge: 'Streak freeze',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -115,26 +108,11 @@ export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
-  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
-  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
   const level = calculateLevel(totalXp);
-  const streakWithFreeze = useMemo(
-    () =>
-      calculateStreakWithFreeze({
-        activeDayKeys: answerDates,
-        freezeState: streakFreezeState,
-      }),
-    [answerDates, streakFreezeState],
-  );
-  const currentStreak = streakWithFreeze.streakDays;
-  const streakRescueMessage = freezeBannerCopy(streakWithFreeze, language);
-  const dayStreakHelper =
-    currentStreak > 0 && streakWithFreeze.freezeState.available > 0
-      ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
-      : undefined;
+  const currentStreak = calculateStreak(answerDates);
   const wrongAnswerCount = Object.values(questionProgress).reduce(
     (count, progress) => count + progress.wrongCount,
     0,
@@ -146,10 +124,6 @@ export default function Screen() {
     wrongAnswerCount,
   });
 
-  useEffect(() => {
-    setStreakFreezeState(streakWithFreeze.freezeState);
-  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
-
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
       <View style={styles.statsRow}>
@@ -157,19 +131,13 @@ export default function Screen() {
         <MetricCard label={copy.xpMetric} value={totalXp} />
       </View>
       <View style={styles.statsRow}>
-        <MetricCard label={copy.dayStreakMetric} value={currentStreak} helper={dayStreakHelper} />
+        <MetricCard label={copy.dayStreakMetric} value={currentStreak} />
         <MetricCard
           label={copy.completedMetric}
           value={completedQuestionIds.length}
           helper={copy.questionsHelper}
         />
       </View>
-      {streakRescueMessage ? (
-        <Card accessible accessibilityLabel={streakRescueMessage} style={styles.streakFreezeCard}>
-          <Badge tone="warm">{copy.streakFreezeBadge}</Badge>
-          <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
-        </Card>
-      ) : null}
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
@@ -213,14 +181,6 @@ const styles = StyleSheet.create({
   },
   cardWide: {
     gap: space[1.5],
-  },
-  streakFreezeCard: {
-    gap: space[1],
-  },
-  streakFreezeText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
   },
   pillRow: {
     flexDirection: 'row',

@@ -19,18 +19,13 @@ test('purchase TypeScript schema stays in parity with validator expectations', (
     'utf8',
   );
 
-  assert.equal(summary.purchaseTypeUnionsValidated, 2);
-  assert.equal(summary.purchaseTypeInterfacesValidated, 8);
+  assert.equal(summary.purchaseTypeUnionsValidated, 1);
+  assert.equal(summary.purchaseTypeInterfacesValidated, 7);
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
-  assert.match(purchaseSource, /export type RemoveAdsReceiptValidationStatus =/);
   assert.match(purchaseSource, /export type RemoveAdsPurchaseStatus =/);
   assert.match(purchaseSource, /export interface PurchaseStorage/);
   assert.match(purchaseSource, /deleteItemAsync\?\(key: string\): Promise<void>;/);
   assert.match(purchaseSource, /export interface RemoveAdsPurchaseProvider/);
-  assert.match(
-    purchaseSource,
-    /validateRemoveAdsReceipt\?\([\s\S]*purchase: RemoveAdsPurchaseRecord,[\s\S]*productId: typeof REMOVE_ADS_PRODUCT_ID,[\s\S]*\): Promise<RemoveAdsReceiptValidationResult>;/,
-  );
   assert.match(
     purchaseSource,
     /restorePurchases\(productIds: readonly string\[\]\): Promise<RemoveAdsPurchaseRecord\[\]>;/,
