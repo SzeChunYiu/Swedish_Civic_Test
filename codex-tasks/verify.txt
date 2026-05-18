@@ -11,6 +11,26 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-19T00:04:00+02:00 current-route update:
+- Current `origin/main` is `0c3cb0e` and includes DATA-INTEGRITY source commit
+  `e1d04ea`, reviewer recheck `6ef2182`, and MANAGER-build partial acceptance
+  `4550a1c`. Current-output proof now shows zero generic single-choice
+  filler-option rows and zero true/false option-shell judgement rows; do not
+  publish VERIFY evidence that still describes those old filler-shell defects
+  as current unless it has been refreshed after those commits.
+- `verify:data/questions.ts q251-q300` is in local CONTENT-VERIFY Pane 3:
+  `/tmp/sct-content-verify-q251-q300-pane3-1779142500`, branch
+  `task/content-verify/q251-q300-pane3-1779142500`, now behind/conflicted after
+  the latest route updates. It must remain report-only, resolve the conflict,
+  recheck current output on `0c3cb0e`, and remove stale generic-fallback /
+  true-false-shell claims before PR or merge. Ordinary meta-stem rows such as
+  `q252` may still be current, but they are a separate generated-template
+  route from the now-zero filler-shell counts.
+- Do not start duplicate q251-q300, recent-data regression, or no-source
+  handoff branches unless VALIDATOR rejects the landed/current evidence with
+  precise residuals. Keep VERIFY out of `data/**`, `content/question-bank.csv`,
+  `site/**`, generator templates, and validator mirrors.
+
 MANAGER-content 2026-05-18T23:54:00+02:00 current-route update:
 - `regress:re-check the 10 most recently changed data/ items` is landed via
   CONTENT-VERIFY PR #781 / `32105c0`, covering q018, q070, q108, q109, q114,
