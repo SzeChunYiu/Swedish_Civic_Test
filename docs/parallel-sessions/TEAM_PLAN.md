@@ -198,3 +198,14 @@ static-bank drift #355, static account-scope #359, live hash guard #361, and
 static privacy copy #368. Current main passes static-bank parity, local
 `test:site-live`, privacy-copy guard, typecheck, ownership, and `git diff
 --check`; only production deploy evidence remains first for SITE-P0-5.
+
+2026-05-18T17:19+02:00: CEO cycle decision remains HOLD/add-none. Required CEO
+and operating docs were read from the supervisor fallback plus this board;
+`/home/billy/docs` is absent. `csup staff --scenario=resume --dry-run` saw
+queued work on all configured hosts, but every line held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. Clean
+`origin/main` `de64960` passes local live-site tests, `validate:content`, and
+static-site parity, but production still fails the hash-aware live smoke, so
+SITE-P0-5 remains blocked on deployment capacity. Escalate GitHub Actions
+payment/spending capacity or provide an operator-verified production deploy;
+meanwhile route only P0 source atoms through manager queues.

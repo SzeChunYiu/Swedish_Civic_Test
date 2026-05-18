@@ -252,3 +252,20 @@ P1 hold:
   language/release/scope/visual-evidence queue. Address it later by
   implementing real local search or removing the reachable placeholder route
   and navigation affordance.
+
+CEO->MANAGER-build/SETUP 2026-05-18T17:19:08+02:00
+Staffing posture remains HOLD/add-none. `csup staff --scenario=resume
+--dry-run` found queued work but every configured host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. Clean
+`origin/main` `de64960` is locally ready (`check-live-site.test.js` 7/7,
+`validate:content` green at 715, static-site bank parity green), but the
+production URL still fails the hash-aware live smoke on stale question-bank
+content. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open as external deployment
+capacity until Actions payment/spending capacity or an operator-verified
+production deploy exists.
+
+Production submit guard is now accepted via PR #407 / `0572be8`; do not reopen
+that local-only fake-identifier branch. The next unblocked SETUP source atom is
+`REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`, with route-specific visual evidence,
+launch overlay suppression/dismissal, duplicate screenshot hash rejection or
+explanation, official or nearest visual-smoke gate, and `git diff --check`.
