@@ -461,9 +461,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Hot mot demokratin säger att ett lågt valdeltagande kan leda till att människor får mindre möjlighet att påverka politiska beslut i sin vardag. Det kan också öka skillnaderna mellan grupper i samhället; de andra alternativen stöds inte av avsnittet.',
+      'Ett lågt valdeltagande kan göra det svårare för människor att påverka politiska beslut i sin vardag. Det kan också öka skillnaderna mellan grupper i samhället; de andra alternativen beskriver följder som inte följer av lågt valdeltagande.',
     explanationEn:
-      'The Threats to democracy section says a low voter turnout can give people fewer opportunities to influence political decisions in everyday life. It can also increase differences between groups in society; the other options are not supported by the section.',
+      'Low voter turnout can leave people with fewer opportunities to influence political decisions in everyday life. It can also widen differences between groups in society; the other options describe effects that do not follow from low voter turnout.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Hot mot demokratin',
