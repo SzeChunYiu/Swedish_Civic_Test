@@ -1471,6 +1471,22 @@ p.deck {
 .ebook__factbox h4 { font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); margin: 0 0 6px; }
 .ebook__factbox p { margin: 0; font-size: 15px; }
 
+.ebook__study-actions { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; margin: 34px 0 10px; padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.ebook__study-actions p { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
+.ebook__progress { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+.ebook__study-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+.ebook__study-links .btn { min-height: 42px; padding: 10px 14px; font-size: 13px; white-space: nowrap; }
+
+.ebook__notes { margin-top: 18px; }
+.ebook__notes h2 { margin-top: 28px; }
+.eb-notes-empty { color: var(--ink-soft) !important; font-size: 15px !important; }
+.eb-notes-item { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.eb-notes-item__text { font-weight: 700; font-size: 15px; line-height: 1.5; }
+.eb-notes-item__note { margin-top: 6px; color: var(--ink-soft); font-size: 14px; line-height: 1.55; }
+.eb-notes-item__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.eb-notes-item__actions button { border: 1px solid var(--line); background: var(--white); color: var(--ink); border-radius: 999px; padding: 6px 10px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.eb-notes-item__actions button:hover { border-color: var(--ink); background: var(--paper-warm); }
+
 .ebook__pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); }
 .ebook__pager a { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 16px 18px; border-radius: 14px; border: 1px solid var(--line); color: var(--ink); font-weight: 600; }
 .ebook__pager a:hover { background: var(--paper-warm); text-decoration: none; border-color: var(--ink); }
@@ -1483,6 +1499,8 @@ p.deck {
 @media (max-width: 980px) {
   .ebook { grid-template-columns: 1fr; gap: 32px; }
   .ebook__sidebar { position: static; max-height: none; }
+  .ebook__study-actions { grid-template-columns: 1fr; }
+  .ebook__study-links { justify-content: flex-start; }
 }
 
 /* DALA */
