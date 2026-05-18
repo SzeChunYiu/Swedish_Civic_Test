@@ -638,10 +638,25 @@ function applyLang(lang) {
 }
 window.applyLang = applyLang;
 
+function smtEmitLanguageChange(lang) {
+  if (typeof window.dispatchEvent !== "function") return;
+  const event = typeof CustomEvent === "function"
+    ? new CustomEvent("smt:languagechange", { detail: { lang } })
+    : (typeof Event === "function" ? new Event("smt:languagechange") : { type: "smt:languagechange" });
+  window.dispatchEvent(event);
+}
+
+function smtSetLanguage(lang) {
+  const nextLang = i18n[lang] ? lang : "en";
+  applyLang(nextLang);
+  smtEmitLanguageChange(nextLang);
+}
+window.smtSetLanguage = smtSetLanguage;
+
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".lang button[data-lang]");
   if (!btn) return;
-  applyLang(btn.dataset.lang);
+  smtSetLanguage(btn.dataset.lang);
 });
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -1309,6 +1324,9 @@ window.addEventListener("hashchange", () => {
   if (smtQuizShouldRender()) smtQuizRender();
 });
 window.addEventListener("DOMContentLoaded", () => {
+  if (smtQuizShouldRender()) smtQuizRender();
+});
+window.addEventListener("smt:languagechange", () => {
   if (smtQuizShouldRender()) smtQuizRender();
 });
 document.addEventListener("click", (e) => {
