@@ -37,9 +37,7 @@ export const architectureSupplementalRouteFiles = [
 export const architectureRouterShellRuntimeFiles = [
   'app/index.tsx',
   'app/_layout.tsx',
-  'app/(auth)/_layout.tsx',
   'app/(tabs)/_layout.tsx',
-  'app/account.tsx',
   'app/search.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',

@@ -203,19 +203,10 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'web-document',
     'native-intent',
   ]);
-  assert.deepEqual(manifest.rootStackScreenNames, [
-    'index',
-    '(tabs)',
-    '(auth)',
-    'account',
-    'search',
-    '+not-found',
-  ]);
+  assert.deepEqual(manifest.rootStackScreenNames, ['index', '(tabs)', 'search', '+not-found']);
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
-    'app/(auth)/_layout.tsx',
-    'app/account.tsx',
     'app/search.tsx',
     'app/+not-found.tsx',
   ]);

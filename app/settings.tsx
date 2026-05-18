@@ -1,7 +1,6 @@
 import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { AccountSection } from '../components/auth/AccountSection';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
@@ -183,8 +182,6 @@ export default function Screen() {
           })}
         </View>
       </View>
-
-      <AccountSection />
 
       <ComplianceLinks />
     </ScrollView>

@@ -5,7 +5,6 @@ import * as SystemUI from 'expo-system-ui';
 
 import { LaunchPopupAd } from '../components/monetization/LaunchPopupAd';
 import { LanguagePicker } from '../components/ui/LanguagePicker';
-import { AuthProvider } from '../lib/auth/AuthContext';
 import { shouldSuppressLaunchPopupAdForPath } from '../lib/monetization/ads';
 import { useRemoveAdsEntitlements } from '../lib/monetization/useRemoveAdsEntitlements';
 import { colors } from '../lib/theme';
@@ -23,7 +22,7 @@ export default function RootLayout() {
   const { entitlements: monetizationEntitlements, entitlementsReady } = useRemoveAdsEntitlements();
 
   return (
-    <AuthProvider>
+    <>
       <Stack
         screenOptions={{
           headerShown: true,
@@ -36,8 +35,6 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ presentation: 'modal', headerShown: false }} />
-        <Stack.Screen name="account" />
         <Stack.Screen name="search" />
         <Stack.Screen name="+not-found" />
       </Stack>
@@ -45,6 +42,6 @@ export default function RootLayout() {
         <LaunchPopupAd entitlements={monetizationEntitlements} />
       ) : null}
       <StatusBar style="auto" />
-    </AuthProvider>
+    </>
   );
 }
