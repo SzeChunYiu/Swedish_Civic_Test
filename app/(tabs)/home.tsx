@@ -8,9 +8,14 @@ import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
+import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
+import { SocialProofRow } from '../../components/ui/SocialProofRow';
+import { StatCallout } from '../../components/ui/StatCallout';
+import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
+import { daysUntil, EXAM_REFORM_DATE } from '../../lib/learning/examDate';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
@@ -176,7 +181,23 @@ export default function Screen() {
         </View>
       }
     >
+      <SwedishFlagBand />
       <WelcomeBanner />
+      <CountdownBanner language={language} />
+      <View style={styles.statRow}>
+        <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
+        <StatCallout
+          value={chapters.length}
+          label={language === 'sv' ? 'kapitel' : 'chapters'}
+          tone="accent"
+        />
+        <StatCallout
+          value={daysUntil(EXAM_REFORM_DATE)}
+          label={language === 'sv' ? 'dagar kvar' : 'days left'}
+          tone="warning"
+        />
+      </View>
+      <SocialProofRow language={language} />
       {!monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
@@ -269,6 +290,11 @@ export default function Screen() {
 const styles = StyleSheet.create({
   rightStack: {
     alignItems: 'flex-end',
+    gap: space[1],
+  },
+  statRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: space[1],
   },
   goalCard: {

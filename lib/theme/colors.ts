@@ -34,6 +34,14 @@ const navy = '#003a5c' satisfies ColorToken;
 const purple = '#4b3f7a' satisfies ColorToken;
 const pink = '#b5527a' satisfies ColorToken;
 const brown = '#6b4a1f' satisfies ColorToken;
+const brandGoogleBlue = '#1976d2' satisfies ColorToken;
+const brandGoogleGreen = '#4caf50' satisfies ColorToken;
+const brandGoogleRed = '#ff3d00' satisfies ColorToken;
+const brandGoogleYellow = '#ffc107' satisfies ColorToken;
+const brandFacebook = '#1877f2' satisfies ColorToken;
+const brandWhite = '#ffffff' satisfies ColorToken;
+const swedishBlue = '#006aa7' satisfies ColorToken;
+const swedishGold = '#fecc00' satisfies ColorToken;
 
 export const colors = {
   canvas,
@@ -65,4 +73,12 @@ export const colors = {
   purple,
   pink,
   brown,
+  brandGoogleBlue,
+  brandGoogleGreen,
+  brandGoogleRed,
+  brandGoogleYellow,
+  brandFacebook,
+  brandWhite,
+  swedishBlue,
+  swedishGold,
 } as const satisfies Record<string, ColorToken>;
