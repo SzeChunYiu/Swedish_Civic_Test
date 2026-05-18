@@ -1080,3 +1080,22 @@ serves current `origin/main`; no Vercel CLI from this repo.
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 22:58 CEST][P0 SITE][external/live]: Rechecked clean current `origin/main` `cabe389` after ebook source-coverage acceptance and latest content handoffs. Local readiness remains green: `node scripts/export-site-question-bank.js --check` exits 0 with 720 questions and 13 chapters; `node --test scripts/check-live-site.test.js` exits 0 with 7/7 passing; `npm run validate:content` exits 0 with static-site parity true; `npm run typecheck -- --pretty false` exits 0; and `git diff --check` exits 0 before queue edits. Production is still stale on both known URLs: `https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app` fails the live smoke with expected 720/hash `97ddcda4c5c9`, found 715/hash `afb9eec56629`; `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` fails with expected 720/hash `97ddcda4c5c9`, found 715/hash `5d2710bebf7e`. Practice hub, wide layout, Mock route, Ebook renderer, and ebook placeholder-copy checks pass on both URLs. Manager action: keep SITE-P0-5 blocked on external production deploy freshness until production serves `cabe389` or newer and the hash-aware live smoke passes. Do not run Vercel CLI from this repo.
 
 REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1 [product defect][2026-05-18 23:10 CEST][P0 TRANSLATE-COMPLETE][wording-rule][content-sync]: Focused whole-bank scan on clean current `origin/main` `87bc8b3` found generated `single_choice` judgement variants that recreate true/false prompts inside a four-option single-choice shell. This is broader than the current q701-q720-only reviewer row: `site/questions.js` has 22 `single_choice` rows whose options are `True`, `False`, `None of the options is correct`, and `Only sometimes` / `Sant`, `Falskt`, `Inget av alternativen stämmer`, and `Endast ibland`: `q149`, `q152`, `q165`, `q168`, `q233`, `q236`, `q253`, `q256`, `q265`, `q268`, `q329`, `q332`, `q337`, `q340`, `q437`, `q440`, `q505`, `q508`, `q517`, `q520`, `q713`, and `q716`. The stems ask the learner to choose a correct option for a statement (`Choose the correct option for the statement...` / `Which option matches the statement?...`) instead of asking a natural civic question; this violates the wording-rule bar against answer-judgement templates and gives learners filler answers that are not real distractors. Existing gates miss the pattern: `npm run validate:content` exits 0 with `questionJudgementMetaStemsValidated:720`; `npm run test:derived-content` exits 0 with 6/6 passing; `node scripts/export-site-question-bank.js --check` exits 0 with 720 questions and 13 chapters; focused published-question/sentence/source tests exit 0 with 33/33 passing; and `git diff --check` is clean before queue edits. Manager action: route DATA-INTEGRITY to one generator/validator/static-mirror cleanup that replaces or suppresses this generated true/false judgement single-choice variant across the full bank, adds a guard rejecting single-choice rows with True/False plus filler options, regenerates `content/question-bank.csv` and `site/questions.js`, and provides export/static parity, content/type/lint/ownership gates, and current-main scans proving the 22 listed rows no longer use judgement/filler-answer shells.
+
+MANAGER-build->VALIDATOR 2026-05-18T23:14:00+02:00
+Accept q601-q650 DATA-INTEGRITY source repair on current `origin/main`: PR
+#740 / `8b7c77f` plus handoff PR #743 / `cbaddb0` closes
+`VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` for q606/q607/q611/q622, with q610
+kept parallel to q611. Manager recheck passed content validation,
+derived-content tests, focused published/static/content-gate tests 31/31,
+canonical/static export parity, `node --check site/questions.js`, typecheck,
+lint, ownership, targeted Prettier, diff whitespace for both source and
+handoff commits, and a direct q606/q607/q610/q611/q622 CSV/static scan with
+zero residual offenders. Current `origin/main` added only reviewer/journal
+metadata after the recheck; q601-q650 artifacts are unchanged.
+
+Route DATA-INTEGRITY remains on the already-started q651-q700 q698
+proper-noun capitalization atom from current reviewer evidence. After q651 is
+accepted or rejected, route the broader
+`REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1` cleanup; it supersedes
+the older q701-q720-only generated-judgement route. Keep SITE-P0-5 external
+until production serves current `origin/main`; no Vercel CLI from this repo.
