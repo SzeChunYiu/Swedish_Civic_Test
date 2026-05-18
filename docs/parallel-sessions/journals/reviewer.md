@@ -3334,3 +3334,27 @@ Evidence: current static copy overclaims source provenance relative to the shipp
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route one SETUP/site copy atom to make Terms/Sources match current UHR provenance and add a guard that compares public source-page claims to `site/questions.js` source titles.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-main-zJmY6p/wt` / `task/reviewer/static-ebook-ch13-1779131390`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main static Ebook chapter-13 coverage pass.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, blockers, active setup/data-integrity/validator queues, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `6c5d2b4`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Duplicate scan found older static chapter-count and ebook placeholder rows, but no current row for missing Ebook chapter 13 coverage.
+- Static scan found `site/index.html` Ebook nav has `data-eb="intro"` through `data-eb="12"` only; `site/ebook.js` `ORDER` is intro/1-12, and `tests/content-static-site-ebook-parity.test.js` hardcodes the same intro/1-12 chapter list.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` - exit 0, 2/2 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-ebook-parity.test.js` - exit 0, 2/2 passing despite only checking intro plus chapters 1-12.
+- Direct VM scan of `site/questions.js` and Ebook source returned `chapterMetaCount:13`, `ch13QuestionCount:145`, `ebookNavHas13:false`, and `orderHas13:false`.
+- Served current `site/` with `python3 -m http.server 8300 --bind 127.0.0.1 --directory site`.
+- System-Chrome runtime pass over `#/ebook` and `#/ebook?c=13` showed no chapter-13 nav item; direct `#/ebook?c=13` fell back to intro with `readerCrumb:"How to read this book"`, `readerHeading:"Slow down. We've got coffee."`, active nav `intro`, no traditions/holidays reader body, and browser console/page errors `[]`.
+- `node --check site/ebook.js`, `node --check site/app.js`, and `node --check site/questions.js` - exit 0.
+Workspace contract: pass - no product source edited; new product defect queued instead of patched.
+Findings queued: `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1`.
+Evidence: the deployable static bank and Home metadata expose chapter 13, but the Ebook reader, nav, pager order, practice links, and focused Ebook parity guard stop at chapter 12.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route SETUP/site or CONTENT-supported site work to add Ebook chapter 13 and a guard that proves all 13 shipped chapters are reachable in the static Ebook.
