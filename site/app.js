@@ -147,7 +147,7 @@ const i18n = window.i18n = {
     "chap.eyebrow": "What's inside",
     "chap.h1": "From kanelbullar to",
     "chap.h2": "Karl XIV Johan.",
-    "chap.deck": "Twelve chapters, sized so you can finish one between trams. Each one mixes the official material with the kind of context you'd actually get from a Swedish friend over coffee.",
+    "chap.deck": "Compact chapters, sized so you can finish one between trams. Each one mixes the official material with the kind of context you'd actually get from a Swedish friend over coffee.",
 
     "chap.1.t": "A very short history of Sweden",
     "chap.1.d": "Vikings → kings → 1809 → folkhemmet → EU. The whole rollercoaster, minus the dynastic family tree memorisation.",
@@ -197,6 +197,7 @@ const i18n = window.i18n = {
     "chap.12.d": "Timed full-length exams that look and feel like the real thing. Plus a what-to-bring list.",
     "chap.12.m1": "3 full mocks",
     "chap.12.m2": "60 min each",
+    "chap.13.t": "Traditions, holidays & everyday culture",
 
     "how.eyebrow": "How it works",
     "how.h1": "Study lagom.",
@@ -440,7 +441,7 @@ const i18n = window.i18n = {
     "chap.eyebrow": "Vad ingår",
     "chap.h1": "Från kanelbullar till",
     "chap.h2": "Karl XIV Johan.",
-    "chap.deck": "Tolv kapitel, lagom korta så du hinner ett mellan spårvagnarna. Varje kapitel blandar det officiella materialet med den sortens sammanhang du faktiskt skulle få av en svensk vän över kaffe.",
+    "chap.deck": "Korta kapitel, lagom stora så du hinner ett mellan spårvagnarna. Varje kapitel blandar det officiella materialet med den sortens sammanhang du faktiskt skulle få av en svensk vän över kaffe.",
 
     "chap.1.t": "Sveriges historia, mycket kortfattat",
     "chap.1.d": "Vikingar → kungar → 1809 → folkhemmet → EU. Hela berg-och-dalbanan, utan släktträdsplugget.",
@@ -490,6 +491,7 @@ const i18n = window.i18n = {
     "chap.12.d": "Tidsatta fullängdsprov som ser ut och känns som det riktiga. Plus en \"så här packar du väskan\"-lista.",
     "chap.12.m1": "3 hela prov",
     "chap.12.m2": "60 min styck",
+    "chap.13.t": "Traditioner, helgdagar & vardagskultur",
 
     "how.eyebrow": "Så funkar det",
     "how.h1": "Plugga lagom.",
