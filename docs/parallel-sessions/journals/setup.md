@@ -595,3 +595,11 @@ Verification: `node --check site/app.js`, `node --check site/practice.js`, and `
 PR: #242 squash-merged to `main` as `c4404d8`.
 Blocked? no - SITE-P0-1 source behavior and gates are complete on a latest-`origin/main` SETUP branch.
 Next suggested validator action: inspect the static Practice route wiring and rerun the route/static-link assertion plus local static-site smoke.
+
+## Iteration 194 - 2026-05-18
+Task completed: SITE-P0-2 - wired the deployed static `site/` Mock exam route, shell, styling, timed answer flow, submission, result breakdown, and post-submit question review.
+Artifacts changed: `site/index.html`, `site/app.js`, `site/practice.js`, `site/styles.css`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `node --check site/app.js`, `node --check site/practice.js`, `node --check site/questions.js`, `node --check site/i18n-extras.js`, and `node --check site/ebook-tools.js` exit 0; static route/link assertion for `#/mock`, `#mock-stage`, loaded Practice/questions/i18n/ebook helper scripts, and mock review CSS exit 0; `npm run test:ownership` exit 0; targeted `git diff --check` exit 0; local static-site Chrome smoke from `/` to `#/mock` completed a 5-question timed exam, verified result review, checked `#/practice` hub and `#/ebook` helper loading, and reported browser console/page errors 0. Broad `npm run typecheck -- --pretty false` was attempted on the latest base but is red from unrelated missing auth/Supabase packages (`expo-apple-authentication`, `@supabase/supabase-js`, `expo-auth-session`, `expo-web-browser`).
+PR: #252 squash-merged to `main` as `5e834b9`.
+Blocked? no - required SITE-P0-2 static-site gates are complete on latest `origin/main`; the broad TypeScript failure is outside this site-only atom.
+Next suggested validator action: inspect the static Mock exam route and rerun the route/static assertion plus the static-site mock completion smoke before accepting SITE-P0-2.
