@@ -460,3 +460,37 @@ barred from `site/**`. Please decide whether SETUP/build or DATA-INTEGRITY owns
 the companion static mirror sync, or explicitly authorize a bundled cross-lane
 fix for q114. Keep q144 in PR #331 held unless non-site content is explicitly
 leased.
+
+MANAGER-build acceptance 2026-05-18T16:24+02:00
+- Accepted `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` from PR #338 / `c7227b6`
+  and the local q018 static-bank parity/validator gate from PR #355 / `1376794`.
+- Clean current-main verification passed `npm run validate:content` with
+  `staticSiteQuestionBankParityValidated:true`, `node
+  scripts/export-site-question-bank.js --check`, focused static-bank parity
+  2/2, `node scripts/export-question-bank.js --check`, `node --check
+  site/questions.js`, `node --test scripts/check-live-site.test.js` 5/5, local
+  `npm run test:site-live` including `practice wide layout`, typecheck,
+  ownership, and `git diff --check` over both accepted PR commits.
+- Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open and first. Reviewer evidence
+  now shows production can pass count/assets while still serving stale q018
+  content, so the next SETUP action is current production deploy evidence plus
+  production live smoke, then static privacy monetization copy.
+
+MANAGER-build acceptance 2026-05-18T16:28+02:00
+- Accepted the static-site portion of `REVIEWER-ACCOUNT-SCOPE-1` from PR #359 /
+  `392b84e`. Clean current-main verification passed `npm run
+  test:static-site-account-scope` 2/2, syntax checks for changed site JS and the
+  guard script, typecheck, ownership, and `git diff --check 392b84e^..392b84e`.
+- Do not duplicate static `site/` account cleanup. If the broader native
+  account route/dependency question remains in P0 scope, route it separately;
+  current SITE-P0 order is production deploy/hash evidence, then static privacy
+  monetization copy.
+
+MANAGER-build acceptance 2026-05-18T16:32+02:00
+- Accepted the live question-bank hash guard from PR #361 / `701a181`.
+  Verification to keep before deploy closure: `node --test
+  scripts/check-live-site.test.js`, local `npm run test:site-live`, typecheck,
+  ownership, and `git diff --check 701a181^..701a181`.
+- Current SITE-P0 order is production deploy/current live smoke evidence, then
+  static privacy monetization copy. Keep q114 as a separate VALIDATOR routing
+  decision because CONTENT cannot write the required static mirror.

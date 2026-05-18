@@ -122,8 +122,8 @@ Teams: HOLD/add-none. Live tmux still shows only `_csup_sentinel_` plus
 --dry-run` reports queued work for configured hosts, but every LUNARC/remote
 line holds with `reason=lunarc_requires_slurm_station`; no `--apply` was run.
 Priorities: production deploy evidence for current `origin/main` is first, then
-Practice width parity, account-scope cleanup, and the static-site
-privacy/monetization copy defect. Treat
+the static-site privacy/monetization copy defect. Practice width parity is now
+accepted via PR #338, and static-site account scope via PR #359. Treat
 `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` as active SITE-P0 because
 VALIDATOR has concrete runtime/source evidence and the blocker/setup queues did
 not yet surface it.

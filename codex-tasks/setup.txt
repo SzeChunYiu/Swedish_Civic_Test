@@ -64,6 +64,30 @@ Accepted P0 SETUP atoms:
      tests/content-static-site-question-bank-parity.test.js` passed 2/2;
      `npm run validate:content` passed at 715 questions; `npm run typecheck -- --pretty false`;
      `npm run test:ownership`; and `git diff --check HEAD^..HEAD` all exit 0.
+7. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` accepted via PR #338 / `c7227b6`.
+   - Clean manager verification on current `origin/main`: `node --test
+     scripts/check-live-site.test.js` passed 5/5; local `npm run test:site-live`
+     passed with `practice wide layout`; `npm run typecheck -- --pretty false`;
+     `npm run test:ownership`; and `git diff --check c7227b6^..c7227b6` all exit 0.
+8. `REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1` accepted via PR #355 / `1376794`.
+   - Clean manager verification on current `origin/main`: `npm run
+     validate:content` reports `staticSiteQuestionBankParityValidated:true`;
+     `node scripts/export-site-question-bank.js --check`; focused static-bank
+     parity 2/2; `node scripts/export-question-bank.js --check`; `node --check
+     site/questions.js`; `npm run typecheck -- --pretty false`; `npm run
+     test:ownership`; and `git diff --check 1376794^..1376794` all exit 0.
+9. Static-site `REVIEWER-ACCOUNT-SCOPE-1` accepted via PR #359 / `392b84e`.
+   - Clean manager verification on current `origin/main`: `npm run
+     test:static-site-account-scope` passed 2/2; `node --check` for
+     `site/ebook-tools.js`, `site/i18n-extras.js`, and
+     `scripts/static-site-account-scope.test.js`; `npm run typecheck -- --pretty
+     false`; `npm run test:ownership`; and `git diff --check 392b84e^..392b84e`
+     all exit 0.
+10. `REVIEWER-SITE-LIVE-HASH-GUARD-1` accepted via PR #361 / `701a181`.
+    - Clean manager verification on current `origin/main`: `node --test
+      scripts/check-live-site.test.js`; local `npm run test:site-live`; `npm run
+      typecheck -- --pretty false`; `npm run test:ownership`; and `git diff
+      --check 701a181^..701a181` all exit 0.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
@@ -100,6 +124,19 @@ manager verification passed static-bank export/parity, `validate:content`,
 The active order remains: production deploy evidence first, Practice width
 parity second, account-scope third, privacy copy fourth.
 
+MANAGER-build acceptance 2026-05-18T16:24+02:00:
+PR #338 closed Practice width parity and PR #355 closed q018 static-bank drift
+with the validator mirror in `validate:content`. The active order is now:
+production deploy evidence first, account-scope second, privacy copy third.
+
+MANAGER-build acceptance 2026-05-18T16:28+02:00:
+PR #359 closed the static-site account-scope cleanup. The active order is now:
+production deploy evidence first, privacy copy second.
+
+MANAGER-build acceptance 2026-05-18T16:32+02:00:
+PR #361 closed the same-count live hash guard. The active order remains:
+production deploy evidence first, privacy copy second.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
@@ -112,35 +149,10 @@ parity second, account-scope third, privacy copy fourth.
      files, `npm run test:ownership`, and `git diff --check`.
    - Current caveat: PR #321 / `3a323ff` landed a useful deploy workflow and
      PR #328 / `11b2b96` fixed the current-count live-smoke behavior, but this
-     is not accepted as live-deploy closure because there is no production
-     deploy evidence for current `origin/main` yet.
+     is not accepted as live-deploy closure until production serves current
+     `origin/main` and live smoke passes with the hash guard.
 
-2. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
-   - Scope: `site/index.html`, `site/styles.css`, and focused site layout
-     assertion.
-   - Required behavior: port the draft wide Practice hub shell so desktop
-     Practice uses the intended wide layout instead of the old 720px container,
-     while preserving current question data and Mock exam behavior.
-   - Required gates: static/browser assertion for the wide Practice container,
-     `node --check` for changed site JS if any, relevant smoke through
-     `#/practice` and `#/mock`, `npm run test:ownership`, and
-     `git diff --check`.
-
-3. `REVIEWER-ACCOUNT-SCOPE-1`
-   - Scope: SETUP/build product shell, route manifests, dependencies, static
-     `site/` account prompts, and scaffold/router-shell tests.
-   - Required behavior: the MVP has no reachable account/authentication
-     surfaces, no Supabase/OAuth runtime dependency path, and local-profile /
-     privacy/static Ebook copy says progress, highlights, and notes work
-     locally without an account.
-   - Acceptance caveat: validator/reviewer saw promising local cleanup, but do
-     not accept this defect until the scoped source atom lands from a clean
-     latest-`origin/main` branch with green whitespace gate, PR self-review,
-     squash-merge, and handoff evidence.
-   - Keep `REVIEWER-SEARCH-PLACEHOLDER-1` separate; do not expand this atom
-     into Search implementation/removal.
-
-4. `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`
+2. `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`
    - Scope: `site/app.js` privacy and FAQ i18n copy plus focused stale-copy
      assertions.
    - Required behavior: static `site/` accurately says web ads use Google
@@ -157,7 +169,7 @@ parity second, account-scope third, privacy copy fourth.
 
 Existing P0 SETUP atoms behind the live-site P0 queue:
 
-5. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+3. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -167,7 +179,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-6. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+4. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -177,7 +189,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-7. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+5. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
