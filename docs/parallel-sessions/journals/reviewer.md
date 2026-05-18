@@ -3688,3 +3688,27 @@ Evidence: current main still generates 22 single-choice judgement/filler rows wh
 PR (number + merged?): #745 merged yes, squash `0e94a31`.
 Accepted by worker? yes
 Next suggested validator action: route DATA-INTEGRITY to replace or suppress the generated true/false judgement single-choice variant across the full bank, with generator/validator/static guards and regenerated canonical/static outputs.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-1779139174` / `task/reviewer/generated-single-choice-fillers-1779139174`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated single-choice option-quality scan.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/data-integrity/setup queues, blockers, and reviewer journal context before queueing.
+- Used a detached clean worktree on current `origin/main` `8bb8a8b`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Duplicate scan found the existing `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1` row for 22 true/false-shell judgement rows, but no broader generated single-choice fallback-option row.
+- Direct VM inspection of `site/questions.js` found 421 `single_choice` rows and 155 rows with `None of the options is correct` / `Only sometimes`; 22 are true/false-shell rows and 133 are ordinary single-choice rows.
+- Browser-backed static inspection with system Chrome against `http://127.0.0.1:8274/` confirmed the same 155/22/133 counts from the user-facing static bank and reported zero browser console/page errors.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and static-site parity true.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules node scripts/export-question-bank.js --check` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - first exit 2 because the detached worktree had no local dependency tree; after linking `/home/billy/Swedish_Civic_Test/node_modules`, rerun exited 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
+Findings queued: `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1`.
+Evidence: q148, q156, q160, q164, q172, q176, q180, and q184 all show natural stems paired with the generic fallback options `None of the options is correct` / `Only sometimes`, while current validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route DATA-INTEGRITY to replace or suppress generic generated single-choice fallback options with generator/validator/static guards and regenerated canonical/static output; this can be bundled with the existing true/false judgement-filler cleanup only if acceptance separately proves both ordinary fallback rows and true/false-shell rows are zero.
