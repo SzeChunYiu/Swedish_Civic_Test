@@ -10,8 +10,8 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import { deriveBadges } from '../../lib/learning/badges';
-import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
+import { deriveBadges, getBadgeTitle } from '../../lib/learning/badges';
+import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -99,16 +99,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
 };
 
-const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
-  sv: {
-    first_practice: 'Första övningen',
-    level_2: 'Nivå 2',
-    mistake_reviewer: 'Misstagsrepetition',
-    streak_3: 'Tre dagars svit',
-  },
-  en: {},
-};
-
 function formatBadges(
   badges: ReturnType<typeof deriveBadges>,
   language: AppLanguage,
@@ -116,7 +106,7 @@ function formatBadges(
 ): string {
   if (badges.length === 0) return emptyLabel;
 
-  return badges.map((badge) => localizedBadgeTitles[language][badge.id] ?? badge.title).join(', ');
+  return badges.map((badge) => getBadgeTitle(badge, language)).join(', ');
 }
 
 export default function Screen() {
