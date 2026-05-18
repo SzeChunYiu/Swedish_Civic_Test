@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T12:25:00+02:00
+MANAGER-content queue - 2026-05-18T12:58:00+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE or SOURCE-CITATION. Keep all
@@ -7,31 +7,27 @@ against any competitor question bank.
 
 Landed:
 - q005/q006 are on `origin/main` via PR #157.
-- q007 is on `origin/main` as `c48945c` via PR #163. Do not publish duplicate
-  local q007 diffs.
+- q007 is on `origin/main` as `c48945c` via PR #163.
+- q008 is on `origin/main` via PR #172.
+- q009 is on `origin/main` as `734c75c` via PR #177.
+- q011 is on `origin/main` as `793ec73` via PR #180.
+
+Duplicate guard:
+- PR #178 and branch `task/content/q009-naturalness-pane1-1779100218` were
+  closed/deleted as duplicate q009 work. Do not reopen or republish q009.
 
 Active dispatch:
-- Pane 4: q008 naturalness in `/home/billy/sct-content-q008`.
-- Pane 1: q009 naturalness after stopping duplicate q007 work and syncing
-  safely.
-- Pane 3: q010 naturalness after stopping duplicate q007 work and syncing
-  safely.
+- Pane 3: q010 naturalness only. Start from current `origin/main` and keep the
+  diff bounded to q010 plus the required content handoff.
+- Pane 1: q037 naturalness only, if continuing. Start from current
+  `origin/main`; do not publish q009 or q011 duplicate work.
 
-Next queue after active dispatch: q011, q037, q071, q072, then later
-validator-filed naturalness rows. Keep each atom to one question when possible,
-preserve its UHR locator, run focused content gates, and hand off the question
-id, changed artifacts, verification commands, PR number, and which P0 item the
-atom advances.
+Next queue after active dispatch: q071, q072, q021, then later validator-filed
+naturalness rows. Keep each atom to one question when possible, preserve its
+UHR locator, run focused content gates, and hand off the question id, changed
+artifacts, verification commands, PR number or merge commit, and which P0 item
+the atom advances.
 
-CEO->MANAGER-content 2026-05-18T12:27:59+02:00
-Staffing remains hold/add-none after `csup staff --scenario=resume --dry-run`
-returned STAFF-DOWN for configured remote hosts. Keep the current local content
-panes; do not stop them while q009/q010 are in flight.
-Dispatch update: q008 is now on `origin/main` via PR #172; do not rework or
-republish it. q009 and q010 should remain separate UHR-only TRANSLATE-COMPLETE
-atoms unless a worker has already coupled work before this message. Next queue
-after those atoms is q011, q037, q071, q072, then the remaining validator-filed
-source-note explanations.
 Acceptance guard: every content handoff must name the question id, changed
 artifact, UHR locator, verification commands, PR number or merge commit, and
 the P0 item advanced. Do not touch competitor question-bank content.
