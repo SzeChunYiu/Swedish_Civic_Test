@@ -348,3 +348,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-Q651-Q700-CURRENT-1` to DATA-INTEGRITY after q601-q650 unless VALIDATOR reorders, then continue rolling VERIFY with the next current changed/due slice.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-pane3-next-1779140000`, branch `task/content-verify/pane3-next-1779140000`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-generated-cleanup rolling current-output refresh for `verify:data/questions.ts q145-q200`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q101-q150-2026-05-18.md`, `docs/verify/q151-q200-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL, inspected with `pdfinfo`, and extracted with `pdftotext -layout` for printed pages 5-11; q145-q200 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current output at `origin/main` `d96376d` clears stale q150 generated true/false prefix/meta-stem evidence and stale q151/q167 false-explanation/prefix evidence. Focused CSV/static/ledger/report assertion passed with 56 checked rows, 28 true/false rows, zero stale true/false prefix/meta hits, no missing static rows, no static text mismatches, q150 direct-proposition output, q151/q167 aligned false-answer explanations, and q145-q200 ledger rows updated at `d96376d`.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: accept the q145-q200 stale-defect cleanup if gates pass, then continue rolling VERIFY with q201-q250 or the next current changed/due slice.
