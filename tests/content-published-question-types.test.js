@@ -635,6 +635,51 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects false-answer explanations that say True is correct', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q151'",
+        "    ? {",
+        "        ...question,",
+        "        explanationSv:",
+        "          'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften.',",
+        '        explanationEn:',
+        '          "The statement is true: Sweden\\'s northernmost part lies north of the Arctic Circle. That makes True correct, while False contradicts the fact.",',
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q151 contains a false-answer explanation that says True is correct/,
+  );
+});
+
 test('published question schema rejects source-material generated option fallbacks', () => {
   const result = spawnSync(
     process.execPath,

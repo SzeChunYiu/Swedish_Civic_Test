@@ -82,6 +82,8 @@ function withSharedFields(
   options: QuestionOption[],
   correctOptionId: string,
   extraTags: string[],
+  explanationSv = source.explanationSv,
+  explanationEn = source.explanationEn,
 ): PracticeQuestion {
   const normalized =
     type === 'single_choice'
@@ -98,8 +100,8 @@ function withSharedFields(
     questionEn: normalizedText.questionEn,
     options: normalized.options,
     correctOptionId: normalized.correctOptionId,
-    explanationSv: source.explanationSv,
-    explanationEn: source.explanationEn,
+    explanationSv,
+    explanationEn,
     uhrReference: source.uhrReference,
     difficulty: source.difficulty,
     reviewStatus: 'published',
@@ -509,6 +511,34 @@ function trueFalseSourceStatementEn(source: PracticeQuestion, variantIsTrue: boo
     return sourceDirectStatementEn(source, statement, sourceStatementIsTrue);
   }
   return sourceOppositeStatementEn(statement);
+}
+
+function sourceTrueFactSv(source: PracticeQuestion): string {
+  return ensureSentence(truthStatementSv(stripTrueFalsePromptSv(source.questionSv)));
+}
+
+function sourceTrueFactEn(source: PracticeQuestion): string {
+  return ensureSentence(truthStatementEn(stripTrueFalsePromptEn(source.questionEn)));
+}
+
+function falseStatementExplanationSv(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
+    return `${sourceTrueFactSv(
+      source,
+    )} Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.`;
+  }
+
+  return source.explanationSv;
+}
+
+function falseStatementExplanationEn(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
+    return `${sourceTrueFactEn(
+      source,
+    )} Therefore the statement in the question is false, so False is correct.`;
+  }
+
+  return source.explanationEn;
 }
 
 function generatedTrueFalseStatementSv(
@@ -1346,6 +1376,8 @@ function buildFalseStatementVariant(source: PracticeQuestion, id: string): Pract
     trueFalseOptions(),
     'false',
     ['published-variant', 'false-statement'],
+    falseStatementExplanationSv(source),
+    falseStatementExplanationEn(source),
   );
 }
 
