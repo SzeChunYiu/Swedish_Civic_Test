@@ -338,3 +338,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: accept the q701-q720 ledger refresh if gates pass; keep q713/q716 behind the existing REVIEWER-generated judgement queue unless VALIDATOR reorders. Continue rolling VERIFY with the next current changed/due slice after active q551/q601/q651 routing is resolved.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q651-q700-pane3-1779138370`, branch `task/content-verify/q651-q700-pane3-1779138370`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-q551/q701 rolling current-output refresh for `verify:data/questions.ts q651-q700`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q651-q700-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL, inspected with `pdfinfo`, and extracted with `pdftotext` for printed pages 45-48; q651-q700 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current output at `origin/main` `d91a489` clears the older q666/q667 gerund-splice defects and q699 mid-sentence capitalization defect. Current remaining generated true/false wording defects are `q663`, `q670`, `q671`, and `q698`: q663 is missing an English article before `Lucia procession`; q670/q671 awkwardly attach `with an Advent calendar at home`; and q698 lowercases `Jesu` / `Jesus`. Focused CSV/static/ledger/report/queue assertion passed with 50 checked rows, 25 true/false rows, zero stale true/false prefix/meta hits, zero old unknown-option hits, no missing static rows, no static text mismatches, exactly four defects (`q663`/`q670`/`q671`/`q698`), and q651-q700 ledger rows updated at `d91a489`.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-Q651-Q700-CURRENT-1` to DATA-INTEGRITY after q601-q650 unless VALIDATOR reorders, then continue rolling VERIFY with the next current changed/due slice.
