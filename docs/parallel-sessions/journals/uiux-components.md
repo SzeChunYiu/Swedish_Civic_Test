@@ -17,3 +17,13 @@ A11y props: default `accessibilityRole="summary"`, optional `accessibilityLabel`
 Verification: `./node_modules/.bin/prettier --check components/Surface.tsx docs/parallel-sessions/journals/uiux-components.md` → pass; token discipline grep on `components/Surface.tsx` → `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false && echo TS-OK` → `TS-OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` → pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` → pass 1/1; `git diff --check -- components/Surface.tsx docs/parallel-sessions/journals/uiux-components.md` → pass (no output).
 Blocked? no — scoped to COMPONENTS writable files only.
 Next: Manager can review Surface and then queue Text if accepted.
+
+## Iteration 2 — 2026-05-18
+
+Component: Text typography atom — `components/Text.tsx`
+Variants/states implemented: `h1`, `h2`, `body`, `caption`, and `label` variants; primary, secondary, disclaimer, accent, success, and warning tones; left, center, and right alignment; caller style and native Text prop passthrough.
+Tokens used: `colors.text`, `colors.textSecondary`, `colors.textDisclaimer`, `colors.accent`, `colors.success`, `colors.warning`, `typography.displaySecondary`, `typography.sectionHeading`, `typography.body`, `typography.captionLight`, and `typography.navButton`.
+A11y props: default `accessibilityRole="header"` for `h1`/`h2`, default `accessibilityRole="text"` for other variants, optional caller override, and optional `accessibilityLabel` passthrough for clearer spoken text.
+Verification: `./node_modules/.bin/prettier --check components/Text.tsx` → pass; token discipline grep on `components/Text.tsx` → `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` → pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` → pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` → pass 1/1.
+Blocked? no — scoped to COMPONENTS writable files only.
+Next: Manager can review Text and then queue Button if accepted.
