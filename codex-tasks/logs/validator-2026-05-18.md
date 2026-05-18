@@ -190,3 +190,21 @@ Next worker task queued: SETUP - keep the already-active
 `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`, then mobile nav reachability, then static
 question-count copy. The flag atom needs immutable static-site flag colors plus
 a browser guard across all palettes in light and dark mode.
+
+Iteration: 2026-05-18T19:39+02:00
+Rows moved to accepted: none.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: clean current-main worktree `/tmp/sct-manager-live-7EcXRF/wt` on
+`origin/main` `810c091` passed `NODE_OPTIONS='--v8-pool-size=1' node --test
+scripts/check-live-site.test.js` 7/7, `NODE_OPTIONS='--v8-pool-size=1' node
+scripts/export-site-question-bank.js --check` with 720 questions and 13
+chapters, and `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` with
+static-site parity true. GitHub deployments API still reports latest
+Production deployment `4731442202` at SHA `3be70d4`; production live smoke
+against `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` exits 1
+because live serves 715 questions and hash `afb9eec56629` while current main
+expects 720 questions and hash `57e05be047f9`.
+Next worker task queued: none for local source from this recheck; restore or
+provide production deploy evidence from current `origin/main`, then rerun the
+hash-aware live smoke before accepting SITE-P0-5.
