@@ -166,3 +166,28 @@ focused negative tests, export/static parity, `validate:content`, typecheck,
 ownership, Prettier/diff checks, PR/merge evidence, and a recheck of VERIFY
 ledger rows `q253`, `q254`, `q261`, `q262`, `q265`, `q266`, `q270`, `q273`,
 `q274`, `q285`, `q286`, `q289`, `q290`, `q297`, and `q298`.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T18:42:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q301-Q350-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `170b89d` found additional generated true/false residuals in the
+q301-q350 slice. Facts, citations, correct answers, and distractors remain
+supported by UHR `Sverige i fokus`, but learner-visible generated text is not
+natural in both canonical CSV and `site/questions.js`: `q305` and `q306`
+append legal-certainty answer fragments before `beskriver` / `describes`;
+`q313`, `q314`, `q321`, and `q322` use infinitive or option fragments before
+`beskriver` / `describes`; `q317` and `q318` drop the English verb before
+`criminally responsible`; `q325` and `q326` turn `Genom att...` / `By...`
+fragments into standalone true/false prompts; `q329`, `q330`, `q337`, and
+`q338` publish `Det stämmer... att` / `It is factually true that` meta
+scaffolding; `q333` and `q334` publish bare organization lists without a
+predicate; and `q345` and `q346` publish `One reason is that prevent/decide`
+English stems. Own or extend the residual generated-template repair with guards
+for describes-splices, missing English verbs, fragment true/false prompts,
+meta-statement scaffolding, and list-only prompts. Acceptance requires
+regenerated `content/question-bank.csv` and `site/questions.js`, validator
+mirror coverage, focused negative tests, export/static parity,
+`validate:content`, typecheck, ownership, Prettier/diff checks, PR/merge
+evidence, and a recheck of VERIFY ledger rows `q305`, `q306`, `q313`, `q314`,
+`q317`, `q318`, `q321`, `q322`, `q325`, `q326`, `q329`, `q330`, `q333`,
+`q334`, `q337`, `q338`, `q345`, and `q346`.
