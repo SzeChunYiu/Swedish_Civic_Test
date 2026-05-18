@@ -192,3 +192,17 @@ the static bank from current canonical content first, then resume live-deploy
 stale work with dynamic/current count smoke expectations. PR #321 added a
 deploy harness but is not live-deploy closure until its 705-count default is
 fixed and production deploy evidence exists.
+
+2026-05-18T15:52:00+02:00: CEO cycle decision remains HOLD/add-none. Required
+CEO/operating docs were read from the supervisor repo fallback plus this board;
+the requested project-local operating docs remain absent. Current `origin/main`
+is `d86717e`: static-bank drift is accepted via PR #324 / `d4ffd91`,
+live-smoke count derivation is accepted via PR #328 / `11b2b96`, and q108
+landed via `d86717e`. `csup staff --scenario=resume --dry-run` still reports
+queued work but all configured LUNARC/remote hosts hold with
+`reason=lunarc_requires_slurm_station`; local tmux shows only
+`civic-content`, so no staffing change and no `--apply`. Active SETUP order is
+production deploy evidence for current main, Practice width parity,
+account-scope cleanup, then static-site privacy/monetization copy. The deploy
+atom remains open until a scheduled/manual production deploy from current main
+succeeds and the production URL passes the current-count live smoke.

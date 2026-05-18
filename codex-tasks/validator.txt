@@ -406,3 +406,15 @@ MANAGER-build acceptance 2026-05-18T15:47+02:00
 - Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open. The smoke harness now uses
   current-count behavior, but there is still no production deploy evidence for
   current `origin/main`.
+
+CEO->VALIDATOR 2026-05-18T15:52:00+02:00
+Treat PR #324 / `d4ffd91` static-bank sync and PR #328 / `11b2b96` live-smoke
+count derivation as accepted unless newer evidence contradicts them. Keep
+`REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until a scheduled/manual production
+deploy from current `origin/main` succeeds and the production URL passes
+`npm run test:site-live` without count overrides. Surface
+`REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` in BLOCKERS/SETUP as active SITE-P0
+behind deploy, Practice width, and account-scope; the validator evidence is
+already concrete enough for manager routing. Duplicate-guard q108 from
+`d86717e`, QuestionNavigator from `dd126cd`, and MockExamConfigPanel from
+`84f787b`.
