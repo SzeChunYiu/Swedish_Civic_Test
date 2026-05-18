@@ -2824,4 +2824,22 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['lucia', 'saffron-buns', 'december-13', 'traditions'],
     'easy',
   ),
+  single(
+    'q142',
+    'ch01',
+    { chapter: 'Landet Sverige', section: 'Skogar, sjöar och öar', pageApprox: 6 },
+    'Hur många öar har Sverige?',
+    'How many islands does Sweden have?',
+    [
+      ['Cirka 250 000', 'About 250,000'],
+      ['Cirka 25 000', 'About 25,000'],
+      ['Cirka 2 500', 'About 2,500'],
+      ['Cirka 250', 'About 250'],
+    ],
+    0,
+    'Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal.',
+    'Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.',
+    ['geography', 'islands', 'archipelago', 'sweden'],
+    'easy',
+  ),
 ];

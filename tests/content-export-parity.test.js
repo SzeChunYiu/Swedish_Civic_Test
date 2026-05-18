@@ -8,5 +8,5 @@ test('question bank export stays in parity with generated questions', () => {
   });
   const match = output.match(/Question bank export parity OK \((\d+) questions\)/);
   assert.ok(match, 'export parity should report the generated question count');
-  assert.ok(Number(match[1]) >= 705);
+  assert.ok(Number(match[1]) >= 710);
 });
