@@ -94,8 +94,11 @@ queue. Expensive judgement where context is rich; cheap pickup where it isn't.
 
 11. PLAN-THE-NEXT — the high-judgement step, done HERE because your context is
     now maximal (you just built and validated this and understand the code and
-    what it still needs). Decide the single most valuable next unit toward
-    GOAL.md, and hand it to the next pane via the queue:
+    what it still needs). Decide the single most valuable next unit — not only
+    the next obvious increment toward GOAL.md, but actively ask "what ELSE does
+    this project need?" and "what would make it genuinely BETTER / delight
+    users more / beat competitors harder?" The product is never finished;
+    there is always a next improvement. Hand that one unit to the next pane:
       echo "<NEW-ID> <product/path>: <specific next change> | why: <what you just learned that makes this next> | verify: <criteria>" >> codex-tasks/open.txt
       git add codex-tasks/open.txt && git commit -qm "next: +<NEW-ID> [allow-meta]"
       # rebase-retry push to origin/main; races are fine, skip on fail
@@ -162,8 +165,11 @@ up directly.
 1. git fetch origin -q
 2. PICK ONE lens to scrutinize this iteration (rotate; don't repeat recent
    scrutiny lines). The full set:
-   - COMPLETENESS: what is missing for a finished citizenship-prep product
-     (vs GOAL.md acceptance and a user's real journey)? Name the gap.
+   - COMPLETENESS & WHAT-ELSE: what is missing for a finished citizenship-prep
+     product (vs GOAL.md and a user's real journey)? AND, beyond "finished":
+     what would make it genuinely better — a feature/polish/delight users
+     would love that we don't have yet? The product is never done; always
+     surface the next thing that makes it better. Name it concretely.
    - CODE QUALITY: pick one module — flag specific non-flawless / unoptimized
      / dead / poorly-typed code; the finding is a concrete refactor with a
      measurable verify (perf number, removed dead code, types tightened).
