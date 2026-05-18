@@ -1104,3 +1104,29 @@ q551-q600 from current VERIFY evidence in `58cb0f6`, with q601-q650 and
 q651-q700 queued behind it unless VALIDATOR explicitly reorders. Do not
 duplicate accepted q401-q450 or q451-q500 source work without fresh
 current-main regression evidence.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T22:58:00+02:00
+`VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` [product defect][P0
+TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on
+current `origin/main` `3967593` supersedes the older broad q601-q650 residual
+report from `f38907d`. The slice has 50 rows, 25 true/false rows, zero
+`Sant eller falskt:` / `True or false:` prefixes, zero true/false meta-wrapper
+stems, and zero old `Det går inte att avgöra av materialet` /
+`It cannot be determined from the material` fallback options in both
+`content/question-bank.csv` and `site/questions.js`. Current remaining defects
+are four generated true/false wording or answer-quality issues: `q606` has
+awkward parallel construction in both languages around protecting the right to
+practise religion and protection from discrimination; `q607` says
+`protects that the state chooses...` / `skyddar att staten väljer...`; `q611`
+treats a debatable Eid al-Fitr/Newroz statement as clearly false even though
+UHR only contrasts Christian cultural holidays with newer traditions; and
+`q622` says Jews gained the right to live `in the country` / `i landet`
+instead of naming Sweden. Facts, citations, answer keys, explanations, and
+ordinary distractors otherwise remain supported by UHR `Sverige i fokus`
+printed pages 42-47. Own this as a generated true/false wording and
+answer-quality follow-up after q551-q600 unless VALIDATOR reorders.
+Acceptance requires generator and validator mirror coverage, regenerated
+`content/question-bank.csv` and `site/questions.js`, export/static parity,
+`validate:content`, `test:derived-content`, focused content gates, typecheck,
+lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
+checks for the four named rows.
