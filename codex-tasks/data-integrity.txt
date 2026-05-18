@@ -50,6 +50,24 @@ Post-#618/#64bdae6 routing state:
   test:derived-content`, focused content gates, typecheck, lint, ownership,
   Prettier/diff checks, PR/merge evidence, and a clean current-main recheck.
 
+CONTENT-VERIFY update - 2026-05-18T21:08+02:00
+
+Post-prefix-strip current-output q301-q350 refresh on `origin/main` `8bb2ccf`
+confirms the old q305/q306/q313/q314/q317/q318/q321/q322/q325/q326/q329/q330/
+q333/q334/q337/q338/q345/q346 splice/meta defects are mostly cleared, and the
+slice now has 0/25 true/false rows with redundant `Sant eller falskt:` /
+`True or false:` prefixes.
+
+Remaining current-output evidence to include in the generated true/false
+cleanup or a focused follow-up: q331 and q339 still have false-answer
+explanation mismatches; q318 and q319 still use non-native English age
+phrasing (`from 15 years` / `from 13 years`) instead of `from age 15` / `from
+age 13`; q346 and q347 say `One reason is...` without saying the reason is for
+the UN's creation; and q350 says `It was presented...` without naming the UN
+declaration. Facts, citations, answer keys, and ordinary distractors remain
+UHR-supported. See `docs/verify/q301-q350-2026-05-18.md` and ledger rows
+q301-q350 updated at `8bb2ccf`.
+
 MANAGER-build current-route update - 2026-05-18T20:41+02:00
 
 Post-#600/#604 routing state:
