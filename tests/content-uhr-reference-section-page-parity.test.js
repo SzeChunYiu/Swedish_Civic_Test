@@ -106,3 +106,49 @@ test('UHR reference parity rejects blank section references', () => {
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /q072 has incomplete UHR reference/);
 });
+
+test('UHR reference parity rejects blank chapter references', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: '', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /q072 has incomplete UHR reference/);
+});
+
+test('UHR reference parity rejects string page references', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: '30' }")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q072 UHR page 30 is outside "Välfärdssamhället" page range 30-31/,
+  );
+});
+
+test('UHR reference parity rejects pages before the referenced chapter range', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 29 }")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q072 UHR page 29 is outside "Välfärdssamhället" page range 30-31/,
+  );
+});
+
+test('UHR reference parity rejects missing reference objects', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "undefined")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q072 uhrReference must be a UHRReference object/,
+  );
+  assert.match(`${result.stdout}\n${result.stderr}`, /q072 has incomplete UHR reference/);
+});

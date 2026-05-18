@@ -1,6 +1,6 @@
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
@@ -9,6 +9,7 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
@@ -193,15 +194,16 @@ export default function QuizSessionScreen() {
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
           <View style={styles.actions}>
-            <Pressable
+            <Button
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               accessibilityState={{ disabled: false }}
               onPress={() => setSelectedOptionId(null)}
-              style={styles.secondaryButton}
+              style={styles.actionButton}
+              variant="secondary"
             >
-              <Text style={styles.secondaryButtonText}>{copy.tryAgain}</Text>
-            </Pressable>
+              {copy.tryAgain}
+            </Button>
             <Link
               accessibilityLabel={copy.backToPracticeAccessibilityLabel}
               accessibilityRole="link"
@@ -270,28 +272,19 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
-  secondaryButton: {
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  secondaryButtonText: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
+  actionButton: {
+    minHeight: space[5] + space[0.5],
   },
   linkButton: {
     alignSelf: 'flex-start',
     backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
+    borderRadius: radius.card,
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
+    minHeight: space[5] + space[0.5],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.5],
     textDecorationLine: 'none',
   },
   link: {

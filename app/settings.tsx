@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { colors, radius, shadows, space, typography } from '../lib/theme';
 
 type SettingsCopy = {
   audioDisabledLabel: string;
@@ -12,6 +12,7 @@ type SettingsCopy = {
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
+  dailyGoalPresetLabel: (goal: number) => string;
   dailyGoalSummary: (answerCount: number) => string;
   dailyGoalTitle: string;
   disableAudioAccessibilityLabel: string;
@@ -30,6 +31,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
+    dailyGoalPresetLabel: (goal) => {
+      if (goal === 5) return 'Snabb';
+      if (goal === 10) return 'Lagom';
+      if (goal === 20) return 'Fokuserad';
+      if (goal === 40) return 'Intensiv';
+      return `${goal}`;
+    },
     dailyGoalSummary: (answerCount) => `${answerCount} svar per dag`,
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
@@ -46,6 +54,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
+    dailyGoalPresetLabel: (goal) => {
+      if (goal === 5) return 'Quick';
+      if (goal === 10) return 'Steady';
+      if (goal === 20) return 'Focused';
+      if (goal === 40) return 'Serious';
+      return `${goal}`;
+    },
     dailyGoalSummary: (answerCount) => `${answerCount} answers per day`,
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
@@ -77,6 +92,7 @@ export default function Screen() {
         accessibilityLabel={copy.languageAccessibilityLabel(label)}
         accessibilityRole="button"
         accessibilityState={{ selected: language === value }}
+        hitSlop={space[1]}
         onPress={() => setLanguage(value)}
         style={[styles.pill, language === value ? styles.pillActive : null]}
       >
@@ -125,6 +141,7 @@ export default function Screen() {
           }
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
+          hitSlop={space[1]}
           onPress={() => setAudioEnabled(!audioEnabled)}
           style={styles.secondaryButton}
         >
@@ -140,23 +157,29 @@ export default function Screen() {
         </Text>
         <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
         <View style={styles.row}>
-          {[5, 10, 20].map((goal) => (
-            <Pressable
-              key={goal}
-              aria-selected={dailyGoalAnswers === goal}
-              accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: dailyGoalAnswers === goal }}
-              onPress={() => setDailyGoalAnswers(goal)}
-              style={[styles.pill, dailyGoalAnswers === goal ? styles.pillActive : null]}
-            >
-              <Text
-                style={[styles.pillText, dailyGoalAnswers === goal ? styles.pillTextActive : null]}
+          {[5, 10, 20, 40].map((goal) => {
+            const selected = dailyGoalAnswers === goal;
+
+            return (
+              <Pressable
+                key={goal}
+                aria-selected={dailyGoalAnswers === goal}
+                accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: dailyGoalAnswers === goal }}
+                hitSlop={space[1]}
+                onPress={() => setDailyGoalAnswers(goal)}
+                style={[styles.pill, styles.goalPill, selected ? styles.pillActive : null]}
               >
-                {goal}
-              </Text>
-            </Pressable>
-          ))}
+                <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
+                  {goal}
+                </Text>
+                <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
+                  {copy.dailyGoalPresetLabel(goal)}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
 
@@ -167,7 +190,7 @@ export default function Screen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.canvas,
     flex: 1,
   },
   content: {
@@ -194,11 +217,13 @@ const styles = StyleSheet.create({
     lineHeight: typography.body.lineHeight,
   },
   section: {
+    backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
     gap: space[1.5],
     padding: space[2],
+    ...shadows.card,
   },
   sectionTitle: {
     color: colors.text,
@@ -211,12 +236,15 @@ const styles = StyleSheet.create({
     gap: space[1],
   },
   pill: {
+    alignItems: 'center',
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    minHeight: space[5] + space[0.5],
     paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
+    paddingVertical: space[0.75],
   },
   pillActive: {
     backgroundColor: colors.badgeBlueBg,
@@ -230,12 +258,32 @@ const styles = StyleSheet.create({
   pillTextActive: {
     color: colors.badgeBlueText,
   },
+  goalPill: {
+    alignItems: 'flex-start',
+    gap: space.hairline,
+    minWidth: space[12],
+  },
+  goalNumberText: {
+    color: colors.text,
+    fontSize: typography.bodyBold.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyBold.lineHeight,
+  },
+  goalPresetText: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.caption.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
   secondaryButton: {
+    alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
-    borderRadius: radius.micro,
+    borderRadius: radius.card,
+    justifyContent: 'center',
+    minHeight: space[5] + space[0.5],
     paddingHorizontal: space[2],
-    paddingVertical: space[1],
+    paddingVertical: space[1.25],
   },
   secondaryButtonText: {
     color: colors.surface,

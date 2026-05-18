@@ -5,6 +5,7 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
@@ -374,22 +375,17 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
-          <Pressable
+          <Button
             aria-disabled={!canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
             accessibilityRole="button"
             accessibilityState={{ disabled: !canStartAccessibleExam || startingAccessibleExam }}
             disabled={!canStartAccessibleExam || startingAccessibleExam}
             onPress={handleStartAccessibleExam}
-            style={[
-              styles.primaryButton,
-              !canStartAccessibleExam || startingAccessibleExam
-                ? styles.primaryButtonDisabled
-                : null,
-            ]}
+            style={styles.actionButton}
           >
-            <Text style={styles.primaryButtonText}>{startAccessibleExamLabel}</Text>
-          </Pressable>
+            {startAccessibleExamLabel}
+          </Button>
         </View>
       </ScrollView>
     );
@@ -433,7 +429,7 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
-          <Pressable
+          <Button
             aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
             accessibilityRole="button"
@@ -442,15 +438,11 @@ export default function Screen() {
             }}
             disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             onPress={handleStartAccessibleExam}
-            style={[
-              styles.secondaryButton,
-              !completionRecorded || !canStartAccessibleExam || startingAccessibleExam
-                ? styles.primaryButtonDisabled
-                : null,
-            ]}
+            style={styles.actionButton}
+            variant="secondary"
           >
-            <Text style={styles.secondaryButtonText}>{startAccessibleExamLabel}</Text>
-          </Pressable>
+            {startAccessibleExamLabel}
+          </Button>
         </View>
 
         <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -570,17 +562,17 @@ export default function Screen() {
         </View>
       ))}
 
-      <Pressable
+      <Button
         aria-disabled={!canSubmit}
         accessibilityLabel={copy.submitAccessibilityLabel}
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSubmit }}
         disabled={!canSubmit}
         onPress={() => setSubmitted(true)}
-        style={[styles.primaryButton, !canSubmit ? styles.primaryButtonDisabled : null]}
+        style={styles.actionButton}
       >
-        <Text style={styles.primaryButtonText}>{copy.submitLabel}</Text>
-      </Pressable>
+        {copy.submitLabel}
+      </Button>
     </ScrollView>
   );
 }
@@ -681,20 +673,8 @@ const styles = StyleSheet.create({
     color: colors.badgeBlueText,
     fontWeight: typography.bodyBold.fontWeight,
   },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.5],
-  },
-  primaryButtonDisabled: {
-    opacity: 0.45,
-  },
-  primaryButtonText: {
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
+  actionButton: {
+    minHeight: space[5] + space[0.5],
   },
   resultCard: {
     backgroundColor: colors.surfaceWarm,
@@ -770,17 +750,5 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
-  },
-  secondaryButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-  },
-  secondaryButtonText: {
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
   },
 });
