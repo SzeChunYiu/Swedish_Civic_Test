@@ -1,28 +1,39 @@
 import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../lib/theme';
 
 export type OptionCardState = 'idle' | 'selected' | 'correct' | 'incorrect';
 
-const defaultStateLabels = {
-  idle: undefined,
-  selected: 'Selected',
-  correct: 'Correct answer',
-  incorrect: 'Incorrect answer',
-} as const satisfies Record<OptionCardState, string | undefined>;
+const defaultStateLabels: Record<AppLanguage, Record<OptionCardState, string | undefined>> = {
+  sv: {
+    idle: undefined,
+    selected: 'Valt',
+    correct: 'Rätt svar',
+    incorrect: 'Fel svar',
+  },
+  en: {
+    idle: undefined,
+    selected: 'Selected',
+    correct: 'Correct answer',
+    incorrect: 'Incorrect answer',
+  },
+};
 
 /**
  * Defaults: `state="idle"`, `disabled=false`, `accessibilityRole="radio"`,
- * `accessibilityState.checked=true` for non-idle states, and a token-sized
- * `hitSlop`. Pass `accessibilityLabel` or `stateLabel` when the visible copy
- * needs a localized spoken label.
+ * `accessibilityState.checked=true` for non-idle states, localized state
+ * fallback labels from settings, and a token-sized `hitSlop`. Pass
+ * `accessibilityLabel`, `stateLabel`, or `languageOverride` when the spoken
+ * copy needs screen-specific localization.
  */
 export interface OptionCardProps extends Omit<PressableProps, 'children' | 'style'> {
   description?: string;
   descriptionStyle?: StyleProp<TextStyle>;
   label: string;
   labelStyle?: StyleProp<TextStyle>;
+  languageOverride?: AppLanguage;
   resultLabel?: string;
   state?: OptionCardState;
   stateLabel?: string;
@@ -33,18 +44,14 @@ function getAccessibilityLabel({
   description,
   label,
   resultLabel,
-  state,
   stateLabel,
 }: {
   description?: string;
   label: string;
   resultLabel?: string;
-  state: OptionCardState;
   stateLabel?: string;
 }) {
-  return [label, description, resultLabel ?? stateLabel ?? defaultStateLabels[state]]
-    .filter(Boolean)
-    .join('. ');
+  return [label, description, resultLabel ?? stateLabel].filter(Boolean).join('. ');
 }
 
 export function OptionCard({
@@ -57,12 +64,16 @@ export function OptionCard({
   hitSlop,
   label,
   labelStyle,
+  languageOverride,
   resultLabel,
   state = 'idle',
   stateLabel,
   style,
   ...pressableProps
 }: OptionCardProps) {
+  const settingsLanguage = useSettingsStore((settings) => settings.language);
+  const language = languageOverride ?? settingsLanguage;
+  const resolvedStateLabel = stateLabel ?? defaultStateLabels[language][state];
   const isDisabled = disabled === true;
   const isChecked = state !== 'idle';
   const resolvedAccessibilityState = {
@@ -75,7 +86,12 @@ export function OptionCard({
     <Pressable
       accessibilityLabel={
         accessibilityLabel ??
-        getAccessibilityLabel({ description, label, resultLabel, state, stateLabel })
+        getAccessibilityLabel({
+          description,
+          label,
+          resultLabel,
+          stateLabel: resolvedStateLabel,
+        })
       }
       accessibilityRole={accessibilityRole}
       accessibilityState={resolvedAccessibilityState}
