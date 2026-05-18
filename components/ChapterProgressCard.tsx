@@ -1,17 +1,40 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { AccessibilityRole, PressableProps, StyleProp, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
 import { PillBadge } from './PillBadge';
 import type { PillBadgeVariant } from './PillBadge';
 import { ProgressBar } from './ProgressBar';
 import { Text } from './Text';
 
+type ChapterProgressCopy = {
+  accuracyLabel: string;
+  answeredLabel: string;
+  correctLabel: string;
+  progressLabel: (progressPercent: number) => string;
+};
+
+const chapterProgressCopy: Record<AppLanguage, ChapterProgressCopy> = {
+  sv: {
+    accuracyLabel: 'rätt',
+    answeredLabel: 'besvarade',
+    correctLabel: 'rätt',
+    progressLabel: (progressPercent) => `${progressPercent} procent klart`,
+  },
+  en: {
+    accuracyLabel: 'accuracy',
+    answeredLabel: 'answered',
+    correctLabel: 'correct',
+    progressLabel: (progressPercent) => `${progressPercent} percent complete`,
+  },
+};
+
 /**
  * Defaults: `answeredCount=0`, `correctCount=0`, `targetPercent=75`,
  * `accessibilityRole="button"` when `onPress` exists and `"summary"`
- * otherwise, and a token-sized `hitSlop`. Pass localized label props for
- * screen-specific copy.
+ * otherwise, localized progress/count labels from settings, and a token-sized
+ * `hitSlop`. Pass localized label props for screen-specific copy.
  */
 export interface ChapterProgressCardProps extends Omit<PressableProps, 'children' | 'style'> {
   accuracyLabel?: string;
@@ -21,6 +44,7 @@ export interface ChapterProgressCardProps extends Omit<PressableProps, 'children
   correctCount?: number;
   correctLabel?: string;
   emoji?: string;
+  languageOverride?: AppLanguage;
   progressAccessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
   subtitle?: string;
@@ -69,15 +93,16 @@ export function ChapterProgressCard({
   accessibilityLabel,
   accessibilityRole,
   accessibilityState,
-  accuracyLabel = 'accuracy',
+  accuracyLabel,
   answeredCount = 0,
-  answeredLabel = 'answered',
+  answeredLabel,
   chapterLabel,
   correctCount = 0,
-  correctLabel = 'correct',
+  correctLabel,
   disabled = false,
   emoji,
   hitSlop,
+  languageOverride,
   onPress,
   progressAccessibilityLabel,
   style,
@@ -87,17 +112,23 @@ export function ChapterProgressCard({
   totalCount,
   ...pressableProps
 }: ChapterProgressCardProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = chapterProgressCopy[language];
   const safeTotal = Number.isFinite(totalCount) && totalCount > 0 ? Math.round(totalCount) : 0;
   const safeAnswered = clampCount(answeredCount, safeTotal);
   const safeCorrect = clampCount(correctCount, safeAnswered);
   const progress = safeTotal > 0 ? safeAnswered / safeTotal : 0;
   const progressPercent = getPercent(safeAnswered, safeTotal);
   const accuracyPercent = safeAnswered > 0 ? getPercent(safeCorrect, safeAnswered) : null;
-  const answeredText = `${safeAnswered}/${safeTotal} ${answeredLabel}`;
-  const correctText = `${safeCorrect} ${correctLabel}`;
+  const resolvedAnsweredLabel = answeredLabel ?? copy.answeredLabel;
+  const resolvedCorrectLabel = correctLabel ?? copy.correctLabel;
+  const resolvedAccuracyLabel = accuracyLabel ?? copy.accuracyLabel;
+  const answeredText = `${safeAnswered}/${safeTotal} ${resolvedAnsweredLabel}`;
+  const correctText = `${safeCorrect} ${resolvedCorrectLabel}`;
   const accuracyText =
-    accuracyPercent === null ? undefined : `${accuracyPercent}% ${accuracyLabel}`;
-  const progressText = progressAccessibilityLabel ?? `${progressPercent} percent complete`;
+    accuracyPercent === null ? undefined : `${accuracyPercent}% ${resolvedAccuracyLabel}`;
+  const progressText = progressAccessibilityLabel ?? copy.progressLabel(progressPercent);
   const resolvedRole: AccessibilityRole = accessibilityRole ?? (onPress ? 'button' : 'summary');
   const isDisabled = disabled === true;
   const resolvedAccessibilityState = {
@@ -165,6 +196,7 @@ export function ChapterProgressCard({
       <ProgressBar
         accessibilityLabel={progressText}
         animated={false}
+        languageOverride={language}
         progress={progress}
         style={styles.progress}
       />
