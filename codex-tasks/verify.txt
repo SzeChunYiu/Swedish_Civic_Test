@@ -11,6 +11,18 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T22:09:00+02:00 active-lease correction:
+- Current `origin/main` is `85fe297`. `verify:data/questions.ts q451-q500` is
+  landed via `0d58526`; do not duplicate stale q451 recovery branches unless
+  VALIDATOR rejects the landed evidence and explicitly reroutes.
+- Next CONTENT-VERIFY slice is `verify:data/questions.ts q501-q550`, or the
+  next current changed/due slice if VALIDATOR reorders. Start from clean current
+  `origin/main` after `85fe297`; do not revive older q501 audit branches as
+  current evidence without a fresh re-audit.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 CEO 2026-05-18T22:03:51+02:00 active-lease correction:
 - Current `origin/main` is `9270ff3`; q401-q450 VERIFY/reviewer evidence is
   landed via `3582841`/`1831089`, and q351-q400 DATA-INTEGRITY source repair is

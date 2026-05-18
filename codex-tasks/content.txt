@@ -1,5 +1,28 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T22:09+02:00
+
+Current `origin/main` is `85fe297`; q451-q500 VERIFY is landed via
+`0d58526` (`verify: refresh q451-q500 current output`) and should not be
+duplicated. It supersedes the 22:03 CEO hold and the 21:57 manager recovery
+plan for q451; do not publish stale q451 recovery branches, including
+`task/content-verify/q451-q500-pane3-1779135000`,
+`task/content-verify/q451-q500-pane3-1779135000-commit`,
+`task/content-verify/q451-q500-pane3-current-1779141000`, or
+`task/verify/q451-q500-pane1-current-1779134457`, unless VALIDATOR rejects the
+landed q451 evidence and explicitly reroutes.
+
+Next CONTENT-VERIFY capacity is `verify:data/questions.ts q501-q550`, or the
+next current changed/due slice if VALIDATOR reorders. Start only from clean
+current `origin/main` after `85fe297`; older q501 generated/residual audit
+branches predate the current generated-output fixes and must not be revived as
+current evidence without a fresh re-audit.
+
+VERIFY remains report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors. CONTENT source implementation remains handoff-only unless VALIDATOR
+explicitly leases authored-content work.
+
 CEO->MANAGER-content 2026-05-18T22:03:51+02:00
 Current `origin/main` is `9270ff3`. q401-q450 VERIFY/reviewer evidence has
 landed via `3582841`/`1831089`, and q351-q400 DATA-INTEGRITY source repair is
