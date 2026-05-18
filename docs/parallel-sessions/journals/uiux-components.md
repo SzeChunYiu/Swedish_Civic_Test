@@ -87,3 +87,13 @@ A11y props: default `accessible=true`; default `accessibilityRole="summary"`; de
 Verification: `./node_modules/.bin/prettier --check components/DisclaimerBanner.tsx` -> pass; token discipline grep on `components/DisclaimerBanner.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/DisclaimerBanner.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review DisclaimerBanner and then queue Screen if accepted.
+
+## Iteration 9 - 2026-05-18
+
+Component: Screen safe-area wrapper atom - `components/Screen.tsx`
+Variants/states implemented: `canvas`, `surface`, and `warm` page tones; `none`, `compact`, and `comfortable` token padding; static and scrollable content modes; caller safe-area edge, wrapper style, and content container style passthrough.
+Tokens used: `colors.canvas`, `colors.surface`, `colors.surfaceWarm`, `space[0]`, `space[2]`, `space[3]`, `space[4]`, and `space[5]`.
+A11y props: default `accessibilityRole="none"` so child reading order remains intact; inherited SafeAreaView accessibility props, including optional `accessibilityLabel`, pass through for callers that need to announce the wrapper.
+Verification: `./node_modules/.bin/prettier --check components/Screen.tsx` -> pass; token discipline grep on `components/Screen.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review Screen and then queue Divider if accepted.
