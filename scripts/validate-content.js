@@ -141,6 +141,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^It was presented in (?:1918|1948)\b/i,
   /^Den presenterades (?:1918|1948)\b/i,
   /^One reason is (?:to (?:protect employees|decide who becomes head of state)|better farming methods|EU membership|eU membership)\b/i,
+  /^En anledning är att (?:valet är hemligt|rösterna ska räknas snabbare)\b/i,
+  /^One reason is (?:the vote is secret|votes are counted faster)\b/i,
   /^En myndighet som\b/i,
   /^An authority that\b/i,
   /\beU membership\b/,
@@ -4158,6 +4160,9 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
   match = q.match(/^Vilka krav gäller för (.+)$/i);
   if (match) return `För ${match[1]} måste ${lowerFirst(stripLeadingMustSv(answer))}`;
+  match = q.match(/^Varför röstar väljare bakom en skärm i vallokalen$/i);
+  if (match)
+    return `En anledning till att väljare röstar bakom en skärm i vallokalen är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Varför bildades Förenta nationerna efter andra världskriget$/i);
   if (match)
     return `Förenta nationerna bildades efter andra världskriget för att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
@@ -4455,6 +4460,9 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
   match = q.match(/^Which requirements apply to (.+)$/i);
   if (match) return `To ${requirementTargetEn(match[1])}, ${lowerFirst(answer)}`;
+  match = q.match(/^Why do voters vote behind a screen at the polling station$/i);
+  if (match)
+    return `One reason voters vote behind a screen at the polling station is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^Why was the United Nations created after the Second World War$/i);
   if (match)
     return `The United Nations was created after the Second World War to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
