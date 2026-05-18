@@ -140,6 +140,9 @@ test('post-EAS-auth runbook covers build, device, and store evidence sequence', 
   assert.match(runbook, /npm run build:preview/);
   assert.match(runbook, /Android physical-device audio/i);
   assert.match(runbook, /iOS physical-device audio/i);
+  assert.match(runbook, /AdMob test ads/i);
+  assert.match(runbook, /Remove Ads\s+purchase/i);
+  assert.match(runbook, /reports\/release-ads-iap-device-qa\.md/);
   assert.match(runbook, /TestFlight/i);
   assert.match(runbook, /Google Play internal/i);
   assert.match(runbook, /reports\/release-evidence-YYYY-MM-DD\.md/);
@@ -156,6 +159,7 @@ test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
     'eas-build-artifacts',
     'android-device-audio',
     'ios-device-audio',
+    'ads-iap-device-qa',
     'store-records',
     'store-credentials',
     'store-policy-questionnaires',

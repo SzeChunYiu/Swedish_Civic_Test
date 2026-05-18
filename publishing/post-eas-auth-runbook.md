@@ -82,6 +82,17 @@ node scripts/update-release-gate.js --gate android-device-audio --status READY -
 node scripts/update-release-gate.js --gate ios-device-audio --status READY --evidence "iPhone 15 TestFlight audio smoke passed; build https://appstoreconnect.apple.com/..."
 ```
 
+Do not mark `ads-iap-device-qa` READY until Android and iOS EAS preview device
+checks prove AdMob test ads render for free users, the 29 SEK Remove Ads
+purchase removes ads, the entitlement persists across relaunch, restore works,
+ATT and Google UMP consent prompts appear where required, and the mock exam
+screen stays ad-free. Record the sign-off in
+`reports/release-ads-iap-device-qa.md`, then reference it from the gate:
+
+```bash
+node scripts/update-release-gate.js --gate ads-iap-device-qa --status READY --evidence-file reports/release-ads-iap-device-qa.md
+```
+
 For longer evidence, write a short text file and pass it with
 `--evidence-file`:
 
@@ -149,7 +160,7 @@ Record evidence for:
 
 - App Store Connect app record for `com.billyyiu.swedishcivictest`.
 - Google Play Console app record for `com.billyyiu.swedishcivictest`.
-- AdMob app record, or a recorded decision to keep real ads disabled for v1.0.
+- AdMob app record and app-ads.txt review for ad-supported v1.0.
 - Public Support URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/.
 - Public Privacy Policy URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/.
 
@@ -223,10 +234,9 @@ If recording store/account evidence locally, create
 `reports/store-records/store-records.json` and reference that path in the
 `store-records` gate evidence. `npm run release:preflight` validates local JSON
 for the bundle identifier, App Store Connect URL, Google Play Console URL, exact
-hosted support/privacy URLs, Apple/Google account ownership review, and either a
-concrete AdMob app ID or the v1.0 real-ads-disabled decision. It also validates
-that App Store and Google Play listing metadata were reviewed against the store
-records.
+hosted support/privacy URLs, Apple/Google account ownership review, and a
+concrete AdMob app ID for the ad-supported v1.0 release. It also validates that
+App Store and Google Play listing metadata were reviewed against the store records.
 
 Required local JSON shape:
 
@@ -245,8 +255,11 @@ Required local JSON shape:
     "googlePackageNameReviewed": true
   },
   "adMob": {
-    "status": "deferred-real-ads-disabled",
-    "note": "REAL_ADS_ENABLED_FOR_V1=false"
+    "status": "ready",
+    "appId": "ca-app-pub-1234567890123456~1234567890",
+    "realAdsEnabled": true,
+    "appAdsTxtReviewed": true,
+    "note": "Ad-supported v1.0 with app-ads.txt reviewed."
   },
   "listingMetadata": {
     "appStoreListingReviewed": true,
@@ -264,21 +277,22 @@ After the EAS build and store records exist, re-review:
 
 - Apple privacy labels against `publishing/privacy-labels.md`.
 - Google Play Data safety against `publishing/google-play-data-safety.md`.
-- The generated binary/build configuration, including the Google Mobile Ads SDK
-  test configuration and `REAL_ADS_ENABLED_FOR_V1=false` posture.
-- Any newly enabled real ad, purchase, analytics, crash, or support SDK.
+- The generated binary/build configuration, including the Google Mobile Ads
+  real-ad path, `EXPO_PUBLIC_REAL_ADS_ENABLED=true`, Remove Ads IAP, and ATT/UMP
+  consent posture.
+- Any newly enabled analytics, crash, support, or additional purchase SDK.
 
 Do not mark `privacy-review` READY in `reports/release-gates.json` until the
 review evidence names the build/binary, Apple privacy labels, Google Play Data
-safety, and the disabled Google Mobile Ads SDK posture.
+safety, and the ad-supported Google Mobile Ads SDK posture.
 
 If recording the final privacy review locally, create
 `reports/privacy-review/privacy-review.json` and reference that path in the
 `privacy-review` gate evidence. `npm run release:preflight` validates local JSON
 for the reviewer audit trail, reviewed build, App Store Connect and Google Play
 questionnaire review status, Apple privacy labels, Google Play Data safety,
-Google Mobile Ads test/real-ads-disabled posture, and disabled analytics, crash,
-purchase, and real-ad SDKs.
+Google Mobile Ads real-ad posture, Remove Ads IAP, ATT/UMP consent review, and
+disabled analytics/crash SDKs.
 
 Required local JSON shape:
 
@@ -309,14 +323,14 @@ Required local JSON shape:
   "googleMobileAds": {
     "sdkPresent": true,
     "testAppIds": true,
-    "realAdsEnabled": false,
-    "gate": "REAL_ADS_ENABLED_FOR_V1=false"
+    "realAdsEnabled": true,
+    "removeAdsIapReviewed": true,
+    "consentFlowReviewed": true,
+    "gate": "EXPO_PUBLIC_REAL_ADS_ENABLED=true; Remove Ads non-consumable in-app purchase at 29 SEK; ATT and UMP consent reviewed."
   },
   "disabledSdks": {
     "analytics": true,
-    "crashReporting": true,
-    "purchases": true,
-    "realAds": true
+    "crashReporting": true
   }
 }
 ```
@@ -339,9 +353,9 @@ final screenshot manifests and rejects browser/web-draft evidence.
 
 ## 6b. Record release-owner approval before production submission
 
-After EAS build artifacts, physical-device audio, store records, submit
-credentials, store policy questionnaires, privacy review, public URLs, and final
-screenshots are all ready, record final release-owner approval in
+After EAS build artifacts, physical-device audio, ad/IAP device QA, store
+records, submit credentials, store policy questionnaires, privacy review, public
+URLs, and final screenshots are all ready, record final release-owner approval in
 `reports/release-owner-approval/release-owner-approval.json`. Reference that path
 in the `release-owner-approval` release gate.
 
@@ -361,6 +375,7 @@ Required local JSON shape:
     "eas-build-artifacts",
     "android-device-audio",
     "ios-device-audio",
+    "ads-iap-device-qa",
     "store-records",
     "store-credentials",
     "store-policy-questionnaires",

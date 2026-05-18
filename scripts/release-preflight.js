@@ -33,6 +33,17 @@ const evidenceRequirements = {
     ['audio smoke result', /audio/i],
     ['build URL, ID, or TestFlight evidence', /build|TestFlight|https?:\/\/|install/i],
   ],
+  'ads-iap-device-qa': [
+    ['Android device QA', /Android|Pixel|Galaxy/i],
+    ['iOS device QA', /iOS|iPhone|iPad|TestFlight/i],
+    ['EAS preview build', /EAS|preview build|TestFlight|internal test/i],
+    ['ads render with test units', /ads? render|AdMob|test units?/i],
+    ['Remove Ads purchase removes ads', /Remove Ads|29 SEK|purchase removes ads/i],
+    ['purchase persists across relaunch', /persist|relaunch/i],
+    ['restore works', /restore/i],
+    ['ATT and UMP consent prompts', /ATT|App Tracking Transparency|UMP|consent/i],
+    ['no ads on exam screen', /no ads? (?:on|during).*exam|exam screen.*ad-free/i],
+  ],
   'store-records': [
     ['App Store Connect record', /App Store Connect|Apple/i],
     ['Google Play Console record', /Google Play/i],
@@ -338,6 +349,50 @@ function validateDeviceAudioEvidence(evidencePath, expectedPlatform) {
   return errors;
 }
 
+function validateAdsIapDeviceQaEvidence(evidencePath) {
+  let content;
+  try {
+    content = fs.readFileSync(evidencePath, 'utf8');
+  } catch (error) {
+    return [`could not read ${evidencePath}: ${error.message}`];
+  }
+
+  const errors = [];
+  if (!/Status:\s*passed/i.test(content)) {
+    errors.push('Status must be passed');
+  }
+  if (/\[\s\]/.test(content)) {
+    errors.push('unchecked checklist items remain');
+  }
+  if (/\b(?:TBD|BLOCKED|not run|placeholder|missing)\b/i.test(content)) {
+    errors.push(
+      'final report must not contain TBD, BLOCKED, not-run, placeholder, or missing language',
+    );
+  }
+
+  const requirements = [
+    ['Android device evidence', /Android|Pixel|Galaxy/i],
+    ['iOS device evidence', /iOS|iPhone|iPad|TestFlight/i],
+    ['EAS preview build evidence', /EAS|preview build|TestFlight|internal test/i],
+    ['AdMob test-unit rendering', /AdMob|test units?|test ad/i],
+    ['Remove Ads purchase removes ads', /Remove Ads|29 SEK|purchase removes ads/i],
+    ['purchase persists across relaunch', /persist|relaunch/i],
+    ['restore works', /restore/i],
+    ['ATT prompt evidence', /ATT|App Tracking Transparency/i],
+    ['UMP consent evidence', /UMP|EEA consent|Google consent/i],
+    ['no exam ad evidence', /no ads? (?:on|during).*exam|exam screen.*ad-free/i],
+    ['proof artifact path or URL', /\b(?:reports|publishing)\/[^\s,;:]+|https:\/\//i],
+  ];
+
+  for (const [label, pattern] of requirements) {
+    if (!pattern.test(content)) {
+      errors.push(`missing ${label}`);
+    }
+  }
+
+  return errors;
+}
+
 function validateStoreRecordEvidence(evidencePath) {
   let evidence;
   try {
@@ -565,6 +620,7 @@ function validateReleaseOwnerApprovalEvidence(evidencePath) {
     'eas-build-artifacts',
     'android-device-audio',
     'ios-device-audio',
+    'ads-iap-device-qa',
     'store-records',
     'store-credentials',
     'store-policy-questionnaires',
@@ -856,6 +912,18 @@ function validateLocalArtifactContents(id, artifactPaths) {
       validateDeviceAudioEvidence(jsonPath, expectedPlatform).map(
         (error) => `${jsonPath}: ${error}`,
       ),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
+  if (id === 'ads-iap-device-qa') {
+    const markdownPaths = artifactPaths.filter((artifactPath) =>
+      /release-ads-iap-device-qa.*\.md$/i.test(artifactPath),
+    );
+    if (markdownPaths.length === 0) return null;
+
+    const errors = markdownPaths.flatMap((markdownPath) =>
+      validateAdsIapDeviceQaEvidence(markdownPath).map((error) => `${markdownPath}: ${error}`),
     );
     return errors.length > 0 ? errors : null;
   }
@@ -1218,6 +1286,13 @@ function buildReport() {
       'iOS physical-device audio smoke',
       'No iOS physical-device/TestFlight build/install/audio evidence is recorded.',
       'Create an EAS preview/TestFlight build and record iOS audio smoke results in a release evidence file.',
+    ),
+    evidenceGate(
+      manualEvidence,
+      'ads-iap-device-qa',
+      'Ad/IAP physical-device release QA',
+      'No Android/iOS ad-supported v1.0 device QA sign-off is recorded in reports/release-ads-iap-device-qa.md.',
+      'Run Android and iOS EAS preview device QA for AdMob test ads, Remove Ads purchase/restore/persistence, ATT/UMP consent prompts, and no ads on exam screens; record the sign-off in reports/release-ads-iap-device-qa.md.',
     ),
     evidenceGate(
       manualEvidence,

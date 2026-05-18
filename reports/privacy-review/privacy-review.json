@@ -5,7 +5,7 @@
   "applePrivacyLabelsReviewed": false,
   "googlePlayDataSafetyReviewed": false,
   "googleMobileAdsSdkPostureReviewed": false,
-  "realAdsEnabledForV1": false,
+  "realAdsEnabledForV1": true,
   "reviewer": "TBD",
   "checkedAtUtc": "TBD",
   "notes": "Review against the generated binary before marking READY."

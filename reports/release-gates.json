@@ -14,9 +14,13 @@
       "status": "BLOCKED",
       "evidence": "No iOS physical-device/TestFlight build/install/audio evidence is recorded."
     },
+    "ads-iap-device-qa": {
+      "status": "BLOCKED",
+      "evidence": "No Android/iOS ad-supported v1.0 device QA sign-off is recorded in reports/release-ads-iap-device-qa.md."
+    },
     "store-records": {
       "status": "BLOCKED",
-      "evidence": "No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0."
+      "evidence": "No App Store Connect or Google Play Console app record evidence is recorded for the ad-supported v1.0 release."
     },
     "store-credentials": {
       "status": "BLOCKED",
@@ -24,11 +28,11 @@
     },
     "store-policy-questionnaires": {
       "status": "READY",
-      "evidence": "Apple age rating/export compliance/content rights/no-official-affiliation review completed against publishing/app-store-listing.md; Google Play content rating/target audience/ads declaration/no-government-affiliation review completed against publishing/google-play-listing.md, publishing/google-play-data-safety.md, and reports/2026-05-15-v1-ads-deferred.md. Local policy evidence recorded in reports/store-policy-questionnaires/store-policy-questionnaires.json; real ads remain disabled for v1.0 and no real-money gambling or official-government affiliation claims are present."
+      "evidence": "Apple age rating/export compliance/content rights/no-official-affiliation review completed against publishing/app-store-listing.md; Google Play content rating/target audience/ads declaration/no-government-affiliation review completed against publishing/google-play-listing.md, publishing/google-play-data-safety.md, and publishing/admob-iap-setup-runbook.md. Local policy evidence recorded in reports/store-policy-questionnaires/store-policy-questionnaires.json; Google Mobile Ads and the 29 SEK Remove Ads IAP are declared for ad-supported v1.0, and no real-money gambling or official-government affiliation claims are present."
     },
     "privacy-review": {
       "status": "BLOCKED",
-      "evidence": "No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded. The review must include the Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false posture."
+      "evidence": "No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded. The review must include Google Mobile Ads, Remove Ads IAP, and ATT/UMP consent disclosures for the ad-supported v1.0 release."
     },
     "release-owner-approval": {
       "status": "BLOCKED",

@@ -65,6 +65,17 @@ const templates = {
       checkedAtUtc: 'TBD',
     },
   },
+  'ads-iap-device-qa': {
+    path: 'reports/release-ads-iap-device-qa.md',
+    contentText: [
+      '# Remove Ads / AdMob Device QA Sign-Off',
+      '',
+      'Status: BLOCKED - template awaiting physical-device evidence.',
+      '',
+      'Fill this report after Android and iOS EAS preview builds prove AdMob test units render, Remove Ads purchase/restore/persistence works, ATT and Google UMP consent prompts appear where required, and the mock exam screen stays ad-free.',
+      '',
+    ].join('\n'),
+  },
   'store-records': {
     path: 'reports/store-records/store-records.json',
     content: {
@@ -212,6 +223,11 @@ function usage() {
   ].join('\n');
 }
 
+function templateBody(template) {
+  if (typeof template.contentText === 'string') return `${template.contentText.trimEnd()}\n`;
+  return `${JSON.stringify(template.content, null, 2)}\n`;
+}
+
 function fail(message) {
   process.stderr.write(`${message}\n\n${usage()}\n`);
   process.exit(1);
@@ -246,7 +262,7 @@ function main() {
       .map((gate) => ({
         gate,
         path: templates[gate].path,
-        status: templates[gate].content.status,
+        status: templates[gate].content?.status ?? 'blocked',
       }));
     process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
     return;
@@ -263,7 +279,7 @@ function main() {
       }
 
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, `${JSON.stringify(template.content, null, 2)}\n`);
+      fs.writeFileSync(outputPath, templateBody(template));
       process.stdout.write(`Created ${gate} evidence stub at ${outputPath}\n`);
     }
     return;
@@ -279,7 +295,7 @@ function main() {
   }
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, `${JSON.stringify(template.content, null, 2)}\n`);
+  fs.writeFileSync(outputPath, templateBody(template));
   process.stdout.write(`Created ${args.gate} evidence stub at ${outputPath}\n`);
 }
 

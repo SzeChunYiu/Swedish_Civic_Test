@@ -119,6 +119,11 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
             evidence:
               'iPhone 15 TestFlight audio smoke passed; build https://appstoreconnect.apple.com/testflight-ready',
           },
+          'ads-iap-device-qa': {
+            status: 'READY',
+            evidence:
+              'Android Pixel 8 and iPhone 15 EAS preview build ad/IAP device QA passed: AdMob test units render for free users, Remove Ads purchase removes ads for 29 SEK and persists after relaunch, restore works, ATT and Google UMP consent prompts were observed, and the exam screen remained ad-free. Proof URL: https://example.com/release-ads-iap-device-qa',
+          },
           'store-records': {
             status: 'READY',
             evidence: storeRecordReadyEvidence(),
@@ -579,6 +584,44 @@ function createDeviceAudioEvidence(platform, options = {}) {
   };
 }
 
+function createAdsIapDeviceQaEvidence(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'release-ads-iap-device-qa',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const content =
+    options.content ||
+    [
+      '# Remove Ads / AdMob Device QA Sign-Off',
+      '',
+      'Status: passed',
+      '',
+      '- Android Pixel 8 / Android 15 installed EAS preview build android-100.',
+      '- iOS iPhone 15 / iOS 18 installed EAS preview build ios-100 through TestFlight.',
+      '- AdMob test units render on Home, Learn, Practice completion, and Mistakes for free users.',
+      '- Remove Ads purchase removes ads for 29 SEK on both platforms.',
+      '- adsDisabled=true persists after force quit and relaunch on Android and iOS.',
+      '- Restore purchase works after local reset on Android and iOS.',
+      '- App Tracking Transparency prompt appears on iOS before tracking-based advertising.',
+      '- Google UMP / EEA consent prompt appears before real ad serving where required.',
+      '- No ads on exam screen before, during, or after mock exam submission.',
+      '- Proof artifacts: reports/release-ads-iap-device-qa/android-video.mp4 and reports/release-ads-iap-device-qa/ios-video.mp4.',
+      '',
+    ].join('\n');
+
+  const evidencePath = path.join(absoluteDir, 'release-ads-iap-device-qa.md');
+  fs.writeFileSync(evidencePath, content);
+
+  return {
+    relativePath: path.join(relativeDir, 'release-ads-iap-device-qa.md'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 function createStoreRecordEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -726,6 +769,7 @@ function createReleaseOwnerApprovalEvidence(options = {}) {
       'eas-build-artifacts',
       'android-device-audio',
       'ios-device-audio',
+      'ads-iap-device-qa',
       'store-records',
       'store-credentials',
       'store-policy-questionnaires',
@@ -887,6 +931,7 @@ test('release preflight fails closed on external launch blockers', () => {
     'eas-build-artifacts',
     'android-device-audio',
     'ios-device-audio',
+    'ads-iap-device-qa',
     'store-records',
     'store-credentials',
     'store-policy-questionnaires',
@@ -1635,6 +1680,69 @@ test('release preflight accepts valid local device audio evidence', () => {
   } finally {
     androidEvidence.cleanup();
     iosEvidence.cleanup();
+  }
+});
+
+test('release preflight blocks unchecked ad/IAP device QA report evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-ads-iap-qa-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const qaEvidence = createAdsIapDeviceQaEvidence({
+    content: fs.readFileSync(path.join(repoRoot, 'reports/release-ads-iap-device-qa.md'), 'utf8'),
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'ads-iap-device-qa': {
+        status: 'READY',
+        evidence: `Android Pixel 8 and iPhone 15 EAS preview build ad/IAP device QA passed: AdMob test units render, Remove Ads purchase removes ads for 29 SEK and persists after relaunch, restore works, ATT and Google UMP consent prompts were observed, and no ads on the exam screen. Report ${qaEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const adsIapQa = report.gates.find((gate) => gate.id === 'ads-iap-device-qa');
+    assert.equal(adsIapQa.status, 'BLOCKED');
+    assert.match(adsIapQa.evidence, /local artifact content/i);
+    assert.match(adsIapQa.evidence, /unchecked checklist items|TBD|BLOCKED/i);
+  } finally {
+    qaEvidence.cleanup();
+  }
+});
+
+test('release preflight accepts valid local ad/IAP device QA report evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-ads-iap-qa-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const qaEvidence = createAdsIapDeviceQaEvidence();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'ads-iap-device-qa': {
+        status: 'READY',
+        evidence: `Android Pixel 8 and iPhone 15 EAS preview build ad/IAP device QA passed: AdMob test units render, Remove Ads purchase removes ads for 29 SEK and persists after relaunch, restore works, ATT and Google UMP consent prompts were observed, and no ads on the exam screen. Report ${qaEvidence.relativePath}.`,
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    assert.equal(report.gates.find((gate) => gate.id === 'ads-iap-device-qa').status, 'READY');
+  } finally {
+    qaEvidence.cleanup();
   }
 });
 

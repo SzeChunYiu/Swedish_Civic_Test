@@ -8,7 +8,7 @@
     "publishing/google-play-listing.md",
     "publishing/privacy-labels.md",
     "publishing/google-play-data-safety.md",
-    "reports/2026-05-15-v1-ads-deferred.md"
+    "publishing/admob-iap-setup-runbook.md"
   ],
   "apple": {
     "ageRatingReviewed": true,
@@ -24,7 +24,7 @@
     "adsDeclarationReviewed": true,
     "noGovernmentAffiliationClaims": true,
     "containsRealMoneyGambling": false,
-    "notes": "Education app for adults/learners; Google Mobile Ads SDK remains test-ID/fail-closed for v1.0 with REAL_ADS_ENABLED_FOR_V1=false; no government affiliation is claimed; no real-money gambling."
+    "notes": "Education app for adults/learners; Google Mobile Ads and the 29 SEK Remove Ads IAP are declared for ad-supported v1.0; no government affiliation is claimed; no real-money gambling."
   },
   "remainingCaveat": "This records the local questionnaire review. Final console submission still depends on store records, credentials, generated builds, privacy review, owner approval, screenshots, and submission gates."
 }
