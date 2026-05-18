@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T16:14:22+02:00
+MANAGER-content queue - 2026-05-18T16:22:49+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
@@ -75,11 +75,14 @@ Duplicate guard:
   follow-up static-site generated bank drift is build/DATA-INTEGRITY-owned;
   CONTENT must not edit `site/**`.
 - q114 is open in PR #352 on branch
-  `task/content/q114-source-note-pane1-1779113157`, but `origin/main` advanced
-  to `1376794` after that branch. Treat PR #352 as the canonical q114
-  CONTENT-VERIFY path; do not duplicate it. The q114 owner must rebase onto
-  current `origin/main`, update the journal PR line to name PR #352 or merge
-  evidence, rerun normal content gates, and keep `site/**` untouched.
+  `task/content/q114-source-note-pane1-1779113157`. Treat PR #352 as the
+  canonical q114 CONTENT-VERIFY path; do not duplicate it. Rebase work in
+  `/tmp/sct-content-verify-pane3` showed the content diff itself is bounded to
+  `data/additionalQuestions.ts` and the content journal, but normal
+  `validate:content` gates fail because q114 makes generated `site/questions.js`
+  stale and CONTENT must not edit `site/**`. Do not push or merge q114 red;
+  VALIDATOR must route a SETUP/build or DATA-INTEGRITY static mirror sync, or
+  explicitly authorize a bundled cross-lane fix.
 - q144 is open in PR #331 on branch
   `task/content/q144-source-expansion-pane1-1779114000`, but latest CEO
   routing holds fresh non-site content behind SITE-P0 unless VALIDATOR
@@ -92,8 +95,11 @@ Active dispatch:
   q078/q079/q080/q081/q108/q109/q142/q143 assignments are superseded.
 - Operator directive in `codex-tasks/open.txt` supersedes the earlier idle-hold
   behavior: managers must not park CONTENT panes while build-capable SITE-P0
-  staffing is unavailable. Keep panes on independent Phase-A UHR-only
-  CONTENT-VERIFY/SOURCE-CITATION atoms that do not touch `site/**`.
+  staffing is unavailable. Current gate reality: data-changing CONTENT atoms
+  now make the generated static-site mirror stale, so they cannot pass normal
+  gates unless VALIDATOR provides a cross-lane static mirror path. Until then,
+  fresh CONTENT capacity should audit/file concrete UHR-only defects or report
+  to VALIDATOR for the q114 static-mirror decision, not open duplicate data PRs.
 - SITE-P0 work remains build-owned; CONTENT must not edit `site/**` and must
   not present content atoms as SITE-P0 progress.
 
@@ -110,9 +116,11 @@ Next content work:
 1. Keep q018 duplicate-guarded as landed; do not open new q018 work. The only
    q018 follow-up is build/DATA-INTEGRITY-owned static-bank acceptance or
    regeneration.
-2. Keep q114 duplicate-guarded in PR #352. The next q114 action is rebase,
-   journal correction, and normal content verification by the existing owner;
-   do not open a second q114 branch.
+2. Keep q114 duplicate-guarded in PR #352. The existing owner already proved
+   the branch cannot satisfy current normal gates as a CONTENT-only diff because
+   `validate:content` requires `site/questions.js` parity. The next action is a
+   VALIDATOR/SETUP/DATA-INTEGRITY decision on static mirror sync or an explicit
+   cross-lane bundled fix; do not open a second q114 branch.
 3. Keep q144 duplicate-guarded in PR #331, but do not advance, duplicate, or
    replace it until VALIDATOR explicitly leases non-site content or CEO routing
    releases CONTENT. If it is later released, the q144 owner must rebase/verify

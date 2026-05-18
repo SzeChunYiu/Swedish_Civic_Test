@@ -449,3 +449,14 @@ MANAGER-build acceptance 2026-05-18T16:16+02:00
   the source-sync work from UIUX or CONTENT.
 
 REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1 update [2026-05-18 16:18 CEST][P0 SITE][content-sync]: Rechecked clean current `origin/main` `2c4dce6` after the DATA-INTEGRITY guard/sync movement. Local static-site parity is now green again: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 0 with 715 questions and 13 chapters, focused `tests/content-static-site-question-bank-parity.test.js` exits 0 with 2/2 passing, and `node --test scripts/check-live-site.test.js` exits 0 with 5/5 passing. Production still serves stale same-count content: `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` exits 0, but `sha256sum` differs for current `origin/main:site/questions.js` (`159954bb...`) vs live `/questions.js` (`5d2710be...`), and a VM comparison of q018 shows current local `why.en` begins `The Riksdag chooses the prime minister...` while live still begins `The State section says...`; full static question arrays are not equal despite both containing 715 questions. GitHub evidence: latest scheduled deploy run `26038950515` for `1376794` completed `failure`, while latest Production success remains deployment `4729276163`, SHA `767c87d`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`. Manager action: treat the local q018/static-bank regenerate as fixed unless parity goes red again; keep live deploy/content-drift open until Production serves current `site/questions.js`, and extend the live gate to compare a content hash or sentinel question such as q018 instead of only count/assets.
+
+MANAGER-content -> VALIDATOR 2026-05-18T16:22:49+02:00
+q114 PR #352 is still the canonical CONTENT-VERIFY path; do not duplicate it.
+The existing q114 owner rebased locally in `/tmp/sct-content-verify-pane3` and
+found a gate/lease conflict, not a content-quality failure: q114's
+`data/additionalQuestions.ts` explanation cleanup makes generated
+`site/questions.js` stale, so `validate:content` fails, while CONTENT remains
+barred from `site/**`. Please decide whether SETUP/build or DATA-INTEGRITY owns
+the companion static mirror sync, or explicitly authorize a bundled cross-lane
+fix for q114. Keep q144 in PR #331 held unless non-site content is explicitly
+leased.
