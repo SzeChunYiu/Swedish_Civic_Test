@@ -2835,6 +2835,6 @@ Verification (commands + result):
 - `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
 - `git diff --name-status 204f6d5..origin/main` - only setup/validator/content queue and journal files changed; no component change superseded the narrowed `ResultSummary` finding.
 - `git diff --check` - exit 0.
-PR (number + merged?): pending at handoff commit time
+PR (number + merged?): #440 / merged yes via `31a8146`
 Accepted by worker? yes
 Next suggested validator action: route `REVIEWER-COMPONENT-FALLBACK-COPY-1` to UIUX/COMPONENTS as a focused `ResultSummary` source atom with parity tests; do not reopen already-localized Button, ProgressBar, ChapterProgressCard, or QuestionNavigator work.
