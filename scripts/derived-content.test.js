@@ -50,6 +50,28 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
+  assert.equal(
+    derived[1].questionSv,
+    'Sant eller falskt: Det stämmer att Sverige ligger i Norden.',
+  );
+  assert.equal(
+    derived[1].questionEn,
+    'True or false: It is true that Sweden is located in the Nordic region.',
+  );
+  assert.equal(derived[2].questionSv, 'Sant eller falskt: Det stämmer att Sverige ligger i Asien.');
+  assert.equal(derived[2].questionEn, 'True or false: It is true that Sweden is located in Asia.');
+  assert.equal(derived[3].questionSv, 'Vilket svar är korrekt? Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Which answer is correct? Where is Sweden located?');
+  assert.ok(
+    derived
+      .filter((question) => question.type === 'true_false')
+      .every(
+        (question) =>
+          !/Ett korrekt svar på frågan|A correct answer to/.test(
+            `${question.questionSv} ${question.questionEn}`,
+          ),
+      ),
+  );
 });
 
 test('derivePublishedQuestions keeps generated single-choice variants at four options', () => {
@@ -85,48 +107,36 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     );
   });
   assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
-});
 
-test('derivePublishedQuestions avoids nested meta-stems for true/false source questions', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q002',
-    chapterId: 'ch01',
-    type: 'true_false',
-    questionSv: 'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-    questionEn: "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-    options: [
-      { id: 'true', textSv: 'Sant', textEn: 'True' },
-      { id: 'false', textSv: 'Falskt', textEn: 'False' },
-    ],
-    correctOptionId: 'true',
-    explanationSv: 'Sveriges nordligaste del ligger norr om polcirkeln.',
-    explanationEn: "Sweden's northernmost part lies north of the Arctic Circle.",
-    uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
-    difficulty: 'easy',
-    reviewStatus: 'reviewed',
-    tags: ['geography', 'arctic-circle', 'true-false'],
-  };
-
-  const derived = derivePublishedQuestions([source], 105);
   const trueFalseVariants = derived.filter((question) => question.type === 'true_false');
-
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionSv),
     [
-      'Sant eller falskt: Påståendet "Sveriges nordligaste del ligger norr om polcirkeln" är sant.',
-      'Sant eller falskt: Påståendet "Sveriges nordligaste del ligger norr om polcirkeln" är falskt.',
+      'Sant eller falskt: Det stämmer i sak att Sverige ligger i Norden.',
+      'Sant eller falskt: Det stämmer inte att Sverige ligger i Norden.',
     ],
   );
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionEn),
     [
-      'True or false: The statement "Sweden\'s northernmost part lies north of the Arctic Circle" is true.',
-      'True or false: The statement "Sweden\'s northernmost part lies north of the Arctic Circle" is false.',
+      'True or false: It is factually true that Sweden is in the Nordic region.',
+      'True or false: It is not true that Sweden is in the Nordic region.',
     ],
   );
-  trueFalseVariants.forEach((question) => {
-    assert.doesNotMatch(question.questionSv, /Ett korrekt svar på frågan "Sant eller falskt:/);
-    assert.doesNotMatch(question.questionEn, /A correct answer to "True or false:/);
-  });
+  assert.equal(
+    derived[3].questionSv,
+    'Vilket alternativ stämmer med påståendet? Sverige ligger i Norden.',
+  );
+  assert.equal(
+    derived[3].questionEn,
+    'Which option matches the statement? Sweden is in the Nordic region.',
+  );
+  assert.ok(
+    trueFalseVariants.every(
+      (question) =>
+        !/Sant eller falskt:\s*Ett korrekt svar|True or false:\s*A correct answer/.test(
+          `${question.questionSv} ${question.questionEn}`,
+        ),
+    ),
+  );
 });

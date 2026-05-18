@@ -232,7 +232,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionTextFieldsNormalizedValidated, summary.publishedQuestions);
   assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
-  assert.equal(summary.questionGeneratedTrueFalseMetaStemValidated, summary.publishedQuestions);
+  assert.equal(summary.questionNestedMetaStemsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionJudgementMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionPromptTextUniquenessValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionTextLabelsValidated, summary.publishedQuestions);
   assert.equal(summary.questionTypeOptionCountsValidated, summary.publishedQuestions);
