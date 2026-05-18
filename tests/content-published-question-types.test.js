@@ -328,6 +328,80 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects residual generated true/false option-fragment stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Sant eller falskt: Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati.',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'True or false: Everyone who has the right to vote has one vote each is part of free elections in a democracy.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects residual generated true/false applies-to stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Sant eller falskt: Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval.',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'True or false: You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
 test('published question metadata schema rejects invalid difficulty values', () => {
   const result = spawnSync(
     process.execPath,
