@@ -160,7 +160,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-release"]
-disabled = true
+disabled = false
 ssh = "lunarc"
 session = "civic-team-release-local"
 prompts = "codex-prompts-civic-team-release.txt"
