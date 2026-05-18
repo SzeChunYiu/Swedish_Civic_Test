@@ -3643,3 +3643,26 @@ Evidence: local current main is deploy-ready by static parity, live-smoke unit c
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep SITE-P0-5 blocked on production deploy freshness until a deployment from `cabe389` or newer passes the hash-aware live smoke.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-LsXQOZPG` / `task/reviewer/q551-q600-resolution-1779138238`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main resolution recheck for `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1` after DATA-INTEGRITY landed q551-q600 wording cleanup.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/data-integrity/setup queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `d1753ae`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Direct CSV/static scan over q562/q563/q574/q575/q598/q599 found 720 static questions, all six CSV rows mirrored in `site/questions.js`, and zero residual matches for the routed q551-q600 patterns.
+- Spot checks show q563 now uses `on a Saturday`, q574 capitalizes `Buddhist and Hindu`, q598 uses plural agreement `are mentioned`, and q599 is a direct learner-facing false proposition.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and static-site parity true.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-static-site-question-bank-parity.test.js tests/content-test-gate-parity.test.js` - exit 0, 30/30 passing, including the residual q551-q600 wording guard.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing q551-q600 finding was updated with resolution evidence instead of filing a new defect.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1 resolution recheck [2026-05-18 23:04 CEST]`.
+Evidence: current main closes the q563/q574/q598/q599 generated true/false naturalness residuals and the focused q551-q600 guard now passes.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept/close q551-q600 after inspecting DATA-INTEGRITY source/PR evidence, then route q601-q650 unless newer accepted evidence supersedes it.
