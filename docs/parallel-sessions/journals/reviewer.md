@@ -3497,3 +3497,28 @@ Evidence: current main closes the q358/q359/q398/q399 standalone-referent residu
 PR (number + merged?): #686 merged yes, squash `9270ff3`.
 Accepted by worker? yes
 Next suggested validator action: no further q351-q400 routing unless a fresh regression appears; keep q401-q450 open for q406/q407/q411/q446/q447.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-q501-q550-1779136000` / `task/reviewer/q501-q550-current-1779136000`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated true/false standalone/naturalness recheck for q501-q550 after q401-q450 source repair and q451-q500 VERIFY landed.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/data-integrity/content/verify queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `8e3aa16`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Duplicate/current-state scan found older q501-q550 residual evidence, but q451-q500 VERIFY is now landed and current routing permits the next slice.
+- Direct VM inspection of `site/questions.js` found 50 q501-q550 rows, 25 true/false rows, zero true/false prefix offenders, zero true/false stem meta offenders, and current standalone/naturalness offenders `q526`, `q527`, `q530`, `q531`, `q535`, `q542`, and `q543`.
+- CSV parser spot check confirmed the same seven texts are mirrored in `content/question-bank.csv`.
+- `q526` and `q527` omit the referent "religion"; `q530`/`q531` have double comma punctuation after `31 December`; `q531` is ungrammatical in both languages; `q535` has ungrammatical Swedish; `q542`/`q543` have English `spreadinging` / `welcominging` typos.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with validators green despite the seven rows.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 29/29 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - first exit 2 because the temporary worktree had no local dependency tree; after linking `/home/billy/Swedish_Civic_Test/node_modules`, rerun exited 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q501-Q550-CURRENT-1`.
+Evidence: current main has seven remaining q501-q550 generated true/false standalone/naturalness defects while the existing validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep q501-q550 behind q451-q500 source routing, then route DATA-INTEGRITY to q501-q550 cleanup for q526/q527/q530/q531/q535/q542/q543 with generator, validator mirror, export/static parity, and current-main spot-check evidence.
