@@ -558,3 +558,35 @@ coverage, regenerated canonical/static output, export/static parity,
 `validate:content`, `test:derived-content`, focused content gates, typecheck,
 lint, ownership, Prettier/diff, PR/merge evidence, and direct spot checks for
 all four named rows.
+
+Iteration: 2026-05-18T23:14+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` as the queue-level DATA-INTEGRITY
+closure for q606/q607/q611/q622 generated true/false wording and
+answer-quality defects, with q610 kept parallel to q611.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #740 is squash-merged on current `origin/main` as `8b7c77f`, with
+handoff PR #743 / `cbaddb0`. Clean manager recheck in
+`/tmp/sct-manager-q601-accept-0SiiWj` passed `npm run validate:content`,
+`npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 31/31, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier, `git diff --check 8b7c77f^..8b7c77f`,
+`git diff --check cbaddb0^..cbaddb0`, and direct q606/q607/q610/q611/q622
+CSV/static scans with zero residual offenders. Current `origin/main` added only
+reviewer/journal metadata after that recheck.
+Next worker task queued: DATA-INTEGRITY -
+`REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` is next for q698
+proper-noun capitalization. Start from clean current main and require generator
+and validator mirror coverage, regenerated canonical/static output,
+export/static parity, `validate:content`, `test:derived-content`, focused
+content gates, typecheck, lint, ownership, Prettier/diff, PR/merge evidence,
+and direct spot checks proving `Jesu födelse` / `Jesus' birth` stay
+capitalized while generic distractors remain naturally lowercased. The broader
+`REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1` cleanup follows q651
+and supersedes the older q701-q720-only generated-judgement route unless
+VALIDATOR explicitly reorders.
