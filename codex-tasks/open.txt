@@ -33,7 +33,8 @@ verify, correct, cite the UHR page.
 
 === PRIORITY: APPLY CLAUDE DESIGN SYSTEM (operator 2026-05-17) ===
 DESIGN.md is now the Claude (Anthropic) warm-parchment system. Execute in order:
-DESIGN-1 [P0, one atom]: rewrite lib/theme/colors.ts token VALUES to exactly the
+DESIGN-1 [DONE 2026-05-18 — verified on origin/main]: lib/theme/colors.ts already matches DESIGN.md §2 exactly (canvas #f5f7fa, accent #006aa7, navy #003a5c, success #1e874b, warning #c77700, … all keys/values); gate tests/content-theme-token-schema.test.js 2/2 green. NO further work — do not re-queue. (Original spec retained below for history.)
+DESIGN-1-HIST [P0, one atom]: rewrite lib/theme/colors.ts token VALUES to exactly the
   table in DESIGN.md section 2 (same KEYS, new values). Update the DESIGN.md
   line-ref comments to point at the new file. tsc must pass (values must satisfy
   the HexColor/RgbaColor types). This single change restyles the whole app via
@@ -161,7 +162,8 @@ FILL-GAPS [standing quality bar, operator 2026-05-17]: the user's bar is
 === END CONTENT OVERHAUL ===
 
 === P0 BUG — DO THIS FIRST, ahead of all cosmetic/design work ===
-SHUFFLE-FIX [P0, correctness]: Single-choice answer options are NOT shuffled —
+SHUFFLE-FIX [DONE 2026-05-18 — verified on origin/main]: implemented in lib/quiz/answerOptionShuffle.ts (seeded Fisher-Yates keyed by question+session, stable within a session) + summarize/balance checks, wired into lib/quiz/examGenerator.ts, practiceSessionStore.ts, app/quiz/[sessionId].tsx, app/(tabs)/practice.tsx. Gates scripts/answer-shuffle.test.js + tests/content-answer-shuffle-parity.test.js 9/9 green. NO further work — do not re-queue. (Original spec retained below for history.)
+SHUFFLE-FIX-HIST [P0, correctness]: Single-choice answer options are NOT shuffled —
 data/questions.ts authored with correct answer mostly first (correctOptionId
 'a' dominant) and lib/content/derivedQuestions.ts normalizeSingleChoiceOptions
 maps by index with no randomization, so the correct answer is almost always A.
