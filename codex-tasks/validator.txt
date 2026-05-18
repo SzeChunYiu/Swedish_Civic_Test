@@ -710,3 +710,35 @@ implementation branches; no remaining generated residual CONTENT audit slice
 exists. Keep q123/q124 duplicate-guarded as accepted, treat q144 as landed via
 PR #513 / `38e4a45`, and keep the unknown-material option defect with
 DATA-INTEGRITY rather than authored content.
+
+MANAGER-build acceptance 2026-05-18T19:05+02:00:
+- Accepted `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1` for the original
+  Practice-feedback and Mock-review scope via commit `1db08b3`. Clean
+  current-main verification in `/tmp/sct-manager-build-accept-shuffle-qThIhk/wt`
+  passed `npm run test:static-site-question-feedback` 2/2,
+  `node --test tests/content-static-site-source-citation-parity.test.js` 3/3,
+  `npm run validate:content`, `npm run typecheck -- --pretty false`, `npm run
+  lint`, `npm run test:ownership`, `node --check` for `site/app.js`,
+  `site/practice.js`, and `scripts/static-site-question-feedback.test.js`, plus
+  diff whitespace checks. Keep the active Mock question disclaimer follow-up
+  open because current reviewer evidence still shows `hasSource:true` and
+  `hasDisclaimer:false` before Mock submission.
+- Accepted `REVIEWER-SITE-ANSWER-SHUFFLE-1` via PR #515 / `cac0c85` plus
+  handoff PR #517 / `c9a3074`. Clean current-main verification passed
+  `npm run test:static-site-answer-shuffle` 4/4, `npm run test:answer-shuffle`
+  7/7, `npm run validate:content` at 720 questions with
+  `answerShuffleDistributionParityValidated:true` and
+  `staticSiteQuestionBankParityValidated:true`, `npm run typecheck -- --pretty
+  false`, `npm run lint`, `npm run test:ownership`, `node --check` for
+  `site/app.js`, `site/practice.js`, and
+  `scripts/static-site-answer-shuffle.test.js`, and `git diff --check
+  cac0c85^..cac0c85`.
+- SETUP routing: do not duplicate citation/disclaimer review-scope or static
+  answer-shuffle work. Next active source atoms are
+  `REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1`,
+  `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`,
+  `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`, then
+  `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`; queue
+  `REVIEWER-SITE-QUESTION-COUNT-COPY-1` behind those P0 surface defects. Live
+  deploy freshness remains externally blocked on production deploy
+  capacity/operator evidence.
