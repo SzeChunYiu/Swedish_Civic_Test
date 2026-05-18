@@ -209,3 +209,25 @@ needed, and verifies export/static parity, `validate:content`,
 `test:derived-content`, focused content gates, typecheck, ownership, Prettier,
 diff checks, PR/merge evidence, and a spot-check that generated single-choice
 variants no longer use source-material wording.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T18:58:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q351-Q400-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `711b20f` found additional generated true/false residuals in the
+q351-q400 slice. Facts, citations, correct answers, and distractors remain
+supported by UHR `Sverige i fokus`, but learner-visible generated text is not
+natural in both canonical CSV and `site/questions.js`: `q357`, `q358`, `q361`,
+`q362`, `q381`, and `q382` use stiff `För... gäller att` / `For...` splices;
+`q365`, `q366`, `q393`, and `q394` publish bare year or percentage fragments as
+true/false prompts; `q373` and `q374` publish national-minority lists without a
+predicate; `q377`, `q378`, `q385`, and `q386` publish infinitive/imperative
+answer fragments as propositions; and `q389` and `q390` publish public-sector
+noun phrases without a predicate. Own or extend the residual generated-template
+repair with guards for applies-to splices, fragment-only true/false prompts,
+list-only prompts, and predicate-less noun phrases. Acceptance requires
+regenerated `content/question-bank.csv` and `site/questions.js`, validator
+mirror coverage, focused negative tests, export/static parity,
+`validate:content`, typecheck, ownership, Prettier/diff checks, PR/merge
+evidence, and a recheck of VERIFY ledger rows `q357`, `q358`, `q361`, `q362`,
+`q365`, `q366`, `q373`, `q374`, `q377`, `q378`, `q381`, `q382`, `q385`,
+`q386`, `q389`, `q390`, `q393`, and `q394`.
