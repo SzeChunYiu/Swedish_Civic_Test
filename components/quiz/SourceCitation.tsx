@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { StyleSheet, Text as NativeText, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
@@ -35,6 +35,7 @@ export interface SourceCitationProps extends Omit<
   'children' | 'style'
 > {
   bodyStyle?: StyleProp<TextStyle>;
+  children?: ReactNode;
   label?: string;
   labelStyle?: StyleProp<TextStyle>;
   language?: AppLanguage;
@@ -68,6 +69,7 @@ export function SourceCitation({
   accessibilityLabel,
   accessibilityRole = 'text',
   bodyStyle,
+  children,
   label,
   labelStyle,
   language = 'sv',
@@ -81,6 +83,7 @@ export function SourceCitation({
   const copy = sourceCitationCopy[language];
   const resolvedLabel = label ?? copy.label;
   const citationText = getCitationText({ copy, reference, sourceTitle, unavailableLabel });
+  const hasCustomBody = children !== undefined && children !== null;
   const pageText = getPageText(copy, reference);
   const resolvedAccessibilityLabel =
     accessibilityLabel ?? [resolvedLabel, citationText, pageText].filter(Boolean).join('. ');
@@ -93,8 +96,14 @@ export function SourceCitation({
       {...viewProps}
     >
       <NativeText style={[styles.label, labelStyle]}>{resolvedLabel}</NativeText>
-      <NativeText style={[styles.body, bodyStyle]}>{citationText}</NativeText>
-      {pageText ? <NativeText style={[styles.meta, metaStyle]}>{pageText}</NativeText> : null}
+      {hasCustomBody ? (
+        children
+      ) : (
+        <NativeText style={[styles.body, bodyStyle]}>{citationText}</NativeText>
+      )}
+      {!hasCustomBody && pageText ? (
+        <NativeText style={[styles.meta, metaStyle]}>{pageText}</NativeText>
+      ) : null}
     </View>
   );
 }
