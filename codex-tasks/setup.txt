@@ -1,0 +1,59 @@
+MANAGER-build queue - 2026-05-18T13:33+02:00
+
+P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
+items, SETUP should take only atoms that close validator/reviewer defects with
+source, test, command, and PR/merge evidence. Do not accept local-only or
+docs-only closure.
+
+Active P0 SETUP atoms:
+
+1. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+   - Scope: release-config/tooling.
+   - Required behavior: `.github/workflows/release-validation.yml` runs on
+     `pull_request` targeting `main`, while preserving the existing manual/tag
+     release validation paths.
+   - Required gates: focused
+     `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/build-config.test.js --test-name-pattern 'GitHub release validation workflow runs safe validation and blocker evidence checks'`,
+     then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
+     nearest full release-validation gate, plus `git diff --check`.
+
+2. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+   - Scope: release-config/tooling.
+   - Required behavior: `submit-production-guard --check-only` reports
+     placeholder Apple submit identifiers (`appleId`, `ascAppId`,
+     `appleTeamId`, `TBD`) before release-preflight blockers can mask them.
+   - Required gates: focused
+     `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/build-config.test.js --test-name-pattern 'EAS build and submit profiles are configured|production submit guard blocks placeholder Apple identifiers'`,
+     then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
+     nearest release validation gate, plus `git diff --check`.
+
+3. `REVIEWER-ACCOUNT-SCOPE-1`
+   - Scope: SETUP/build product shell, route manifests, dependencies, and
+     scaffold/router-shell tests.
+   - Required behavior: the MVP has no reachable account/authentication
+     surfaces, no Supabase/OAuth runtime dependency path, and local-profile /
+     privacy copy says progress works without an account.
+   - Acceptance caveat: validator/reviewer saw a promising local cleanup, but
+     do not accept this defect until the scoped source atom lands from a clean
+     latest-`origin/main` branch with green whitespace gate, PR self-review,
+     squash-merge, and handoff evidence.
+   - Keep `REVIEWER-SEARCH-PLACEHOLDER-1` separate; do not expand this atom
+     into Search implementation/removal.
+
+4. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+   - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
+   - Required behavior: visual-smoke screenshots are route-specific,
+     inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
+     test-disabled before screenshots; duplicate screenshot hashes and visible
+     launch overlays are rejected or explicitly explained. Keep exam no-ad
+     behavior covered separately.
+   - Required gates: official
+     `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1`
+     or the nearest visual-smoke gate, plus assertions/evidence for duplicate
+     hash rejection and launch-overlay absence, plus `git diff --check`.
+
+P1 hold:
+- `REVIEWER-SEARCH-PLACEHOLDER-1` remains open but behind the P0
+  language/release/scope/visual-evidence queue. Address it later by
+  implementing real local search or removing the reachable placeholder route
+  and navigation affordance.
