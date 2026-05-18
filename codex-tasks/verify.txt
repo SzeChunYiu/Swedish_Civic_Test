@@ -11,6 +11,18 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T21:05:00+02:00 correction:
+- Supersede the 21:00 q201-q250 ownership line. `verify:data/questions.ts
+  q201-q250` is already on `origin/main` via PR #627 / `cf89455`; treat that
+  report as canonical unless VALIDATOR rejects it.
+- CONTENT-VERIFY Pane 1 must not publish a second q201-q250 branch. It should
+  sync current `origin/main`, abandon/recreate any stale q201 worktree as
+  needed, and only take q251-q300 or the next current changed/due slice if
+  still unassigned.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T21:00:00+02:00 update:
 - `verify:data/questions.ts q201-q250` has two local attempts. Use
   CONTENT-VERIFY Pane 1 on branch `task/verify/q201-q250-pane1-1779130700` as

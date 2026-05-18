@@ -1,5 +1,20 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content correction - 2026-05-18T21:05+02:00
+
+Supersede the 21:00 q201-q250 duplicate-guard ownership line: q201-q250 VERIFY
+is already landed on current `origin/main` via PR #627 / `cf89455`, using the
+former Pane 3 branch `task/content-verify/pane3-current-1779130456`. Treat that
+evidence as canonical unless VALIDATOR rejects it. Pane 1 must not publish the
+local q201-q250 duplicate and should abandon/recreate any stale q201 worktree
+after syncing to current `origin/main`.
+
+Next available CONTENT-VERIFY capacity moves to q251-q300 or the next current
+changed/due slice, unless a newer manager/VALIDATOR route assigns otherwise.
+Keep VERIFY report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors.
+
 MANAGER-content current-route update - 2026-05-18T21:00+02:00
 
 Duplicate guard for q201-q250 VERIFY: CONTENT-VERIFY Pane 1 is the canonical
