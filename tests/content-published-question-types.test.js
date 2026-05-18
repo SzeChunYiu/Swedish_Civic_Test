@@ -513,6 +513,37 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects source-material generated option fallbacks', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
+    return String(contents)
+      .replace('Inget av alternativen stämmer', 'Det går inte att avgöra av materialet')
+      .replace('None of the options is correct', 'It cannot be determined from the material');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[0\] option\[2\] uses source-material fallback wording/,
+  );
+});
+
 test('published question metadata schema rejects invalid difficulty values', () => {
   const result = spawnSync(
     process.execPath,

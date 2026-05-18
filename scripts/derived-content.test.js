@@ -123,6 +123,13 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
       ['a', 'b', 'c', 'd'],
     );
   });
+  assert.equal(derived[0].options[2].textSv, 'Inget av alternativen stämmer');
+  assert.equal(derived[0].options[2].textEn, 'None of the options is correct');
+  assert.ok(
+    singleChoiceVariants.every(
+      (question) => !/materialet|from the material/i.test(JSON.stringify(question.options)),
+    ),
+  );
   assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
   assert.equal(
     derived[0].questionSv,
