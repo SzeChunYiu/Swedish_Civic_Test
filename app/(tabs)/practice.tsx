@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -43,6 +43,14 @@ type PracticeCopy = {
   provenanceUhrLabel: string;
   provenanceSupplementaryLabel: string;
   provenanceEditorialLabel: string;
+  aboutSourcesShow: string;
+  aboutSourcesHide: string;
+  aboutSourcesUhrTitle: string;
+  aboutSourcesUhrBody: string;
+  aboutSourcesSupplementaryTitle: string;
+  aboutSourcesSupplementaryBody: string;
+  aboutSourcesEditorialTitle: string;
+  aboutSourcesEditorialBody: string;
 };
 
 const practiceCopy: Record<AppLanguage, PracticeCopy> = {
@@ -66,6 +74,17 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     provenanceUhrLabel: 'UHR-källa',
     provenanceSupplementaryLabel: 'Tilläggsfråga',
     provenanceEditorialLabel: 'Redaktionell',
+    aboutSourcesShow: 'Om källorna',
+    aboutSourcesHide: 'Stäng om källorna',
+    aboutSourcesUhrTitle: 'UHR-källa',
+    aboutSourcesUhrBody:
+      'Frågor som kommer direkt från UHR:s utbildningsmaterial Sverige i fokus. Allt innehåll i mock-provet är UHR.',
+    aboutSourcesSupplementaryTitle: 'Tilläggsfråga',
+    aboutSourcesSupplementaryBody:
+      'Variant som genererats utifrån en UHR-fråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
+    aboutSourcesEditorialTitle: 'Redaktionell',
+    aboutSourcesEditorialBody:
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
   },
   en: {
     badge: '5-minute practice',
@@ -87,6 +106,17 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     provenanceUhrLabel: 'UHR source',
     provenanceSupplementaryLabel: 'Supplementary',
     provenanceEditorialLabel: 'Editorial',
+    aboutSourcesShow: 'About the sources',
+    aboutSourcesHide: 'Close about-the-sources',
+    aboutSourcesUhrTitle: 'UHR source',
+    aboutSourcesUhrBody:
+      "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
+    aboutSourcesSupplementaryTitle: 'Supplementary',
+    aboutSourcesSupplementaryBody:
+      'Variant generated from a UHR question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
+    aboutSourcesEditorialTitle: 'Editorial',
+    aboutSourcesEditorialBody:
+      'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
   },
 };
 
@@ -110,6 +140,7 @@ export default function Screen() {
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
   );
+  const [aboutSourcesOpen, setAboutSourcesOpen] = useState(false);
   const copy = practiceCopy[language];
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
@@ -201,6 +232,33 @@ export default function Screen() {
             {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
           </Text>
         </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ expanded: aboutSourcesOpen }}
+          accessibilityLabel={
+            aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow
+          }
+          onPress={() => setAboutSourcesOpen((value) => !value)}
+          style={styles.aboutSourcesTrigger}
+        >
+          <Text style={styles.aboutSourcesTriggerText}>
+            {aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
+          </Text>
+        </Pressable>
+        {aboutSourcesOpen ? (
+          <View accessibilityRole="text" style={styles.aboutSourcesPanel}>
+            <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesUhrTitle}</Text>
+            <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesUhrBody}</Text>
+            <Text style={styles.aboutSourcesItemTitle}>
+              {copy.aboutSourcesSupplementaryTitle}
+            </Text>
+            <Text style={styles.aboutSourcesItemBody}>
+              {copy.aboutSourcesSupplementaryBody}
+            </Text>
+            <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesEditorialTitle}</Text>
+            <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesEditorialBody}</Text>
+          </View>
+        ) : null}
       </View>
       <QuestionDisclaimer />
       {(() => {
@@ -356,6 +414,35 @@ const styles = StyleSheet.create({
   provenanceEditorial: {
     backgroundColor: colors.surfaceMuted,
     color: colors.textMuted,
+  },
+  aboutSourcesTrigger: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: space[0.5],
+    paddingVertical: space[0.5],
+  },
+  aboutSourcesTriggerText: {
+    color: colors.accent,
+    fontSize: typography.caption.fontSize,
+    textDecorationLine: 'underline',
+  },
+  aboutSourcesPanel: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[0.5],
+    padding: space[1.5],
+  },
+  aboutSourcesItemTitle: {
+    color: colors.text,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  aboutSourcesItemBody: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+    marginBottom: space[0.5],
   },
   bookmarkButton: {
     alignSelf: 'flex-start',

@@ -219,6 +219,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'sources',
     'support',
     'terms',
+    'about-the-test',
   ]);
   assert.deepEqual(manifest.notFoundRouteNames, ['+not-found']);
   assert.deepEqual(manifest.notFoundHeaderModes, ['visible-language-picker']);

@@ -306,6 +306,12 @@ export const expoRouterStandaloneRoutes = [
     href: '/terms',
     purpose: 'Terms of use route outside the primary tabs',
   },
+  {
+    name: 'about-the-test',
+    file: 'app/about-the-test.tsx',
+    href: '/about-the-test',
+    purpose: 'About-the-test informational route outside the primary tabs',
+  },
 ] as const satisfies readonly ExpoRouterStandaloneRoute[];
 
 export const expoRouterStandaloneHeaderHiddenRoutes = [
@@ -316,6 +322,7 @@ export const expoRouterStandaloneHeaderHiddenRoutes = [
   'sources',
   'support',
   'terms',
+  'about-the-test',
 ] as const;
 
 export const expoRouterShellContract = {
