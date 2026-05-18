@@ -32,20 +32,41 @@ test('practice session separates retry from next-question advancement', () => {
   usePracticeSessionStore.setState({
     activeQuestionId: null,
     selectedOptionId: null,
+    shuffleSessionId: 'practice-session-0',
   });
 
   usePracticeSessionStore.getState().selectOption('q1', 'q1-a');
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, 'q1-a');
+  assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
 
   usePracticeSessionStore.getState().resetSelection();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
+  assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
 
   usePracticeSessionStore.getState().advanceQuestion();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
+  assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
+});
+
+test('chapter quiz session id resolves to the first question in that chapter', () => {
+  const { getChapterQuizSessionId, getFirstQuestionForChapter } = loadTs(
+    'lib/quiz/practiceFlow.ts',
+  );
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch02' },
+    { id: 'q3', chapterId: 'ch01' },
+  ];
+
+  assert.equal(getFirstQuestionForChapter(questions, 'ch01')?.id, 'q1');
+  assert.equal(getChapterQuizSessionId(questions, 'ch01'), 'q1');
+  assert.equal(getChapterQuizSessionId(questions, 'ch02'), 'q2');
+  assert.equal(getChapterQuizSessionId(questions, 'missing'), null);
+  assert.equal(getChapterQuizSessionId(questions, null), null);
 });

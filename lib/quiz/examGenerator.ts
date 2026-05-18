@@ -1,7 +1,9 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
+import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
 
 export type ExamOptions = {
   questionCount?: number;
+  sessionId?: string;
 };
 
 export type ExamAnswerMap = Record<string, string>;
@@ -27,11 +29,15 @@ export type ExamChapterBreakdownItem = ExamChapterResult & {
 export type ExamReviewItem = {
   questionId: string;
   questionSv: string;
+  questionEn: string;
   chapterId: string;
   selectedOptionTextSv: string;
+  selectedOptionTextEn: string;
   correctOptionTextSv: string;
+  correctOptionTextEn: string;
   isCorrect: boolean;
   explanationSv: string;
+  explanationEn: string;
   uhrReference: PracticeQuestion['uhrReference'];
 };
 
@@ -65,7 +71,7 @@ function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
 
 export function generateExam(
   questions: PracticeQuestion[] = [],
-  { questionCount = 20 }: ExamOptions = {},
+  { questionCount = 20, sessionId = 'mock-exam' }: ExamOptions = {},
 ): PracticeQuestion[] {
   const targetCount = Math.max(0, Math.floor(questionCount));
   const chapterBuckets = new Map<string, PracticeQuestion[]>();
@@ -95,7 +101,7 @@ export function generateExam(
     round += 1;
   }
 
-  return selected;
+  return selected.map((question) => shuffleQuestionOptionsForSession(question, sessionId));
 }
 
 export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap): ExamResult {
@@ -152,11 +158,15 @@ export function buildExamReviewItems(
     return {
       questionId: question.id,
       questionSv: question.questionSv,
+      questionEn: question.questionEn,
       chapterId: question.chapterId,
-      selectedOptionTextSv: selectedOption?.textSv ?? 'Not answered',
-      correctOptionTextSv: correctOption?.textSv ?? 'Correct answer missing',
+      selectedOptionTextSv: selectedOption?.textSv ?? 'Inte besvarad',
+      selectedOptionTextEn: selectedOption?.textEn ?? 'Not answered',
+      correctOptionTextSv: correctOption?.textSv ?? 'Rätt svar saknas',
+      correctOptionTextEn: correctOption?.textEn ?? 'Correct answer missing',
       isCorrect: answers[question.id] === question.correctOptionId,
       explanationSv: question.explanationSv,
+      explanationEn: question.explanationEn,
       uhrReference: question.uhrReference,
     };
   });

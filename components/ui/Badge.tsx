@@ -3,9 +3,22 @@ import type { PropsWithChildren } from 'react';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type BadgeTone = 'blue' | 'green' | 'orange' | 'warm';
+type BadgeProps = PropsWithChildren<{ accessibilityLabel?: string; tone?: BadgeTone }>;
 
-export function Badge({ children, tone = 'blue' }: PropsWithChildren<{ tone?: BadgeTone }>) {
-  return <Text style={[styles.badge, styles[tone]]}>{children}</Text>;
+export function Badge({ accessibilityLabel, children, tone = 'blue' }: BadgeProps) {
+  const badgeAccessibilityLabel =
+    accessibilityLabel ??
+    (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
+
+  return (
+    <Text
+      aria-label={badgeAccessibilityLabel}
+      accessibilityLabel={badgeAccessibilityLabel}
+      style={[styles.badge, styles[tone]]}
+    >
+      {children}
+    </Text>
+  );
 }
 
 const styles = StyleSheet.create({

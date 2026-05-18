@@ -1,5 +1,6 @@
 import * as Speech from 'expo-speech';
 import type { QuestionOption } from '../../types/content';
+import { stripSourceAuthorityPhrasing } from '../quiz/questionText';
 
 type SpeakableQuestion = {
   questionSv: string;
@@ -11,16 +12,18 @@ function optionLetter(index: number): string {
 }
 
 export function buildQuestionSpeechText(question: SpeakableQuestion): string {
+  const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;
   const optionText = question.options
     .map((option, index) => `Alternativ ${optionLetter(index)}. ${option.textSv}.`)
     .join(' ');
-  return `${question.questionSv} ${optionText}`.trim();
+  return `${promptText} ${optionText}`.trim();
 }
 
 export function speakSwedish(text: string): void {
-  if (text.trim().length === 0) return;
+  const speechText = text.trim();
+  if (speechText.length === 0) return;
   try {
-    Speech.speak(text, { language: 'sv-SE' });
+    Speech.speak(speechText, { language: 'sv-SE' });
   } catch (error) {
     console.warn('Speech unavailable:', error);
   }

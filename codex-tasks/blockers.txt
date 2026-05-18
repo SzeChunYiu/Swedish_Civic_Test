@@ -1,0 +1,20 @@
+BLOCKERS — cleared & reset by operator 2026-05-18, at origin/main HEAD 83b6bbb.
+
+All prior REVIEWER-BLOCKED-DIRTY-WORKTREE / "stop until reconcile main" /
+q023/q102/q103 external-source-lease entries were STALE (pinned to long-dead
+HEADs from the abandoned Phase-B / 520-question divergence) and are deleted.
+There are NO active blockers.
+
+STANDING POLICY (operator, hard — read every cycle):
+1. A dirty worktree from OTHER lanes' in-scope work is NORMAL in this
+   parallel factory and is NOT a blocker. Lanes have disjoint write scope.
+   Never record a "tree dirty / boundary moved" blocker and never stop or
+   park a pane for it.
+2. Phase-B / external-provenance work is DEFERRED (see open.txt OPERATOR
+   DIRECTIVE). Do not file blockers about Phase-B leases.
+3. A real blocker is ONLY a hard correctness failure on Phase-A work
+   (tsc error, test:content red, a content gate red) that prevents a
+   *push*. Even then the affected pane RE-TASKS to another unblocked
+   Phase-A atom — it never idles.
+4. If you would otherwise write "stop X until Y reconciles": instead
+   re-task X to the next independent Phase-A atom and log that, not a stop.

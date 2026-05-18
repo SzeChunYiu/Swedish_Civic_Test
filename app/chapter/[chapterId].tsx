@@ -6,55 +6,119 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
-import { colors, space, typography } from '../../lib/theme';
+import { getChapterQuizSessionId } from '../../lib/quiz/practiceFlow';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
+import { colors, radius, space, typography } from '../../lib/theme';
+import type { Chapter } from '../../types/content';
+
+type ChapterRouteCopy = {
+  backToListAccessibilityLabel: string;
+  backToLearn: string;
+  chapterDescription: (chapter: Chapter) => string;
+  chapterSubtitle: (chapter: Chapter) => string;
+  chapterTitle: (chapter: Chapter) => string;
+  emptyQuestions: string;
+  missingTitle: string;
+  practiceQuestionsTitle: (count: number) => string;
+  startQuiz: string;
+  startQuizAccessibilityLabel: (chapterTitle: string) => string;
+};
+
+const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy> = {
+  sv: {
+    backToListAccessibilityLabel: 'Tillbaka till kapitellistan',
+    backToLearn: 'Tillbaka till studievägen',
+    chapterDescription: (chapter) => chapter.descriptionSv,
+    chapterSubtitle: (chapter) => chapter.nameEn,
+    chapterTitle: (chapter) => chapter.nameSv,
+    emptyQuestions: 'Frågor för det här kapitlet har inte lagts till ännu.',
+    missingTitle: 'Kapitlet hittades inte',
+    practiceQuestionsTitle: (count) => `Övningsfrågor (${count})`,
+    startQuiz: 'Starta quiz',
+    startQuizAccessibilityLabel: (chapterTitle) => `Starta quiz för ${chapterTitle}`,
+  },
+  en: {
+    backToListAccessibilityLabel: 'Back to chapter list',
+    backToLearn: 'Back to Learn',
+    chapterDescription: (chapter) => chapter.descriptionEn,
+    chapterSubtitle: (chapter) => chapter.nameSv,
+    chapterTitle: (chapter) => chapter.nameEn,
+    emptyQuestions: 'Questions for this chapter are not added yet.',
+    missingTitle: 'Chapter not found',
+    practiceQuestionsTitle: (count) => `Practice questions (${count})`,
+    startQuiz: 'Start quiz',
+    startQuizAccessibilityLabel: (chapterTitle) => `Start quiz for ${chapterTitle}`,
+  },
+};
 
 export default function ChapterScreen() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
+  const language = useSettingsStore((state) => state.language);
+  const copy = chapterRouteCopy[language];
   const chapter = chapters.find((item) => item.id === chapterId);
   const chapterQuestions = questions.filter((question) => question.chapterId === chapterId);
 
   if (!chapter) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.title}>Chapter not found</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          {copy.missingTitle}
+        </Text>
         <Link
-          accessibilityLabel="Back to chapter list"
+          accessibilityLabel={copy.backToListAccessibilityLabel}
           accessibilityRole="link"
           href="/learn"
           style={styles.link}
         >
-          Back to Learn
+          {copy.backToLearn}
         </Link>
       </View>
     );
   }
 
+  const quizSessionId = getChapterQuizSessionId(questions, chapter.id);
+  const chapterTitle = copy.chapterTitle(chapter);
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Link
-        accessibilityLabel="Back to chapter list"
+        accessibilityLabel={copy.backToListAccessibilityLabel}
         accessibilityRole="link"
         href="/learn"
         style={styles.link}
       >
-        ← Back to Learn
+        ← {copy.backToLearn}
       </Link>
-      <Text style={styles.title}>{chapter.nameSv}</Text>
-      <Text style={styles.subtitle}>{chapter.nameEn}</Text>
-      <Text style={styles.description}>{chapter.descriptionSv}</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        {chapterTitle}
+      </Text>
+      <Text style={styles.subtitle}>{copy.chapterSubtitle(chapter)}</Text>
+      <Text style={styles.description}>{copy.chapterDescription(chapter)}</Text>
+      {quizSessionId ? (
+        <Link
+          accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}
+          accessibilityRole="link"
+          href={`/quiz/${quizSessionId}`}
+          style={styles.startQuizLink}
+        >
+          {copy.startQuiz}
+        </Link>
+      ) : null}
       <QuestionDisclaimer />
 
-      <Text style={styles.sectionTitle}>Practice questions ({chapterQuestions.length})</Text>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        {copy.practiceQuestionsTitle(chapterQuestions.length)}
+      </Text>
       <View style={styles.list}>
         {chapterQuestions.length > 0 ? (
           chapterQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
-              <QuestionCard question={question} />
-              <UHRReferenceCard reference={question.uhrReference} />
+              <QuestionCard question={question} language={language} />
+              <UHRReferenceCard language={language} reference={question.uhrReference} />
             </View>
           ))
         ) : (
-          <Text style={styles.empty}>Questions for this chapter are not added yet.</Text>
+          <Text style={styles.empty}>{copy.emptyQuestions}</Text>
         )}
       </View>
     </ScrollView>
@@ -115,6 +179,17 @@ const styles = StyleSheet.create({
     color: colors.accent,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
+  },
+  startQuizLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.25],
     textDecorationLine: 'none',
   },
 });

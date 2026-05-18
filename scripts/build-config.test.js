@@ -700,7 +700,7 @@ test('external release blocker loop runs every safe evidence command and records
       `echo "npm $@" >> "${commandLog}"`,
       'case "$*" in',
       '  *"release:evidence-index"*) echo "STUBS_READY"; exit 0 ;;',
-      '  *"release:owner-action-packet"*) echo "OWNER_PACKET_READY"; exit 1 ;;',
+      '  *"release:owner-action-packet"*) out=""; for arg in "$@"; do out="$arg"; done; echo "# Owner packet" > "$out"; echo "OWNER_PACKET_READY"; exit 1 ;;',
       '  *) echo "blocked by external evidence super-secret-token"; exit 1 ;;',
       'esac',
       '',
@@ -722,6 +722,10 @@ test('external release blocker loop runs every safe evidence command and records
     },
   );
   const report = fs.readFileSync(reportPath, 'utf8');
+  const ownerPacket = fs.readFileSync(
+    path.join(tmpDir, 'release-owner-action-packet-latest.md'),
+    'utf8',
+  );
   const calls = fs.readFileSync(commandLog, 'utf8');
   const pkg = readJson('package.json');
 
@@ -747,6 +751,7 @@ test('external release blocker loop runs every safe evidence command and records
   assert.match(calls, /node scripts\/write-release-issue-update\.js --out /);
   assert.match(calls, /npm run release:evidence-index/);
   assert.match(calls, /npm run release:owner-action-packet/);
+  assert.match(ownerPacket, /# Owner packet/);
   assert.doesNotMatch(calls, /--run-validate/);
   assert.doesNotMatch(report, /super-secret-token/);
 });
@@ -953,7 +958,7 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   assert.match(workflow, /RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS:\s*true/);
   assert.match(
     workflow,
-    /RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:\s*reports\/external-release-loop-latest\.md,reports\/release-issue-update-latest\.md,reports\/release-issue-comment-latest\.md/,
+    /RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:\s*reports\/external-release-loop-latest\.md,reports\/release-owner-action-packet-latest\.md,reports\/release-issue-update-latest\.md,reports\/release-issue-comment-latest\.md,reports\/release-owner-action-packet-comment-latest\.md/,
   );
   assert.match(workflow, /EXPO_TOKEN:\s*\$\{\{ secrets\.EXPO_TOKEN \}\}/);
   assert.match(workflow, /GH_TOKEN:\s*\$\{\{ github\.token \}\}/);
@@ -974,12 +979,73 @@ test('manual external blocker loop workflow runs redacted evidence loop and uplo
   );
   assert.doesNotMatch(workflow, /npm run release:issue-comment/);
   assert.match(workflow, /RELEASE_ISSUE_COMMENT_EXIT=\$code/);
+  assert.match(
+    workflow,
+    /node scripts\/post-release-owner-action-packet\.js --body-file reports\/release-owner-action-packet-latest\.md --out reports\/release-owner-action-packet-comment-latest\.md/,
+  );
+  assert.match(workflow, /OWNER_ACTION_PACKET_COMMENT_EXIT=\$code/);
   assert.match(workflow, /exit 0/);
   assert.match(workflow, /reports\/external-release-loop-latest\.md/);
+  assert.match(workflow, /reports\/release-owner-action-packet-latest\.md/);
   assert.match(workflow, /reports\/release-issue-update-latest\.md/);
   assert.match(workflow, /reports\/release-issue-comment-latest\.md/);
+  assert.match(workflow, /reports\/release-owner-action-packet-comment-latest\.md/);
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+});
+
+test('owner action packet comment posts existing packet body and writes non-secret report', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'owner-action-packet-comment-'));
+  const bodyPath = path.join(tmpDir, 'owner-packet.md');
+  const reportPath = path.join(tmpDir, 'owner-packet-comment.md');
+  const ghLog = path.join(tmpDir, 'gh.log');
+  const ghBody = path.join(tmpDir, 'gh-body.md');
+  fs.writeFileSync(
+    path.join(tmpDir, 'gh'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${ghLog}"`,
+      'while [ "$#" -gt 0 ]; do',
+      '  if [ "$1" = "--body-file" ]; then shift; cp "$1" "' + ghBody + '"; fi',
+      '  shift',
+      'done',
+      'echo "https://github.com/SzeChunYiu/Swedish_Civic_Test/issues/11#issuecomment-1"',
+      'exit 0',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(bodyPath, '# Owner packet\n\nToken phrase should stay in body file only.\n');
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/post-release-owner-action-packet.js', '--body-file', bodyPath, '--out', reportPath],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+  const report = fs.readFileSync(reportPath, 'utf8');
+  const ghCalls = fs.readFileSync(ghLog, 'utf8');
+  const postedBody = fs.readFileSync(ghBody, 'utf8');
+  const pkg = readJson('package.json');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:owner-action-packet-comment'],
+    'node scripts/post-release-owner-action-packet.js',
+  );
+  assert.match(result.stdout, /Release owner action packet comment POSTED/i);
+  assert.match(report, /Status \| POSTED/);
+  assert.match(report, /Issue \| 11/);
+  assert.match(
+    report,
+    /Issue comment URL \| https:\/\/github\.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/11#issuecomment-1/,
+  );
+  assert.match(ghCalls, /issue comment 11 --repo SzeChunYiu\/Swedish_Civic_Test --body-file /);
+  assert.equal(postedBody, '# Owner packet\n\nToken phrase should stay in body file only.\n');
+  assert.doesNotMatch(report, /Token phrase should stay in body file only/);
 });
 
 test('external blocker loop dispatch command starts workflow and writes report', () => {
@@ -1212,12 +1278,79 @@ test('production submit guard blocks while release preflight is not ready', () =
 
 test('web export script is available for local production bundle smoke', () => {
   const pkg = readJson('package.json');
+  const appConfig = readJson('app.json').expo;
+  const vercelConfig = readJson('vercel.json');
+  const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
+  const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
+
+  assert.equal(appConfig.web.output, 'single');
+  assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
+  assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
     pkg.scripts['release:web-export-smoke'],
     'rm -rf dist-web && npm run build:web:export',
   );
+  assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
+  assert.equal(redirects.trim(), '/* /index.html 200');
+  assert.match(workflow, /npm run build:web:export/);
+  assert.match(workflow, /node scripts\/prepare-web-export\.js --check dist-web/);
+  assert.match(workflow, /actions\/upload-artifact@v6/);
+  assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
+});
+
+test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-postbuild-'));
+  const outputDir = path.join(tmpDir, 'dist-web');
+  const bundleDir = path.join(outputDir, '_expo/static/js/web');
+  fs.mkdirSync(bundleDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(outputDir, 'index.html'),
+    [
+      '<!DOCTYPE html>',
+      '<html>',
+      '<head><title>Export</title></head>',
+      '<body>',
+      '<div id="root"></div>',
+      '<script src="/_expo/static/js/web/entry-test.js" defer></script>',
+      '</body>',
+      '</html>',
+      '',
+    ].join('\n'),
+  );
+  fs.writeFileSync(
+    path.join(bundleDir, 'entry-test.js'),
+    'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}}; const icon = {uri:"/assets/icon.png"};',
+  );
+
+  const result = spawnSync(process.execPath, ['scripts/prepare-web-export.js', outputDir], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const index = fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8');
+  const fallback = fs.readFileSync(path.join(outputDir, '404.html'), 'utf8');
+  const bundle = fs.readFileSync(path.join(bundleDir, 'entry-test.js'), 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(index, /data-web-export-loader="true"/);
+  assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
+  assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
+  assert.doesNotMatch(index, /src="\/_expo\//);
+  assert.equal(fallback, index);
+  assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
+  assert.match(bundle, /uri:"assets\/icon\.png"/);
+
+  const checkResult = spawnSync(
+    process.execPath,
+    ['scripts/prepare-web-export.js', '--check', outputDir],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
 test('native appearance config has its required Expo module', () => {

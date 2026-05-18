@@ -1,28 +1,40 @@
 import { StyleSheet, Text } from 'react-native';
 
+import { adBannerCopy } from '../../lib/monetization/adCopy';
 import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
 export function AdBanner({
   placement = 'home_banner',
-  entitlements = FREE_ENTITLEMENTS,
+  entitlements,
 }: {
   placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
-  if (!shouldShowAd(placement, entitlements)) return null;
+  const language = useSettingsStore((state) => state.language);
+  const copy = adBannerCopy[language];
+  const { entitlements: resolvedEntitlements, entitlementsReady } =
+    useResolvedAdEntitlements(entitlements);
+
+  if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;
 
   const unit = getAdUnit(placement);
+  const placementLabel = copy.placementLabels[placement];
+  const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;
+  const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);
+
   return (
-    <Card>
+    <Card
+      accessibilityHint={`${copy.previewHint} ${copy.removeAdsHint}`}
+      accessibilityLabel={accessibilityLabel}
+    >
       <Text style={styles.eyebrow}>Google AdMob</Text>
-      <Text style={styles.title}>{placement.replaceAll('_', ' ')}</Text>
-      <Text style={styles.meta}>
-        {unit?.testOnly ? 'AdMob test unit active · web preview' : 'AdMob placement active'}
-      </Text>
+      <Text style={styles.title}>{placementLabel}</Text>
+      <Text style={styles.meta}>{adStatusLabel}</Text>
     </Card>
   );
 }

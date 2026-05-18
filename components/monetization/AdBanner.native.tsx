@@ -1,27 +1,47 @@
 import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
+import { adBannerCopy } from '../../lib/monetization/adCopy';
 import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
-import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
+import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 
 export function AdBanner({
   placement = 'home_banner',
-  entitlements = FREE_ENTITLEMENTS,
+  entitlements,
 }: {
   placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
+  const language = useSettingsStore((state) => state.language);
+  const copy = adBannerCopy[language];
+  const { entitlements: resolvedEntitlements, entitlementsReady } =
+    useResolvedAdEntitlements(entitlements);
+  const mobileAdsConsent = useMobileAdsConsent(resolvedEntitlements);
   const unitId = getPlatformAdUnitId(placement, Platform.OS);
-  const visible = shouldShowAd(placement, entitlements);
+  const visible =
+    entitlementsReady &&
+    mobileAdsConsent.initialized &&
+    shouldShowAd(placement, resolvedEntitlements, mobileAdsConsent.decision.consentDecision);
 
   if (!visible || !unitId) return null;
 
+  const placementLabel = copy.placementLabels[placement];
+
   return (
-    <View accessibilityLabel={`Google AdMob banner for ${placement}`} style={styles.nativeSlot}>
+    <View
+      accessible
+      accessibilityHint={`${copy.previewHint} ${copy.removeAdsHint}`}
+      accessibilityLabel={copy.accessibilityLabel(placementLabel, copy.liveStatus)}
+      style={styles.nativeSlot}
+    >
       <BannerAd
-        requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
+        }}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         unitId={unitId}
       />

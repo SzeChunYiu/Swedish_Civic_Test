@@ -1,10 +1,3 @@
-export interface GlossaryTerm {
-  id: string;
-  termSv: string;
-  termEn: string;
-  explanationSv: string;
-  explanationEn: string;
-  chapterId?: string;
-}
+import type { GlossaryTerm } from '../types/content';
 
 export const glossaryTerms: GlossaryTerm[] = [];

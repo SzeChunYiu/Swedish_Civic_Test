@@ -3,16 +3,47 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getAdUnit, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let launchPopupShownThisRuntime = false;
+
+type LaunchPopupAdCopy = {
+  closeAccessibilityLabel: string;
+  closeLabel: string;
+  dialogAccessibilityLabel: string;
+  liveBody: string;
+  testBody: string;
+  title: string;
+};
+
+const launchPopupAdCopy: Record<AppLanguage, LaunchPopupAdCopy> = {
+  sv: {
+    closeAccessibilityLabel: 'Stäng startannons',
+    closeLabel: 'Fortsätt studera',
+    dialogAccessibilityLabel: 'Startannons',
+    liveBody: 'Sponsrad annons vid appstart.',
+    testBody: 'Testannons för appstart visas en gång per appstart.',
+    title: 'Startannons',
+  },
+  en: {
+    closeAccessibilityLabel: 'Close launch sponsor ad',
+    closeLabel: 'Continue studying',
+    dialogAccessibilityLabel: 'Launch sponsor ad',
+    liveBody: 'Sponsored launch placement.',
+    testBody: 'App-open test ad preview shown once per app launch.',
+    title: 'Launch sponsor',
+  },
+};
 
 export function LaunchPopupAd({
   entitlements = FREE_ENTITLEMENTS,
 }: {
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
+  const language = useSettingsStore((state) => state.language);
+  const copy = launchPopupAdCopy[language];
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -33,6 +64,8 @@ export function LaunchPopupAd({
 
   return (
     <Modal
+      accessibilityLabel={copy.dialogAccessibilityLabel}
+      accessibilityViewIsModal
       animationType="fade"
       transparent
       visible={visible}
@@ -41,19 +74,17 @@ export function LaunchPopupAd({
       <View style={styles.backdrop}>
         <View style={styles.card}>
           <Text style={styles.eyebrow}>Google AdMob</Text>
-          <Text style={styles.title}>Launch sponsor</Text>
-          <Text style={styles.body}>
-            {unit?.testOnly
-              ? 'App-open test ad preview shown once per app launch.'
-              : 'Sponsored launch placement.'}
+          <Text accessibilityRole="header" style={styles.title}>
+            {copy.title}
           </Text>
+          <Text style={styles.body}>{unit?.testOnly ? copy.testBody : copy.liveBody}</Text>
           <Pressable
-            accessibilityLabel="Close launch sponsor ad"
+            accessibilityLabel={copy.closeAccessibilityLabel}
             accessibilityRole="button"
             onPress={() => setVisible(false)}
             style={styles.closeButton}
           >
-            <Text style={styles.closeText}>Continue studying</Text>
+            <Text style={styles.closeText}>{copy.closeLabel}</Text>
           </Pressable>
         </View>
       </View>

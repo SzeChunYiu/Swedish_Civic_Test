@@ -2,6 +2,7 @@ import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
+import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
@@ -11,105 +12,242 @@ import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
-import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
+import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
+type BenchmarkProduct = (typeof uxBenchmarks)[number]['product'];
+
+type HomeCopy = {
+  browseChapters: string;
+  browseChaptersAccessibilityLabel: string;
+  benchmarkLessons: Record<BenchmarkProduct, string>;
+  dailyGoalTitle: string;
+  dayStreakHelper: string;
+  dayStreakMetric: string;
+  eyebrow: string;
+  feedbackBadge: string;
+  feedbackLink: string;
+  feedbackLinkAccessibilityLabel: string;
+  feedbackText: string;
+  feedbackTitle: string;
+  levelMetric: string;
+  questionsHelper: (count: number) => string;
+  questionsMetric: string;
+  reviewWeakChapters: string;
+  startPractice: string;
+  startPracticeAccessibilityLabel: string;
+  startPracticeSet: string;
+  studyLoopSubtitle: string;
+  studyLoopTitle: string;
+  subtitle: string;
+  title: string;
+  weakChaptersHelper: string;
+  weakChaptersMetric: string;
+  xpBasedHelper: string;
+};
+
+const homeCopy: Record<AppLanguage, HomeCopy> = {
+  sv: {
+    browseChapters: 'Bläddra bland kapitel',
+    browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
+    benchmarkLessons: {
+      CivicsGo:
+        'Börja med kort ämnesövning, tydliga sviter, XP, märken och väg tillbaka efter misstag.',
+      'Citizen Pass':
+        'Visa behärskning per område så att eleven ser vad som är klart, repeterat eller fortfarande svagt.',
+      'Duolingo-inspired learning loops':
+        'Ge en snabb första vinst, en självklar nästa handling och varsam daglig vanefeedback utan att hindra seriösa studier.',
+      'Life in the UK Test apps':
+        'Kombinera realistiska tidsatta prov med flashcards, bokmärken, felspårning, ljud, offline-studier och tydliga redo-signaler.',
+    },
+    dailyGoalTitle: 'Dagens mål',
+    dayStreakHelper: 'daglig vana',
+    dayStreakMetric: 'dagars svit',
+    eyebrow: 'Studieöversikt',
+    feedbackBadge: '10 000 elevers återkoppling',
+    feedbackLink: 'Repetera sparade frågor',
+    feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
+    feedbackText:
+      '10 000 simulerade elever bad om tydligare framsteg, sparade svåra frågor, källstödd repetition och annonser som hålls borta från prov. De förbättringarna finns nu i studieflödet.',
+    feedbackTitle: 'UX-förbättringar från simulerade studier',
+    levelMetric: 'nivå',
+    questionsHelper: (count) => `${count} kapitel`,
+    questionsMetric: 'frågor',
+    reviewWeakChapters: 'Repetera svaga kapitel',
+    startPractice: 'Starta övning',
+    startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
+    startPracticeSet: 'Starta en 5-minutersövning',
+    studyLoopSubtitle:
+      'Lärdomar från framgångsrika samhällsprovs- och språkstudieappar: ett tydligt nästa steg, direkt återkoppling och synliga framsteg.',
+    studyLoopTitle: 'Optimerat studieflöde',
+    subtitle:
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    title: 'Studera lugnt, ett samhällsbegrepp i taget',
+    weakChaptersHelper: 'behöver repetition',
+    weakChaptersMetric: 'svaga kapitel',
+    xpBasedHelper: 'XP-baserad',
+  },
+  en: {
+    browseChapters: 'Browse chapters',
+    browseChaptersAccessibilityLabel: 'Browse all civic chapters',
+    benchmarkLessons: {
+      CivicsGo:
+        'Lead with bite-sized topic practice, visible streaks, XP, badges, and mistake recovery.',
+      'Citizen Pass':
+        'Show mastery by skill area so learners know what is ready, reviewed, or still weak.',
+      'Duolingo-inspired learning loops':
+        'Give a fast first win, one obvious next action, and gentle daily habit feedback without blocking serious study.',
+      'Life in the UK Test apps':
+        'Combine realistic timed exams with flashcards, bookmarks, wrong-answer tracking, audio, offline study, and readiness indicators.',
+    },
+    dailyGoalTitle: "Today's goal",
+    dayStreakHelper: 'daily habit',
+    dayStreakMetric: 'day streak',
+    eyebrow: 'Study dashboard',
+    feedbackBadge: '10,000-learner feedback pass',
+    feedbackLink: 'Review saved questions',
+    feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
+    feedbackText:
+      '10,000 simulated learners asked for clearer progress, saved hard questions, source-backed review, and ads that stay out of exams. Those fixes are now built into the study loop.',
+    feedbackTitle: 'UX updates from simulated study sessions',
+    levelMetric: 'level',
+    questionsHelper: (count) => `${count} chapters`,
+    questionsMetric: 'questions',
+    reviewWeakChapters: 'Review weak chapters',
+    startPractice: 'Start practice',
+    startPracticeAccessibilityLabel: 'Start the recommended practice session',
+    startPracticeSet: 'Start a 5-minute practice set',
+    studyLoopSubtitle:
+      'Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress.',
+    studyLoopTitle: 'Optimized study loop',
+    subtitle:
+      'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
+    title: 'Prepare calmly, one civic concept at a time',
+    weakChaptersHelper: 'needs review',
+    weakChaptersMetric: 'weak chapters',
+    xpBasedHelper: 'XP-based',
+  },
+};
+
 export default function Screen() {
-  const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
+  const {
+    entitlements: monetizationEntitlements,
+    purchaseRuntime,
+    setEntitlements: setMonetizationEntitlements,
+  } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
-  const completedToday = Math.min(completedQuestionIds.length, dailyGoalAnswers);
+  const language = useSettingsStore((state) => state.language);
+  const copy = homeCopy[language];
+  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const currentStreak = calculateStreak(answerDates);
   const level = calculateLevel(totalXp);
   const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
-  const nextAction =
-    weakChapterCount > 0 ? 'Review weak chapters' : 'Start a 5-minute practice set';
+  const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;
 
   return (
     <ScreenShell
-      eyebrow="Study dashboard"
-      title="Prepare calmly, one civic concept at a time"
-      subtitle="A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations."
+      eyebrow={copy.eyebrow}
+      title={copy.title}
+      subtitle={copy.subtitle}
       rightSlot={
         <View style={styles.goalCard}>
-          <Text style={styles.goalLabel}>Today&apos;s goal</Text>
+          <Text accessibilityRole="header" style={styles.goalLabel}>
+            {copy.dailyGoalTitle}
+          </Text>
           <Text style={styles.goalMetric}>
             {completedToday}/{dailyGoalAnswers}
           </Text>
-          <ProgressBar progress={progress} />
+          <ProgressBar language={language} progress={progress} />
           <Text style={styles.goalHint}>{nextAction}</Text>
         </View>
       }
     >
       <View style={styles.actions}>
         <Link
-          accessibilityLabel="Start the recommended practice session"
+          accessibilityLabel={copy.startPracticeAccessibilityLabel}
           accessibilityRole="link"
           href="/practice"
           style={styles.primaryLink}
         >
-          Start practice
+          {copy.startPractice}
         </Link>
         <Link
-          accessibilityLabel="Browse all civic chapters"
+          accessibilityLabel={copy.browseChaptersAccessibilityLabel}
           accessibilityRole="link"
           href="/learn"
           style={styles.secondaryLink}
         >
-          Browse chapters
+          {copy.browseChapters}
         </Link>
       </View>
 
       <View style={styles.statsRow}>
-        <MetricCard label="level" value={level} tone="blue" helper="XP-based" />
-        <MetricCard label="day streak" value={currentStreak} helper="daily habit" />
+        <MetricCard
+          label={copy.levelMetric}
+          value={level}
+          tone="blue"
+          helper={copy.xpBasedHelper}
+        />
+        <MetricCard
+          label={copy.dayStreakMetric}
+          value={currentStreak}
+          helper={copy.dayStreakHelper}
+        />
       </View>
       <View style={styles.statsRow}>
-        <MetricCard label="weak chapters" value={weakChapterCount} helper="needs review" />
         <MetricCard
-          label="questions"
+          label={copy.weakChaptersMetric}
+          value={weakChapterCount}
+          helper={copy.weakChaptersHelper}
+        />
+        <MetricCard
+          label={copy.questionsMetric}
           value={questions.length}
-          helper={`${chapters.length} chapters`}
+          helper={copy.questionsHelper(chapters.length)}
         />
       </View>
 
       <Card style={styles.feedbackCard}>
-        <Badge tone="blue">10,000-learner feedback pass</Badge>
-        <Text style={styles.feedbackTitle}>UX updates from simulated study sessions</Text>
-        <Text style={styles.feedbackText}>
-          10,000 simulated learners asked for clearer progress, saved hard questions, source-backed
-          review, and ads that stay out of exams. Those fixes are now built into the study loop.
+        <Badge tone="blue">{copy.feedbackBadge}</Badge>
+        <Text accessibilityRole="header" style={styles.feedbackTitle}>
+          {copy.feedbackTitle}
         </Text>
+        <Text style={styles.feedbackText}>{copy.feedbackText}</Text>
         <Link
-          accessibilityLabel="Review bookmarked or missed questions"
+          accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
           accessibilityRole="link"
           href="/mistakes"
           style={styles.feedbackLink}
         >
-          Review saved questions
+          {copy.feedbackLink}
         </Link>
       </Card>
 
-      <SectionHeader
-        title="Optimized study loop"
-        subtitle="Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress."
-      />
+      <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
       <View style={styles.loopGrid}>
         {uxBenchmarks.map((item) => (
           <Card key={item.product} style={styles.loopCard}>
             <Badge tone="warm">{item.product}</Badge>
-            <Text style={styles.loopText}>{item.lesson}</Text>
+            <Text style={styles.loopText}>{copy.benchmarkLessons[item.product]}</Text>
           </Card>
         ))}
       </View>
 
-      <AdBanner placement="home_banner" />
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
+      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
     </ScreenShell>
   );
 }

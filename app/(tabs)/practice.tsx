@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -8,16 +9,70 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
-import { isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
+import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
+import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+type PracticeCopy = {
+  badge: string;
+  bookmark: string;
+  bookmarked: string;
+  bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
+  completedQuestions: (count: number) => string;
+  emptyTitle: string;
+  nextQuestion: string;
+  nextQuestionAccessibilityLabel: string;
+  questionTitle: (questionNumber: number) => string;
+  scoreLabel: string;
+  subtitle: string;
+  tryAgain: string;
+  tryAgainAccessibilityLabel: string;
+};
+
+const practiceCopy: Record<AppLanguage, PracticeCopy> = {
+  sv: {
+    badge: '5-minutersövning',
+    bookmark: 'Bokmärk',
+    bookmarked: 'Bokmärkt',
+    bookmarkAccessibilityLabel: (isBookmarked) =>
+      isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
+    completedQuestions: (count) => `Besvarade frågor: ${count}`,
+    emptyTitle: 'Det finns inga övningsfrågor ännu.',
+    nextQuestion: 'Nästa fråga',
+    nextQuestionAccessibilityLabel: 'Gå till nästa övningsfråga',
+    questionTitle: (questionNumber) => `Fråga ${questionNumber}`,
+    scoreLabel: 'Poäng',
+    subtitle: 'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
+    tryAgain: 'Försök igen',
+    tryAgainAccessibilityLabel: 'Försök igen med den här övningsfrågan',
+  },
+  en: {
+    badge: '5-minute practice',
+    bookmark: 'Bookmark',
+    bookmarked: 'Bookmarked',
+    bookmarkAccessibilityLabel: (isBookmarked) =>
+      isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
+    completedQuestions: (count) => `Completed questions: ${count}`,
+    emptyTitle: 'No practice questions are available yet.',
+    nextQuestion: 'Next question',
+    nextQuestionAccessibilityLabel: 'Move to the next practice question',
+    questionTitle: (questionNumber) => `Question ${questionNumber}`,
+    scoreLabel: 'Score',
+    subtitle: 'Answer, get instant feedback, then review the UHR source before moving on.',
+    tryAgain: 'Try again',
+    tryAgainAccessibilityLabel: 'Try this practice question again',
+  },
+};
 
 export default function Screen() {
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
@@ -25,17 +80,30 @@ export default function Screen() {
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
+  const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
-  const question = getPracticeQuestionForSession(questions, completedQuestionIds, activeQuestionId);
+  const language = useSettingsStore((state) => state.language);
+  const copy = practiceCopy[language];
+  const rawQuestion = getPracticeQuestionForSession(
+    questions,
+    completedQuestionIds,
+    activeQuestionId,
+  );
+  const question = useMemo(
+    () =>
+      rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
+    [rawQuestion, shuffleSessionId],
+  );
 
   if (!question) {
     return (
       <View style={styles.emptyContainer}>
-        <Text>No practice questions are available yet.</Text>
+        <Text>{copy.emptyTitle}</Text>
       </View>
     );
   }
@@ -49,50 +117,71 @@ export default function Screen() {
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = questions.length > 0 ? questionNumber / questions.length : 0;
   const handleSelectOption = (optionId: string) => {
+    const selectedOption = question.options.find((option) => option.id === optionId);
+    const optionIsCorrect = isCorrectAnswer(question, optionId);
+
     selectOption(question.id, optionId);
-    recordAnswer(question.id, isCorrectAnswer(question, optionId));
+    recordAnswer(question.id, optionIsCorrect);
+
+    if (!optionIsCorrect && selectedOption) {
+      recordWrongAnswerReview({
+        questionId: question.id,
+        selectedOptionTextEn: selectedOption.textEn,
+        selectedOptionTextSv: selectedOption.textSv,
+      });
+    }
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Badge>5-minute practice</Badge>
-        <Text style={styles.title}>Question {questionNumber}</Text>
-        <Text style={styles.subtitle}>
-          Answer, get instant feedback, then review the UHR source before moving on.
+        <Badge>{copy.badge}</Badge>
+        <Text accessibilityRole="header" style={styles.title}>
+          {copy.questionTitle(questionNumber)}
         </Text>
-        <ProgressBar progress={bankProgress} />
-        <Text style={styles.meta}>Completed questions: {completedQuestionIds.length}</Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
+        <ProgressBar language={language} progress={bankProgress} />
+        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
         <Pressable
-          accessibilityLabel={
-            isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question'
-          }
+          aria-selected={isBookmarked}
+          accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
           accessibilityRole="button"
           accessibilityState={{ selected: isBookmarked }}
           onPress={() => toggleBookmark(question.id)}
           style={[styles.bookmarkButton, isBookmarked ? styles.bookmarkButtonActive : null]}
         >
           <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
-            {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+            {isBookmarked ? copy.bookmarked : copy.bookmark}
           </Text>
         </Pressable>
       </View>
       <QuestionDisclaimer />
-      <QuestionCard question={question} />
-      <AudioButton text={buildQuestionSpeechText(question)} enabled={audioEnabled} />
+      <QuestionCard question={question} language={language} />
+      <AudioButton
+        enabled={audioEnabled}
+        language={language}
+        text={buildQuestionSpeechText(question)}
+      />
 
       <View style={styles.options}>
         {question.options.map((option) => {
-          const isSelected = hasSelectedAnswer && selectedOptionId === option.id;
+          const feedback = getAnswerOptionFeedback(
+            question,
+            option.id,
+            hasSelectedAnswer ? selectedOptionId : null,
+            language,
+          );
 
           return (
             <AnswerOption
               key={option.id}
               disabled={hasSelectedAnswer}
+              language={language}
               option={option}
               onPress={() => handleSelectOption(option.id)}
-              resultLabel={isSelected ? (selectedIsCorrect ? 'Rätt' : 'Fel') : undefined}
-              tone={isSelected ? (selectedIsCorrect ? 'correct' : 'incorrect') : 'idle'}
+              resultLabel={feedback.resultLabel}
+              selected={hasSelectedAnswer && selectedOptionId === option.id}
+              tone={feedback.tone}
             />
           );
         })}
@@ -102,29 +191,34 @@ export default function Screen() {
         <View style={styles.feedback}>
           {currentScore ? (
             <Text style={styles.score}>
-              Score: {currentScore.correct}/{currentScore.total}
+              {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
             </Text>
           ) : null}
-          <ExplanationPanel explanationSv={question.explanationSv} />
-          <UHRReferenceCard reference={question.uhrReference} />
+          <ExplanationPanel
+            explanationEn={question.explanationEn}
+            explanationSv={question.explanationSv}
+            language={language}
+          />
+          <UHRReferenceCard language={language} reference={question.uhrReference} />
           <AdBanner placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
-            <Pressable
-              accessibilityLabel="Move to the next practice question"
+            <Button
+              accessibilityLabel={copy.nextQuestionAccessibilityLabel}
               accessibilityRole="button"
               onPress={advanceQuestion}
-              style={styles.nextQuestion}
+              style={styles.feedbackButton}
             >
-              <Text style={styles.nextQuestionText}>Next question</Text>
-            </Pressable>
-            <Pressable
-              accessibilityLabel="Try this practice question again"
+              {copy.nextQuestion}
+            </Button>
+            <Button
+              accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               onPress={resetSelection}
-              style={styles.tryAgain}
+              style={styles.feedbackButton}
+              variant="secondary"
             >
-              <Text style={styles.tryAgainText}>Try again</Text>
-            </Pressable>
+              {copy.tryAgain}
+            </Button>
           </View>
         </View>
       ) : null}
@@ -203,34 +297,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
+  feedbackButton: {
+    minHeight: space[5] + space[0.5],
+  },
   score: {
     color: colors.success,
     fontSize: typography.body.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
-  },
-  nextQuestion: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  nextQuestionText: {
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  tryAgain: {
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  tryAgainText: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
   },
 });

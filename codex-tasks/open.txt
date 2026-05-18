@@ -1,0 +1,343 @@
+
+>>> READ codex-tasks/P0.md FIRST. While P0.md has open items, only P0-advancing
+>>> iterations are accepted; trivial product-path commits are reverted. <<<
+ADS-1 lib/monetization/premium.ts + ads.ts: decouple adsDisabled from isPremiumUser; shouldShowAd false when adsDisabled; unit tests (npm test -- monetization).
+ADS-2 lib/monetization/ads.ts: replace hardcoded REAL_ADS_ENABLED_FOR_V1=false with env/remote flag; keep Google test units default in dev; lib/monetization/ad-units.real.ts loader (gitignored) for operator real IDs.
+IAP-1 lib/monetization/purchases.ts: react-native-iap wrapper buy("removeads") + restorePurchases() + persisted adsDisabled (secure store) + product id constants; mock provider for web/dev/tests.
+IAP-2 app/ + components/monetization: "Remove Ads" paywall UI 29 SEK, Buy + Restore wired to purchases.ts->adsDisabled; surface near ad placements; tsc+lint clean.
+CONSENT-1 lib/ + app/: expo-tracking-transparency (iOS ATT) + Google UMP consent gate before ad SDK init; no personalized ads without consent.
+COMPLY-1 publishing/public-site/app-ads.txt placeholder + update publishing/privacy-labels.md + google-play-data-safety.md (ads SDK + IAP); reports/release-ads-iap-device-qa.md template.
+TEST-1 tests: monetization gating unit tests + e2e web stub by entitlement; npx expo export --platform web must not crash with ad stubs.
+
+
+WEB-DEPLOY: make the web build host-agnostic and deploy-ready. (1) app.json: expo.web.output="single"; baseUrl only if served from a subpath. (2) npm run build:web:export -> dist-web; in build add cp dist-web/index.html dist-web/404.html. (3) Add vercel.json (SPA rewrite all->/index.html) and public/_redirects (/* /index.html 200) so Vercel OR Netlify OR Cloudflare Pages deploy in one click. (4) Add .github/workflows/web-deploy.yml that builds + uploads dist-web as a CI artifact (do NOT assume GitHub Pages; repo is private). Acceptance: workflow green AND dist-web/index.html loads the app offline (open file -> mounts). Product path app.json + .github/ + vercel.json. One atom, no monetization/test edits.
+
+=== PRIORITY FOCUS (operator, 2026-05-17): UI/UX POLISH + CONTENT VERIFICATION ===
+The v1.0 frame exists & is 7/7 green. Two sustained priorities now, every iteration until done:
+
+UIUX-POLISH (lane SETUP/UI, repeat as many atoms as needed): Implement the v1.0-SAFE UI/UX
+recommendations from docs/competitive-teardown.md (NOT the backend/v1.1 items). Each atom: pick
+ONE concrete improvement and ship it in app/ or components/ — button affordance/size/states/
+hierarchy, layout & spacing on the 8px scale, visual hierarchy, empty states, answer-reveal
+SV+EN explanation, calmer information density, loading/disabled states, tap targets >=44px,
+a11y labels. MUST honor DESIGN.md tokens (zero hardcoded colors — keeps step 6 green), keep all
+7 acceptance steps green. Reference a named teardown row in the commit msg.
+
+CONTENT-VERIFY (lane CONTENT/REVIEWER, repeat): Rigorously audit the question bank in data/.
+Each atom: take a batch of questions and verify — (a) traceable to UHR Sverige i fokus ref,
+(b) Swedish natural & correct, (c) English an accurate translation, (d) the marked answer is
+factually correct, (e) disclaimer present on every question screen. Fix defects in data/ and
+file via review-to-queue.sh. A wrong answer or mistranslation is a P0. Do NOT mass-rewrite;
+verify, correct, cite the UHR page.
+=== END PRIORITY FOCUS ===
+
+=== PRIORITY: APPLY CLAUDE DESIGN SYSTEM (operator 2026-05-17) ===
+DESIGN.md is now the Claude (Anthropic) warm-parchment system. Execute in order:
+DESIGN-1 [DONE 2026-05-18 — verified on origin/main]: lib/theme/colors.ts already matches DESIGN.md §2 exactly (canvas #f5f7fa, accent #006aa7, navy #003a5c, success #1e874b, warning #c77700, … all keys/values); gate tests/content-theme-token-schema.test.js 2/2 green. NO further work — do not re-queue. (Original spec retained below for history.)
+DESIGN-1-HIST [P0, one atom]: rewrite lib/theme/colors.ts token VALUES to exactly the
+  table in DESIGN.md section 2 (same KEYS, new values). Update the DESIGN.md
+  line-ref comments to point at the new file. tsc must pass (values must satisfy
+  the HexColor/RgbaColor types). This single change restyles the whole app via
+  the token system; acceptance step 6 (zero hardcoded colors) MUST stay green.
+  Verify: npx tsc --noEmit and npm test -- monetization.
+DESIGN-2..N [repeat atoms]: align components/ and app/ to DESIGN.md sections 3-5
+  — serif headings (load a serif via expo-font, weight 500, never 700), radius
+  scale (cards 8-12, primary button 12, pills 9999), warm ring + whisper
+  shadows, body line-height 1.6, tap targets >= 44px. Token-only colors, keep
+  all 7 acceptance steps green, honor the DESIGN.md do and dont lists. This
+  folds into the existing UIUX-POLISH priority — the Claude look is the target.
+=== END CLAUDE DESIGN PRIORITY ===
+
+=== PRIORITY: MOTION + GRAPHICS RICHNESS (operator 2026-05-17) ===
+Make the app feel alive and delightful — generous, polished motion and graphics
+throughout, WITHOUT breaking the calm Claude aesthetic, a11y, or 60fps.
+Repeatable atoms in app/ + components/ (token-driven via lib/theme/motion.ts —
+add motion tokens for durations/easings, no hardcoded timings/colors):
+- Entrance/stagger animations for lists, cards, screens (Reanimated/Moti).
+- Route/screen transitions (shared-element where natural).
+- Micro-interactions: button press/scale, ripple, focus, toggles, tab switches.
+- Celebratory moments: correct answer, quiz complete, streak/XP, badge unlock
+  (confetti/Lottie, spring pop, count-up numbers) — tasteful, ~1s, skippable.
+- Skeleton/shimmer loaders, animated empty states, progress ring animations.
+- Subtle ambient: parallax/illustration motion on hero/results, gentle.
+- Add richer graphics: Lottie animations + organic illustrations matching
+  DESIGN.md (terracotta/warm, hand-drawn feel), not generic stock.
+HARD RULES: honor prefers-reduced-motion (respect Accessibility reduce-motion —
+provide reduced/no-motion variants); keep 60fps (use native driver/Reanimated
+worklets, no JS-thread jank); colors via tokens only; all 7 acceptance steps
+stay green; NO motion on the exam screen that distracts; nothing janky on the
+web export. Folds into UIUX-POLISH. Tasteful-but-abundant, premium not noisy.
+=== END MOTION PRIORITY ===
+
+=== PRIORITY: CONTENT & QUESTION-QUALITY OVERHAUL (operator 2026-05-17) ===
+Operator-authorized content-policy update. The factory follows THIS over the
+older CLAUDE.md content-rule #1/#5. KEEP the legal-safety subset unchanged.
+
+LEGAL-SAFETY (still NON-NEGOTIABLE, never relax):
+- Never claim official affiliation with UHR/Skolverket/Migrationsverket.
+- Never claim questions are real/official exam questions.
+- Disclaimer (not a real/official exam) visible on every question screen.
+- Every question MUST cite a specific, verifiable PUBLIC source.
+
+DIFFICULTY-1 [feature, v1.0]: add a difficulty setting (Lätt / Medel / Svår).
+  Schema: each question carries distractor tiers by plausibility. Quiz engine
+  picks distractors per chosen difficulty — harder = more plausible, closely
+  related, similar-looking wrong options for the SAME question. Ship selector
+  (Settings + pre-quiz) + engine + schema now; content lane backfills harder
+  distractors progressively. Easy must still be fair; Hard genuinely tricky.
+
+SOURCE-CITATION [DONE 2026-05-17 — commit d73f546 / PR #109]: The "Enligt
+  UHR-materialet, ..." / "According to the UHR material, ..." connective has
+  been stripped from ALL question stems (61 base literals) and from the
+  derived single-choice variant template (lib/content/derivedQuestions.ts).
+  UHR is now cited only via the uhrChapter/uhrSection/uhrPage fields (the
+  Källa/Source line), never in the stem. Enforced by an executable gate:
+  tests/content-uhr-source-citation-stem.test.js (wired into test:content) —
+  fails if any stem carries the connective. question-bank.csv offenders
+  228 -> 0; full test:content 202/202 green. DO NOT re-queue per-question
+  UHR-strip work; the gate keeps this done. (The not-a-real-exam disclaimer
+  is separate and unchanged.)
+
+TRANSLATE-COMPLETE [v1.0, P0]: 100% SV+EN parity — validate:content FAILS if
+  any user-facing string or question field lacks both. Then a naturalness pass:
+  English must be natural, idiomatic, fluent (not literal/MT). Stilted English
+  = P0 defect via review-to-queue. Swedish must be correct & natural too.
+
+=== OPERATOR DIRECTIVE 2026-05-18 — MANAGER MUST SOLVE, NEVER PARK (hard, overrides any prior hold logic) ===
+MANAGER CONTRACT (operator, P0, non-negotiable): your job is to keep EVERY
+worker pane productive every cycle. You may NEVER respond to a blocker, a
+dirty worktree, or a moved boundary by sleep-holding / parking / idling a
+pane. A dirty worktree caused by OTHER lanes doing their own in-scope work
+is NORMAL and EXPECTED in this parallel factory — lanes have disjoint
+write scope precisely so a globally-clean tree is never required. "Tree
+dirty" / "boundary moved" / "waiting on a VALIDATOR/GM/REVIEWER lease" are
+NOT stop conditions and NEVER justify holding a pane. If a worker's current
+atom is genuinely blocked, RE-TASK that pane immediately to the next
+independent unblocked Phase-A SOURCE-EXPANSION atom or a CONTENT-VERIFY
+atom — do not sleep it. An idle/held pane is a P0 MANAGER defect to fix
+this cycle, not an acceptable state. The only thing that may block a *push*
+is a hard correctness failure (tsc error, test:content red, a content gate
+red); that still never blocks a *pane* from moving to other work.
+PHASE-B IS DEFERRED BY OPERATOR (2026-05-18): Phase-B (non-UHR / external
+authorities) and the EXTERNAL PROVENANCE-LABEL workstream are OUT OF SCOPE
+this milestone. They are NOT "rejected pending a VALIDATOR lease" — they
+are simply deferred until the operator explicitly re-opens them after
+Phase-A UHR coverage is saturated. Do NOT start, queue, or hold any pane on
+Phase-B / external work. All content capacity goes to Phase-A (exhaust UHR
+"Sverige i fokus") + CONTENT-VERIFY + citation rigour on the existing
+UHR-provenance bank only.
+=== END OPERATOR DIRECTIVE ===
+
+SOURCE-EXPANSION [content, P0 program, target = 2000 verified questions]:
+  PHASE A — EXHAUST UHR: mine the UHR "Sverige i fokus" material
+  completely. Every distinct fact/concept/topic in every UHR chapter &
+  section must yield question(s) until UHR coverage is SATURATED (no
+  remaining UHR fact a fair test could ask that we don't cover). Add a
+  UHR-coverage report/check: per UHR chapter+section, list facts vs
+  questions; gaps are tracked and burned down.
+  PHASE B — EXPAND SAME TOPICS FROM OTHER AUTHORITIES: within the SAME
+  UHR topic domains, add questions researched from OTHER authoritative
+  public sources, e.g. riksdagen.se / lagen.nu (law), regeringen.se,
+  Skatteverket, Migrationsverket, SCB, Skolverket, Forsakringskassan,
+  1177, Arbetsformedlingen, Pensionsmyndigheten, MSB/krisinformation.se,
+  Sweden.se / Swedish Institute, official kommun/region .se pages. Prefer
+  primary official sources over secondary.
+  TARGET: ramp the bank to ~2000 questions total, balanced across all
+  civic domains and difficulty (Latt/Medel/Svar), NO near-duplicate
+  stems/answers (reuse the duplicate-text detector; dup = reject).
+  STRICT CITATION GATE (executable, hard, per question — uncited or
+  unverifiable = P0, NOT shippable): every question MUST carry a
+  specific verifiable public source — concrete source title + locator
+  (chapter/section/page or stable public URL), not a vague 'official
+  info'. That citation MUST render to the user on the website (the
+  Kalla/Source line under the question). Add/extend a test asserting:
+  (a) 100% of questions have a non-empty, well-formed verifiable source;
+  (b) the source string is surfaced in the rendered question UI. A
+  question whose fact cannot be traced to a citable public source is
+  deleted, not guessed. Factually wrong/outdated = P0.
+  PROVENANCE LABEL (executable, hard): every question has a required
+  provenance field marking its origin as either the official UHR study
+  material ("Sverige i fokus") or an EXTERNAL authority. Every non-UHR
+  question MUST show a clear, localized label/badge in the rendered UI
+  (SV+EN, e.g. "Extern kalla - utover UHR-materialet" / "External
+  source - beyond the UHR material") so the learner always knows which
+  questions come from the official study material vs supplementary
+  authoritative sources. UHR-origin questions are NOT given the external
+  label. This label is IN ADDITION to (never a replacement for) the
+  specific Kalla/Source citation line. Add/extend a test asserting:
+  (a) 100% of questions have a valid provenance value (uhr|external);
+  (b) every external-provenance question renders the external label in
+  the question UI; (c) no UHR question is mislabeled external. A non-UHR
+  question without the visible external label = P0, not shippable.
+  QUALITY (unchanged, all still enforced): original PARAPHRASED wording
+  (never verbatim source text), natural fluent language, SV+EN parity
+  now (then the EBOOK multilingual set), not-a-real-exam disclaimer, no
+  claimed official affiliation, DESIGN.md tokens, all content gates green.
+  PROCESS: incremental atoms (~25-50 fully-sourced verified questions per
+  atom), id-sequence continues, regenerate question-bank.csv, run
+  test:content each atom (never push red). Grow coverage; never dilute
+  accuracy or citation rigour to hit the count.
+
+FILL-GAPS [standing quality bar, operator 2026-05-17]: the user's bar is
+  "fill every gap, fill every detail of all aspects of the project."
+  Every lane (content, UI, monetization, ebook, tests, accessibility,
+  i18n) should actively hunt and close its own gaps each iteration, not
+  just touch a path. Partial/placeholder/TODO left behind = a defect to
+  log and burn down. Thoroughness and completeness are the standard.
+=== END CONTENT OVERHAUL ===
+
+=== P0 BUG — DO THIS FIRST, ahead of all cosmetic/design work ===
+SHUFFLE-FIX [DONE 2026-05-18 — verified on origin/main]: implemented in lib/quiz/answerOptionShuffle.ts (seeded Fisher-Yates keyed by question+session, stable within a session) + summarize/balance checks, wired into lib/quiz/examGenerator.ts, practiceSessionStore.ts, app/quiz/[sessionId].tsx, app/(tabs)/practice.tsx. Gates scripts/answer-shuffle.test.js + tests/content-answer-shuffle-parity.test.js 9/9 green. NO further work — do not re-queue. (Original spec retained below for history.)
+SHUFFLE-FIX-HIST [P0, correctness]: Single-choice answer options are NOT shuffled —
+data/questions.ts authored with correct answer mostly first (correctOptionId
+'a' dominant) and lib/content/derivedQuestions.ts normalizeSingleChoiceOptions
+maps by index with no randomization, so the correct answer is almost always A.
+This makes the quiz trivially gameable and looks broken.
+FIX (root cause, in the derivation/session pipeline, NOT a data-only patch):
+- Shuffle single-choice options with a SEEDED RNG keyed by (questionId +
+  sessionId) so order is randomized but STABLE within a quiz session/instance
+  (must NOT reshuffle on re-render or change mid-question), and reproducible
+  for review screens and tests.
+- Remap correctOptionId after shuffle; isCorrectAnswer must still resolve
+  correctly; explanations/option feedback follow the option, not the slot.
+- Exclude true_false from positional shuffle (keep true/false order fixed).
+- Interacts with DIFFICULTY-1: pick distractors by difficulty FIRST, then
+  shuffle the final option set.
+TESTS (add, must pass): over the full published bank, correct-answer display
+  position is ~uniform (no single position > 35%); shuffle stable within a
+  session; isCorrectAnswer correct post-shuffle. Keep all 7 acceptance steps
+  green. This is the highest-priority item in this file.
+=== END P0 ===
+
+=== PRIORITY: ONLINE STUDY EBOOK (operator 2026-05-17) ===
+EBOOK [feature+content, v1.0 = SV+EN; more langs tracked in v1.1 spec]:
+Add a "Study / Läs" section readable ONLINE on the web build (and in-app),
+a structured study ebook covering the Swedish citizenship knowledge domains
+(geography & nature, history, society & democracy, working life, laws & rights,
+everyday life, culture, etc.) — chapters + table of contents + in-chapter
+navigation, comfortable reading layout per DESIGN.md (serif headings, 1.6
+line-height, parchment), works great on the live web URL.
+HARD CONTENT RULES:
+- ORIGINAL, PARAPHRASED prose — do NOT copy UHR (or any source) text
+  verbatim or near-verbatim. Rewrite naturally in our own words.
+- Natural, fluent language (not machine/literal). SV + EN parity now, then
+  EXPAND to the major languages spoken by immigrants in Sweden:
+  Arabic, Persian (Farsi/Dari), Somali, Tigrinya, Kurdish (Sorani +
+  Kurmanji), Bosnian/Croatian/Serbian, Polish, Turkish, Spanish, Russian,
+  Ukrainian, Thai, Mandarin, Finnish (prioritise by community size;
+  confirm/extend the set with quick public-data research).
+  NATIVE-QUALITY GATE (hard, per language): each translation must read as
+  if written by an educated NATIVE speaker — idiomatic, grammatically
+  perfect, culturally natural register, NOT machine/literal. A stilted or
+  MT-flavoured translation is a DEFECT, not shippable. Add a per-language
+  native-quality review lane/checklist; mark a language done only when it
+  passes that review. One language chapter-set per atom.
+- Each chapter cites its verifiable public source(s) at the end.
+- Keep legal-safety: no claimed official affiliation, not an official text,
+  disclaimer present. Factually accurate & current; wrong = P0.
+- Cross-link: questions can reference the relevant ebook chapter.
+Ship SV+EN chapters incrementally (repeatable atoms), web reading UX first.
+=== END EBOOK ===
+
+=== PRIORITY: PANEL-OPT + DEDICATED CRITICAL REVIEWER (operator 2026-05-17) ===
+PANEL-OPT [repeatable, P1]: optimize the information/panels on EVERY screen.
+Per screen: one primary focus + minimal supporting context. Remove clutter,
+redundant labels, empty/decorative panels, duplicated info. Strong hierarchy
+(title > primary action > support). Mobile + web. Token colors only, DESIGN.md
+§5, keep 7/7 green. One screen per atom; name the screen in the commit.
+
+CRITICAL-REVIEWER [dedicated standing lane, every iteration — Reviewer Contract]:
+A hostile, product-minded reviewer. Each iteration: pick ONE aspect of ONE
+screen/flow (UI, UX, layout, info density, copy, Swedish accuracy, English
+naturalness, answer correctness, a11y, perf, motion, the answer-shuffle, the
+source-citation) and ATTACK it as a demanding real user/expert. EVERY finding
+MUST be filed via /Users/billy/Desktop/projects/.shared/review-to-queue.sh
+(--team build/content --severity blocker|major|minor --kind user-sim|functional|
+data|language|a11y) so it becomes a must-fix queue item — NOT a markdown
+report (a report-only iteration is reverted like any audit-loop). Severities:
+wrong answer / missing translation / broken flow = blocker. The reviewer never
+accepts "looks fine" — it always finds the next concrete defect until the app
+is genuinely product-level. Findings route back to build/content and must be
+closed by a product fix, not prose.
+=== END ===
+
+=== PRIORITY: "DID YOU KNOW?" FACT BUBBLE (operator 2026-05-17) ===
+FACT-BUBBLE [feature+content, P1]: a delightful "Visste du? / Did you know?"
+bubble showing a short interesting fact / 冷知識 about Sweden (history, society,
+nature, culture, quirky civic trivia). Show at non-distracting moments: home,
+between questions / loading, quiz-results, ebook chapter ends — NEVER on the
+active exam/question screen. Tasteful gold-accent bubble per DESIGN.md (gold =
+highlight token), gentle entrance motion (respects reduced-motion), dismiss /
+"another one" affordance.
+CONTENT RULES (same as questions): curated facts dataset; each fact factually
+accurate & current, ORIGINAL paraphrased wording (never copied verbatim),
+natural fluent language, SV+EN parity now (full language set in v1.1), each
+fact cites a verifiable public source. Inaccurate fact = P0. Start ~30-50
+strong facts, expandable; rotate without immediate repeats.
+TONE (operator 2026-05-17, user directive): FACT-BUBBLE MUST carry a
+sense of Swedish humor — witty, warm, self-aware (lagom, fika, the
+queue ticket, jantelagen, weather complaints, Systembolaget, allemans-
+ratten quirks, etc.). Dry encyclopedic trivia is a MISS even if
+factually correct; the humor is the point and makes the app lively.
+Humor must land naturally in BOTH SV and EN (not a translated pun that
+dies in one language) and never undercut factual accuracy or the
+not-a-real-exam disclaimer. Aim: a Swede smiles in recognition; a
+learner abroad finds it charming and memorable.
+=== END ===
+
+=== PRIORITY: SWEDISH MASCOTS (Jellycat-style) + PICKER (operator 2026-05-17) ===
+MASCOT [feature+art, P1]: a selectable Swedish mascot companion.
+Art style: Jellycat-INSPIRED (soft rounded plush look, gentle bean shapes,
+simple friendly dot/curve faces, calm pastel fills tinted to DESIGN.md tokens)
+— ORIGINAL art, NOT copies of Jellycat's actual products/characters (style
+only, no IP infringement). Implement as scalable inline SVG React components
+(no external/binary assets, no AI-image dependency), token-colored, crisp at
+any size, animatable.
+Initial set (>=6, expandable): Dalahäst (Dala horse), Älg (moose),
+Kanelbulle (cinnamon bun), Skogskatt (Swedish forest cat), Igelkott
+(hedgehog), Räv (fox), Kräfta (crayfish), Lingon sprite.
+UX: a mascot PICKER screen/section (gallery, choose one, persisted in
+settings/entitlements store); chosen mascot appears as a friendly companion on
+home / results / streak / empty states / fact bubble — NEVER on the active
+exam/question screen. Reactive micro-animations tie into the MOTION priority
+(idle bob, happy bounce on correct answer / quiz complete / badge), respect
+prefers-reduced-motion, 60fps, token colors only, keep 7/7 acceptance green.
+Repeatable atoms: one mascot SVG or the picker per atom; name it in the commit.
+=== END ===
+
+MASCOT-UPDATE (operator 2026-05-17): add "Skoglimpa" (Swedish dark rye/forest
+loaf) to the mascot set. FEATURE Kanelbulle + Skoglimpa as the highlighted
+"favourites" in the picker (top row / pre-selected default = Kanelbulle).
+Same Jellycat-inspired original SVG style + reactive animation rules.
+
+
+=== PRIORITY: UI-OVERHAUL (operator 2026-05-17, user directive) ===
+UI-OVERHAUL [P0, feature+design, repeatable atoms]: the app is functionally
+mostly there but "doesn't look like an app yet" — it feels thin. Make it
+feel like a rich, real, polished mobile/web app. ADDITIVE ambition: MORE
+buttons, MORE functions, more interactive surfaces and affordances, stronger
+app-like navigation (tab bar / clear primary actions / quick actions / empty
+states with CTAs / progress + streak surfaces / settings depth). This is
+DISTINCT from PANEL-OPT (declutter): screens should be dense and capable
+where it helps, not sparse — but still strong hierarchy, DESIGN.md tokens
+only, reduced-motion respected, mobile + web parity, SV+EN parity. Distil
+concretely from comparable best-in-class test-prep / language apps (ties to
+the competitive-distillation directive): identify specific patterns/screens
+they have that we lack, then build them. One screen/feature per atom; name
+it in the commit; keep all content/test gates green. Acceptance per atom:
+the screen gains a real, usable, app-grade capability (not decoration).
+=== END UI-OVERHAUL ===
+
+=== PRIORITY: MONETIZATION-OPT (operator 2026-05-17, user directive) ===
+MONETIZATION-OPT [P1, research+feature]: optimise monetisation WITHOUT
+hurting the learner. (a) RESEARCH (write findings to docs/, cite sources):
+how comparable test-prep / language / civic apps place ads and price
+upgrades; where ads are least disturbing. (b) AD-PLACEMENT POLICY: ads ONLY
+at natural breakpoints — results screen, between question sets, ebook
+chapter ends, home — and a hard rule + executable test asserting NO ad ever
+renders on the active exam/question screen. (c) OPTIMISE: Remove-Ads paywall
+placement & copy near (not on) ad surfaces, rewarded-ad value exchange,
+upgrade conversion. Reuse existing lib/monetization (ADS-*/IAP-*); keep
+adsDisabled/entitlement gating intact; tsc + npm test -- monetization clean.
+One atom per change; research atom first, then policy test, then tuning.
+=== END MONETIZATION-OPT ===

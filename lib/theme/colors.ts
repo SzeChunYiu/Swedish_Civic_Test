@@ -1,30 +1,68 @@
-/** Notion-inspired color tokens sourced from DESIGN.md. */
+type HexColor = `#${string}`;
+type RgbaColor = `rgba(${string})`;
+
+export type ColorToken = HexColor | RgbaColor;
+
+// Swedish system — clean Scandinavian: flag blue primary, gold accent.
+// Values authoritative in DESIGN.md §2. Stable KEYS; whole app restyles here.
+const canvas = '#f5f7fa' satisfies ColorToken;
+const surface = '#ffffff' satisfies ColorToken;
+const surfaceWarm = '#eaf0f7' satisfies ColorToken;
+const surfaceMuted = 'rgba(11, 31, 51, 0.05)' satisfies ColorToken;
+const text = '#0b1f33' satisfies ColorToken;
+const textSoft = '#22384c' satisfies ColorToken;
+const textSecondary = '#44586b' satisfies ColorToken;
+const textDisclaimer = '#6b7c8c' satisfies ColorToken;
+const textMuted = '#5a6b7a' satisfies ColorToken;
+const textPlaceholder = '#9aa9b6' satisfies ColorToken;
+const warmDark = '#0b1f33' satisfies ColorToken;
+const accent = '#006aa7' satisfies ColorToken;
+const accentActive = '#00537f' satisfies ColorToken;
+const focus = '#2f80ed' satisfies ColorToken;
+const focusSoft = '#dbeafe' satisfies ColorToken;
+const badgeBlueBg = '#fff3cf' satisfies ColorToken;
+const badgeBlueText = '#8a6a00' satisfies ColorToken;
+const border = '#dbe3ec' satisfies ColorToken;
+const success = '#1e874b' satisfies ColorToken;
+const successSoft = '#e6f4ec' satisfies ColorToken;
+const correctBg = successSoft;
+const warning = '#c77700' satisfies ColorToken;
+const warningSoft = '#fdf0dd' satisfies ColorToken;
+const incorrectBg = warningSoft;
+const teal = '#0e7c8a' satisfies ColorToken;
+const navy = '#003a5c' satisfies ColorToken;
+const purple = '#4b3f7a' satisfies ColorToken;
+const pink = '#b5527a' satisfies ColorToken;
+const brown = '#6b4a1f' satisfies ColorToken;
+
 export const colors = {
-  canvas: '#ffffff',
-  surface: '#ffffff',
-  surfaceWarm: '#f6f5f4',
-  surfaceMuted: 'rgba(0, 0, 0, 0.05)',
-  text: 'rgba(0, 0, 0, 0.95)',
-  textSoft: 'rgba(0, 0, 0, 0.9)',
-  textSecondary: 'rgba(0, 0, 0, 0.8)',
-  textDisclaimer: 'rgba(0, 0, 0, 0.65)',
-  textMuted: '#615d59',
-  textPlaceholder: '#a39e98',
-  warmDark: '#31302e',
-  accent: '#0075de',
-  accentActive: '#005bab',
-  focus: '#097fe8',
-  focusSoft: '#d8ecff',
-  badgeBlueBg: '#f2f9ff',
-  badgeBlueText: '#097fe8',
-  border: 'rgba(0, 0, 0, 0.1)',
-  success: '#1aae39',
-  successSoft: '#eefaf1',
-  warning: '#dd5b00',
-  warningSoft: '#fff3ea',
-  teal: '#2a9d99',
-  navy: '#213183',
-  purple: '#391c57',
-  pink: '#ff64c8',
-  brown: '#523410',
-} as const;
+  canvas,
+  surface,
+  surfaceWarm,
+  surfaceMuted,
+  text,
+  textSoft,
+  textSecondary,
+  textDisclaimer,
+  textMuted,
+  textPlaceholder,
+  warmDark,
+  accent,
+  accentActive,
+  focus,
+  focusSoft,
+  badgeBlueBg,
+  badgeBlueText,
+  border,
+  success,
+  successSoft,
+  correctBg,
+  warning,
+  warningSoft,
+  incorrectBg,
+  teal,
+  navy,
+  purple,
+  pink,
+  brown,
+} as const satisfies Record<string, ColorToken>;

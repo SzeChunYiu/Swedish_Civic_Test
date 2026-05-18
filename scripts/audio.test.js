@@ -5,17 +5,39 @@ const test = require('node:test');
 const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+const moduleCache = new Map();
+
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
 
 function loadTs(relativePath, options = {}) {
-  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  const filePath = path.resolve(repoRoot, relativePath);
+  const cacheKey = `${filePath}:${options.speechMock ? 'speech-mock' : 'default'}`;
+  if (moduleCache.has(cacheKey)) return moduleCache.get(cacheKey);
+
+  const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
+  moduleCache.set(cacheKey, mod.exports);
+
   new Function('module', 'exports', 'require', output)(mod, mod.exports, (request) => {
     if (request === 'expo-speech') return options.speechMock || { speak() {}, stop() {} };
+    if (request.startsWith('.')) {
+      const resolvedPath = resolveLocalModule(filePath, request);
+      return loadTs(path.relative(repoRoot, resolvedPath), options);
+    }
     return require(request);
   });
+  moduleCache.set(cacheKey, mod.exports);
   return mod.exports;
 }
 
@@ -30,6 +52,19 @@ test('buildQuestionSpeechText reads Swedish question and answer options', () => 
   });
 
   assert.equal(text, 'Vad betyder demokrati? Alternativ A. Folkstyre. Alternativ B. Envälde.');
+});
+
+test('buildQuestionSpeechText keeps source citation separate from spoken prompt', () => {
+  const { buildQuestionSpeechText } = loadTs('lib/audio/speak.ts');
+  const text = buildQuestionSpeechText({
+    questionSv: 'Enligt UHR-materialet, ungefär hur långt sträcker sig Sverige?',
+    options: [{ id: 'a', textSv: 'Cirka 1 600 kilometer', textEn: 'About 1,600 kilometres' }],
+  });
+
+  assert.equal(
+    text,
+    'Ungefär hur långt sträcker sig Sverige? Alternativ A. Cirka 1 600 kilometer.',
+  );
 });
 
 test('speech helpers do not crash when the platform speech engine is unavailable', () => {
@@ -57,4 +92,25 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.equal(warnings.length, 2);
   assert.match(warnings[0], /Speech unavailable/i);
   assert.match(warnings[1], /Speech stop unavailable/i);
+});
+
+test('practice and routed quiz screens honor the persisted audio setting', () => {
+  const routeFiles = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
+
+  for (const routeFile of routeFiles) {
+    const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
+    assert.match(source, /import\s+\{\s*AudioButton\s*\}\s+from ['"][^'"]+AudioButton['"]/);
+    assert.match(
+      source,
+      /import\s+\{\s*buildQuestionSpeechText\s*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
+    );
+    assert.match(
+      source,
+      /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
+    );
+    assert.match(
+      source,
+      /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
+    );
+  }
 });

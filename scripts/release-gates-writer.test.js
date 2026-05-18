@@ -175,6 +175,50 @@ test('release evidence stub command creates gate-specific non-secret evidence fi
   assert.match(secondRun.stderr || secondRun.stdout, /already exists/i);
 });
 
+test('release evidence stub command creates all missing blocked manual templates', () => {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-stubs-all-'));
+  const tmpReports = path.join(tmpRoot, 'reports');
+  fs.mkdirSync(path.join(tmpReports, 'store-records'), { recursive: true });
+  fs.copyFileSync(
+    path.join(repoRoot, 'reports/release-gates.json'),
+    path.join(tmpReports, 'release-gates.json'),
+  );
+  fs.writeFileSync(
+    path.join(tmpReports, 'store-records/store-records.json'),
+    `${JSON.stringify({ gate: 'store-records', keep: 'existing owner draft' }, null, 2)}\n`,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/create-release-evidence-stub.js', '--root', tmpRoot, '--all'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(
+    pkg.scripts['release:evidence-stubs-all'],
+    'node scripts/create-release-evidence-stub.js --all',
+  );
+  assert.match(result.stdout, /Created eas-build-artifacts evidence stub/i);
+  assert.match(result.stdout, /Skipped store-records evidence stub/i);
+  assert.equal(
+    fs.existsSync(path.join(tmpReports, 'eas-build-artifacts/eas-build-artifacts.json')),
+    true,
+  );
+  assert.equal(fs.existsSync(path.join(tmpReports, 'submission/submission.json')), true);
+  assert.equal(
+    fs.existsSync(
+      path.join(tmpReports, 'store-policy-questionnaires/store-policy-questionnaires.json'),
+    ),
+    false,
+  );
+  assert.deepEqual(
+    JSON.parse(fs.readFileSync(path.join(tmpReports, 'store-records/store-records.json'), 'utf8')),
+    { gate: 'store-records', keep: 'existing owner draft' },
+  );
+});
+
 test('release evidence stub command rejects unknown gates', () => {
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-stub-unknown-'));
   const result = spawnSync(
@@ -264,6 +308,7 @@ test('release owner action packet lists only remaining external blockers', () =>
   assert.match(report, /# Release owner action packet/);
   assert.match(report, /Status \| BLOCKED/);
   assert.match(report, /Remaining owner actions \| 10/);
+  assert.match(report, /npm run release:evidence-stubs-all/);
   assert.match(report, /`eas-auth`/);
   assert.match(report, /EXPO_TOKEN/);
   assert.match(report, /`store-records`/);

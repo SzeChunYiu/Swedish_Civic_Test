@@ -44,11 +44,47 @@ test('XP rules follow the MVP gamification table', () => {
 });
 
 test('streak logic counts consecutive unique answer dates through today', () => {
-  const { calculateStreak } = loadAllTs('lib/learning/streaks.ts');
+  const { calculateStreak, getLocalDateKey } = loadAllTs('lib/learning/streaks.ts');
 
+  assert.equal(getLocalDateKey(new Date(2026, 0, 5, 23, 59)), '2026-01-05');
+  assert.equal(getLocalDateKey(new Date(2026, 10, 9, 0, 1)), '2026-11-09');
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14', '2026-05-15'], '2026-05-15'), 3);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
+});
+
+test('daily goal counts question answers for the requested local day only', () => {
+  const { countAnswersForLocalDate } = loadAllTs('lib/learning/streaks.ts');
+
+  const today = new Date(2026, 4, 17, 12);
+  const yesterday = new Date(2026, 4, 16, 12);
+  const tomorrow = new Date(2026, 4, 18, 12);
+
+  assert.equal(
+    countAnswersForLocalDate(
+      {
+        q001: { lastAnsweredAt: today.toISOString() },
+        q002: { lastAnsweredAt: yesterday.toISOString() },
+        q003: { lastAnsweredAt: tomorrow.toISOString() },
+        q004: { lastAnsweredAt: 'not-a-date' },
+        q005: {},
+      },
+      today,
+    ),
+    1,
+  );
+  assert.equal(countAnswersForLocalDate({}, today), 0);
+});
+
+test('progress answer dates use the shared local calendar key', () => {
+  const progressStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+
+  assert.match(progressStore, /import \{ getLocalDateKey \} from '\.\.\/learning\/streaks';/);
+  assert.match(progressStore, /const answerDate = getLocalDateKey\(new Date\(answeredAt\)\);/);
+  assert.doesNotMatch(progressStore, /answeredAt\.slice\(0,\s*10\)/);
 });
 
 test('mastery blends accuracy, coverage, and recency', () => {
