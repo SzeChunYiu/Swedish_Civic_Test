@@ -734,61 +734,11 @@ function sourceTrueFactEn(source: PracticeQuestion): string {
   return ensureSentence(truthStatementEn(stripTrueFalsePromptEn(source.questionEn)));
 }
 
-function cleanTrueFalseSourceExplanationSv(source: PracticeQuestion): string {
-  return ensureSentence(
-    upperFirst(
-      source.explanationSv
-        .replace(/^Påståendet är sant[:.]?\s*/i, '')
-        .replace(
-          /\s*Därför\s+stämmer\s+alternativet\s+Sant,\s+medan\s+Falskt\s+motsäger\s+uppgiften\.?$/i,
-          '',
-        )
-        .replace(
-          /\s*[;,]?\s*(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\.?$/i,
-          '',
-        )
-        .trim(),
-    ),
-  );
-}
-
-function cleanTrueFalseSourceExplanationEn(source: PracticeQuestion): string {
-  return ensureSentence(
-    upperFirst(
-      source.explanationEn
-        .replace(/^The statement is true[:.]?\s*/i, '')
-        .replace(
-          /\s*That\s+makes\s+True\s+correct,\s+while\s+False\s+contradicts\s+the\s+fact\.?$/i,
-          '',
-        )
-        .replace(/\s*,?\s*so\s+the\s+statement\s+is\s+true\.?$/i, '')
-        .replace(/\s*[;,]?\s*that\s+makes\s+the\s+statement\s+true\.?$/i, '')
-        .trim(),
-    ),
-  );
-}
-
-function trueStatementExplanationSv(source: PracticeQuestion): string {
-  if (isTrueFalseSource(source)) {
-    if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationSv(source);
-    return ensureSentence(trueFalseSourceStatementSv(source, true));
-  }
-
-  return source.explanationSv;
-}
-
-function trueStatementExplanationEn(source: PracticeQuestion): string {
-  if (isTrueFalseSource(source)) {
-    if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationEn(source);
-    return ensureSentence(trueFalseSourceStatementEn(source, true));
-  }
-
-  return source.explanationEn;
-}
-
 function falseStatementExplanationSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return ensureSentence(sourceTrueFactSv(source));
+    return `${sourceTrueFactSv(
+      source,
+    )} Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.`;
   }
 
   return source.explanationSv;
@@ -796,7 +746,9 @@ function falseStatementExplanationSv(source: PracticeQuestion): string {
 
 function falseStatementExplanationEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return ensureSentence(sourceTrueFactEn(source));
+    return `${sourceTrueFactEn(
+      source,
+    )} Therefore the statement in the question is false, so False is correct.`;
   }
 
   return source.explanationEn;
@@ -1808,8 +1760,6 @@ function buildTrueStatementVariant(source: PracticeQuestion, id: string): Practi
     trueFalseOptions(),
     'true',
     ['published-variant', 'true-false'],
-    trueStatementExplanationSv(source),
-    trueStatementExplanationEn(source),
   );
 }
 

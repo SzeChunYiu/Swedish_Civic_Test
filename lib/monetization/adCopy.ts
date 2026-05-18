@@ -12,8 +12,6 @@ type AdBannerCopy = {
 
 type NativeAdCardCopy = {
   accessibilityLabel: string;
-  ctaAccessibilityLabel: (callToAction: string) => string;
-  ctaHint: string;
   eyebrow: string;
   hint: string;
   meta: string;
@@ -59,8 +57,6 @@ export const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy> = {
   sv: {
     accessibilityLabel:
       'Inbyggd testannons: Sponsrad studieplacering. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
-    ctaAccessibilityLabel: (callToAction) => `Annonsåtgärd: ${callToAction}`,
-    ctaHint: 'Aktiverar annonsens åtgärd.',
     eyebrow: 'Inbyggd testannons',
     hint: 'Sponsrad annonsförhandsvisning. Döljs när Ta bort annonser är aktivt.',
     meta: 'Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov.',
@@ -69,8 +65,6 @@ export const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy> = {
   en: {
     accessibilityLabel:
       'Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. Hidden after Remove Ads is active.',
-    ctaAccessibilityLabel: (callToAction) => `Ad action: ${callToAction}`,
-    ctaHint: 'Activates the ad action.',
     eyebrow: 'Test native ad',
     hint: 'Sponsored ad preview. Hidden after Remove Ads is active.',
     meta: 'AdMob test placement preview. Keep out of timed exams.',

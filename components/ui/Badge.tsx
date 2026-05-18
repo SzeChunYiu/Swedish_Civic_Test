@@ -1,30 +1,11 @@
-import type { PropsWithChildren } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import type { AccessibilityRole, StyleProp, TextProps, TextStyle } from 'react-native';
+import type { PropsWithChildren } from 'react';
 import { colors, radius, space, typography } from '../../lib/theme';
 
-export type BadgeTone = 'blue' | 'green' | 'orange' | 'warm';
+type BadgeTone = 'blue' | 'green' | 'orange' | 'warm';
+type BadgeProps = PropsWithChildren<{ accessibilityLabel?: string; tone?: BadgeTone }>;
 
-/**
- * Defaults: `tone="blue"`, `accessibilityRole="text"`, and a spoken label
- * derived from string or number children. Pass `accessibilityLabel` when badge
- * children are not plain text or need route-specific wording.
- */
-export interface BadgeProps extends PropsWithChildren<Omit<TextProps, 'children' | 'style'>> {
-  accessibilityLabel?: string;
-  accessibilityRole?: AccessibilityRole;
-  style?: StyleProp<TextStyle>;
-  tone?: BadgeTone;
-}
-
-export function Badge({
-  accessibilityLabel,
-  accessibilityRole = 'text',
-  children,
-  style,
-  tone = 'blue',
-  ...textProps
-}: BadgeProps) {
+export function Badge({ accessibilityLabel, children, tone = 'blue' }: BadgeProps) {
   const badgeAccessibilityLabel =
     accessibilityLabel ??
     (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
@@ -33,9 +14,7 @@ export function Badge({
     <Text
       aria-label={badgeAccessibilityLabel}
       accessibilityLabel={badgeAccessibilityLabel}
-      accessibilityRole={accessibilityRole}
-      style={[styles.badge, styles[tone], style]}
-      {...textProps}
+      style={[styles.badge, styles[tone]]}
     >
       {children}
     </Text>

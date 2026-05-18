@@ -100,45 +100,9 @@ operator guard are the merge-gate until branch protection or CI is restored.
 - ≤20% of commits may have zero `app/components/lib/types/data/tests` lines (allow-meta tagged release/publishing work).
 - Each MANAGER must reject at least one bad worker iteration per day or the operator will assume the manager is rubber-stamping.
 
-## Next sprint preview — v1.1 Pro tier (NOT current sprint; queued for after v1.0 Remove-Ads ships)
-
-Operator has approved nine blueprints in `swedish_citizenship_app_project_plan/`:
-
-- `13_pro_tier.md` — Pro Lifetime IAP at **59 SEK** (one-time, no subscription) with extended entitlement matrix + **Free / Ad-Free / Pro comparison table** as paywall headline.
-- `14_fsrs_review.md` — FSRS-lite spaced repetition (Pro feature; Free gets 3 cards/day).
-- `15_ebook_highlights.md` — multi-color highlights + notes + export (Free gets yellow only; content prerequisite: long-form ebook bodies).
-- `16_referral_google.md` — Google sign-in → 7-day Pro for both sides (depends on optional Supabase auth landing first).
-- `17_confidence_slider.md` — confidence rating 1–5 + calibration screen (Pro).
-- `18_custom_study_plan.md` — test-date countdown + auto-generated daily target (Pro; Free sees countdown only).
-- `19_weekly_recap.md` — Sunday recap notification + screen (Free for everyone, opt-in, local-only).
-- `20_mock_exam_realism.md` — tab-switch pause + color-shift timer + mid-exam flag + time-per-question heatmap (Free).
-- `21_accessibility_bundle.md` — Atkinson Hyperlegible font + 4-step text size + audio playback rate (Free for everyone — never Pro-gated).
-- `22_user_dashboard.md` — visualizations dashboard with activity heatmap, per-chapter bars, mock chart, time-of-day pattern, mistake convergence (Free gets sections 1–3, Pro gets 4–6).
-
-Lane files in `codex-tasks/`: `pro-tier.txt`, `fsrs-review.txt`, `ebook-highlights.txt`, `referral-google.txt`, `confidence-slider.txt`, `custom-study-plan.txt`, `weekly-recap.txt`, `mock-exam-realism.txt`, `accessibility-bundle.txt`.
-
-Lanes that have NO Pro/auth dependency and can start as soon as v1.0 ships:
-- `weekly-recap`, `mock-exam-realism`, `accessibility-bundle`.
-
-Lanes blocked on Pro IAP wiring (lane `pro-tier` iterations 1–2):
-- `confidence-slider`, `custom-study-plan`, `fsrs-review` (UI portion).
-
-Lane blocked on Supabase + Google sign-in:
-- `referral-google`.
-
-Lane blocked on long-form ebook content authoring:
-- `ebook-highlights` (UI portion).
-
-**Workers MUST NOT start v1.1 lanes until the current Remove-Ads v1.0 acceptance test passes on `main`.** The Pro tier extends the entitlement type without renaming existing fields, but accidental scope creep will break Remove-Ads acceptance. Off-sprint commits will be reverted.
-
-Operator session is concurrently implementing two foundational pieces in parallel (out-of-band, does not count against worker quotas, tagged `[allow-meta]` on any non-product touches):
-- FSRS algorithm core in `lib/learning/spacedRepetition.ts` (so the review-store lane has something to plug into).
-- `lib/storage/highlightsStore.ts` skeleton (so the highlights UI lane has a store to call).
-- Entitlement type extension in `types/monetization.ts` + `lib/monetization/premium.ts` (additive, Remove-Ads acceptance preserved).
-
 ## Out of scope (do NOT spend time on)
 
-- AI tutor, AI-generated questions inside the app, community features.
+- AI tutor, backend services, user accounts, AI-generated questions inside the app, community features.
 - Creating the real AdMob account / real ad unit IDs / store IAP products (operator does these via the runbook).
 - Final store submission + Expo/EAS login (external; operator will grant EAS access for preview builds).
 
