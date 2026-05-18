@@ -137,3 +137,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q551-Q600-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q551-Q600-1` into the active DATA-INTEGRITY generated-output repairs, then assign the next rolling VERIFY slice starting at `q601`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-q601-q650-pane1-1779126600`, branch `task/verify/q601-q650-pane1-1779126600`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q601-q650` generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q601-q650-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL and extracted locally for cited printed pages 42-47; q601-q650 source support, answer keys, and ordinary distractors are acceptable; generated true/false rows `q602`, `q603`, `q606`, `q607`, `q610`, `q611`, `q614`, `q615`, `q618`, `q619`, `q622`, `q623`, `q626`, `q627`, `q630`, `q631`, `q642`, `q643`, and `q650` fail natural-language quality; generated single-choice rows `q604`, `q608`, `q612`, `q616`, `q620`, `q624`, `q628`, `q632`, `q636`, `q640`, `q644`, and `q648` contain the already-routed unknown-material fallback option; `docs/verify/ledger.md` rows q601-q650 updated at `f38907d`; focused ledger/report/queue assertion passed for 50 checked rows, 19 residual defects, 12 unknown-option defects, and 19 ok rows; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): #567 pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q601-Q650-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q601-Q650-1` into the active DATA-INTEGRITY generated-output repairs, then assign the next rolling VERIFY slice starting at `q651`.

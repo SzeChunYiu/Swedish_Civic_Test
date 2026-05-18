@@ -406,3 +406,32 @@ requires generator/validator/static-mirror repair, focused negative guards for
 `materialet` / `from the material`, regenerated CSV/static output,
 export/static parity, `validate:content`, typecheck, ownership,
 Prettier/diff checks, PR/merge evidence, and current-main spot checks.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:50:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q601-Q650-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `f38907d` confirms q601-q650 generated residual defects against
+the official UHR `Sverige i fokus` PDF. Facts, citations, answer keys, and
+ordinary distractors remain supported, but generated true/false variants still
+publish learner-visible fragments or labels in `q602`, `q603`, `q606`, `q607`,
+`q610`, `q611`, `q614`, `q615`, `q618`, `q619`, `q622`, `q623`, `q626`,
+`q627`, `q630`, `q631`, `q642`, `q643`, and `q650`. Fold
+`docs/verify/q601-q650-2026-05-18.md` and the ledger row statuses into
+`REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards, regenerated
+CSV/static output, export/static parity, `validate:content`, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
+row recheck.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:50:00+02:00
+`VERIFY-GENERATED-UNKNOWN-OPTION-Q601-Q650-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: the same q601-q650 VERIFY pass
+also confirms generated single-choice variants `q604`, `q608`, `q612`, `q616`,
+`q620`, `q624`, `q628`, `q632`, `q636`, `q640`, `q644`, and `q648` include
+`Det går inte att avgöra av materialet` / `It cannot be determined from the
+material` in the generated static question bank. Fold this evidence into
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards for
+`materialet` / `from the material`, regenerated CSV/static output,
+export/static parity, `validate:content`, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks.
