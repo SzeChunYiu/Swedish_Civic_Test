@@ -1312,7 +1312,11 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     [
       '<!DOCTYPE html>',
       '<html>',
-      '<head><title>Export</title></head>',
+      '<head>',
+      '<title>Export</title>',
+      '<link rel="preload" href="/_expo/static/js/web/entry-test.js" as="script">',
+      '<link rel="icon" href="/assets/favicon.png">',
+      '</head>',
       '<body>',
       '<div id="root"></div>',
       '<script src="/_expo/static/js/web/entry-test.js" defer></script>',
@@ -1339,6 +1343,10 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);
+  assert.doesNotMatch(index, /href="\/_expo\//);
+  assert.doesNotMatch(index, /href="\/assets\//);
+  assert.match(index, /href="_expo\/static\/js\/web\/entry-test\.js"/);
+  assert.match(index, /href="assets\/favicon\.png"/);
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
