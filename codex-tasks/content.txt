@@ -1,5 +1,26 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-18T20:45+02:00
+
+Current `origin/main` includes PR #609 / `47f3983`, the post-#570/#584
+q151-q200 VERIFY refresh. Treat the older q151-q200 splice-residual evidence
+as stale: q174/q190/q194-style splice defects are no longer current in that
+slice. The current learner-visible generated true/false defects are now:
+- the global redundant true/false prefix surface (`299` true_false rows in
+  `content/question-bank.csv` and `site/questions.js`);
+- negative/not-true false-statement stems in q151, q167, q235, q255, q266,
+  q331, q339, q439, q507, q519, and q715;
+- false-answer explanation mismatches in q151, q167, q235, q255, q331, q339,
+  q439, q507, q519, and q715;
+- residual English grammar/naturalness in q666, q667, and q699.
+
+All four are generated-output or generated/static-mirror work and remain
+DATA-INTEGRITY-owned. CONTENT source implementation remains handoff-only unless
+VALIDATOR explicitly leases `CONTENT-AUTHORED-TF-PREFIX-1` as a paired
+authored-data plus generated CSV/static-mirror cleanup. Do not duplicate
+q151-q200 VERIFY, do not reopen unknown-material option evidence, and do not
+publish a data-only authored-prefix branch.
+
 MANAGER-content current-route update - 2026-05-18T20:36+02:00
 
 Current `origin/main` includes DATA-INTEGRITY #600 / `476afdb`, which clears
