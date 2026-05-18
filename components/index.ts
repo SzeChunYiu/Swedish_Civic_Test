@@ -3,6 +3,7 @@ export * from './ChapterProgressCard';
 export * from './ChapterRow';
 export * from './DisclaimerBanner';
 export * from './Divider';
+export * from './MockExamStatusBar';
 export * from './OptionCard';
 export * from './PillBadge';
 export * from './ProgressBar';

@@ -147,3 +147,13 @@ A11y props: default `accessibilityRole="button"` when `onPress` exists and `"sum
 Verification: `./node_modules/.bin/prettier --check components/ChapterProgressCard.tsx components/index.ts` -> pass; token discipline grep on `components/ChapterProgressCard.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/ChapterProgressCard.tsx components/index.ts docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
 Next: SCREENS can use `ChapterProgressCard` when porting the practice-hub chapter grid from the 2026-05-18 design draft.
+
+## Iteration 15 - 2026-05-18
+
+Component: MockExamStatusBar exam header atom - `components/MockExamStatusBar.tsx`, exported from `components/index.ts`.
+Variants/states implemented: mock-exam label and counter group, timer group with normal/warning low-time state, localized submit action, disabled/no-handler submit state, and caller style/accessibility passthrough.
+Tokens used: `colors.surface`, `colors.border`, `colors.warningSoft`, `colors.warning`, `colors.text`, `radius.card`, `space[0.5]`, `space[1]`, `space[1.5]`, `space[12]`, and `space.hairline`; child `Button`, `PillBadge`, and `Text` keep their own token usage.
+A11y props: default `accessibilityRole="summary"`; derived whole-bar `accessibilityLabel`; timer badge gets explicit spoken label; submit `Button` gets explicit `accessibilityRole="button"`, label, and disabled state.
+Verification: `./node_modules/.bin/prettier --check components/MockExamStatusBar.tsx components/index.ts` -> pass; token discipline grep on `components/MockExamStatusBar.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass after linking the existing `node_modules` install into the clean worktree; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1.
+Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
+Next: SCREENS can use `MockExamStatusBar` when porting the mock-exam shell from the 2026-05-18 design draft; COMPONENTS can next extract a question navigation dot/grid atom from the same draft.
