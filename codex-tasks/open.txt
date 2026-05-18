@@ -357,3 +357,9 @@ COMPONENTS: make every Swedish-flag element use the fixed flag constants, never 
 DELIGHT: ensure any flag motion/effect keeps official fixed colors across theme/dark-mode
 MASCOT-ART: any flag on mascots uses the fixed official colors, not palette
 REVIEWER: audit live app + static site in light AND dark AND each palette — flag must stay official colors; queue P0 defects; add a regression guard
+
+# === TONE 2026-05-18: empathetic test-taker solidarity humor ===
+CONTENT: add FACT-BUBBLE + result/empty-state lines with warm "you've got this, we all just need to pass this for citizenship" solidarity humor (guardrails in content.md — never offensive, encouraging, SV+EN)
+DELIGHT: reflect the empathetic solidarity tone in result/encouragement moments (supportive, light, never mocking; reduced-motion safe)
+REVIEWER: audit humor microcopy against the content.md guardrails — flag anything that punches down / could offend / discourages, as P0
+LANGUAGE: when localizing humor, keep it warm + inoffensive in-culture (re-localize the joke, never literal if it would misfire)
