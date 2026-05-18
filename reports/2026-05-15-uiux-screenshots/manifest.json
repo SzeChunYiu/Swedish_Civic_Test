@@ -1,12 +1,15 @@
 {
-  "capturedAt": "2026-05-18T15:24:58.562Z",
+  "capturedAt": "2026-05-18T19:03:12.264Z",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "launchOverlayPolicy": "Visual smoke dismisses the launch sponsor overlay before every screenshot and rejects visible overlays.",
   "duplicatePolicy": "Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.",
   "duplicateExplanations": [
     {
-      "names": ["home", "index"],
+      "names": [
+        "home",
+        "index"
+      ],
       "reason": "The root route is a redirect to /home, so it may match the Home screenshot exactly."
     }
   ],
@@ -15,8 +18,8 @@
       "name": "index",
       "route": "/",
       "file": "index.png",
-      "bytes": 137217,
-      "sha256": "232c89597f3d152ad3e2804ff44d843e7b31567a80bb0210dde89a451a4beca5",
+      "bytes": 157282,
+      "sha256": "20973c212b3a52fbec18c3ccbf70e8c97e3e321e06385c99ad68a4f56bdd42b2",
       "launchOverlayDismissed": true,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -33,8 +36,8 @@
       "name": "home",
       "route": "/home",
       "file": "home.png",
-      "bytes": 163272,
-      "sha256": "5984ee375d8fb3c0a46dc0569a52bc9f0cae66167f55aaf62dcc12b0dd6ecd30",
+      "bytes": 157282,
+      "sha256": "20973c212b3a52fbec18c3ccbf70e8c97e3e321e06385c99ad68a4f56bdd42b2",
       "launchOverlayDismissed": true,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -42,8 +45,8 @@
       "name": "learn",
       "route": "/learn",
       "file": "learn.png",
-      "bytes": 192626,
-      "sha256": "0758ae690de54057db658ecfd6ee6ac4eb0987522c51618a17a4df3fe69dc230",
+      "bytes": 187346,
+      "sha256": "b001c1e9ee1eced2470c17a3f4ba0b4193b14e338649b8ad30f5da0022523736",
       "launchOverlayDismissed": true,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -51,8 +54,8 @@
       "name": "practice",
       "route": "/practice",
       "file": "practice.png",
-      "bytes": 174726,
-      "sha256": "a17e48f7c44a52e9739515aeed78133861f0ba0abd5adf7e9832ed3e84e6dce2",
+      "bytes": 169917,
+      "sha256": "ad44e6b0c0f4277b34e846e9b83de826dfa8a2b109076e3169a48ea3f8b60984",
       "launchOverlayDismissed": false,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -60,8 +63,8 @@
       "name": "exam",
       "route": "/exam",
       "file": "exam.png",
-      "bytes": 171029,
-      "sha256": "266d9d03adf662868c236c025bc0e9e0f68f38065788753809a4f00f41b054ea",
+      "bytes": 165351,
+      "sha256": "9c357e9d013e117169d2922f17375004dee0cd87480332d9a87d408cf742a9b8",
       "launchOverlayDismissed": false,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -69,8 +72,8 @@
       "name": "mistakes",
       "route": "/mistakes",
       "file": "mistakes.png",
-      "bytes": 200327,
-      "sha256": "fd85c6a8cc9226b79c04e8c1c4a7792880d3dd41526ff8b3d2f59209f5bd9a44",
+      "bytes": 196017,
+      "sha256": "86e3eb9f353a853bc03b7268d280d768f3b7fac244ecb8af7241b7b6fa1ad912",
       "launchOverlayDismissed": true,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -78,8 +81,8 @@
       "name": "profile",
       "route": "/profile",
       "file": "profile.png",
-      "bytes": 161316,
-      "sha256": "dcbec22c10f486f0c9d7cc8dac86503847c402188404342e579bcdc374b0617e",
+      "bytes": 123138,
+      "sha256": "c45d9eec059709582f1ee9209e35ad1b693ec5e8eab26bd6e974e3cc36e0a81f",
       "launchOverlayDismissed": true,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -96,8 +99,8 @@
       "name": "chapter-ch01",
       "route": "/chapter/ch01",
       "file": "chapter-ch01.png",
-      "bytes": 178332,
-      "sha256": "0411fb2d034ec2d48f1450c883d46012964934f442517a538a21a00c203fddf3",
+      "bytes": 178083,
+      "sha256": "ea7513e9f6a10ad7cf43328a2e046457f806a55615aae467bdb48266a2142ee4",
       "launchOverlayDismissed": true,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -114,8 +117,8 @@
       "name": "privacy",
       "route": "/privacy",
       "file": "privacy.png",
-      "bytes": 221142,
-      "sha256": "b3885803a87ba7738c44fcac09420f04a6a11ed51657b9ef4a07d08b561b5e69",
+      "bytes": 225534,
+      "sha256": "8fef1a31d40bdd9d822c86e2a4afb62df43e0629307103caaecf049201bc26f6",
       "launchOverlayDismissed": false,
       "launchOverlayVisibleAfterDismissal": false
     },
@@ -141,8 +144,8 @@
       "name": "support",
       "route": "/support",
       "file": "support.png",
-      "bytes": 195853,
-      "sha256": "b19e03e28a84ab834c5ca8970ce6530279a4d3fddc221ced90478773e6f1fe1e",
+      "bytes": 195392,
+      "sha256": "326488027f627b83f5a229e7f522a55b7af726b7ee8bca147c4203c0d864e425",
       "launchOverlayDismissed": false,
       "launchOverlayVisibleAfterDismissal": false
     }
