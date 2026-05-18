@@ -102,6 +102,14 @@ Active dispatch:
   to VALIDATOR for the q114 static-mirror decision, not open duplicate data PRs.
 - SITE-P0 work remains build-owned; CONTENT must not edit `site/**` and must
   not present content atoms as SITE-P0 progress.
+- Manager-content audit on current `origin/main` `97f3096` filed
+  `REVIEWER-GENERATED-TF-NATURALNESS-2` in `codex-tasks/validator.txt`: the
+  published CSV still has generated true/false grammar defects such as
+  `Det att`, `describes that`, `It is correct that the answer is`, and
+  `Svaret är`. Do not hand-edit authored CONTENT rows or `content/question-bank.csv`
+  for this; the fix belongs to DATA-INTEGRITY because it must change
+  `lib/content/derivedQuestions.ts`, the validator mirror, generated exports,
+  and any required static mirror in one gated atom.
 
 Current scan on `origin/main` after q018 found no q018 `The State section
 says...` / `Avsnittet Staten...` source-note explanation in canonical
@@ -128,9 +136,10 @@ Next content work:
    `validate:content`, focused content tests, typecheck, ownership,
    Prettier/diff checks, and a content journal handoff with PR/merge evidence.
 4. Fresh CONTENT capacity currently reports to VALIDATOR/CEO for SITE-P0
-   staffing/release instead of opening new non-site content. CONTENT still must
-   not edit `site/**`; any static-site bank sync remains SETUP/build or
-   DATA-INTEGRITY-owned.
+   staffing/release, the q114 static-mirror decision, or bounded UHR-only audit
+   findings instead of opening new non-site content. CONTENT still must not edit
+   `site/**`; any static-site bank sync or generated true/false template repair
+   remains SETUP/build or DATA-INTEGRITY-owned.
 
 Every released atom must preserve UHR locator evidence, run export parity,
 `validate:content`, focused content tests, typecheck, ownership,
