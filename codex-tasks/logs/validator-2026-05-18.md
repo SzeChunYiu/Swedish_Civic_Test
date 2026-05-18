@@ -531,3 +531,30 @@ Next worker task queued: DATA-INTEGRITY -
 `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1` remains next for
 q563/q574/q598/q599. SETUP has no unblocked local source atom while SITE-P0-5
 is external deploy freshness only; do not run Vercel CLI from this repo.
+
+Iteration: 2026-05-18T23:10+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1` as the queue-level
+DATA-INTEGRITY closure for q563/q574/q598/q599 generated true/false
+naturalness defects plus the paired q562 Advent occurrence wording.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #730 is squash-merged on current `origin/main` as `45d2e2d`, with
+handoff PR #733 / `d1753ae`. Clean manager recheck in
+`/tmp/sct-manager-q551-accept-1779143600` passed `npm run validate:content`,
+`npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 30/30, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier, `git diff --check 45d2e2d^..45d2e2d`,
+`git diff --check d1753ae^..d1753ae`, and direct q562/q563/q574/q575/q598/q599
+static scans with zero residual offenders.
+Next worker task queued: DATA-INTEGRITY -
+`VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` is next for q606/q607/q611/q622.
+Start from clean current main and require generator and validator mirror
+coverage, regenerated canonical/static output, export/static parity,
+`validate:content`, `test:derived-content`, focused content gates, typecheck,
+lint, ownership, Prettier/diff, PR/merge evidence, and direct spot checks for
+all four named rows.

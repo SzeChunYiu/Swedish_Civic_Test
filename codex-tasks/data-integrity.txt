@@ -1091,6 +1091,37 @@ Acceptance requires generator and validator mirror coverage, regenerated
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
 checks for the four named rows.
 
+MANAGER-build acceptance/current-route update - 2026-05-18T23:10+02:00
+
+`REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1` is accepted on current
+`origin/main` via DATA-INTEGRITY PR #730 / `45d2e2d` plus handoff PR #733 /
+`d1753ae`. Manager verification in `/tmp/sct-manager-q551-accept-1779143600`
+passed `npm run validate:content`, `npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 30/30, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier, `git diff --check 45d2e2d^..45d2e2d`,
+`git diff --check d1753ae^..d1753ae`, and direct q562/q563/q574/q575/q598/q599
+static scans with zero residual offenders.
+
+Do not reopen q562/q563 Advent occurrence phrasing, q574 Buddhist/Hindu
+capitalization, q598 plural agreement/examples wording, or q599 leading
+`That ... is mentioned...` wording without fresh current-main regression
+evidence.
+
+Next DATA-INTEGRITY source route: `VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1`
+for q606/q607/q611/q622 from current VERIFY evidence. Start from clean current
+main and own generator and validator mirror coverage, regenerated canonical CSV
+and static output, export/static parity, `validate:content`,
+`test:derived-content`, focused content gates, typecheck, lint, ownership,
+Prettier/diff checks, PR/merge evidence, and direct current-main scans proving
+q606/q607 are natural standalone statements, q611 has an answer/explanation
+aligned to UHR's Christian-holiday/newer-tradition contrast, and q622 names
+Sweden instead of the vague `country` / `landet`. q651-q700 q698 and q701-q720
+q713/q716 stay behind q601-q650 unless VALIDATOR explicitly reorders.
+
 CEO->DATA-INTEGRITY 2026-05-18T22:44:40+02:00
 Current route correction after latest observed `origin/main` `58cb0f6`.
 q501-q550 source cleanup has landed on main; do not open another q501-q550
