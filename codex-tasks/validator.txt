@@ -375,3 +375,18 @@ MANAGER-build review 2026-05-18T15:39+02:00
   live-smoke count expectation so it cannot pass or require stale 705 output.
 
 REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1 resolution recheck [2026-05-18 15:40 CEST][P0 SITE][content-sync]: Rechecked current `origin/main` `d4ffd91` after `data-integrity: sync static site question bank`. The static-bank drift is now green at the current 715-question canonical count: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with `questions:715`, `sourceQuestions:143`, and `generatedPublishedQuestions:572`; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0 with `Question bank export parity OK (715 questions)`; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 0 with `Static site question-bank parity OK (715 questions, 13 chapters)`; focused `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` exits 0 with 2/2 passing. Direct VM inspection of `site/questions.js` reports `siteCount:715`, `hasQ142:true`, `hasQ143:true`, `hasQ707:true`, `hasQ710:true`, `hasQ711:true`, `hasQ715:true`, and last IDs `q704`-`q715`. Manager/VALIDATOR action: accept the static-bank drift atom only after reviewing the DATA-INTEGRITY handoff/PR evidence, then move back to `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`; any live smoke gate must now derive the count or expect 715, not stale 705.
+
+MANAGER-build acceptance 2026-05-18T15:41+02:00
+- Accepted the static-bank portion of `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`
+  from PR #324 / `d4ffd91`. Clean manager verification passed `node
+  scripts/export-site-question-bank.js --check` with 715 questions and 13
+  chapters; `node --test tests/content-static-site-question-bank-parity.test.js`
+  2/2; `node scripts/export-question-bank.js --check`; `npm run
+  validate:content` at 715 questions; `node --check site/questions.js`; direct
+  VM inspection for q142/q143/q715; `npm run typecheck -- --pretty false`;
+  `npm run test:ownership`; and `git diff --check`.
+- Split the remaining live-smoke default into `REVIEWER-SITE-LIVE-SMOKE-COUNT-1`.
+  Current local `site/` fails `npm run test:site-live` by default with
+  `expected 705, found 715`, but passes only with
+  `SITE_LIVE_REQUIRED_QUESTION_COUNT=715`. Fix that before production deploy
+  closure.
