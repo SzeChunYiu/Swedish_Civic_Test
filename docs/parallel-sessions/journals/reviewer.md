@@ -2977,3 +2977,23 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/site or LANGUAGE/site to update visible question-count copy across localized footer/about variants and add a static guard so count claims cannot drift from the generated static bank.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-live-OxOHuV/wt` / detached `origin/main` `916ae1b`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after the latest Production deployment advanced.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- `git fetch origin`; current `origin/main` is `916ae1b`.
+- GitHub deployments API reports latest Production deployment `4731442202`, SHA `3be70d4`, created `2026-05-18T16:56:19Z`, target `https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app`.
+- Used clean worktree `/tmp/sct-review-live-OxOHuV/wt` on `origin/main` `916ae1b`, with shared `node_modules` symlinked for local checks.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0 with 7/7 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app` - exit 1; live serves 715 questions with hash prefix `afb9eec56629`, current main expects 720 with hash prefix `57e05be047f9`; Practice hub, wide layout, Mock route, Ebook renderer, and placeholder-copy asset checks pass.
+- `git diff --name-only 3be70d421e0489485ddb7f53c804477c50b1aa95..origin/main -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json .github/workflows vercel.json` - product deltas include `content/question-bank.csv`, `data/additionalQuestions.ts`, `data/chapters.ts`, `package.json`, `site/app.js`, `site/practice.js`, and `site/questions.js`.
+- `git diff --check` - exit 0.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open; latest production moved forward but still does not serve current `origin/main`. Require production deploy from `916ae1b` or newer plus a passing hash-aware live smoke before accepting SITE-P0-5.
