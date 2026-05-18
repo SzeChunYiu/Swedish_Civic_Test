@@ -3685,6 +3685,6 @@ Verification (commands + result):
 Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
 Findings queued: `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`.
 Evidence: current main still generates 22 single-choice judgement/filler rows while the existing validators stay green; the current q701/q720 row catches only two examples.
-PR (number + merged?): pending at handoff commit time.
+PR (number + merged?): #745 merged yes, squash `0e94a31`.
 Accepted by worker? yes
 Next suggested validator action: route DATA-INTEGRITY to replace or suppress the generated true/false judgement single-choice variant across the full bank, with generator/validator/static guards and regenerated canonical/static outputs.
