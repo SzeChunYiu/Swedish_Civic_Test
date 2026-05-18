@@ -767,6 +767,41 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
   assert.equal(result.entitlements.adsDisabled, false);
 });
 
+test('shared IAP provider honors requested product ids beyond Remove Ads', async () => {
+  const { REMOVE_ADS_PRODUCT_ID, createMemoryPurchaseStorage, createMockPurchaseProvider } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
+  const { PRO_LIFETIME_PRODUCT_ID, buyProLifetime, restoreProLifetime } = loadTs(
+    'lib/monetization/proLifetimePurchase.ts',
+  );
+
+  const purchaseResult = await buyProLifetime({
+    provider: createMockPurchaseProvider(),
+    storage: createMemoryPurchaseStorage(),
+  });
+
+  assert.equal(purchaseResult.status, 'purchased');
+  assert.equal(purchaseResult.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(purchaseResult.entitlements.spacedRepetition, true);
+
+  const removeAdsOnlyRestore = await restoreProLifetime({
+    provider: createMockPurchaseProvider({ ownedProductIds: [REMOVE_ADS_PRODUCT_ID] }),
+    storage: createMemoryPurchaseStorage(),
+  });
+
+  assert.equal(removeAdsOnlyRestore.status, 'not_found');
+  assert.equal(removeAdsOnlyRestore.entitlements.spacedRepetition, false);
+
+  const proRestore = await restoreProLifetime({
+    provider: createMockPurchaseProvider({ ownedProductIds: [PRO_LIFETIME_PRODUCT_ID] }),
+    storage: createMemoryPurchaseStorage(),
+  });
+
+  assert.equal(proRestore.status, 'restored');
+  assert.equal(proRestore.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(proRestore.entitlements.spacedRepetition, true);
+});
+
 test('remove-ads paywall is surfaced near an ad placement and wired to purchase helpers', () => {
   const paywallSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
