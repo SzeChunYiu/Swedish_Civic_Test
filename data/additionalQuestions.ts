@@ -2029,10 +2029,7 @@ export const additionalQuestions: PracticeQuestion[] = [
         'Bara en världsreligion är representerad i Sverige',
         'Only one world religion is represented in Sweden',
       ],
-      [
-        'Svenska kyrkans medlemsantal ökar enligt avsnittet',
-        'Church of Sweden membership is increasing according to the section',
-      ],
+      ['Svenska kyrkans medlemsantal ökar', 'Church of Sweden membership is increasing'],
     ],
     0,
     'Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige; därför är de andra alternativen fel.',
