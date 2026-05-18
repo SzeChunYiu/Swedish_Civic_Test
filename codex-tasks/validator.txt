@@ -288,3 +288,22 @@ MANAGER-build acceptance 2026-05-18T14:29+02:00
 REVIEWER-SITE-EBOOK-SV-PARITY-1 [product defect][2026-05-18 14:34 CEST][P0 SITE][language]: Focused SITE-P0-4 ebook pass found the deployed static ebook still violates the active SV/EN parity bar. Static evidence from clean `origin/main` `7f3c84b`: `rg -n "Svenska översättningen kommer|friendly stubs|We're writing this chapter now|kommer i v1.1|v1.1" site/ebook.js site/index.html -S` finds the file header `12 chapters; first 3 written in full, rest are friendly stubs`, twelve Swedish chapter-body placeholders saying `Svenska översättningen kommer i v1.1`, and the generic unwritten-chapter fallback. A focused Node scan reports `svStubCount:12` while the English ebook has 12 `Facts you'll see on the test` chapter bodies. Runtime evidence from a local static serve of `site/` at `http://127.0.0.1:8204`: system Chrome with `localStorage.smt_lang="sv"` on `#/ebook?c=1` renders the Swedish heading and lede, but the body is only `Svenska översättningen kommer i v1.1 - på engelska tills vidare. Klicka Öva för svenska frågor.`; ebook nav has 13 links, ebook tools are loaded, and browser console/page errors are 0. Manager action: assign SETUP/content-supported SITE-P0-4 work to replace all Swedish ebook placeholders with natural Swedish chapter prose matching the English coverage, remove v1.1/placeholder copy from the deployed site, and add a static ebook parity guard that fails on untranslated chapter bodies before accepting SITE-P0-4 or starting SITE-P0-5.
 
 REVIEWER-ACCOUNT-SCOPE-1 site update [2026-05-18 14:40 CEST][P0 SITE][scope/privacy]: Rechecked the deployed static `site/` surface against the same no-account MVP contract. The previous app-shell account cleanup does not cover the static site: `site/index.html` still exposes a global `Sign in` button and `#signin-modal`, `site/signin.js` opens the modal, and `site/ebook-tools.js` gates highlights/notes on `localStorage["smt_signed_in"] === "1"` with sign-in nudges. Runtime evidence from clean `origin/main` `c37bf5a` served at `http://127.0.0.1:8206`: system Chrome on `#/` found one Sign in button; clicking it opened a modal with `Sync your progress.`, `Continue with Google`, `Continue with Apple`, `Email`, `Send magic link`, and `Beta: accounts are rolling out gradually`; console/page errors were 0. Static syntax checks for `site/app.js`, `site/signin.js`, and `site/ebook-tools.js` pass, so syntax gates do not cover this scope drift. Manager action: include `site/` in `REVIEWER-ACCOUNT-SCOPE-1`: remove or hide static Sign in/OAuth/magic-link/account-sync UI and make ebook highlights/notes purely local or defer them without account prompts; add a static-site guard rejecting reachable account/auth copy before accepting the no-account MVP scope.
+
+MANAGER-build acceptance 2026-05-18T14:43+02:00
+- Accepted `SITE-P0-4` from PR #279 / `9def23a`, with SETUP handoff PR #280 /
+  `41a6bcb`. This closes `REVIEWER-SITE-EBOOK-SV-PARITY-1` and the remaining
+  ebook-helper/SITE-P0-4 portion of `REVIEWER-SITE-STATIC-WIRING-1`.
+- Clean current-main manager verification passed: `node --check site/ebook.js`;
+  `node --check site/ebook-tools.js`; focused ebook copy/navigation source
+  assertion for no stale Swedish placeholders, exposed `window.smtEbookRender`,
+  `smtApplyEbookHighlights`, chapter practice links, notes host, Swedish study
+  briefs, and source caveat; `NODE_OPTIONS='--v8-pool-size=1' npm run
+  typecheck -- --pretty false`; `NODE_OPTIONS='--v8-pool-size=1' npm run
+  validate:content`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`;
+  `git diff --check HEAD~2..HEAD`; and static-site Chrome smoke rooted at
+  `site/` for English and Swedish Ebook, `11 / 12` progress, `Öva kapitlet`
+  navigation to `#/practice?c=11`, active Practice question render, and browser
+  console/page errors 0.
+- SITE-P0 stop-the-line remains active only for `SITE-P0-5`: REVIEWER must
+  audit the live deployed static site against the draft mockups and queue
+  concrete parity defects. Do not close `SITE-P0-5` with a report-only audit.
