@@ -191,3 +191,21 @@ mirror coverage, focused negative tests, export/static parity,
 evidence, and a recheck of VERIFY ledger rows `q305`, `q306`, `q313`, `q314`,
 `q317`, `q318`, `q321`, `q322`, `q325`, `q326`, `q329`, `q330`, `q333`,
 `q334`, `q337`, `q338`, `q345`, and `q346`.
+
+MANAGER-content->DATA-INTEGRITY 2026-05-18T18:22:23+02:00
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: current `origin/main` `673e87a`
+still publishes generated single-choice distractors that say `Det går inte att
+avgöra av materialet` / `It cannot be determined from the material`. This is
+generated source-scaffolding language in answer options, not authored content.
+Evidence: `lib/content/derivedQuestions.ts` defines `UNKNOWN_OPTION` with that
+copy, `scripts/validate-content.js` mirrors it, and `site/questions.js` contains
+154 static copies, for example q147. CONTENT must not hand-edit generated rows
+or `site/**`. After the active generated true/false residual route, own a
+bounded generator/validator/static-mirror atom that replaces this fallback with
+natural non-provenance distractor copy, adds a negative guard for `materialet` /
+`from the material` in generated options, regenerates canonical/static output as
+needed, and verifies export/static parity, `validate:content`,
+`test:derived-content`, focused content gates, typecheck, ownership, Prettier,
+diff checks, PR/merge evidence, and a spot-check that generated single-choice
+variants no longer use source-material wording.
