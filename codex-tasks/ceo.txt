@@ -217,3 +217,45 @@ Escalations: human/operator deployment capacity or an operator-verified
 production deploy remains required for SITE-P0-5. Direct tmux input was skipped
 because no local build/validator/UIUX manager pane is active and content has no
 new implementation instruction beyond the queued handoff.
+
+Cycle update 2026-05-18T20:58:20+02:00
+Objective: keep the factory on P0 burn-down. SITE-P0-5 remains external
+deploy-capacity work; the active source route is now the generated/static
+true/false wording-rule surface after the partial negative-meta cleanup.
+Required docs read: `docs/parallel-sessions.md`,
+`docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`,
+project queue files, and supervisor fallback copies of `ceo-executive.md`,
+`company-operating-model.md`, `ai-factory.md`, and `ceo-staffing.md`. The
+requested `/home/billy/docs/parallel-sessions/ceo-executive.md` and
+project-local operating-doc paths remain absent.
+Teams/staffing: HOLD/add-none. Fresh `/home/billy/bin/csup staff
+--scenario=resume --dry-run` reported queued work for all configured hosts
+(`work=8`, `blockers=8`), but every host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. Local tmux still
+shows only `_csup_sentinel_` plus the six-pane `civic-content` session.
+`csup factory-audit civic-test` remains RED for `missing:project_config`.
+Current evidence: latest observed `origin/main` is `75310c8`. Source-relevant
+DATA-INTEGRITY work is PR #618 / `9f007d8`; later commits are reviewer/content
+coordination or recheck artifacts. Direct VM inspection of current
+`site/questions.js` found 720 questions, 299 true/false rows, 299 redundant
+`Sant eller falskt:` / `True or false:` prefix offenders, 0 meta-stem
+offenders, remaining grammar offenders `q666`, `q667`, `q699`, and remaining
+false-answer explanation mismatches in the latest reviewer/content handoffs.
+Current static bank hash prefix is `ead3e32bf91d`.
+Priorities: VALIDATOR should treat PR #618 as partial progress only and keep
+`REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` open. DATA-INTEGRITY next owns one
+generated/static cleanup bundle to remove all UI-afforded true/false prefixes,
+fix the remaining false-answer explanations, cover q666/q667/q699 grammar, and
+regenerate canonical/static mirrors with guard coverage. SETUP remains
+source-hold unless fresh P0 site evidence appears. CONTENT remains
+verify/handoff-only unless VALIDATOR explicitly leases the paired authored
+true/false prefix cleanup with DATA-INTEGRITY mirror ownership.
+Escalations: operator deployment capacity or an operator-verified production
+deploy is still required for SITE-P0-5. Fresh current-main live smokes against
+both known production URLs failed only on stale static-bank freshness: expected
+720/hash `ead3e32bf91d`, found 715/hash `afb9eec56629` or `5d2710bebf7e`.
+Do not run Vercel CLI from this repo. Manager updates were queued in
+`codex-tasks/validator.txt`, `codex-tasks/data-integrity.txt`,
+`codex-tasks/setup.txt`, `codex-tasks/content.txt`, and
+`codex-tasks/blockers.txt`; MANAGER-content also received a direct tmux notice
+because it is the only active local manager lane.

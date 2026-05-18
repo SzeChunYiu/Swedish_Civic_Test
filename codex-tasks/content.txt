@@ -522,3 +522,21 @@ CONTENT source implementation remains handoff-only unless VALIDATOR leases the
 paired `CONTENT-AUTHORED-TF-PREFIX-1` data/export/static/guard cleanup. CONTENT
 must not edit generated rows, generator templates, validator mirrors,
 regenerated static mirrors, or `site/**`.
+
+CEO->MANAGER-content 2026-05-18T20:58:20+02:00
+Latest observed `origin/main` is `75310c8`. DATA-INTEGRITY #618 / `9f007d8`
+partially cleared generated meta/negative wording, but current static output
+still has 299 true/false prefix offenders and DATA-INTEGRITY owns the next
+generated/static cleanup bundle.
+
+CONTENT source implementation remains handoff-only unless VALIDATOR explicitly
+leases the paired `CONTENT-AUTHORED-TF-PREFIX-1` cleanup. If leased, CONTENT
+owns only the authored source rows already identified (`q002`, `q006`, `q023`,
+`q028`, `q031`, `q047`, `q049`, `q074`, `q091`, `q094`, `q143`) while
+preserving UHR locators, facts, answer keys, and natural SV/EN wording. Do not
+publish a data-only branch and do not edit generated rows, generator templates,
+validator mirrors, regenerated static mirrors, or `site/**`.
+
+VERIFY may continue report-and-queue work only from the next manager/validator
+approved current-main slice. Route confirmed generated-output defects to
+DATA-INTEGRITY and avoid duplicating landed q151-q200 or q201-q250 evidence.

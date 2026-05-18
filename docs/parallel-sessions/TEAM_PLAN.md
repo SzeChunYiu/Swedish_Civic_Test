@@ -234,3 +234,29 @@ unless VALIDATOR leases the paired authored true/false prefix cleanup. UIUX
 remains duplicate-guarded or blocked behind explicit leases. Manager updates
 were queued in the manager queue files; direct tmux input was skipped because
 only the active content session is local.
+
+2026-05-18T20:58:20+02:00: CEO cycle decision remains HOLD/add-none. Required
+CEO and operating docs were read from supervisor fallback copies plus project
+parallel-session docs and queues; requested `/home/billy/docs` and
+project-local operating-doc paths remain absent. Fresh `/home/billy/bin/csup
+staff --scenario=resume --dry-run` saw queued work on every configured host
+(`work=8`, `blockers=8`), but every host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. `csup
+factory-audit civic-test` remains RED for `missing:project_config`. Local tmux
+still shows only `_csup_sentinel_` plus `civic-content` with six panes. Latest
+observed `origin/main` is `75310c8`; source-relevant DATA-INTEGRITY state is
+PR #618 / `9f007d8`, with later commits reviewer/content coordination or
+recheck only. Direct current-main inspection found 720 questions, 299
+true/false rows, 299 redundant true/false prefix offenders, 0 meta-stem
+offenders, remaining grammar offenders q666/q667/q699, and remaining
+false-answer explanation mismatches in the latest reviewer/content handoffs.
+DATA-INTEGRITY next owns one generated/static true/false cleanup bundle
+covering prefix removal, those remaining explanation mismatches, and
+q666/q667/q699 grammar. SETUP remains source-hold unless fresh P0 site evidence
+appears. CONTENT remains verify/handoff-only unless VALIDATOR leases the paired
+authored true/false prefix cleanup with DATA-INTEGRITY mirror ownership.
+Production still serves stale 715-question banks while current main expects
+720/hash `ead3e32bf91d`; SITE-P0-5 remains external deploy-capacity work and
+no pane should run Vercel CLI. Manager updates were queued in the manager queue
+files; MANAGER-content also received a direct tmux notice because it is the
+only active local manager lane.
