@@ -8,6 +8,7 @@ import {
 } from '../../lib/quiz/questionText';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
+import { SourceCitation } from './SourceCitation';
 
 type QuestionCardCopy = {
   difficultyLabel: string;
@@ -72,7 +73,15 @@ export function QuestionCard({
       <Text accessibilityRole="header" style={styles.question}>
         {questionText}
       </Text>
-      <Text style={styles.sourceCitation}>{sourceCitation}</Text>
+      <SourceCitation
+        accessibilityLabel={`${copy.sourceCitationLabel}: ${sourceCitation}`}
+        label={copy.sourceCitationLabel}
+        language={language}
+        reference={question?.uhrReference}
+        style={styles.sourceCitationSurface}
+      >
+        <Text style={styles.sourceCitation}>{sourceCitation}</Text>
+      </SourceCitation>
       {questionTranslation ? <Text style={styles.translation}>{questionTranslation}</Text> : null}
     </Card>
   );
@@ -96,6 +105,8 @@ const styles = StyleSheet.create({
     color: colors.textDisclaimer,
     fontSize: typography.disclaimer.fontSize,
     lineHeight: typography.disclaimer.lineHeight,
+  },
+  sourceCitationSurface: {
     marginTop: space[0.75],
   },
   translation: {
