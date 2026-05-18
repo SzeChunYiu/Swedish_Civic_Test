@@ -191,28 +191,23 @@ Accepted P0 SETUP atoms:
       targeted Prettier, and `git diff --check origin/main..HEAD` all exit 0.
       The focused guard proves Swedish `70% Poäng` and English `70% Score`
       rows are spaced and localized, without the old `70%score` glue.
+20. `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1` accepted via PR #561 / `0fe7922`.
+    - Clean manager verification on PR #561 passed `npm run
+      test:static-site-flag-palette` 1/1 across all five palettes in light and
+      dark themes, `npm run test:static-site-settings-language` 4/4, `npm run
+      test:static-site-practice-result-i18n` 2/2, `npm run
+      test:static-site-answer-shuffle` 4/4, `npm run
+      test:static-site-question-feedback` 3/3, `npm run validate:content` at
+      720 questions with static parity true, `npm run typecheck -- --pretty
+      false`, `npm run lint`, `npm run test:ownership`, `node --check
+      scripts/static-site-flag-palette.test.js`, targeted Prettier, and `git
+      diff --check origin/main..HEAD` all exit 0. The focused browser guard
+      proves brand, hero, and Ebook flag surfaces keep official blue/gold while
+      palette accents still mutate.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
-1. `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`
-   - Scope: deployed static `site/` visible Swedish flag surfaces across user
-     palette and theme choices.
-   - Required behavior: actual flag renderings must keep fixed official flag
-     colors, independent from palette/theme variables. Normal UI accents may
-     remain palette-driven, but `.brand__mark`, `.hero__cross`, and any other
-     static-site flag/easter-egg/favicons that depict the Swedish flag must not
-     use mutable `--blue` / `--gold` accents.
-   - Required gates: static browser guard cycling all static-site palettes in
-     light and dark mode and failing if visible flag surfaces differ from
-     official blue/yellow; `node --check` for changed `site/` scripts; lint;
-     typecheck; ownership; targeted Prettier/diff checks; journal handoff; and
-     PR/merge evidence.
-   - Reviewer evidence: current static source uses `var(--blue)` and
-     `var(--gold)` for `.brand__mark` and `.hero__cross`, while Settings
-     palettes mutate those variables; browser audit showed Midsommar, Falu,
-     Skargarden, and Norrsken recolor the flag surfaces.
-
-2. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
+1. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
    - Scope: deployed static `site/` mobile header/navigation at <=390px width.
    - Required behavior: Practice, Mock exam, Ebook, Support, and Settings must
      be reachable without horizontal overflow or hidden 0x0 nav links.
@@ -225,7 +220,7 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
      scroll width in a 390px viewport, visible nav only `Home` and `Practice`,
      hidden `Mock exam`, `Ebook`, and `Support`, and no menu button.
 
-3. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
+2. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
    - Scope: deployed static `site/` user-visible question-count/product-count
      copy in `site/index.html`, `site/i18n-extras.js`, and any related static
      copy surface.
