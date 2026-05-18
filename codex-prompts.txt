@@ -1,2 +1,2 @@
-/goal PANE 0 lane SETUP. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/setup.md; ship one verified Expo scaffold atom. Iterate until rate-limited.
-/goal PANE 1 lane CONTENT. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/content.md; ship one verified content or question atom. Iterate until rate-limited.
+/goal You are PANE 0, lane SETUP. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/setup.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 1, lane CONTENT. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/content.md, then iterate per the protocol until rate-limited.

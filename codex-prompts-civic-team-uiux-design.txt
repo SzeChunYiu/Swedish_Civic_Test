@@ -1,3 +1,3 @@
-/goal PANE 0 lane MANAGER-uiux-design. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/UIUX_BOARD.md; accept only verified design-token and component atoms from panes 1-2. Iterate until rate-limited.
-/goal PANE 1 lane DESIGN-TOKENS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/design-tokens.md; ship one strict theme-token product atom in lib/theme/. Iterate until rate-limited.
-/goal PANE 2 lane COMPONENTS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/components.md; ship one component atom using theme tokens only. Iterate until rate-limited.
+/goal You are PANE 0, lane MANAGER-uiux-design. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/uiux-manager.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 1, lane DESIGN-TOKENS. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/design-tokens.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 2, lane COMPONENTS. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/components.md, then iterate per the protocol until rate-limited.

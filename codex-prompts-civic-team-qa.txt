@@ -1,3 +1,3 @@
-/goal PANE 0 lane MANAGER-qa. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/TEAM_PLAN.md; accept only verified E2E and unit test atoms from panes 1-2. Iterate until rate-limited.
-/goal PANE 1 lane E2E. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/reviewer.md; ship one verified end-to-end test atom covering a product screen or quiz flow. Iterate until rate-limited.
-/goal PANE 2 lane UNIT. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/architecture.md; ship one focused unit test or failing-test fix covering a product source file. Iterate until rate-limited.
+/goal You are PANE 0, lane MANAGER-qa. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/validator.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 1, lane E2E. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/reviewer.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 2, lane UNIT. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/validator.md, then iterate per the protocol until rate-limited.
