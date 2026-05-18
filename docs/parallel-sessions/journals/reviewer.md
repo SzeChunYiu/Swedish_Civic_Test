@@ -3544,6 +3544,6 @@ Verification (commands + result):
 Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
 Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1`.
 Evidence: current main has four remaining q551-q600 generated true/false naturalness defects while the existing validators stay green.
-PR (number + merged?): pending at handoff commit time.
+PR (number + merged?): #700 merged yes, squash `8e46b3b`.
 Accepted by worker? yes
 Next suggested validator action: keep q551-q600 behind q451-q500 and q501-q550 source routing unless VALIDATOR reorders, then route DATA-INTEGRITY to q563/q574/q598/q599 cleanup with generator, validator mirror, export/static parity, and current-main spot-check evidence.
