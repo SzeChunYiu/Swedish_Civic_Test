@@ -79,6 +79,16 @@ function valuesForFieldInSource(source, fieldName) {
   );
 }
 
+function valuesForFieldInConstArray(source, constName, fieldName) {
+  const match = source.match(
+    new RegExp(`export const ${constName}\\s*=\\s*\\[([\\s\\S]*?)\\]\\s+as const`),
+  );
+
+  assert.notEqual(match, null, `${constName} should be declared as an exported array`);
+
+  return valuesForFieldInSource(match[1], fieldName);
+}
+
 const architectureRouteFiles = architectureTargetFiles.filter(
   (relativePath) => relativePath.startsWith('app/') && relativePath.endsWith('.tsx'),
 );
@@ -93,9 +103,12 @@ const releaseComplianceRouteFiles = [
 ];
 
 const routerShellRuntimeFiles = [
-  'app/_layout.tsx',
-  'app/(tabs)/_layout.tsx',
   'app/index.tsx',
+  'app/_layout.tsx',
+  'app/(auth)/_layout.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/account.tsx',
+  'app/search.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -187,6 +200,7 @@ const monetizationRuntimeFiles = [
   'lib/monetization/mobileAdsConsent.ts',
   'lib/monetization/premium.ts',
   'lib/monetization/purchases.ts',
+  'lib/monetization/releasePolicy.ts',
   'lib/monetization/rewardedAd.native.ts',
   'lib/monetization/rewardedAd.ts',
   'lib/monetization/rewardedExam.ts',
@@ -367,7 +381,11 @@ test('architecture compliance support files exist', () => {
 
 test('architecture router shell runtime files exist', () => {
   const routerShellManifest = readText('lib/scaffold/routerShellManifest.ts');
-  const routerShellContractFiles = valuesForFieldInSource(routerShellManifest, 'file');
+  const routerShellContractFiles = [
+    ...valuesForFieldInConstArray(routerShellManifest, 'expoRouterShellFiles', 'file'),
+    ...valuesForFieldInConstArray(routerShellManifest, 'expoRouterRootStackScreens', 'file'),
+    'lib/scaffold/routerShellManifest.ts',
+  ];
 
   assert.deepEqual(
     routerShellRuntimeFiles.filter((relativePath) => !exists(relativePath)),
@@ -540,10 +558,20 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   const indexRoute = readText('app/index.tsx');
 
   assert.match(rootLayout, /import\s+\{\s*Stack\s*,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
-  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), ['(tabs)', '+not-found', 'index']);
+  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
+    '(auth)',
+    '(tabs)',
+    '+not-found',
+    'account',
+    'index',
+    'search',
+  ]);
   assert.match(rootLayout, /<Stack\s+screenOptions=\{\{\s*headerShown:\s*false\s*\}\}>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']index["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']\(tabs\)["']\s*\/>/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']\(auth\)["']/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']account["']\s*\/>/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']search["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/);
   assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
   assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);

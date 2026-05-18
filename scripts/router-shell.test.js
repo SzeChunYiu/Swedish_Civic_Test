@@ -42,12 +42,39 @@ function valuesForFieldInSource(source, fieldName) {
   ].map((match) => match[1]);
 }
 
+function valuesForFieldInConstArray(source, constName, fieldName) {
+  const match = source.match(
+    new RegExp(`export const ${escapeRegExp(constName)}\\s*=\\s*\\[([\\s\\S]*?)\\]\\s+as const`),
+  );
+
+  assert.notEqual(match, null, `${constName} should be declared as a readonly array`);
+
+  return valuesForFieldInSource(match[1], fieldName);
+}
+
+function extractStackScreenNames(rootLayoutSource) {
+  return Array.from(
+    rootLayoutSource.matchAll(/<Stack\.Screen\s+name=(["'])([^"']+)\1/g),
+    (match) => match[2],
+  );
+}
+
 function readRouterShellManifest() {
   const manifest = read('lib/scaffold/routerShellManifest.ts');
 
   return {
-    files: valuesForFieldInSource(manifest, 'file'),
-    roles: valuesForFieldInSource(manifest, 'role'),
+    files: valuesForFieldInConstArray(manifest, 'expoRouterShellFiles', 'file'),
+    roles: valuesForFieldInConstArray(manifest, 'expoRouterShellFiles', 'role'),
+    rootStackScreenNames: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterRootStackScreens',
+      'name',
+    ),
+    rootStackScreenFiles: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterRootStackScreens',
+      'file',
+    ),
     recoveryHrefs: valuesInConstArray(manifest, 'expoRouterShellRecoveryHrefs'),
     standaloneHeaderHiddenRoutes: valuesInConstArray(
       manifest,
@@ -163,16 +190,34 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   const nativeIntent = read('app/+native-intent.ts');
 
   assert.deepEqual(manifest.files, [
+    'app/index.tsx',
     'app/_layout.tsx',
     'app/+not-found.tsx',
     'app/+html.tsx',
     'app/+native-intent.ts',
   ]);
   assert.deepEqual(manifest.roles, [
+    'initial-redirect',
     'root-layout',
     'not-found-route',
     'web-document',
     'native-intent',
+  ]);
+  assert.deepEqual(manifest.rootStackScreenNames, [
+    'index',
+    '(tabs)',
+    '(auth)',
+    'account',
+    'search',
+    '+not-found',
+  ]);
+  assert.deepEqual(manifest.rootStackScreenFiles, [
+    'app/index.tsx',
+    'app/(tabs)/_layout.tsx',
+    'app/(auth)/_layout.tsx',
+    'app/account.tsx',
+    'app/search.tsx',
+    'app/+not-found.tsx',
   ]);
   assert.deepEqual(manifest.recoveryHrefs, ['/home']);
   assert.deepEqual(manifest.standaloneHeaderHiddenRoutes, [
@@ -199,6 +244,14 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   for (const file of manifest.files) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
   }
+  for (const file of manifest.rootStackScreenFiles) {
+    assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
+  }
+
+  assert.deepEqual(
+    extractStackScreenNames(rootLayout).sort(),
+    [...manifest.rootStackScreenNames].sort(),
+  );
 
   assertMatches(
     rootLayout,
