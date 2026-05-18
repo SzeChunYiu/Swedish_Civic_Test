@@ -601,3 +601,19 @@ MANAGER-build acceptance 2026-05-18T18:03+02:00
 - Do not duplicate q124. Keep `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` as
   the active DATA-INTEGRITY generated-template route; q123 remains separate
   pending normal manager acceptance.
+
+MANAGER-build acceptance 2026-05-18T18:10+02:00
+- Accepted `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` from PR #418 /
+  `f15404a`.
+- Clean current-main verification in `/tmp/sct-manager-build-q123-1779120511`
+  passed: direct old-wording scan for `avsnittet` / `this section` across
+  `data/additionalQuestions.ts`, `site/questions.js`, and
+  `content/question-bank.csv`; q123 source spot-checks preserving UHR section
+  `Hinduism och buddhism` and page 43; `node scripts/export-question-bank.js
+  --check`; `node scripts/export-site-question-bank.js --check`; `npm run
+  validate:content`; focused content/source/static tests 23/23; `node --check
+  site/questions.js`; `npm run typecheck -- --pretty false`; `npm run
+  test:ownership`; targeted Prettier; `git diff --check f15404a^..f15404a`;
+  and serialized `npm run test:content -- --test-concurrency=1` 298/298.
+- Do not duplicate q123. Keep `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` as
+  the active DATA-INTEGRITY generated-template route.
