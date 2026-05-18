@@ -27,8 +27,9 @@ const sourceCitationCopy: Record<AppLanguage, SourceCitationCopy> = {
 
 /**
  * Defaults: `language="sv"`, source title `"Sverige i fokus"`,
- * `accessibilityRole="text"`, and localized citation labels. Pass a
- * `reference` to render the source line separately from disclaimer copy.
+ * `accessibilityRole="text"`, `showLabel=true`, and localized citation
+ * labels. Pass a `reference` to render the source line separately from
+ * disclaimer copy.
  */
 export interface SourceCitationProps extends Omit<
   ComponentProps<typeof View>,
@@ -41,6 +42,7 @@ export interface SourceCitationProps extends Omit<
   language?: AppLanguage;
   metaStyle?: StyleProp<TextStyle>;
   reference?: UHRReference;
+  showLabel?: boolean;
   sourceTitle?: string;
   style?: StyleProp<ViewStyle>;
   unavailableLabel?: string;
@@ -75,6 +77,7 @@ export function SourceCitation({
   language = 'sv',
   metaStyle,
   reference,
+  showLabel = true,
   sourceTitle = 'Sverige i fokus',
   style,
   unavailableLabel,
@@ -95,7 +98,9 @@ export function SourceCitation({
       style={[styles.container, style]}
       {...viewProps}
     >
-      <NativeText style={[styles.label, labelStyle]}>{resolvedLabel}</NativeText>
+      {showLabel ? (
+        <NativeText style={[styles.label, labelStyle]}>{resolvedLabel}</NativeText>
+      ) : null}
       {hasCustomBody ? (
         children
       ) : (
