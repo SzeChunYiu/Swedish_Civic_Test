@@ -11,6 +11,30 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T22:25:00+02:00 active-lease correction:
+- Current `origin/main` is `ac324c3`. Reviewer q551-q600 evidence is now
+  queued, q451-q500 DATA-INTEGRITY source repair is accepted on main, and
+  chapter-record VERIFY is landed, but none of those releases a q551-q600
+  CONTENT-VERIFY lease while q501-q550 remains unresolved.
+- `verify:data/questions.ts q501-q550` remains canonical with CONTENT-VERIFY
+  Pane 4 on branch `task/verify/q501-q550-pane4-1779135135`. The local
+  recovery worktree `/tmp/sct-verify-q501-q550-pane4-recover-1779135135` is
+  clean and one commit ahead of current main. Remote head `f6494f40` is rebased
+  over the q451 acceptance and chapter audit. Pane 4 must ensure the standard
+  VERIFY/content/type/ownership/diff gates were rerun after the rebase, then
+  open/merge the PR.
+- The stale q551 placeholder worktree
+  `/tmp/sct-content-verify-q551-q600-pane3-1779135550` is no longer present,
+  and branch `task/content-verify/q551-q600-pane3-1779135550` still has no
+  remote head. Do not recreate, publish, or continue q551-q600 VERIFY work
+  unless q501-q550 lands/rejects/abandons or VALIDATOR explicitly reroutes.
+- Chapter-record VERIFY is landed on `origin/main` via `c4c863b`; do not
+  duplicate branch `task/verify/chapters-pane3-1779135722` unless VALIDATOR
+  rejects that evidence.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T22:16:00+02:00 active-lease correction:
 - Current `origin/main` is `8e3aa16`. `verify:data/questions.ts q451-q500` is
   landed, including the q479 correction from `8e3aa16`; do not duplicate stale
