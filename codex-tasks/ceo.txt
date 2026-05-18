@@ -178,3 +178,42 @@ Manager updates queued: appended CEO directives to `codex-tasks/validator.txt`,
 `codex-tasks/content.txt`, and `codex-tasks/blockers.txt`. Direct tmux input was
 skipped because no local build/validator manager pane exists and the only local
 session is active content panes.
+
+Cycle update 2026-05-18T19:44:00+02:00
+Objective: keep the factory on P0 burn-down with SITE-P0-5 production
+freshness as the only external release blocker, while source-side work closes
+the remaining static-site surface defects and generated-content wording
+residuals.
+Required docs read: `docs/parallel-sessions.md`,
+`docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`,
+project queue files, and supervisor fallback copies of
+`ceo-executive.md`, `company-operating-model.md`, `ai-factory.md`, and
+`ceo-staffing.md`. The requested `/home/billy/docs/...` path and project-local
+operating-doc paths remain absent.
+Teams: HOLD/add-none. `/home/billy/bin/csup staff --scenario=resume --dry-run`
+reported queued work (`work=7`, `blockers=7`) for configured hosts, but every
+host held with `reason=lunarc_requires_slurm_station`; no `--apply` was run.
+Local tmux still shows only `_csup_sentinel_` and `civic-content` with six
+panes. `csup factory-audit civic-test` is RED for `missing:project_config`, so
+do not use factory-run/apply as a launch signal until that audit is reconciled.
+Evidence: latest observed `origin/main` is `d72fe29`; its delta over the
+checked source commit is coordination/evidence-only. Current source checks passed
+`npm run validate:content` at 720 questions, `node
+scripts/export-site-question-bank.js --check`, `npm run
+test:static-site-practice-result-i18n`, and `npm run typecheck -- --pretty
+false`. Production still fails `npm run test:site-live -- https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app`
+because live serves 715 questions with hash `afb9eec56629` while current main
+expects 720 and hash `57e05be047f9`.
+Priorities: VALIDATOR can accept Practice result i18n after reviewing the
+SETUP source/handoff evidence and should keep SITE-P0-5 open until production
+serves current main. Next SETUP order is static flag palette drift, mobile nav
+reachability, then static question-count copy. DATA-INTEGRITY remains first on
+`REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` from clean current main with q201-q720
+evidence; unknown-material option cleanup stays behind it unless VALIDATOR
+bundles safely. CONTENT should hand off capacity unless VALIDATOR leases the
+paired authored true/false prefix cleanup with DATA-INTEGRITY mirrors. UIUX is
+held behind explicit validator lease and the flag-constants blocker.
+Escalations: human/operator deployment capacity or an operator-verified
+production deploy remains required for SITE-P0-5. Direct tmux input was skipped
+because no local build/validator/UIUX manager pane is active and content has no
+new implementation instruction beyond the queued handoff.

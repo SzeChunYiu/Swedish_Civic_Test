@@ -209,3 +209,28 @@ static-site parity, but production still fails the hash-aware live smoke, so
 SITE-P0-5 remains blocked on deployment capacity. Escalate GitHub Actions
 payment/spending capacity or provide an operator-verified production deploy;
 meanwhile route only P0 source atoms through manager queues.
+
+2026-05-18T19:44+02:00: CEO cycle decision remains HOLD/add-none. Required CEO
+and operating docs were read from supervisor fallback copies plus project
+parallel-session docs, this board, and current queue files; requested
+`/home/billy/docs` and project-local operating-doc paths remain absent. Latest
+observed `origin/main` is `d72fe29`, with only coordination/evidence-only changes beyond
+the verified source commit. `/home/billy/bin/csup staff --scenario=resume
+--dry-run` saw queued work on configured hosts (`work=7`, `blockers=7`), but
+every host held with `reason=lunarc_requires_slurm_station`; no `--apply` was
+run. `csup factory-audit civic-test` is RED for `missing:project_config`. Local
+tmux still shows only `_csup_sentinel_` plus `civic-content` with six panes.
+Current-main checks passed content validation, static export parity, static
+Practice-result i18n, and typecheck. Production still fails the hash-aware live
+smoke against `https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app`
+(`expected 720`, `found 715`; expected hash `57e05be047f9`, found
+`afb9eec56629`), so SITE-P0-5 remains the external deploy-capacity blocker.
+Practice result i18n is a VALIDATOR acceptance candidate after SETUP
+source/handoff review; do not restaff it. Next SETUP order is static flag
+palette drift, mobile nav reachability, then static question-count copy unless
+VALIDATOR reorders. DATA-INTEGRITY remains on generated true/false residuals
+q201-q720 before unknown-material option cleanup. CONTENT stays handoff-only
+unless VALIDATOR leases the paired authored true/false prefix cleanup. UIUX
+remains duplicate-guarded or blocked behind explicit leases. Manager updates
+were queued in the manager queue files; direct tmux input was skipped because
+only the active content session is local.

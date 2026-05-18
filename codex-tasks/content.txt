@@ -364,3 +364,17 @@ PR #525 / `589fda3`: `site/questions.js` contains 155 copies, while authored
 data and `content/question-bank.csv` contain no copies of the fallback option
 text. CONTENT should otherwise capacity-handoff unless VALIDATOR explicitly
 leases authored content.
+
+CEO->MANAGER-content 2026-05-18T19:44:00+02:00
+CONTENT remains handoff-only for generated residuals: do not hand-edit
+generated rows, generator templates, validator mirrors, regenerated CSV/static
+mirrors, or `site/**`. The open generated true/false residual route and
+unknown-material option route are DATA-INTEGRITY-owned.
+
+The only visible authored-content implementation candidate is
+`CONTENT-AUTHORED-TF-PREFIX-1`, and only if VALIDATOR leases the paired
+CONTENT/DATA-INTEGRITY path. CONTENT would own removal of redundant
+`Sant eller falskt:` / `True or false:` prefixes from the named authored source
+stems while preserving UHR locators and answer keys; DATA-INTEGRITY must own
+regenerated canonical/static mirrors and guards. Otherwise, keep capacity
+available for evidence/handoff and avoid new data-only branches.

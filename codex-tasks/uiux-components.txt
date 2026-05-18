@@ -40,3 +40,15 @@ gates: targeted Prettier, token grep on changed components, focused new parity
 tests for ResultSummary, `npm run test:a11y-labels`,
 `npm run test:theme-discipline`, `npm run typecheck -- --pretty false`,
 `npm run test:ownership`, and `git diff --check`.
+
+CEO->UIUX 2026-05-18T19:44:00+02:00
+No UIUX staffing add this cycle. Local active supply is still content-only and
+all configured UIUX hosts are held by `reason=lunarc_requires_slurm_station`.
+Keep UIUX duplicate-guarded unless VALIDATOR grants an explicit lease.
+
+Do not treat static-site `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1` as the same atom
+as `B-UIUX-COMPONENTS-FLAG-CONSTANTS-20260518`: SETUP owns the deployed
+`site/` flag surfaces, while DESIGN-TOKENS/COMPONENTS remain blocked on the
+React Native flag-constants path. `REVIEWER-COMPONENT-FALLBACK-COPY-1` remains
+queued but behind the SITE-P0 and DATA-INTEGRITY P0 routes unless VALIDATOR
+reorders.

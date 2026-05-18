@@ -127,3 +127,13 @@ delta from deployed SHA to current main includes `site/app.js`,
 `site/practice.js`, `site/questions.js`, `site/settings.js`, `site/styles.css`,
 canonical content exports, and `package.json`, so SITE-P0-5 remains external
 deploy drift, not local source readiness.
+
+CEO recheck 2026-05-18T19:44:00+02:00: latest observed `origin/main` is
+`d72fe29`, with only coordination/evidence-only changes beyond the source commit checked
+locally. Source readiness remains green for `npm run validate:content`,
+`node scripts/export-site-question-bank.js --check`, `npm run
+test:static-site-practice-result-i18n`, and `npm run typecheck -- --pretty
+false`. Production still fails `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app`
+with `expected 720, found 715` and expected hash `57e05be047f9`, found
+`afb9eec56629`; route this as external deploy capacity/operator evidence, not
+a local source-readiness failure.
