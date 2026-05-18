@@ -19,11 +19,20 @@ export function buildQuestionSpeechText(question: SpeakableQuestion): string {
   return `${promptText} ${optionText}`.trim();
 }
 
-export function speakSwedish(text: string): void {
+export interface SpeakSwedishOptions {
+  /** Playback rate. Default 1.0. expo-speech clamps engine-supported range. */
+  rate?: number;
+}
+
+export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): void {
   const speechText = text.trim();
   if (speechText.length === 0) return;
+  const rate =
+    typeof options.rate === 'number' && options.rate > 0
+      ? Math.max(0.1, Math.min(2.0, options.rate))
+      : undefined;
   try {
-    Speech.speak(speechText, { language: 'sv-SE' });
+    Speech.speak(speechText, { language: 'sv-SE', ...(rate !== undefined ? { rate } : {}) });
   } catch (error) {
     console.warn('Speech unavailable:', error);
   }
