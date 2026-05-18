@@ -410,3 +410,26 @@ Next worker task queued: none for local SETUP source. Keep live deploy
 freshness external until production serves current main and the hash-aware live
 smoke passes; keep `REVIEWER-SEARCH-PLACEHOLDER-1` on P1 hold unless VALIDATOR
 elevates it.
+
+Iteration: 2026-05-18T21:44+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`VERIFY-GENERATED-TF-Q301-Q350-POST650-WORDING-1` as the queue-level
+DATA-INTEGRITY closure for q318/q319 age phrasing, q346/q347 UN-purpose stems,
+and q350/q351 UN-declaration standalone stems.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: source commit `120d440` is on current `origin/main`. Clean manager
+verification in `/tmp/sct-manager-build-q301-accept-1779133212` passed
+`npm run validate:content`, `npm run test:derived-content`, focused
+published/static/content-gate tests 25/25, canonical/static export parity,
+`node --check site/questions.js`, `npm run typecheck -- --pretty false`,
+`npm run lint`, `npm run test:ownership`, targeted Prettier, `git diff --check
+120d440^..120d440`, direct q318/q319/q346/q347/q350/q351 CSV/static residual
+scan with 0 offenders, and serialized `npm run test:content --
+--test-concurrency=1` 310/310.
+Next worker task queued: DATA-INTEGRITY -
+`VERIFY-GENERATED-TF-STANDALONE-Q351-Q400-POST642-1` remains next for
+q358/q359/q371/q374/q375/q398/q399 standalone-referent, answer-clarity, and
+Swedish-naturalness defects; start from clean current main and require
+generator/validator/static mirror evidence plus the standard content/type/lint/
+ownership/Prettier/diff gates before acceptance.
