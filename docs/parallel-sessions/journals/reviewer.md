@@ -3784,3 +3784,27 @@ Evidence: the ad-supported v1.0 goal requires a physical-device QA sign-off temp
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route RELEASE/COMPLY to add the template plus a guard before store submission; keep actual iOS/Android device QA blocked until real EAS preview evidence fills it.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-TMfBdT` / `task/reviewer/single-choice-meta-stem-post-fillers-1779151200`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main partial resolution recheck for `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1` after DATA-INTEGRITY removed generated filler shells.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active validator/data-integrity/setup/uiux queues, blockers, and reviewer history before queueing.
+- Used a clean temporary worktree on current `origin/main` `b9116df`; the shared checkout has unrelated local lane files and was not reset.
+- Direct VM inspection of `site/questions.js` found 720 total questions, 421 `single_choice` rows, zero generated single-choice fallback-option rows, zero true/false judgement-shell rows, and 133 ordinary generated single-choice rows still beginning with `Which answer is correct?` / `Vilket svar är korrekt?`.
+- The same scan spot-checked `q663`, `q670`, `q671`, and `q698`; q698 remains capitalized correctly, while the separate q651-q700 naturalness residuals remain outside this bounded pass.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions, `generatedSingleChoiceFillerOptionsValidated:576`, `questionJudgementMetaStemsValidated:720`, and static-site parity true.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 720 questions.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-static-site-question-bank-parity.test.js tests/content-test-gate-parity.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 39/39 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing DATA-INTEGRITY finding updated instead of filing a duplicate.
+Findings queued: `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1 partial resolution recheck [2026-05-19 00:00 CEST]`.
+Evidence: current main closes the generic filler-option and true/false judgement-shell surfaces, but still publishes 133 ordinary generated single-choice meta-prefix stems while current validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept only the filler-option/judgement-shell subclosure after source/PR inspection; keep DATA-INTEGRITY routed to remove or rewrite the remaining 133 ordinary generated single-choice meta-stems in canonical CSV and static output.
