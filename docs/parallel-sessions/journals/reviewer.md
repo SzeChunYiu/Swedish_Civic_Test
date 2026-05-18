@@ -2482,6 +2482,6 @@ Verification (commands + result):
 - `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 705 questions and 705 bilingual text pairs validated.
 - `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 705-question export parity OK.
 - `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0; 6/6 passing.
-PR (number + merged?): #238 / pending before merge attempt.
+PR (number + merged?): #238 / merged yes via squash commit `69b2220`.
 Accepted by worker? yes
 Next suggested validator action: assign a CONTENT-owned q079 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 popular-movements facts about labour, free church, women, and temperance movements; keep TRANSLATE-COMPLETE open because current validators stay green while this defect exists.
