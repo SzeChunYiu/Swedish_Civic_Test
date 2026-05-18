@@ -319,7 +319,7 @@ function main() {
     return;
   }
 
-  const artifactDir = fs.mkdtempSync(path.join(os.tmpdir(), 'almost-swedish-release-loop-'));
+  const artifactDir = fs.mkdtempSync(path.join(os.tmpdir(), 'swedish-civic-test-release-loop-'));
   const results = buildSteps(artifactDir).map(runStep);
   const status = writeReport(path.resolve(args.out), results, artifactDir);
   copySelectedArtifacts(path.resolve(args.out), artifactDir);

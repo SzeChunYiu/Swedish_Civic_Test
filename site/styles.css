@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------
-   Almost Swedish — public site
+   Sveriges Medborgartest — public site
    Palette: Swedish flag blue + gold, warm-cream paper, deep navy.
    Type: Bricolage Grotesque (display), Manrope (body),
          Instrument Serif italic (flourish accents).
@@ -296,7 +296,7 @@ p.deck {
   border-top: 1px solid var(--line);
 }
 .list-quiet li {
-  display: flex; align-items: flex-start; gap: 24px;
+  display: flex; align-items: baseline; gap: 24px;
   padding: 22px 4px;
   border-bottom: 1px solid var(--line);
   font-family: var(--display);
@@ -314,20 +314,6 @@ p.deck {
   color: var(--blue);
   min-width: 32px;
   letter-spacing: .08em;
-}
-.list-quiet__copy {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 4px;
-}
-.list-quiet__meta {
-  color: var(--ink-soft);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0;
-  line-height: 1.25;
 }
 
 
@@ -596,49 +582,6 @@ p.deck {
   letter-spacing: .04em;
   line-height: 1.5;
 }
-.quiz__source-row {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0 0 24px;
-}
-.quiz__source-row .quiz__source,
-.quiz__source-row .quiz__feedback-source,
-.quiz__source-row .mock-review__source {
-  flex: 1 1 240px;
-  margin: 0;
-}
-.quiz__provenance {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 3px 9px;
-  color: var(--ink-soft);
-  background: var(--paper-warm);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-.quiz__provenance--uhr {
-  color: var(--blue-ink);
-  background: rgba(0,106,167,.08);
-  border-color: rgba(0,106,167,.28);
-}
-.quiz__provenance--derived {
-  color: #5a3416;
-  background: var(--gold-soft);
-  border-color: rgba(217,169,0,.45);
-}
-.quiz__provenance--editorial {
-  color: var(--ink-soft);
-  background: var(--white);
-}
 .quiz__disclaimer {
   margin: -14px 0 24px;
   color: var(--ink-soft);
@@ -680,9 +623,6 @@ p.deck {
 }
 .quiz__feedback b { color: var(--ink); }
 .quiz__feedback.is-wrong { background: #fbe9df; border-left-color: #c2410c; }
-.quiz__feedback .quiz__source-row {
-  margin: 14px 0 0;
-}
 .quiz__feedback-source {
   margin: 14px 0 0;
   color: var(--ink-soft);
@@ -1095,8 +1035,8 @@ p.deck {
   font-weight: 700;
   letter-spacing: 0;
 }
-.mock-result.is-strong .mock-result__verdict { color: #1e874b; }
-.mock-result.needs-study .mock-result__verdict { color: #c2410c; }
+.mock-result.is-pass .mock-result__verdict { color: #1e874b; }
+.mock-result.is-fail .mock-result__verdict { color: #c2410c; }
 .mock-result__pct {
   margin: 0 0 32px;
   font-family: var(--mono);
@@ -1214,9 +1154,6 @@ p.deck {
   font-size: 11px;
   letter-spacing: .04em;
   line-height: 1.5;
-}
-.mock-review__body .quiz__source-row {
-  margin: 10px 0 0;
 }
 .mock-review__disclaimer {
   margin: 8px 0 0;
@@ -1593,9 +1530,7 @@ p.deck {
 .ebook__nav-n { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); min-width: 22px; letter-spacing: .08em; }
 
 .ebook__reader { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 56px clamp(28px, 5vw, 64px) 60px; min-height: 70vh; max-width: 760px; }
-.ebook__meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .ebook__crumb { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
-.ebook__provenance-badge { display: inline-flex; align-items: center; min-height: 24px; border-radius: 999px; padding: 4px 10px; background: var(--paper-warm); border: 1px solid var(--line); color: var(--ink-soft); font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .ebook__h1 { font-family: var(--display); font-weight: 700; font-size: clamp(34px, 4.4vw, 52px); line-height: 1.04; letter-spacing: -.025em; margin: 14px 0 18px; text-wrap: balance; }
 .ebook__h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--blue); }
 .ebook__lede { font-size: 19px; line-height: 1.55; color: var(--ink-soft); max-width: 56ch; margin: 0 0 32px; }
@@ -1616,7 +1551,7 @@ p.deck {
 .ebook__study-actions p { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
 .ebook__progress { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
 .ebook__study-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
-.ebook__study-links .btn { min-height: 44px; padding: 10px 14px; font-size: 13px; white-space: nowrap; }
+.ebook__study-links .btn { min-height: 42px; padding: 10px 14px; font-size: 13px; white-space: nowrap; }
 
 .ebook__notes { margin-top: 18px; }
 .ebook__notes h2 { margin-top: 28px; }
@@ -2216,124 +2151,3 @@ p.deck {
   background: #16212e; border-color: #25313e; color: var(--gold);
 }
 :root[data-theme="dark"] .cheats__panel { box-shadow: 8px 8px 0 var(--gold); }
-
-/* ============================================================ V1.1 DASHBOARD */
-.v11-band { padding: 48px 0; background: var(--paper-warm, #faf9f7); }
-.v11-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 24px;
-}
-.v11-card {
-  background: var(--paper, #fff);
-  border: 1px solid var(--line, rgba(0,0,0,.08));
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.v11-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--ink-soft, #888);
-}
-/* Readiness ring */
-.v11-score-ring {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 4px auto;
-}
-.v11-score-inner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-.v11-score-inner strong { font-size: 22px; font-weight: 700; }
-.v11-score-inner small  { font-size: 11px; color: var(--ink-soft,#888); }
-.v11-verdict { font-weight: 600; font-size: 14px; text-align: center; }
-.v11-sparse  { font-size: 11px; color: var(--ink-soft,#888); text-align: center; }
-.v11-components {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
-}
-.v11-components span {
-  font-size: 11px;
-  background: var(--paper-warm,#faf9f7);
-  border: 1px solid var(--line,rgba(0,0,0,.07));
-  border-radius: 99px;
-  padding: 2px 8px;
-  color: var(--ink-soft,#888);
-}
-/* Streak */
-.v11-streak-num {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--gold, #d4930a);
-  text-align: center;
-}
-.v11-streak-unit { font-size: 18px; font-weight: 400; margin-left: 2px; }
-.v11-freeze-banner {
-  font-size: 12px;
-  color: var(--blue, #2e86c1);
-  margin: 0;
-  text-align: center;
-}
-.v11-freeze-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  justify-content: center;
-  margin-top: 4px;
-}
-.v11-freeze-pip {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--line, #ddd);
-}
-.v11-freeze-pip--on { background: var(--blue, #2e86c1); }
-.v11-freeze-label { font-size: 11px; color: var(--ink-soft,#888); margin-left: 4px; }
-/* Weekly recap */
-.v11-recap-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.v11-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 56px;
-}
-.v11-stat strong { font-size: 22px; font-weight: 700; line-height: 1; }
-.v11-stat small   { font-size: 11px; color: var(--ink-soft,#888); }
-.v11-stat--warn strong { color: #e05b2e; }
-/* Weak chapters */
-.v11-weak-list { display: flex; flex-direction: column; gap: 10px; }
-.v11-weak-item {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-.v11-weak-title { font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.v11-weak-acc   { font-size: 12px; font-variant-numeric: tabular-nums; }
-.v11-weak-link  { font-size: 12px; color: var(--blue,#2e86c1); text-decoration: none; white-space: nowrap; }
-.v11-weak-link:hover { text-decoration: underline; }
-
-/* Dark mode */
-:root[data-theme="dark"] .v11-card { background: #18222e; border-color: #25313e; }
-:root[data-theme="dark"] .v11-band { background: #111c26; }
-:root[data-theme="dark"] .v11-components span { background: #111c26; border-color: #25313e; }

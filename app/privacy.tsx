@@ -26,7 +26,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Inget konto krävs',
       },
       localProgressStorage: {
-        body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, studiesviter och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus.',
+        body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, streaks och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus.',
         title: 'Lokal lagring av framsteg',
       },
       gdprRights: {
@@ -38,7 +38,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Annonser och köp',
       },
       adConsent: {
-        body: 'På iOS begärs App Tracking Transparency innan spårningsbaserad annonsering. Där det krävs visas Google UMP-samtyckesformuläret innan riktiga AdMob-annonser visas. Annonser kan blockeras eller begäras som icke-personanpassade annonser när samtyckesbeslutet inte tillåter personanpassad annonsering.',
+        body: 'På iOS begärs App Tracking Transparency innan spårningsbaserad annonsering. Där det krävs visas Google UMP consent-formuläret innan riktiga AdMob-annonser visas. Annonser kan blockeras eller begäras som icke-personanpassade annonser när samtyckesbeslutet inte tillåter personanpassad annonsering.',
         title: 'Annonssamtycke',
       },
       providerProcessing: {

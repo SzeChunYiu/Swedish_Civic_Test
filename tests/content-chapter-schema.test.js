@@ -27,7 +27,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/chapters.ts')) {
     return String(contents)
       .replace("    nameEn: 'The country of Sweden',", "    nameEn: 'Landet Sverige',")
-      .replace('    questionCount: 50,', '    questionCount: 0,');
+      .replace('    questionCount: 25,', '    questionCount: 0,');
   }
   return contents;
 };

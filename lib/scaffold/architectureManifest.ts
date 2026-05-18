@@ -39,7 +39,6 @@ export const architectureRouterShellRuntimeFiles = [
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
-  'app/dashboard.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -125,7 +124,6 @@ export const architectureSharedUiRuntimeFiles = [
 export const architectureThemeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
-  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',

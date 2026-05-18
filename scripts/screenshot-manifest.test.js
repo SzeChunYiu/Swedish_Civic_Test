@@ -11,7 +11,7 @@ function readJson(relativePath) {
 
 test('store screenshot manifest covers required listing surfaces', () => {
   const manifest = readJson('publishing/screenshot-manifest.json');
-  assert.equal(manifest.appName, 'Almost Swedish');
+  assert.equal(manifest.appName, 'Sweden Citizenship Test Prep');
   assert.equal(manifest.status, 'web-draft-only');
   assert.match(manifest.finalDeviceRequirement, /real devices/i);
   assert.ok(manifest.shots.length >= 8);
