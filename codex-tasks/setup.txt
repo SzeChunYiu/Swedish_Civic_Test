@@ -1,4 +1,4 @@
-MANAGER-build queue - 2026-05-18T17:05+02:00
+MANAGER-build queue - 2026-05-18T18:25+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
 items, SETUP should take only atoms that close validator/reviewer defects with
@@ -118,6 +118,20 @@ Accepted P0 SETUP atoms:
       `npm run typecheck -- --pretty false`, `npm run test:ownership`,
       Prettier for `scripts/build-config.test.js`, and `git diff --check
       0572be8^..0572be8` all exit 0.
+14. `REVIEWER-NATIVE-ACCOUNT-SCOPE-1` accepted via PR #476 / `dc8fecf`.
+    - Clean manager verification on current `origin/main` `93e6d5a` passed
+      `npm run test:native-account-scope` 4/4, `npm run typecheck -- --pretty
+      false` after linking the existing dependency tree into the temp worktree,
+      `npm run test:compliance`, `npm run test:router-shell` 5/5, `npm run
+      test:architecture` 22/22, `npm run validate:content`, focused
+      profile/legal route parity tests 8/8, `npm run lint`, `npm run
+      test:ownership`, `npm run test:monetization` 21/21,
+      `npm run test:static-site-account-scope` 2/2, `npm run
+      test:static-site-privacy-copy` 2/2, export/static parity, and `git diff
+      --check dc8fecf^..dc8fecf`. The first temp-worktree typecheck failed
+      because `node_modules` was absent, then passed after dependency linking;
+      broad `npm run test:build-config` hung in this temp environment and is
+      not counted as manager acceptance evidence.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
@@ -329,13 +343,66 @@ open as the remaining SITE-P0 blocker; it needs production deploy capacity or
 operator-verified production deploy evidence, not another local visual-smoke
 source atom.
 
-REVIEWER-NATIVE-ACCOUNT-SCOPE-1 [P0 scope/privacy][SETUP/build]:
-The static-site account cleanup is accepted, but the native Expo app still
-ships account/auth/Supabase surfaces despite the current v1.0 no-account MVP
-scope. See `codex-tasks/validator.txt` for evidence. Route one source atom to
-remove or hide the native `(auth)` and `account` flows, AccountHeader/
-AccountSection/WelcomeBanner sign-in/sync copy, remote entitlement reads, and
-Supabase runtime dependency/copy, or obtain an explicit operator scope change
-for accounts. Acceptance needs source changes in `app/`, `components/`, `lib/`,
-or dependency manifests, a native account-scope guard, typecheck, ownership,
-relevant compliance/profile tests, and `git diff --check`.
+MANAGER-build acceptance 2026-05-18T18:25+02:00:
+`REVIEWER-NATIVE-ACCOUNT-SCOPE-1` is accepted via PR #476 / `dc8fecf`. Current
+main has no native `(auth)` route, `account` route, `components/auth`, `lib/auth`,
+or `lib/supabase.ts`, and the native account-scope guard plus router,
+architecture, compliance, content, lint, monetization, ownership, and parity
+checks passed as recorded above. Do not duplicate this SETUP atom.
+
+Active unblocked P0 SETUP source atoms while live deploy is externally blocked:
+
+3. `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1`
+   - Scope: deployed static `site/` Practice and Mock review question feedback.
+   - Required behavior: static Practice feedback and Mock result review must
+     render localized UHR source citations from `q.source` and the independent
+     study / not-a-real-exam disclaimer for each reviewed question. The copy
+     must match the product stance used by the app question flows and must not
+     claim official authority.
+   - Required gates: focused static browser or DOM guard proving the citation
+     and disclaimer appear after answering Practice and inside Mock review;
+     `node --check` for changed `site/` scripts; static question-bank parity if
+     `site/questions.js` changes; `npm run validate:content`; typecheck;
+     ownership; targeted Prettier/diff checks; journal handoff; PR/merge
+     evidence.
+   - Reviewer evidence: `site/questions.js` carries `q.source`, but
+     `site/app.js`/`site/practice.js` feedback renders question, answer, and
+     `q.why` only. Local Chrome against `site/` showed
+     `practiceAfterHasCitation:false`, `practiceAfterHasDisclaimer:false`,
+     `mockReviewHasCitation:false`, and `mockReviewHasDisclaimer:false`.
+
+4. `REVIEWER-SITE-ANSWER-SHUFFLE-1`
+   - Scope: deployed static `site/` Practice and Mock option display, scoring,
+     and review.
+   - Required behavior: static Practice and Mock must not render answer options
+     in stored bank order for single-choice questions. Add deterministic
+     per-session/per-question answer-option shuffling, remap scoring/review to
+     the displayed order, and keep true/false ordering stable if the worker
+     documents that product decision.
+   - Required gates: static-site guard rejecting correct-position concentration
+     above 35% for single-choice display order; focused Practice and Mock
+     runtime tests proving shuffled labels score and review correctly; `node
+     --check` for changed `site/` scripts; typecheck; ownership; targeted
+     Prettier/diff checks; journal handoff; PR/merge evidence.
+   - Reviewer evidence: direct `site/questions.js` VM load counted 705 static
+     questions with answer indexes `[533,160,12,0]`, so slot A is correct for
+     75.6% of the static bank. `site/app.js` and `site/practice.js` both render
+     `q.opts.map(...)` in stored order.
+
+5. `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`
+   - Scope: deployed static `site/` Settings language changes while a Practice
+     chapter quiz or Mock exam is active.
+   - Required behavior: changing language through Settings must immediately
+     rerender the active Practice question surface and Mock landing/exam/result
+     surfaces, not only save `localStorage` or update global chrome. The
+     Settings path and the existing inline language controls must share the
+     same rerender behavior.
+   - Required gates: static browser guard for Settings EN-to-SV on
+     `#/practice?c=1` and `#/mock?run=1`, proving active question/UI labels
+     switch language without a full reload; `node --check` for changed `site/`
+     scripts; typecheck; ownership; targeted Prettier/diff checks; journal
+     handoff; PR/merge evidence.
+   - Reviewer evidence: Settings -> Language -> Svenska set `{doc:"sv",
+     saved:"sv"}`, but active Practice still showed `Where is Sweden located?`
+     plus English answers, and active Mock still showed `MOCK EXAM`,
+     `TIME LEFT`, `Submit`, and English navigation labels.

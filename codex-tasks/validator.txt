@@ -635,3 +635,24 @@ MANAGER-build QA 2026-05-18T18:20+02:00
   `validate:content`, `test:derived-content`, typecheck, ownership,
   Prettier/diff, PR/merge, and current-main residual-row recheck pass.
 REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1 [product defect][2026-05-18 18:18 CEST][P0 SITE][language]: The deployable static site Settings language control changes the saved language but does not re-render active Practice or Mock exam task surfaces. Evidence from clean `origin/main` served with `python3 -m http.server 8224 --bind 127.0.0.1 --directory site` plus system-Chrome Playwright: on `#/practice?c=1`, clicking Settings -> Language -> Svenska set `{doc:"sv", saved:"sv"}` but `#quiz-stage` still showed `Where is Sweden located?`, `Source: ... p. 5`, and English answer options; `afterSettingsStillEnglish:true`, `afterSettingsHasSwedish:false`. On `#/mock?run=1`, the same Settings path set `{doc:"sv", saved:"sv"}` but `#mock-stage` still showed `MOCK EXAM`, `TIME LEFT`, `Submit`, and English question-navigation labels; `afterSettingsStillEnglishUi:true`, `afterSettingsHasSwedishUi:false`. Browser console/page errors were 0. Code inspection matches the runtime: `site/settings.js` handles `[data-set="language"]` with `applyLang(v)` only, while `site/app.js` re-renders the Practice quiz only for `.lang button[data-lang]` clicks and `site/practice.js` re-renders only the Practice hub, not active chapter quizzes or Mock exam. Manager action: assign SETUP/site to centralize language-change events so Settings language changes immediately re-render active Practice quiz and Mock landing/exam/result surfaces, then add a static browser guard for the Settings EN/SV path on `#/practice?c=1` and `#/mock?run=1`.
+
+MANAGER-build acceptance 2026-05-18T18:25+02:00
+- Accepted `REVIEWER-NATIVE-ACCOUNT-SCOPE-1` from PR #476 / `dc8fecf`.
+- Clean current-main verification in
+  `/tmp/sct-manager-build-route-static-site-p0-1779121359` passed `npm run
+  test:native-account-scope` 4/4; `npm run typecheck -- --pretty false` after
+  linking the shared dependency tree into the temp worktree; `npm run
+  test:compliance`; `npm run test:router-shell` 5/5; `npm run
+  test:architecture` 22/22; `npm run validate:content`; focused profile/legal
+  route parity tests 8/8; `npm run lint`; `npm run test:ownership`; `npm run
+  test:monetization` 21/21; `npm run test:static-site-account-scope` 2/2;
+  `npm run test:static-site-privacy-copy` 2/2; export/static parity; and `git
+  diff --check dc8fecf^..dc8fecf`.
+- Environment notes: the first temp-worktree typecheck failed because
+  `node_modules` was absent, then passed after dependency linking. Broad
+  `npm run test:build-config` hung in this temp environment and was terminated,
+  so it is not counted as acceptance evidence.
+- Do not duplicate native account-scope work. SETUP now owns the static-site
+  citation/disclaimer defect first, then static answer-option shuffling, then
+  Settings language rerender, while live deploy freshness remains externally
+  blocked.

@@ -66,3 +66,30 @@ validator mirror coverage, focused negative guards, regenerated CSV/static
 mirror, export/static parity, `validate:content`, `test:derived-content`,
 typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a fresh
 current-main residual-row recheck before acceptance.
+
+Iteration: 2026-05-18T18:25+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-NATIVE-ACCOUNT-SCOPE-1` as the queue-level closure for the native
+Expo no-account MVP scope defect.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #476 is closed and merged as `dc8fecf`; current `origin/main`
+`93e6d5a` contains it after PR #477. Clean manager verification in
+`/tmp/sct-manager-build-route-static-site-p0-1779121359` passed `npm run
+test:native-account-scope` 4/4, `npm run typecheck -- --pretty false` after
+linking the existing dependency tree into the temp worktree, `npm run
+test:compliance`, `npm run test:router-shell` 5/5, `npm run test:architecture`
+22/22, `npm run validate:content`, focused profile/legal route parity tests
+8/8, `npm run lint`, `npm run test:ownership`, `npm run test:monetization`
+21/21, `npm run test:static-site-account-scope` 2/2, `npm run
+test:static-site-privacy-copy` 2/2, export/static parity, and `git diff
+--check dc8fecf^..dc8fecf`. The first temp-worktree typecheck failed only
+because `node_modules` was absent; broad `npm run test:build-config` hung in
+this temp environment and was not counted as acceptance evidence.
+Next worker task queued: SETUP - fix
+`REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1` first, then
+`REVIEWER-SITE-ANSWER-SHUFFLE-1`, then
+`REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`, with source changes, focused
+static-site guards, typecheck, ownership, diff checks, journal handoff, and
+PR/merge evidence. Keep native account-scope duplicate-guarded and keep live
+deploy freshness blocked on external production deploy evidence.
