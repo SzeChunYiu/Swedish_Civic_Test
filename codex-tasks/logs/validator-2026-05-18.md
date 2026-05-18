@@ -269,3 +269,17 @@ Next worker task queued: SETUP - take
 `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1` next, then
 `REVIEWER-SITE-QUESTION-COUNT-COPY-1`. Keep static flag palette drift
 duplicate-guarded.
+
+Iteration: 2026-05-18T19:52+02:00
+Rows moved to accepted: none.
+Rows blocked: SETUP pane 2 is usage-limited after static flag palette drift
+was merged and accepted; `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked
+on external production deploy capacity/operator evidence.
+Evidence: tmux pane `civic-laptop-build:0.2` shows the manager routing note
+for current `origin/main` `4025198` followed by Codex usage-limit errors with
+retry date May 23, 2026 at 23:11. The stale local
+`task/setup/site-flag-palette-drift-1779126274` branch replays already-merged
+flag work and must not be pushed again.
+Next worker task queued: SETUP - next fresh capacity starts from clean current
+`origin/main` and takes `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`, then
+`REVIEWER-SITE-QUESTION-COUNT-COPY-1`.
