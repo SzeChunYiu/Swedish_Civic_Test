@@ -2018,3 +2018,11 @@ Question count / verification: No content source changed. Current `origin/main` 
 Verification: required lane docs read; `git fetch origin`; `git worktree list --porcelain`; tmux pane capture for active q201 workers; diff/status checks for Pane 1 and Pane 3 worktrees; scoped `git diff --check` on the coordination files.
 PR: pending at handoff write time.
 Blocked / next validator action: monitor Pane 1 for q201-q250 PR/merge evidence, keep Pane 3's duplicate branch unmerged, then route q251-q300 or the next current changed/due VERIFY slice.
+
+## Manager-content routing correction - 2026-05-18
+Task completed: Corrected the q201-q250 duplicate guard after PR #627 / `cf89455` landed before the prior manager note reached main.
+Artifacts changed: `codex-tasks/content.txt`, `codex-tasks/verify.txt`, `docs/parallel-sessions/journals/content.md`.
+Question count / verification: No content source changed. q201-q250 VERIFY is now on `origin/main` via `cf89455`; treat that report as canonical unless VALIDATOR rejects it. Pane 1 was directly notified not to publish its duplicate q201-q250 work and to sync before taking q251-q300 or the next due/current slice.
+Verification: current `origin/main` log checked; PR #627 / `cf89455` artifact inspected; tmux notice sent to Pane 1; scoped `git diff --check` on coordination files.
+PR: pending at handoff write time.
+Blocked / next validator action: prevent duplicate q201-q250 publication; next unassigned CONTENT-VERIFY work is q251-q300 or the next current changed/due slice.
