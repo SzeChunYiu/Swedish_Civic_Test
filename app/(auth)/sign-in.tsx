@@ -3,6 +3,8 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { FacebookLogo } from '../../components/auth/FacebookLogo';
+import { GoogleLogo } from '../../components/auth/GoogleLogo';
 import { useAuth } from '../../lib/auth/AuthContext';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -27,8 +29,7 @@ export default function SignInScreen() {
       <View style={styles.card}>
         <Text style={styles.title}>Sign in</Text>
         <Text style={styles.subtitle}>
-          Optional. Sign in to sync your progress across devices and keep Remove-Ads tied to your
-          account.
+          Optional. Sync your progress across devices and tie Remove-Ads to your account.
         </Text>
 
         <Pressable
@@ -37,9 +38,14 @@ export default function SignInScreen() {
           accessibilityState={{ disabled: busy !== null, busy: busy === 'google' }}
           onPress={wrap('google', signInWithGoogle)}
           disabled={busy !== null}
-          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+          style={({ pressed }) => [
+            styles.providerButton,
+            styles.googleButton,
+            pressed && styles.buttonPressed,
+          ]}
         >
-          <Text style={styles.buttonText}>
+          <GoogleLogo size={20} />
+          <Text style={styles.googleText}>
             {busy === 'google' ? 'Opening Google…' : 'Continue with Google'}
           </Text>
         </Pressable>
@@ -50,9 +56,14 @@ export default function SignInScreen() {
           accessibilityState={{ disabled: busy !== null, busy: busy === 'facebook' }}
           onPress={wrap('facebook', signInWithFacebook)}
           disabled={busy !== null}
-          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+          style={({ pressed }) => [
+            styles.providerButton,
+            styles.facebookButton,
+            pressed && styles.buttonPressed,
+          ]}
         >
-          <Text style={styles.buttonText}>
+          <FacebookLogo size={20} />
+          <Text style={styles.facebookText}>
             {busy === 'facebook' ? 'Opening Facebook…' : 'Continue with Facebook'}
           </Text>
         </Pressable>
@@ -67,6 +78,12 @@ export default function SignInScreen() {
           />
         ) : null}
 
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>OR</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Continue without signing in"
@@ -75,6 +92,10 @@ export default function SignInScreen() {
         >
           <Text style={styles.skipText}>Continue without signing in</Text>
         </Pressable>
+
+        <Text style={styles.fineprint}>
+          By signing in you accept our terms and privacy policy. We never receive your password.
+        </Text>
       </View>
     </View>
   );
@@ -91,9 +112,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: radius.small,
+    borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
-    gap: space[2],
+    gap: space[1.5],
     maxWidth: 420,
     padding: space[4],
     width: '100%',
@@ -103,6 +124,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.subHeading.fontFamily,
     fontSize: typography.subHeading.fontSize,
     fontWeight: typography.subHeading.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
   },
   subtitle: {
     color: colors.textMuted,
@@ -111,16 +133,32 @@ const styles = StyleSheet.create({
     lineHeight: typography.body.lineHeight,
     marginBottom: space[1],
   },
-  button: {
+  providerButton: {
     alignItems: 'center',
-    backgroundColor: colors.accent,
     borderRadius: radius.small,
-    paddingVertical: space[1.75],
+    flexDirection: 'row',
+    gap: space[1.5],
+    justifyContent: 'center',
+    paddingVertical: space[1.5],
+  },
+  googleButton: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  facebookButton: {
+    backgroundColor: colors.brandFacebook,
   },
   buttonPressed: {
-    backgroundColor: colors.accentActive,
+    opacity: 0.85,
   },
-  buttonText: {
+  googleText: {
+    color: colors.text,
+    fontFamily: typography.bodySemibold.fontFamily,
+    fontSize: typography.bodySemibold.fontSize,
+    fontWeight: typography.bodySemibold.fontWeight,
+  },
+  facebookText: {
     color: colors.surface,
     fontFamily: typography.bodySemibold.fontFamily,
     fontSize: typography.bodySemibold.fontSize,
@@ -130,13 +168,37 @@ const styles = StyleSheet.create({
     height: space[6],
     width: '100%',
   },
+  divider: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space[1],
+    marginTop: space[0.5],
+  },
+  dividerLine: {
+    backgroundColor: colors.border,
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+  },
+  dividerText: {
+    color: colors.textMuted,
+    fontFamily: typography.micro.fontFamily,
+    fontSize: typography.micro.fontSize,
+    letterSpacing: typography.micro.letterSpacing,
+  },
   skipButton: {
     alignItems: 'center',
-    paddingVertical: space[1.5],
+    paddingVertical: space[1],
   },
   skipText: {
     color: colors.textMuted,
     fontFamily: typography.captionLight.fontFamily,
     fontSize: typography.captionLight.fontSize,
+  },
+  fineprint: {
+    color: colors.textMuted,
+    fontFamily: typography.disclaimer.fontFamily,
+    fontSize: typography.disclaimer.fontSize,
+    lineHeight: typography.disclaimer.lineHeight,
+    textAlign: 'center',
   },
 });
