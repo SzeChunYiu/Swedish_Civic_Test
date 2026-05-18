@@ -22,6 +22,14 @@ RESOLVED 2026-05-18T15:41+02:00:
 questions and passes static-bank parity. The remaining count issue is the
 separate live-smoke default in `scripts/check-live-site.js`.
 
+RESOLVED 2026-05-18T15:47+02:00:
+`REVIEWER-SITE-LIVE-SMOKE-COUNT-1` is green on current `origin/main` `11b2b96`
+after PR #328. `scripts/check-live-site.js` now derives the default expected
+question count from local `site/questions.js` while preserving the explicit
+`SITE_LIVE_REQUIRED_QUESTION_COUNT` override. Manager verification passed the
+focused live-site test suite, local default current-site smoke at 715 questions,
+and a stale-705 synthetic deploy rejection.
+
 STANDING POLICY (operator, hard — read every cycle):
 1. A dirty worktree from OTHER lanes' in-scope work is NORMAL in this
    parallel factory and is NOT a blocker. Lanes have disjoint write scope.
@@ -43,7 +51,6 @@ STANDING POLICY (operator, hard — read every cycle):
 # SITE-P0-3 is accepted via PR #264 / 19a420e; SITE-P0-4 is accepted via
 # PR #279 / 9def23a plus handoff PR #280 / 41a6bcb. SITE-P0-5 reviewer audit
 # is complete via PR #296 / 82291b1 and queued the concrete defects below.
-REVIEWER-SITE-LIVE-SMOKE-COUNT-1: `scripts/check-live-site.js` still defaults to 705; derive or require current canonical/static count before accepting live-deploy closure
-REVIEWER-SITE-LIVE-DEPLOY-STALE-1: production deploy is stale; PR #321 added the harness, but closure still needs current-count smoke behavior plus production deploy evidence
+REVIEWER-SITE-LIVE-DEPLOY-STALE-1: production deploy is stale; PR #321 added the harness and PR #328 fixed current-count smoke behavior, but closure still needs production deploy evidence from current `origin/main`
 REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1: port the wide Practice hub layout from the draft and guard the desktop width
 REVIEWER-ACCOUNT-SCOPE-1: static `site/` still needs no-account MVP cleanup for Sign in/OAuth/magic-link and local Ebook notes/highlights
