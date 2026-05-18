@@ -3358,3 +3358,25 @@ Evidence: the deployable static bank and Home metadata expose chapter 13, but th
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route SETUP/site or CONTENT-supported site work to add Ebook chapter 13 and a guard that proves all 13 shipped chapters are reachable in the static Ebook.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-prefix-current-Y24dWP/wt` / `task/reviewer/generated-tf-false-explanations-1779132690`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` after DATA-INTEGRITY landed true/false prefix removal.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active validator/setup/data-integrity/content queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `eeeffb9`; the shared checkout has unrelated dirty queue files and was not reset.
+- VM inspection of `site/questions.js` found `720` total questions, `299` true-false questions, `0` redundant true/false prefix offenders, `0` true/false stem meta offenders, and `9` false-answer rows with explanations that still describe the underlying positive statement as true: `q151`, `q167`, `q235`, `q255`, `q331`, `q339`, `q439`, `q507`, and `q715`.
+- Spot check found q666/q667/q699 stems are now grammatically natural enough for the previously routed residual.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionGeneratedTrueFalseNaturalnessValidated: 720`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 25/25 passing.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing finding narrowed instead of filing a duplicate.
+Findings queued: `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1 update [2026-05-18 21:18 CEST]`.
+Evidence: prefix and grammar residuals are clear on current main, but generated false-answer explanations still conflict with the False answer key while current validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept the prefix/grammar portions only after DATA-INTEGRITY source evidence review, then route the remaining generated false-answer explanation guard/fix for the nine named rows.
