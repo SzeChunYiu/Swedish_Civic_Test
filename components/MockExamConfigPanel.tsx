@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
 import { Button } from './Button';
 import { PillBadge } from './PillBadge';
@@ -19,11 +20,76 @@ export interface MockExamChapterOption {
   title: string;
 }
 
+type MockExamConfigPanelCopy = {
+  allChaptersLabel: string;
+  chaptersLabel: string;
+  clearChaptersLabel: string;
+  decrementDurationAccessibilityLabel: string;
+  decrementQuestionAccessibilityLabel: string;
+  durationLabel: string;
+  durationValueLabel: (minutes: number) => string;
+  feedbackLabel: string;
+  incrementDurationAccessibilityLabel: string;
+  incrementQuestionAccessibilityLabel: string;
+  localSaveLabel: string;
+  passingAccessibilityLabel: (label: string, percent: number) => string;
+  passingLabel: string;
+  practiceLabel: string;
+  questionCountLabel: string;
+  resetLabel: string;
+  selectedChaptersValueLabel: (count: number) => string;
+  startLabel: string;
+};
+
+const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
+  sv: {
+    allChaptersLabel: 'Alla',
+    chaptersLabel: 'Kapitel',
+    clearChaptersLabel: 'Inga',
+    decrementDurationAccessibilityLabel: 'Minska provtid',
+    decrementQuestionAccessibilityLabel: 'Minska antal frågor',
+    durationLabel: 'Tid',
+    durationValueLabel: (minutes) => `${minutes} min`,
+    feedbackLabel: 'Ingen återkoppling före inlämning',
+    incrementDurationAccessibilityLabel: 'Öka provtid',
+    incrementQuestionAccessibilityLabel: 'Öka antal frågor',
+    localSaveLabel: 'Sparas lokalt',
+    passingAccessibilityLabel: (label, percent) => `${label} ${percent} procent`,
+    passingLabel: 'Gräns för godkänt',
+    practiceLabel: 'Öva först',
+    questionCountLabel: 'Frågor',
+    resetLabel: 'Återställ',
+    selectedChaptersValueLabel: (count) => (count === 1 ? '1 valt' : `${count} valda`),
+    startLabel: 'Starta provet',
+  },
+  en: {
+    allChaptersLabel: 'All',
+    chaptersLabel: 'Chapters',
+    clearChaptersLabel: 'None',
+    decrementDurationAccessibilityLabel: 'Decrease exam duration',
+    decrementQuestionAccessibilityLabel: 'Decrease question count',
+    durationLabel: 'Time',
+    durationValueLabel: (minutes) => `${minutes} min`,
+    feedbackLabel: 'No feedback until submit',
+    incrementDurationAccessibilityLabel: 'Increase exam duration',
+    incrementQuestionAccessibilityLabel: 'Increase question count',
+    localSaveLabel: 'Saved locally',
+    passingAccessibilityLabel: (label, percent) => `${label} ${percent} percent`,
+    passingLabel: 'Pass',
+    practiceLabel: 'Practice first',
+    questionCountLabel: 'Questions',
+    resetLabel: 'Reset',
+    selectedChaptersValueLabel: (count) => `${count} selected`,
+    startLabel: 'Start exam',
+  },
+};
+
 /**
- * Defaults: English labels, `minQuestionCount=5`, `questionStep=1`,
- * `minDurationMinutes=2`, `maxDurationMinutes=90`, `durationStep=1`,
- * `passingPercent=75`, `accessibilityRole="summary"`, and token-sized
- * press targets. Pass localized labels and callbacks from the owning screen.
+ * Defaults: localized labels from settings, `minQuestionCount=5`,
+ * `questionStep=1`, `minDurationMinutes=2`, `maxDurationMinutes=90`,
+ * `durationStep=1`, `passingPercent=75`, `accessibilityRole="summary"`,
+ * and token-sized press targets. Pass localized labels and callbacks from
+ * the owning screen for screen-specific copy.
  */
 export interface MockExamConfigPanelProps extends Omit<SurfaceProps, 'children'> {
   allChaptersLabel?: string;
@@ -41,6 +107,7 @@ export interface MockExamConfigPanelProps extends Omit<SurfaceProps, 'children'>
   feedbackLabel?: string;
   incrementDurationAccessibilityLabel?: string;
   incrementQuestionAccessibilityLabel?: string;
+  languageOverride?: AppLanguage;
   localSaveLabel?: string;
   maxDurationMinutes?: number;
   maxQuestionCount: number;
@@ -201,23 +268,24 @@ function Stepper({
 export function MockExamConfigPanel({
   accessibilityLabel,
   accessibilityRole = 'summary',
-  allChaptersLabel = 'All',
+  allChaptersLabel,
   chapters,
   chaptersHint,
-  chaptersLabel = 'Chapters',
-  clearChaptersLabel = 'None',
-  decrementDurationAccessibilityLabel = 'Decrease exam duration',
-  decrementQuestionAccessibilityLabel = 'Decrease question count',
+  chaptersLabel,
+  clearChaptersLabel,
+  decrementDurationAccessibilityLabel,
+  decrementQuestionAccessibilityLabel,
   durationHint,
-  durationLabel = 'Time',
+  durationLabel,
   durationMinutes,
   durationStep = 1,
-  durationValueLabel = (minutes) => `${minutes} min`,
+  durationValueLabel,
   elevation = 'card',
-  feedbackLabel = 'No feedback until submit',
-  incrementDurationAccessibilityLabel = 'Increase exam duration',
-  incrementQuestionAccessibilityLabel = 'Increase question count',
-  localSaveLabel = 'Saved locally',
+  feedbackLabel,
+  incrementDurationAccessibilityLabel,
+  incrementQuestionAccessibilityLabel,
+  languageOverride,
+  localSaveLabel,
   maxDurationMinutes = 90,
   maxQuestionCount,
   minDurationMinutes = 2,
@@ -230,25 +298,50 @@ export function MockExamConfigPanel({
   onSelectAllChapters,
   onStart,
   onToggleChapter,
-  passingLabel = 'Pass',
+  passingLabel,
   passingPercent = 75,
-  practiceLabel = 'Practice first',
+  practiceLabel,
   questionCount,
   questionCountHint,
-  questionCountLabel = 'Questions',
+  questionCountLabel,
   questionStep = 1,
-  resetLabel = 'Reset',
+  resetLabel,
   selectedChapterIds = chapters.map((chapter) => chapter.id),
-  selectedChaptersValueLabel = (count) => `${count} selected`,
+  selectedChaptersValueLabel,
   startAccessibilityLabel,
   startDisabled = false,
-  startLabel = 'Start exam',
+  startLabel,
   style,
   subtitle,
   title,
   tone = 'surface',
   ...surfaceProps
 }: MockExamConfigPanelProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = mockExamConfigPanelCopy[language];
+  const resolvedAllChaptersLabel = allChaptersLabel ?? copy.allChaptersLabel;
+  const resolvedChaptersLabel = chaptersLabel ?? copy.chaptersLabel;
+  const resolvedClearChaptersLabel = clearChaptersLabel ?? copy.clearChaptersLabel;
+  const resolvedDecrementDurationAccessibilityLabel =
+    decrementDurationAccessibilityLabel ?? copy.decrementDurationAccessibilityLabel;
+  const resolvedDecrementQuestionAccessibilityLabel =
+    decrementQuestionAccessibilityLabel ?? copy.decrementQuestionAccessibilityLabel;
+  const resolvedDurationLabel = durationLabel ?? copy.durationLabel;
+  const resolvedDurationValueLabelGetter = durationValueLabel ?? copy.durationValueLabel;
+  const resolvedFeedbackLabel = feedbackLabel ?? copy.feedbackLabel;
+  const resolvedIncrementDurationAccessibilityLabel =
+    incrementDurationAccessibilityLabel ?? copy.incrementDurationAccessibilityLabel;
+  const resolvedIncrementQuestionAccessibilityLabel =
+    incrementQuestionAccessibilityLabel ?? copy.incrementQuestionAccessibilityLabel;
+  const resolvedLocalSaveLabel = localSaveLabel ?? copy.localSaveLabel;
+  const resolvedPassingLabel = passingLabel ?? copy.passingLabel;
+  const resolvedPracticeLabel = practiceLabel ?? copy.practiceLabel;
+  const resolvedQuestionCountLabel = questionCountLabel ?? copy.questionCountLabel;
+  const resolvedResetLabel = resetLabel ?? copy.resetLabel;
+  const resolvedSelectedChaptersValueLabelGetter =
+    selectedChaptersValueLabel ?? copy.selectedChaptersValueLabel;
+  const resolvedStartLabel = startLabel ?? copy.startLabel;
   const safeMinQuestionCount = Math.max(0, Math.round(minQuestionCount));
   const safeMaxQuestionCount = Math.max(safeMinQuestionCount, Math.round(maxQuestionCount));
   const safeQuestionCount = clamp(questionCount, safeMinQuestionCount, safeMaxQuestionCount);
@@ -258,19 +351,20 @@ export function MockExamConfigPanel({
   const selectedChapterCount = getSelectedCount(chapters, selectedChapterIds);
   const hasSelectableChapters = chapters.some((chapter) => !chapter.disabled);
   const startIsDisabled = startDisabled || !onStart || selectedChapterCount === 0;
-  const resolvedDurationValueLabel = durationValueLabel(safeDuration);
-  const resolvedSelectedChaptersValueLabel = selectedChaptersValueLabel(selectedChapterCount);
+  const resolvedDurationValueLabel = resolvedDurationValueLabelGetter(safeDuration);
+  const resolvedSelectedChaptersValueLabel =
+    resolvedSelectedChaptersValueLabelGetter(selectedChapterCount);
 
   return (
     <Surface
       accessibilityLabel={
         accessibilityLabel ??
         getPanelAccessibilityLabel({
-          chaptersLabel,
-          durationLabel,
+          chaptersLabel: resolvedChaptersLabel,
+          durationLabel: resolvedDurationLabel,
           durationValueLabel: resolvedDurationValueLabel,
           questionCount: safeQuestionCount,
-          questionCountLabel,
+          questionCountLabel: resolvedQuestionCountLabel,
           selectedChaptersValueLabel: resolvedSelectedChaptersValueLabel,
           title,
         })
@@ -291,7 +385,7 @@ export function MockExamConfigPanel({
           ) : null}
         </View>
         <PillBadge
-          accessibilityLabel={`${passingLabel} ${passingPercent} percent`}
+          accessibilityLabel={copy.passingAccessibilityLabel(resolvedPassingLabel, passingPercent)}
           variant="accent"
         >
           {passingPercent}%
@@ -301,9 +395,9 @@ export function MockExamConfigPanel({
       <View style={styles.controlsGrid}>
         <View style={styles.controlCard}>
           <Stepper
-            decrementAccessibilityLabel={decrementQuestionAccessibilityLabel}
-            incrementAccessibilityLabel={incrementQuestionAccessibilityLabel}
-            label={questionCountLabel}
+            decrementAccessibilityLabel={resolvedDecrementQuestionAccessibilityLabel}
+            incrementAccessibilityLabel={resolvedIncrementQuestionAccessibilityLabel}
+            label={resolvedQuestionCountLabel}
             max={safeMaxQuestionCount}
             min={safeMinQuestionCount}
             onChange={onQuestionCountChange}
@@ -320,9 +414,9 @@ export function MockExamConfigPanel({
 
         <View style={styles.controlCard}>
           <Stepper
-            decrementAccessibilityLabel={decrementDurationAccessibilityLabel}
-            incrementAccessibilityLabel={incrementDurationAccessibilityLabel}
-            label={durationLabel}
+            decrementAccessibilityLabel={resolvedDecrementDurationAccessibilityLabel}
+            incrementAccessibilityLabel={resolvedIncrementDurationAccessibilityLabel}
+            label={resolvedDurationLabel}
             max={safeMaxDuration}
             min={safeMinDuration}
             onChange={onDurationMinutesChange}
@@ -341,7 +435,7 @@ export function MockExamConfigPanel({
       <View style={styles.chapterSection}>
         <View style={styles.sectionHeader}>
           <View style={styles.headerCopy}>
-            <Text variant="label">{chaptersLabel}</Text>
+            <Text variant="label">{resolvedChaptersLabel}</Text>
             {chaptersHint ? (
               <Text tone="secondary" variant="caption">
                 {chaptersHint}
@@ -350,31 +444,37 @@ export function MockExamConfigPanel({
           </View>
           <View style={styles.selectActions}>
             <Button
-              accessibilityLabel={allChaptersLabel}
+              accessibilityLabel={resolvedAllChaptersLabel}
               accessibilityRole="button"
               accessibilityState={{ disabled: !onSelectAllChapters || !hasSelectableChapters }}
               disabled={!onSelectAllChapters || !hasSelectableChapters}
+              languageOverride={language}
               onPress={onSelectAllChapters}
               size="sm"
               variant="ghost"
             >
-              {allChaptersLabel}
+              {resolvedAllChaptersLabel}
             </Button>
             <Button
-              accessibilityLabel={clearChaptersLabel}
+              accessibilityLabel={resolvedClearChaptersLabel}
               accessibilityRole="button"
               accessibilityState={{ disabled: !onClearChapters || !hasSelectableChapters }}
               disabled={!onClearChapters || !hasSelectableChapters}
+              languageOverride={language}
               onPress={onClearChapters}
               size="sm"
               variant="ghost"
             >
-              {clearChaptersLabel}
+              {resolvedClearChaptersLabel}
             </Button>
           </View>
         </View>
 
-        <View accessibilityLabel={chaptersLabel} accessibilityRole="summary" style={styles.chips}>
+        <View
+          accessibilityLabel={resolvedChaptersLabel}
+          accessibilityRole="summary"
+          style={styles.chips}
+        >
           {chapters.map((chapter) => {
             const selected = selectedChapterIds.some((selectedId) =>
               idsMatch(selectedId, chapter.id),
@@ -421,43 +521,46 @@ export function MockExamConfigPanel({
       </View>
 
       <View style={styles.metaRow}>
-        <PillBadge>{`${passingPercent}% ${passingLabel}`}</PillBadge>
-        <PillBadge>{feedbackLabel}</PillBadge>
-        <PillBadge>{localSaveLabel}</PillBadge>
+        <PillBadge>{`${passingPercent}% ${resolvedPassingLabel}`}</PillBadge>
+        <PillBadge>{resolvedFeedbackLabel}</PillBadge>
+        <PillBadge>{resolvedLocalSaveLabel}</PillBadge>
       </View>
 
       <View style={styles.actions}>
         <Button
-          accessibilityLabel={startAccessibilityLabel ?? startLabel}
+          accessibilityLabel={startAccessibilityLabel ?? resolvedStartLabel}
           accessibilityRole="button"
           accessibilityState={{ disabled: startIsDisabled }}
           disabled={startIsDisabled}
+          languageOverride={language}
           onPress={onStart}
           style={styles.primaryAction}
           variant="primary"
         >
-          {startLabel}
+          {resolvedStartLabel}
         </Button>
         <Button
-          accessibilityLabel={practiceLabel}
+          accessibilityLabel={resolvedPracticeLabel}
           accessibilityRole="button"
           accessibilityState={{ disabled: !onPractice }}
           disabled={!onPractice}
+          languageOverride={language}
           onPress={onPractice}
           style={styles.secondaryAction}
           variant="secondary"
         >
-          {practiceLabel}
+          {resolvedPracticeLabel}
         </Button>
         {onReset ? (
           <Button
-            accessibilityLabel={resetLabel}
+            accessibilityLabel={resolvedResetLabel}
             accessibilityRole="button"
+            languageOverride={language}
             onPress={onReset}
             size="sm"
             variant="ghost"
           >
-            {resetLabel}
+            {resolvedResetLabel}
           </Button>
         ) : null}
       </View>
