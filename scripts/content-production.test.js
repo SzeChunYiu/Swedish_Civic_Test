@@ -2,15 +2,17 @@ const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const test = require('node:test');
 
-test('full content production validates 500 published UHR-referenced questions', () => {
+test('full content production validates published UHR-referenced questions', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questions, 500);
-  assert.equal(summary.publishedQuestions, 500);
+  const expectedPublishedQuestions = summary.sourceQuestions + summary.generatedPublishedQuestions;
+  const expectedGeneratedQuestions = summary.sourceQuestions * 4;
+  assert.equal(summary.questions, expectedPublishedQuestions);
+  assert.equal(summary.publishedQuestions, expectedPublishedQuestions);
   assert.equal(summary.chapterSchemasValidated, 13);
   assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
   assert.equal(summary.chapterExactSchemaKeysValidated, 13);
@@ -183,7 +185,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.answerValidationTypeUnionsValidated, 1);
   assert.equal(summary.answerValidationTypeInterfacesValidated, 1);
   assert.equal(summary.answerValidationTypeSchemaParityValidated, true);
-  assert.equal(summary.answerFeedbackQuestionsValidated, 500);
+  assert.equal(summary.answerFeedbackQuestionsValidated, summary.publishedQuestions);
   assert.ok(summary.answerFeedbackOptionsValidated > summary.answerFeedbackQuestionsValidated);
   assert.equal(summary.answerFeedbackRuntimeParityValidated, true);
   assert.ok(summary.answerShuffleSingleChoiceQuestionsValidated > 100);
@@ -194,7 +196,7 @@ test('full content production validates 500 published UHR-referenced questions',
   );
   assert.equal(summary.answerShuffleSeedDistributionsValidated, 50);
   assert.equal(summary.answerShuffleDistributionParityValidated, true);
-  assert.equal(summary.questionSpeechTextQuestionsValidated, 500);
+  assert.equal(summary.questionSpeechTextQuestionsValidated, summary.publishedQuestions);
   assert.ok(
     summary.questionSpeechTextOptionsValidated > summary.questionSpeechTextQuestionsValidated,
   );
@@ -210,34 +212,34 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(summary.masteryRulesValidated, 7);
   assert.equal(summary.masteryRulesParityValidated, true);
-  assert.equal(summary.sourceQuestions, 100);
-  assert.equal(summary.generatedPublishedQuestions, 400);
-  assert.equal(summary.authoredSourceQuestionsValidated, 100);
-  assert.equal(summary.authoredSourcePartitionQuestionsValidated, 100);
-  assert.equal(summary.sourcePublicationParityValidated, 100);
+  assert.equal(summary.sourceQuestions, 120);
+  assert.equal(summary.generatedPublishedQuestions, expectedGeneratedQuestions);
+  assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
+  assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
+  assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
   assert.equal(summary.generationParityValidated, true);
   assert.equal(summary.chapterGenerationParityValidated, 13);
-  assert.equal(summary.generatedSourceMetadataParityValidated, 400);
-  assert.equal(summary.generatedPromptTemplateParityValidated, 400);
-  assert.equal(summary.generatedAnswerTemplateParityValidated, 400);
-  assert.equal(summary.generatedTagTemplateParityValidated, 400);
-  assert.equal(summary.questionSchemasValidated, 500);
-  assert.equal(summary.publishedQuestionTypesValidated, 500);
-  assert.equal(summary.questionIdSequencesValidated, 500);
-  assert.equal(summary.questionBilingualTextPairsValidated, 500);
-  assert.equal(summary.questionOptionBilingualTextPairsValidated, 500);
-  assert.equal(summary.questionExactSchemaKeysValidated, 500);
-  assert.equal(summary.questionTextFieldsNormalizedValidated, 500);
-  assert.equal(summary.questionSentenceEndingsValidated, 500);
-  assert.equal(summary.questionAuthorityBoundaryTextValidated, 500);
-  assert.equal(summary.questionPromptTextUniquenessValidated, 500);
-  assert.equal(summary.questionOptionTextLabelsValidated, 500);
-  assert.equal(summary.questionTypeOptionCountsValidated, 500);
-  assert.equal(summary.questionOptionIdConventionsValidated, 500);
+  assert.equal(summary.generatedSourceMetadataParityValidated, summary.generatedPublishedQuestions);
+  assert.equal(summary.generatedPromptTemplateParityValidated, summary.generatedPublishedQuestions);
+  assert.equal(summary.generatedAnswerTemplateParityValidated, summary.generatedPublishedQuestions);
+  assert.equal(summary.generatedTagTemplateParityValidated, summary.generatedPublishedQuestions);
+  assert.equal(summary.questionSchemasValidated, summary.publishedQuestions);
+  assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
+  assert.equal(summary.questionIdSequencesValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionExactSchemaKeysValidated, summary.publishedQuestions);
+  assert.equal(summary.questionTextFieldsNormalizedValidated, summary.publishedQuestions);
+  assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
+  assert.equal(summary.questionPromptTextUniquenessValidated, summary.publishedQuestions);
+  assert.equal(summary.questionOptionTextLabelsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionTypeOptionCountsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionOptionIdConventionsValidated, summary.publishedQuestions);
   assert.ok(summary.trueFalseQuestions > 0);
   assert.equal(summary.trueFalseOptionLabelsValidated, summary.trueFalseQuestions);
-  assert.equal(summary.questionTagsValidated, 500);
-  assert.equal(summary.questionBankCsvRowsValidated, 500);
+  assert.equal(summary.questionTagsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapExactSchemaKeysValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);
@@ -248,6 +250,6 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.uhrMapPageRangesValidated, 13);
   assert.equal(summary.uhrSourceMaterialLinkParityValidated, true);
   assert.equal(summary.uhrSourceRetrievedDateValidated, true);
-  assert.equal(summary.questionChapterReferenceParityValidated, 500);
-  assert.equal(summary.uhrReferencesValidated, 500);
+  assert.equal(summary.questionChapterReferenceParityValidated, summary.publishedQuestions);
+  assert.equal(summary.uhrReferencesValidated, summary.publishedQuestions);
 });

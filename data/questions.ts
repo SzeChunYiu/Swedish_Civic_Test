@@ -634,7 +634,7 @@ export const sourceQuestions: PracticeQuestion[] = publishQuestions([
 
 export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
-  101,
+  sourceQuestions.length + 1,
 );
 
 export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];

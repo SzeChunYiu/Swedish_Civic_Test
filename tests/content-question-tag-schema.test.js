@@ -18,7 +18,6 @@ function readValidationSummary() {
 test('published question tags stay lowercase kebab-case and unique', () => {
   const summary = readValidationSummary();
 
-  assert.equal(summary.questionTagsValidated, 500);
   assert.equal(summary.questionTagsValidated, summary.publishedQuestions);
 });
 

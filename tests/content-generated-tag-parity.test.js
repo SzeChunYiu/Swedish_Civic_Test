@@ -14,7 +14,6 @@ test('generated question tags exactly match source tags plus variant convention 
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.generatedTagTemplateParityValidated, 400);
   assert.equal(summary.generatedTagTemplateParityValidated, summary.generatedPublishedQuestions);
 });
 
