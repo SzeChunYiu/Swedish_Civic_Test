@@ -79,8 +79,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Banker, företag och hushåll', 'Banks, companies, and households'],
     ],
     0,
-    'Det politiska ansvaret i Sverige delas mellan nationell nivå (staten), regional nivå (regioner) och kommunal nivå (kommuner). Därför är stat, regioner och kommuner rätt; de andra alternativen blandar ihop det politiska ansvaret med monarki, rättsväsende eller ekonomi.',
-    'Political responsibility in Sweden is divided between the national level (the state), regional level (regions), and local level (municipalities). Therefore the state, regions, and municipalities is correct; the other options confuse political responsibility with monarchy, the justice system, or the economy.',
+    'Det politiska ansvaret i Sverige delas mellan nationell, regional och kommunal nivå. I praktiken betyder det staten, regionerna och kommunerna. EU-beslut kan också påverka Sverige.',
+    'Political responsibility in Sweden is divided between national, regional, and municipal levels. In practice, that means the state, regions, and municipalities. EU decisions can also affect Sweden.',
     ['government', 'levels', 'state-region-municipality'],
   ),
   single(
