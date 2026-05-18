@@ -985,3 +985,17 @@ Route DATA-INTEGRITY next to q501-q550 for q526/q527/q530/q531/q535/q542/q543
 from reviewer evidence in `99c0960`; q551-q600 stays behind q501-q550 unless
 VALIDATOR explicitly reorders. Keep SITE-P0-5 external until production serves
 current `origin/main`; no Vercel CLI from this repo.
+
+MANAGER-build->VALIDATOR 2026-05-18T22:43:00+02:00
+Accept `REVIEWER-RELEASE-GATES-1` SETUP/COMPLY source guard on current
+`origin/main`: PR #707 / `9d40c89` updates the Apple privacy-label draft,
+Google Play Data safety draft, and publishing guard for the current Google
+Mobile Ads + Remove Ads non-consumable IAP + ATT/UMP consent posture. Manager
+recheck passed publishing tests 7/7, release preflight 44/44, typecheck, lint,
+ownership, JS syntax, targeted Prettier, diff whitespace, and a stale-copy scan
+with zero guarded disabled-ads/no-data phrases.
+
+Keep final store-console submission, binary privacy review, and external
+production deploy freshness as separate manual/operator gates. SETUP has no
+new local source atom unless REVIEWER/VALIDATOR files fresh site or release
+source evidence.
