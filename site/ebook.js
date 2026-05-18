@@ -31,7 +31,7 @@
           <h2>What this book is</h2>
           <p>A plain-language reader for Sweden's citizenship test (medborgarskapsprovet). Written for adults learning Swedish civic life from scratch, by someone who's been there.</p>
           <h2>What it's <em>not</em></h2>
-          <p>Not the official material. Not a legal document. Not a substitute for the actual sources — every claim here is footnoted in the <a href="#/sources">sources page</a>.</p>
+          <p>Not the official material. Not a legal document. Not a substitute for UHR's public study material. Use the <a href="#/sources">Sources page</a> for question-bank citations, and check UHR's material when a fact matters.</p>
           <h2>How to use it</h2>
           <ul>
             <li>Each chapter is ~10 minutes to read.</li>
