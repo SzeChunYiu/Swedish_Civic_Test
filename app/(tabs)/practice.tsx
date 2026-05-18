@@ -13,7 +13,7 @@ import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
-import { filterQuestionsByProvenance, getQuestionProvenance } from '../../lib/content/provenance';
+import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
@@ -261,30 +261,6 @@ export default function Screen() {
         ) : null}
       </View>
       <QuestionDisclaimer />
-      {(() => {
-        const provenance = getQuestionProvenance(question);
-        const label =
-          provenance === 'uhr'
-            ? copy.provenanceUhrLabel
-            : provenance === 'derived'
-              ? copy.provenanceSupplementaryLabel
-              : copy.provenanceEditorialLabel;
-        const tone =
-          provenance === 'uhr'
-            ? styles.provenanceUhr
-            : provenance === 'derived'
-              ? styles.provenanceSupplementary
-              : styles.provenanceEditorial;
-        return (
-          <Text
-            accessibilityRole="text"
-            accessibilityLabel={`Provenance: ${label}`}
-            style={[styles.provenanceBadge, tone]}
-          >
-            {label}
-          </Text>
-        );
-      })()}
       <QuestionCard question={question} language={language} />
       <AudioButton
         enabled={audioEnabled}
