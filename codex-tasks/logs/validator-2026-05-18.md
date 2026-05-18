@@ -632,3 +632,29 @@ canonical/static output, export/static parity, content/type/lint/ownership
 gates, PR/merge evidence, and direct scans proving q663/q670/q671 are natural
 while q698 remains capitalized. Keep whole-bank judgement/filler cleanup behind
 this q651-q700 follow-up unless VALIDATOR explicitly reorders.
+
+Iteration: 2026-05-18T23:39+02:00
+Rows moved to accepted: none beyond the 23:31 q698 partial acceptance.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence. DATA-INTEGRITY still has open
+source work in q651-q700 before the broader generated filler routes.
+Evidence: clean detached current-main worktree
+`/tmp/sct-manager-build-origin-VNq4QF/wt` at `origin/main` `09d8cb3` passed
+`node scripts/export-site-question-bank.js --check`, `node
+scripts/export-question-bank.js --check`, `npm run validate:content`,
+`npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 32/32, and `git diff --check` using
+the shared dependency install. Direct static-bank inspection confirms q698 is
+fixed (`Jesu födelse` / `Jesus' birth`), while q663 still says `called Lucia
+procession` and q670/q671 still attach Advent-calendar wording awkwardly.
+The same scan confirms the next broader route remains real: 22 true/false
+judgement-shell single-choice rows, 133 ordinary `Which answer is correct?` /
+`Vilket svar är korrekt?` generated meta-stem rows, and 155 single-choice rows
+with generic filler options.
+Next worker task queued: DATA-INTEGRITY - keep the next source route as the
+q651-q700 q663/q670/q671 follow-up from clean current main. Only after that is
+accepted or rejected should DATA-INTEGRITY take the whole-bank generated
+judgement/filler cleanup, with separate zero-count acceptance for judgement
+shells, ordinary meta-stems, and generic filler options.

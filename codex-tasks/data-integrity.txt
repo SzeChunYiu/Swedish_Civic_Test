@@ -1322,3 +1322,27 @@ must separately prove zero ordinary generated single-choice rows retain
 single-choice rows expose `None of the options is correct` / `Only sometimes`,
 and zero true/false judgement-shell rows remain in both canonical CSV and
 static output.
+
+MANAGER-build current-route update - 2026-05-18T23:39+02:00
+
+Manager verification baseline was `origin/main` `09d8cb3`; later rebases
+through `55f01df` were coordination-only for this route. q698 remains accepted
+and should not be reopened: direct static-bank inspection confirms q698 now
+renders `Jesu födelse` / `Jesus' birth`, and manager gates passed
+static/canonical export parity, `validate:content`, `test:derived-content`,
+focused published/static/content-gate tests 32/32, and `git diff --check`.
+
+The next DATA-INTEGRITY source route is still the q651-q700 residual follow-up
+for q663/q670/q671:
+- q663 English still says `called Lucia procession`.
+- q670 still attaches Advent-calendar wording awkwardly after opening a door.
+- q671 still attaches Advent-calendar wording to the bonfire false statement.
+
+After q663/q670/q671 is accepted or rejected, route the broader generated
+single-choice cleanup. Current-main scan still finds 22 true/false
+judgement-shell single-choice rows, 133 ordinary generated
+`Which answer is correct?` / `Vilket svar är korrekt?` meta-stem rows, and
+155 single-choice rows with generic fallback options. Acceptance for that
+broader cleanup must separately prove zero judgement shells, zero ordinary
+single-choice meta-stems, and zero generic filler-option rows in both
+canonical CSV and `site/questions.js`.
