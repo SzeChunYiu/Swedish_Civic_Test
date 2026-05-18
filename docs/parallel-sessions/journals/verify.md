@@ -217,3 +217,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold q251-q300's stale residual route into the active DATA-INTEGRITY generated true/false cleanup with `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` and the false-explanation guard, then continue rolling VERIFY with q301-q350 or the next changed slice.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-1779131082b`, branch `task/content-verify/1779131082`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-prefix-strip rolling current-output refresh for `verify:data/questions.ts q301-q350`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q301-q350-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL and opened/extracted for printed pages 17-22; q301-q350 facts, citations, answer keys, and ordinary distractors remain supported. Current output at `origin/main` `8bb2ccf` clears the older q301-q350 splice/meta defects and has 0/25 true/false prefix rows in the slice; q331/q339 still have false-answer explanation mismatches, and q318/q319/q346/q347/q350 still need standalone/natural generated-stem cleanup. Focused CSV/static/ledger assertion passed with 50 checked rows, 25 true/false rows, zero prefix rows, false-explanation mismatch rows `q331`/`q339`, residual grammar rows `q318`/`q319`/`q346`/`q347`/`q350`, no stem-level positive/negative meta rows, no missing static rows, and no static text mismatches. `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check`, `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and `git diff --check` passed.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: fold q301-q350 current evidence into the active DATA-INTEGRITY generated true/false cleanup for false-explanation guards and the q318/q319/q346/q347/q350 standalone-stem follow-up, then route the next non-overlapping rolling VERIFY slice.
