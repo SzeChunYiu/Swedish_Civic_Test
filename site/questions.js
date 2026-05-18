@@ -5485,8 +5485,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In present-day Sweden, Buddhists and Hindus are mainly found among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights confuse this section with Christianity, Islam, or Judaism.",
-      "sv": "I dagens Sverige finns det främst buddhister och hinduer bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter blandar ihop avsnittet med kristendom, islam eller judendom."
+      "en": "In present-day Sweden, Buddhists and Hindus are found mainly among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights refer instead to Christianity, Islam, or Judaism.",
+      "sv": "I dagens Sverige finns buddhister och hinduer främst bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter handlar i stället om kristendom, islam eller judendom."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27586,8 +27586,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In present-day Sweden, Buddhists and Hindus are mainly found among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights confuse this section with Christianity, Islam, or Judaism.",
-      "sv": "I dagens Sverige finns det främst buddhister och hinduer bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter blandar ihop avsnittet med kristendom, islam eller judendom."
+      "en": "In present-day Sweden, Buddhists and Hindus are found mainly among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights refer instead to Christianity, Islam, or Judaism.",
+      "sv": "I dagens Sverige finns buddhister och hinduer främst bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter handlar i stället om kristendom, islam eller judendom."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27626,8 +27626,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In present-day Sweden, Buddhists and Hindus are mainly found among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights confuse this section with Christianity, Islam, or Judaism.",
-      "sv": "I dagens Sverige finns det främst buddhister och hinduer bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter blandar ihop avsnittet med kristendom, islam eller judendom."
+      "en": "In present-day Sweden, Buddhists and Hindus are found mainly among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights refer instead to Christianity, Islam, or Judaism.",
+      "sv": "I dagens Sverige finns buddhister och hinduer främst bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter handlar i stället om kristendom, islam eller judendom."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27666,8 +27666,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In present-day Sweden, Buddhists and Hindus are mainly found among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights confuse this section with Christianity, Islam, or Judaism.",
-      "sv": "I dagens Sverige finns det främst buddhister och hinduer bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter blandar ihop avsnittet med kristendom, islam eller judendom."
+      "en": "In present-day Sweden, Buddhists and Hindus are found mainly among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights refer instead to Christianity, Islam, or Judaism.",
+      "sv": "I dagens Sverige finns buddhister och hinduer främst bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter handlar i stället om kristendom, islam eller judendom."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27714,8 +27714,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In present-day Sweden, Buddhists and Hindus are mainly found among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights confuse this section with Christianity, Islam, or Judaism.",
-      "sv": "I dagens Sverige finns det främst buddhister och hinduer bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter blandar ihop avsnittet med kristendom, islam eller judendom."
+      "en": "In present-day Sweden, Buddhists and Hindus are found mainly among immigrants from countries where these religions are large. The options about the Church of Sweden, Sweden’s second-largest religion, and civil rights refer instead to Christianity, Islam, or Judaism.",
+      "sv": "I dagens Sverige finns buddhister och hinduer främst bland invandrare från länder där dessa religioner är stora. Alternativen om Svenska kyrkan, Sveriges näst största religion och medborgerliga rättigheter handlar i stället om kristendom, islam eller judendom."
     },
     "source": {
       "title": "Sverige i fokus",
