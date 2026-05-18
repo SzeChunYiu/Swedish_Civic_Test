@@ -1,6 +1,23 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
+
+const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank');
+
+const repoRoot = path.resolve(__dirname, '..');
+const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
+
+function actualStaticQuestions() {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8'), context, {
+    filename: 'site/questions.js',
+    timeout: 3000,
+  });
+  return context.window.SMT_QUESTIONS;
+}
 
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -11,6 +28,37 @@ test('published question types stay answerable by quiz runtime', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
+});
+
+test('published true/false question banks omit UI-afforded prefixes', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const csvLines = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/);
+
+  const generatedStaticOffenders = generatedSiteBank
+    .filter((question) => question.type === 'true_false')
+    .filter(
+      (question) =>
+        trueFalsePrefixPattern.test(question.q.sv) || trueFalsePrefixPattern.test(question.q.en),
+    )
+    .map((question) => question.id);
+  const actualStaticOffenders = Array.from(actualSiteBank)
+    .filter((question) => question.type === 'true_false')
+    .filter(
+      (question) =>
+        trueFalsePrefixPattern.test(question.q.sv) || trueFalsePrefixPattern.test(question.q.en),
+    )
+    .map((question) => question.id);
+  const csvOffenders = csvLines
+    .filter((line) => line.includes('"true_false"'))
+    .filter((line) => /"(?:Sant eller falskt|True or false)\s*:/.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+
+  assert.deepEqual(generatedStaticOffenders, []);
+  assert.deepEqual(actualStaticOffenders, []);
+  assert.deepEqual(csvOffenders, []);
 });
 
 test('published question type schema rejects non-answerable flashcards', () => {
@@ -231,11 +279,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Det stämmer att Ungefär nästan 11 miljoner människor bor i Sverige.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: It is true that Approximately almost 11 million people live in Sweden.',
       );
   }
@@ -250,7 +298,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -268,11 +316,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Det är korrekt att Svaret är genom att kontrollera information.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: It is correct that the answer is checking information.',
       );
   }
@@ -287,7 +335,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -305,11 +353,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att statschefen saknar politisk makt.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: That the head of state lacks political power describes that Sweden is a constitutional monarchy.',
       );
   }
@@ -324,7 +372,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -342,11 +390,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: Everyone who has the right to vote has one vote each is part of free elections in a democracy.',
       );
   }
@@ -361,7 +409,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -379,11 +427,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.',
       );
   }
@@ -398,7 +446,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -416,11 +464,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: They implement decisions and must follow laws and government instructions describes government agencies.',
       );
   }
@@ -435,7 +483,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -453,11 +501,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Allemansrätten innebär att den ger alla möjlighet att vara i naturen.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: The right of public access means it gives everyone the opportunity to be in nature.',
       );
   }
@@ -472,7 +520,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -490,11 +538,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Genom att allmänna handlingar kan begäras ut.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: By allowing public documents to be requested.',
       );
   }
@@ -509,7 +557,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -527,11 +575,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: The statement is true: Sweden is in the Nordic region.',
       );
   }
@@ -546,7 +594,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -564,11 +612,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Var ligger Sverige?',
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
         'Sant eller falskt: Det är inte sant att Sveriges nordligaste del ligger norr om polcirkeln.',
       )
       .replace(
-        'Where is Sweden located?',
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
         'True or false: It is not true that Sweden is in northern Europe.',
       );
   }
@@ -583,7 +631,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 contains a generated true\/false grammar-splice stem/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 

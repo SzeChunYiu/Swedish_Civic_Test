@@ -73,10 +73,10 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[1].questionSv, 'Sant eller falskt: Sverige ligger i Norden.');
-  assert.equal(derived[1].questionEn, 'True or false: Sweden is located in the Nordic region.');
-  assert.equal(derived[2].questionSv, 'Sant eller falskt: Sverige ligger i Asien.');
-  assert.equal(derived[2].questionEn, 'True or false: Sweden is located in Asia.');
+  assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
+  assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
+  assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
+  assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
   assert.equal(derived[3].questionSv, 'Vilket svar är korrekt? Var ligger Sverige?');
   assert.equal(derived[3].questionEn, 'Which answer is correct? Where is Sweden located?');
   assert.ok(
@@ -97,8 +97,8 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     id: 'q002',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Sverige ligger i Norden.',
-    questionEn: 'True or false: Sweden is in the Nordic region.',
+    questionSv: 'Sverige ligger i Norden.',
+    questionEn: 'Sweden is in the Nordic region.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -151,17 +151,11 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   const trueFalseVariants = derived.filter((question) => question.type === 'true_false');
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionSv),
-    [
-      'Sant eller falskt: Sverige ligger i Norden.',
-      'Sant eller falskt: Sverige ligger inte i Norden.',
-    ],
+    ['Sverige ligger i Norden.', 'Sverige ligger inte i Norden.'],
   );
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionEn),
-    [
-      'True or false: Sweden is in the Nordic region.',
-      'True or false: Sweden is not in the Nordic region.',
-    ],
+    ['Sweden is in the Nordic region.', 'Sweden is not in the Nordic region.'],
   );
   assert.equal(
     derived[3].questionSv,
@@ -174,7 +168,7 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   assert.ok(
     trueFalseVariants.every(
       (question) =>
-        !/Sant eller falskt:\s*(?:Ett korrekt svar|Det är inte sant att|Det stämmer att)|True or false:\s*(?:A correct answer|It is not true that|It is true that)/.test(
+        !/Ett korrekt svar|Det är inte sant att|Det stämmer att|A correct answer|It is not true that|It is true that/.test(
           `${question.questionSv} ${question.questionEn}`,
         ),
     ),
@@ -278,26 +272,20 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
         ),
     ),
   );
-  assert.equal(
-    derived[1].questionSv,
-    'Sant eller falskt: Havet vid Sveriges östra kust heter Östersjön.',
-  );
+  assert.equal(derived[1].questionSv, 'Havet vid Sveriges östra kust heter Östersjön.');
   assert.equal(
     derived[1].questionEn,
-    "True or false: The sea along Sweden's eastern coast is called the Baltic Sea.",
+    "The sea along Sweden's eastern coast is called the Baltic Sea.",
   );
-  assert.equal(
-    derived[5].questionSv,
-    'Sant eller falskt: Nästan 11 miljoner människor bor i Sverige.',
-  );
-  assert.equal(derived[5].questionEn, 'True or false: Almost 11 million people live in Sweden.');
+  assert.equal(derived[5].questionSv, 'Nästan 11 miljoner människor bor i Sverige.');
+  assert.equal(derived[5].questionEn, 'Almost 11 million people live in Sweden.');
   assert.equal(
     derived[9].questionSv,
-    'Sant eller falskt: Ett parti måste få minst 4 procent av rösterna för att komma in i riksdagen.',
+    'Ett parti måste få minst 4 procent av rösterna för att komma in i riksdagen.',
   );
   assert.equal(
     derived[9].questionEn,
-    'True or false: A party must receive at least 4 percent of the votes to enter the Riksdag.',
+    'A party must receive at least 4 percent of the votes to enter the Riksdag.',
   );
 });
 
@@ -585,47 +573,43 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Sant eller falskt: Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
+      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
     ),
   );
   assert.ok(
     text.includes(
-      'True or false: That referendums in Sweden are advisory means politicians do not have to follow the result.',
+      'That referendums in Sweden are advisory means politicians do not have to follow the result.',
+    ),
+  );
+  assert.ok(
+    text.includes("The foremost task of Sweden's regions is to be responsible for health care."),
+  );
+  assert.ok(
+    text.includes(
+      'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
+    ),
+  );
+  assert.ok(
+    text.includes("Sweden's three largest lakes are the Baltic Sea, Kattegat, and Skagerrak."),
+  );
+  assert.ok(
+    text.includes(
+      'A feature of free elections in a democracy is that everyone who has the right to vote has one vote each.',
     ),
   );
   assert.ok(
     text.includes(
-      "True or false: The foremost task of Sweden's regions is to be responsible for health care.",
+      'One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
     ),
   );
   assert.ok(
     text.includes(
-      'True or false: Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
+      'To vote in Sweden’s Riksdag election, you must be a Swedish citizen and at least 18 years old.',
     ),
   );
   assert.ok(
     text.includes(
-      "True or false: Sweden's three largest lakes are the Baltic Sea, Kattegat, and Skagerrak.",
-    ),
-  );
-  assert.ok(
-    text.includes(
-      'True or false: A feature of free elections in a democracy is that everyone who has the right to vote has one vote each.',
-    ),
-  );
-  assert.ok(
-    text.includes(
-      'True or false: One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
-    ),
-  );
-  assert.ok(
-    text.includes(
-      'True or false: To vote in Sweden’s Riksdag election, you must be a Swedish citizen and at least 18 years old.',
-    ),
-  );
-  assert.ok(
-    text.includes(
-      'True or false: A suspected person should be considered innocent until the person has been convicted.',
+      'A suspected person should be considered innocent until the person has been convicted.',
     ),
   );
 });
@@ -635,52 +619,52 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   const byId = new Map(questions.map((question) => [question.id, question]));
   const expectedRows = {
     q151: [
-      'Sant eller falskt: Sveriges nordligaste del ligger inte norr om polcirkeln.',
-      "True or false: Sweden's northernmost part does not lie north of the Arctic Circle.",
+      'Sveriges nordligaste del ligger inte norr om polcirkeln.',
+      "Sweden's northernmost part does not lie north of the Arctic Circle.",
     ],
     q167: [
-      'Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat.',
-      "True or false: The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
+      'Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat.',
+      "The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
     ],
     q235: [
-      'Sant eller falskt: Riksdagen väljer inte statsminister.',
-      'True or false: The Riksdag does not choose the prime minister.',
+      'Riksdagen väljer inte statsminister.',
+      'The Riksdag does not choose the prime minister.',
     ],
     q255: [
-      'Sant eller falskt: Oppositionen ska inte granska regeringens arbete och föreslå annan politik.',
-      'True or false: The opposition should not scrutinize the government’s work and propose alternative policies.',
+      'Oppositionen ska inte granska regeringens arbete och föreslå annan politik.',
+      'The opposition should not scrutinize the government’s work and propose alternative policies.',
     ],
     q266: [
-      'Sant eller falskt: Politiker i Sverige behöver inte följa resultatet av en folkomröstning.',
-      'True or false: Politicians in Sweden do not have to follow the result of a referendum.',
+      'Politiker i Sverige behöver inte följa resultatet av en folkomröstning.',
+      'Politicians in Sweden do not have to follow the result of a referendum.',
     ],
     q267: [
-      'Sant eller falskt: Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning.',
-      'True or false: Politicians in Sweden are required to follow the result of a referendum.',
+      'Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning.',
+      'Politicians in Sweden are required to follow the result of a referendum.',
     ],
     q331: [
-      'Sant eller falskt: Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym.',
-      'True or false: A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.',
+      'Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym.',
+      'A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.',
     ],
     q339: [
-      'Sant eller falskt: Public service-företag ska inte vara oberoende av politiska och andra intressen.',
-      'True or false: Public service companies should not be independent of political and other interests.',
+      'Public service-företag ska inte vara oberoende av politiska och andra intressen.',
+      'Public service companies should not be independent of political and other interests.',
     ],
     q439: [
-      'Sant eller falskt: Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',
-      'True or false: Swedish municipalities do not have to offer older people support and help.',
+      'Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',
+      'Swedish municipalities do not have to offer older people support and help.',
     ],
     q507: [
-      'Sant eller falskt: Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret.',
-      'True or false: Swedish total defence does not include both military defence and civil defence.',
+      'Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret.',
+      'Swedish total defence does not include both military defence and civil defence.',
     ],
     q519: [
-      'Sant eller falskt: År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt.',
-      'True or false: In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.',
+      'År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt.',
+      'In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.',
     ],
     q715: [
-      'Sant eller falskt: Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
-      'True or false: Sweden is not usually divided into Götaland, Svealand, and Norrland.',
+      'Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
+      'Sweden is not usually divided into Götaland, Svealand, and Norrland.',
     ],
   };
 
@@ -705,36 +689,48 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   const expectedRows = {
     q206: [
-      'Sant eller falskt: Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val.',
-      "True or false: Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
+      'Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val.',
+      "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
     ],
     q326: [
-      'Sant eller falskt: Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess.',
-      'True or false: The principle of public access makes it easier to scrutinize authorities by allowing public documents to be requested unless they are covered by secrecy rules.',
+      'Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess.',
+      'The principle of public access makes it easier to scrutinize authorities by allowing public documents to be requested unless they are covered by secrecy rules.',
     ],
     q374: [
-      'Sant eller falskt: Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar.',
-      "True or false: Sweden's five national minorities are Jews, Roma, Sami, Sweden Finns, and Tornedalians.",
+      'Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar.',
+      "Sweden's five national minorities are Jews, Roma, Sami, Sweden Finns, and Tornedalians.",
     ],
     q458: [
-      'Sant eller falskt: Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
-      'True or false: The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.',
+      'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
+      'The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.',
     ],
     q482: [
-      'Sant eller falskt: Sveriges nordiska samarbete sker främst genom Nordiska rådet och Nordiska ministerrådet.',
-      "True or false: Sweden's Nordic cooperation mainly takes place through the Nordic Council and the Nordic Council of Ministers.",
+      'Sveriges nordiska samarbete sker främst genom Nordiska rådet och Nordiska ministerrådet.',
+      "Sweden's Nordic cooperation mainly takes place through the Nordic Council and the Nordic Council of Ministers.",
     ],
     q502: [
-      'Sant eller falskt: Sverige och Finland valde att nästan samtidigt ansöka om medlemskap i Nato efter Rysslands attack mot Ukraina 2022.',
-      "True or false: Sweden and Finland chose to apply for NATO membership at almost the same time after Russia's attack on Ukraine in 2022.",
+      'Sverige och Finland valde att nästan samtidigt ansöka om medlemskap i Nato efter Rysslands attack mot Ukraina 2022.',
+      "Sweden and Finland chose to apply for NATO membership at almost the same time after Russia's attack on Ukraine in 2022.",
     ],
     q550: [
-      'Sant eller falskt: Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
-      'True or false: Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
+      'Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
+      'Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
     ],
     q654: [
-      'Sant eller falskt: Nouruz och Newroz firas vid vårdagjämningen den 21 mars.',
-      'True or false: Nouruz and Newroz are observed at the spring equinox on 21 March.',
+      'Nouruz och Newroz firas vid vårdagjämningen den 21 mars.',
+      'Nouruz and Newroz are observed at the spring equinox on 21 March.',
+    ],
+    q666: [
+      'På påskafton är det vanligt att äta ägg, lamm, lax och sill och att barn får godis i påskägg.',
+      'On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and for children to get candy in Easter eggs.',
+    ],
+    q667: [
+      'På påskafton är det vanligt att tända adventsljus och öppna adventskalendrar.',
+      'On Easter Saturday, it is common to light Advent candles and open Advent calendars.',
+    ],
+    q699: [
+      'Julen firar traditionellt vårens ankomst inom kristendomen.',
+      'Christmas traditionally celebrates the arrival of spring in Christianity.',
     ],
   };
 
@@ -743,18 +739,28 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
   }
 
-  const residualText = questions
-    .filter(
-      (question) =>
-        question.type === 'true_false' &&
-        Number(question.id.replace(/^q/, '')) >= 201 &&
-        Number(question.id.replace(/^q/, '')) <= 720,
-    )
+  const residualQuestions = questions.filter(
+    (question) =>
+      question.type === 'true_false' &&
+      Number(question.id.replace(/^q/, '')) >= 201 &&
+      Number(question.id.replace(/^q/, '')) <= 720,
+  );
+  const residualText = residualQuestions
     .map((question) => `${question.questionSv} ${question.questionEn}`)
     .join('\n');
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|One reason is that so|have they|har de|applies to|gäller för|True or false:\s*(?:By|Apply|Leave|Live)\b|Sant eller falskt:\s*(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)/i,
   );
+  residualQuestions.forEach((question) => {
+    assert.doesNotMatch(question.questionEn, /celebrates The/, question.id);
+    assert.doesNotMatch(question.questionSv, /firar traditionellt [A-ZÅÄÖ]/, question.id);
+    assert.doesNotMatch(question.questionEn, /^(?:By|Apply|Leave|Live)\b/i, question.id);
+    assert.doesNotMatch(
+      question.questionSv,
+      /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
+      question.id,
+    );
+  });
 });
