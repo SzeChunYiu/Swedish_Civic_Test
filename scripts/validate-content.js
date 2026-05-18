@@ -2069,8 +2069,12 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   {
-    label: 'shared Button import',
-    pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
+    label: 'shared OptionCard import',
+    pattern: /import \{ OptionCard \} from '\.\.\/OptionCard';/,
+  },
+  {
+    label: 'OptionCard state type import',
+    pattern: /import type \{ OptionCardState \} from '\.\.\/OptionCard';/,
   },
   {
     label: 'disabled prop',
@@ -2087,6 +2091,10 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   {
     label: 'language-specific copy map',
     pattern: /const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy>/,
+  },
+  {
+    label: 'localized option state label contract',
+    pattern: /stateLabels: Record<Exclude<OptionCardState, 'idle'>, string>;/,
   },
   {
     label: 'Swedish select-answer accessibility copy',
@@ -2106,8 +2114,8 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
       /const accessibilityLabel = resultLabel\s*\?\s*`\$\{label\}, \$\{resultLabel\}`\s*:\s*copy\.selectAccessibilityLabel\(label\);/,
   },
   {
-    label: 'explicit button role',
-    pattern: /accessibilityRole="button"/,
+    label: 'localized OptionCard state label selection',
+    pattern: /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   },
   {
     label: 'selected and disabled state forwarding',
@@ -2118,13 +2126,21 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /disabled=\{disabled\}/,
   },
   {
-    label: 'feedback-aware visible label',
-    pattern: /\{resultLabel \? `\$\{label\}[^`]*\$\{resultLabel\}` : label\}/,
+    label: 'feedback-aware visible label handoff',
+    pattern: /resultLabel=\{resultLabel\}/,
   },
   {
-    label: 'tone-to-variant mapping',
+    label: 'OptionCard state forwarding',
+    pattern: /state=\{state\}/,
+  },
+  {
+    label: 'OptionCard state label forwarding',
+    pattern: /stateLabel=\{stateLabel\}/,
+  },
+  {
+    label: 'tone-to-OptionCard state mapping',
     pattern:
-      /const variant = tone === 'correct' \? 'success' : tone === 'incorrect' \? 'danger' : 'option';/,
+      /function getOptionCardState\(tone: AnswerTone, selected: boolean\): OptionCardState \{\s*if \(tone !== 'idle'\) return tone;\s*return selected \? 'selected' : 'idle';\s*\}/,
   },
   {
     label: 'English and Swedish option label switch',
