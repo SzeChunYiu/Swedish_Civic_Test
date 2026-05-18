@@ -1,3 +1,33 @@
+MANAGER-content current-route correction - 2026-05-19T01:20+02:00
+
+Current `origin/main` is `cf1034b` after SETUP live-deploy recheck
+`69b94c4` and MANAGER-build generated true/false closure acceptance
+`cf1034b`. These newer commits do not open CONTENT source implementation
+work. They do change the q351-q400 route context: `cf1034b` records acceptance
+after DATA-INTEGRITY #809/#819, and a direct current static scan on `cf1034b`
+shows the old q351-q400 defect rows `q358`, `q359`, `q371`, `q374`, `q375`,
+`q398`, and `q399` now publish standalone, learner-visible stems. The existing
+`docs/verify/q351-q400-2026-05-18.md` report and ledger rows are still pinned
+to `120d440` and mark those rows as defects, so the next q351-q400 work is a
+CONTENT-VERIFY refresh/ledger cleanup from clean `cf1034b` or later, not a
+CONTENT source route and not evidence from the old report.
+
+CONTENT source implementation remains handoff-only. `CONTENT-AUTHORED-TF-PREFIX-1`
+is still unleased and must not become a data-only branch. CONTENT must not edit
+`data/**`, `content/question-bank.csv`, `site/**`, generator templates, or
+validator mirrors without an explicit bundled lease.
+
+Fresh CONTENT-VERIFY capacity may take `verify:data/questions.ts q351-q400`
+from clean current `origin/main` `cf1034b` or later. Keep it report-and-queue
+only: inspect UHR citations, facts, answer keys, distractors, naturalness,
+explanations, and current CSV/static output; update only VERIFY-owned
+reports/ledger/queues/journals; reconcile the stale q351-q400 ledger defects
+only if current proof supports it; then rerun export parity,
+`validate:content`, `test:derived-content`, typecheck, ownership, and diff
+whitespace gates before PR/merge. Do not publish q351-q400 evidence based on
+`120d440`, `84f8ab3`, `8782487`, `e33d142`, or pre-`cf1034b` branches unless
+it has been refreshed on `cf1034b` or later.
+
 MANAGER-content current-route correction - 2026-05-19T01:08+02:00
 
 Current `origin/main` is `e33d142` after PR #823 merged the pre-amend 01:04
