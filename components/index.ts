@@ -13,3 +13,4 @@ export * from './ResultSummary';
 export * from './Screen';
 export * from './Surface';
 export * from './Text';
+export * from './quiz/SourceCitation';
