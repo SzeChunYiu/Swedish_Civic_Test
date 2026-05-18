@@ -11,6 +11,27 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T22:16:00+02:00 active-lease correction:
+- Current `origin/main` is `8e3aa16`. `verify:data/questions.ts q451-q500` is
+  landed, including the q479 correction from `8e3aa16`; do not duplicate stale
+  q451 recovery branches unless VALIDATOR rejects the landed evidence and
+  explicitly reroutes.
+- `verify:data/questions.ts q501-q550` is actively owned by CONTENT-VERIFY
+  Pane 4 in `/tmp/sct-verify-q501-q550-pane4-1779135135` on branch
+  `task/verify/q501-q550-pane4-1779135135`. It has local VERIFY/report/queue
+  edits and must rebase or sync to current `origin/main`, preserve the q479
+  correction, rerun the standard VERIFY/content/type/ownership/diff gates, and
+  only then PR/merge.
+- The Pane 3 q501 worktree
+  `/tmp/sct-content-verify-q501-q550-pane3-1779135140` on branch
+  `task/content-verify/q501-q550-pane3-1779135140` is a duplicate placeholder
+  with no file changes at manager check time. Do not publish or continue it
+  unless Pane 4 is rejected, abandoned, or VALIDATOR reroutes.
+- Do not start q551-q600 or another q501 duplicate while Pane 4 q501-q550 is
+  active. Keep VERIFY report-and-queue only: no edits to `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T22:09:00+02:00 active-lease correction:
 - Current `origin/main` is `85fe297`. `verify:data/questions.ts q451-q500` is
   landed via `0d58526`; do not duplicate stale q451 recovery branches unless
