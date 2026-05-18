@@ -105,9 +105,7 @@ const releaseComplianceRouteFiles = [
 const routerShellRuntimeFiles = [
   'app/index.tsx',
   'app/_layout.tsx',
-  'app/(auth)/_layout.tsx',
   'app/(tabs)/_layout.tsx',
-  'app/account.tsx',
   'app/search.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
@@ -559,10 +557,8 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
 
   assert.match(rootLayout, /import\s+\{\s*Stack\s*,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
-    '(auth)',
     '(tabs)',
     '+not-found',
-    'account',
     'index',
     'search',
   ]);
@@ -578,11 +574,6 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
     rootLayout,
     /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
   );
-  assert.match(
-    rootLayout,
-    /<Stack\.Screen\s+name=["']\(auth\)["']\s+options=\{\{\s*presentation:\s*'modal',\s*headerShown:\s*false\s*\}\}/,
-  );
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']account["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']search["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/);
   assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);

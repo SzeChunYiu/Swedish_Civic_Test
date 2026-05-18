@@ -4,7 +4,6 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { space } from '../../lib/theme';
-import { AccountHeader } from '../auth/AccountHeader';
 import { LanguagePicker } from './LanguagePicker';
 import { AudioIcon } from './icons/AudioIcon';
 import { BookmarkIcon } from './icons/BookmarkIcon';
@@ -78,7 +77,6 @@ export function TopBarActions() {
       >
         <SettingsIcon size={22} />
       </Link>
-      <AccountHeader />
     </View>
   );
 }

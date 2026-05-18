@@ -32,7 +32,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
         title: 'Vad du kan rapportera',
       },
       noPersonalData: {
-        body: 'Ta inte med personuppgifter, myndighets-ID, detaljer om migrationsärenden eller känslig kontoinformation i supportmeddelanden.',
+        body: 'Ta inte med personuppgifter, myndighets-ID, detaljer om migrationsärenden eller känslig privat information i supportmeddelanden.',
         title: 'Inga personuppgifter',
       },
       independentStudyTool: {
@@ -54,7 +54,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
         title: 'What to report',
       },
       noPersonalData: {
-        body: 'Please include no personal data, government identifiers, immigration case details, or sensitive account information in support messages.',
+        body: 'Please include no personal data, government identifiers, immigration case details, or sensitive private information in support messages.',
         title: 'No personal data',
       },
       independentStudyTool: {

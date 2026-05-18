@@ -26,8 +26,7 @@
         {
           "userTrackingPermission": "This identifier may be used to deliver relevant study app ads after consent."
         }
-      ],
-      "expo-web-browser"
+      ]
     ],
     "splash": {
       "image": "./assets/splash-icon.png",

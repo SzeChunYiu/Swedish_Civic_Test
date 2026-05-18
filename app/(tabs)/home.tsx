@@ -1,8 +1,6 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { AccountHeader } from '../../components/auth/AccountHeader';
-import { WelcomeBanner } from '../../components/auth/WelcomeBanner';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
@@ -164,23 +162,19 @@ export default function Screen() {
       title={copy.title}
       subtitle={copy.subtitle}
       rightSlot={
-        <View style={styles.rightStack}>
-          <AccountHeader />
-          <View style={styles.goalCard}>
-            <Text accessibilityRole="header" style={styles.goalLabel}>
-              {copy.dailyGoalTitle}
-            </Text>
-            <Text style={styles.goalMetric}>
-              {completedToday}/{dailyGoalAnswers}
-            </Text>
-            <ProgressBar language={language} progress={progress} />
-            <Text style={styles.goalHint}>{nextAction}</Text>
-          </View>
+        <View style={styles.goalCard}>
+          <Text accessibilityRole="header" style={styles.goalLabel}>
+            {copy.dailyGoalTitle}
+          </Text>
+          <Text style={styles.goalMetric}>
+            {completedToday}/{dailyGoalAnswers}
+          </Text>
+          <ProgressBar language={language} progress={progress} />
+          <Text style={styles.goalHint}>{nextAction}</Text>
         </View>
       }
     >
       <SwedishFlagBand />
-      <WelcomeBanner />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -280,10 +274,6 @@ export default function Screen() {
 }
 
 const styles = StyleSheet.create({
-  rightStack: {
-    alignItems: 'flex-end',
-    gap: space[1],
-  },
   statRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
