@@ -268,3 +268,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold q451-q500 current evidence into the active DATA-INTEGRITY generated true/false standalone/naturalness route after q351-q400, then route q501-q550 or the next non-overlapping current changed/due VERIFY slice.
+
+Lane: CONTENT-VERIFY / CONTENT Pane 1
+Host/branch: local worktree `/tmp/sct-q451-q479-correction-pane1-1779134961`, branch `task/verify/q451-q500-q479-correction-pane1-1779134961`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: q451-q500 current-output correction for `q479`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q451-q500-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): Checked current `origin/main` `38cb692` against canonical CSV and `site/questions.js`; `q479` still publishes `Den digitala revolutionen har förändrat bara hur människor firar midsommar.` / `The digital revolution has changed only how people celebrate Midsummer.` Static parity is intact, but the Swedish false-statement word order remains unnatural, so q451-q500 current residual evidence is six rows: `q454`, `q466`, `q470`, `q471`, `q479`, and `q495`. Focused correction assertion passed for report, ledger, queue, CSV/static text, and exact defect set.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: keep `q479` in the active q451-q500 DATA-INTEGRITY generated true/false naturalness route and require current-main spot checks for all six named rows.

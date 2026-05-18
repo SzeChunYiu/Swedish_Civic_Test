@@ -913,27 +913,27 @@ checks for every named row.
 CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T21:50:00+02:00
 `VERIFY-GENERATED-TF-STANDALONE-Q451-Q500-POST642-1` [product defect][P0
 TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on
-current `origin/main` `e4ca949` supersedes the older q451-q500 residual report
+current `origin/main` `38cb692` supersedes the older q451-q500 residual report
 from `c03f88f`. The prior fragment/list/predicate defects are no longer
 current for `q458`, `q459`, `q462`, `q463`, `q467`, `q474`, `q475`, `q478`,
-`q479`, `q482`, `q483`, `q486`, `q487`, `q490`, `q491`, `q494`, `q498`, and
-`q499`, and the slice has zero true/false prefix or meta-wrapper rows in
-canonical CSV and `site/questions.js`. Current remaining generated-output
-defects are five naturalness/standalone true/false stems: `q454` has Swedish
+`q482`, `q483`, `q486`, `q487`, `q490`, `q491`, `q494`, `q498`, and `q499`,
+and the slice has zero true/false prefix or meta-wrapper rows in canonical CSV
+and `site/questions.js`. Current remaining generated-output defects are six
+naturalness/standalone true/false stems: `q454` has Swedish
 mid-sentence capitalization (`att Kungens...`), `q466` has Swedish/English
 mid-sentence capitalization after a splice (`för Samarbetet...` / `for
 Cooperation...`), `q470` and `q471` use `En anledning...` / `One reason...`
-without naming what the reason explains, and `q495` has unnatural Swedish and
+without naming what the reason explains, `q479` has unnatural Swedish adverb
+placement (`har förändrat bara hur...`), and `q495` has unnatural Swedish and
 English word order around `endast` / `only`. Facts, citations, answer keys,
 explanations, and ordinary distractors remain supported by UHR `Sverige i
 fokus` printed pages 32-39. Own this as a generated true/false-stem
-standalone/naturalness follow-up, preferably bundled with the current q401-q450
-standalone-stem DATA-INTEGRITY route if VALIDATOR keeps one route. Acceptance requires
-generator and validator mirror coverage, regenerated `content/question-bank.csv`
-and `site/questions.js`, export/static parity, `validate:content`,
+standalone/naturalness follow-up. Acceptance requires generator and validator
+mirror coverage, regenerated `content/question-bank.csv` and
+`site/questions.js`, export/static parity, `validate:content`,
 `test:derived-content`, focused content gates, typecheck, lint, ownership,
 Prettier/diff checks, PR/merge evidence, and current-main spot checks for the
-five named rows.
+six named rows.
 
 MANAGER-build acceptance 2026-05-18T22:20+02:00
 `REVIEWER-GENERATED-TF-STANDALONE-Q401-Q450-CURRENT-1` is accepted on current
@@ -956,7 +956,7 @@ Do not reopen q406/q407 labour-market-law referent wording, q411 A-kassan
 fragment wording, q446/q447 population-growth referent wording, or q447 `EU`
 capitalization without fresh current-main regression evidence. The next
 DATA-INTEGRITY route is `VERIFY-GENERATED-TF-STANDALONE-Q451-Q500-POST642-1`
-for q454/q466/q470/q471/q495 from clean current main, with generator and
+for q454/q466/q470/q471/q479/q495 from clean current main, with generator and
 validator mirror coverage, regenerated canonical/static output, export/static
 parity, `validate:content`, `test:derived-content`, focused content gates,
 typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and
