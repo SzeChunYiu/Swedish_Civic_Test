@@ -121,56 +121,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q098 | authored-source | q098 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | ca00008 | ok | rolling-source-slice |
 | q099 | authored-source | q099 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | ca00008 | ok | rolling-source-slice |
 | q100 | authored-source | q100 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | ca00008 | ok | rolling-source-slice |
-| q101 | authored-source | q101 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Påsk | 45 | - | restate | oldest-unverified |
-| q102 | authored-source | q102 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | - | restate | oldest-unverified |
-| q103 | authored-source | q103 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Första maj | 46 | - | restate | oldest-unverified |
-| q104 | authored-source | q104 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q105 | authored-source | q105 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q106 | authored-source | q106 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q107 | authored-source | q107 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q108 | authored-source | q108 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q109 | authored-source | q109 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | - | restate | oldest-unverified |
-| q110 | authored-source | q110 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | - | restate | oldest-unverified |
-| q111 | authored-source | q111 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q112 | authored-source | q112 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q113 | authored-source | q113 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | - | restate | oldest-unverified |
-| q114 | authored-source | q114 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q115 | authored-source | q115 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q116 | authored-source | q116 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q117 | authored-source | q117 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | - | restate | oldest-unverified |
-| q118 | authored-source | q118 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | - | restate | oldest-unverified |
-| q119 | authored-source | q119 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | - | restate | oldest-unverified |
-| q120 | authored-source | q120 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | - | restate | oldest-unverified |
-| q121 | authored-source | q121 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q122 | authored-source | q122 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q123 | authored-source | q123 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q124 | authored-source | q124 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | - | restate | oldest-unverified |
-| q125 | authored-source | q125 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | - | restate | oldest-unverified |
-| q126 | authored-source | q126 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Några traditionella högtider under året | 45 | - | restate | oldest-unverified |
-| q127 | authored-source | q127 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q128 | authored-source | q128 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q129 | authored-source | q129 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | - | restate | oldest-unverified |
-| q130 | authored-source | q130 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q131 | authored-source | q131 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Påsk | 45 | - | restate | oldest-unverified |
-| q132 | authored-source | q132 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q133 | authored-source | q133 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | - | restate | oldest-unverified |
-| q134 | authored-source | q134 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q135 | authored-source | q135 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q136 | authored-source | q136 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q137 | authored-source | q137 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q138 | authored-source | q138 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q139 | authored-source | q139 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q140 | authored-source | q140 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q141 | authored-source | q141 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | - | restate | oldest-unverified |
-| q142 | authored-source | q142 | data/additionalQuestions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | - | restate | oldest-unverified |
-| q143 | authored-source | q143 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | - | restate | oldest-unverified |
-| q144 | section-practice | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q145 | true-false | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q146 | false-statement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q147 | judgement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q148 | section-practice | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q149 | true-false | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q150 | false-statement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
+| q101 | authored-source | q101 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 998185a | ok | rolling-source-slice |
+| q102 | authored-source | q102 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | 998185a | ok | rolling-source-slice |
+| q103 | authored-source | q103 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Första maj | 46 | 998185a | ok | rolling-source-slice |
+| q104 | authored-source | q104 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | 998185a | ok | rolling-source-slice |
+| q105 | authored-source | q105 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Advent | 47 | 998185a | ok | rolling-source-slice |
+| q106 | authored-source | q106 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
+| q107 | authored-source | q107 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 998185a | ok | rolling-source-slice |
+| q108 | authored-source | q108 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 998185a | ok | rolling-source-slice |
+| q109 | authored-source | q109 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 998185a | ok | rolling-source-slice |
+| q110 | authored-source | q110 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 998185a | ok | rolling-source-slice |
+| q111 | authored-source | q111 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 998185a | ok | rolling-source-slice |
+| q112 | authored-source | q112 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 998185a | ok | rolling-source-slice |
+| q113 | authored-source | q113 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 998185a | ok | rolling-source-slice |
+| q114 | authored-source | q114 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 998185a | ok | rolling-source-slice |
+| q115 | authored-source | q115 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 998185a | ok | rolling-source-slice |
+| q116 | authored-source | q116 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 998185a | ok | rolling-source-slice |
+| q117 | authored-source | q117 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 998185a | ok | rolling-source-slice |
+| q118 | authored-source | q118 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 998185a | ok | rolling-source-slice |
+| q119 | authored-source | q119 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 998185a | ok | rolling-source-slice |
+| q120 | authored-source | q120 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 998185a | ok | rolling-source-slice |
+| q121 | authored-source | q121 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 998185a | ok | rolling-source-slice |
+| q122 | authored-source | q122 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 998185a | ok | rolling-source-slice |
+| q123 | authored-source | q123 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 998185a | ok | rolling-source-slice |
+| q124 | authored-source | q124 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | 998185a | ok | rolling-source-slice |
+| q125 | authored-source | q125 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | 998185a | ok | rolling-source-slice |
+| q126 | authored-source | q126 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Några traditionella högtider under året | 45 | 998185a | ok | rolling-source-slice |
+| q127 | authored-source | q127 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 998185a | ok | rolling-source-slice |
+| q128 | authored-source | q128 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 998185a | ok | rolling-source-slice |
+| q129 | authored-source | q129 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 998185a | ok | rolling-source-slice |
+| q130 | authored-source | q130 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
+| q131 | authored-source | q131 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 998185a | ok | rolling-source-slice |
+| q132 | authored-source | q132 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Advent | 47 | 998185a | ok | rolling-source-slice |
+| q133 | authored-source | q133 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | 998185a | ok | rolling-source-slice |
+| q134 | authored-source | q134 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | 998185a | ok | rolling-source-slice |
+| q135 | authored-source | q135 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Advent | 47 | 998185a | ok | rolling-source-slice |
+| q136 | authored-source | q136 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | 998185a | ok | rolling-source-slice |
+| q137 | authored-source | q137 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 998185a | ok | rolling-source-slice |
+| q138 | authored-source | q138 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
+| q139 | authored-source | q139 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
+| q140 | authored-source | q140 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
+| q141 | authored-source | q141 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 998185a | ok | rolling-source-slice |
+| q142 | authored-source | q142 | data/additionalQuestions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 998185a | ok | rolling-source-slice |
+| q143 | authored-source | q143 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 998185a | ok | rolling-source-slice |
+| q144 | section-practice | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
+| q145 | true-false | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
+| q146 | false-statement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
+| q147 | judgement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
+| q148 | section-practice | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
+| q149 | true-false | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
+| q150 | false-statement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
 | q151 | judgement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
 | q152 | section-practice | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
 | q153 | true-false | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |

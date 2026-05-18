@@ -37,3 +37,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF opened from
 PR (number + merged?): #381 merged via squash (`2b342b9`)
 Accepted by worker? yes
 Next suggested validator action: review the q051-q100 VERIFY report and then assign `verify:data/questions.ts q101-q150`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-pane3-1779116046`, branch `task/content-verify/pane3-1779116046`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q101-q150` citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q101-q150-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF opened from the current UHR utbildningsmaterial page for every cited chapter/section/page group; no q101-q150 defects found; `q101`-`q143` authored-source rows and generated rows `q144`-`q150` marked `ok` at `998185a`; generated variants after `q150` remain separate `restate` rows. `node scripts/export-question-bank.js --check` passed at 715 questions; direct ledger assertion passed for exactly q101-q150 and confirmed q151/q544/q715 remain `restate`; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed; `git diff --check` passed.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: review the q101-q150 VERIFY report and then assign the next rolling slice starting at `q151`.
