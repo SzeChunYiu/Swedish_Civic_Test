@@ -3165,3 +3165,25 @@ Evidence: current main closes the mobile-nav reachability row but still publishe
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: accept/reject the mobile-nav SETUP atom from source/handoff evidence, keep question-count copy as the next local SITE/source atom, and keep live deploy freshness open until production serves current main.
+
+Lane: REVIEWER
+Host/branch: `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-main-CpOA1E/wt` / `task/reviewer/site-count-copy-current-1779127856`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main SITE recheck for static Home chapter-count copy.
+Changed artifacts: `codex-tasks/validator.txt`; `codex-tasks/setup.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active setup/data-integrity/validator queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main`, then rebased through `60f5827` after SETUP fixed the stale question-count copy and through `16dbe4d` after DATA-INTEGRITY advanced main; the shared checkout has unrelated dirty queue/report files and is on a gone task branch.
+- Confirmed `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/.shared/review-to-queue.sh`, and repo-local `.shared/review-to-queue.sh` are absent, so the existing validator/setup queue rows were updated directly.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `node --check site/app.js`, `node --check site/practice.js`, and `node --check site/settings.js` - exit 0.
+- Served current `site/` with `python3 -m http.server 8271 --bind 127.0.0.1 --directory site`.
+- Initial smoke on `3898bf8` found stale 500/500+ question copy plus stale Twelve/Tolv chapter copy. After rebasing onto `60f5827`, `rg -n "500\\+|core 500|Twelve chapters|Tolv kapitel|Free MVP|Gratis MVP" site/index.html site/app.js site/i18n-extras.js -S` showed the 500 claims were fixed but `Twelve chapters` / `Tolv kapitel` remained.
+- System-Chrome Home smoke after the rebase showed `window.SMT_QUESTIONS.length:720`, `window.SMT_CHAPTERS_META.length:13`, `stale500:false`, English `staleTwelve:true`, and Swedish `staleTolv:true`; browser console/page errors were empty.
+- `git diff --check` - exit 0.
+Workspace contract: pass - no product source edited; a narrowed chapter-count finding was queued after the question-count source fix landed.
+Findings queued: `REVIEWER-SITE-CHAPTER-COUNT-COPY-1`.
+Evidence: current main no longer publishes stale 500-question copy, but still publishes stale Twelve/Tolv chapter copy against the generated 13-chapter static metadata; existing static bank and syntax checks pass but do not cover rendered chapter-count drift.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept/reject the question-count source atom on its own evidence, then route `REVIEWER-SITE-CHAPTER-COUNT-COPY-1` as the next static copy guard/fix; keep live deploy freshness open until production serves current main.
