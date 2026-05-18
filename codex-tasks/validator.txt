@@ -496,3 +496,15 @@ MANAGER-build acceptance 2026-05-18T16:32+02:00
   decision because CONTENT cannot write the required static mirror.
 
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 16:30 CEST][P0 SITE][external/live]: Rechecked current `origin/main` `9df0988` after the live hash-guard acceptance. Production is still stale: latest Production deployment remains `4729276163`, SHA `767c87d`, created `2026-05-18T14:00:23Z`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`, while current main is `9df0988`. The current hash-aware live check exits 1 against that URL: question count and Practice/Mock/Ebook assets pass, but static question-bank content fails with expected hash prefix `159954bb98a3` and live hash prefix `5d2710bebf7e`. The controlled deploy path is externally blocked: Scheduled Vercel deploy runs `26039712170`, `26039467016`, `26038950515`, `26038147705`, `26037443794`, `26037143042`, and `26036978641` all completed `failure`; the latest check-run annotation for job `76547582762` reports account payment/spending-limit failure before the job starts. Manager action: keep this first in SITE-P0; restore GitHub Actions billing/spending capacity or provide an operator-verified production deployment, then rerun `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js <production-url>` and a reviewer live parity pass before closing SITE-P0-5.
+
+MANAGER-build acceptance 2026-05-18T16:36+02:00
+- Accepted `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` from PR #368 /
+  `c118147`. Clean current-main verification passed `npm run
+  test:static-site-privacy-copy` 2/2, `node --check site/app.js`, `node --check
+  scripts/static-site-privacy-copy.test.js`, source spot-checks for current
+  AdSense/AdMob/consent/local-progress/29 SEK Remove Ads copy in English and
+  Swedish, `npm run typecheck -- --pretty false`, `npm run test:ownership`,
+  targeted Prettier, and `git diff --check`.
+- Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open and first. Production deploy
+  evidence from current `origin/main` plus hash-aware live smoke is now the only
+  remaining SITE-P0-5 blocker in the build queue.
