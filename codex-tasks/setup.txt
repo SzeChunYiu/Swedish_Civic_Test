@@ -255,6 +255,12 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
      `60f5827`, a current Home smoke still shows English `Twelve chapters...`
      and Swedish `Tolv kapitel...` while the static chapter metadata has 13
      chapters and no stale 500-question claim remains.
+   - Reviewer resolution recheck 2026-05-18T20:25+02:00 on current
+     `origin/main` `0b26519`: `npm run test:static-site-chapter-count-copy`
+     passes 2/2, static parity reports 720 questions and 13 chapters, and a
+     system-Chrome Home smoke renders 13 overview rows in both English and
+     Swedish. VALIDATOR can accept this atom once the SETUP source commit and
+     handoff evidence are reviewed.
 
 MANAGER-build note 2026-05-18T15:25+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then

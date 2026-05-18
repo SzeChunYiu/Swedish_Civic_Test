@@ -3187,3 +3187,23 @@ Evidence: current main no longer publishes stale 500-question copy, but still pu
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: accept/reject the question-count source atom on its own evidence, then route `REVIEWER-SITE-CHAPTER-COUNT-COPY-1` as the next static copy guard/fix; keep live deploy freshness open until production serves current main.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-origin-main` / `task/reviewer/site-chapter-list-1779128500`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main resolution recheck for `REVIEWER-SITE-CHAPTER-COUNT-COPY-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `codex-tasks/setup.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Started from clean current `origin/main` `0b26519` after SETUP landed `setup: fix static chapter count copy`; the earlier reviewer PR was repurposed from stale defect evidence into resolution evidence because main advanced before merge.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` - exit 0, 2/2 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `node --check site/app.js`, `node --check site/practice.js`, `node --check site/settings.js`, and `node --check scripts/static-site-chapter-count-copy.test.js` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- Served current `site/` with `python3 -m http.server 8280 --bind 127.0.0.1 --directory site`.
+- System-Chrome Home smoke showed `window.SMT_CHAPTERS_META.length:13`, English `.list-quiet li` count `13` ending at `13 Traditions, holidays & everyday culture`, Swedish `.list-quiet li` count `13` ending at `13 Traditioner, helgdagar & vardagskultur`, and browser console/page errors `[]`.
+Workspace contract: pass - no product source edited; queued only reviewer resolution evidence.
+Findings queued: `REVIEWER-SITE-CHAPTER-COUNT-COPY-1 resolution recheck [2026-05-18 20:25 CEST]`.
+Evidence: current main closes stale Twelve/Tolv copy and visible Home chapter-list completeness against the 13-chapter static metadata.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept/reject the SETUP chapter-count source atom using the source diff, handoff, focused guard, and this reviewer resolution evidence; keep live deploy freshness open until production serves current main.
