@@ -1,5 +1,26 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-18T21:00+02:00
+
+Duplicate guard for q201-q250 VERIFY: CONTENT-VERIFY Pane 1 is the canonical
+owner for the current-output q201-q250 refresh in worktree
+`/tmp/sct-verify-q201-q250-pane1-1779130700`, branch
+`task/verify/q201-q250-pane1-1779130700`. The older Pane 3 branch
+`task/content-verify/pane3-current-1779130456` is duplicate/stale after its PR
+publish path hit missing `gh`; do not open, merge, or duplicate that branch
+unless Pane 1 is explicitly abandoned or rejected.
+
+Pane 1 must sync/recheck current `origin/main` before committing, keep scope to
+`docs/verify/ledger.md`, `docs/verify/q201-q250-2026-05-18.md`, and
+`docs/parallel-sessions/journals/verify.md` unless a newly confirmed current
+defect is not already covered by the active DATA-INTEGRITY route. The current
+q201-q250 findings are still generated-output work: true/false prefix rows and
+the q235 false-answer explanation mismatch. CONTENT source implementation
+remains handoff-only unless VALIDATOR explicitly leases
+`CONTENT-AUTHORED-TF-PREFIX-1` as a paired data/export/static/guard cleanup.
+After q201-q250 lands, is rejected, or is abandoned, next VERIFY capacity moves
+to q251-q300 or the next current changed/due slice.
+
 MANAGER-content current-route update - 2026-05-18T20:45+02:00
 
 Current `origin/main` includes PR #609 / `47f3983`, the post-#570/#584

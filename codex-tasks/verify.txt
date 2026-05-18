@@ -11,6 +11,23 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T21:00:00+02:00 update:
+- `verify:data/questions.ts q201-q250` has two local attempts. Use
+  CONTENT-VERIFY Pane 1 on branch `task/verify/q201-q250-pane1-1779130700` as
+  canonical. It must recheck/sync current `origin/main` before commit and keep
+  the atom report-and-queue only.
+- Do not open or merge the older duplicate branch
+  `task/content-verify/pane3-current-1779130456` unless Pane 1 is explicitly
+  abandoned or rejected; its PR path hit missing `gh` and it is no longer the
+  canonical q201-q250 route.
+- The current q201-q250 evidence should fold into the existing generated
+  true/false DATA-INTEGRITY cleanup: slice true/false prefix rows plus q235's
+  false-answer explanation mismatch. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors from VERIFY work.
+- Next VERIFY capacity after q201-q250 lands, is rejected, or is abandoned:
+  q251-q300 or the next current changed/due slice.
+
 MANAGER-content 2026-05-18T20:45:00+02:00 update:
 - `verify:data/questions.ts q151-q200` post-#570/#584 refresh is landed via
   PR #609 / `47f3983`; do not duplicate that branch or its stale pre-rebase
