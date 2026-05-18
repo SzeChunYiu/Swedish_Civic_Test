@@ -84,3 +84,19 @@ Verification (commands + result):
 Accepted by worker? yes/no/blocked
 Next suggested validator action:
 ```
+
+## CEO cycle handoff
+
+2026-05-18T12:27:59+02:00: Executive cycle decision remains HOLD/add-none.
+Required CEO and operating docs were read from the supervisor repo fallback
+plus this board. `csup staff --scenario=resume --dry-run` returned
+STAFF-DOWN/no queued work for configured LUNARC hosts and reported no remote
+task queues in the disabled fs10/fs9 checkouts. Local tmux shows only
+`civic-content` active. q008 is now on `origin/main` via PR #172; keep the
+current local content team running q009/q010 as separate UHR-only
+TRANSLATE-COMPLETE atoms. Next content queue is q011, q037, q071, q072, then
+remaining validator-filed source-note explanations.
+UIUX/release/build/qa remain unstaffed this cycle. No human escalation is
+required; remote disablement remains a staffing constraint, not a product
+blocker. CEO directives were queued in `codex-tasks/ceo.txt`,
+`codex-tasks/content.txt`, and `codex-tasks/validator.txt`.
