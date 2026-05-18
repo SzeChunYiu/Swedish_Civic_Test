@@ -2500,6 +2500,6 @@ Verification (commands + result):
 - `rg -n "practice.js|questions.js|ebook-tools.js|i18n-extras.js|data-page=\"/mock\"|#/mock|known =" site -S` after rebasing onto `origin/main` `c4404d8` - exit 0; output shows `questions.js` and `practice.js` are now loaded, `#/mock` links are only inside `site/practice.js`, `site/app.js` still allow-lists no `/mock` route, and `ebook-tools.js` / `i18n-extras.js` are still not loaded.
 - Served `/tmp/sct-review-origin-main/site` with `python3 -m http.server 8197 --bind 127.0.0.1`.
 - System-Chrome static-site smoke after the rebase - exit 2 by design. Home script list includes `questions.js` and `practice.js`; `window.smtRecordAnswer` is present; `window.SMT_QUESTIONS` has 57 questions; `/practice` shows the new hub with `hubCards:12` and one `#/mock` link; `#/mock` still falls back to active page `/` with `mockStageExists:false`; `/ebook` still renders with 13 chapter links and `ebookToolsLoaded:false`.
-PR (number + merged?): #244 / draft, pending
+PR (number + merged?): #244 / merged yes via squash commit `9071fef`
 Accepted by worker? yes
 Next suggested validator action: assign SETUP to add the static `/mock` route shell/stage, allow-list `/mock`, make the Practice mock link open the live mock exam flow, preserve/load ebook helper tooling, and add a static smoke guard that fails when present SITE P0 files are not reachable through the deployed page shell.
