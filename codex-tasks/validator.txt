@@ -210,3 +210,15 @@ MANAGER-build acceptance 2026-05-18T13:10+02:00
   now routes `REVIEWER-GENERATED-SINGLE-CHOICE-TF-STEM-1`; broader generated
   true/false grammar-splice naturalness remains a follow-up unless DATA-INTEGRITY
   can cover both in one bounded generator/validator/CSV/test atom.
+
+MANAGER-build acceptance 2026-05-18T13:17+02:00
+- Accepted DATA-INTEGRITY nested single-choice true/false prompt atom from PR
+  #212 / `22d0d42` for `REVIEWER-GENERATED-SINGLE-CHOICE-TF-STEM-1`.
+  Clean `origin/main` verification passed: CSV scan found no rejected
+  single-choice/nested true-false/judgement scaffolding; `node scripts/export-question-bank.js --check`;
+  `npm run validate:content`; `npm run test:derived-content`;
+  `node --test tests/content-published-question-types.test.js`; `npm run typecheck`;
+  `npm run test:ownership`; and `git diff --check`.
+- `codex-tasks/data-integrity.txt` now routes `REVIEWER-GENERATED-TF-NATURALNESS-1`
+  as the next bounded generator-naturalness atom. Keep broader content
+  naturalness defects in CONTENT unless they require generated-template changes.
