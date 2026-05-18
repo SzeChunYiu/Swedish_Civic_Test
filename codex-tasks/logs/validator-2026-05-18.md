@@ -208,3 +208,26 @@ expects 720 questions and hash `57e05be047f9`.
 Next worker task queued: none for local source from this recheck; restore or
 provide production deploy evidence from current `origin/main`, then rerun the
 hash-aware live smoke before accepting SITE-P0-5.
+
+Iteration: 2026-05-18T19:42+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-PRACTICE-RESULT-I18N-1` as the queue-level closure for the
+static Practice completion result label defect.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #548 is closed and merged as `d372521` on current `origin/main`;
+reviewer evidence for the same defect also landed in PR #550. Clean manager
+verification in `/tmp/sct-manager-pr548-sJo2C3/wt` passed
+`NODE_OPTIONS='--v8-pool-size=1' npm run
+test:static-site-practice-result-i18n` 2/2, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:static-site-settings-language` 4/4, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:static-site-answer-shuffle` 4/4, `NODE_OPTIONS='--v8-pool-size=1'
+npm run validate:content` at 720 questions with static parity true,
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run lint`, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:ownership`, `node --check site/app.js`, `node --check
+scripts/static-site-practice-result-i18n.test.js`, targeted Prettier, and
+`git diff --check origin/main..HEAD`.
+Next worker task queued: SETUP - take
+`REVIEWER-SITE-FLAG-PALETTE-DRIFT-1` next, then mobile nav reachability, then
+static question-count copy. Keep Practice result i18n duplicate-guarded.
