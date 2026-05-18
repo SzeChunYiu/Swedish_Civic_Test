@@ -1479,8 +1479,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Vem som är statschef', 'Who is head of state'],
     ],
     0,
-    'Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt.',
-    'Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.',
+    'Den digitala revolutionen handlar om mer än ny teknik. Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och hittar information. Digitalisering gör också handel, samarbete och informationsutbyte över gränser enklare.',
+    'The digital revolution is about more than new technology. Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and find information. Digitalization also makes trade, cooperation, and information exchange across borders easier.',
     ['digital-revolution', 'globalization', 'information-society'],
   ),
   single(
