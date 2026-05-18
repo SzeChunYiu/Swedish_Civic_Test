@@ -8,7 +8,8 @@ import { colors, motion, radius, space } from '../lib/theme';
 /**
  * Defaults: `progress=0`, `animated=true`, `accessibilityRole="progressbar"`,
  * and a rounded accent fill over a warm tokenized track. Pass
- * `accessibilityLabel` when the default percentage copy should be localized.
+ * `accessibilityLabel` when the default percentage copy and native progress
+ * value text should be localized.
  */
 export interface ProgressBarProps extends Omit<ComponentProps<typeof View>, 'style'> {
   animated?: boolean;
@@ -67,7 +68,7 @@ export function ProgressBar({
         min: 0,
         max: 100,
         now: progressPercent,
-        text: defaultAccessibilityText,
+        text: resolvedAccessibilityLabel,
         ...accessibilityValue,
       }}
       style={[styles.track, style]}
