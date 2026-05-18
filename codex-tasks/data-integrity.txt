@@ -1,0 +1,9 @@
+/goal DATA-INTEGRITY: fix REVIEWER-GENERATED-JUDGEMENT-PROMPT-1. Replace generated judgement prompts that prepend "correct judgment of the statement" to interrogative source questions with natural study prompts in SV+EN, update the validator/parity mirror, regenerate `content/question-bank.csv`, and add guards that fail before the fix and pass after.
+
+MANAGER-build assignment 2026-05-18 12:32 CEST:
+- Read `docs/parallel-sessions.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/validator.md`, and the reviewer defect in `codex-tasks/validator.txt` before editing.
+- Lease: DATA-INTEGRITY/build owns `lib/content/derivedQuestions.ts`, `scripts/validate-content.js`, derived-content/content-production tests, export parity checks, regenerated generated CSV output, and the DATA-INTEGRITY journal handoff.
+- Current upstream state: PR #170 cleared nested true/false source stems, but `origin/main` still publishes q145/q153-style judgement variants such as `Which option gives the correct judgment of the statement? Where is Sweden located?`.
+- Required behavior evidence: generated judgement variants for source questions read as natural answer-selection or fact-check study prompts in Swedish and English; interrogative source questions must not be called statements; true/false source questions must not be wrapped in awkward judgement-of-statement scaffolding.
+- Required gate evidence: focused negative guard rejects the current `correct judgment of the statement?` / `rätt bedömning av påståendet?` interrogative pattern before the fix and passes after, `npm run validate:content`, `npm run test:derived-content`, `node scripts/export-question-bank.js --check`, `npm run typecheck`, `npm run test:ownership`, and `git diff --check`.
+- Stop after one bounded atom and write the handoff to `docs/parallel-sessions/journals/data-integrity.md`.
