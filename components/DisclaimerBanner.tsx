@@ -2,22 +2,40 @@ import type { ComponentProps } from 'react';
 import { StyleSheet, Text as NativeText, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
-export const defaultDisclaimerTitle = 'Independent study tool';
-export const defaultDisclaimerMessage =
-  'Not official or affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Practice content is created for learning and is not real exam content.';
+type DisclaimerBannerCopy = {
+  message: string;
+  title: string;
+};
+
+const disclaimerBannerCopy: Record<AppLanguage, DisclaimerBannerCopy> = {
+  sv: {
+    title: 'Fristående studiestöd',
+    message:
+      'Inte officiell eller kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Övningsinnehållet är skapat för lärande och är inte riktiga provfrågor.',
+  },
+  en: {
+    title: 'Independent study tool',
+    message:
+      'Not official or affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Practice content is created for learning and is not real exam content.',
+  },
+};
+
+export const defaultDisclaimerTitle = disclaimerBannerCopy.en.title;
+export const defaultDisclaimerMessage = disclaimerBannerCopy.en.message;
 
 /**
- * Defaults: `title="Independent study tool"`, a required independent-app
- * disclaimer message, `accessible=true`, and `accessibilityRole="summary"`.
- * Pass `accessibilityLabel` when localized visible copy needs a different
- * spoken label.
+ * Defaults: localized independent-app disclaimer copy from settings,
+ * `accessible=true`, and `accessibilityRole="summary"`. Pass `title`,
+ * `message`, or `accessibilityLabel` when a caller needs custom copy.
  */
 export interface DisclaimerBannerProps extends Omit<
   ComponentProps<typeof View>,
   'children' | 'style'
 > {
+  languageOverride?: AppLanguage;
   message?: string;
   messageStyle?: StyleProp<TextStyle>;
   style?: StyleProp<ViewStyle>;
@@ -33,23 +51,34 @@ export function DisclaimerBanner({
   accessibilityLabel,
   accessibilityRole = 'summary',
   accessible = true,
-  message = defaultDisclaimerMessage,
+  languageOverride,
+  message,
   messageStyle,
   style,
-  title = defaultDisclaimerTitle,
+  title,
   titleStyle,
   ...viewProps
 }: DisclaimerBannerProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = disclaimerBannerCopy[language];
+  const resolvedTitle = title ?? copy.title;
+  const resolvedMessage = message ?? copy.message;
+
   return (
     <View
-      accessibilityLabel={accessibilityLabel ?? getAccessibilityLabel(title, message)}
+      accessibilityLabel={
+        accessibilityLabel ?? getAccessibilityLabel(resolvedTitle, resolvedMessage)
+      }
       accessibilityRole={accessibilityRole}
       accessible={accessible}
       style={[styles.base, style]}
       {...viewProps}
     >
-      {title ? <NativeText style={[styles.title, titleStyle]}>{title}</NativeText> : null}
-      <NativeText style={[styles.message, messageStyle]}>{message}</NativeText>
+      {resolvedTitle ? (
+        <NativeText style={[styles.title, titleStyle]}>{resolvedTitle}</NativeText>
+      ) : null}
+      <NativeText style={[styles.message, messageStyle]}>{resolvedMessage}</NativeText>
     </View>
   );
 }
