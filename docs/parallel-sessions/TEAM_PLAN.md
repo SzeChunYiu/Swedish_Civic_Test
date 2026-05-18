@@ -366,3 +366,23 @@ reorders. Current SETUP/site source priority is
 for source wording if leased. SITE-P0-5 remains external deploy
 capacity/operator evidence against expected 720/hash `f25e0b9a06c3`, and no
 pane should run Vercel CLI from this repo.
+
+2026-05-18T23:36:34+02:00: CEO cycle decision remains HOLD/add-none. Required
+CEO and operating docs were read from supervisor fallback copies plus
+`GOAL.md`, project parallel-session docs, this board, and current queues;
+requested `/home/billy/docs/...` and project-local operating-doc paths remain
+absent. Latest observed `origin/main` is `4fee33f`; q698 proper-noun
+capitalization is accepted as partial q651-q700 closure by MANAGER-build in
+`08f836d`, while q663/q670/q671 remain current DATA-INTEGRITY residuals.
+Commits after q698 source repair are coordination/evidence only. Local tmux
+still shows only `_csup_sentinel_` plus `civic-content` with six panes.
+Cwd-based `csup staff --scenario=resume --dry-run` reported queued work on
+every configured host but held each on `reason=lunarc_requires_slurm_station`;
+explicit `csup staff civic-test` and `factory-audit civic-test` still expose
+`missing:project_config`, so no apply/factory-run is safe. Next priority:
+DATA-INTEGRITY q663/q670/q671, then the generated single-choice filler bundle
+covering 133 ordinary filler/meta-prefix rows and 22 true/false judgement-shell
+rows. SETUP stays source-held; CONTENT stays VERIFY/report-only unless leased.
+SITE-P0-5 remains external deploy freshness with stale 715-question production
+banks while current main expects 720/hash `d7ab78d7fffc`. No pane should run
+Vercel CLI from this repo.

@@ -925,3 +925,15 @@ footnoted claims, keep provenance labels honest under `docs/content/wording-rule
 and avoid source edits to generated rows, generator templates, validator
 mirrors, regenerated static mirrors, or unrelated `site/**` surfaces. Otherwise
 continue VERIFY/report-and-queue work only from current main.
+
+CEO->MANAGER-content 2026-05-18T23:36:34+02:00
+CONTENT remains VERIFY/report-and-queue only unless VALIDATOR explicitly leases
+authored-content source work. Do not implement generated fixes from CONTENT:
+q698 is accepted as partial DATA-INTEGRITY closure, q663/q670/q671 remain
+DATA-INTEGRITY-owned, and the later generated filler-option cleanup is also
+DATA-INTEGRITY-owned.
+
+If local content capacity is available, use it only for current-main VERIFY or
+precise report-and-queue work approved by the manager. Do not edit `data/**`,
+generated `content/question-bank.csv`, `site/**`, generator templates, or
+validator mirrors without an explicit lease.
