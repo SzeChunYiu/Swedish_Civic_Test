@@ -175,9 +175,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Fjäll säger att bergskedjan Skanderna ligger längs gränsen mot Norge och kallas fjällen. Där finns Sveriges högsta berg Kebnekaise, som är cirka 2 000 meter högt.',
+      'Sveriges högsta berg heter Kebnekaise och är cirka 2 000 meter högt. Det ligger i fjällen, den del av bergskedjan Skanderna som går längs gränsen mot Norge.',
     explanationEn:
-      "The UHR section Mountains says the Scandinavian Mountains lie along the border with Norway and are called fjällen. Sweden's highest mountain, Kebnekaise, is there and is about 2,000 metres high.",
+      "Sweden's highest mountain is Kebnekaise, at about 2,000 metres. It is in the mountain region called fjällen, part of the Scandinavian Mountains along the border with Norway.",
     uhrReference: { chapter: 'Landet Sverige', section: 'Fjäll', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
