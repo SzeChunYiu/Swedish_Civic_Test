@@ -11,6 +11,21 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T23:18:00+02:00 current-route update:
+- Current `origin/main` is `8bb8a8b`. q601-q650 source cleanup is on main via
+  DATA-INTEGRITY commit `8b7c77f`, with handoff `cbaddb0`; do not duplicate
+  q601-q650 VERIFY or source-cleanup work unless VALIDATOR rejects the
+  current-main source state. MANAGER-build accepted q601 wording at `19abd0c`.
+- `verify:data/questions.ts q651-q700` is now on main via `58732d6`, with the
+  report verified against `d91a489`. Do not duplicate q651-q700 unless
+  VALIDATOR rejects the landed evidence with fresh current-main residuals.
+- q701-q720 VERIFY is already on main via `e3fe9dd`; do not duplicate stale
+  q701 branches. Route the next maintained VERIFY slice only if VALIDATOR
+  assigns it.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors from VERIFY work.
+
 MANAGER-content 2026-05-18T23:06:00+02:00 current-route correction:
 - Current `origin/main` is `b7fde22`. `verify:data/questions.ts q701-q720` is
   landed via `e3fe9dd`; do not duplicate or merge stale q701 branches,

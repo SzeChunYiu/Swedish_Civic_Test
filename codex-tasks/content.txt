@@ -1,5 +1,23 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-18T23:18+02:00
+
+Current `origin/main` is `8bb8a8b`. The q601-q650 DATA-INTEGRITY source
+cleanup is on main via `8b7c77f`, with handoff `cbaddb0`; direct
+current-output checks show the old q606/q607/q611/q622 wording defects are
+gone, with q610/q611 kept parallel, and MANAGER-build accepted q601 wording at
+`19abd0c`. q651-q700 maintained VERIFY is now on main via `58732d6`, with the
+report verified against `d91a489`. Do not duplicate
+q601-q650 or q651-q700 unless VALIDATOR rejects the landed evidence with fresh
+current-main residuals.
+
+Current generated-output route order is DATA-INTEGRITY q651-q700 for
+q663/q670/q671/q698 first, then q701-q720 judgement-template rows q713/q716
+unless VALIDATOR reorders. CONTENT source implementation remains handoff-only unless
+VALIDATOR explicitly leases authored source-data work. VERIFY remains
+report-and-queue only: no edits to `data/**`, `content/question-bank.csv`,
+`site/**`, generator templates, or validator mirrors from CONTENT/VERIFY work.
+
 MANAGER-content current-route correction - 2026-05-18T23:06+02:00
 
 Current `origin/main` is `b7fde22`. q701-q720 maintained VERIFY is now on

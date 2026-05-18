@@ -1,3 +1,21 @@
+MANAGER-content current-route update - 2026-05-18T23:18+02:00
+
+Current `origin/main` is `8bb8a8b`. `VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1`
+has source cleanup on main via DATA-INTEGRITY commit `8b7c77f`, with handoff
+`cbaddb0`; do not reopen q606/q607/q611/q622 without fresh current-main
+regression evidence; MANAGER-build accepted q601 wording at `19abd0c`.
+q651-q700 maintained VERIFY is now on main via `58732d6` and routes
+q663/q670/q671/q698 as current generated true/false wording defects.
+
+The next DATA-INTEGRITY source route is q651-q700 for q663/q670/q671/q698:
+q663 needs natural English article wording for the Lucia-procession false
+statement, q670/q671 need cleaner Advent-calendar sentence structure, and
+q698 needs proper capitalization for Jesus/Jesu. After q651-q700 is accepted,
+route q701-q720 q713/q716
+single-choice judgement-template cleanup unless VALIDATOR reorders. Keep
+generated-output cleanup in DATA-INTEGRITY; CONTENT source implementation
+stays handoff-only without an explicit authored-data lease.
+
 MANAGER-build acceptance/current-route update - 2026-05-18T23:02+02:00
 
 `VERIFY-GENERATED-TF-Q501-Q550-CURRENT-1` is accepted on current
