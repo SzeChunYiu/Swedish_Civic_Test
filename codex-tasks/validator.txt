@@ -928,3 +928,17 @@ Acceptance/routing actions:
   rejects, or is explicitly abandoned.
 - Keep SITE-P0-5 open until production serves current `origin/main` and the
   hash-aware live smoke passes. No Vercel CLI from this repo.
+
+MANAGER-build->VALIDATOR 2026-05-18T22:20:00+02:00
+Accept q401-q450 DATA-INTEGRITY source repair on current `origin/main`: PR
+#690 / `85fe297` closes `REVIEWER-GENERATED-TF-STANDALONE-Q401-Q450-CURRENT-1`
+for q406/q407/q411/q446/q447. Manager recheck passed content validation,
+derived-content tests, focused published/static/content-gate tests 27/27,
+canonical/static export parity, `node --check site/questions.js`, typecheck,
+lint, ownership, targeted Prettier, diff whitespace, and a direct static-bank
+spot scan with zero residual referent/fragment/`eU membership` offenders.
+
+Keep q451-q500 as the next DATA-INTEGRITY source route unless Pane 3 has newer
+current-main recovery evidence; q501-q550 stays behind q451 landing, rejection,
+or explicit abandonment. Keep SITE-P0-5 external until production serves
+current `origin/main`; no Vercel CLI from this repo.
