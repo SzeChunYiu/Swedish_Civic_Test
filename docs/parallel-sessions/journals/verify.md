@@ -97,3 +97,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF opened from
 PR (number + merged?): #499 merged via squash (`1cfac7a`)
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q351-Q400-1` to DATA-INTEGRITY with the existing residual generated-template/static-mirror repair, then assign the next rolling VERIFY slice starting at `q401`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-q401-q450-pane3-1779122930`, branch `task/verify/q401-q450-pane3-1779122930`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q401-q450` generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q401-q450-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was downloaded and opened for cited printed pages 28-32; q401-q450 source support, answer keys, and distractors are acceptable; generated rows `q401`, `q402`, `q405`, `q406`, `q410`, `q414`, `q425`, `q426`, `q429`, `q430`, `q433`, `q434`, `q437`, `q438`, `q445`, and `q446` fail natural-language quality in canonical CSV and `site/questions.js`; `docs/verify/ledger.md` rows q401-q450 updated at `3be70d4`, with those 16 rows marked `defect` and the rest `ok`; focused CSV/static mirror assertion reported 50 checked rows, 26 true/false rows, 16 defects, and no static mirror mismatches; `node scripts/export-question-bank.js --check`, `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, `npm run typecheck -- --pretty false`, `npm run test:ownership`, and `git diff --check` all passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q401-Q450-1` into the active DATA-INTEGRITY residual generator/static-mirror repair, then assign the next rolling VERIFY slice starting at `q451`.
