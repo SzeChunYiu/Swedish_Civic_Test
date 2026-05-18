@@ -55,3 +55,24 @@ test('answer option feedback reveals the correct answer after a wrong selection'
     tone: 'idle',
   });
 });
+
+test('answer option feedback labels follow the selected question language', () => {
+  const { getAnswerOptionFeedback } = loadTs('lib/quiz/answerValidation.ts');
+  const question = {
+    id: 'q1',
+    correctOptionId: 'option-b',
+  };
+
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-b', 'option-b', 'en'), {
+    resultLabel: 'Correct',
+    tone: 'correct',
+  });
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-a', 'option-a', 'en'), {
+    resultLabel: 'Wrong',
+    tone: 'incorrect',
+  });
+  assert.deepEqual(getAnswerOptionFeedback(question, 'option-b', 'option-a', 'en'), {
+    resultLabel: 'Correct answer',
+    tone: 'correct',
+  });
+});

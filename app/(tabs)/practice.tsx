@@ -17,6 +17,7 @@ import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShu
 import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
+import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
@@ -78,8 +79,10 @@ export default function Screen() {
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
+  const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
@@ -92,8 +95,8 @@ export default function Screen() {
   );
   const question = useMemo(
     () =>
-      rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, 'practice-session') : undefined,
-    [rawQuestion],
+      rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
+    [rawQuestion, shuffleSessionId],
   );
 
   if (!question) {
@@ -113,8 +116,19 @@ export default function Screen() {
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = questions.length > 0 ? questionNumber / questions.length : 0;
   const handleSelectOption = (optionId: string) => {
+    const selectedOption = question.options.find((option) => option.id === optionId);
+    const optionIsCorrect = isCorrectAnswer(question, optionId);
+
     selectOption(question.id, optionId);
-    recordAnswer(question.id, isCorrectAnswer(question, optionId));
+    recordAnswer(question.id, optionIsCorrect);
+
+    if (!optionIsCorrect && selectedOption) {
+      recordWrongAnswerReview({
+        questionId: question.id,
+        selectedOptionTextEn: selectedOption.textEn,
+        selectedOptionTextSv: selectedOption.textSv,
+      });
+    }
   };
 
   return (
@@ -125,7 +139,7 @@ export default function Screen() {
           {copy.questionTitle(questionNumber)}
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
-        <ProgressBar progress={bankProgress} />
+        <ProgressBar language={language} progress={bankProgress} />
         <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
         <Pressable
           aria-selected={isBookmarked}
@@ -141,8 +155,12 @@ export default function Screen() {
         </Pressable>
       </View>
       <QuestionDisclaimer />
-      <QuestionCard question={question} />
-      <AudioButton text={buildQuestionSpeechText(question)} enabled={audioEnabled} />
+      <QuestionCard question={question} language={language} />
+      <AudioButton
+        enabled={audioEnabled}
+        language={language}
+        text={buildQuestionSpeechText(question)}
+      />
 
       <View style={styles.options}>
         {question.options.map((option) => {
@@ -150,6 +168,7 @@ export default function Screen() {
             question,
             option.id,
             hasSelectedAnswer ? selectedOptionId : null,
+            language,
           );
 
           return (

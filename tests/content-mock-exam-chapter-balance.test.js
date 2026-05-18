@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -72,4 +72,36 @@ test('default mock exam stays balanced across bundled UHR chapters', () => {
     exam.length,
   );
   assert.ok(Math.max(...counts) - Math.min(...counts) <= 1);
+});
+
+test('default mock exam balance rejects first-N question generator drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/quiz/examGenerator.ts')) {
+    return String(contents).replace(
+      '  const selected: PracticeQuestion[] = [];\\n  let round = 0;',
+      '  const selected: PracticeQuestion[] = questions.filter(isReviewedUhrQuestion).slice(0, targetCount);\\n  return selected.map((question) => shuffleQuestionOptionsForSession(question, sessionId));\\n\\n  let round = 0;',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /default mock exam covers \d+ chapters, expected 13/,
+  );
 });

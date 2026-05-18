@@ -220,7 +220,6 @@ Workspace contract: pass - no product source edited; existing consent/compliance
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-CONSENT-COMPLY-1 update`.
 Evidence: `CONSENT1` added decision logic, but no app/component ad path calls `getAdConsentDecision`, so helper-only work does not enforce the goal's "consent gate before ad SDK init" requirement. The public-site `app-ads.txt` file is still absent.
 Next manager action: assign source-touching ad-consent wiring and `app-ads.txt` compliance work; keep helper-only consent acceptance from clearing the release blocker.
-
 Lane: REVIEWER
 Artifact reviewed: workspace contract state after the consent recheck.
 Checks run:
@@ -1307,3 +1306,910 @@ Workspace contract: pass for bounded q095 evidence, then blocked for more passes
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:41 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:41 CEST]`.
 Evidence: q095 is source-aligned, exported, and user-facing clean on `/quiz/q095`; SOURCE-CITATION remains open for generated prompt-template wording and unaccepted q096/source-owner follow-up.
 Next manager action: VALIDATOR can review q095 as bounded CONTENT evidence, but should keep REVIEWER stopped until the current CONTENT/DATA-INTEGRITY/SETUP dirty files are accepted, rejected, committed, or cleared.
+
+Lane: REVIEWER
+Host/branch: local/main q096 pass started on HEAD `73bc572`; boundary moved to `3ac1998` afterward.
+Artifact reviewed: CONTENT q096 Islam prompt plus exported `/quiz/q096`.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, `DESIGN.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queue first; updated `REVIEWER-SOURCE-CITATION-STEM-1` rather than creating a duplicate.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 500 published questions, 500 UHR references, and `questionAuthorityBoundaryTextValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- Direct normalized q096/q481-q484 source/export assertion - two over-specific source-text attempts failed on PDF extraction boundaries/soft line breaks; corrected normalization exit 0 and confirmed q096 data, q096/q481-q484 CSV rows, and UHR source support for Islam as the second-largest religion in Sweden.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- `node scripts/prepare-web-export.js --check dist-web` - exit 0.
+- System-Chrome exported-web `/quiz/q096` smoke - initial attempts used the wrong source-citation punctuation and did not dismiss the app-start ad; corrected smoke exit 0 with clean SV/EN prompt, source citation, disclaimer, correct answer, dismissible launch ad, and console/page errors 0.
+- Static CSV scan - exit 0; 35 exported prompt rows still match source-authority wording while validation stays green: authored `q010`, `q012`, `q013`, `q014`, `q086`, `q088`, and `q089`, plus 28 generated rows.
+Workspace contract: pass for q096 evidence, then blocked for more passes because the checkout moved again outside REVIEWER ownership.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:50 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:50 CEST]`.
+Evidence: q096 is source-aligned, exported, and user-facing clean on `/quiz/q096`; SOURCE-CITATION remains open for earlier authored stems and generated prompt-template wording because validators still pass while raw/exported prompts contain source-authority language.
+Next manager action: keep q096 accepted as CNT44, assign CONTENT/DATA-INTEGRITY to clean and validate the remaining source-authority rows, and bound or clear the current q097/export CSV diff before the next REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `3ac1998` (ahead 1 from origin/main)
+Artifact reviewed: workspace contract state after q096 pass.
+Checks run:
+- `git status --short --branch` and product/test `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json`.
+- Checked TEAM_PLAN and DATA-INTEGRITY journal for q097 and `tests/content-uhr-source-citation-stem.test.js`.
+Workspace contract: blocked - no additional functional pass run because the artifact moved again outside REVIEWER ownership.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:50 CEST-current]`.
+Evidence: TEAM_PLAN accepts CNT44/DI38, but says q097 and newer DATA-INTEGRITY edits remain unaccepted. Current product/test diff is `tests/content-uhr-source-citation-stem.test.js`, which has a DATA-INTEGRITY handoff but no TEAM_PLAN acceptance row yet; HEAD also includes unaccepted q097 commit `3ac1998`.
+Next manager action: VALIDATOR should accept/reject q097 and the source-citation stem gate, or hand REVIEWER a stable boundary excluding them.
+
+Final boundary addendum: before handoff, product/test diff expanded to `scripts/validate-content.js` plus `tests/content-uhr-source-citation-stem.test.js`. REVIEWER did not edit either file; the stop condition remains active until VALIDATOR bounds q097 and the source-citation validator/test atom.
+Final boundary addendum 2: the last observed product/test diff expanded again to `scripts/validate-content.js`, `tests/content-question-card-accessibility-parity.test.js`, and `tests/content-uhr-source-citation-stem.test.js`. REVIEWER did not edit these files; the stop condition remains active.
+
+Lane: REVIEWER
+Artifact reviewed: live source-citation stem gate and current exported `content/question-bank.csv` after DI39/CNT45 acceptance notes.
+Checks run:
+- Re-read `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/architecture.md`, and `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked existing reviewer queue first; updated `REVIEWER-SOURCE-CITATION-STEM-1` instead of creating a duplicate.
+- `node --test tests/content-uhr-source-citation-stem.test.js` - exit 0, 2/2 tests passed.
+- `npm run validate:content` - exit 0, including `questionAuthorityBoundaryTextValidated:500`.
+- Inline CSV stem scan over `questionSv`/`questionEn` - found 55 source-authority wording matches for `UHR-materialet`, `UHR material`, `UHR-avsnitt`, or `UHR section`; examples include q010, q012, q013, q014, q086, q088, q089, and generated q137.
+Workspace contract: pass for this focused pass; blocked for further passes because live dirty product/test files remain outside REVIEWER ownership.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:54 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:54 CEST]`.
+Evidence: the current test bans only narrow connective forms, so stems like `Vad beskriver UHR-materialet...` and `Which natural resources does the UHR material mention...` still pass while the product requirement says the source belongs in the separate `Källa/Source` line.
+Next manager action: keep SOURCE-CITATION open; require a source-touching content/data-integrity fix and a wider executable gate before accepting the current dirty source-citation work.
+
+Boundary addendum [2026-05-17 23:57 CEST]: after the 23:54 pass, the product/test diff cleared and HEAD moved to `79b0884`; `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` is now empty. The source-citation finding still reproduces on current HEAD with 55 exported stem matches, but the checkout remains moving/dirty in non-REVIEWER coordination and report files, so REVIEWER stopped pending a stable GM/VALIDATOR boundary.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `79b0884` (ahead 4 from origin/main)
+Artifact reviewed: workspace contract state on resume.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, queue files, and current CONTENT/SETUP/DATA-INTEGRITY handoffs.
+- `git status --short --branch` and `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - product/test dirt is present outside REVIEWER ownership.
+- Inspected diffs for `data/additionalQuestions.ts`, `content/question-bank.csv`, `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, and `tests/architecture-public-exports.test.js`.
+- Searched TEAM_PLAN and lane journals for q099/router-shell acceptance or handoff.
+Workspace contract: blocked - no functional pass run because the current artifact boundary is mixed and unaccepted.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 00:00 CEST]`.
+Evidence: TEAM_PLAN addenda explicitly leave q099/q493-q496 Midsummer content/export edits and the router-shell public-export contract unaccepted. Current product/test diff also includes router-shell manifest/test rewrites with no matching current SETUP handoff; REVIEWER did not edit product source, content, or tests.
+Next manager action: CONTENT/SETUP/VALIDATOR should accept, reject, commit, or clear q099 plus router-shell/public-export changes, or explicitly provide REVIEWER a stable artifact boundary before the next functional pass.
+
+Boundary addendum [2026-05-18 00:01 CEST]: the artifact moved again during verification. q099 is now committed as `05dd010`, and `data/additionalQuestions.ts` / `content/question-bank.csv` are clean. SETUP also appended Iteration 147 for `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, and `tests/architecture-public-exports.test.js`, but TEAM_PLAN has no acceptance row for `05dd010` or that SETUP atom. Current product/test diff is limited to those three router-shell/public-export files, and `main` is ahead 1 / behind 4 from `origin/main`; REVIEWER remains blocked until VALIDATOR accepts/rejects or provides a stable boundary.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state before the next focused functional pass.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and lane handoffs.
+- `git status --short --branch` - current branch is `main` ahead 1 / behind 4 with non-REVIEWER product/test dirt.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` - current product/test diff lists `content/question-bank.csv`, `data/additionalQuestions.ts`, `data/questions.ts`, `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, `scripts/validate-content.js`, `tests/architecture-public-exports.test.js`, `tests/content-question-authority-boundary.test.js`, and `tests/content-uhr-source-citation-stem.test.js`.
+- Inspected current diffs: APP14 now bounds the router-shell/public-export files, but the data/source-citation cleanup and validator/test widening are outside REVIEWER ownership and have no visible current acceptance boundary. The configured `review-to-queue.sh` helper is still unavailable in this Linux checkout, so queue updates remain direct.
+Workspace contract: blocked - no functional pass run because the artifact boundary is mixed and moving.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 00:03 CEST]`.
+Evidence: TEAM_PLAN accepts APP14 but not the current source-citation content/validator/test diff or HEAD `05dd010` q099 boundary; REVIEWER edited only queue/journal notes.
+Next manager action: VALIDATOR/GM should accept, reject, commit, clear, or explicitly bound the current q010/q012/q013/q014/q086/q088/q089 source-citation cleanup plus validator widening, reconcile `main`, then hand REVIEWER a stable artifact for the next focused pass.
+
+Boundary addendum [2026-05-18 00:04 CEST]: the artifact moved again during this REVIEWER verification. Current product/test/config scope also includes `playwright.config.ts` and untracked `tests/e2e/browserLaunch.ts` alongside the content/source-citation/router-shell files listed above. REVIEWER did not edit those files; keep the lane stopped until source-owner panes or VALIDATOR bound the current content/source-citation/router-shell/Playwright changes and reconcile the branch.
+
+Final boundary addendum [2026-05-18 00:04 CEST]: final status check shows `tests/e2e/learn-chapter-navigation.spec.ts` also joined the non-REVIEWER dirty scope. REVIEWER did not edit it; no further pass is valid until owners/VALIDATOR provide a stable target.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch ahead 1 / behind 4 from `origin/main`.
+Artifact reviewed: current CONTENT q100 Lucia handoff plus DATA-INTEGRITY broad source-citation stem gate handoff.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current CONTENT/DATA-INTEGRITY handoffs.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-question-authority-boundary.test.js` - exit 0, 5/5 passed.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including `questionAuthorityBoundaryTextValidated:500`, `questionBankCsvRowsValidated:500`, and `generatedPromptTemplateParityValidated:400`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, 500-question export parity OK.
+- Direct CSV stem scan over `questionSv`/`questionEn` - exit 0 with `checkedRows:500`, `offenders:0`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web smoke over `/quiz/q010`, `/quiz/q088`, `/quiz/q100`, and `/quiz/q497` - exit 0; every route showed the expected SV+EN standalone stem, `Källa/Source: Sverige i fokus`, independent-study disclaimer, no banned UHR source-authority phrasing, and no console/page errors.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; this is review evidence for owner handoffs, not acceptance.
+Findings queued: no new product defect. Existing `REVIEWER-SOURCE-CITATION-STEM-1` updated in `codex-tasks/validator.txt` as cleared in the current checkout; dirty-worktree blocker updated because broader iteration still needs VALIDATOR/GM boundary.
+Evidence: previously reported source-authority stem offenders are now absent from raw/exported stems and rendered quiz routes checked in this pass.
+Next manager action: VALIDATOR can review/accept or reject the bounded q100 CONTENT atom and broad source-citation DATA-INTEGRITY atom; keep REVIEWER stopped for additional passes until current source-owner dirty-tree scope and branch divergence are bounded.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch ahead 1 / behind 4 from `origin/main`.
+Artifact reviewed: SETUP Iteration 149 SHUFFLE-FIX delivery-surface guard.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and the SETUP Iteration 149 handoff.
+- Inspected `scripts/answer-shuffle.test.js`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, `lib/quiz/examGenerator.ts`, and `lib/quiz/answerOptionShuffle.ts`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` - exit 0, 5/5 passed including the new delivery-surface guard.
+- System-Chrome exported-web runtime check - exit 0; `/practice` rendered the expected `practice-session` shuffled order for q001, `/quiz/q010` rendered the expected `q010` shuffled order, and console/page errors were empty.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; this is review evidence for the owner handoff, not acceptance.
+Findings queued: none. Updated the existing dirty-worktree blocker because broader review is still blocked by mixed non-REVIEWER product/test dirt.
+Evidence: the app-facing option order matched `shuffleQuestionOptionsForSession` for both Practice and routed quiz, so the new guard aligns with observed runtime behavior.
+Next manager action: VALIDATOR can review/accept or reject the bounded SETUP Iteration 149 test atom; keep REVIEWER stopped for additional passes until the current source-owner dirty-tree scope and branch divergence are bounded.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch ahead 1 / behind 4 from `origin/main`.
+Artifact reviewed: DATA-INTEGRITY glossary duplicate/unknown-chapter schema coverage handoff.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and the DATA-INTEGRITY glossary handoff.
+- Inspected `tests/content-glossary-schema.test.js`, `data/glossary.ts`, `types/content.ts`, and the matching `scripts/validate-content.js` glossary validation hooks.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-glossary-schema.test.js` - exit 0, 4/4 passed.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including `glossaryTerms:0`, `glossaryTermsValidated:0`, `glossaryTermExactSchemaKeysValidated:0`, and `contentTypeSchemaParityValidated:true`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, 500-question export parity OK.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; this is review evidence for the owner handoff, not acceptance.
+Findings queued: none. Updated the existing dirty-worktree blocker because broader review is still blocked by mixed non-REVIEWER product/test dirt.
+Evidence: the focused glossary test now proves bundled empty glossary state is schema-valid and rejects extra keys, duplicate ids/SV/EN terms, and unknown chapter links.
+Next manager action: VALIDATOR can review/accept or reject the bounded DATA-INTEGRITY glossary schema atom; keep REVIEWER stopped for additional passes until the current source-owner dirty-tree scope and branch divergence are bounded.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web English-support path for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and prior REVIEWER language finding.
+- Inspected `app/settings.tsx`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, `app/(tabs)/exam.tsx`, `components/quiz/QuestionCard.tsx`, `components/quiz/AnswerOption.tsx`, `components/quiz/ExplanationPanel.tsx`, and `lib/quiz/questionText.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First inline system-Chrome attempts identified the current launch-ad close label as `Stäng startannons`; reran with that close control.
+- Inline Playwright with `/usr/bin/google-chrome`: `/settings` -> English support -> `/practice` -> answer `In southern Europe` -> `/quiz/q001` -> answer `In southern Europe` - exit 1.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern 'English support reaches quiz options, explanations, and exam review text'` - exit 0, 49/49, showing current static coverage does not catch this runtime language gap.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:18 CEST]`.
+Evidence: English mode is partially fixed but incomplete. Runtime result: settings switched to English; Practice and routed quiz both showed English options and English explanation, but both still rendered `Var ligger Sverige?` as the heading (`headingSvCount:1`, `headingEnCount:0`) while also showing `Where is Sweden located?` only as body translation; after a wrong answer both screens still used Swedish feedback labels `Fel` / `Rätt svar` and had no English feedback labels. Console/page errors were empty.
+Next manager action: assign source-touching TRANSLATE-COMPLETE work for `QuestionCard` language selection plus localized answer feedback labels, then add runtime/e2e coverage for English mode on Practice and routed quiz.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: CONTENT Iteration 203 q051 UN prompt cleanup plus exported `/quiz/q051`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and CONTENT handoff.
+- Inspected the current q051/q301-q304 diff in `data/additionalQuestions.ts`, `data/questions.ts`, and `content/question-bank.csv`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 published questions, `questionAuthorityBoundaryTextValidated:500`, `questionBankCsvRowsValidated:500`, and `generatedPromptTemplateParityValidated:400`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- Direct q051/q301-q304 CSV/data assertion - exit 0; confirms the new standalone SV/EN stem, expected generated variants, page 22 UHR metadata, and absence of the old `according to the material` wording.
+- Local UHR text scan over `tmp/sverige-i-fokus.txt` found the relevant page-22 lines saying that after the Second World War in 1945, 51 countries created the UN to prevent war and protect rights.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- `node scripts/prepare-web-export.js --check dist-web` - exit 0.
+- System-Chrome exported-web `/quiz/q051` smoke - exit 0 after dismissing the launch ad; found the new Swedish and English question text, no old source-material stem, the correct answer text, separate `Källa/Source: Sverige i fokus, Mänskliga rättigheter, Mänskliga rättigheter gäller alla, s. 22`, the independent-study disclaimer, correct-answer feedback, and console/page errors 0.
+Workspace contract: pass for bounded q051 evidence, then blocked for broader review because the shared checkout still has mixed non-REVIEWER product/test dirt and branch divergence.
+Findings queued: no new product defect; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 00:23 CEST]`.
+Evidence: q051 is source-aligned, exported, and user-facing clean in the current checkout. REVIEWER edited only queue/journal notes.
+Next manager action: VALIDATOR can review or reject the bounded CONTENT q051 atom; keep REVIEWER stopped for additional broad passes until owner panes or VALIDATOR bound/accept/reject the current product/test scope and reconcile the branch or provide a stable review target.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web English-support mock-exam result flow for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and prior REVIEWER language finding.
+- Inspected `app/(tabs)/exam.tsx`, `components/quiz/QuestionCard.tsx`, `components/quiz/AnswerOption.tsx`, `components/quiz/ExplanationPanel.tsx`, `components/quiz/UHRReferenceCard.tsx`, and `lib/quiz/questionText.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First inline system-Chrome probe confirmed exam flow stayed functional in English mode but had an over-broad option/explanation assertion, so it was narrowed.
+- Narrow inline system-Chrome pass: `/settings` -> English support -> `/exam` -> start mock exam -> answer 20 questions -> submit - exit 1 because the result chapter breakdown remained Swedish.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:27 CEST]`.
+Evidence: English mode was selected, exam questions and `UHR reference` rendered in English, and console/page errors were empty. The result `Chapter breakdown` still showed Swedish chapter names including `Landet Sverige`, `Sveriges demokratiska system`, `Så här styrs Sverige`, and `Traditioner och högtider`; `hasSwedishChapterName:true`, `hasEnglishChapterName:false`. Code inspection confirms `app/(tabs)/exam.tsx` renders `chapter.chapterNameSv` in the breakdown regardless of selected language.
+Next manager action: assign a source-touching exam review localization atom so `chapterNameEn` renders in English mode, with runtime/e2e coverage for mock-exam result localization; do not accept static parity-only or docs-only work for TRANSLATE-COMPLETE.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Swedish-mode mock-exam shell for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Reused the current `dist-web` from the preceding export.
+- Inline system-Chrome pass: `/settings` -> Swedish -> `/exam`, dismiss launch ad if present, inspect active mock-exam shell - exit 1 because screen chrome stayed English.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:27 CEST]`.
+Evidence: `swedishSelected:true`; Swedish question content was visible (`Var ligger Sverige?`, `I Norden i norra Europa`, `I södra Europa`), but shell text still included `Mock exam`, `Time left`, `UHR-based questions`, `no ads during exam`, `Progress`, `answered`, and `Submit exam`; console/page errors 0.
+Next manager action: localize the mock-exam screen chrome and result copy for both `sv` and `en` in source, then add runtime/e2e coverage; fixing only question fields is not enough for TRANSLATE-COMPLETE.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web English-support learning path and chapter card rendering for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and prior REVIEWER language findings.
+- Inspected `app/(tabs)/learn.tsx`, `app/chapter/[chapterId].tsx`, `components/learning/ChapterCard.tsx`, `components/quiz/QuestionCard.tsx`, and `lib/storage/settingsStore.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First inline system-Chrome attempt showed the launch ad intercepting the settings language control until dismissed; reran with launch-ad dismissal.
+- Inline system-Chrome pass: `/settings` -> English support -> `/learn` -> `/chapter/ch01` - exit 1 because the Learn chapter cards stayed Swedish in English mode.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:33 CEST]`.
+Evidence: English mode was selected and `/learn` route copy switched to English, but the first chapter card still exposed Swedish card content: `learn.hasEnglishRouteCopy:true`, `learn.hasEnglishTitle:true`, `learn.hasSwedishTitle:true`, `learn.hasEnglishDescription:false`, `learn.hasSwedishDescription:true`, and `firstChapterLinkName:"Open chapter Landet Sverige. English name: The country of Sweden. Progress: 0 of 50 questions practiced."` The detail route `/chapter/ch01` rendered English title/description correctly. Browser console/page errors were empty.
+Next manager action: extend the source-touching TRANSLATE-COMPLETE work to localize `components/learning/ChapterCard.tsx` visible text and accessibility labels in English mode, then add runtime/e2e coverage for `/learn`.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web practice audio control for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Inspected `components/learning/AudioButton.tsx`, `app/(tabs)/practice.tsx`, and `app/quiz/[sessionId].tsx`.
+- Reused the current `dist-web` from the preceding export.
+- First inline system-Chrome attempt through `/settings` timed out before the route assertion; reran directly against `/practice`.
+- Inline system-Chrome `/practice` smoke - exit 1 because the audio control remained hardcoded in English.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:35 CEST]`.
+Evidence: rendered practice question content was present, with `hasSwedishQuestion:true`; the bilingual question card also exposed the English translation, but the audio control was only English: `hasEnglishListenText:true`, `englishAudioButtonCount:1`, `swedishAudioButtonCount:0`, and browser console/page errors 0. Code inspection shows `AudioButton` hardcodes `Listen`, `Audio disabled`, `Audio unavailable`, and English accessibility hints while Practice and routed quiz do not pass language.
+Next manager action: localize `components/learning/AudioButton.tsx`, pass selected language from Practice and routed quiz, and add runtime/e2e coverage for the audio control before closing TRANSLATE-COMPLETE.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Swedish Home monetization ad card for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Inspected `components/monetization/AdBanner.tsx`, `components/monetization/NativeAdCard.tsx`, and `components/monetization/LaunchPopupAd.tsx`.
+- Reused the current `dist-web` export.
+- Inline system-Chrome `/home` smoke - exit 1 because the Home ad card remained English/debug-labeled on a Swedish screen.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:37 CEST]`.
+Evidence: Swedish Home copy and Remove Ads text were visible, but the ad card still exposed English/internal copy: `swedishHomeVisible:true`, `hasAdMobCard:true`, `hasEnglishPlacement:true`, `hasEnglishAdStatus:true`, `hasSwedishRemoveAdsCopy:true`, and browser console/page errors 0. Rendered text included `Home Banner`, `AdMob test unit active`, `web preview`, and `Sponsored ad preview`.
+Next manager action: localize `AdBanner` and `NativeAdCard`, map placement ids to localized labels, and add runtime/e2e coverage for Swedish ad placeholder cards before closing TRANSLATE-COMPLETE.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Swedish-mode Practice `QuestionCard` accessibility label for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and prior REVIEWER language findings.
+- Inspected `components/quiz/QuestionCard.tsx`, `app/(tabs)/practice.tsx`, and `lib/quiz/questionText.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome pass: `/settings` -> Swedish -> `/practice`, then collect rendered `aria-label` values - exit 1 because the question card accessibility label remained English-prefixed.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:41 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 00:41 CEST]`.
+Evidence: Swedish question content was visible (`swedishQuestionVisible:1`), but the `QuestionCard` label exposed `Difficulty: easy. Question: Var ligger Sverige?. English translation: Where is Sweden located?. Source citation: Källa/Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5`; `englishA11yPrefixes` contained that label, and browser console/page errors were empty. Code inspection confirms the Swedish `QuestionCard` copy uses `Question`, `English translation`, and `Source citation`.
+Next manager action: localize `QuestionCard` accessibility-label prefixes for Swedish mode and add runtime/a11y coverage that reads the generated `aria-label`; keep broader REVIEWER stopped until owner panes or VALIDATOR bound the current source/test scope and branch divergence.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Swedish-mode Mistakes native ad placeholder for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and prior REVIEWER language findings.
+- Inspected `app/(tabs)/mistakes.tsx`, `components/monetization/NativeAdCard.tsx`, `components/monetization/AdBanner.tsx`, and `components/quiz/QuestionCard.tsx`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome pass: `/settings` -> Swedish -> `/mistakes`, dismiss `Stäng startannons`, then inspect visible text and `aria-label` values - exit 1 because the native ad placeholder remained English/internal-labeled.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:45 CEST]`.
+Evidence: Swedish route content rendered (`Misstag`, Swedish subtitle/disclaimer, `Inga misstag ännu`), but the ad card still showed `TEST NATIVE AD`, `Sponsored study placement`, `AdMob test placement preview. Keep out of timed exams.`, and an English accessibility label: `Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. Hidden after Remove Ads is active.` Browser console/page errors were empty.
+Next manager action: localize `NativeAdCard` and `AdBanner` visible text plus accessibility labels/hints for Swedish and English mode, and add runtime coverage for `/home` and `/mistakes` ad placeholders before closing TRANSLATE-COMPLETE.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Swedish-mode progress bar accessibility labels for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and prior REVIEWER language findings.
+- Confirmed `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are not executable/present in this checkout; used `codex-tasks/validator.txt` per the reviewer lane contract.
+- Inspected `components/ui/ProgressBar.tsx`, `scripts/ui-effects.test.js`, and `scripts/validate-content.js`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome pass: `/settings` -> Swedish -> `/home`, `/practice`, and `/quiz/q001`, then collect `[role="progressbar"]` aria labels - exit 1 because all three labels stayed English.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 00:51 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 00:51 CEST]`.
+Evidence: Swedish mode was selected; `/home`, `/practice`, and `/quiz/q001` each exposed progressbar aria labels `["0 percent complete"]`; `englishProgressLabels` contained all three labels, `swedishProgressLabels:[]`, and browser console/page errors were empty. Code inspection confirms `ProgressBar` hardcodes ``${progressPercent} percent complete`` while static gates assert that exact English pattern.
+Next manager action: localize shared `ProgressBar` accessibility labels for Swedish and English contexts, update static gates to reject English-only Swedish labels, and add runtime/a11y coverage on progress-bar routes before closing TRANSLATE-COMPLETE.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after the latest reviewer pass.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current reviewer queues.
+- `git status --short -- app components lib data content scripts tests package.json package-lock.json app.json eas.json playwright.config.ts reports/2026-05-15-uiux-screenshots` - source/test/report dirt remains outside REVIEWER ownership.
+- `git rev-list --left-right --count HEAD...@{u}` - `0 6`.
+Workspace contract: blocked/rate-limited - no new functional pass run because the artifact boundary is still mixed and not owned by REVIEWER.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 00:54 CEST]`.
+Evidence: dirty scope includes app quiz/language files, shared learning/quiz/monetization components, content/question files, `lib/scaffold/routerShellManifest.ts`, `package.json`, `playwright.config.ts`, validator/router/audio/UI test files, many content/e2e tests, screenshot/report mutations including deleted legal/support/source screenshots, and untracked `lib/monetization/adCopy.ts`, `tests/content-test-gate-parity.test.js`, and `tests/e2e/browserLaunch.ts`. REVIEWER edited only queue/journal notes.
+Next manager action: GM/VALIDATOR or source-owner panes need to bound, accept, reject, commit, or clear the source/test/report scope and reconcile the branch before handing REVIEWER another acceptance-grade functional pass; do not count this queue/journal update as product acceptance.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Swedish-mode mock-exam answer controls and submitted review labels for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and prior REVIEWER language findings.
+- Confirmed `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are not executable/present in this checkout; used `codex-tasks/validator.txt` per the reviewer lane contract.
+- Inspected `app/(tabs)/exam.tsx`, `components/ui/ProgressBar.tsx`, `components/learning/ChapterCard.tsx`, `components/monetization/AdBanner.tsx`, `components/monetization/NativeAdCard.tsx`, and `lib/monetization/adCopy.ts` to avoid retesting the just-accepted ad/audio/question slices.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome pass: `/settings` -> Swedish -> `/exam`, answer one option per question, submit, then inspect answer-button aria labels, submit control, and submitted-review labels - exit 1 because the mock-exam controls/review labels remained English-only.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 update [2026-05-18 01:00 CEST]`.
+Evidence: Swedish mode was selected and the exam question content was answerable, but answer buttons exposed English aria-labels such as `Select answer I västra Asien for question 1`; the submit control exposed aria-label `Submit mock exam` and visible `Submit exam`; after submission, result labels included `Selected answer` 20 times, `Correct answer` 20 times, `Question review`, and `Chapter breakdown`, with `swedishReviewLabels:0`; browser console/page errors were empty.
+Next manager action: localize `app/(tabs)/exam.tsx` active-exam and submitted-review visible copy plus accessibility labels for Swedish and English, then add runtime/e2e coverage that inspects answer-button aria labels, submit copy, chapter breakdown, question review, selected-answer, and correct-answer labels before closing TRANSLATE-COMPLETE.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: SETUP Iteration 157 ProgressBar localization handoff for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `DESIGN.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and prior REVIEWER language findings.
+- Confirmed `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are not executable/present in this checkout.
+- Inspected SETUP Iteration 157 in `docs/parallel-sessions/journals/setup.md`, `components/ui/ProgressBar.tsx`, ProgressBar route call sites, and existing parity coverage.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-progress-bar-accessibility-parity.test.js` - exit 0, 3/3 passing.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome pass against exported web: set Swedish and English in `/settings`, then inspect `[role="progressbar"]` labels on `/home`, `/practice`, `/quiz/q001`, and `/learn` - exit 0.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; this is bounded verification evidence for SETUP Iteration 157, not product acceptance.
+Findings queued: no new defect; updated `codex-tasks/validator.txt` item `REVIEWER-LANGUAGE-SUPPORT-1 resolution check [2026-05-18 01:05 CEST]`.
+Evidence: Swedish mode exposed `0 procent klart` in `aria-label` and `aria-valuetext` on all checked progressbars; English mode exposed `0 percent complete`; no opposite-language progress labels and no browser console/page errors were found.
+Next manager action: VALIDATOR can close the ProgressBar subdefect after accepting the bounded SETUP Iteration 157 source atom; broader TRANSLATE-COMPLETE still needs the queued mock-exam localization work.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web mock-exam localization surface and focused E2E gate for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current queues, and prior REVIEWER language findings.
+- Inspected `app/(tabs)/exam.tsx`, `tests/e2e/exam-submit-review.spec.ts`, `playwright.config.ts`, and `tests/e2e/browserLaunch.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- `CI=1 NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1` - exit 1. The official spec failed at `page.getByText('Förklaring')).toHaveCount(0)` before submission because the locator resolved to one match.
+- Inspected `test-results/exam-submit-review-mock-ex-907f2-re-and-source-backed-review/error-context.md`; the snapshot showed the active Swedish mock exam with localized answer buttons and no visible review cards before submission.
+- Inline system-Chrome exported-web pass with exact text checks - exit 0. It exercised `/settings` -> Swedish `/exam` -> answer 20 -> submit and `/settings` -> English support `/exam` -> answer 20 -> submit.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` items `REVIEWER-LANGUAGE-SUPPORT-1 resolution check [2026-05-18 01:10 CEST]` and `REVIEWER-EXAM-E2E-LOCATOR-1`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 01:10 CEST]`.
+Evidence: runtime Swedish showed `Övningsprov`, `Välj svaret ... för fråga N`, `Skicka övningsprov`, `Provresultat`, `Kapitelöversikt`, `Frågegenomgång`, `Valt svar` 20, `Rätt svar` 20, `Förklaring` 20, `UHR-källa` 20, Swedish breakdown names, no English shell/review labels, and console errors 0. Runtime English showed `Mock exam`, `Select answer ... for question N`, `Submit mock exam`, `Exam result`, `Chapter breakdown`, `Question review`, `Selected answer` 20, `Correct answer` 20, `Explanation` 20, `UHR reference` 20, English breakdown names, no Swedish shell/review labels, and console errors 0. Exact pre-submit explanation count was 0 in both languages.
+Next manager action: VALIDATOR can review the bounded mock-exam localization atom as runtime-cleared, but should assign a test atom for `REVIEWER-EXAM-E2E-LOCATOR-1` so the official E2E assertion matches the product behavior and ideally covers English mode too.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web profile/settings/support route headers for P0 TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and recent REVIEWER findings.
+- Inspected `app/_layout.tsx`, `app/(tabs)/_layout.tsx`, `app/settings.tsx`, `app/support.tsx`, `app/(tabs)/profile.tsx`, `components/compliance/ComplianceLinks.tsx`, `components/ui/ScreenShell.tsx`, and `components/monetization/PremiumBanner.tsx`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First inline system-Chrome probe against `/profile` -> Remove Ads -> `/home` -> `/settings` -> English support hit a strict locator because `/settings` rendered both `settings` and `Settings`.
+- Narrow inline system-Chrome confirmation pass on `/settings`, English `/settings`, `/support`, and `/profile` - exit 1 because standalone routes expose default route-name headers above localized content.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ROUTE-HEADER-1`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 01:17 CEST]`.
+Evidence: Swedish `/settings` body started with `settings` before `Inställningar`, and heading collection returned visible `settings`, `Inställningar`, `Frågespråk`, `Ljud`, `Dagligt mål`, `Juridik och källor`; English mode returned both visible `settings` and `Settings`; `/support` returned visible `support` above `Support och återkoppling`. Console/page errors were empty. Code inspection shows `app/_layout.tsx` hides Stack headers only for `index`, `(tabs)`, and `+not-found`, so standalone routes inherit lower-case internal route names while current static checks only inspect in-page copy.
+Next manager action: assign a source-touching route-shell atom to hide or localize standalone Stack headers for settings/legal/support/onboarding-style routes, then add runtime/e2e coverage rejecting lower-case internal route headers and duplicate page headings in Swedish and English. Keep REVIEWER stopped for broader passes until owner panes or VALIDATOR bound the dirty source/test scope and branch divergence.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Home bottom tab navigation and Remove Ads smoke surface.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `DESIGN.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and recent REVIEWER findings.
+- Inspected `app/(tabs)/_layout.tsx`, `app/(tabs)/home.tsx`, `components/monetization/PremiumBanner.tsx`, `components/monetization/AdBanner.tsx`, `lib/monetization/purchases.ts`, `lib/monetization/premium.ts`, and `lib/monetization/useRemoveAdsEntitlements.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome Remove Ads smoke on exported `/home` - exit 0 for the happy path: free user sees the home AdMob placement, Buy 29 SEK persists `monetization.removeAds.adsDisabled.v1=true`, home ads disappear, ad-free state survives reload, restore reapplies ad-free state in the same web runtime, and console/page errors are 0.
+- Inline system-Chrome tab-navigation pass on exported `/home` at 390x844 - exit 1 because bottom tab links include repeated visible `⏷` glyphs.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-TAB-NAV-GLYPH-1`.
+Evidence: bottom navigation rendered 24 visible chevron nodes at the tab row (`y:801`), `document.body.innerText` showed repeated `⏷` lines before tab labels, and tab link texts were `⏷⏷Hem`, `⏷⏷Lär dig`, `⏷⏷Öva`, `⏷⏷Prov`, `⏷⏷Misstag`, and `⏷⏷Profil`; browser console/page errors were empty. Code inspection shows `app/(tabs)/_layout.tsx` only supplies tab titles, with no `tabBarIcon` or placeholder suppression.
+Next manager action: assign SETUP/UI to provide meaningful localized tab icons or suppress placeholder glyph output in `app/(tabs)/_layout.tsx`, ensure accessible tab names are plain localized labels, and add runtime/static coverage rejecting `⏷` in bottom navigation link text. Keep the Remove Ads smoke as reviewer evidence only, not product acceptance.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web active-question ad suppression on `/practice`, `/quiz/q001`, and `/exam`.
+Checks run:
+- Reused the current `dist-web` from the preceding export.
+- Inspected `lib/monetization/ads.ts` and `app/_layout.tsx` route-level launch-ad suppression.
+- Inline system-Chrome pass on exported `/practice`, `/quiz/q001`, and `/exam`, clearing local storage for free-user state before each route - exit 1 because active question routes still showed the launch ad dialog.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ACTIVE-QUESTION-LAUNCH-AD-1`.
+Evidence: `/practice` rendered the active question `Var ligger Sverige?` and answer options while also exposing a `role="dialog"` with `aria-label="Startannons"`, `Google AdMob`, `Testannons för appstart visas en gång per appstart.`, and `Fortsätt studera`; `/quiz/q001` showed the same launch ad over the routed question. `/exam` remained correctly ad-free. Browser console/page errors were empty. Code inspection shows `LAUNCH_POPUP_AD_SUPPRESSED_ROUTES` includes `/exam` and legal/support/source routes but not `/practice` or `/quiz`.
+Next manager action: assign a source-touching monetization route-suppression atom so app-open ads never render on active question screens (`/practice`, `/quiz/*`, `/exam`), while preserving free-user ads at home/result breakpoints; add runtime/static coverage for those route cases.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Practice and routed Quiz answer-option accessible names in Swedish and English modes.
+Checks run:
+- Re-read `GOAL.md`, `DESIGN.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and checked existing reviewer queues to avoid duplicating the resolved QuestionCard, AudioButton, ProgressBar, and exam-localization findings.
+- Inspected `components/quiz/AnswerOption.tsx`, `tests/content-answer-option-accessibility-parity.test.js`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, and matching static validator references.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome pass on exported `/settings`, `/practice`, and `/quiz/q001` for Swedish and English modes - exit 1 because Swedish answer options exposed English `Select answer...` aria labels.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-answer-option-accessibility-parity.test.js` - exit 0, 2/2 passing, showing the current static gate does not catch the runtime language gap.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-ANSWER-OPTION-A11Y-LANGUAGE-1`.
+Evidence: Swedish `/practice` rendered localized visible content (`Fråga 1`, `Var ligger Sverige?`, Swedish option text), but answer button labels were `Select answer I södra Europa`, `Select answer I västra Asien`, `Select answer I Norden i norra Europa`, and `Select answer I Nordamerika`; Swedish `/quiz/q001` had the same English prefix pattern and zero `Välj svaret...` labels. English mode correctly used `Select answer ...`. Browser console/page errors were empty. Code inspection shows `components/quiz/AnswerOption.tsx` hardcodes ``Select answer ${label}``, and `scripts/validate-content.js` currently asserts that English pattern.
+Next manager action: assign SETUP/UI to localize shared `AnswerOption` idle accessibility labels for Swedish and English, then update static validation and runtime/e2e coverage so Swedish `/practice` and `/quiz/q001` reject English-only `Select answer` labels.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web QuestionCard difficulty text in Swedish and English modes.
+Checks run:
+- Reused the current `dist-web` built with `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2`.
+- Inspected `components/quiz/QuestionCard.tsx`, `tests/content-question-card-accessibility-parity.test.js`, `scripts/ui-effects.test.js`, and `scripts/validate-content.js`.
+- Inline system-Chrome pass on exported `/settings`, `/practice`, and `/quiz/q001` for Swedish and English modes - exit 1 because Swedish mode exposes raw English `easy`/`EASY` difficulty values.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-card-accessibility-parity.test.js` - exit 0, 3/3 passing, showing the current static gate does not catch raw difficulty enum display.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-QUESTION-DIFFICULTY-LANGUAGE-1`.
+Evidence: Swedish `/practice` showed visible `EASY` above `Var ligger Sverige?`, no visible `Lätt`, and a QuestionCard aria label starting `Svårighetsgrad: easy. Fråga: Var ligger Sverige?...`; Swedish `/quiz/q001` showed the same raw difficulty value. English mode showed `EASY` and `Difficulty: easy` as expected for comparison. Browser console/page errors were empty. Code inspection shows `QuestionCard` renders the raw `question.difficulty` value and validation currently asserts that direct rendering.
+Next manager action: assign SETUP/UI to localize QuestionCard difficulty display and accessibility values by language, update validation/tests to reject raw enum display, and add runtime coverage for `/practice` and `/quiz/q001`.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web QuestionCard source-citation prefix in Swedish and English modes.
+Checks run:
+- Reused the current `dist-web` from the 01:30 export.
+- Inspected `lib/quiz/questionText.ts`, `components/quiz/QuestionCard.tsx`, `components/quiz/UHRReferenceCard.tsx`, existing source-citation queue entries, and static validation references.
+- Inline system-Chrome pass on exported `/settings` and `/practice` for Swedish and English modes - exit 1 because English mode still shows the mixed `Källa/Source:` prefix in the visible QuestionCard citation and aria label.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-QUESTION-SOURCE-CITATION-LANGUAGE-1`.
+Evidence: English `/practice` rendered localized route/question content (`Practice`, `Question 1`, `Where is Sweden located?`, English options), but the QuestionCard source line was `Källa/Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5`, and its aria label contained `Source citation: Källa/Source: ...`. Swedish mode also uses the combined prefix, which may be acceptable as Swedish-first but still shares the same hardcoded helper. Browser console/page errors were empty. Code inspection shows `getQuestionSourceCitation()` has no language argument and always returns `Källa/Source: ... s. N`, while `UHRReferenceCard` already localizes its title/page copy after feedback.
+Next manager action: assign SETUP/UI to localize QuestionCard source-citation prefixes/page labels by selected language and add coverage that keeps the separate source line while rejecting mixed-language citation prefixes in English mode.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web wrong-answer-to-Mistakes review flow in English support mode.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and recent REVIEWER findings to avoid duplicating Practice feedback, ad placeholder, tab-nav, and QuestionCard findings.
+- Inspected `app/(tabs)/mistakes.tsx`, `app/(tabs)/practice.tsx`, `components/quiz/AnswerOption.tsx`, `components/quiz/QuestionCard.tsx`, `components/quiz/ExplanationPanel.tsx`, `components/quiz/UHRReferenceCard.tsx`, `lib/quiz/answerValidation.ts`, and current mistakes static coverage.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline system-Chrome pass on exported web: `/settings` -> English support, dismiss known launch-ad overlays, `/practice` -> wrong answer q001, then `/mistakes` - exit 1 because the saved Mistakes review omitted answer context.
+- `rg -n "mistakes|Wrong answers to revisit|Fel svar att repetera|wrongCount|Wrong answers:" tests scripts app components lib` - existing static coverage checks shell copy, headers, ads, disclaimer, and wrong-count plumbing, but no Mistakes correct-answer/selected-answer review context.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer defect-discovery evidence, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-MISTAKES-ANSWER-REVIEW-1`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 01:39 CEST]`.
+Evidence: Practice now showed `In southern Europe — Wrong`, `In the Nordic region in northern Europe — Correct answer`, and the English explanation. `/mistakes` showed `Mistakes`, `Wrong answers: 1`, `Where is Sweden located?`, the English explanation, and `UHR reference`, but `hasCorrectAnswerLabel:false`, `hasCorrectOptionText:false`, `hasSelectedWrongOptionText:false`, and `answerButtons:[]`; relevant aria labels covered only the QuestionCard and UHR reference. Browser console/page errors were empty.
+Next manager action: assign a source-touching Mistakes review atom in `app/(tabs)/mistakes.tsx` to show selected wrong answer when available and always show the correct answer for saved wrong-answer cards, with localized labels and runtime/static coverage for Swedish and English mistake reviews. Keep broader REVIEWER stopped until owner panes or VALIDATOR bound the dirty source/test scope and branch divergence.
+
+Lane: REVIEWER
+Host/branch: local/main HEAD `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after the latest reviewer pass.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and current handoff tails.
+- `git status --short --branch` - still shows broad non-REVIEWER product/test/report dirt.
+- `git rev-list --left-right --count HEAD...@{u}` - `0 6`.
+- `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json playwright.config.ts reports/2026-05-15-uiux-screenshots` - dirty source/test/report scope includes app routes, shared learning/quiz/monetization/UI components, content/question files, quiz helpers, router/Playwright config, validator and e2e tests, and screenshots.
+Workspace contract: blocked/rate-limited - no new functional pass run because the current artifact boundary is still mixed and not fully accepted in `TEAM_PLAN.md`.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 01:42 CEST]`.
+Evidence: The latest visible TEAM_PLAN acceptances stop at `APP25`, `CNT62`, and `DI56`, while newer SETUP/DATA-INTEGRITY handoffs such as SETUP Iteration 163 and a UHR exact-schema atom are present in journals but not accepted. Current untracked source/test helper files include `lib/monetization/adCopy.ts`, `tests/content-exam-route-copy-parity.test.js`, `tests/content-test-gate-parity.test.js`, and `tests/e2e/browserLaunch.ts`. REVIEWER edited only queue/journal notes.
+Next manager action: GM/VALIDATOR or source-owner panes should accept, reject, commit, clear, or explicitly bound the current source/test/report scope and reconcile the branch before requesting another REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Remove Ads entitlement route suppression.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current reviewer queues.
+- Inspected `app/_layout.tsx`, `components/monetization/LaunchPopupAd.tsx`, `components/monetization/AdBanner.tsx`, `components/monetization/NativeAdCard.tsx`, `components/monetization/PremiumBanner.tsx`, `lib/monetization/ads.ts`, and `lib/monetization/useRemoveAdsEntitlements.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome pass on exported web port 4195: clean free-user `/home` baseline, buy Remove Ads, then visit `/home`, `/learn`, `/mistakes`, `/practice`, `/quiz/q001`, and `/exam` - exit 0.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer evidence, not acceptance.
+Findings queued: no new defect; updated `codex-tasks/validator.txt` item `REVIEWER-ADS-IAP-1 resolution check [2026-05-18 01:50 CEST]`.
+Evidence: free `/home` initially showed one localized `Google AdMob: Annons på startsidan...` ad label; after `Köp Ta bort annonser för 29 SEK`, `localStorage['monetization.removeAds.adsDisabled.v1']` was `true`. All checked routes had no launch dialogs, no ad accessibility labels, no ad text matches, and console/page errors 0.
+Next manager action: close only the paid-user route-suppression subcheck after accepting the bounded purchase/ad atom; keep native device, real-unit, consent, and store-account gates separate.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web Practice and routed Quiz answer-option/difficulty localization.
+Checks run:
+- Inspected `components/quiz/AnswerOption.tsx`, `components/quiz/QuestionCard.tsx`, `tests/content-answer-option-accessibility-parity.test.js`, and `tests/content-question-card-accessibility-parity.test.js`.
+- Reused the current exported web on port 4195.
+- System-Chrome pass set Swedish and English in `/settings`, then inspected `/practice` and `/quiz/q001` answer-button aria labels plus QuestionCard difficulty visible/a11y text - exit 0.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer evidence, not acceptance.
+Findings queued: no new defect; updated `codex-tasks/validator.txt` items `REVIEWER-ANSWER-OPTION-A11Y-LANGUAGE-1 resolution check [2026-05-18 01:50 CEST]` and `REVIEWER-QUESTION-DIFFICULTY-LANGUAGE-1 resolution check [2026-05-18 01:50 CEST]`.
+Evidence: Swedish `/practice` and `/quiz/q001` answer labels all start `Välj svaret`, English answer labels all start `Select answer`; no opposite-language select labels appeared. Swedish QuestionCard difficulty shows `LÄTT` with `Svårighetsgrad: Lätt...`; English shows `EASY` with `Difficulty: Easy...`; raw Swedish-mode `easy`/`EASY` difficulty text was absent. Console/page errors 0. The `Källa/Source:` citation prefix remains mixed-language and stays queued separately.
+Next manager action: close these two reviewer defects after accepting the bounded source/test atoms; keep the source-citation prefix and Mistakes-review defects open.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web standalone route headers after root Stack header changes.
+Checks run:
+- Inspected `app/_layout.tsx` and route-header queue history.
+- Reused the current exported web on port 4195.
+- System-Chrome pass at 320x568 set Swedish and English, then inspected headings on `/settings`, `/support`, `/privacy`, `/terms`, `/sources`, `/disclaimer`, and `/onboarding` - exit 0.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer evidence, not acceptance.
+Findings queued: no new defect; updated `codex-tasks/validator.txt` item `REVIEWER-ROUTE-HEADER-1 resolution check [2026-05-18 01:50 CEST]`.
+Evidence: no visible/internal route-name headings matching `settings`, `support`, `privacy`, `terms`, `sources`, `disclaimer`, or `onboarding` appeared; localized page headings rendered in Swedish and English; console/page errors 0.
+Next manager action: close this reviewer defect after accepting the bounded route-shell atom. Remaining reviewer product defects include tab glyphs, active-question launch ads, mixed QuestionCard source-citation prefixes, and missing Mistakes answer-review context.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web small-mobile `/settings` and `/onboarding` layout.
+Checks run:
+- Reused the current exported web on port 4195.
+- System-Chrome pass at 320x568 dismissed the launch modal, inspected scroll metrics, and verified bottom actions/links on `/settings` and `/onboarding` - exit 0.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt remains mixed, so this is reviewer evidence, not acceptance.
+Findings queued: no new defect; updated `codex-tasks/validator.txt` items `REVIEWER-SETTINGS-MOBILE-SCROLL-1 resolution check [2026-05-18 01:50 CEST]` and `REVIEWER-ONBOARDING-MOBILE-SCROLL-1 resolution check [2026-05-18 01:50 CEST]`.
+Evidence: `/settings` measured `scrollHeight:568`, `innerHeight:568`, and the `Support` compliance link was reachable at `y:455`. `/onboarding` measured `scrollHeight:568`, `innerHeight:568`, with `Börja studera` at `y:410` and `Justera inställningar` at `y:455`. Console/page errors 0.
+Next manager action: close these two reviewer defects after accepting the bounded mobile-layout atoms; continue source-owner work on the remaining queued product defects.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after the bounded resolution passes.
+Checks run:
+- `git status --short --branch`.
+- `npm run test:ownership` after queue/journal edits - exit 0.
+- Stopped the temporary exported-web server on port 4195.
+Workspace contract: blocked/rate-limited for broader review - bounded resolution checks were completed, but the shared checkout still has broad non-REVIEWER product/test/report dirt and branch divergence.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 01:50 CEST]`.
+Evidence: current status still shows app route changes, shared learning/quiz/monetization/UI component changes, content/question files, quiz helpers, router/Playwright config, validator/e2e/content tests, screenshot artifacts, and untracked test/helper files outside REVIEWER ownership. REVIEWER touched only queue/journal notes. Ownership gate passed.
+Next manager action: GM/VALIDATOR or source-owner panes should bound, accept/reject, commit, or clear the current source/test/report scope and reconcile the branch before requesting another broad REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after the latest TEAM_PLAN and source-owner journal updates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, and `codex-tasks/blockers.txt`.
+- Inspected SETUP, DATA-INTEGRITY, and CONTENT journal tails for current handoff boundaries.
+- `git status --short --branch` and `git diff --name-status -- app components lib data content scripts tests package.json app.json eas.json playwright.config.ts reports/2026-05-15-uiux-screenshots`.
+Workspace contract: blocked/rate-limited - no new broad functional pass was started because the checkout remains a mixed non-REVIEWER artifact, and DATA-INTEGRITY has a newer language-settings parity handoff not yet reflected in the latest TEAM_PLAN acceptance rows.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 01:56 CEST]`; no duplicate product defect queued.
+Evidence: branch remains behind 6 from `origin/main`; status still shows broad app/component/lib/content/data/script/test/report dirt plus untracked helper/parity files outside REVIEWER ownership. Latest TEAM_PLAN accepts through APP28/CNT65/DI58, while DATA-INTEGRITY journal now includes a later language-settings parity atom.
+Next manager action: GM/VALIDATOR or source-owner panes should accept/reject, commit, clear, or explicitly bound the current source/test/report scope and reconcile the branch before asking REVIEWER for another broad pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web `/profile` Remove Ads paywall flow and paid-user route suppression.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and SETUP/DATA-INTEGRITY/CONTENT journal tails before the pass.
+- `rg -n "Remove Ads|Ta bort|restore|Restore|29 SEK|Premium|adsDisabled|purchase|removeAds" app components lib tests scripts -S` confirmed current paywall/helper surfaces exist.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- A first strict-static-server run passed the paywall/product assertions but reported `/favicon.ico` 404 under non-SPA serving, so it was not used as product evidence for console cleanliness.
+- Inline Playwright using `/usr/bin/google-chrome` against repo `tests/e2e/serve-dist-web.cjs` on port 4198 - exit 0.
+Workspace contract: pass with caveats - no product source edited; this is reviewer evidence from the current accepted dirty-tree surface, not source acceptance. Broader acceptance-grade review remains constrained by the mixed dirty checkout and branch divergence.
+Findings queued: none new. Added `REVIEWER-ADS-IAP-1` resolution-check evidence for the web profile/paywall subcheck.
+Evidence: clean `/profile` context showed Remove Ads/Ta bort annonser copy, `29 SEK`, one buy button, one restore button, and idle one-time-purchase/restore status. Restore before buy showed the localized not-found state. Buy set `localStorage['monetization.removeAds.adsDisabled.v1']="true"`, showed the ad-free active state, disabled the buy button, persisted on returning to `/profile`, and `/home`, `/learn`, `/mistakes`, `/practice`, `/quiz/q001`, and `/exam` all had `dialogCount:0`, `googleAdMobCount:0`, ad-preview text count 0, console errors 0, and page errors 0.
+Next manager action: close only the web profile/paywall portion of `REVIEWER-ADS-IAP-1` after accepting the bounded paywall/purchase source atoms; keep native store product/device restore QA, real AdMob IDs, consent prompts, tab glyphs, active-question launch ads, and Mistakes answer-review defects separate.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web tab navigation, active-question launch-ad suppression, and wrong-answer-to-Mistakes review flow.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queue state, and SETUP/DATA-INTEGRITY/CONTENT journal tails before testing.
+- Inspected `app/(tabs)/_layout.tsx`, `app/(tabs)/mistakes.tsx`, `lib/monetization/ads.ts`, and existing reviewer queue entries to avoid duplicate findings.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Started `PORT=4201 node tests/e2e/serve-dist-web.cjs`.
+- System-Chrome pass at 390x844 inspected bottom tab links on `/home`, then fresh contexts for `/home`, `/practice`, `/quiz/q001`, and `/exam` launch-ad state - exit 0 after correcting a case-sensitive baseline assertion.
+- System-Chrome pass set English support, answered `/practice` q001 incorrectly with `In southern Europe`, then inspected `/mistakes` answer-review context - exit 1 because the saved Mistakes card still omitted selected/correct answer context.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt and branch divergence remain, so this is reviewer evidence and queueing, not acceptance.
+Findings queued: `codex-tasks/validator.txt` resolution checks for `REVIEWER-TAB-NAV-GLYPH-1` and `REVIEWER-ACTIVE-QUESTION-LAUNCH-AD-1`; still-open update for `REVIEWER-MISTAKES-ANSWER-REVIEW-1`.
+Evidence: Bottom tabs now render exactly `Hem`, `Lär dig`, `Öva`, `Prov`, `Misstag`, `Profil` with matching plain aria labels and `chevronTabTexts:[]`. `/home` still shows the passive free-user launch ad baseline (`Startannons`, `GOOGLE ADMOB`), while `/practice`, `/quiz/q001`, and `/exam` render expected route content with `dialogCount:0`, no launch/ad text, and console/page errors 0. The Mistakes flow records Practice feedback correctly, but `/mistakes` still has `hasCorrectAnswerLabel:false`, `hasCorrectOptionText:false`, `hasSelectedWrongOptionText:false`, and no answer-review controls beyond the launch-ad dismiss button.
+Next manager action: accept or reject the bounded tab-navigation and active-question launch-ad atoms before closing those reviewer findings; keep `REVIEWER-MISTAKES-ANSWER-REVIEW-1` assigned to a source owner with localized selected/correct-answer review UI and coverage. Broader acceptance-grade REVIEWER passes remain blocked until GM/VALIDATOR bounds the dirty source/test/report scope and reconciles the branch.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web wrong-answer-to-Mistakes review flow after new Mistakes store/source dirty state.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and source-owner journal tails before testing.
+- Inspected `app/(tabs)/mistakes.tsx`, `app/(tabs)/practice.tsx`, `lib/storage/mistakeReviewStore.ts`, and the existing `REVIEWER-MISTAKES-ANSWER-REVIEW-1` queue item to avoid a duplicate finding.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Started `PORT=4202 node tests/e2e/serve-dist-web.cjs`.
+- First system-Chrome pass reached `/mistakes` but hit reviewer-script strict locator ambiguity on the exact `Mistakes` text, so it was discarded as product evidence.
+- Rerun system-Chrome pass scoped the locator to the Mistakes heading, set English support, answered `/practice` q001 incorrectly with `In southern Europe`, then inspected `/mistakes` answer-review context - exit 1 because the saved Mistakes card still omitted selected/correct answer context.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt and branch divergence remain, so this is reviewer evidence and queueing, not acceptance.
+Findings queued: updated existing `codex-tasks/validator.txt` item `REVIEWER-MISTAKES-ANSWER-REVIEW-1`; updated `codex-tasks/blockers.txt` dirty-worktree blocker.
+Evidence: Practice showed `In southern Europe — Wrong` and `In the Nordic region in northern Europe — Correct answer`; `/mistakes` showed `Mistakes`, `Wrong answers: 1`, `Where is Sweden located?`, the English explanation, and `UHR reference`, but returned `hasCorrectAnswerLabel:false`, `hasCorrectOptionText:false`, `hasSelectedWrongLabel:false`, `hasSelectedWrongOptionText:false`, and `hasAnswerButtons:0`. Browser console/page errors 0.
+Next manager action: keep `REVIEWER-MISTAKES-ANSWER-REVIEW-1` assigned to a source owner until `app/(tabs)/mistakes.tsx` reads and renders the persisted selected wrong answer plus the correct answer with localized labels and coverage. Broader acceptance-grade REVIEWER passes remain blocked until GM/VALIDATOR bounds the dirty source/test/report scope and reconciles the branch.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current exported web wrong-answer-to-Mistakes review flow after SETUP Iteration 168.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and SETUP/DATA-INTEGRITY/CONTENT journal tails before testing.
+- Inspected `app/(tabs)/mistakes.tsx`, `lib/storage/mistakeReviewStore.ts`, `tests/e2e/practice-feedback.spec.ts`, and the existing `REVIEWER-MISTAKES-ANSWER-REVIEW-1` queue history to avoid a duplicate finding.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Started `PORT=4204 node tests/e2e/serve-dist-web.cjs`.
+- System-Chrome pass at 390x844 set Swedish, answered `/practice` q001 incorrectly, then inspected `/mistakes`; reran the same flow in English support mode - exit 0.
+Workspace contract: pass with caveat - no product source edited by REVIEWER; current non-REVIEWER product/test/report dirt and branch divergence remain, so this is reviewer evidence and queueing, not acceptance.
+Findings queued: no new defect; updated `codex-tasks/validator.txt` item `REVIEWER-MISTAKES-ANSWER-REVIEW-1 resolution check [2026-05-18 02:16 CEST]`; updated `codex-tasks/blockers.txt` dirty-worktree blocker.
+Evidence: Swedish `/mistakes` showed `Fel svar att repetera`, `Ditt senaste felaktiga svar`, `I södra Europa`, `Rätt svar`, `I Norden i norra Europa`, and aria label `Svar att repetera. Ditt senaste felaktiga svar: I södra Europa. Rätt svar: I Norden i norra Europa.` English `/mistakes` showed `Wrong answers to revisit`, `Your latest wrong answer`, `In southern Europe`, `Correct answer`, `In the Nordic region in northern Europe`, and aria label `Answers to review. Your latest wrong answer: In southern Europe. Correct answer: In the Nordic region in northern Europe.` Browser console/page errors 0.
+Next manager action: close `REVIEWER-MISTAKES-ANSWER-REVIEW-1` only after accepting the bounded SETUP Iteration 168 source/test atom. Broader acceptance-grade REVIEWER passes remain blocked until GM/VALIDATOR bounds the dirty source/test/report scope and reconciles the branch.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after TEAM_PLAN accepted APP29-APP31, CNT68-CNT69, and DI62.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/validator.txt`, `codex-tasks/blockers.txt`, and SETUP/DATA-INTEGRITY/CONTENT journal tails.
+- `git status --short --branch` and `git diff --name-status` confirmed broad non-REVIEWER dirty app/component/lib/content/data/script/test/report scope remains.
+- Compared latest manager acceptances with current source-owner journal tails; CONTENT q053, SETUP Iteration 169, and DATA-INTEGRITY Mistakes route parity are visible after the latest accepted TEAM_PLAN boundary.
+Workspace contract: blocked/rate-limited - no new functional pass was started because the checkout is still a mixed artifact and the reviewer contract says to stop when dirty-worktree ownership is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 02:21 CEST]`; no duplicate product defect queued.
+Evidence: latest plan accepts APP29-APP31/CNT68-CNT69/DI62, but current status still includes app routes, shared learning/quiz/monetization/UI components, content/question files, quiz helpers, Playwright/config, content/e2e/unit tests, screenshot reports, and untracked helper/parity files outside REVIEWER ownership. This lane did not edit product source or tests.
+Next manager action: GM/VALIDATOR or source-owner panes should accept/reject, commit, clear, or explicitly bound the current source/test/report scope and reconcile the branch before requesting another REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after TEAM_PLAN accepted APP32, CNT70, and DI63.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/validator.txt`, `codex-tasks/blockers.txt`, and source-owner journal tails.
+- `git status --short --branch` and `git diff --name-status` confirmed broad non-REVIEWER dirty app/component/lib/content/data/script/test/report scope remains.
+- Compared the latest TEAM_PLAN acceptance boundary with `docs/parallel-sessions/journals/data-integrity.md`; the journal contains a newer `Mistakes route wrong-answer review-store negative parity coverage atom` after accepted DI63.
+Workspace contract: blocked/rate-limited - no new functional pass was started because the checkout is still a mixed artifact and the reviewer contract says to stop when dirty-worktree ownership or acceptance state is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 02:24 CEST]`; no duplicate product defect queued.
+Evidence: latest plan accepts APP32, CNT70, and DI63 only; DATA-INTEGRITY has a newer Mistakes review-store handoff not reflected in TEAM_PLAN, while current status still includes broad app routes, shared learning/quiz/monetization/UI components, content/question files, quiz helpers, Playwright/config, content/e2e/unit tests, screenshot reports, and untracked helper/parity files outside REVIEWER ownership. This lane did not edit product source or tests.
+Next manager action: GM/VALIDATOR or source-owner panes should accept/reject, commit, clear, or explicitly bound the newer DATA-INTEGRITY handoff and mixed source/test/report scope before requesting another REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: CONTENT Iteration 228 q012 English explanation and exported `/quiz/q012` route.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and SETUP/DATA-INTEGRITY/CONTENT journal tails.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`; it is missing in this environment, so the finding was queued directly in `codex-tasks/validator.txt` following existing reviewer lane practice.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 published questions and 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js` - exit 0 with 3/3 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- `sed -n '300,345p' data/questions.ts` - q012 source slice shows the English explanation beginning `The Democracy means rule by the people section says...`.
+- Direct TS import attempt failed because `@babel/register` is not installed; no source files were changed for tooling.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Started `PORT=4206 node tests/e2e/serve-dist-web.cjs`; stopped the server after the pass.
+- System-Chrome exported-web pass set English support, opened `/quiz/q012`, selected the correct answer, and exited 1 by design because the awkward English explanation was visible.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current non-REVIEWER product/test/report dirt and branch divergence remain, so this is reviewer evidence and queueing, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q012-EN-NATURALNESS-1`; refreshed `codex-tasks/blockers.txt` dirty-worktree/rate-limit blocker.
+Evidence: `/quiz/q012` in English mode showed the English question, independent-study disclaimer, source citation `Source: Sverige i fokus, Sveriges demokratiska system, Demokrati betyder folkstyre, p. 10`, correct-answer feedback, and the explanation text `The Democracy means rule by the people section says free elections mean everyone who has the right to vote has one vote each. It also says voters should be able to express opinions without threats or coercion, that there should be several parties, and that the vote should be secret.` Browser console/page errors 0.
+Next manager action: assign CONTENT to rewrite q012 English explanation naturally while preserving the UHR page 10 citation and facts; then accept/reject or otherwise bound the q012 handoff and broad mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after TEAM_PLAN accepted APP32, CNT70, and DI63.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and SETUP/DATA-INTEGRITY/CONTENT journal tails.
+- `git status --short --branch`, `git rev-list --left-right --count HEAD...@{u}`, and `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json playwright.config.ts reports/2026-05-15-uiux-screenshots`.
+- Compared the latest TEAM_PLAN acceptance boundary with current source-owner journals.
+Workspace contract: blocked/rate-limited - no new functional pass was started because the checkout is still a mixed artifact and the reviewer contract says to stop when dirty-worktree ownership or acceptance state is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 02:27 CEST]`; no duplicate product defect queued.
+Evidence: latest plan accepts APP32, CNT70, and DI63 only; source-owner journals now show newer unaccepted SETUP Iteration 170 mock-exam shuffle review coverage, CONTENT Iteration 226 q054 violence-law prompt cleanup, and DATA-INTEGRITY Mistakes route wrong-answer review-store parity. Current diff still spans broad non-REVIEWER app/component/lib/content/data/script/test/report scope, and `main` remains `0 6` behind `origin/main`. This lane did not edit product source or tests.
+Next manager action: GM/VALIDATOR or source-owner panes should accept/reject, commit, clear, or explicitly bound the newer handoffs and mixed source/test/report scope before requesting another REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after TEAM_PLAN accepted APP33, CNT71, and DI65.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queues, and SETUP/DATA-INTEGRITY/CONTENT journal tails.
+- `git status --short --branch`, `git rev-list --left-right --count HEAD...@{u}`, and `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json playwright.config.ts reports/2026-05-15-uiux-screenshots`.
+- Compared the latest TEAM_PLAN acceptance boundary with current source-owner journals.
+Workspace contract: blocked/rate-limited - no new broad functional pass was started because the checkout remains a mixed artifact and the reviewer contract says to stop when dirty-worktree ownership or acceptance state is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 02:30 CEST]`; no duplicate product defect queued.
+Evidence: latest plan accepts APP33, CNT71, and DI65, but source-owner journals now show newer unaccepted SETUP Iteration 171 answer-shuffle label-preservation coverage and CONTENT Iteration 227 q059 Sametinget prompt cleanup. Current status still spans broad non-REVIEWER app/component/lib/content/data/script/test/report scope, includes untracked helper/parity files, and `main` remains `0 6` behind `origin/main`. This lane did not edit product source or tests.
+Next manager action: GM/VALIDATOR or source-owner panes should accept/reject, commit, clear, or explicitly bound the newer handoffs and mixed source/test/report scope before requesting another REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: workspace contract state after TEAM_PLAN accepted APP34 and CNT72.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and SETUP/DATA-INTEGRITY/CONTENT journal tails.
+- `git status --short --branch`, `git rev-list --left-right --count HEAD...@{u}`, and `git diff --name-status -- app components lib data content scripts tests package.json package-lock.json app.json eas.json playwright.config.ts reports/2026-05-15-uiux-screenshots`.
+- Compared the latest TEAM_PLAN acceptance boundary with current source-owner journals.
+Workspace contract: blocked/rate-limited - no new broad functional pass was started because the checkout remains a mixed artifact and the reviewer contract says to stop when dirty-worktree ownership or acceptance state is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 02:33 CEST]`; no duplicate product defect queued.
+Evidence: latest plan accepts APP34 and CNT72, so SETUP Iteration 171 and CONTENT Iteration 227 are now reflected in TEAM_PLAN. DATA-INTEGRITY still has a newer unaccepted handoff for published question ID format negative schema coverage after accepted DI65. Current status still spans broad non-REVIEWER app/component/lib/content/data/script/test/report scope, includes untracked helper/parity files, and `main` remains `0 6` behind `origin/main`. This lane did not edit product source or tests.
+Next manager action: GM/VALIDATOR or source-owner panes should accept/reject, commit, clear, or explicitly bound the newer DATA-INTEGRITY handoff and mixed source/test/report scope before requesting another REVIEWER functional pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: final handoff for the q012 TRANSLATE-COMPLETE pass and current rate-limit state.
+Checks run:
+- Completed the bounded q012 exported-web pass recorded above; queued `REVIEWER-Q012-EN-NATURALNESS-1` in `codex-tasks/validator.txt`.
+- `git diff --check -- codex-tasks/validator.txt codex-tasks/blockers.txt docs/parallel-sessions/journals/reviewer.md` - exit 0.
+- `npm run test:ownership` - exit 0.
+- `git status --short --branch` still shows `main...origin/main [behind 6]` and broad non-REVIEWER product/test/report dirt.
+Workspace contract: blocked/rate-limited after one focused pass - no product source or tests edited by REVIEWER.
+Findings queued: `REVIEWER-Q012-EN-NATURALNESS-1`; blocker refreshed as `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 02:38 CEST]`.
+Evidence: `/quiz/q012` in English support mode renders the awkward explanation beginning `The Democracy means rule by the people section says...`; the content validator, source-citation stem test, export parity, web export, and ownership gate all pass, so this is a product-language defect not caught by current gates.
+Next manager action: CONTENT should rewrite q012 English explanation naturally, then GM/VALIDATOR should accept/reject or bound q012 and the mixed checkout before requesting another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current q013 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q013`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and lane journal tails.
+- Checked the shared review helper path from `codex-tasks/open.txt`; `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` is not executable in this container, so this finding was queued through the reviewer lane fallback file.
+- `sed -n '300,435p' data/questions.ts` - q013 `explanationEn` begins `The A strong democracy section lists...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js` - exit 0, 3/3.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q013` in English support mode - exit 1 by design because the awkward explanation is visible after answering.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q013-EN-NATURALNESS-1`.
+Evidence: `/quiz/q013` rendered `Which is a way to influence and participate in society?`, the Swedish secondary prompt, correct feedback for `Contact politicians, demonstrate, or sign a petition`, source citation `Source: Sverige i fokus, Sveriges demokratiska system, En stark demokrati, p. 10`, the not-official disclaimer, and the user-visible explanation beginning `The A strong democracy section...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q013 English explanation naturally, preserving the UHR page 10 source and participation facts; GM/VALIDATOR should accept/reject or bound q013 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current q014 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q014`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and lane journal tails.
+- Checked the shared review helper path from `codex-tasks/open.txt`; `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are not executable in this container, so this finding was queued through the reviewer lane fallback file.
+- `sed -n '405,475p' data/questions.ts` - q014 `explanationEn` begins `The Democracy means rule by the people section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js` - exit 0, 3/3.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q014` in English support mode - exit 1 by design because the awkward explanation is visible after answering.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q014-EN-NATURALNESS-1`.
+Evidence: `/quiz/q014` rendered `What is it called when laws apply to everyone and no one may be sentenced without a fair trial?`, the Swedish secondary prompt, correct feedback for `Legal certainty`, source citation `Source: Sverige i fokus, Sveriges demokratiska system, Demokrati betyder folkstyre, p. 10`, the not-official disclaimer, and the user-visible explanation beginning `The Democracy means rule by the people section...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q014 English explanation naturally, preserving the UHR page 10 legal-certainty source and facts; GM/VALIDATOR should accept/reject or bound q014 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current q015 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q015`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and source-owner journal tails.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are not executable in this container, so this finding was queued through the reviewer lane fallback file.
+- `sed -n '420,510p' data/questions.ts` - q015 `explanationEn` begins `The Threats to democracy section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js` - exit 0, 3/3.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q015` in English support mode - exit 1 by design because the awkward explanation is visible after answering.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q015-EN-NATURALNESS-1`.
+Evidence: `/quiz/q015` rendered `How can a low voter turnout affect democracy?`, the Swedish secondary prompt, correct feedback for `People may have fewer opportunities to influence political decisions`, source citation `Source: Sverige i fokus, Sveriges demokratiska system, Hot mot demokratin, p. 11`, the independent/not-official disclaimer, and the user-visible explanation beginning `The Threats to democracy section...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q015 English explanation naturally, preserving the UHR page 11 low-voter-turnout source and facts; GM/VALIDATOR should accept/reject or bound q012-q015 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current q016 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q016`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and source-owner journal tails.
+- Checked the existing reviewer queue first; q016 had no duplicate naturalness finding.
+- `sed -n '470,545p' data/questions.ts` - q016 `explanationEn` begins `The State section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Started `PORT=4208 node tests/e2e/serve-dist-web.cjs`; the first script attempt hit the launch sponsor overlay on `/settings`, then the rerun dismissed it before switching to English support.
+- System-Chrome exported-web pass on `/quiz/q016` in English support mode - exit 1 by design because the awkward explanation is visible after answering.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q016-EN-NATURALNESS-1`.
+Evidence: `/quiz/q016` rendered `How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?`, the Swedish secondary prompt, source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, the independent-study disclaimer, and the user-visible explanation `The State section says Sweden is a parliamentary representative democracy. This means citizens vote in general elections and elect members of the Riksdag, which then makes decisions on laws and the state budget.` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q016 English explanation naturally, preserving the UHR page 12 parliamentary-democracy source and facts; GM/VALIDATOR should accept/reject or bound q012-q016 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current q017 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q017`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and source-owner journal tails.
+- Checked the existing reviewer queue first; q012-q016 English-naturalness findings already exist, and no q017 duplicate was queued.
+- `sed -n '500,585p' data/questions.ts` - q017 `explanationEn` begins `The UHR section The state says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass via `tests/e2e/serve-dist-web.cjs` on port 4208 - exit 1 by design because the awkward explanation is visible after answering.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q017-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q017` rendered `How many members does the Riksdag have?`, the Swedish secondary prompt, source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, the independent-study disclaimer, correct feedback for `349`, and the user-visible explanation beginning `The UHR section The state says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q017 English explanation naturally, preserving the UHR page 12 Riksdag-member source and facts; GM/VALIDATOR should accept/reject or bound q012-q017 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main at `05dd010`, branch behind 6 from `origin/main`.
+Artifact reviewed: current q020 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q020`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/validator.txt`, `codex-tasks/open.txt`, `codex-tasks/blockers.txt`, and source-owner journal tails.
+- Checked the existing reviewer queue first; q012-q017 English-naturalness findings already exist, and no q020 duplicate was queued.
+- `sed -n '585,690p' data/questions.ts` - q020 `explanationEn` begins `The Referendums section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Started `PORT=4210 node tests/e2e/serve-dist-web.cjs`; system-Chrome exported-web pass on `/quiz/q020` in English support mode - exit 1 by design because the awkward explanation is visible after answering. The local static server was stopped after the pass.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q020-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q020` rendered `What does it mean that referendums in Sweden are advisory?`, the Swedish secondary prompt, source citation `Source: Sverige i fokus, Politiska val och partier, Folkomröstningar, p. 14`, the independent-study disclaimer, correct feedback for `Politicians do not have to follow the result`, and the user-visible explanation `The Referendums section says referendums can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q020 English explanation naturally, preserving the UHR page 14 referendum source and facts; GM/VALIDATOR should accept/reject or bound q012-q020 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current q018 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q018`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/validator.txt`, `codex-tasks/blockers.txt`, and source-owner journal tails.
+- Checked the existing reviewer queue first; q012-q017 and q020 English-naturalness findings already exist, and no q018 duplicate was queued.
+- `sed -n '500,650p' data/questions.ts` - q018 `explanationEn` is `The State section says the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.`
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass via `tests/e2e/serve-dist-web.cjs` on port 4210 - exit 1 by design because the awkward explanation is visible after answering.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q018-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q018` rendered `Who chooses the prime minister?`, the Swedish secondary prompt, source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, the independent-study disclaimer, correct feedback for `The Riksdag`, and the user-visible explanation `The State section says the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q018 English explanation naturally, preserving the UHR page 12 prime-minister-selection source and facts; GM/VALIDATOR should accept/reject or bound q012-q020 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: current q019 TRANSLATE-COMPLETE content/runtime slice in `data/questions.ts`, exported CSV, and exported web `/quiz/q019`.
+Checks run:
+- Checked the existing reviewer queue first; q012-q018 and q020 English-naturalness findings already exist, and no q019 duplicate was queued.
+- `sed -n '535,610p' data/questions.ts` - q019 `explanationEn` is `The Elections and voting section says a person must have turned 18 to have the right to vote. To vote in a Riksdag election, a person must also be a Swedish citizen.`
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 500-question parity.
+- Reused current `dist-web` from the 03:13 CEST q018 web export because only REVIEWER queue/journal files changed afterward.
+- System-Chrome exported-web pass via `tests/e2e/serve-dist-web.cjs` on port 4213 confirmed the post-answer explanation line on `/quiz/q019`.
+Workspace contract: pass with caveat - no product source or tests edited by REVIEWER; current checkout remains a mixed non-REVIEWER dirty artifact, so this is defect evidence rather than source acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q019-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q019` rendered `How old must a person be to have the right to vote?`, the Swedish secondary prompt, source citation `Source: Sverige i fokus, Politiska val och partier, Val och röstning, p. 14`, the independent-study disclaimer, correct feedback for `18 years old`, and the user-visible explanation `The Elections and voting section says a person must have turned 18 to have the right to vote. To vote in a Riksdag election, a person must also be a Swedish citizen.` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: CONTENT should rewrite q019 English explanation naturally, preserving the UHR page 14 voting-age source and facts; GM/VALIDATOR should accept/reject or bound q012-q020 plus the mixed checkout before another acceptance-grade REVIEWER pass.
+
+Lane: REVIEWER
+Host/branch: local/main, branch behind 6 from `origin/main`.
+Artifact reviewed: completion-audit boundary for the REVIEWER objective.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, current queue tails, and current blockers.
+- `tail -n 45 docs/parallel-sessions/journals/reviewer.md` confirmed the q020, q018, and q019 focused functional passes and handoffs.
+- `tail -n 18 codex-tasks/validator.txt` confirmed product defects queued through `REVIEWER-Q019-EN-NATURALNESS-1`.
+- `git rev-list --left-right --count HEAD...@{u}` returned `0 6`.
+- `git status --short --branch` still shows broad non-REVIEWER app/component/lib/content/data/script/test/report dirt plus untracked helper/parity files.
+Workspace contract: blocked - no product source or tests edited by REVIEWER; current artifact is still mixed and not suitable for another acceptance-grade broad pass.
+Findings queued: no new product defect from the audit; refreshed `REVIEWER-BLOCKED-DIRTY-WORKTREE-1`.
+Evidence: latest TEAM_PLAN manager log says reviewer English-naturalness findings remain open and no reviewer queue-only findings were accepted as product atoms; current status remains behind upstream with broad dirty source/test/report scope.
+Next manager action: bound or reconcile the source-owner changes before handing REVIEWER another acceptance-grade functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q022` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked the existing reviewer queue first; q012-q020 English-naturalness findings already exist, and no q022 duplicate was queued.
+- Static source review: `sed -n '1,140p' data/additionalQuestions.ts` shows q022 `explanationEn` begins with `The UHR section The state says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q022` in English support mode - exit 1 by design because the awkward explanation was visible.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q022-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q022` rendered `Which of the following tasks belongs to the Riksdag?`, the Swedish secondary prompt, source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, the independent-study disclaimer, correct feedback for `To decide laws and how the state's money should be used`, and the user-visible explanation `The UHR section The state says members of the Riksdag make decisions about laws and the state budget. The same section also says the Riksdag decides how state money should be used.` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q022 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q023` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `codex-tasks/P0.md`, `docs/architecture.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked the existing reviewer queue first; q012-q020 and q022 English-naturalness findings already exist, and no q023 duplicate was queued.
+- Static source review: `sed -n '85,185p' data/additionalQuestions.ts` shows q023 `explanationEn` begins with `The UHR section The state says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q023` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q023-EN-NATURALNESS-1`.
+Evidence: `/quiz/q023` rendered `True or false: The Riksdag chooses the prime minister.`, the Swedish secondary prompt, source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, the independent-study disclaimer, correct feedback for `True`, and the user-visible explanation `The UHR section The state says the Riksdag chooses the prime minister, who is given the task of forming a government. It also says the prime minister then chooses the government ministers.` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q023 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q024` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `codex-tasks/P0.md`, `docs/architecture.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked the existing reviewer queue first; q012-q020, q022, and q023 English-naturalness findings already exist, and no q024 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are not executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `sed -n '85,180p' data/additionalQuestions.ts` shows q024 `explanationEn` begins with `The UHR section Government agencies says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q024` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q024-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q024` rendered `Which statement describes government agencies?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Myndigheter, p. 13`, independent-study disclaimer, correct feedback for `They implement decisions and must follow laws and government instructions`, and the user-visible explanation `The UHR section Government agencies says the government governs the country with the help of government agencies. Agencies must follow the law and the instructions they have received from the government.` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q024 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q025` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `codex-tasks/P0.md`, `docs/architecture.md`, and current `docs/parallel-sessions/TEAM_PLAN.md`.
+- Checked the existing reviewer queue first; q012-q020 and q022-q024 English-naturalness findings already exist, and no q025 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are not executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `sed -n '120,240p' data/additionalQuestions.ts` shows q025 `explanationEn` begins with `The UHR section Regions and municipalities says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q025` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q025-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q025` rendered `What is the foremost task of Sweden's regions?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Regioner och kommuner, p. 13`, independent-study disclaimer, correct feedback for `To be responsible for health care`, and the user-visible explanation `The UHR section Regions and municipalities says Sweden is divided into 21 regions...` Browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q025 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q026` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020 and q022-q025 English-naturalness findings already exist, and no q026 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '140,190p'` shows q026 `explanationEn` begins with `The UHR section Municipal responsibilities says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q026` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q026-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q026` rendered `Which example describes municipal responsibilities?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Kommunernas ansvar, p. 13`, independent-study disclaimer, correct feedback for `Water and sewage, care services, snow removal, park maintenance, and adult education`, and the user-visible explanation beginning `The UHR section Municipal responsibilities says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q026 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q027` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `codex-tasks/P0.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020 and q022-q026 English-naturalness findings already exist, and no q027 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; neither documented helper path is executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '170,195p'` shows q027 `explanationEn` begins with `The UHR section Sweden's form of government says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q027` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q027-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q027` rendered `What does it mean that Sweden is a constitutional monarchy?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Sveriges statsskick, p. 13`, independent-study disclaimer, correct feedback for `That the head of state is a king or queen but lacks political power`, and the user-visible explanation beginning `The UHR section Sweden's form of government says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q027 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q028` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020 and q022-q027 English-naturalness findings already exist, and no q028 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '180,235p'` shows q028 `explanationEn` begins with `The UHR section The state says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q028` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q028-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q028` rendered `True or false: The opposition should scrutinize the government’s work and propose alternative policies.`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, independent-study disclaimer, correct feedback for `True`, and the user-visible explanation beginning `The UHR section The state says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q028 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.

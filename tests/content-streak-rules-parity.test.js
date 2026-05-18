@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -39,4 +39,36 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], today), 2);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], today), 1);
   assert.equal(calculateStreak(['2026-05-16'], today), 0);
+});
+
+test('streak runtime parity rejects timestamp date-key normalization drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/streaks.ts')) {
+    return String(contents).replace(
+      'const uniqueDays = new Set(days.map((day) => day.slice(0, 10)));',
+      'const uniqueDays = new Set(days);',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /streak rule consecutive answer days through today returned 2, expected 3/,
+  );
 });

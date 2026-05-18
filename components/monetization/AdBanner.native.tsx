@@ -1,13 +1,13 @@
 import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
+import { adBannerCopy } from '../../lib/monetization/adCopy';
 import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
-
-const REMOVE_ADS_ACCESSIBILITY_HINT = 'Hidden after Remove Ads is active.';
 
 export function AdBanner({
   placement = 'home_banner',
@@ -16,6 +16,8 @@ export function AdBanner({
   placement?: AdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
+  const language = useSettingsStore((state) => state.language);
+  const copy = adBannerCopy[language];
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
   const mobileAdsConsent = useMobileAdsConsent(resolvedEntitlements);
@@ -27,13 +29,13 @@ export function AdBanner({
 
   if (!visible || !unitId) return null;
 
-  const placementLabel = placement.replaceAll('_', ' ');
+  const placementLabel = copy.placementLabels[placement];
 
   return (
     <View
       accessible
-      accessibilityHint={`Sponsored ad banner. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
-      accessibilityLabel={`Google AdMob banner: ${placementLabel}. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
+      accessibilityHint={`${copy.previewHint} ${copy.removeAdsHint}`}
+      accessibilityLabel={copy.accessibilityLabel(placementLabel, copy.liveStatus)}
       style={styles.nativeSlot}
     >
       <BannerAd

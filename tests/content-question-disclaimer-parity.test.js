@@ -13,6 +13,24 @@ const expectedDisclaimerRoutes = [
   'app/chapter/[chapterId].tsx',
   'app/quiz/[sessionId].tsx',
 ];
+const expectedDisclaimerCounts = new Map([
+  ['app/onboarding.tsx', 1],
+  ['app/(tabs)/practice.tsx', 1],
+  ['app/(tabs)/exam.tsx', 3],
+  ['app/(tabs)/mistakes.tsx', 1],
+  ['app/chapter/[chapterId].tsx', 1],
+  ['app/quiz/[sessionId].tsx', 1],
+]);
+const expectedQuestionCardRoutes = [
+  'app/(tabs)/practice.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/chapter/[chapterId].tsx',
+  'app/quiz/[sessionId].tsx',
+];
+
+function countQuestionDisclaimerOccurrences(source) {
+  return (source.match(/<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/g) || []).length;
+}
 
 test('question disclaimer coverage stays aligned across study surfaces', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -39,7 +57,36 @@ test('question disclaimer coverage stays aligned across study surfaces', () => {
   for (const routeFile of expectedDisclaimerRoutes) {
     const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
     assert.match(source, /QuestionDisclaimer/);
-    assert.match(source, /<QuestionDisclaimer \/>/);
+    assert.match(source, /<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/);
+    assert.equal(
+      countQuestionDisclaimerOccurrences(source),
+      expectedDisclaimerCounts.get(routeFile),
+      `${routeFile} should keep disclaimer coverage for each question-bearing branch`,
+    );
+  }
+});
+
+test('question disclaimer stays separate from source citation rendering', () => {
+  const disclaimerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/quiz/QuestionDisclaimer.tsx'),
+    'utf8',
+  );
+  const questionCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/quiz/QuestionCard.tsx'),
+    'utf8',
+  );
+
+  assert.doesNotMatch(disclaimerSource, /getQuestionSourceCitation|Källa\/Source|Source citation/);
+  assert.doesNotMatch(disclaimerSource, /uhrReference|UHRReferenceCard/);
+  assert.doesNotMatch(questionCardSource, /QuestionDisclaimer/);
+
+  for (const routeFile of expectedQuestionCardRoutes) {
+    const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
+    assert.ok(
+      source.search(/<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/) <
+        source.indexOf('<QuestionCard'),
+      `${routeFile} should show the independent-study disclaimer before question cards`,
+    );
   }
 });
 
@@ -56,7 +103,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('<QuestionDisclaimer />', '<></>');
+      .replace('<QuestionDisclaimer language={language} />', '<></>');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

@@ -113,7 +113,7 @@ export default function ChapterScreen() {
         {chapterQuestions.length > 0 ? (
           chapterQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
-              <QuestionCard question={question} />
+              <QuestionCard question={question} language={language} />
               <UHRReferenceCard language={language} reference={question.uhrReference} />
             </View>
           ))

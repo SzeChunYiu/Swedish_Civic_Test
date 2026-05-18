@@ -6,25 +6,69 @@ import {
   getQuestionSourceCitation,
   getQuestionTranslationText,
 } from '../../lib/quiz/questionText';
+import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
 
-export function QuestionCard({ question }: { question?: PracticeQuestion }) {
+type QuestionCardCopy = {
+  difficultyLabel: string;
+  difficultyValueLabels: Record<PracticeQuestion['difficulty'] | 'practice', string>;
+  questionLabel: string;
+  secondaryLabel: string;
+  sourceCitationLabel: string;
+};
+
+const questionCardCopy: Record<AppLanguage, QuestionCardCopy> = {
+  sv: {
+    difficultyLabel: 'Svårighetsgrad',
+    difficultyValueLabels: {
+      easy: 'Lätt',
+      medium: 'Medel',
+      hard: 'Svår',
+      practice: 'Övning',
+    },
+    questionLabel: 'Fråga',
+    secondaryLabel: 'Engelsk översättning',
+    sourceCitationLabel: 'Källhänvisning',
+  },
+  en: {
+    difficultyLabel: 'Difficulty',
+    difficultyValueLabels: {
+      easy: 'Easy',
+      medium: 'Medium',
+      hard: 'Hard',
+      practice: 'Practice',
+    },
+    questionLabel: 'Question',
+    secondaryLabel: 'Swedish original',
+    sourceCitationLabel: 'Source citation',
+  },
+};
+
+export function QuestionCard({
+  language = 'sv',
+  question,
+}: {
+  language?: AppLanguage;
+  question?: PracticeQuestion;
+}) {
+  const copy = questionCardCopy[language];
   const difficulty = question?.difficulty ?? 'practice';
-  const questionText = getQuestionDisplayText(question, 'sv');
-  const questionTranslation = getQuestionTranslationText(question);
-  const sourceCitation = getQuestionSourceCitation(question);
+  const difficultyLabel = copy.difficultyValueLabels[difficulty];
+  const questionText = getQuestionDisplayText(question, language);
+  const questionTranslation = getQuestionTranslationText(question, language);
+  const sourceCitation = getQuestionSourceCitation(question, language);
   const questionAccessibilityLabel = [
-    `Difficulty: ${difficulty}`,
-    `Question: ${questionText}`,
-    questionTranslation ? `English translation: ${questionTranslation}` : null,
-    `Source citation: ${sourceCitation}`,
+    `${copy.difficultyLabel}: ${difficultyLabel}`,
+    `${copy.questionLabel}: ${questionText}`,
+    questionTranslation ? `${copy.secondaryLabel}: ${questionTranslation}` : null,
+    `${copy.sourceCitationLabel}: ${sourceCitation}`,
   ]
     .filter(Boolean)
     .join('. ');
 
   return (
     <Card accessibilityLabel={questionAccessibilityLabel}>
-      <Text style={styles.label}>{difficulty}</Text>
+      <Text style={styles.label}>{difficultyLabel}</Text>
       <Text accessibilityRole="header" style={styles.question}>
         {questionText}
       </Text>

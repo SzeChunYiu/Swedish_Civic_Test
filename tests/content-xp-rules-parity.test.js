@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -41,4 +41,33 @@ test('XP progression parity validates answer, completion, and level rules', () =
   assert.equal(calculateLevel(99), 1);
   assert.equal(calculateLevel(100), 2);
   assert.equal(calculateLevel(400), 3);
+});
+
+test('XP progression parity rejects level threshold drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/xp.ts')) {
+    return String(contents).replace('/ 100)) + 1', '/ 200)) + 1');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /XP rule level at 100 XP returned 1, expected 2/,
+  );
 });

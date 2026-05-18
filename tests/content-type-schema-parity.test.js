@@ -24,6 +24,7 @@ test('content TypeScript schema stays in parity with runtime validator expectati
     contentTypes,
     /export type QuestionType = 'single_choice' \| 'true_false' \| 'flashcard';/,
   );
+  assert.match(contentTypes, /export type Difficulty = 'easy' \| 'medium' \| 'hard';/);
   assert.match(contentTypes, /export interface PracticeQuestion/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
@@ -61,6 +62,39 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('content TypeScript schema parity rejects difficulty union drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/types/content.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        "export type Difficulty = 'easy' | 'medium' | 'hard';",
+        "export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /types\/content\.ts Difficulty values are \["easy","medium","hard","expert"\], expected \["easy","medium","hard"\]/,
+  );
+});
+
 test('content TypeScript schema parity rejects glossary field optionality drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -88,5 +122,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /GlossaryTerm\.chapterId optional=false, expected true/,
+  );
+});
+
+test('content TypeScript schema parity rejects UHR page locator optionality drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/types/content.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('pageApprox: number;', 'pageApprox?: number;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /UHRReference\.pageApprox optional=true, expected false/,
   );
 });

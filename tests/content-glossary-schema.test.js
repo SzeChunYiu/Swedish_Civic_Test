@@ -87,3 +87,54 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.match(output, /demokrati\.editorNote is not part of GlossaryTerm schema/);
 });
+
+test('glossary schema rejects duplicate terms and unknown chapter links', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return [
+      "import type { GlossaryTerm } from '../types/content';",
+      '',
+      'export const glossaryTerms: GlossaryTerm[] = [',
+      '  {',
+      "    id: 'demokrati',",
+      "    termSv: 'Demokrati',",
+      "    termEn: 'Democracy',",
+      "    explanationSv: 'Folkstyre där invånare kan påverka gemensamma beslut.',",
+      "    explanationEn: 'Rule by the people where residents can influence shared decisions.',",
+      "    chapterId: 'ch02',",
+      '  },',
+      '  {',
+      "    id: 'demokrati',",
+      "    termSv: 'Demokrati',",
+      "    termEn: 'Democracy',",
+      "    explanationSv: 'Folkstyre där invånare kan påverka gemensamma beslut.',",
+      "    explanationEn: 'Rule by the people where residents can influence shared decisions.',",
+      "    chapterId: 'ch99',",
+      '  },',
+      '];',
+      '',
+    ].join('\\n');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /demokrati duplicates glossary term id/);
+  assert.match(output, /demokrati duplicates Swedish glossary term/);
+  assert.match(output, /demokrati duplicates English glossary term/);
+  assert.match(output, /demokrati references unknown chapter ch99/);
+});

@@ -49,11 +49,19 @@ function readRouterShellManifest() {
     files: valuesForFieldInSource(manifest, 'file'),
     roles: valuesForFieldInSource(manifest, 'role'),
     recoveryHrefs: valuesInConstArray(manifest, 'expoRouterShellRecoveryHrefs'),
+    standaloneHeaderHiddenRoutes: valuesInConstArray(
+      manifest,
+      'expoRouterStandaloneHeaderHiddenRoutes',
+    ),
     notFoundRouteNames: valuesForFieldInSource(manifest, 'notFoundRouteName'),
-    notFoundTitles: valuesForFieldInSource(manifest, 'notFoundTitle'),
+    notFoundHeaderModes: valuesForFieldInSource(manifest, 'notFoundHeaderMode'),
+    rootStackHeaderModes: valuesForFieldInSource(manifest, 'rootStackHeaderMode'),
+    notFoundRedirectHrefs: valuesForFieldInSource(manifest, 'notFoundRedirectHref'),
+    notFoundFileProtocolFallbacks: valuesForFieldInSource(manifest, 'notFoundFileProtocolFallback'),
     webLanguages: valuesForFieldInSource(manifest, 'webLanguage'),
     webAppShellMarkers: valuesForFieldInSource(manifest, 'webAppShellMarker'),
     themeColorTokens: valuesForFieldInSource(manifest, 'themeColorToken'),
+    statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
     appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
   };
@@ -65,43 +73,59 @@ test('router shell fallback is registered in the root Expo stack', () => {
   assertMatches(rootLayout, /<Stack\b/, 'root layout should render the Expo Router stack');
   assertMatches(
     rootLayout,
-    /<Stack\.Screen\s+name=["']\+not-found["'][\s\S]*title:\s*["']Page not found["']/,
-    'root stack should register the not-found recovery route with a stable title',
+    /<Stack\s+screenOptions=\{\{\s*headerShown:\s*false\s*\}\}>/,
+    'root stack should hide standalone route headers so in-page localized headers are the only visible headings',
+  );
+  assertMatches(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/,
+    'root stack should register the not-found recovery route under the hidden root header contract',
   );
   assertMatches(
     rootLayout,
     /SystemUI\.setBackgroundColorAsync\(colors\.canvas\)/,
     'native shell background should follow the theme canvas color',
   );
-  assertContains(
+  assertMatches(
     rootLayout,
-    '<LaunchPopupAd />',
-    'root shell should keep launch ad placement wired',
+    /<LaunchPopupAd\s+entitlements=\{monetizationEntitlements\}\s*\/>/,
+    'root shell should keep launch ad placement wired with resolved entitlements',
   );
   assertMatches(
     rootLayout,
-    /<StatusBar[\s\S]*backgroundColor=\{colors\.canvas\}[\s\S]*style=["']dark["']/,
-    'status bar should stay aligned with the light Expo shell theme',
+    /<StatusBar[\s\S]*style=["']auto["']/,
+    'status bar should stay on the Expo shell auto style',
   );
 });
 
-test('not-found route offers safe Home and Practice recovery actions', () => {
+test('not-found route redirects unknown routes to Home with a file-export fallback', () => {
   const notFoundRoute = read('app/+not-found.tsx');
 
-  assertContains(notFoundRoute, 'Page not found recovery screen');
-  assertContains(notFoundRoute, 'Safe route recovery actions');
   assertMatches(
     notFoundRoute,
-    /router\.replace\(["']\/home["']\)/,
-    'fallback route should provide a safe Home recovery action',
+    /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/,
+    'fallback route should use the Expo Router redirect primitive',
   );
   assertMatches(
     notFoundRoute,
-    /router\.replace\(["']\/practice["']\)/,
-    'fallback route should provide a safe Practice recovery action',
+    /import\s+HomeScreen\s+from ['"]\.\/\(tabs\)\/home['"]/,
+    'static file exports should keep a concrete Home fallback component',
   );
-  assertContains(notFoundRoute, 'Return to study home');
-  assertContains(notFoundRoute, 'Start practice from the route fallback');
+  assertMatches(
+    notFoundRoute,
+    /window\.location\.protocol\s+===\s+['"]file:['"]/,
+    'fallback route should detect static file protocol exports',
+  );
+  assertMatches(
+    notFoundRoute,
+    /return\s+<HomeScreen\s*\/>/,
+    'file protocol exports should render Home directly',
+  );
+  assertMatches(
+    notFoundRoute,
+    /<Redirect\s+href=["']\/home["']\s*\/>/,
+    'runtime unknown routes should redirect to Home',
+  );
 });
 
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
@@ -150,12 +174,25 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'web-document',
     'native-intent',
   ]);
-  assert.deepEqual(manifest.recoveryHrefs, ['/home', '/practice']);
+  assert.deepEqual(manifest.recoveryHrefs, ['/home']);
+  assert.deepEqual(manifest.standaloneHeaderHiddenRoutes, [
+    'disclaimer',
+    'onboarding',
+    'privacy',
+    'settings',
+    'sources',
+    'support',
+    'terms',
+  ]);
   assert.deepEqual(manifest.notFoundRouteNames, ['+not-found']);
-  assert.deepEqual(manifest.notFoundTitles, ['Page not found']);
+  assert.deepEqual(manifest.notFoundHeaderModes, ['hidden']);
+  assert.deepEqual(manifest.rootStackHeaderModes, ['hidden']);
+  assert.deepEqual(manifest.notFoundRedirectHrefs, ['/home']);
+  assert.deepEqual(manifest.notFoundFileProtocolFallbacks, ['HomeScreen']);
   assert.deepEqual(manifest.webLanguages, ['sv']);
   assert.deepEqual(manifest.webAppShellMarkers, ['expo-router']);
   assert.deepEqual(manifest.themeColorTokens, ['colors.canvas']);
+  assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
   assert.deepEqual(manifest.appSchemes, ['swedish-civic-test']);
 
@@ -165,19 +202,37 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
 
   assertMatches(
     rootLayout,
+    /<Stack\s+screenOptions=\{\{\s*headerShown:\s*false\s*\}\}>/,
+    'root stack should hide standalone route headers from the manifest contract',
+  );
+  for (const routeName of manifest.standaloneHeaderHiddenRoutes) {
+    assert.equal(
+      fs.existsSync(path.join(repoRoot, `app/${routeName}.tsx`)),
+      true,
+      `${routeName} should stay covered by the hidden standalone header contract`,
+    );
+  }
+  assertMatches(
+    rootLayout,
     new RegExp(
-      `name=["']${escapeRegExp(manifest.notFoundRouteNames[0])}["'][\\s\\S]*title:\\s*["']${escapeRegExp(manifest.notFoundTitles[0])}["']`,
+      `<Stack\\.Screen\\s+name=["']${escapeRegExp(manifest.notFoundRouteNames[0])}["']\\s*\\/>`,
     ),
-    'root stack should match the fallback route manifest contract',
+    'root stack should register the fallback route under the hidden header contract',
   );
   assertContains(rootLayout, `SystemUI.setBackgroundColorAsync(${manifest.themeColorTokens[0]})`);
+  assertContains(rootLayout, `<StatusBar style="${manifest.statusBarStyles[0]}" />`);
   for (const href of manifest.recoveryHrefs) {
     assertMatches(
       notFoundRoute,
-      new RegExp(`router\\.replace\\(["']${escapeRegExp(href)}["']\\)`),
-      `${href} should remain a not-found recovery action`,
+      new RegExp(`<Redirect\\s+href=["']${escapeRegExp(href)}["']\\s*\\/>`),
+      `${href} should remain the not-found redirect target`,
     );
   }
+  assertContains(
+    notFoundRoute,
+    `return <${manifest.notFoundFileProtocolFallbacks[0]} />;`,
+    'file protocol fallback should match the manifest component',
+  );
   assertContains(
     htmlShell,
     `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${manifest.webLanguages[0]}">`,

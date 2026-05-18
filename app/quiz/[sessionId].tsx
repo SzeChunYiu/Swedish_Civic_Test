@@ -15,6 +15,7 @@ import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
+import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
@@ -87,6 +88,7 @@ export default function QuizSessionScreen() {
     [normalizedSessionId, pickedQuestion],
   );
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
@@ -119,8 +121,19 @@ export default function QuizSessionScreen() {
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
 
   const handleSelectOption = (optionId: string) => {
+    const selectedOption = question.options.find((option) => option.id === optionId);
+    const optionIsCorrect = isCorrectAnswer(question, optionId);
+
     setSelectedOptionId(optionId);
-    recordAnswer(question.id, isCorrectAnswer(question, optionId));
+    recordAnswer(question.id, optionIsCorrect);
+
+    if (!optionIsCorrect && selectedOption) {
+      recordWrongAnswerReview({
+        questionId: question.id,
+        selectedOptionTextEn: selectedOption.textEn,
+        selectedOptionTextSv: selectedOption.textSv,
+      });
+    }
   };
 
   return (
@@ -131,12 +144,16 @@ export default function QuizSessionScreen() {
           {copy.sessionTitle(normalizedSessionId)}
         </Text>
         <Text style={styles.subtitle}>{copy.sessionSubtitle}</Text>
-        <ProgressBar progress={hasSelectedAnswer ? 1 : 0} />
+        <ProgressBar language={language} progress={hasSelectedAnswer ? 1 : 0} />
       </View>
 
-      <QuestionDisclaimer />
-      <QuestionCard question={question} />
-      <AudioButton text={buildQuestionSpeechText(question)} enabled={audioEnabled} />
+      <QuestionDisclaimer language={language} />
+      <QuestionCard question={question} language={language} />
+      <AudioButton
+        enabled={audioEnabled}
+        language={language}
+        text={buildQuestionSpeechText(question)}
+      />
 
       <View style={styles.options}>
         {question.options.map((option) => {
@@ -144,6 +161,7 @@ export default function QuizSessionScreen() {
             question,
             option.id,
             hasSelectedAnswer ? selectedOptionId : null,
+            language,
           );
 
           return (

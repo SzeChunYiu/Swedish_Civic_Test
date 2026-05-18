@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -45,4 +45,35 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
     getNextReviewAt({ isCorrect: true, correctStreak: 50, answeredAt }),
     daysAfter(answeredAt, expectedSchedule.at(-1)),
   );
+});
+
+test('spaced repetition schema rejects schedule drift and non-increasing intervals', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/spacedRepetition.ts')) {
+    return String(contents).replace(
+      'export const spacedRepetitionSchedule: number[] = [1, 3, 7, 15, 30];',
+      'export const spacedRepetitionSchedule: number[] = [1, 3, 3, 15, 30];',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /spacedRepetitionSchedule is \[1,3,3,15,30\]/);
+  assert.match(output, /spacedRepetitionSchedule\[2\] must be greater than the previous interval/);
 });

@@ -64,7 +64,9 @@ const architectureTargetFiles = [
 ];
 
 function valuesInConstArray(source, constName) {
-  const match = source.match(new RegExp(`export const ${constName}\\s*=\\s*\\[([\\s\\S]*?)\\]`));
+  const match = source.match(
+    new RegExp(`export const ${constName}\\s*=\\s*\\[([\\s\\S]*?)\\]\\s+as const`),
+  );
 
   assert.notEqual(match, null, `${constName} should be declared as an exported array`);
 
@@ -88,6 +90,117 @@ const releaseComplianceRouteFiles = [
   'app/sources.tsx',
   'app/support.tsx',
   'app/terms.tsx',
+];
+
+const complianceSupportComponentFiles = [
+  'components/compliance/ComplianceLinks.tsx',
+  'components/compliance/LegalPage.tsx',
+];
+
+const designSystemSupportComponentFiles = [
+  'components/Surface.tsx',
+  'components/ui/Badge.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ScreenShell.tsx',
+];
+
+const themeRuntimeFiles = [
+  'lib/theme/index.ts',
+  'lib/theme/colors.ts',
+  'lib/theme/motion.ts',
+  'lib/theme/radius.ts',
+  'lib/theme/shadows.ts',
+  'lib/theme/spacing.ts',
+  'lib/theme/typography.ts',
+];
+
+const answerShuffleRuntimeFiles = [
+  'lib/quiz/answerOptionShuffle.ts',
+  'lib/quiz/practiceSessionStore.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'lib/quiz/examGenerator.ts',
+];
+
+const questionLanguageRuntimeFiles = [
+  'lib/localization/language.ts',
+  'lib/storage/settingsStore.ts',
+  'lib/quiz/questionText.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/AnswerOption.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/learning/AudioButton.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+];
+
+const quizFeedbackRuntimeFiles = [
+  'components/quiz/AnswerOption.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/CelebrationBurst.tsx',
+  'lib/quiz/answerValidation.ts',
+  'lib/quiz/scoring.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+];
+
+const mistakeReviewRuntimeFiles = [
+  'lib/storage/mistakeReviewStore.ts',
+  'lib/storage/progressStore.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/mistakes.tsx',
+];
+
+const monetizationRuntimeFiles = [
+  'lib/monetization/adCopy.ts',
+  'lib/monetization/ads.ts',
+  'lib/monetization/consent.ts',
+  'lib/monetization/mobileAdsConsent.ts',
+  'lib/monetization/premium.ts',
+  'lib/monetization/purchases.ts',
+  'lib/monetization/rewardedAd.native.ts',
+  'lib/monetization/rewardedAd.ts',
+  'lib/monetization/rewardedExam.ts',
+  'lib/monetization/useMobileAdsConsent.ts',
+  'lib/monetization/useMockExamAccess.ts',
+  'lib/monetization/useRemoveAdsEntitlements.ts',
+  'components/monetization/AdBanner.native.tsx',
+  'components/monetization/AdBanner.tsx',
+  'components/monetization/LaunchPopupAd.native.tsx',
+  'components/monetization/LaunchPopupAd.tsx',
+  'components/monetization/NativeAdCard.tsx',
+  'components/monetization/PremiumBanner.tsx',
+  'app/_layout.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/(tabs)/exam.tsx',
+];
+
+const learningProgressRuntimeFiles = [
+  'lib/learning/badges.ts',
+  'lib/learning/mastery.ts',
+  'lib/learning/spacedRepetition.ts',
+  'lib/learning/streaks.ts',
+  'lib/learning/xp.ts',
+  'lib/storage/progressStore.ts',
+  'components/learning/ChapterCard.tsx',
+  'components/learning/Flashcard.tsx',
+  'components/learning/AudioButton.tsx',
+  'components/ui/ProgressBar.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/chapter/[chapterId].tsx',
 ];
 
 function readJson(relativePath) {
@@ -138,10 +251,120 @@ test('product architecture manifest matches the target scaffold files', () => {
   const manifestFiles = valuesForFieldInSource(manifest, 'file');
   const manifestDirectories = valuesInConstArray(manifest, 'architectureScaffoldDirectories');
   const manifestTabRoutes = valuesInConstArray(manifest, 'architectureTabRouteFiles');
+  const manifestSupplementalRoutes = valuesInConstArray(
+    manifest,
+    'architectureSupplementalRouteFiles',
+  );
+  const manifestComplianceSupportFiles = valuesInConstArray(
+    manifest,
+    'architectureComplianceSupportFiles',
+  );
+  const manifestDesignSystemSupportFiles = valuesInConstArray(
+    manifest,
+    'architectureDesignSystemSupportFiles',
+  );
+  const manifestThemeRuntimeFiles = valuesInConstArray(manifest, 'architectureThemeRuntimeFiles');
+  const manifestAnswerShuffleRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureAnswerShuffleRuntimeFiles',
+  );
+  const manifestQuestionLanguageRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureQuestionLanguageRuntimeFiles',
+  );
+  const manifestQuizFeedbackRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureQuizFeedbackRuntimeFiles',
+  );
+  const manifestMistakeReviewRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureMistakeReviewRuntimeFiles',
+  );
+  const manifestMonetizationRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureMonetizationRuntimeFiles',
+  );
+  const manifestLearningProgressRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureLearningProgressRuntimeFiles',
+  );
 
   assert.deepEqual(manifestFiles, architectureTargetFiles);
   assert.deepEqual(manifestDirectories, ['app', 'components', 'data', 'lib', 'types']);
   assert.deepEqual(manifestTabRoutes, architectureTabRouteFiles);
+  assert.deepEqual(manifestSupplementalRoutes, releaseComplianceRouteFiles);
+  assert.deepEqual(manifestComplianceSupportFiles, complianceSupportComponentFiles);
+  assert.deepEqual(manifestDesignSystemSupportFiles, designSystemSupportComponentFiles);
+  assert.deepEqual(manifestThemeRuntimeFiles, themeRuntimeFiles);
+  assert.deepEqual(manifestAnswerShuffleRuntimeFiles, answerShuffleRuntimeFiles);
+  assert.deepEqual(manifestQuestionLanguageRuntimeFiles, questionLanguageRuntimeFiles);
+  assert.deepEqual(manifestQuizFeedbackRuntimeFiles, quizFeedbackRuntimeFiles);
+  assert.deepEqual(manifestMistakeReviewRuntimeFiles, mistakeReviewRuntimeFiles);
+  assert.deepEqual(manifestMonetizationRuntimeFiles, monetizationRuntimeFiles);
+  assert.deepEqual(manifestLearningProgressRuntimeFiles, learningProgressRuntimeFiles);
+});
+
+test('architecture design system support files exist', () => {
+  assert.deepEqual(
+    designSystemSupportComponentFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture compliance support files exist', () => {
+  assert.deepEqual(
+    complianceSupportComponentFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture theme runtime files exist', () => {
+  assert.deepEqual(
+    themeRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture answer shuffle runtime files exist', () => {
+  assert.deepEqual(
+    answerShuffleRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture question language runtime files exist', () => {
+  assert.deepEqual(
+    questionLanguageRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture quiz feedback runtime files exist', () => {
+  assert.deepEqual(
+    quizFeedbackRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture mistake review runtime files exist', () => {
+  assert.deepEqual(
+    mistakeReviewRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture monetization runtime files exist', () => {
+  assert.deepEqual(
+    monetizationRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture learning progress runtime files exist', () => {
+  assert.deepEqual(
+    learningProgressRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
 });
 
 test('Expo Router route scaffold files expose default component exports', () => {
@@ -206,6 +429,10 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
   );
   assert.match(tabLayout, /type TabTitleCopy = Record<TabRouteName, string>;/);
   assert.match(tabLayout, /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/);
+  assert.match(tabLayout, /const hiddenTabIcon = \(\) => null;/);
+  assert.match(tabLayout, /function getTabOptions\(title: string\)/);
+  assert.match(tabLayout, /tabBarAccessibilityLabel: title/);
+  assert.match(tabLayout, /tabBarIcon: hiddenTabIcon/);
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
@@ -225,7 +452,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
     assert.match(
       tabLayout,
       new RegExp(
-        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{\\{ title: copy\\.${routeName} \\}\\}`,
+        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{getTabOptions\\(copy\\.${routeName}\\)\\}`,
       ),
     );
   }
@@ -237,18 +464,10 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
 
   assert.match(rootLayout, /import\s+\{\s*Stack\s*,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), ['(tabs)', '+not-found', 'index']);
-  assert.match(
-    rootLayout,
-    /<Stack\.Screen\s+name=["']index["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
-  );
-  assert.match(
-    rootLayout,
-    /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
-  );
-  assert.match(
-    rootLayout,
-    /<Stack\.Screen\s+name=["']\+not-found["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
-  );
+  assert.match(rootLayout, /<Stack\s+screenOptions=\{\{\s*headerShown:\s*false\s*\}\}>/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']index["']\s*\/>/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']\(tabs\)["']\s*\/>/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/);
   assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
   assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);
 });

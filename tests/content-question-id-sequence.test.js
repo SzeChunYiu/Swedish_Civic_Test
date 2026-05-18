@@ -45,3 +45,31 @@ require('./scripts/validate-content.js');
   assert.match(output, /q001 expected sequential id q002/);
   assert.match(output, /duplicate question id q001/);
 });
+
+test('published question ID schema rejects non-q-number formats', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace("    id: 'q001',", "    id: 'question-001',");
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /question-001 id must use q### format/);
+  assert.match(output, /question-001 expected sequential id q001/);
+});

@@ -1138,7 +1138,7 @@ test('exam screen does not import ad components', () => {
   assert.match(accessHookSource, /createSecureStoreMockExamAccessStorage/);
 });
 
-test('global launch popup ad is suppressed on exam and compliance routes', () => {
+test('global launch popup ad is suppressed on active question and compliance routes', () => {
   const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
   const entitlementHookSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
@@ -1153,6 +1153,10 @@ test('global launch popup ad is suppressed on exam and compliance routes', () =>
   assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/exam'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/exam/review'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/practice'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/practice/review'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001/review'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/privacy'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
@@ -1160,11 +1164,12 @@ test('global launch popup ad is suppressed on exam and compliance routes', () =>
   assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/practice'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/mistakes'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/profile'), false);
   assert.deepEqual(adsConfig.suppressedLaunchPopupRoutes, [
     '/exam',
+    '/practice',
+    '/quiz',
     '/disclaimer',
     '/privacy',
     '/sources',

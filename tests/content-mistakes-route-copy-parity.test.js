@@ -19,7 +19,7 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
 
-  assert.equal(summary.mistakesRouteCopyLabelsValidated, 26);
+  assert.equal(summary.mistakesRouteCopyLabelsValidated, 30);
   assert.equal(summary.mistakesRouteCopyParityValidated, true);
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -27,6 +27,10 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /Gå igenom fel svar med fråga, förklaring, källreferens/);
   assert.match(source, /Review wrong answers with the question, explanation, source reference/);
   assert.match(source, /accessibilityLabel=\{copy\.emptyPracticeAccessibilityLabel\}/);
+  assert.match(source, /useMistakeReviewStore/);
+  assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
+  assert.match(source, /\{copy\.correctAnswerLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.answerReviewAccessibilityLabel\(/);
   assert.match(
     source,
     /\{copy\.wrongAnswers\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\)\}/,
@@ -88,4 +92,67 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /mistakes route is missing sv copy/);
+});
+
+test('mistakes route copy parity rejects missing answer-review accessibility copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'accessibilityLabel={copy.answerReviewAccessibilityLabel(',
+        'accessibilityLabel={copy.emptyPracticeAccessibilityLabel}',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /answer review must expose localized accessibility summary/,
+  );
+});
+
+test('mistakes route copy parity rejects missing wrong-answer review store wiring', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replaceAll('useMistakeReviewStore', 'useProgressStore');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /mistakes route must read stored wrong-answer review text/,
+  );
 });

@@ -129,3 +129,21 @@ test('question source export wiring guard rejects bypassed generated rows', () =
     /questions export must concatenate sourceQuestions before generatedPublishedQuestions/,
   );
 });
+
+test('question source export wiring guard rejects reordered authored partitions', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'data/questions.ts'), 'utf8').replace(
+    `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
+  ...baseQuestions,
+  ...additionalQuestions,
+]);`,
+    `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
+  ...additionalQuestions,
+  ...baseQuestions,
+]);`,
+  );
+
+  assert.throws(
+    () => assertQuestionSourceExportWiring(source),
+    /sourceQuestions export must publish baseQuestions followed by additionalQuestions/,
+  );
+});
