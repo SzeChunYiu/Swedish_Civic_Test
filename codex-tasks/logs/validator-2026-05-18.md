@@ -310,3 +310,27 @@ Next worker task queued: DATA-INTEGRITY -
 `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` may now start from clean current
 `origin/main`; keep CONTENT-authored true/false prefix cleanup separate unless
 VALIDATOR explicitly leases a paired CONTENT/DATA-INTEGRITY atom.
+
+Iteration: 2026-05-18T20:05+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1` as the queue-level closure for the
+static mobile topbar reachability defect.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #574 is closed and merged as `8e9b49c` on current `origin/main`.
+Clean manager verification passed `NODE_OPTIONS='--v8-pool-size=1' npm run
+test:static-site-mobile-nav` 1/1, `node --check site/app.js`, `node --check
+scripts/static-site-mobile-nav.test.js`, `NODE_OPTIONS='--v8-pool-size=1' npm
+run test:static-site-settings-language` 4/4, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:static-site-flag-palette` 1/1, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:static-site-answer-shuffle` 4/4, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:static-site-question-feedback` 3/3, `NODE_OPTIONS='--v8-pool-size=1'
+npm run validate:content` at 720 questions with static-site parity true,
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run lint`, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:ownership`, targeted Prettier, and `git diff --check
+8e9b49c^..8e9b49c`.
+Next worker task queued: SETUP -
+`REVIEWER-SITE-QUESTION-COUNT-COPY-1` may now start from clean current
+`origin/main`; keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external until
+production serves current main and the hash-aware live smoke passes.

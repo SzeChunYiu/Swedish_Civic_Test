@@ -204,23 +204,24 @@ Accepted P0 SETUP atoms:
       diff --check origin/main..HEAD` all exit 0. The focused browser guard
       proves brand, hero, and Ebook flag surfaces keep official blue/gold while
       palette accents still mutate.
+21. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1` accepted via PR #574 /
+    `8e9b49c`.
+    - Clean manager verification on current `origin/main` `bc20f8c` passed
+      `npm run test:static-site-mobile-nav` 1/1, `node --check site/app.js`,
+      `node --check scripts/static-site-mobile-nav.test.js`, `npm run
+      test:static-site-settings-language` 4/4, `npm run
+      test:static-site-flag-palette` 1/1, `npm run
+      test:static-site-answer-shuffle` 4/4, `npm run
+      test:static-site-question-feedback` 3/3, `npm run validate:content` at
+      720 questions with static parity true, `npm run typecheck -- --pretty
+      false`, `npm run lint`, `npm run test:ownership`, targeted Prettier, and
+      `git diff --check 8e9b49c^..8e9b49c` all exit 0. The focused mobile
+      viewport guard proves Practice, Mock exam, Ebook, Support, and Settings
+      are reachable at 390px without document/body horizontal overflow.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
-1. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
-   - Scope: deployed static `site/` mobile header/navigation at <=390px width.
-   - Required behavior: Practice, Mock exam, Ebook, Support, and Settings must
-     be reachable without horizontal overflow or hidden 0x0 nav links.
-   - Required gates: static mobile viewport guard proving required destinations
-     are visible or reachable through an accessible menu at <=390px width, no
-     document/body horizontal overflow, `node --check` for changed `site/`
-     scripts, typecheck, lint, ownership, targeted Prettier/diff checks,
-     journal handoff, and PR/merge evidence.
-   - Reviewer evidence: current-main mobile smoke measured 448px document/body
-     scroll width in a 390px viewport, visible nav only `Home` and `Practice`,
-     hidden `Mock exam`, `Ebook`, and `Support`, and no menu button.
-
-2. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
+1. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
    - Scope: deployed static `site/` user-visible question-count/product-count
      copy in `site/index.html`, `site/i18n-extras.js`, and any related static
      copy surface.
