@@ -96,7 +96,7 @@ const i18n = window.i18n = {
     "nav.sources": "Sources",
     "nav.cta": "Get the app ↗",
 
-    "hero.eyebrow": "Unofficial · Free MVP · 500+ questions",
+    "hero.eyebrow": "Unofficial · Free MVP · Source-backed questions",
     "hero.h1a": "Pass the test.",
     "hero.h1b": "Earn the passport.",
     "hero.h1c": "Brag at midsommar.",
@@ -353,6 +353,7 @@ const i18n = window.i18n = {
     "footer.app.4": "Mock exam",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Fine print",
+    "footer.about.p": "An independent study tool, built by people who've taken the test themselves. Free to start, study, and take mock exams.",
     "footer.h.honest": "Honest disclaimer",
     "footer.honest.p": "Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. We just really like helping people study.",
     "footer.copyright": "© 2026 Sveriges Medborgartest. Made with kanelbullar in Stockholm.",
@@ -388,7 +389,7 @@ const i18n = window.i18n = {
     "nav.sources": "Källor",
     "nav.cta": "Hämta appen ↗",
 
-    "hero.eyebrow": "Inofficiell · Gratis MVP · 500+ frågor",
+    "hero.eyebrow": "Inofficiell · Gratis MVP · Källstödda frågor",
     "hero.h1a": "Klara provet.",
     "hero.h1b": "Få passet.",
     "hero.h1c": "Skryt på midsommar.",
@@ -645,6 +646,7 @@ const i18n = window.i18n = {
     "footer.app.4": "Provexempel",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Finstilta",
+    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.",
     "footer.h.honest": "Ärlig friskrivning",
     "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
     "footer.copyright": "© 2026 Sveriges Medborgartest. Gjort med kanelbullar i Stockholm.",
