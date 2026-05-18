@@ -331,3 +331,33 @@ that rejects authored `true_false` source stems beginning with
 `validate:content`, focused content gates, typecheck, ownership,
 Prettier/diff checks, PR/merge evidence, and a current-main prefix recheck.
 Do not accept a data-only cleanup that leaves static parity stale.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:37:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q501-Q550-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `d372521` confirms q501-q550 generated residual defects against
+the official UHR `Sverige i fokus` PDF. Facts, citations, answer keys, and
+ordinary distractors remain supported, but canonical CSV and `site/questions.js`
+still publish learner-visible generated true/false fragments/meta scaffolding
+in `q502`, `q503`, `q506`, `q507`, `q514`, `q515`, `q518`, `q519`, `q522`,
+`q523`, `q526`, `q527`, `q530`, `q531`, `q542`, `q543`, `q546`, `q547`, and
+`q550`. Fold `docs/verify/q501-q550-2026-05-18.md` and the ledger row statuses
+into `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards, regenerated
+CSV/static output, export/static parity, `validate:content`, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
+row recheck.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:37:00+02:00
+`VERIFY-GENERATED-UNKNOWN-OPTION-Q501-Q550-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: the same q501-q550 VERIFY pass
+also confirms generated single-choice variants `q504`, `q505`, `q508`, `q512`,
+`q516`, `q517`, `q520`, `q524`, `q528`, `q532`, `q536`, `q540`, `q544`, and
+`q548` include `Det går inte att avgöra av materialet` / `It cannot be
+determined from the material` in `content/question-bank.csv` and
+`site/questions.js`. Fold this evidence into
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards for
+`materialet` / `from the material`, regenerated CSV/static output,
+export/static parity, `validate:content`, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks.
