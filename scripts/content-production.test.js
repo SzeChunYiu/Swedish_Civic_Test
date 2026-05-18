@@ -230,6 +230,14 @@ test('full content production validates published UHR-referenced questions', () 
     summary.generatedSingleChoiceFillerOptionsValidated,
     summary.generatedPublishedQuestions,
   );
+  assert.equal(
+    summary.generatedSingleChoiceMetaStemsValidated,
+    summary.generatedPublishedQuestions,
+  );
+  assert.equal(
+    summary.generatedSingleChoiceExplanationLabelsValidated,
+    summary.generatedPublishedQuestions,
+  );
   assert.equal(summary.generatedTagTemplateParityValidated, summary.generatedPublishedQuestions);
   assert.equal(summary.questionSchemasValidated, summary.publishedQuestions);
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);

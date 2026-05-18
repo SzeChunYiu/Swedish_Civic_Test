@@ -66,6 +66,9 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const actualSiteBank = actualStaticQuestions();
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
+  const metaStemPattern = /^(?:Vilket svar är korrekt\?|Which answer is correct\?)/i;
+  const absentTrueFalseExplanationPattern =
+    /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 
   function singleChoiceOptionTexts(question) {
     return (question.opts || []).flatMap((option) => [option.sv, option.en]);
@@ -96,10 +99,40 @@ test('generated single-choice banks omit true-false and filler option shells', (
       .map((question) => question.id);
   }
 
+  function metaStemRows(questions) {
+    return Array.from(questions)
+      .filter((question) => question.type === 'single_choice')
+      .filter(
+        (question) => metaStemPattern.test(question.q.sv) || metaStemPattern.test(question.q.en),
+      )
+      .map((question) => question.id);
+  }
+
+  function absentTrueFalseExplanationRows(questions) {
+    return Array.from(questions)
+      .filter((question) => question.type === 'single_choice')
+      .filter(
+        (question) =>
+          !singleChoiceOptionTexts(question).some((text) =>
+            /^(?:Sant|Falskt|True|False)$/.test(text),
+          ),
+      )
+      .filter((question) =>
+        absentTrueFalseExplanationPattern.test(
+          `${question.why?.sv || ''} ${question.why?.en || ''}`,
+        ),
+      )
+      .map((question) => question.id);
+  }
+
   assert.deepEqual(fillerRows(generatedSiteBank), []);
   assert.deepEqual(fillerRows(actualSiteBank), []);
   assert.deepEqual(trueFalseShellRows(generatedSiteBank), []);
   assert.deepEqual(trueFalseShellRows(actualSiteBank), []);
+  assert.deepEqual(metaStemRows(generatedSiteBank), []);
+  assert.deepEqual(metaStemRows(actualSiteBank), []);
+  assert.deepEqual(absentTrueFalseExplanationRows(generatedSiteBank), []);
+  assert.deepEqual(absentTrueFalseExplanationRows(actualSiteBank), []);
 });
 
 test('published question type schema rejects non-answerable flashcards', () => {
