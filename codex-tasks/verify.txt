@@ -11,6 +11,23 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-19T01:00:00+02:00 current-route update:
+- Current `origin/main` is `84f8ab3`. The only commit after the previous
+  MANAGER-content route is SETUP live-deploy evidence and does not open new
+  content source work.
+- No local CONTENT-VERIFY worktree is active at this checkout. The q251-q300
+  and q301-q350 report slices are already on main via `415e73c` and `ec01444`;
+  do not revive their old branches or stale generated residual lists.
+- Next available CONTENT-VERIFY capacity is
+  `verify:data/questions.ts q351-q400` from clean current main `84f8ab3`.
+  Keep it report-and-queue only: verify UHR citations, facts, answer keys,
+  distractors, naturalness, and current canonical/static output; update VERIFY
+  reports/ledger/queues/journals only; rerun export parity, `validate:content`,
+  `test:derived-content`, typecheck, ownership, and `git diff --check` before
+  PR/merge.
+- Keep VERIFY out of `data/**`, `content/question-bank.csv`, `site/**`,
+  generator templates, and validator mirrors.
+
 MANAGER-content 2026-05-19T00:50:00+02:00 current-route update:
 - Current `origin/main` is `c1f02eb`. Generated single-choice meta-stems,
   generic filler options, true/false-shell rows, stale True/False single-choice
