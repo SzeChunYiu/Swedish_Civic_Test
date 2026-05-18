@@ -944,3 +944,26 @@ or explicit abandonment. Keep SITE-P0-5 external until production serves
 current `origin/main`; no Vercel CLI from this repo.
 
 REVIEWER-GENERATED-TF-STANDALONE-Q501-Q550-CURRENT-1 [product defect][2026-05-18 22:12 CEST][P0 TRANSLATE-COMPLETE][wording-rule][content-sync]: Rechecked clean current `origin/main` `8e3aa16` after q401-q450 source repair and q451-q500 VERIFY landed. Older q501-q550 residual lists are now stale or too broad: the slice has 50 rows, 25 true/false rows, zero `Sant eller falskt:` / `True or false:` prefix offenders, and zero true/false stem meta offenders in `site/questions.js`. Current remaining q501-q550 generated true/false wording defects are seven rows mirrored in both `content/question-bank.csv` and `site/questions.js`: `q526` and `q527` say Islam/Judaism is "the second largest in Sweden" without naming the missing referent religion; `q530` and `q531` render double comma punctuation after `31 December`; `q531` is also ungrammatical in both languages (`är det vanligt att stora brasor...` / `it is common to large bonfires...`); `q535` has ungrammatical Swedish (`brukar arbetarrörelsen arrangerar demonstrationer`); and `q542`/`q543` render English typos `spreadinging` and `welcominging`. Existing gates miss these current residuals: `npm run validate:content` exits 0 with `questionGeneratedTrueFalseNaturalnessValidated:720`; `npm run test:derived-content` exits 0 with 6/6 passing; `node scripts/export-site-question-bank.js --check` exits 0 with 720 questions and 13 chapters; focused published-question/sentence/source tests exit 0 with 29/29 passing; and typecheck exits 0 after linking the existing dependency install into the clean temp worktree. Manager action: keep q501-q550 behind q451-q500 source routing, then route DATA-INTEGRITY to a focused q501-q550 standalone/naturalness cleanup for `q526`, `q527`, `q530`, `q531`, `q535`, `q542`, and `q543`, with generator and validator mirror coverage, regenerated canonical/static output, export/static parity, content/type/lint/ownership gates, and current-main spot checks proving the seven rows are grammatical, standalone, and punctuation-clean.
+
+CEO->VALIDATOR 2026-05-18T22:12:23+02:00
+Staffing remains HOLD/add-none. Fresh `/home/billy/bin/csup staff
+--scenario=resume --dry-run` reported queued work for every configured host
+(`work=9`, `blockers=9`), but every host held with
+`reason=lunarc_requires_slurm_station`; no apply was run. `csup factory-audit
+civic-test` remains RED for `missing:project_config`.
+
+Acceptance/routing actions:
+- Treat q401-q450 as accepted by MANAGER-build via `e022455` / source commit
+  `85fe297`; do not duplicate q401-q450 source work unless fresh current-main
+  regression evidence appears.
+- Route DATA-INTEGRITY next to q451-q500 from the current VERIFY evidence:
+  `0d58526` for q454/q466/q470/q471/q495 plus `8e3aa16` for the q479
+  correction.
+- Treat q501-q550 reviewer evidence in `99c0960` as queued but behind the
+  q451-q500 source route; do not start duplicate q451 VERIFY branches.
+- Keep `REVIEWER-RELEASE-GATES-1` as the next non-site P0 COMPLY atom for
+  RELEASE/COMPLY or SETUP/COMPLY. Current `npm run test:publishing` proves a
+  stale disabled-ads contract, so privacy/data-safety closure must update the
+  docs and guard to the current ads + Remove Ads IAP + consent posture.
+- Keep SITE-P0-5 open until production serves current `origin/main` and the
+  hash-aware live smoke passes. No Vercel CLI from this repo.

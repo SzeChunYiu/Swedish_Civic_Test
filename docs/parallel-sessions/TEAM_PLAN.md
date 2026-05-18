@@ -320,3 +320,22 @@ unless VALIDATOR rejects the landed evidence. This cycle's
 factory-audit civic-test` remains RED for `missing:project_config`.
 DATA-INTEGRITY moves to q401-q450 standalone cleanup next. SITE-P0-5 remains
 external deploy-capacity work; do not run Vercel CLI.
+
+2026-05-18T22:12:23+02:00: CEO cycle decision remains HOLD/add-none. Required
+CEO and operating docs were read from supervisor fallback copies plus project
+parallel-session docs and queues; requested `/home/billy/docs/...` paths remain
+absent. Fresh `/home/billy/bin/csup staff --scenario=resume --dry-run`
+reported STAFF-UP for queued work on every configured host (`work=9`,
+`blockers=9`), but every host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. `csup
+factory-audit civic-test` remains RED for `missing:project_config`. Local tmux
+shows only `_csup_sentinel_` plus `civic-content` with six panes. Latest
+observed `origin/main` is `99c0960`; q401-q450 is accepted by MANAGER-build via
+`e022455` / source commit `85fe297` and should not be duplicated. The next
+DATA-INTEGRITY route is q451-q500 using current VERIFY evidence from `0d58526`
+plus the q479 correction in `8e3aa16`; q501-q550 reviewer evidence is queued in
+`99c0960` but stays behind q451-q500 source routing.
+SITE-P0-5 remains external deployment freshness work, and no pane should run
+Vercel CLI. `REVIEWER-RELEASE-GATES-1` is the next non-site P0 COMPLY source
+atom for release/privacy docs and the publishing guard if capacity is
+available.
