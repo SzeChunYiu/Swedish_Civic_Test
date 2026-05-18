@@ -104,6 +104,12 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
+const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
+  /\bSant eller falskt:\s*Det stämmer att\s+(?:Ungefär|Havet)\b/i,
+  /\bTrue or false:\s*It is true that\s+(?:The|In|Approximately)\b/i,
+  /\bTrue or false:.*\bbelongs to\s+[a-zåäö][^.,"]*/i,
+  /\bSant eller falskt:.*\bhör till\s+[a-zåäö][^.,"]*/i,
+];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -3163,6 +3169,12 @@ function findQuestionJudgementMetaStem(question) {
   return QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -3237,6 +3249,16 @@ function upperFirst(value) {
   return value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
 }
 
+function lowerLeadingEnglishArticle(value) {
+  return `${value ?? ''}`.replace(/^(The|In|A|An|At|On|Almost)\b/, (match) => match.toLowerCase());
+}
+
+function lowerLeadingSwedishCommonStart(value) {
+  return `${value ?? ''}`.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När)\b/, (match) =>
+    match.toLowerCase(),
+  );
+}
+
 function stripLeadingPurposeSv(value) {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
 }
@@ -3257,12 +3279,12 @@ function isTrueFalseSource(sourceQuestion) {
   return sourceQuestion?.type === 'true_false' && sourceQuestion.options?.length === 2;
 }
 
-function truthStatementSv(statement, isTrue) {
-  return `${isTrue ? 'Det stämmer att' : 'Det är falskt att'} ${statement}`;
+function truthStatementSv(statement) {
+  return `Det är korrekt att ${lowerLeadingSwedishCommonStart(statement)}`;
 }
 
-function truthStatementEn(statement, isTrue) {
-  return `${isTrue ? 'It is true that' : 'It is false that'} ${statement}`;
+function truthStatementEn(statement) {
+  return `It is correct that ${lowerLeadingEnglishArticle(statement)}`;
 }
 
 function sourceStatementJudgementSv(statement, isTrue) {
@@ -3270,7 +3292,9 @@ function sourceStatementJudgementSv(statement, isTrue) {
 }
 
 function sourceStatementJudgementEn(statement, isTrue) {
-  return `${isTrue ? 'It is factually true that' : 'It is not true that'} ${statement}`;
+  return `${isTrue ? 'It is factually true that' : 'It is not true that'} ${lowerLeadingEnglishArticle(
+    statement,
+  )}`;
 }
 
 function trueFalseSourceStatementSv(sourceQuestion, variantIsTrue) {
@@ -3295,14 +3319,14 @@ function generatedTrueFalseStatementSv(sourceQuestion, option, variantIsTrue) {
   if (isTrueFalseSource(sourceQuestion)) {
     return trueFalseSourceStatementSv(sourceQuestion, variantIsTrue);
   }
-  return truthStatementSv(civicStatementSv(sourceQuestion, option), true);
+  return truthStatementSv(civicStatementSv(sourceQuestion, option));
 }
 
 function generatedTrueFalseStatementEn(sourceQuestion, option, variantIsTrue) {
   if (isTrueFalseSource(sourceQuestion)) {
     return trueFalseSourceStatementEn(sourceQuestion, variantIsTrue);
   }
-  return truthStatementEn(civicStatementEn(sourceQuestion, option), true);
+  return truthStatementEn(civicStatementEn(sourceQuestion, option));
 }
 
 function judgementPromptSv(sourceQuestion) {
@@ -3367,7 +3391,7 @@ function civicStatementSv(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} är ${answer}`;
 
   match = q.match(/^Ungefär hur många (.+)$/i);
-  if (match) return `Ungefär ${lowerFirst(answer)} ${match[1]}`;
+  if (match) return `${upperFirst(answer)} ${match[1]}`;
 
   match = q.match(/^Vilka (.+?) är viktiga i Sverige$/i);
   if (match) return `${upperFirst(answer)} är viktiga ${match[1]} i Sverige`;
@@ -3425,8 +3449,7 @@ function civicStatementSv(sourceQuestion, option) {
   if (match) return `${upperFirst(answer)} gäller för ${match[1]}`;
 
   match = q.match(/^Varför (.+)$/i);
-  if (match)
-    return `${upperFirst(stripLeadingPurposeSv(answer))} är en anledning till att ${match[1]}`;
+  if (match) return `En anledning är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return `${upperFirst(match[1])} har ${lowerFirst(answer)} gemensamt`;
@@ -3444,7 +3467,12 @@ function civicStatementSv(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} reglerar ${lowerFirst(answer)}`;
 
   match = q.match(/^Vad innebär (.+)$/i);
-  if (match) return `${upperFirst(match[1])} innebär ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match)
+    return `${upperFirst(match[1])} innebär att ${lowerFirst(
+      stripLeadingPurposeSv(answer)
+        .replace(/^den\s+/i, '')
+        .replace(/^det\s+/i, ''),
+    )}`;
 
   match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
   if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
@@ -3455,15 +3483,25 @@ function civicStatementSv(sourceQuestion, option) {
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
 
+  match = q.match(/^Vad förändrades genom (.+)$/i);
+  if (match)
+    return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^När firas (.+?) i Sverige$/i);
+  if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
+
   match = q.match(/^Vilket svar beskriver (.+)$/i);
   if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
 
-  const section = lowerFirst(sourceQuestion.uhrReference?.section ?? 'ämnet');
-  if (/^att\s+/i.test(answer))
-    return `Inom ${section} gäller det att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
-  if (/^för att\s+/i.test(answer))
-    return `${upperFirst(stripLeadingPurposeSv(answer))} hör till ${section}`;
-  return `${upperFirst(answer)} hör till ${section}`;
+  match = q.match(
+    /^Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen$/i,
+  );
+  if (match) return `Ett parti måste få ${lowerFirst(answer)} för att komma in i riksdagen`;
+
+  return `Svaret är ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 }
 
 function civicStatementEn(sourceQuestion, option) {
@@ -3483,10 +3521,13 @@ function civicStatementEn(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} stretches ${lowerFirst(answer)} ${match[2]}`;
 
   match = q.match(/^What is (.+) called$/i);
-  if (match) return `${upperFirst(match[1])} is called ${answer}`;
+  if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
 
   match = q.match(/^What is the name of (.+)$/i);
-  if (match) return `${upperFirst(match[1])} is called ${answer}`;
+  if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which islands are Sweden's two largest$/i);
+  if (match) return `Sweden's two largest islands are ${answer}`;
 
   match = q.match(/^Which islands are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
@@ -3495,7 +3536,7 @@ function civicStatementEn(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} are ${answer}`;
 
   match = q.match(/^Approximately how many (.+)$/i);
-  if (match) return `Approximately ${lowerFirst(answer)} ${match[1]}`;
+  if (match) return `${upperFirst(answer)} ${match[1]}`;
 
   match = q.match(/^Which (.+?) are important in Sweden$/i);
   if (match) return `${upperFirst(answer)} are important ${match[1]} in Sweden`;
@@ -3554,7 +3595,7 @@ function civicStatementEn(sourceQuestion, option) {
   if (match) return `${upperFirst(answer)} applies to ${match[1]}`;
 
   match = q.match(/^Why (.+)$/i);
-  if (match) return `${upperFirst(stripLeadingPurposeEn(answer))} is a reason why ${match[1]}`;
+  if (match) return `One reason is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return `${upperFirst(match[1])} have ${lowerFirst(answer)} in common`;
@@ -3583,15 +3624,22 @@ function civicStatementEn(sourceQuestion, option) {
   match = q.match(/^From what age is (.+)$/i);
   if (match) return `From ${lowerFirst(answer)}, ${match[1]}`;
 
+  match = q.match(/^What changed through (.+)$/i);
+  if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
+  if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
+
   match = q.match(/^Which answer describes (.+)$/i);
   if (match) return `${upperFirst(answer)} describes ${match[1]}`;
 
-  const section = lowerFirst(sourceQuestion.uhrReference?.section ?? 'the topic');
-  if (/^to\s+/i.test(answer))
-    return `In ${section}, it means to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
-  if (/^because\s+/i.test(answer))
-    return `${upperFirst(stripLeadingPurposeEn(answer))} belongs to ${section}`;
-  return `${upperFirst(answer)} belongs to ${section}`;
+  match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
+  if (match) return `A party must receive ${lowerFirst(answer)} to enter the Riksdag`;
+
+  return `The answer is ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 }
 
 function correctOption(question) {
@@ -4610,6 +4658,7 @@ let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
+let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
@@ -11646,6 +11695,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
+      const generatedTrueFalseNaturalnessIssue =
+        findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
       } else if (stemSourceAuthorityReference) {
@@ -11662,6 +11713,11 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated judgement meta-stem instead of a civic-study prompt`);
       } else {
         questionJudgementMetaStemsValidated += 1;
+      }
+      if (generatedTrueFalseNaturalnessIssue) {
+        fail(`${label} contains a generated true/false grammar-splice stem`);
+      } else {
+        questionGeneratedTrueFalseNaturalnessValidated += 1;
       }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
@@ -12068,6 +12124,7 @@ console.log(
       questionAuthorityBoundaryTextValidated,
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
+      questionGeneratedTrueFalseNaturalnessValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,
