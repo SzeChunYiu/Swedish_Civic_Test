@@ -2589,3 +2589,21 @@ Verification (commands + result):
 PR (number + merged?): #313 / pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the first site P0 follow-up until a production deploy from current `origin/main` is live and protected by a live smoke gate.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-qbank-P63WVc` / `task/reviewer/site-question-bank-drift-1779113100`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Static `site/questions.js` parity audit after q142 source-expansion landed.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, and current blocker/setup/validator queues.
+- Used a clean temporary worktree at `origin/main` `056c4d4` because the shared checkout has unrelated dirty lane files.
+- Duplicate scan for static-site question-bank / q142 drift found the accepted SITE-P0-3 sync and content q142 handoff saying `site/questions.js` was not touched by CONTENT, but no reviewer row for the new q142 static-site drift.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questions:710`, `sourceQuestions:142`, and `generatedPublishedQuestions:568`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 at 710 questions.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 1: `site/questions.js is out of sync; run node scripts/export-site-question-bank.js`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` - exit 1, 0/2 passing, with canonical 710 vs site 705 count mismatch.
+- Direct VM inspection of `site/questions.js` reported `siteCount:705`, `hasQ142:true`, `hasQ707:false`, `hasQ710:false`, and last IDs `q694`-`q705`.
+PR (number + merged?): #315 / pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: route SETUP/DATA-INTEGRITY to regenerate `site/questions.js` from current canonical content, update static/live smoke expectations from 705 to 710 or derive them dynamically, and keep the static-site question-bank parity guard green.
