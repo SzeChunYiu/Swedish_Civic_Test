@@ -642,3 +642,23 @@ aligned with the negated prompt, regenerated CSV/static mirrors,
 export/static parity, `validate:content`, `test:derived-content`, focused
 content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge
 evidence, and a current-main prefix/meta/explanation recheck.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T21:03:00+02:00
+`VERIFY-GENERATED-TF-Q201-Q250-POST609-1` [product defect][P0
+TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on
+current `origin/main` `75310c8` supersedes the older q201-q250 residual report.
+The prior splice defects in `q206`, `q237`, and `q238` are no longer current:
+those rows now publish direct, source-supported propositions. The current
+q201-q250 defects are generated true/false wording defects already in the
+active generated true/false route: all 25 true/false rows in the slice still
+begin with `Sant eller falskt:` / `True or false:`, and `q235` still has the
+false-answer explanation mismatch where the question says the Riksdag does not
+choose the prime minister, the answer is `False`, but the explanation says the
+underlying positive statement is true. Acceptance can bundle this with
+`REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` and the false-explanation guard.
+Required evidence remains generator/validator/static-mirror updates,
+regenerated `content/question-bank.csv` and `site/questions.js`, focused guards
+for prefix and false-explanation rows, export/static parity, `validate:content`,
+`test:derived-content`, focused content gates, typecheck, lint, ownership,
+Prettier/diff checks, PR/merge evidence, and a current-main spot check for
+`q202`, `q203`, `q206`, `q207`, `q234`, `q235`, `q238`, `q239`, and `q250`.
