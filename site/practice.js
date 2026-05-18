@@ -12,6 +12,14 @@
 
   function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
   function tr(map) { return (map && (map[lang()] || map.en)) || ""; }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"]/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+    }[c]));
+  }
 
   function getProgress() {
     try { return JSON.parse(localStorage.getItem("smt_progress") || "{}"); } catch { return {}; }
@@ -269,7 +277,6 @@
     const out1 = document.getElementById("cfg-count-out");
     const out2 = document.getElementById("cfg-min-out");
     const startBtn = document.getElementById("cfg-start");
-    const minMaxLabel = () => { /* no-op for now */ };
 
     function refreshCounts() {
       const cfgNow = loadMockCfg();
@@ -280,7 +287,7 @@
       slider.max = String(Math.max(5, available));
       if (parseInt(slider.value, 10) > available) slider.value = String(available);
       out1.textContent = slider.value;
-      const hint = slider.parentElement.nextElementSibling;
+      const hint = slider.closest(".mock-cfg__row").querySelector(".mock-cfg__hint");
       if (hint) hint.textContent = (sv ? "Max " : "Max ") + available;
       if (startBtn) {
         startBtn.classList.toggle("is-disabled", available < 5);
@@ -319,6 +326,12 @@
       saveMockCfg(Object.assign({}, MOCK_DEFAULTS));
       renderMockLanding();
     });
+    if (startBtn) {
+      startBtn.addEventListener("click", (e) => {
+        if (startBtn.classList.contains("is-disabled")) e.preventDefault();
+      });
+    }
+    refreshCounts();
   }
 
   function startMock() {
@@ -455,6 +468,36 @@
         </li>
       `;
     }).join("");
+    const reviewRows = MOCK.questions.map((q, i) => {
+      const picked = MOCK.answers[i];
+      const isCorrect = picked === q.answer;
+      const selectedText = picked === null
+        ? (sv ? "Inte besvarad" : "Not answered")
+        : tr(q.opts[picked]);
+      const correctText = tr(q.opts[q.answer]);
+      return `
+        <details class="mock-review__item ${isCorrect ? "is-correct" : "is-wrong"}">
+          <summary>
+            <span>${sv ? "Fråga" : "Question"} ${i + 1}</span>
+            <b>${isCorrect ? (sv ? "Rätt" : "Correct") : (sv ? "Fel" : "Needs review")}</b>
+          </summary>
+          <div class="mock-review__body">
+            <p class="mock-review__q">${escapeHtml(tr(q.q))}</p>
+            <dl>
+              <div>
+                <dt>${sv ? "Ditt svar" : "Your answer"}</dt>
+                <dd>${escapeHtml(selectedText)}</dd>
+              </div>
+              <div>
+                <dt>${sv ? "Rätt svar" : "Correct answer"}</dt>
+                <dd>${escapeHtml(correctText)}</dd>
+              </div>
+            </dl>
+            <p class="mock-review__why">${escapeHtml(tr(q.why))}</p>
+          </div>
+        </details>
+      `;
+    }).join("");
 
     stage.innerHTML = `
       <div class="mock-result ${pass ? "is-pass" : "is-fail"}">
@@ -466,6 +509,10 @@
         <p class="mock-result__pct">${pct}% — ${sv ? "godkänt-gräns" : "passing line"} 75%</p>
 
         <ul class="result-chapters">${chapterRows}</ul>
+        <section class="mock-review" aria-label="${sv ? "Frågegenomgång" : "Question review"}">
+          <h3>${sv ? "Frågegenomgång" : "Question review"}</h3>
+          ${reviewRows}
+        </section>
 
         <div class="quiz__cta">
           <a class="btn btn--ghost" href="#/mock?run=1">${sv ? "Försök igen" : "Try again"} ↻</a>
