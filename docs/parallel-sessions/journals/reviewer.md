@@ -3666,3 +3666,25 @@ Evidence: current main closes the q563/q574/q598/q599 generated true/false natur
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: accept/close q551-q600 after inspecting DATA-INTEGRITY source/PR evidence, then route q601-q650 unless newer accepted evidence supersedes it.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current` / `task/reviewer/generated-judgement-filler-1779144000`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main whole-bank generated judgement/filler-answer scan.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `codex-tasks/P0.md`, active validator/setup/data-integrity queues, blockers, and reviewer journal context before queueing.
+- Used a clean worktree on current `origin/main` `87bc8b3`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo-local `.shared/review-to-queue.sh` were absent, so REVIEWER appended directly to `codex-tasks/validator.txt` as in prior lane fallback.
+- Direct VM inspection of `site/questions.js` found 22 generated `single_choice` rows using True/False plus filler options: `q149`, `q152`, `q165`, `q168`, `q233`, `q236`, `q253`, `q256`, `q265`, `q268`, `q329`, `q332`, `q337`, `q340`, `q437`, `q440`, `q505`, `q508`, `q517`, `q520`, `q713`, and `q716`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionJudgementMetaStemsValidated:720`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 33/33 passing.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
+Findings queued: `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`.
+Evidence: current main still generates 22 single-choice judgement/filler rows while the existing validators stay green; the current q701/q720 row catches only two examples.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route DATA-INTEGRITY to replace or suppress the generated true/false judgement single-choice variant across the full bank, with generator/validator/static guards and regenerated canonical/static outputs.
