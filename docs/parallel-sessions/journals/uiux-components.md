@@ -27,3 +27,13 @@ A11y props: default `accessibilityRole="header"` for `h1`/`h2`, default `accessi
 Verification: `./node_modules/.bin/prettier --check components/Text.tsx` → pass; token discipline grep on `components/Text.tsx` → `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` → pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` → pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` → pass 1/1.
 Blocked? no — scoped to COMPONENTS writable files only.
 Next: Manager can review Text and then queue Button if accepted.
+
+## Iteration 3 - 2026-05-18
+
+Component: Button action atom - `components/Button.tsx`
+Variants/states implemented: `primary`, `secondary`, and `ghost` variants; `sm`, `md`, and `lg` sizes; loading state with spinner and busy accessibility state; disabled state with neutral token styling; pressed state using motion/token styling.
+Tokens used: `colors.accent`, `colors.accentActive`, `colors.surface`, `colors.surfaceWarm`, `colors.surfaceMuted`, `colors.border`, `colors.focus`, `colors.focusSoft`, `colors.text`, `colors.textPlaceholder`, `motion.pressedScale`, `radius.card`, `space[0.75]`, `space[1]`, `space[1.5]`, `space[2]`, `space[3]`, `space[6]`, `space[7]`, `space[8]`, `space.hairline`, and `typography.navButton`.
+A11y props: default `accessibilityRole="button"`; derives `accessibilityLabel` from string/number children or `loadingLabel`; merges caller `accessibilityState` with `disabled` and `busy`; default token-sized `hitSlop`; loading spinner hidden from the accessibility tree.
+Verification: `./node_modules/.bin/prettier --check components/Button.tsx` -> pass; token discipline grep on `components/Button.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/Button.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review Button and then queue OptionCard if accepted.
