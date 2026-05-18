@@ -87,7 +87,7 @@ test('settings store schema stays in parity with persisted settings state', () =
     'utf8',
   );
 
-  assert.equal(summary.settingsStoreFieldsValidated, 6);
+  assert.equal(summary.settingsStoreFieldsValidated, 10);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
   assert.match(settingsStore, /type SettingsState = \{/);
   assert.match(settingsStore, /language: AppLanguage;/);

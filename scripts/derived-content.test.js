@@ -5,15 +5,38 @@ const test = require('node:test');
 const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+const moduleCache = new Map();
+
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
 
 function loadTs(relativePath, exportName) {
   const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) {
+    const cached = moduleCache.get(filePath);
+    return exportName ? cached[exportName] : cached;
+  }
   const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  moduleCache.set(filePath, mod.exports);
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)));
+    }
+    return require(request);
+  }
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  moduleCache.set(filePath, mod.exports);
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
@@ -550,7 +573,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för/i,
+    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is that so|have they|har de/i,
   );
   assert.doesNotMatch(text, /are The/);
   assert.ok(
@@ -595,7 +618,96 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'True or false: For a person suspected of a crime in Sweden, a suspected person should be considered innocent until the person has been convicted.',
+      'True or false: A suspected person should be considered innocent until the person has been convicted.',
     ),
+  );
+});
+
+test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
+  const { questions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+
+  const expectedRows = {
+    q206: [
+      'Sant eller falskt: Domstolarna väljer alla riksdagsledamöter.',
+      'True or false: The courts elect all members of the Riksdag.',
+    ],
+    q237: [
+      'Sant eller falskt: Statliga myndigheter genomför beslut och måste följa lagar och regeringens instruktioner.',
+      'True or false: Government agencies implement decisions and must follow laws and government instructions.',
+    ],
+    q270: [
+      'Sant eller falskt: En anledning är att rösterna ska räknas snabbare.',
+      'True or false: One reason is that votes are counted faster.',
+    ],
+    q273: [
+      'Sant eller falskt: Människor i ett politiskt parti har gemensamma idéer om hur samhället ska styras.',
+      'True or false: People in a political party have shared ideas about how society should be governed.',
+    ],
+    q285: [
+      'Sant eller falskt: Listan med regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen innehåller bara Sveriges fyra grundlagar.',
+      "True or false: The list with the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession contains only Sweden's four constitutional laws.",
+    ],
+    q289: [
+      'Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från folket.',
+      'True or false: The Instrument of Government says that all public power comes from the people.',
+    ],
+    q297: [
+      'Sant eller falskt: Allemansrätten ger alla möjlighet att vara i naturen, men man måste visa ansvar.',
+      'True or false: The right of public access gives everyone the opportunity to be in nature, but people must act responsibly.',
+    ],
+    q321: [
+      'Sant eller falskt: En viktig uppgift för fria medier i en demokrati är att informera, möjliggöra samhällsdebatt och granska personer med makt.',
+      'True or false: An important role of free media in a democracy is to inform, enable public debate, and scrutinize people with power.',
+    ],
+    q441: [
+      'Sant eller falskt: För tvåhundra år sedan var Sverige ett typiskt jordbruksland där nästan alla bodde på landet.',
+      'True or false: Two hundred years ago, Sweden was a typical agricultural country where almost everyone lived in the countryside.',
+    ],
+  };
+
+  for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
+    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
+    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+  }
+
+  const residualText = [
+    'q206',
+    'q237',
+    'q238',
+    'q253',
+    'q254',
+    'q265',
+    'q266',
+    'q270',
+    'q273',
+    'q274',
+    'q285',
+    'q286',
+    'q289',
+    'q290',
+    'q297',
+    'q298',
+    'q305',
+    'q306',
+    'q313',
+    'q314',
+    'q321',
+    'q322',
+    'q357',
+    'q358',
+    'q361',
+    'q362',
+    'q381',
+    'q382',
+    'q441',
+    'q442',
+  ]
+    .map((id) => `${byId.get(id)?.questionSv} ${byId.get(id)?.questionEn}`)
+    .join('\n');
+
+  assert.doesNotMatch(
+    residualText,
+    /describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|One reason is that so|have they|har de|applies to|gäller för/i,
   );
 });
