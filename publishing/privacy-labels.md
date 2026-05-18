@@ -1,33 +1,69 @@
-# Apple App Privacy labels — current MVP answers
+# Apple App Privacy labels — ad-supported v1.0 draft
 
-Reference: Apple App Privacy Details, https://developer.apple.com/app-store/app-privacy-details/
+Reference:
+
+- Apple App Privacy Details: https://developer.apple.com/app-store/app-privacy-details/
+- Apple User Privacy and Data Use / ATT:
+  https://developer.apple.com/app-store/user-privacy-and-data-use/
+- Google Mobile Ads SDK iOS App Store data disclosure:
+  https://developers.google.com/ad-manager/mobile-ads-sdk/ios/privacy/data-disclosure
 
 ## Current answer
 
-Data Not Collected.
+Select **Yes, data is collected from this app** for the v1.0 release draft.
 
-## Rationale
+The app itself still has no account system, developer profile database, remote
+progress sync, support form, analytics SDK, or crash reporting SDK. Study
+progress, settings, mistakes, XP, streaks, bookmarks, and audio preference stay
+on the local device.
 
-The current MVP does not require an account and does not transmit user profile, progress, contact, location, financial, health, contacts, user content, search, browsing, identifier, purchase, usage, diagnostics, or other personal data to a developer server.
+The release binary does include Google Mobile Ads, App Tracking Transparency,
+Google UMP consent, and a one-time Remove Ads non-consumable IAP for **29 SEK**.
+Those SDK/store paths mean the old no-collection answer is no longer the safe
+release posture.
 
-Study progress, settings, mistakes, XP, streaks, bookmarks, and audio preference are stored locally on the local device through the app storage layer.
+## Data types to review in App Store Connect
 
-## Ad SDK posture for v1.0
+- **Identifiers / Device ID** — Google Mobile Ads may use the device advertising
+  identifier or app/developer-bounded identifiers for third-party advertising
+  and analytics. The app requests ATT before tracking-based advertising.
+- **Usage Data / Product Interaction** — Google Mobile Ads may process app
+  launches, taps, ad views, video views, and other interaction signals for ad
+  delivery, measurement, and SDK performance.
+- **Advertising Data** — Google Mobile Ads may process which ads were served or
+  viewed for advertising and analytics.
+- **Diagnostics** — Google Mobile Ads may process crash logs, performance data,
+  app launch time, hang rate, and energy usage to improve SDK reliability and ad
+  performance.
+- **Purchases** — App Store in-app purchase infrastructure and the app runtime
+  process the Remove Ads non-consumable purchase/restore state for app
+  functionality. The app stores only the local `adsDisabled` entitlement flag.
+- **Location review** — Google Mobile Ads may use IP address to estimate general
+  location. Confirm whether the final Xcode privacy report requires a Coarse
+  Location disclosure for the submitted binary.
 
-The native project includes `react-native-google-mobile-ads` with Google sample test app IDs so native build/prebuild paths stay realistic. Runtime ad rendering remains fail-closed for v1.0: `REAL_ADS_ENABLED_FOR_V1` is `false`, `shouldShowAd()` returns false before any placement check, and the configured ad units are test-only.
+## Uses and tracking posture
 
-Before App Store submission, review the generated native binary and App Store Connect privacy questionnaire against this exact disabled/test-ID configuration. Do not enable real ad requests without updating this file, the in-app privacy copy, and the public privacy page.
+- Third-party advertising: Google Mobile Ads on study screens.
+- Analytics / measurement: Google Mobile Ads SDK performance and ad measurement
+  signals.
+- App functionality: Remove Ads purchase, restore, and local entitlement state.
+- Tracking: the app includes `expo-tracking-transparency`; on iOS, tracking-based
+  advertising must wait for ATT authorization. Where required, Google UMP consent
+  must be gathered before real AdMob serving.
+- Non-personalized ads: if consent does not allow personalized ad serving, the
+  runtime blocks or limits ad serving according to the consent decision.
 
-## Important release caveat
+## Binary review checklist before App Store submission
 
-If real AdMob requests, analytics SDK, crash reporting SDK, purchase SDK, account system, remote content service, or support form is enabled before App Store submission, this file must be updated before release.
-
-Likely changes after real SDK enablement:
-
-- Ad SDKs may require disclosure of identifiers, usage data, diagnostics, or tracking depending on configuration.
-- Purchase SDKs may require disclosure of purchase data and identifiers.
-- Crash reporting may require diagnostics disclosure.
-
-## App Tracking Transparency
-
-Current MVP: no tracking request and no cross-app tracking SDK.
+- Confirm `EXPO_PUBLIC_REAL_ADS_ENABLED` and real AdMob unit IDs match the build
+  being submitted.
+- Review the generated Xcode privacy report and Google Mobile Ads privacy
+  manifest for the exact SDK versions in the binary.
+- Confirm ATT prompt wording from `app.json` appears in the native build.
+- Confirm UMP consent appears in regions where consent is required.
+- Confirm Remove Ads purchase and restore use
+  `com.billyyiu.swedishcivictest.removeads` and the displayed price remains
+  **29 SEK**.
+- Update this file before submission if analytics, crash reporting, accounts,
+  remote content, or support collection is enabled.

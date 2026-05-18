@@ -9,6 +9,14 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function staleWords(...words) {
+  return new RegExp(words.join('\\s+'), 'i');
+}
+
+function staleToken(...parts) {
+  return new RegExp(parts.join('_'), 'i');
+}
+
 function parseExternalBlockerRows(markdown) {
   return markdown
     .split('\n')
@@ -51,22 +59,51 @@ test('store publishing metadata is prepared', () => {
   assert.match(googlePlayListing, /Data safety/i);
 });
 
-test('privacy labels and data safety answers match current MVP data practices', () => {
+test('privacy labels and data safety answers match ad-supported release practices', () => {
   const privacyLabels = read('publishing/privacy-labels.md');
   assert.match(privacyLabels, /Apple App Privacy/i);
-  assert.match(privacyLabels, /Data Not Collected/i);
-  assert.match(privacyLabels, /local/i);
-  assert.match(privacyLabels, /react-native-google-mobile-ads/i);
-  assert.match(privacyLabels, /REAL_ADS_ENABLED_FOR_V1.*false/i);
-  assert.match(privacyLabels, /test app IDs/i);
+  assert.match(privacyLabels, /Yes, data is collected from this app/i);
+  assert.match(privacyLabels, /Google Mobile Ads/i);
+  assert.match(privacyLabels, /EXPO_PUBLIC_REAL_ADS_ENABLED/i);
+  assert.match(privacyLabels, /Remove Ads/i);
+  assert.match(privacyLabels, /29 SEK/i);
+  assert.match(privacyLabels, /non-consumable/i);
+  assert.match(privacyLabels, /App Tracking Transparency|ATT/i);
+  assert.match(privacyLabels, /Google UMP consent/i);
+  assert.match(privacyLabels, /Device ID/i);
+  assert.match(privacyLabels, /Product Interaction/i);
+  assert.match(privacyLabels, /Advertising Data/i);
+  assert.match(privacyLabels, /Diagnostics/i);
+  assert.match(privacyLabels, /Purchases/i);
+  assert.match(privacyLabels, /local device/i);
+  assert.doesNotMatch(privacyLabels, staleWords('Data', 'Not', 'Collected'));
+  assert.doesNotMatch(privacyLabels, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
+  assert.doesNotMatch(privacyLabels, staleWords('real', 'ads', 'disabled'));
+  assert.doesNotMatch(privacyLabels, staleWords('test', 'app', 'IDs'));
 
   const dataSafety = read('publishing/google-play-data-safety.md');
-  assert.match(dataSafety, /No user data collected/i);
-  assert.match(dataSafety, /No user data shared/i);
+  assert.match(dataSafety, /Yes, data is collected/i);
+  assert.match(dataSafety, /Yes, data is shared/i);
   assert.match(dataSafety, /local device/i);
-  assert.match(dataSafety, /Google Mobile Ads SDK/i);
-  assert.match(dataSafety, /real ads disabled/i);
-  assert.match(dataSafety, /test app IDs/i);
+  assert.match(dataSafety, /Google Mobile Ads/i);
+  assert.match(dataSafety, /Google UMP consent/i);
+  assert.match(dataSafety, /Remove Ads/i);
+  assert.match(dataSafety, /29 SEK/i);
+  assert.match(dataSafety, /non-consumable/i);
+  assert.match(dataSafety, /approximate location/i);
+  assert.match(dataSafety, /app interactions/i);
+  assert.match(dataSafety, /diagnostics/i);
+  assert.match(dataSafety, /Device or other IDs/i);
+  assert.match(dataSafety, /purchase history/i);
+  assert.match(dataSafety, /Advertising or marketing/i);
+  assert.match(dataSafety, /Analytics/i);
+  assert.match(dataSafety, /Fraud prevention/i);
+  assert.match(dataSafety, /encrypted in transit/i);
+  assert.doesNotMatch(dataSafety, staleWords('No', 'user', 'data', 'collected'));
+  assert.doesNotMatch(dataSafety, staleWords('No', 'user', 'data', 'shared'));
+  assert.doesNotMatch(dataSafety, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
+  assert.doesNotMatch(dataSafety, staleWords('real', 'ads', 'disabled'));
+  assert.doesNotMatch(dataSafety, staleWords('test', 'app', 'IDs'));
 });
 
 test('public support and privacy URL copy is ready for hosting', () => {
