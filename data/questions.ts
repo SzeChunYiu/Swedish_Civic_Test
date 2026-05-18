@@ -505,9 +505,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Staten säger att Sverige är en parlamentarisk representativ demokrati. Det innebär att medborgarna röstar i allmänna val och väljer ledamöter till riksdagen, som sedan fattar beslut om lagar och statens budget.',
+      'Sverige är en parlamentarisk representativ demokrati. Medborgarna röstar i allmänna val och väljer ledamöter till riksdagen, som sedan beslutar om lagar och statens budget.',
     explanationEn:
-      'The State section says Sweden is a parliamentary representative democracy. This means citizens vote in general elections and elect members of the Riksdag, which then makes decisions on laws and the state budget.',
+      'Sweden is a parliamentary representative democracy. Citizens vote in general elections and elect members of the Riksdag, which then decides on laws and the state budget.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
