@@ -149,7 +149,11 @@
       const group = seg.parentElement.dataset.set;
       const v = seg.dataset.val;
       if (group === "theme") applyTheme(v);
-      else if (group === "language") { lsSet("smt_lang", v); if (window.applyLang) window.applyLang(v); else location.reload(); }
+      else if (group === "language") {
+        if (window.smtSetLanguage) window.smtSetLanguage(v);
+        else if (window.applyLang) window.applyLang(v);
+        else { lsSet("smt_lang", v); location.reload(); }
+      }
       else if (group === "textsize") applyTextSize(v);
       setSegment(group, v);
       return;

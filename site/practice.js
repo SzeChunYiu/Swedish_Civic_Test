@@ -661,6 +661,26 @@
     }
   }
 
+  function rerenderForLanguageChange() {
+    if (isOnPractice()) {
+      if (activePracticeChapter()) {
+        if (typeof window.smtQuizRender === "function") window.smtQuizRender();
+      } else {
+        renderPracticeHub();
+      }
+    }
+    if (!isOnMock()) return;
+    if (!mockIsRunning()) {
+      renderMockLanding();
+    } else if (MOCK.submitted) {
+      renderMockResult();
+    } else if (MOCK.questions.length) {
+      renderMockExam();
+    } else {
+      mockBoot();
+    }
+  }
+
   document.addEventListener("click", (e) => {
     const pick = e.target.closest("#mock-stage .mock-opt");
     if (pick) {
@@ -687,6 +707,7 @@
 
   window.addEventListener("hashchange", onRoute);
   window.addEventListener("DOMContentLoaded", onRoute);
+  window.addEventListener("smt:languagechange", rerenderForLanguageChange);
 
   // Re-render hub when language changes
   document.addEventListener("click", (e) => {
