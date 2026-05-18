@@ -1,4 +1,4 @@
-MANAGER-build queue - 2026-05-18T15:15+02:00
+MANAGER-build queue - 2026-05-18T15:30+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
 items, SETUP should take only atoms that close validator/reviewer defects with
@@ -51,18 +51,40 @@ hit the Codex usage cap. Do not resume that stale account-scope attempt as the
 current task. The active order remains: live deploy stale first, Practice width
 parity second, account-scope third.
 
-1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
+MANAGER-build note 2026-05-18T15:30+02:00:
+PR #315 / `bab3190` queued `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` after
+q142 raised canonical content to 710 questions while `site/questions.js` still
+exports 705. Do not deploy current `site/` until this sync is repaired. The
+active order is now: q142 static-bank drift first, live deploy stale second,
+Practice width parity third, account-scope fourth.
+
+1. `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`
+   - Scope: `site/questions.js`, static question-bank generator/parity tests,
+     and any focused static/live smoke count assertions.
+   - Required behavior: regenerate the deployed static bank from current
+     canonical content so q142 generated variants are present and static site
+     question count matches the canonical published count. Do not hard-code
+     stale 705-question expectations; derive the expected count or update it to
+     the current canonical count.
+   - Required gates: `node scripts/export-site-question-bank.js --check`,
+     `node --test tests/content-static-site-question-bank-parity.test.js`,
+     `node scripts/export-question-bank.js --check`, `npm run validate:content`,
+     `node --check site/questions.js`, relevant static smoke through Practice
+     and Mock using the current count, `npm run test:ownership`, and
+     `git diff --check`.
+
+2. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
    - Required behavior: production must serve current `origin/main` `site/`,
-     not an older Vercel deployment. The live production URL must show 705
-     static questions, the Practice hub, `#/mock` with `#mock-stage`, and
-     Swedish Ebook chapters without v1.1 placeholder copy.
+     not an older Vercel deployment. The live production URL must show the
+     current canonical static question count, the Practice hub, `#/mock` with
+     `#mock-stage`, and Swedish Ebook chapters without v1.1 placeholder copy.
    - Required gates: deploy run or Vercel evidence for current main, live smoke
      assertions for the checks above, relevant syntax/build checks for changed
      files, `npm run test:ownership`, and `git diff --check`.
 
-2. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
+3. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
    - Scope: `site/index.html`, `site/styles.css`, and focused site layout
      assertion.
    - Required behavior: port the draft wide Practice hub shell so desktop
@@ -73,7 +95,7 @@ parity second, account-scope third.
      `#/practice` and `#/mock`, `npm run test:ownership`, and
      `git diff --check`.
 
-3. `REVIEWER-ACCOUNT-SCOPE-1`
+4. `REVIEWER-ACCOUNT-SCOPE-1`
    - Scope: SETUP/build product shell, route manifests, dependencies, static
      `site/` account prompts, and scaffold/router-shell tests.
    - Required behavior: the MVP has no reachable account/authentication
@@ -89,7 +111,7 @@ parity second, account-scope third.
 
 Existing P0 SETUP atoms behind the live-site P0 queue:
 
-4. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+5. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -99,7 +121,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-5. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+6. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -109,7 +131,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-6. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+7. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
