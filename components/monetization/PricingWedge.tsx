@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { REMOVE_ADS_PRICE_LABEL } from '../../lib/monetization/purchases';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type PricingWedgeProps = {
@@ -11,13 +12,13 @@ type PricingWedgeProps = {
 const copy = {
   sv: {
     proof: (q: number, c: number) => `${q} övningsfrågor i ${c} kapitel`,
-    pitch:
-      'Andra appar tar 499 kr i förskott. Vi är gratis med annonser — eller 29 kr för att ta bort dem permanent.',
+    pitch: (price: string) =>
+      `Andra appar tar 499 kr i förskott. Vi är gratis med annonser — eller ${price} för att ta bort dem permanent.`,
   },
   en: {
     proof: (q: number, c: number) => `${q} practice questions across ${c} chapters`,
-    pitch:
-      'Other apps charge 499 kr upfront. We are free with ads — or 29 kr to remove them permanently.',
+    pitch: (price: string) =>
+      `Other apps charge 499 kr upfront. We are free with ads — or ${price} to remove them permanently.`,
   },
 } as const;
 
@@ -26,7 +27,7 @@ export function PricingWedge({ questionCount, chapterCount, language }: PricingW
   return (
     <View accessibilityRole="summary" style={styles.wrapper}>
       <Text style={styles.proof}>{t.proof(questionCount, chapterCount)}</Text>
-      <Text style={styles.pitch}>{t.pitch}</Text>
+      <Text style={styles.pitch}>{t.pitch(REMOVE_ADS_PRICE_LABEL)}</Text>
     </View>
   );
 }
