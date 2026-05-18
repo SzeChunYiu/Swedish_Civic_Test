@@ -2406,3 +2406,22 @@ Workspace contract: pass with environment caveat - no product source edited; thi
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-REMOVE-ADS-PRICE-COPY-1`.
 Evidence: `components/monetization/PricingWedge.tsx` uses `29 kr` in both Swedish and English Home pitch copy, while `lib/monetization/purchases.ts`, `components/monetization/PremiumBanner.tsx`, `app/privacy.tsx`, and release policy/tests use the canonical `29 SEK` Remove Ads price. This creates inconsistent purchase copy in the learner-facing funnel.
 Next manager action: assign a source-touching UI/monetization atom to align `PricingWedge` with `REMOVE_ADS_PRICE_LABEL` or exact `29 SEK`, add parity coverage, and rerun checks in an environment with local Expo/TypeScript dependencies.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-1779098914` / `task/reviewer/1779098914`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q037 English naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `docs/content-strategy.md`, and current queues.
+- Existing queue scan showed reviewer English-naturalness findings already exist for q001-q028, q071, and q072; no q037 duplicate was present.
+- `nl -ba data/additionalQuestions.ts | sed -n '368,390p'` - q037 `explanationEn` begins `The section on the Instrument of Government says...` and continues `It also describes that...`.
+- `rg -n "explanationEn|ExplanationPanel|language" app/quiz components/quiz app/'(tabs)'/practice.tsx -S` - routed quiz and practice pass `question.explanationEn` to `ExplanationPanel` for the selected language.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 705 questions and 705 bilingual text pairs validated.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0; 6/6 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 705 questions in parity.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 1 because Expo cannot resolve the configured `expo-web-browser` plugin from local `node_modules`.
+- `git status --short --branch` in the shared checkout later showed another lane's uncommitted source files on `task/data-integrity/1779098835`; reviewer queue/journal edits were made in a separate temporary worktree from `origin/main` to avoid bundling that work.
+PR (number + merged?): #152 / pending before merge attempt.
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q037 naturalness atom; keep TRANSLATE-COMPLETE open because current validators remain green while this user-visible English defect exists.
