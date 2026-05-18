@@ -1,3 +1,3 @@
-/goal PANE 0 lane MANAGER-uiux-runtime. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/UIUX_BOARD.md; accept only verified screen and motion/a11y atoms from panes 1-2. Iterate until rate-limited.
-/goal PANE 1 lane SCREENS. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/screens.md; ship one screen-polish atom using components and theme. Iterate until rate-limited.
-/goal PANE 2 lane MOTION-A11Y. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/motion-a11y.md; ship one reduce-motion-safe motion or a11y atom. Iterate until rate-limited.
+/goal You are PANE 0, lane MANAGER-uiux-runtime. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/uiux-manager.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 1, lane SCREENS. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/screens.md, then iterate per the protocol until rate-limited.
+/goal You are PANE 2, lane MOTION-A11Y. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/motion-a11y.md, then iterate per the protocol until rate-limited.

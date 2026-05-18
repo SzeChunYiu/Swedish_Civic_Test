@@ -1,1 +1,1 @@
-/goal PANE 0 lane CEO. Read docs/parallel-sessions/PRODUCTIVITY.md and docs/parallel-sessions/TEAM_PLAN.md; convert blockers into product atoms, protect team scope, archive evidence. Iterate until rate-limited.
+/goal You are PANE 0, lane CEO. Read docs/parallel-sessions.md, docs/parallel-sessions/TEAM_PLAN.md, and docs/parallel-sessions/gm.md, then iterate per the protocol until rate-limited.
