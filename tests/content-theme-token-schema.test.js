@@ -24,8 +24,24 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(themeIndex, /export \{ colors \} from '\.\/colors';/);
+  assert.match(themeIndex, /export \{ swedishFlagColors \} from '\.\/flag';/);
   assert.match(themeIndex, /export \{ space \} from '\.\/spacing';/);
   assert.match(themeIndex, /export \{ typography \} from '\.\/typography';/);
+});
+
+test('Swedish flag surfaces use fixed flag constants outside the palette token map', () => {
+  const flagSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/flag.ts'), 'utf8');
+  const flagBandSource = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/SwedishFlagBand.tsx'),
+    'utf8',
+  );
+
+  assert.match(flagSource, /blue:\s*'#006aa7'/);
+  assert.match(flagSource, /gold:\s*'#fecc00'/);
+  assert.match(flagSource, /brand\/flag constants, not palette tokens/);
+  assert.match(flagBandSource, /swedishFlagColors\.blue/);
+  assert.match(flagBandSource, /swedishFlagColors\.gold/);
+  assert.doesNotMatch(flagBandSource, /colors\.swedishBlue|colors\.swedishGold/);
 });
 
 test('theme token schema rejects spacing token drift', () => {
