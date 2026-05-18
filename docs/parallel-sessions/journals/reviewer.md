@@ -2558,3 +2558,19 @@ Verification (commands + result):
 PR (number + merged?): #296 / merged yes via squash commit `82291b1`
 Accepted by worker? yes
 Next suggested validator action: route `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` before more local-only SITE closure, then route `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` to SETUP/UI for the draft wide Practice layout.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-privacy-aDc7rD` / `task/reviewer/site-privacy-monetization-1779110037`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 SITE static privacy/monetization copy audit.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, current SITE/setup queues, and current reviewer queue entries.
+- Used a clean temporary worktree at `origin/main` because the shared checkout has unrelated dirty queue, component, report, and screenshot files from active lanes.
+- Duplicate scan for `SITE.*PRIVACY`, `PRIVACY.*SITE`, `static.*privacy`, `site/app.js`, `site/index.html`, `real ad rendering is disabled`, and `riktig annonsvisning` found the older exported-app privacy defect and the live-deploy stale-site blocker, but no static `site/app.js` i18n privacy/monetization row.
+- Source grep showed `site/index.html` now has AdSense/AdMob privacy paragraphs, while `site/app.js` still has stale EN/SV `privacy.lede`, `privacy.s5.p`, and FAQ monetization strings claiming no sales, disabled real ads, and only future premium features.
+- Served `/tmp/sct-reviewer-site-privacy-aDc7rD/site` with `python3 -m http.server 4317 --bind 127.0.0.1`.
+- System-Chrome static-site pass on `#/privacy` with `localStorage.smt_lang="en"` and `"sv"` - exit 0 as evidence collection, but observed product failure: English reported `disabledAdsEn:true`, `dontSellEn:true`, and `removeAds:false`; Swedish reported `disabledAdsSv:true`, `dontSellSv:true`, and `removeAds:false`; console/page errors were 0.
+PR (number + merged?): #306 / pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site copy work to update `site/app.js` EN/SV privacy and FAQ monetization strings for AdSense, AdMob/Google Mobile Ads consent, and Remove Ads 29 SEK, then add a static/browser guard rejecting stale disabled-ads/future-premium strings.
