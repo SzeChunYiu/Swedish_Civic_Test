@@ -104,6 +104,13 @@ still needs VALIDATOR/manager acceptance evidence. External deployment
 freshness remains the SITE-P0 blocker requiring operator/deploy evidence. Do
 not stop the meta pane or run Vercel CLI from this repo.
 
+Correction 2026-05-18T21:31:00+02:00: `origin/main` advanced before the CEO
+cycle PR merged. Current `origin/main` is `dff1c24`; generated true/false
+cleanup acceptance remains recorded by `a269684` (`manager-build: accept
+generated true-false cleanup`). Treat the 21:16 DATA-INTEGRITY acceptance line
+as superseded; the HOLD/add-none staffing decision and SITE-P0 deploy-freshness
+operator dependency still stand.
+
 2026-05-18T12:27:59+02:00: Executive cycle decision remains HOLD/add-none.
 Required CEO and operating docs were read from the supervisor repo fallback
 plus this board. `csup staff --scenario=resume --dry-run` returned
