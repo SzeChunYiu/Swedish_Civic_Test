@@ -21,56 +21,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 
 | ID | Kind | Source ID | Source path | Chapter ID | UHR chapter | UHR section | Page | Last verified commit | Status | Next recheck |
 |---|---|---|---|---|---|---|---:|---|---|---|
-| q001 | authored-source | q001 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q002 | authored-source | q002 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q003 | authored-source | q003 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q004 | authored-source | q004 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q005 | authored-source | q005 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q006 | authored-source | q006 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q007 | authored-source | q007 | data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | - | restate | oldest-unverified |
-| q008 | authored-source | q008 | data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | - | restate | oldest-unverified |
-| q009 | authored-source | q009 | data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | - | restate | oldest-unverified |
-| q010 | authored-source | q010 | data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | - | restate | oldest-unverified |
-| q011 | authored-source | q011 | data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q012 | authored-source | q012 | data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q013 | authored-source | q013 | data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | - | restate | oldest-unverified |
-| q014 | authored-source | q014 | data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q015 | authored-source | q015 | data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
-| q016 | authored-source | q016 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q017 | authored-source | q017 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q018 | authored-source | q018 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q019 | authored-source | q019 | data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q020 | authored-source | q020 | data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q021 | authored-source | q021 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | - | restate | oldest-unverified |
-| q022 | authored-source | q022 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q023 | authored-source | q023 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q024 | authored-source | q024 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | - | restate | oldest-unverified |
-| q025 | authored-source | q025 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | - | restate | oldest-unverified |
-| q026 | authored-source | q026 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | - | restate | oldest-unverified |
-| q027 | authored-source | q027 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | - | restate | oldest-unverified |
-| q028 | authored-source | q028 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q029 | authored-source | q029 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q030 | authored-source | q030 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q031 | authored-source | q031 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q032 | authored-source | q032 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | - | restate | oldest-unverified |
-| q033 | authored-source | q033 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | - | restate | oldest-unverified |
-| q034 | authored-source | q034 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q035 | authored-source | q035 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q036 | authored-source | q036 | data/additionalQuestions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | - | restate | oldest-unverified |
-| q037 | authored-source | q037 | data/additionalQuestions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | - | restate | oldest-unverified |
-| q038 | authored-source | q038 | data/additionalQuestions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | - | restate | oldest-unverified |
-| q039 | authored-source | q039 | data/additionalQuestions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | - | restate | oldest-unverified |
-| q040 | authored-source | q040 | data/additionalQuestions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | - | restate | oldest-unverified |
-| q041 | authored-source | q041 | data/additionalQuestions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | - | restate | oldest-unverified |
-| q042 | authored-source | q042 | data/additionalQuestions.ts | ch05 | Lag och rätt | Domstolar | 18 | - | restate | oldest-unverified |
-| q043 | authored-source | q043 | data/additionalQuestions.ts | ch05 | Lag och rätt | Polisen | 18 | - | restate | oldest-unverified |
-| q044 | authored-source | q044 | data/additionalQuestions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | - | restate | oldest-unverified |
-| q045 | authored-source | q045 | data/additionalQuestions.ts | ch06 | Mediernas roll | Fria medier | 20 | - | restate | oldest-unverified |
-| q046 | authored-source | q046 | data/additionalQuestions.ts | ch06 | Mediernas roll | Fria medier | 20 | - | restate | oldest-unverified |
-| q047 | authored-source | q047 | data/additionalQuestions.ts | ch06 | Mediernas roll | Fria medier | 20 | - | restate | oldest-unverified |
-| q048 | authored-source | q048 | data/additionalQuestions.ts | ch06 | Mediernas roll | Public service | 21 | - | restate | oldest-unverified |
-| q049 | authored-source | q049 | data/additionalQuestions.ts | ch06 | Mediernas roll | Public service | 21 | - | restate | oldest-unverified |
-| q050 | authored-source | q050 | data/additionalQuestions.ts | ch06 | Mediernas roll | Källkritik | 21 | - | restate | oldest-unverified |
+| q001 | authored-source | q001 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 97f3096 | ok | rolling-source-slice |
+| q002 | authored-source | q002 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 97f3096 | ok | rolling-source-slice |
+| q003 | authored-source | q003 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 97f3096 | ok | rolling-source-slice |
+| q004 | authored-source | q004 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 97f3096 | ok | rolling-source-slice |
+| q005 | authored-source | q005 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 97f3096 | ok | rolling-source-slice |
+| q006 | authored-source | q006 | data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 97f3096 | ok | rolling-source-slice |
+| q007 | authored-source | q007 | data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | 97f3096 | ok | rolling-source-slice |
+| q008 | authored-source | q008 | data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 97f3096 | ok | rolling-source-slice |
+| q009 | authored-source | q009 | data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | 97f3096 | ok | rolling-source-slice |
+| q010 | authored-source | q010 | data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | 97f3096 | ok | rolling-source-slice |
+| q011 | authored-source | q011 | data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | 97f3096 | ok | rolling-source-slice |
+| q012 | authored-source | q012 | data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | 97f3096 | ok | rolling-source-slice |
+| q013 | authored-source | q013 | data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | 97f3096 | ok | rolling-source-slice |
+| q014 | authored-source | q014 | data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | 97f3096 | ok | rolling-source-slice |
+| q015 | authored-source | q015 | data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 97f3096 | ok | rolling-source-slice |
+| q016 | authored-source | q016 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
+| q017 | authored-source | q017 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
+| q018 | authored-source | q018 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
+| q019 | authored-source | q019 | data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 97f3096 | ok | rolling-source-slice |
+| q020 | authored-source | q020 | data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 97f3096 | ok | rolling-source-slice |
+| q021 | authored-source | q021 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 97f3096 | ok | rolling-source-slice |
+| q022 | authored-source | q022 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
+| q023 | authored-source | q023 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
+| q024 | authored-source | q024 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 97f3096 | ok | rolling-source-slice |
+| q025 | authored-source | q025 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 97f3096 | ok | rolling-source-slice |
+| q026 | authored-source | q026 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 97f3096 | ok | rolling-source-slice |
+| q027 | authored-source | q027 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 97f3096 | ok | rolling-source-slice |
+| q028 | authored-source | q028 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
+| q029 | authored-source | q029 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 97f3096 | ok | rolling-source-slice |
+| q030 | authored-source | q030 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 97f3096 | ok | rolling-source-slice |
+| q031 | authored-source | q031 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 97f3096 | ok | rolling-source-slice |
+| q032 | authored-source | q032 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 97f3096 | ok | rolling-source-slice |
+| q033 | authored-source | q033 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 97f3096 | ok | rolling-source-slice |
+| q034 | authored-source | q034 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 97f3096 | ok | rolling-source-slice |
+| q035 | authored-source | q035 | data/additionalQuestions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 97f3096 | ok | rolling-source-slice |
+| q036 | authored-source | q036 | data/additionalQuestions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 97f3096 | ok | rolling-source-slice |
+| q037 | authored-source | q037 | data/additionalQuestions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 97f3096 | ok | rolling-source-slice |
+| q038 | authored-source | q038 | data/additionalQuestions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 97f3096 | ok | rolling-source-slice |
+| q039 | authored-source | q039 | data/additionalQuestions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 97f3096 | ok | rolling-source-slice |
+| q040 | authored-source | q040 | data/additionalQuestions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 97f3096 | ok | rolling-source-slice |
+| q041 | authored-source | q041 | data/additionalQuestions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | 97f3096 | ok | rolling-source-slice |
+| q042 | authored-source | q042 | data/additionalQuestions.ts | ch05 | Lag och rätt | Domstolar | 18 | 97f3096 | ok | rolling-source-slice |
+| q043 | authored-source | q043 | data/additionalQuestions.ts | ch05 | Lag och rätt | Polisen | 18 | 97f3096 | ok | rolling-source-slice |
+| q044 | authored-source | q044 | data/additionalQuestions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | 97f3096 | ok | rolling-source-slice |
+| q045 | authored-source | q045 | data/additionalQuestions.ts | ch06 | Mediernas roll | Fria medier | 20 | 97f3096 | ok | rolling-source-slice |
+| q046 | authored-source | q046 | data/additionalQuestions.ts | ch06 | Mediernas roll | Fria medier | 20 | 97f3096 | ok | rolling-source-slice |
+| q047 | authored-source | q047 | data/additionalQuestions.ts | ch06 | Mediernas roll | Fria medier | 20 | 97f3096 | ok | rolling-source-slice |
+| q048 | authored-source | q048 | data/additionalQuestions.ts | ch06 | Mediernas roll | Public service | 21 | 97f3096 | ok | rolling-source-slice |
+| q049 | authored-source | q049 | data/additionalQuestions.ts | ch06 | Mediernas roll | Public service | 21 | 97f3096 | ok | rolling-source-slice |
+| q050 | authored-source | q050 | data/additionalQuestions.ts | ch06 | Mediernas roll | Källkritik | 21 | 97f3096 | ok | rolling-source-slice |
 | q051 | authored-source | q051 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | - | restate | oldest-unverified |
 | q052 | authored-source | q052 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | - | restate | oldest-unverified |
 | q053 | authored-source | q053 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | - | restate | oldest-unverified |
