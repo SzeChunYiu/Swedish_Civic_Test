@@ -237,3 +237,13 @@ Verification (commands + result): UHR official `Sverige i fokus` text was opened
 PR (number + merged?): #656, merge pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold q351-q400 current evidence into the active DATA-INTEGRITY generated true/false standalone-stem route with q301-q350, then route q401-q450 or the next non-overlapping rolling VERIFY slice from current main.
+
+Lane: CONTENT-VERIFY / CONTENT Pane 2
+Host/branch: `/home/billy/Swedish_Civic_Test`, branch `task/content/pane4-current-handoff-1779126720`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-prefix-strip rolling current-output refresh for `verify:data/questions.ts q351-q400`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q351-q400-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL and opened/extracted for printed pages 22-28; q351-q400 facts, citations, answer keys, and ordinary distractors remain supported except q371's generated false-statement ambiguity after context stripping. Current output at `origin/main` `120d440` clears the older q351-q400 splice/list/fragment defects, clears q351's standalone-subject issue, and has 0/25 true/false prefix rows in the slice; q358/q359/q398/q399 still need standalone-subject cleanup, q371 needs generated false-statement context/answer cleanup, and q374/q375 need Swedish capitalization cleanup. Focused CSV/static/ledger assertion passed with 50 checked rows, 25 true/false rows, zero prefix rows, zero meta rows, defect rows `q358`/`q359`/`q371`/`q374`/`q375`/`q398`/`q399`, no missing static rows, and no static text mismatches. Passed: `git diff --check`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check`; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: fold q351-q400 current evidence into DATA-INTEGRITY generated true/false cleanup/follow-up coverage, then route the next non-overlapping rolling VERIFY slice.

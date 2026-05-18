@@ -371,56 +371,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q348 | judgement | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | 8bb2ccf | ok | rolling-source-slice |
 | q349 | section-practice | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 8bb2ccf | ok | rolling-source-slice |
 | q350 | true-false | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 8bb2ccf | defect | queued-data-integrity-residual-grammar |
-| q351 | false-statement | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | dff1c24 | defect | queued-data-integrity-standalone-stem |
-| q352 | judgement | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | dff1c24 | ok | rolling-source-slice |
-| q353 | section-practice | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | dff1c24 | ok | rolling-source-slice |
-| q354 | true-false | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | dff1c24 | ok | rolling-source-slice |
-| q355 | false-statement | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | dff1c24 | ok | rolling-source-slice |
-| q356 | judgement | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | dff1c24 | ok | rolling-source-slice |
-| q357 | section-practice | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | dff1c24 | ok | rolling-source-slice |
-| q358 | true-false | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | dff1c24 | defect | queued-data-integrity-standalone-stem |
-| q359 | false-statement | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | dff1c24 | defect | queued-data-integrity-standalone-stem |
-| q360 | judgement | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | dff1c24 | ok | rolling-source-slice |
-| q361 | section-practice | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | dff1c24 | ok | rolling-source-slice |
-| q362 | true-false | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | dff1c24 | ok | rolling-source-slice |
-| q363 | false-statement | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | dff1c24 | ok | rolling-source-slice |
-| q364 | judgement | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | dff1c24 | ok | rolling-source-slice |
-| q365 | section-practice | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | dff1c24 | ok | rolling-source-slice |
-| q366 | true-false | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | dff1c24 | ok | rolling-source-slice |
-| q367 | false-statement | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | dff1c24 | ok | rolling-source-slice |
-| q368 | judgement | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | dff1c24 | ok | rolling-source-slice |
-| q369 | section-practice | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | dff1c24 | ok | rolling-source-slice |
-| q370 | true-false | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | dff1c24 | ok | rolling-source-slice |
-| q371 | false-statement | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | dff1c24 | ok | rolling-source-slice |
-| q372 | judgement | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | dff1c24 | ok | rolling-source-slice |
-| q373 | section-practice | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q374 | true-false | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q375 | false-statement | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q376 | judgement | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q377 | section-practice | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q378 | true-false | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q379 | false-statement | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q380 | judgement | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | dff1c24 | ok | rolling-source-slice |
-| q381 | section-practice | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | dff1c24 | ok | rolling-source-slice |
-| q382 | true-false | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | dff1c24 | ok | rolling-source-slice |
-| q383 | false-statement | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | dff1c24 | ok | rolling-source-slice |
-| q384 | judgement | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | dff1c24 | ok | rolling-source-slice |
-| q385 | section-practice | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | dff1c24 | ok | rolling-source-slice |
-| q386 | true-false | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | dff1c24 | ok | rolling-source-slice |
-| q387 | false-statement | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | dff1c24 | ok | rolling-source-slice |
-| q388 | judgement | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | dff1c24 | ok | rolling-source-slice |
-| q389 | section-practice | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q390 | true-false | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q391 | false-statement | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q392 | judgement | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q393 | section-practice | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q394 | true-false | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q395 | false-statement | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q396 | judgement | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | dff1c24 | ok | rolling-source-slice |
-| q397 | section-practice | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | dff1c24 | ok | rolling-source-slice |
-| q398 | true-false | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | dff1c24 | defect | queued-data-integrity-standalone-stem |
-| q399 | false-statement | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | dff1c24 | defect | queued-data-integrity-standalone-stem |
-| q400 | judgement | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | dff1c24 | ok | rolling-source-slice |
+| q351 | false-statement | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 120d440 | ok | rolling-source-slice |
+| q352 | judgement | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 120d440 | ok | rolling-source-slice |
+| q353 | section-practice | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | 120d440 | ok | rolling-source-slice |
+| q354 | true-false | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | 120d440 | ok | rolling-source-slice |
+| q355 | false-statement | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | 120d440 | ok | rolling-source-slice |
+| q356 | judgement | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | 120d440 | ok | rolling-source-slice |
+| q357 | section-practice | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | 120d440 | ok | rolling-source-slice |
+| q358 | true-false | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q359 | false-statement | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q360 | judgement | q054 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | 120d440 | ok | rolling-source-slice |
+| q361 | section-practice | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | 120d440 | ok | rolling-source-slice |
+| q362 | true-false | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | 120d440 | ok | rolling-source-slice |
+| q363 | false-statement | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | 120d440 | ok | rolling-source-slice |
+| q364 | judgement | q055 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | 120d440 | ok | rolling-source-slice |
+| q365 | section-practice | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | 120d440 | ok | rolling-source-slice |
+| q366 | true-false | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | 120d440 | ok | rolling-source-slice |
+| q367 | false-statement | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | 120d440 | ok | rolling-source-slice |
+| q368 | judgement | q056 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | 120d440 | ok | rolling-source-slice |
+| q369 | section-practice | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | 120d440 | ok | rolling-source-slice |
+| q370 | true-false | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | 120d440 | ok | rolling-source-slice |
+| q371 | false-statement | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | 120d440 | defect | queued-data-integrity-answer-ambiguity |
+| q372 | judgement | q057 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | 120d440 | ok | rolling-source-slice |
+| q373 | section-practice | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | ok | rolling-source-slice |
+| q374 | true-false | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | defect | queued-data-integrity-sv-naturalness |
+| q375 | false-statement | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | defect | queued-data-integrity-sv-naturalness |
+| q376 | judgement | q058 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | ok | rolling-source-slice |
+| q377 | section-practice | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | ok | rolling-source-slice |
+| q378 | true-false | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | ok | rolling-source-slice |
+| q379 | false-statement | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | ok | rolling-source-slice |
+| q380 | judgement | q059 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | 120d440 | ok | rolling-source-slice |
+| q381 | section-practice | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | 120d440 | ok | rolling-source-slice |
+| q382 | true-false | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | 120d440 | ok | rolling-source-slice |
+| q383 | false-statement | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | 120d440 | ok | rolling-source-slice |
+| q384 | judgement | q060 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | 120d440 | ok | rolling-source-slice |
+| q385 | section-practice | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | 120d440 | ok | rolling-source-slice |
+| q386 | true-false | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | 120d440 | ok | rolling-source-slice |
+| q387 | false-statement | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | 120d440 | ok | rolling-source-slice |
+| q388 | judgement | q061 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | 120d440 | ok | rolling-source-slice |
+| q389 | section-practice | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q390 | true-false | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q391 | false-statement | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q392 | judgement | q062 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q393 | section-practice | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q394 | true-false | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q395 | false-statement | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q396 | judgement | q063 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | 120d440 | ok | rolling-source-slice |
+| q397 | section-practice | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | ok | rolling-source-slice |
+| q398 | true-false | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q399 | false-statement | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q400 | judgement | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | ok | rolling-source-slice |
 | q401 | section-practice | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 711b20f | ok | rolling-source-slice |
 | q402 | true-false | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 3be70d4 | defect | queued-data-integrity-residual |
 | q403 | false-statement | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 3be70d4 | defect | queued-data-integrity-residual |
