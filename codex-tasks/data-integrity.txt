@@ -273,3 +273,22 @@ generator/validator/static-mirror repair, focused negative guards, regenerated
 CSV/static output, export/static parity, `validate:content`, typecheck,
 ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
 row recheck.
+
+MANAGER-content->DATA-INTEGRITY 2026-05-18T19:05:00+02:00
+Extend `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` with the newer CONTENT
+residual evidence through q720. q551-q600 is on main via PR #505 / `7d77249`,
+q601-q650 is on main via PR #503 / `95aa330`, q651-q700 is on main via PR #506 /
+`eb10dc5`, q701-q720 is on main via PR #512 / `2d41d8f`, and earlier
+current-main evidence includes q401-q450 via PR #495 and q501-q550 via
+`f6bbeb0`. Facts, citations, answer keys, and distractors remain
+source-supported; the defect is generated learner-visible wording in canonical
+CSV and `site/questions.js`.
+Acceptance for the DATA-INTEGRITY repair now needs focused guards that cover
+the q401-q720 fragment/list/predicate residual patterns plus the already routed
+q201-q400 examples, regenerated `content/question-bank.csv` and
+`site/questions.js`, export/static parity, `validate:content`,
+`test:derived-content`, focused published-question/content gates, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and a current-main residual
+recheck. Keep `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` in the same
+generator/validator/static-mirror ownership area if VALIDATOR chooses to bundle
+it safely; CONTENT must not hand-edit generated rows or `site/**`.

@@ -328,3 +328,18 @@ validator mirror in `scripts/validate-content.js`, and current static output
 contains 154 copies. CONTENT must not edit `site/**`, generated CSV rows,
 generator templates, or validator mirrors; fresh authored content stays behind
 explicit VALIDATOR lease.
+
+MANAGER-content 2026-05-18T19:05:00+02:00
+Current `origin/main` is `332bfc9`, with q551-q600 residual audit evidence on
+main via PR #505 / `7d77249`, q601-q650 evidence on main via PR #503 /
+`95aa330`, q651-q700 evidence on main via PR #506 / `eb10dc5`, and q701-q720
+evidence on main via PR #512 / `2d41d8f`. Treat q401-q720 residual evidence as
+DATA-INTEGRITY-owned generated-template/static-mirror work, not as a CONTENT
+implementation lease. CONTENT must not hand-edit generated rows, generator
+templates, validator mirrors, regenerated CSV/static mirrors, or `site/**`.
+Do not duplicate q401-q450, q501-q550, q551-q600, q601-q650, q651-q700, or
+q701-q720 audit branches. No generated residual CONTENT audit slice remains;
+CONTENT should capacity-handoff unless VALIDATOR explicitly leases authored
+content. q123/q124 remain accepted and duplicate-guarded, q144 is now on main
+via PR #513 / `38e4a45`, and generated unknown-material option wording remains
+DATA-INTEGRITY-owned.
