@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 import { Button } from './Button';
 import type { ButtonVariant } from './Button';
@@ -11,6 +12,40 @@ import type { SurfaceProps } from './Surface';
 import { Text } from './Text';
 
 export type ResultSummaryStatus = 'pass' | 'review';
+
+type ResultSummaryCopy = {
+  metricLabel: (correctCount: number, totalCount: number) => string;
+  passingLineLabel: string;
+  percentLabel: (percent: number) => string;
+  progressLabel: (percent: number) => string;
+  scoreLabel: string;
+  statusLabels: Record<ResultSummaryStatus, string>;
+};
+
+const resultSummaryCopy: Record<AppLanguage, ResultSummaryCopy> = {
+  sv: {
+    metricLabel: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
+    passingLineLabel: 'Gräns för godkänt',
+    percentLabel: (percent) => `${percent} procent`,
+    progressLabel: (percent) => `${percent} procent rätt`,
+    scoreLabel: 'Poäng',
+    statusLabels: {
+      pass: 'Godkänt',
+      review: 'Behöver repeteras',
+    },
+  },
+  en: {
+    metricLabel: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
+    passingLineLabel: 'Passing line',
+    percentLabel: (percent) => `${percent} percent`,
+    progressLabel: (percent) => `${percent} percent correct`,
+    scoreLabel: 'Score',
+    statusLabels: {
+      pass: 'Passed',
+      review: 'Needs review',
+    },
+  },
+};
 
 export interface ResultSummaryAction {
   accessibilityLabel?: string;
@@ -28,12 +63,14 @@ export interface ResultSummaryMetric {
 
 /**
  * Defaults: `passingPercent=75`, status inferred from score, `tone="surface"`,
- * `elevation="card"`, and `accessibilityRole="summary"`. Pass localized
- * labels when the result summary is shown in a translated screen.
+ * `elevation="card"`, localized fallback labels from settings, and
+ * `accessibilityRole="summary"`. Pass localized label props for
+ * screen-specific copy.
  */
 export interface ResultSummaryProps extends Omit<SurfaceProps, 'children'> {
   actions?: ResultSummaryAction[];
   correctCount: number;
+  languageOverride?: AppLanguage;
   metricLabel?: string;
   passingLineLabel?: string;
   passingPercent?: number;
@@ -62,15 +99,15 @@ function getPercent(correctCount: number, totalCount: number) {
 function getAccessibilityLabel({
   metricLabel,
   passingLineLabel,
-  percent,
+  percentLabel,
   statusLabel,
 }: {
   metricLabel: string;
   passingLineLabel: string;
-  percent: number;
+  percentLabel: string;
   statusLabel: string;
 }) {
-  return `${statusLabel}. ${percent} percent. ${metricLabel}. ${passingLineLabel}.`;
+  return `${statusLabel}. ${percentLabel}. ${metricLabel}. ${passingLineLabel}.`;
 }
 
 export function ResultSummary({
@@ -79,11 +116,12 @@ export function ResultSummary({
   actions,
   correctCount,
   elevation = 'card',
+  languageOverride,
   metricLabel,
-  passingLineLabel = 'Passing line',
+  passingLineLabel,
   passingPercent = 75,
   progressAccessibilityLabel,
-  scoreLabel = 'Score',
+  scoreLabel,
   status,
   statusLabel,
   style,
@@ -93,15 +131,20 @@ export function ResultSummary({
   trailingMetrics = [],
   ...surfaceProps
 }: ResultSummaryProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = resultSummaryCopy[language];
   const safeTotal = Number.isFinite(totalCount) && totalCount > 0 ? Math.round(totalCount) : 0;
   const safeCorrect = clampCount(correctCount, safeTotal);
   const percent = getPercent(safeCorrect, safeTotal);
   const resolvedStatus = status ?? (percent >= passingPercent ? 'pass' : 'review');
-  const resolvedStatusLabel =
-    statusLabel ?? (resolvedStatus === 'pass' ? 'Passed' : 'Needs review');
-  const resolvedMetricLabel = metricLabel ?? `${safeCorrect}/${safeTotal} correct`;
-  const resolvedPassingLineLabel = `${passingLineLabel} ${passingPercent}%`;
-  const progressLabel = progressAccessibilityLabel ?? `${percent} percent correct`;
+  const resolvedStatusLabel = statusLabel ?? copy.statusLabels[resolvedStatus];
+  const resolvedMetricLabel = metricLabel ?? copy.metricLabel(safeCorrect, safeTotal);
+  const resolvedPassingLineText = passingLineLabel ?? copy.passingLineLabel;
+  const resolvedPassingLineLabel = `${resolvedPassingLineText} ${passingPercent}%`;
+  const percentAccessibilityLabel = copy.percentLabel(percent);
+  const progressLabel = progressAccessibilityLabel ?? copy.progressLabel(percent);
+  const resolvedScoreLabel = scoreLabel ?? copy.scoreLabel;
   const badgeVariant = resolvedStatus === 'pass' ? 'success' : 'warning';
   const fillStyle = resolvedStatus === 'pass' ? styles.passFill : styles.reviewFill;
 
@@ -112,7 +155,7 @@ export function ResultSummary({
         getAccessibilityLabel({
           metricLabel: resolvedMetricLabel,
           passingLineLabel: resolvedPassingLineLabel,
-          percent,
+          percentLabel: percentAccessibilityLabel,
           statusLabel: resolvedStatusLabel,
         })
       }
@@ -124,7 +167,7 @@ export function ResultSummary({
     >
       <View style={styles.header}>
         <PillBadge variant={badgeVariant}>{resolvedStatusLabel}</PillBadge>
-        <Text accessibilityLabel={`${percent} percent`} style={styles.percent} variant="h1">
+        <Text accessibilityLabel={percentAccessibilityLabel} style={styles.percent} variant="h1">
           {percent}%
         </Text>
         {subtitle ? (
@@ -137,6 +180,7 @@ export function ResultSummary({
       <ProgressBar
         accessibilityLabel={progressLabel}
         fillStyle={fillStyle}
+        languageOverride={language}
         progress={percent / 100}
         style={styles.progress}
       />
@@ -144,7 +188,7 @@ export function ResultSummary({
       <View style={styles.metrics}>
         <View style={styles.metric}>
           <Text tone="secondary" variant="caption">
-            {scoreLabel}
+            {resolvedScoreLabel}
           </Text>
           <Text style={styles.metricValue} variant="label">
             {resolvedMetricLabel}
@@ -152,7 +196,7 @@ export function ResultSummary({
         </View>
         <View style={styles.metric}>
           <Text tone="secondary" variant="caption">
-            {passingLineLabel}
+            {resolvedPassingLineText}
           </Text>
           <Text style={styles.metricValue} variant="label">
             {passingPercent}%
@@ -179,6 +223,7 @@ export function ResultSummary({
               accessibilityState={{ disabled: action.disabled }}
               disabled={action.disabled}
               key={action.label}
+              languageOverride={language}
               onPress={action.onPress}
               style={styles.action}
               testID={action.testID}

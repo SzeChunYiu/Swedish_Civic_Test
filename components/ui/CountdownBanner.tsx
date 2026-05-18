@@ -23,10 +23,7 @@ export function CountdownBanner({ language }: { language: 'sv' | 'en' }) {
   const [days, setDays] = useState<number>(() => daysUntil(EXAM_REFORM_DATE));
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setDays(daysUntil(EXAM_REFORM_DATE)),
-      60 * 60 * 1000,
-    );
+    const interval = setInterval(() => setDays(daysUntil(EXAM_REFORM_DATE)), 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
