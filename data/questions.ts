@@ -571,9 +571,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'Avsnittet Val och röstning säger att man ska ha fyllt 18 år för att ha rösträtt. För att rösta i riksdagsvalet måste man dessutom vara svensk medborgare.',
+      'Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap.',
     explanationEn:
-      'The Elections and voting section says a person must have turned 18 to have the right to vote. To vote in a Riksdag election, a person must also be a Swedish citizen.',
+      'A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Val och röstning',
