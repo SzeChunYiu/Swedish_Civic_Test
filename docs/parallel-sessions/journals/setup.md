@@ -603,3 +603,11 @@ Verification: `node --check site/app.js`, `node --check site/practice.js`, `node
 PR: #252 squash-merged to `main` as `5e834b9`.
 Blocked? no - required SITE-P0-2 static-site gates are complete on latest `origin/main`; the broad TypeScript failure is outside this site-only atom.
 Next suggested validator action: inspect the static Mock exam route and rerun the route/static assertion plus the static-site mock completion smoke before accepting SITE-P0-2.
+
+## Iteration 195 - 2026-05-18
+Task completed: SITE-P0-3 - refreshed the deployed static `site/` question bank from canonical content after q019/q020 explanation updates so the static Practice/Mock routes pass the existing drift guard.
+Artifacts changed: `site/questions.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: pre-fix `node scripts/export-site-question-bank.js --check` failed with `site/questions.js is out of sync`; after regeneration and rebase onto latest `origin/main`, `node scripts/export-site-question-bank.js --check` exit 0 with 705 questions and 13 chapters; `node --check site/questions.js` exit 0; `node --test tests/content-static-site-question-bank-parity.test.js` exit 0 with 2/2 passing; `npm run validate:content` exit 0; `npm run typecheck -- --pretty false` exit 0 after isolated worktree `npm ci`; `npm run test:ownership` exit 0; `git diff --check HEAD~1..HEAD` exit 0; static-site Chrome smoke showed 13 Practice cards, 705-question total, q001 feedback, 5-row Mock review, and browser console/page errors 0.
+PR: #264 squash-merged to `main` as `19a420e`.
+Blocked? no - SITE-P0-3 is synced on latest `origin/main`; the existing export/parity guard now catches future static question-bank drift.
+Next suggested validator action: inspect the generated q019/q020 static-bank diff and rerun `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, and `node --check site/questions.js` before accepting SITE-P0-3.
