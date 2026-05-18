@@ -35,8 +35,8 @@ const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy> = {
     emptyQuestions: 'Frågor för det här kapitlet har inte lagts till ännu.',
     missingTitle: 'Kapitlet hittades inte',
     practiceQuestionsTitle: (count) => `Övningsfrågor (${count})`,
-    startQuiz: 'Starta frågepass',
-    startQuizAccessibilityLabel: (chapterTitle) => `Starta frågepass för ${chapterTitle}`,
+    startQuiz: 'Starta quiz',
+    startQuizAccessibilityLabel: (chapterTitle) => `Starta quiz för ${chapterTitle}`,
   },
   en: {
     backToListAccessibilityLabel: 'Back to chapter list',

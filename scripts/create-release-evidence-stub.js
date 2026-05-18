@@ -5,8 +5,8 @@ const path = require('node:path');
 
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyPolicyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
-const bundleIdentifier = 'com.billyyiu.almostswedish';
-const packageName = 'com.billyyiu.almostswedish';
+const bundleIdentifier = 'com.billyyiu.swedishcivictest';
+const packageName = 'com.billyyiu.swedishcivictest';
 
 const templates = {
   'eas-build-artifacts': {

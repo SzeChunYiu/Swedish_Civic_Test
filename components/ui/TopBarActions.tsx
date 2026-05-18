@@ -1,12 +1,9 @@
-import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
-import { useState } from 'react';
-import type { ReactNode } from 'react';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space } from '../../lib/theme';
+import { space } from '../../lib/theme';
 import { LanguagePicker } from './LanguagePicker';
 import { AudioIcon } from './icons/AudioIcon';
 import { BookmarkIcon } from './icons/BookmarkIcon';
@@ -19,12 +16,6 @@ type TopBarActionsCopy = {
   savedQuestions: string;
   search: string;
   settings: string;
-};
-
-type TopBarActionLinkProps = {
-  accessibilityLabel: string;
-  children: ReactNode;
-  href: Href;
 };
 
 const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
@@ -44,17 +35,7 @@ const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
   },
 };
 
-const defaultIconSize = space[3];
-
-/**
- * Defaults: reads language and audio state from settings, renders token-sized
- * header actions with localized labels and 48px touch targets.
- */
-export interface TopBarActionsProps {
-  iconSize?: number;
-}
-
-export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps = {}) {
+export function TopBarActions() {
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
@@ -64,78 +45,39 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
     <View style={styles.row}>
       <LanguagePicker />
       <Pressable
-        aria-checked={audioEnabled}
         accessibilityRole="switch"
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
         accessibilityState={{ checked: audioEnabled }}
-        hitSlop={space[1]}
         onPress={() => setAudioEnabled(!audioEnabled)}
-        style={({ pressed }) => [styles.iconButton, pressed ? styles.iconButtonPressed : null]}
+        style={styles.iconButton}
       >
-        <AudioIcon size={iconSize} muted={!audioEnabled} />
+        <AudioIcon size={22} muted={!audioEnabled} />
       </Pressable>
-      <TopBarActionLink href="/search" accessibilityLabel={copy.search}>
-        <SearchIcon size={iconSize} />
-      </TopBarActionLink>
-      <TopBarActionLink href="/mistakes" accessibilityLabel={copy.savedQuestions}>
-        <BookmarkIcon size={iconSize} />
-      </TopBarActionLink>
-      <TopBarActionLink href="/settings" accessibilityLabel={copy.settings}>
-        <SettingsIcon size={iconSize} />
-      </TopBarActionLink>
+      <Link
+        accessibilityLabel={copy.search}
+        accessibilityRole="link"
+        href="/search"
+        style={styles.iconLink}
+      >
+        <SearchIcon size={22} />
+      </Link>
+      <Link
+        accessibilityLabel={copy.savedQuestions}
+        accessibilityRole="link"
+        href="/mistakes"
+        style={styles.iconLink}
+      >
+        <BookmarkIcon size={22} />
+      </Link>
+      <Link
+        accessibilityLabel={copy.settings}
+        accessibilityRole="link"
+        href="/settings"
+        style={styles.iconLink}
+      >
+        <SettingsIcon size={22} />
+      </Link>
     </View>
-  );
-}
-
-function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
-  const clearPressedState = () => setIsPressed(false);
-  const handleKeyboardPressStart = ({ key }: { key: string }) => {
-    if (key === 'Enter' || key === ' ') setIsPressed(true);
-  };
-  const handleKeyboardPressEnd = ({ key }: { key: string }) => {
-    if (key === 'Enter' || key === ' ') setIsPressed(false);
-  };
-  const webInteractionHandlers =
-    Platform.OS === 'web'
-      ? {
-          onBlur: () => {
-            setIsFocused(false);
-            clearPressedState();
-          },
-          onFocus: () => setIsFocused(true),
-          onKeyDown: handleKeyboardPressStart,
-          onKeyUp: handleKeyboardPressEnd,
-          onMouseEnter: () => setIsHovered(true),
-          onMouseDown: () => setIsPressed(true),
-          onMouseLeave: () => {
-            setIsHovered(false);
-            clearPressedState();
-          },
-          onMouseUp: clearPressedState,
-          onTouchEnd: clearPressedState,
-          onTouchStart: () => setIsPressed(true),
-        }
-      : {};
-
-  return (
-    <Link
-      {...webInteractionHandlers}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="link"
-      href={href}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={clearPressedState}
-      style={[
-        styles.iconLink,
-        isFocused || isHovered ? styles.iconLinkHover : null,
-        isPressed ? styles.iconLinkPressed : null,
-      ]}
-    >
-      {children}
-    </Link>
   );
 }
 
@@ -147,29 +89,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: space[1.5],
   },
   iconButton: {
-    alignItems: 'center',
-    borderRadius: radius.pill,
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-  },
-  iconButtonPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
+    padding: space[0.5],
   },
   iconLink: {
-    alignItems: 'center',
-    borderRadius: radius.pill,
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-  },
-  iconLinkHover: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.hoverScale }],
-  },
-  iconLinkPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
+    padding: space[0.5],
   },
 });
