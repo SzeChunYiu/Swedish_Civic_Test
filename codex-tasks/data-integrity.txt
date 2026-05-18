@@ -1,3 +1,33 @@
+MANAGER-build current-route refresh - 2026-05-18T22:37+02:00
+
+Current `origin/main` `435b39f` still reproduces the q501-q550 generated
+true/false wording defects after the accepted q451-q500 repair and release
+privacy-gates work. Direct current-output scans still show:
+- `q526`/`q527`: Islam/Judaism is "the second largest in Sweden" without
+  "religion" / `religionen`.
+- `q530`/`q531`: doubled English comma after "31 December"; q531 also has the
+  incomplete `vanligt att stora brasor...` / `common to large bonfires...`
+  construction.
+- `q535`: Swedish `brukar ... arrangerar` finite-verb error.
+- `q542`/`q543`: English `spreadinging` / `welcominging` typos.
+
+Nearest green gates on the current route: `node scripts/export-question-bank.js
+--check`, `node scripts/export-site-question-bank.js --check`, `npm run
+validate:content`, and `npm run test:derived-content` all pass when run in a
+dependency-complete environment, so the current validators do not yet cover
+these learner-visible wording defects. DATA-INTEGRITY should own one bounded
+generator/validator/static-mirror atom for q526/q527/q530/q531/q535/q542/q543,
+regenerate `content/question-bank.csv` and `site/questions.js`, add focused
+guards for the exact residual patterns, then rerun export/static parity,
+`validate:content`, `test:derived-content`, focused content gates, typecheck,
+lint, ownership, Prettier/diff checks, PR/merge evidence, and direct current
+CSV/static scans for all seven rows.
+
+Reviewer q601-q650 evidence is now present on `origin/main`, but it stays
+behind q501-q550 until this q501 route lands, rejects, or is explicitly
+abandoned. Do not reopen q451-q500 without fresh current-main regression
+evidence.
+
 VERIFY-GENERATED-TF-Q501-Q550-CURRENT-1 [P0 TRANSLATE-COMPLETE][generated-output][2026-05-18]: Current-output q501-q550 VERIFY on `origin/main` `85fe297` found seven remaining generated true/false naturalness/grammar defects in both `content/question-bank.csv` and `site/questions.js`: `q526`/`q527` omit the target noun "religion" / `religionen` from "second largest in Sweden"; `q530` and `q531` have doubled English commas after "31 December"; `q531` is also ungrammatical in both languages (`vanligt att stora brasor...` / `common to large bonfires...`); `q535` has the Swedish verb error `brukar ... arrangerar`; and `q542`/`q543` publish English `spreadinging` / `welcominging` typos. Facts, citations, answer keys, explanations, and ordinary distractors remain UHR-supported; older q501-q550 fragment, prefix, meta-wrapper, false-explanation, and unknown-material fallback defects are clean on current main. Owner: DATA-INTEGRITY should update generated true/false wording/templates or source transformation logic, mirror validator/static guards for these patterns, regenerate `content/question-bank.csv` and `site/questions.js`, then rerun export/static parity, `validate:content`, `test:derived-content`, typecheck, lint, ownership, focused q501-q550 scans, and `git diff --check`. Evidence: `docs/verify/q501-q550-2026-05-18.md` and ledger rows q501-q550 updated at `85fe297`.
 
 
