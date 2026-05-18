@@ -392,9 +392,9 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch02',
     type: 'single_choice',
     questionSv:
-      'Vad kallas det när lagarna gäller för alla och ingen får dömas utan en rättvis rättegång?',
+      'Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?',
     questionEn:
-      'What is it called when laws apply to everyone and no one may be sentenced without a fair trial?',
+      'What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?',
     options: [
       {
         id: 'a',
@@ -419,9 +419,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Demokrati betyder folkstyre säger att en viktig förutsättning för demokrati är att lagarna gäller för alla i Sverige och att ingen får dömas utan en rättvis rättegång. Det kallas rättssäkerhet; de andra alternativen beskriver andra begrepp.',
+      'Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker.',
     explanationEn:
-      'The Democracy means rule by the people section says an important condition for democracy is that laws apply to everyone in Sweden and that no one may be sentenced without a fair trial. This is called legal certainty; the other alternatives describe different concepts.',
+      'Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
