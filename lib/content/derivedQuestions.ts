@@ -134,6 +134,15 @@ function lowerLeadingSwedishCommonStart(value: string): string {
   return value.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När)\b/, (match) => match.toLowerCase());
 }
 
+function englishSubjectVerb(value: string, singular: string, plural: string): string {
+  return /,|\band\b/i.test(value) ? plural : singular;
+}
+
+function englishInfinitive(value: string): string {
+  const trimmed = lowerFirst(value.trim());
+  return /^to\b/i.test(trimmed) ? trimmed : `to ${trimmed}`;
+}
+
 function stripLeadingPurposeSv(value: string): string {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
 }
@@ -155,11 +164,11 @@ function isTrueFalseSource(source: PracticeQuestion): boolean {
 }
 
 function truthStatementSv(statement: string): string {
-  return `Det är korrekt att ${lowerLeadingSwedishCommonStart(statement)}`;
+  return upperFirst(statement);
 }
 
 function truthStatementEn(statement: string): string {
-  return `It is correct that ${lowerLeadingEnglishArticle(statement)}`;
+  return upperFirst(statement);
 }
 
 function sourceStatementJudgementSv(statement: string, isTrue: boolean): string {
@@ -266,7 +275,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka (.+?) är viktiga i Sverige$/i);
   if (match) return `${upperFirst(answer)} är viktiga ${match[1]} i Sverige`;
 
-  match = q.match(/^Vad betyder (.+)$/i);
+  match = q.match(/^Vad betyder (?!det att\b)(.+)$/i);
   if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
@@ -288,13 +297,13 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[2])} har ${lowerFirst(answer)} ${match[1]}`;
 
   match = q.match(/^Vem väljer (.+)$/i);
-  if (match) return `${upperFirst(answer)} väljer ${lowerFirst(match[1])}`;
+  if (match) return `${upperFirst(match[1])} väljs av ${lowerFirst(answer)}`;
 
   match = q.match(/^Hur gammal måste man ha fyllt för att (.+)$/i);
   if (match) return `Man måste ha fyllt ${lowerFirst(answer)} för att ${match[1]}`;
 
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return `${upperFirst(stripLeadingPurposeSv(answer))} beskriver att ${match[1]}`;
+  if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vilka tre nivåer delar (.+)$/i);
   if (match) return `${upperFirst(answer)} delar ${match[1]}`;
@@ -310,7 +319,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilket exempel beskriver (.+)$/i);
-  if (match) return `${upperFirst(answer)} är ett exempel på ${match[1]}`;
+  if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
 
   match = q.match(/^Hur ofta hålls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
@@ -371,7 +380,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   );
   if (match) return `Ett parti måste få ${lowerFirst(answer)} för att komma in i riksdagen`;
 
-  return `Svaret är ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  return upperFirst(stripLeadingPurposeSv(answer));
 }
 
 function civicStatementEn(source: PracticeQuestion, option: QuestionOption): string {
@@ -430,13 +439,16 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[2])} has ${lowerFirst(answer)} ${match[1]}`;
 
   match = q.match(/^Who chooses (.+)$/i);
-  if (match) return `${upperFirst(answer)} chooses ${lowerFirst(match[1])}`;
+  if (match) return `${upperFirst(match[1])} is chosen by ${lowerLeadingEnglishArticle(answer)}`;
 
   match = q.match(/^How old must (.+?) be to (.+)$/i);
   if (match) return `${upperFirst(match[1])} must be ${lowerFirst(answer)} to ${match[2]}`;
 
   match = q.match(/^What does it mean that (.+)$/i);
-  if (match) return `${upperFirst(stripLeadingPurposeEn(answer))} describes that ${match[1]}`;
+  if (match) return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^What does it mean to (.+)$/i);
+  if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^Which three levels share (.+)$/i);
   if (match) return `${upperFirst(answer)} share ${match[1]}`;
@@ -449,11 +461,15 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(answer)} describes ${match[1]}`;
 
   match = q.match(/^What is the foremost task of (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])}'s foremost task is ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) {
+    return `The foremost task of ${lowerLeadingEnglishArticle(match[1])} is ${englishInfinitive(
+      stripLeadingPurposeEn(answer),
+    )}`;
+  }
 
   match = q.match(/^Which example describes (.+)$/i);
-  if (match) return `${upperFirst(answer)} is an example of ${match[1]}`;
+  if (match)
+    return `${upperFirst(answer)} ${englishSubjectVerb(answer, 'belongs', 'belong')} among ${match[1]}`;
 
   match = q.match(/^How often are (.+) held in Sweden$/i);
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
@@ -506,7 +522,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
   if (match) return `A party must receive ${lowerFirst(answer)} to enter the Riksdag`;
 
-  return `The answer is ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  return upperFirst(stripLeadingPurposeEn(answer));
 }
 
 function buildSingleChoiceVariant(source: PracticeQuestion, id: string): PracticeQuestion {

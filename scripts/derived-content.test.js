@@ -50,22 +50,10 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(
-    derived[1].questionSv,
-    'Sant eller falskt: Det är korrekt att Sverige ligger i Norden.',
-  );
-  assert.equal(
-    derived[1].questionEn,
-    'True or false: It is correct that Sweden is located in the Nordic region.',
-  );
-  assert.equal(
-    derived[2].questionSv,
-    'Sant eller falskt: Det är korrekt att Sverige ligger i Asien.',
-  );
-  assert.equal(
-    derived[2].questionEn,
-    'True or false: It is correct that Sweden is located in Asia.',
-  );
+  assert.equal(derived[1].questionSv, 'Sant eller falskt: Sverige ligger i Norden.');
+  assert.equal(derived[1].questionEn, 'True or false: Sweden is located in the Nordic region.');
+  assert.equal(derived[2].questionSv, 'Sant eller falskt: Sverige ligger i Asien.');
+  assert.equal(derived[2].questionEn, 'True or false: Sweden is located in Asia.');
   assert.equal(derived[3].questionSv, 'Vilket svar är korrekt? Var ligger Sverige?');
   assert.equal(derived[3].questionEn, 'Which answer is correct? Where is Sweden located?');
   assert.ok(
@@ -262,26 +250,153 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
   );
   assert.equal(
     derived[1].questionSv,
-    'Sant eller falskt: Det är korrekt att havet vid Sveriges östra kust heter Östersjön.',
+    'Sant eller falskt: Havet vid Sveriges östra kust heter Östersjön.',
   );
   assert.equal(
     derived[1].questionEn,
-    "True or false: It is correct that the sea along Sweden's eastern coast is called the Baltic Sea.",
+    "True or false: The sea along Sweden's eastern coast is called the Baltic Sea.",
   );
   assert.equal(
     derived[5].questionSv,
-    'Sant eller falskt: Det är korrekt att nästan 11 miljoner människor bor i Sverige.',
+    'Sant eller falskt: Nästan 11 miljoner människor bor i Sverige.',
   );
-  assert.equal(
-    derived[5].questionEn,
-    'True or false: It is correct that almost 11 million people live in Sweden.',
-  );
+  assert.equal(derived[5].questionEn, 'True or false: Almost 11 million people live in Sweden.');
   assert.equal(
     derived[9].questionSv,
-    'Sant eller falskt: Det är korrekt att ett parti måste få minst 4 procent av rösterna för att komma in i riksdagen.',
+    'Sant eller falskt: Ett parti måste få minst 4 procent av rösterna för att komma in i riksdagen.',
   );
   assert.equal(
     derived[9].questionEn,
-    'True or false: It is correct that a party must receive at least 4 percent of the votes to enter the Riksdag.',
+    'True or false: A party must receive at least 4 percent of the votes to enter the Riksdag.',
+  );
+});
+
+test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const sources = [
+    {
+      id: 'q020',
+      chapterId: 'ch04',
+      type: 'single_choice',
+      questionSv: 'Vad betyder det att folkomröstningar i Sverige är rådgivande?',
+      questionEn: 'What does it mean that referendums in Sweden are advisory?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'politikerna måste inte följa resultatet',
+          textEn: 'Politicians do not have to follow the result',
+        },
+        {
+          id: 'b',
+          textSv: 'politikerna måste alltid följa resultatet',
+          textEn: 'Politicians must always follow the result',
+        },
+        { id: 'c', textSv: 'valet blir hemligt', textEn: 'The vote becomes secret' },
+        { id: 'd', textSv: 'riksdagen upplöses', textEn: 'The Riksdag is dissolved' },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Folkomröstningar är rådgivande.',
+      explanationEn: 'Referendums are advisory.',
+      uhrReference: {
+        chapter: 'Politiska val och partier',
+        section: 'Folkomröstningar',
+        pageApprox: 14,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['referendum'],
+    },
+    {
+      id: 'q024',
+      chapterId: 'ch03',
+      type: 'single_choice',
+      questionSv: 'Vilken är regionernas främsta uppgift i Sverige?',
+      questionEn: "What is the foremost task of Sweden's regions?",
+      options: [
+        {
+          id: 'a',
+          textSv: 'att ansvara för hälso- och sjukvården',
+          textEn: 'to be responsible for health care',
+        },
+        { id: 'b', textSv: 'att döma i brottmål', textEn: 'to judge criminal cases' },
+        { id: 'c', textSv: 'att stifta lagar', textEn: 'to pass laws' },
+        { id: 'd', textSv: 'att sköta utrikespolitik', textEn: 'to handle foreign policy' },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Regioner ansvarar för vård.',
+      explanationEn: 'Regions are responsible for health care.',
+      uhrReference: {
+        chapter: 'Så här styrs Sverige',
+        section: 'Regioner och kommuner',
+        pageApprox: 13,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['regions'],
+    },
+    {
+      id: 'q025',
+      chapterId: 'ch03',
+      type: 'single_choice',
+      questionSv: 'Vilket exempel beskriver kommunernas ansvar?',
+      questionEn: 'Which example describes municipal responsibilities?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning',
+          textEn:
+            'water and sewage, care services, snow removal, park maintenance, and adult education',
+        },
+        {
+          id: 'b',
+          textSv: 'att skicka ambassadörer till andra länder',
+          textEn: 'sending ambassadors to other countries',
+        },
+        { id: 'c', textSv: 'att besluta om EU-lagar', textEn: 'passing EU laws' },
+        { id: 'd', textSv: 'att leda domstolarna', textEn: 'leading the courts' },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Kommuner ansvarar för lokala tjänster.',
+      explanationEn: 'Municipalities handle local services.',
+      uhrReference: {
+        chapter: 'Så här styrs Sverige',
+        section: 'Kommunernas ansvar',
+        pageApprox: 13,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['municipality'],
+    },
+  ];
+
+  const derived = derivePublishedQuestions(sources, 301);
+  const generatedTrueFalse = derived.filter((question) => question.type === 'true_false');
+  const text = generatedTrueFalse
+    .map((question) => `${question.questionSv} ${question.questionEn}`)
+    .join('\n');
+
+  assert.doesNotMatch(
+    text,
+    /Det att|describes that|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities/i,
+  );
+  assert.ok(
+    text.includes(
+      'Sant eller falskt: Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'True or false: That referendums in Sweden are advisory means politicians do not have to follow the result.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      "True or false: The foremost task of Sweden's regions is to be responsible for health care.",
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'True or false: Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
+    ),
   );
 });

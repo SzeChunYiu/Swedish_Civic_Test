@@ -6472,8 +6472,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden is located in the Nordic region in northern Europe.",
-      "sv": "Sant eller falskt: Det är korrekt att Sverige ligger i Norden i norra Europa."
+      "en": "True or false: Sweden is located in the Nordic region in northern Europe.",
+      "sv": "Sant eller falskt: Sverige ligger i Norden i norra Europa."
     },
     "opts": [
       {
@@ -6511,8 +6511,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden is located in southern Europe.",
-      "sv": "Sant eller falskt: Det är korrekt att Sverige ligger i södra Europa."
+      "en": "True or false: Sweden is located in southern Europe.",
+      "sv": "Sant eller falskt: Sverige ligger i södra Europa."
     },
     "opts": [
       {
@@ -6816,8 +6816,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden stretches about 1,600 kilometres from Treriksröset to Smygehuk.",
-      "sv": "Sant eller falskt: Det är korrekt att Sverige sträcker sig cirka 1 600 kilometer från Treriksröset till Smygehuk."
+      "en": "True or false: Sweden stretches about 1,600 kilometres from Treriksröset to Smygehuk.",
+      "sv": "Sant eller falskt: Sverige sträcker sig cirka 1 600 kilometer från Treriksröset till Smygehuk."
     },
     "opts": [
       {
@@ -6856,8 +6856,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden stretches about 160 kilometres from Treriksröset to Smygehuk.",
-      "sv": "Sant eller falskt: Det är korrekt att Sverige sträcker sig cirka 160 kilometer från Treriksröset till Smygehuk."
+      "en": "True or false: Sweden stretches about 160 kilometres from Treriksröset to Smygehuk.",
+      "sv": "Sant eller falskt: Sverige sträcker sig cirka 160 kilometer från Treriksröset till Smygehuk."
     },
     "opts": [
       {
@@ -6991,8 +6991,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the sea along Sweden's eastern coast is called the Baltic Sea.",
-      "sv": "Sant eller falskt: Det är korrekt att havet vid Sveriges östra kust heter Östersjön."
+      "en": "True or false: The sea along Sweden's eastern coast is called the Baltic Sea.",
+      "sv": "Sant eller falskt: Havet vid Sveriges östra kust heter Östersjön."
     },
     "opts": [
       {
@@ -7030,8 +7030,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the sea along Sweden's eastern coast is called the North Sea.",
-      "sv": "Sant eller falskt: Det är korrekt att havet vid Sveriges östra kust heter Nordsjön."
+      "en": "True or false: The sea along Sweden's eastern coast is called the North Sea.",
+      "sv": "Sant eller falskt: Havet vid Sveriges östra kust heter Nordsjön."
     },
     "opts": [
       {
@@ -7164,8 +7164,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's two largest islands are Gotland and Öland.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges två största öar är Gotland och Öland."
+      "en": "True or false: Sweden's two largest islands are Gotland and Öland.",
+      "sv": "Sant eller falskt: Sveriges två största öar är Gotland och Öland."
     },
     "opts": [
       {
@@ -7204,8 +7204,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's two largest islands are Hisingen and Orust.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges två största öar är Hisingen och Orust."
+      "en": "True or false: Sweden's two largest islands are Hisingen and Orust.",
+      "sv": "Sant eller falskt: Sveriges två största öar är Hisingen och Orust."
     },
     "opts": [
       {
@@ -7510,8 +7510,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's highest mountain is called Kebnekaise.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges högsta berg heter Kebnekaise."
+      "en": "True or false: Sweden's highest mountain is called Kebnekaise.",
+      "sv": "Sant eller falskt: Sveriges högsta berg heter Kebnekaise."
     },
     "opts": [
       {
@@ -7549,8 +7549,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's highest mountain is called Smygehuk.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges högsta berg heter Smygehuk."
+      "en": "True or false: Sweden's highest mountain is called Smygehuk.",
+      "sv": "Sant eller falskt: Sveriges högsta berg heter Smygehuk."
     },
     "opts": [
       {
@@ -7684,8 +7684,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's three largest lakes are Vänern, Vättern, and Mälaren.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges tre största sjöar är Vänern, Vättern och Mälaren."
+      "en": "True or false: Sweden's three largest lakes are Vänern, Vättern, and Mälaren.",
+      "sv": "Sant eller falskt: Sveriges tre största sjöar är Vänern, Vättern och Mälaren."
     },
     "opts": [
       {
@@ -7725,8 +7725,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's three largest lakes are The Baltic Sea, Kattegat, and Skagerrak.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges tre största sjöar är Östersjön, Kattegatt och Skagerrak."
+      "en": "True or false: Sweden's three largest lakes are The Baltic Sea, Kattegat, and Skagerrak.",
+      "sv": "Sant eller falskt: Sveriges tre största sjöar är Östersjön, Kattegatt och Skagerrak."
     },
     "opts": [
       {
@@ -7862,8 +7862,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that almost 11 million people live in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att nästan 11 miljoner människor bor i Sverige."
+      "en": "True or false: Almost 11 million people live in Sweden.",
+      "sv": "Sant eller falskt: Nästan 11 miljoner människor bor i Sverige."
     },
     "opts": [
       {
@@ -7901,8 +7901,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that almost 1 million people live in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att nästan 1 miljon människor bor i Sverige."
+      "en": "True or false: Almost 1 million people live in Sweden.",
+      "sv": "Sant eller falskt: Nästan 1 miljon människor bor i Sverige."
     },
     "opts": [
       {
@@ -8035,8 +8035,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Iron ore and other minerals, forest, agricultural land, and water are important natural resources in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Järnmalm och andra mineraler, skog, jordbruksmark och vatten är viktiga naturresurser i Sverige."
+      "en": "True or false: Iron ore and other minerals, forest, agricultural land, and water are important natural resources in Sweden.",
+      "sv": "Sant eller falskt: Järnmalm och andra mineraler, skog, jordbruksmark och vatten är viktiga naturresurser i Sverige."
     },
     "opts": [
       {
@@ -8075,8 +8075,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Oil, natural gas, desert land, and tropical rain are important natural resources in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Olja, naturgas, ökenmark och tropiskt regn är viktiga naturresurser i Sverige."
+      "en": "True or false: Oil, natural gas, desert land, and tropical rain are important natural resources in Sweden.",
+      "sv": "Sant eller falskt: Olja, naturgas, ökenmark och tropiskt regn är viktiga naturresurser i Sverige."
     },
     "opts": [
       {
@@ -8210,8 +8210,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Democracy means rule by the people.",
-      "sv": "Sant eller falskt: Det är korrekt att Demokrati betyder folkstyre."
+      "en": "True or false: Democracy means rule by the people.",
+      "sv": "Sant eller falskt: Demokrati betyder folkstyre."
     },
     "opts": [
       {
@@ -8249,8 +8249,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Democracy means military rule.",
-      "sv": "Sant eller falskt: Det är korrekt att Demokrati betyder militärstyre."
+      "en": "True or false: Democracy means military rule.",
+      "sv": "Sant eller falskt: Demokrati betyder militärstyre."
     },
     "opts": [
       {
@@ -8382,8 +8382,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Everyone who has the right to vote has one vote each is part of free elections in a democracy.",
-      "sv": "Sant eller falskt: Det är korrekt att Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati."
+      "en": "True or false: Everyone who has the right to vote has one vote each is part of free elections in a democracy.",
+      "sv": "Sant eller falskt: Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati."
     },
     "opts": [
       {
@@ -8421,8 +8421,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Only one party may stand for election is part of free elections in a democracy.",
-      "sv": "Sant eller falskt: Det är korrekt att Bara ett parti får ställa upp ingår i fria val i en demokrati."
+      "en": "True or false: Only one party may stand for election is part of free elections in a democracy.",
+      "sv": "Sant eller falskt: Bara ett parti får ställa upp ingår i fria val i en demokrati."
     },
     "opts": [
       {
@@ -8554,8 +8554,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Contact politicians, demonstrate, or sign a petition is a way to influence and participate in society.",
-      "sv": "Sant eller falskt: Det är korrekt att Kontakta politiker, demonstrera eller skriva på en namninsamling är ett sätt att påverka och delta i samhället."
+      "en": "True or false: Contact politicians, demonstrate, or sign a petition is a way to influence and participate in society.",
+      "sv": "Sant eller falskt: Kontakta politiker, demonstrera eller skriva på en namninsamling är ett sätt att påverka och delta i samhället."
     },
     "opts": [
       {
@@ -8593,8 +8593,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Ban others from voting in political elections is a way to influence and participate in society.",
-      "sv": "Sant eller falskt: Det är korrekt att Förbjuda andra från att rösta i politiska val är ett sätt att påverka och delta i samhället."
+      "en": "True or false: Ban others from voting in political elections is a way to influence and participate in society.",
+      "sv": "Sant eller falskt: Förbjuda andra från att rösta i politiska val är ett sätt att påverka och delta i samhället."
     },
     "opts": [
       {
@@ -8726,8 +8726,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that When laws apply equally to everyone and no one can be convicted without a fair trial, it is called legal certainty.",
-      "sv": "Sant eller falskt: Det är korrekt att när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det rättssäkerhet."
+      "en": "True or false: When laws apply equally to everyone and no one can be convicted without a fair trial, it is called legal certainty.",
+      "sv": "Sant eller falskt: När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det rättssäkerhet."
     },
     "opts": [
       {
@@ -8765,8 +8765,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that When laws apply equally to everyone and no one can be convicted without a fair trial, it is called censorship.",
-      "sv": "Sant eller falskt: Det är korrekt att när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det censur."
+      "en": "True or false: When laws apply equally to everyone and no one can be convicted without a fair trial, it is called censorship.",
+      "sv": "Sant eller falskt: När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det censur."
     },
     "opts": [
       {
@@ -8898,8 +8898,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that People may have fewer opportunities to influence political decisions when a low voter turnout affects democracy.",
-      "sv": "Sant eller falskt: Det är korrekt att Människor kan få mindre möjlighet att påverka politiska beslut när ett lågt valdeltagande påverkar demokratin."
+      "en": "True or false: People may have fewer opportunities to influence political decisions when a low voter turnout affects democracy.",
+      "sv": "Sant eller falskt: Människor kan få mindre möjlighet att påverka politiska beslut när ett lågt valdeltagande påverkar demokratin."
     },
     "opts": [
       {
@@ -8937,8 +8937,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that All voters get two votes each in the next election when a low voter turnout affects democracy.",
-      "sv": "Sant eller falskt: Det är korrekt att Alla väljare får två röster var i nästa val när ett lågt valdeltagande påverkar demokratin."
+      "en": "True or false: All voters get two votes each in the next election when a low voter turnout affects democracy.",
+      "sv": "Sant eller falskt: Alla väljare får två röster var i nästa val när ett lågt valdeltagande påverkar demokratin."
     },
     "opts": [
       {
@@ -9070,8 +9070,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
-      "sv": "Sant eller falskt: Det är korrekt att Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val."
+      "en": "True or false: Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
+      "sv": "Sant eller falskt: Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val."
     },
     "opts": [
       {
@@ -9109,8 +9109,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy the courts elect all members of the Riksdag.",
-      "sv": "Sant eller falskt: Det är korrekt att Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati domstolarna väljer alla riksdagsledamöter."
+      "en": "True or false: Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy the courts elect all members of the Riksdag.",
+      "sv": "Sant eller falskt: Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati domstolarna väljer alla riksdagsledamöter."
     },
     "opts": [
       {
@@ -9242,8 +9242,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Riksdag has 349 members.",
-      "sv": "Sant eller falskt: Det är korrekt att Riksdagen har 349 ledamöter."
+      "en": "True or false: The Riksdag has 349 members.",
+      "sv": "Sant eller falskt: Riksdagen har 349 ledamöter."
     },
     "opts": [
       {
@@ -9281,8 +9281,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Riksdag has 21 members.",
-      "sv": "Sant eller falskt: Det är korrekt att Riksdagen har 21 ledamöter."
+      "en": "True or false: The Riksdag has 21 members.",
+      "sv": "Sant eller falskt: Riksdagen har 21 ledamöter."
     },
     "opts": [
       {
@@ -9414,8 +9414,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Riksdag chooses the prime minister.",
-      "sv": "Sant eller falskt: Det är korrekt att Riksdagen väljer statsministern."
+      "en": "True or false: The prime minister is chosen by the Riksdag.",
+      "sv": "Sant eller falskt: Statsministern väljs av riksdagen."
     },
     "opts": [
       {
@@ -9453,8 +9453,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the king alone chooses the prime minister.",
-      "sv": "Sant eller falskt: Det är korrekt att Kungen ensam väljer statsministern."
+      "en": "True or false: The prime minister is chosen by the king alone.",
+      "sv": "Sant eller falskt: Statsministern väljs av kungen ensam."
     },
     "opts": [
       {
@@ -9586,8 +9586,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that a person must be 18 years old to have the right to vote.",
-      "sv": "Sant eller falskt: Det är korrekt att man måste ha fyllt 18 år för att ha rösträtt."
+      "en": "True or false: A person must be 18 years old to have the right to vote.",
+      "sv": "Sant eller falskt: Man måste ha fyllt 18 år för att ha rösträtt."
     },
     "opts": [
       {
@@ -9625,8 +9625,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that a person must be 16 years old to have the right to vote.",
-      "sv": "Sant eller falskt: Det är korrekt att man måste ha fyllt 16 år för att ha rösträtt."
+      "en": "True or false: A person must be 16 years old to have the right to vote.",
+      "sv": "Sant eller falskt: Man måste ha fyllt 16 år för att ha rösträtt."
     },
     "opts": [
       {
@@ -9758,8 +9758,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Politicians do not have to follow the result describes that referendums in Sweden are advisory.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att folkomröstningar i Sverige är rådgivande betyder politikerna måste inte följa resultatet."
+      "en": "True or false: That referendums in Sweden are advisory means politicians do not have to follow the result.",
+      "sv": "Sant eller falskt: Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet."
     },
     "opts": [
       {
@@ -9797,8 +9797,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Politicians must always follow the result describes that referendums in Sweden are advisory.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att folkomröstningar i Sverige är rådgivande betyder politikerna måste alltid följa resultatet."
+      "en": "True or false: That referendums in Sweden are advisory means politicians must always follow the result.",
+      "sv": "Sant eller falskt: Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste alltid följa resultatet."
     },
     "opts": [
       {
@@ -9930,8 +9930,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the state, regions, and municipalities share political responsibility in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Stat, regioner och kommuner delar det politiska ansvaret i Sverige."
+      "en": "True or false: The state, regions, and municipalities share political responsibility in Sweden.",
+      "sv": "Sant eller falskt: Stat, regioner och kommuner delar det politiska ansvaret i Sverige."
     },
     "opts": [
       {
@@ -9969,8 +9969,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the king, church, and nobility share political responsibility in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Kung, kyrka och adel delar det politiska ansvaret i Sverige."
+      "en": "True or false: The king, church, and nobility share political responsibility in Sweden.",
+      "sv": "Sant eller falskt: Kung, kyrka och adel delar det politiska ansvaret i Sverige."
     },
     "opts": [
       {
@@ -10102,8 +10102,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Riksdag has the task to decide laws and how the state's money should be used.",
-      "sv": "Sant eller falskt: Det är korrekt att Riksdagen har uppgiften att besluta om lagar och hur statens pengar ska användas."
+      "en": "True or false: The Riksdag has the task to decide laws and how the state's money should be used.",
+      "sv": "Sant eller falskt: Riksdagen har uppgiften att besluta om lagar och hur statens pengar ska användas."
     },
     "opts": [
       {
@@ -10141,8 +10141,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Riksdag has the task to manage regional public transport.",
-      "sv": "Sant eller falskt: Det är korrekt att Riksdagen har uppgiften att sköta regionernas kollektivtrafik."
+      "en": "True or false: The Riksdag has the task to manage regional public transport.",
+      "sv": "Sant eller falskt: Riksdagen har uppgiften att sköta regionernas kollektivtrafik."
     },
     "opts": [
       {
@@ -10446,8 +10446,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that They implement decisions and must follow laws and government instructions describes government agencies.",
-      "sv": "Sant eller falskt: Det är korrekt att De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter."
+      "en": "True or false: They implement decisions and must follow laws and government instructions describes government agencies.",
+      "sv": "Sant eller falskt: De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter."
     },
     "opts": [
       {
@@ -10485,8 +10485,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that They replace courts in criminal cases describes government agencies.",
-      "sv": "Sant eller falskt: Det är korrekt att De ersätter domstolarna i brottmål beskriver statliga myndigheter."
+      "en": "True or false: They replace courts in criminal cases describes government agencies.",
+      "sv": "Sant eller falskt: De ersätter domstolarna i brottmål beskriver statliga myndigheter."
     },
     "opts": [
       {
@@ -10618,8 +10618,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's regions's foremost task is be responsible for health care.",
-      "sv": "Sant eller falskt: Det är korrekt att Regionernas främsta uppgift i Sverige är att ansvara för hälso- och sjukvården."
+      "en": "True or false: The foremost task of Sweden's regions is to be responsible for health care.",
+      "sv": "Sant eller falskt: Regionernas främsta uppgift i Sverige är att ansvara för hälso- och sjukvården."
     },
     "opts": [
       {
@@ -10657,8 +10657,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden's regions's foremost task is judge criminal cases.",
-      "sv": "Sant eller falskt: Det är korrekt att Regionernas främsta uppgift i Sverige är att döma i brottmål."
+      "en": "True or false: The foremost task of Sweden's regions is to judge criminal cases.",
+      "sv": "Sant eller falskt: Regionernas främsta uppgift i Sverige är att döma i brottmål."
     },
     "opts": [
       {
@@ -10790,8 +10790,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Water and sewage, care services, snow removal, park maintenance, and adult education is an example of municipal responsibilities.",
-      "sv": "Sant eller falskt: Det är korrekt att Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning är ett exempel på kommunernas ansvar."
+      "en": "True or false: Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.",
+      "sv": "Sant eller falskt: Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning är exempel på kommunernas ansvar."
     },
     "opts": [
       {
@@ -10829,8 +10829,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sending ambassadors to other countries is an example of municipal responsibilities.",
-      "sv": "Sant eller falskt: Det är korrekt att Att skicka ambassadörer till andra länder är ett exempel på kommunernas ansvar."
+      "en": "True or false: Sending ambassadors to other countries belongs among municipal responsibilities.",
+      "sv": "Sant eller falskt: Att skicka ambassadörer till andra länder är exempel på kommunernas ansvar."
     },
     "opts": [
       {
@@ -10962,8 +10962,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that That the head of state is a king or queen but lacks political power describes that Sweden is a constitutional monarchy.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att statschefen är kung eller drottning men saknar politisk makt."
+      "en": "True or false: That Sweden is a constitutional monarchy means that the head of state is a king or queen but lacks political power.",
+      "sv": "Sant eller falskt: Att Sverige är en konstitutionell monarki betyder att statschefen är kung eller drottning men saknar politisk makt."
     },
     "opts": [
       {
@@ -11001,8 +11001,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that That the monarch has all political power describes that Sweden is a constitutional monarchy.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att monarken har all politisk makt."
+      "en": "True or false: That Sweden is a constitutional monarchy means that the monarch has all political power.",
+      "sv": "Sant eller falskt: Att Sverige är en konstitutionell monarki betyder att monarken har all politisk makt."
     },
     "opts": [
       {
@@ -11306,8 +11306,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Elections to the Riksdag, regional councils, and municipal councils are held every four years in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige hålls vart fjärde år."
+      "en": "True or false: Elections to the Riksdag, regional councils, and municipal councils are held every four years in Sweden.",
+      "sv": "Sant eller falskt: Val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige hålls vart fjärde år."
     },
     "opts": [
       {
@@ -11345,8 +11345,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Elections to the Riksdag, regional councils, and municipal councils are held every year in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige hålls varje år."
+      "en": "True or false: Elections to the Riksdag, regional councils, and municipal councils are held every year in Sweden.",
+      "sv": "Sant eller falskt: Val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige hålls varje år."
     },
     "opts": [
       {
@@ -11478,8 +11478,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.",
-      "sv": "Sant eller falskt: Det är korrekt att man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval."
+      "en": "True or false: You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.",
+      "sv": "Sant eller falskt: Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval."
     },
     "opts": [
       {
@@ -11517,8 +11517,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that You must own a home in Sweden applies to voting in Sweden’s Riksdag election.",
-      "sv": "Sant eller falskt: Det är korrekt att man måste äga en bostad i Sverige gäller för att rösta i Sveriges riksdagsval."
+      "en": "True or false: You must own a home in Sweden applies to voting in Sweden’s Riksdag election.",
+      "sv": "Sant eller falskt: Man måste äga en bostad i Sverige gäller för att rösta i Sveriges riksdagsval."
     },
     "opts": [
       {
@@ -11822,8 +11822,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that the vote is secret and no one else should see their choice.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att valet är hemligt och ingen annan ska se vilket val de gör."
+      "en": "True or false: One reason is that the vote is secret and no one else should see their choice.",
+      "sv": "Sant eller falskt: En anledning är att valet är hemligt och ingen annan ska se vilket val de gör."
     },
     "opts": [
       {
@@ -11861,8 +11861,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that so votes are counted faster.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att rösterna ska räknas snabbare."
+      "en": "True or false: One reason is that so votes are counted faster.",
+      "sv": "Sant eller falskt: En anledning är att rösterna ska räknas snabbare."
     },
     "opts": [
       {
@@ -11994,8 +11994,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that People in a political party have shared ideas about how society should be governed in common.",
-      "sv": "Sant eller falskt: Det är korrekt att Människor i ett politiskt parti har gemensamma idéer om hur samhället ska styras gemensamt."
+      "en": "True or false: People in a political party have shared ideas about how society should be governed in common.",
+      "sv": "Sant eller falskt: Människor i ett politiskt parti har gemensamma idéer om hur samhället ska styras gemensamt."
     },
     "opts": [
       {
@@ -12033,8 +12033,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that People in a political party have they replace the courts in common.",
-      "sv": "Sant eller falskt: Det är korrekt att Människor i ett politiskt parti har de ersätter domstolarna gemensamt."
+      "en": "True or false: People in a political party have they replace the courts in common.",
+      "sv": "Sant eller falskt: Människor i ett politiskt parti har de ersätter domstolarna gemensamt."
     },
     "opts": [
       {
@@ -12166,8 +12166,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that in a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.",
-      "sv": "Sant eller falskt: Det är korrekt att I ett proportionellt val händer det att partiet får 20 procent av platserna om ett parti får 20 procent av rösterna."
+      "en": "True or false: In a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.",
+      "sv": "Sant eller falskt: I ett proportionellt val händer det att partiet får 20 procent av platserna om ett parti får 20 procent av rösterna."
     },
     "opts": [
       {
@@ -12205,8 +12205,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that in a proportional election, the party receives all seats if a party receives 20 percent of the votes.",
-      "sv": "Sant eller falskt: Det är korrekt att I ett proportionellt val händer det att partiet får alla platser om ett parti får 20 procent av rösterna."
+      "en": "True or false: In a proportional election, the party receives all seats if a party receives 20 percent of the votes.",
+      "sv": "Sant eller falskt: I ett proportionellt val händer det att partiet får alla platser om ett parti får 20 procent av rösterna."
     },
     "opts": [
       {
@@ -12338,8 +12338,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that a party must receive at least 4 percent of the votes to enter the Riksdag.",
-      "sv": "Sant eller falskt: Det är korrekt att ett parti måste få minst 4 procent av rösterna för att komma in i riksdagen."
+      "en": "True or false: A party must receive at least 4 percent of the votes to enter the Riksdag.",
+      "sv": "Sant eller falskt: Ett parti måste få minst 4 procent av rösterna för att komma in i riksdagen."
     },
     "opts": [
       {
@@ -12377,8 +12377,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that a party must receive at least 1 percent of the votes to enter the Riksdag.",
-      "sv": "Sant eller falskt: Det är korrekt att ett parti måste få minst 1 procent av rösterna för att komma in i riksdagen."
+      "en": "True or false: A party must receive at least 1 percent of the votes to enter the Riksdag.",
+      "sv": "Sant eller falskt: Ett parti måste få minst 1 procent av rösterna för att komma in i riksdagen."
     },
     "opts": [
       {
@@ -12510,8 +12510,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession is the list that contains only Sweden's four constitutional laws.",
-      "sv": "Sant eller falskt: Det är korrekt att Regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen är listan som innehåller bara Sveriges fyra grundlagar."
+      "en": "True or false: The Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession is the list that contains only Sweden's four constitutional laws.",
+      "sv": "Sant eller falskt: Regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen är listan som innehåller bara Sveriges fyra grundlagar."
     },
     "opts": [
       {
@@ -12549,8 +12549,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Education Act, Social Services Act, Environmental Code, and Annual Leave Act is the list that contains only Sweden's four constitutional laws.",
-      "sv": "Sant eller falskt: Det är korrekt att Skollagen, socialtjänstlagen, miljöbalken och semesterlagen är listan som innehåller bara Sveriges fyra grundlagar."
+      "en": "True or false: The Education Act, Social Services Act, Environmental Code, and Annual Leave Act is the list that contains only Sweden's four constitutional laws.",
+      "sv": "Sant eller falskt: Skollagen, socialtjänstlagen, miljöbalken och semesterlagen är listan som innehåller bara Sveriges fyra grundlagar."
     },
     "opts": [
       {
@@ -12682,8 +12682,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Instrument of Government says that all public power comes from the people about public power in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Regeringsformen säger att all offentlig makt utgår från folket om offentlig makt i Sverige."
+      "en": "True or false: The Instrument of Government says that all public power comes from the people about public power in Sweden.",
+      "sv": "Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från folket om offentlig makt i Sverige."
     },
     "opts": [
       {
@@ -12721,8 +12721,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Instrument of Government says that all public power comes from the courts about public power in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Regeringsformen säger att all offentlig makt utgår från domstolarna om offentlig makt i Sverige."
+      "en": "True or false: The Instrument of Government says that all public power comes from the courts about public power in Sweden.",
+      "sv": "Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från domstolarna om offentlig makt i Sverige."
     },
     "opts": [
       {
@@ -12854,8 +12854,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Act of Succession regulates who will become king or queen after the current monarch.",
-      "sv": "Sant eller falskt: Det är korrekt att Successionsordningen reglerar vem som ska bli kung eller drottning efter den nuvarande monarken."
+      "en": "True or false: The Act of Succession regulates who will become king or queen after the current monarch.",
+      "sv": "Sant eller falskt: Successionsordningen reglerar vem som ska bli kung eller drottning efter den nuvarande monarken."
     },
     "opts": [
       {
@@ -12893,8 +12893,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Act of Succession regulates how collective agreements are signed.",
-      "sv": "Sant eller falskt: Det är korrekt att Successionsordningen reglerar hur kollektivavtal tecknas."
+      "en": "True or false: The Act of Succession regulates how collective agreements are signed.",
+      "sv": "Sant eller falskt: Successionsordningen reglerar hur kollektivavtal tecknas."
     },
     "opts": [
       {
@@ -13026,8 +13026,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the right of public access means it gives everyone the opportunity to be in nature, but people must act responsibly.",
-      "sv": "Sant eller falskt: Det är korrekt att Allemansrätten innebär att ger alla möjlighet att vara i naturen, men man måste visa ansvar."
+      "en": "True or false: The right of public access means it gives everyone the opportunity to be in nature, but people must act responsibly.",
+      "sv": "Sant eller falskt: Allemansrätten innebär att ger alla möjlighet att vara i naturen, men man måste visa ansvar."
     },
     "opts": [
       {
@@ -13065,8 +13065,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the right of public access means it gives a right to walk on fields and into private gardens.",
-      "sv": "Sant eller falskt: Det är korrekt att Allemansrätten innebär att ger rätt att gå på åkrar och in i privata trädgårdar."
+      "en": "True or false: The right of public access means it gives a right to walk on fields and into private gardens.",
+      "sv": "Sant eller falskt: Allemansrätten innebär att ger rätt att gå på åkrar och in i privata trädgårdar."
     },
     "opts": [
       {
@@ -13198,8 +13198,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service are part of the Swedish justice system.",
-      "sv": "Sant eller falskt: Det är korrekt att Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten och Kriminalvården ingår i det svenska rättsväsendet."
+      "en": "True or false: The Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service are part of the Swedish justice system.",
+      "sv": "Sant eller falskt: Polisen, Åklagarmyndigheten, domstolar, Brottsoffermyndigheten och Kriminalvården ingår i det svenska rättsväsendet."
     },
     "opts": [
       {
@@ -13237,8 +13237,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Riksdag, government, regions, and municipalities are part of the Swedish justice system.",
-      "sv": "Sant eller falskt: Det är korrekt att Riksdag, regering, regioner och kommuner ingår i det svenska rättsväsendet."
+      "en": "True or false: Riksdag, government, regions, and municipalities are part of the Swedish justice system.",
+      "sv": "Sant eller falskt: Riksdag, regering, regioner och kommuner ingår i det svenska rättsväsendet."
     },
     "opts": [
       {
@@ -13370,8 +13370,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Courts are independent, and everyone has the right to defend themselves and appeal a judgment describes legal certainty in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom beskriver rättssäkerhet i Sverige."
+      "en": "True or false: Courts are independent, and everyone has the right to defend themselves and appeal a judgment describes legal certainty in Sweden.",
+      "sv": "Sant eller falskt: Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom beskriver rättssäkerhet i Sverige."
     },
     "opts": [
       {
@@ -13409,8 +13409,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the government or Riksdag can decide how courts should judge cases describes legal certainty in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Regering eller riksdag kan bestämma hur domstolar ska döma beskriver rättssäkerhet i Sverige."
+      "en": "True or false: The government or Riksdag can decide how courts should judge cases describes legal certainty in Sweden.",
+      "sv": "Sant eller falskt: Regering eller riksdag kan bestämma hur domstolar ska döma beskriver rättssäkerhet i Sverige."
     },
     "opts": [
       {
@@ -13542,8 +13542,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that a suspected person should be considered innocent until the person has been convicted applies to a person suspected of a crime in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att en misstänkt person ska betraktas som oskyldig tills personen har dömts gäller för en person som är misstänkt för brott i Sverige."
+      "en": "True or false: A suspected person should be considered innocent until the person has been convicted applies to a person suspected of a crime in Sweden.",
+      "sv": "Sant eller falskt: En misstänkt person ska betraktas som oskyldig tills personen har dömts gäller för en person som är misstänkt för brott i Sverige."
     },
     "opts": [
       {
@@ -13581,8 +13581,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Courts decide only disputes between parents applies to a person suspected of a crime in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Domstolarna avgör bara frågor mellan föräldrar gäller för en person som är misstänkt för brott i Sverige."
+      "en": "True or false: Courts decide only disputes between parents applies to a person suspected of a crime in Sweden.",
+      "sv": "Sant eller falskt: Domstolarna avgör bara frågor mellan föräldrar gäller för en person som är misstänkt för brott i Sverige."
     },
     "opts": [
       {
@@ -13714,8 +13714,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that To maintain law and order and prevent and investigate crimes describes the role of the police in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Att upprätthålla lag och ordning samt förebygga och utreda brott beskriver polisens uppgift i Sverige."
+      "en": "True or false: To maintain law and order and prevent and investigate crimes describes the role of the police in Sweden.",
+      "sv": "Sant eller falskt: Att upprätthålla lag och ordning samt förebygga och utreda brott beskriver polisens uppgift i Sverige."
     },
     "opts": [
       {
@@ -13753,8 +13753,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that To decide the state budget describes the role of the police in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Att besluta statens budget beskriver polisens uppgift i Sverige."
+      "en": "True or false: To decide the state budget describes the role of the police in Sweden.",
+      "sv": "Sant eller falskt: Att besluta statens budget beskriver polisens uppgift i Sverige."
     },
     "opts": [
       {
@@ -13886,8 +13886,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that From 15 years, a person in Sweden criminally responsible and able to be prosecuted for a crime.",
-      "sv": "Sant eller falskt: Det är korrekt att Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
+      "en": "True or false: From 15 years, a person in Sweden criminally responsible and able to be prosecuted for a crime.",
+      "sv": "Sant eller falskt: Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
       {
@@ -13925,8 +13925,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that From 13 years, a person in Sweden criminally responsible and able to be prosecuted for a crime.",
-      "sv": "Sant eller falskt: Det är korrekt att Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
+      "en": "True or false: From 13 years, a person in Sweden criminally responsible and able to be prosecuted for a crime.",
+      "sv": "Sant eller falskt: Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
       {
@@ -14058,8 +14058,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that To inform, enable public debate, and scrutinize people with power describes an important role of free media in a democracy.",
-      "sv": "Sant eller falskt: Det är korrekt att Att informera, möjliggöra samhällsdebatt och granska personer med makt beskriver en viktig uppgift för fria medier i en demokrati."
+      "en": "True or false: To inform, enable public debate, and scrutinize people with power describes an important role of free media in a democracy.",
+      "sv": "Sant eller falskt: Att informera, möjliggöra samhällsdebatt och granska personer med makt beskriver en viktig uppgift för fria medier i en demokrati."
     },
     "opts": [
       {
@@ -14097,8 +14097,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that They should replace political elections describes an important role of free media in a democracy.",
-      "sv": "Sant eller falskt: Det är korrekt att De ska ersätta politiska val beskriver en viktig uppgift för fria medier i en demokrati."
+      "en": "True or false: They should replace political elections describes an important role of free media in a democracy.",
+      "sv": "Sant eller falskt: De ska ersätta politiska val beskriver en viktig uppgift för fria medier i en demokrati."
     },
     "opts": [
       {
@@ -14230,8 +14230,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is by allowing public documents to be requested unless they are covered by secrecy rules.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess."
+      "en": "True or false: By allowing public documents to be requested unless they are covered by secrecy rules.",
+      "sv": "Sant eller falskt: Genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess."
     },
     "opts": [
       {
@@ -14269,8 +14269,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is by letting the state decide what media may write.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är genom att staten bestämmer vad medier får skriva."
+      "en": "True or false: By letting the state decide what media may write.",
+      "sv": "Sant eller falskt: Genom att staten bestämmer vad medier får skriva."
     },
     "opts": [
       {
@@ -14575,8 +14575,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR).",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR)."
+      "en": "True or false: Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR).",
+      "sv": "Sant eller falskt: Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR)."
     },
     "opts": [
       {
@@ -14615,8 +14615,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the Police, Tax Agency, and Migration Agency.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är polisen, Skatteverket och Migrationsverket."
+      "en": "True or false: The Police, Tax Agency, and Migration Agency.",
+      "sv": "Sant eller falskt: Polisen, Skatteverket och Migrationsverket."
     },
     "opts": [
       {
@@ -14922,8 +14922,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is questioning and checking whether information is correct.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt."
+      "en": "True or false: To be source-critical means questioning and checking whether information is correct.",
+      "sv": "Sant eller falskt: Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt."
     },
     "opts": [
       {
@@ -14961,8 +14961,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is never reading news.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att vara källkritisk betyder att aldrig läsa nyheter."
+      "en": "True or false: To be source-critical means never reading news.",
+      "sv": "Sant eller falskt: Att vara källkritisk betyder att aldrig läsa nyheter."
     },
     "opts": [
       {
@@ -15094,8 +15094,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that prevent war and protect human rights.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att förhindra krig och skydda människors rättigheter."
+      "en": "True or false: One reason is that prevent war and protect human rights.",
+      "sv": "Sant eller falskt: En anledning är att förhindra krig och skydda människors rättigheter."
     },
     "opts": [
       {
@@ -15133,8 +15133,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that decide Swedish municipal taxes.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att bestämma svenska kommunalskatter."
+      "en": "True or false: One reason is that decide Swedish municipal taxes.",
+      "sv": "Sant eller falskt: En anledning är att bestämma svenska kommunalskatter."
     },
     "opts": [
       {
@@ -15266,8 +15266,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is it was presented in 1948 and contains 30 articles.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är den presenterades 1948 och innehåller 30 artiklar."
+      "en": "True or false: It was presented in 1948 and contains 30 articles.",
+      "sv": "Sant eller falskt: Den presenterades 1948 och innehåller 30 artiklar."
     },
     "opts": [
       {
@@ -15305,8 +15305,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is it was presented in 1918 and applies only to Europe.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är den presenterades 1918 och gäller bara Europa."
+      "en": "True or false: It was presented in 1918 and applies only to Europe.",
+      "sv": "Sant eller falskt: Den presenterades 1918 och gäller bara Europa."
     },
     "opts": [
       {
@@ -15438,8 +15438,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the goal of Sweden’s gender equality policy means that women and men should have the same rights and duties and equal power to influence society and their own lives.",
-      "sv": "Sant eller falskt: Det är korrekt att Målet med Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv."
+      "en": "True or false: The goal of Sweden’s gender equality policy means that women and men should have the same rights and duties and equal power to influence society and their own lives.",
+      "sv": "Sant eller falskt: Målet med Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv."
     },
     "opts": [
       {
@@ -15477,8 +15477,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.",
-      "sv": "Sant eller falskt: Det är korrekt att Målet med Sveriges jämställdhetspolitik innebär att jämställdhet bara handlar om hur många kvinnor som finns i politiken."
+      "en": "True or false: The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.",
+      "sv": "Sant eller falskt: Målet med Sveriges jämställdhetspolitik innebär att jämställdhet bara handlar om hur många kvinnor som finns i politiken."
     },
     "opts": [
       {
@@ -15611,8 +15611,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that They are crimes under Swedish law applies to violence in close relationships and honour-related violence and oppression in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Det är brottsligt enligt svensk lag gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige."
+      "en": "True or false: They are crimes under Swedish law applies to violence in close relationships and honour-related violence and oppression in Sweden.",
+      "sv": "Sant eller falskt: Det är brottsligt enligt svensk lag gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige."
     },
     "opts": [
       {
@@ -15651,8 +15651,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that They are always private family matters and not crimes applies to violence in close relationships and honour-related violence and oppression in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Det är alltid en privat familjefråga och inte ett brott gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige."
+      "en": "True or false: They are always private family matters and not crimes applies to violence in close relationships and honour-related violence and oppression in Sweden.",
+      "sv": "Sant eller falskt: Det är alltid en privat familjefråga och inte ett brott gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige."
     },
     "opts": [
       {
@@ -15786,8 +15786,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that It is illegal to buy sex, but the person who sells it is not punished applies to buying sex in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Det är olagligt att köpa sex, men personen som säljer straffas inte gäller för att köpa sex i Sverige."
+      "en": "True or false: It is illegal to buy sex, but the person who sells it is not punished applies to buying sex in Sweden.",
+      "sv": "Sant eller falskt: Det är olagligt att köpa sex, men personen som säljer straffas inte gäller för att köpa sex i Sverige."
     },
     "opts": [
       {
@@ -15825,8 +15825,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that It is always legal to buy sex applies to buying sex in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Det är alltid lagligt att köpa sex gäller för att köpa sex i Sverige."
+      "en": "True or false: It is always legal to buy sex applies to buying sex in Sweden.",
+      "sv": "Sant eller falskt: Det är alltid lagligt att köpa sex gäller för att köpa sex i Sverige."
     },
     "opts": [
       {
@@ -15958,8 +15958,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 2020.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 2020."
+      "en": "True or false: 2020.",
+      "sv": "Sant eller falskt: 2020."
     },
     "opts": [
       {
@@ -15997,8 +15997,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 1979.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 1979."
+      "en": "True or false: 1979.",
+      "sv": "Sant eller falskt: 1979."
     },
     "opts": [
       {
@@ -16130,8 +16130,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is that hitting children is prohibited.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är det är förbjudet att slå barn."
+      "en": "True or false: That hitting children is prohibited.",
+      "sv": "Sant eller falskt: Det är förbjudet att slå barn."
     },
     "opts": [
       {
@@ -16169,8 +16169,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is that the Convention on the Rights of the Child became Swedish law.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är barnkonventionen blev svensk lag."
+      "en": "True or false: That the Convention on the Rights of the Child became Swedish law.",
+      "sv": "Sant eller falskt: Barnkonventionen blev svensk lag."
     },
     "opts": [
       {
@@ -16302,8 +16302,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is jews, Roma, Sami, Sweden Finns, and Tornedalians.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar."
+      "en": "True or false: Jews, Roma, Sami, Sweden Finns, and Tornedalians.",
+      "sv": "Sant eller falskt: Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar."
     },
     "opts": [
       {
@@ -16341,8 +16341,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is danes, Norwegians, Icelanders, Germans, and French.",
-      "sv": "Sant eller falskt: Det är korrekt att Sveriges fem nationella minoriteter är Danskar, norrmän, islänningar, tyskar och fransmän."
+      "en": "True or false: Danes, Norwegians, Icelanders, Germans, and French.",
+      "sv": "Sant eller falskt: Sveriges fem nationella minoriteter är Danskar, norrmän, islänningar, tyskar och fransmän."
     },
     "opts": [
       {
@@ -16474,8 +16474,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is represent the Sami population on questions of language, culture, and identity.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är representera den samiska befolkningen i frågor om språk, kultur och identitet."
+      "en": "True or false: Represent the Sami population on questions of language, culture, and identity.",
+      "sv": "Sant eller falskt: Representera den samiska befolkningen i frågor om språk, kultur och identitet."
     },
     "opts": [
       {
@@ -16513,8 +16513,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is decide the state budget.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är besluta statens budget."
+      "en": "True or false: Decide the state budget.",
+      "sv": "Sant eller falskt: Besluta statens budget."
     },
     "opts": [
       {
@@ -16646,8 +16646,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that It is permitted to marry a person of the same sex applies to marriage between people of the same sex in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Det är tillåtet att gifta sig med en person av samma kön gäller för äktenskap mellan personer av samma kön i Sverige."
+      "en": "True or false: It is permitted to marry a person of the same sex applies to marriage between people of the same sex in Sweden.",
+      "sv": "Sant eller falskt: Det är tillåtet att gifta sig med en person av samma kön gäller för äktenskap mellan personer av samma kön i Sverige."
     },
     "opts": [
       {
@@ -16685,8 +16685,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that It is prohibited to marry a person of the same sex applies to marriage between people of the same sex in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Det är förbjudet att gifta sig med en person av samma kön gäller för äktenskap mellan personer av samma kön i Sverige."
+      "en": "True or false: It is prohibited to marry a person of the same sex applies to marriage between people of the same sex in Sweden.",
+      "sv": "Sant eller falskt: Det är förbjudet att gifta sig med en person av samma kön gäller för äktenskap mellan personer av samma kön i Sverige."
     },
     "opts": [
       {
@@ -16818,8 +16818,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is work for equal rights for everyone and make sure the Discrimination Act is followed.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är arbeta för allas lika rättigheter och se till att diskrimineringslagen följs."
+      "en": "True or false: Work for equal rights for everyone and make sure the Discrimination Act is followed.",
+      "sv": "Sant eller falskt: Arbeta för allas lika rättigheter och se till att diskrimineringslagen följs."
     },
     "opts": [
       {
@@ -16857,8 +16857,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is make sure debts are paid and decide on debt restructuring.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är se till att skulder blir betalda och besluta om skuldsanering."
+      "en": "True or false: Make sure debts are paid and decide on debt restructuring.",
+      "sv": "Sant eller falskt: Se till att skulder blir betalda och besluta om skuldsanering."
     },
     "opts": [
       {
@@ -16990,8 +16990,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is activities for which the state, regions, and municipalities are responsible.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är verksamheter som staten, regionerna och kommunerna ansvarar för."
+      "en": "True or false: Activities for which the state, regions, and municipalities are responsible.",
+      "sv": "Sant eller falskt: Verksamheter som staten, regionerna och kommunerna ansvarar för."
     },
     "opts": [
       {
@@ -17029,8 +17029,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is all privately owned companies.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är alla privatägda företag."
+      "en": "True or false: All privately owned companies.",
+      "sv": "Sant eller falskt: Alla privatägda företag."
     },
     "opts": [
       {
@@ -17162,8 +17162,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is about 70 percent.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är cirka 70 procent."
+      "en": "True or false: About 70 percent.",
+      "sv": "Sant eller falskt: Cirka 70 procent."
     },
     "opts": [
       {
@@ -17201,8 +17201,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is about 30 percent.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är cirka 30 procent."
+      "en": "True or false: About 30 percent.",
+      "sv": "Sant eller falskt: Cirka 30 procent."
     },
     "opts": [
       {
@@ -17334,8 +17334,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they represent employees, negotiate wages, and can help members.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar."
+      "en": "True or false: They represent employees, negotiate wages, and can help members.",
+      "sv": "Sant eller falskt: De företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar."
     },
     "opts": [
       {
@@ -17373,8 +17373,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they decide who may vote in Riksdag elections.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de bestämmer vilka som får rösta i riksdagsval."
+      "en": "True or false: They decide who may vote in Riksdag elections.",
+      "sv": "Sant eller falskt: De bestämmer vilka som får rösta i riksdagsval."
     },
     "opts": [
       {
@@ -17506,8 +17506,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is through negotiations between labour-market parties.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är genom förhandlingar mellan arbetsmarknadens parter."
+      "en": "True or false: Through negotiations between labour-market parties.",
+      "sv": "Sant eller falskt: Genom förhandlingar mellan arbetsmarknadens parter."
     },
     "opts": [
       {
@@ -17545,8 +17545,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is by the state deciding all wages.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är genom att staten bestämmer alla löner."
+      "en": "True or false: By the state deciding all wages.",
+      "sv": "Sant eller falskt: Genom att staten bestämmer alla löner."
     },
     "opts": [
       {
@@ -17678,8 +17678,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that protect employees’ rights and help create a safe work environment.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att skydda anställdas rättigheter och bidra till en trygg arbetsmiljö."
+      "en": "True or false: One reason is that protect employees’ rights and help create a safe work environment.",
+      "sv": "Sant eller falskt: En anledning är att skydda anställdas rättigheter och bidra till en trygg arbetsmiljö."
     },
     "opts": [
       {
@@ -17717,8 +17717,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that decide who becomes head of state.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att bestämma vem som blir statschef."
+      "en": "True or false: One reason is that decide who becomes head of state.",
+      "sv": "Sant eller falskt: En anledning är att bestämma vem som blir statschef."
     },
     "opts": [
       {
@@ -17850,8 +17850,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is it can pay money to unemployed members.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är den kan betala ut pengar till arbetslösa medlemmar."
+      "en": "True or false: It can pay money to unemployed members.",
+      "sv": "Sant eller falskt: Den kan betala ut pengar till arbetslösa medlemmar."
     },
     "opts": [
       {
@@ -17889,8 +17889,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is an authority that judges work environment crimes.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är en myndighet som dömer i arbetsmiljöbrott."
+      "en": "True or false: An authority that judges work environment crimes.",
+      "sv": "Sant eller falskt: En myndighet som dömer i arbetsmiljöbrott."
     },
     "opts": [
       {
@@ -18023,8 +18023,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is it makes sure debts are paid and can help with debt restructuring.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är den ser till att skulder blir betalda och kan hjälpa till med skuldsanering."
+      "en": "True or false: It makes sure debts are paid and can help with debt restructuring.",
+      "sv": "Sant eller falskt: Den ser till att skulder blir betalda och kan hjälpa till med skuldsanering."
     },
     "opts": [
       {
@@ -18063,8 +18063,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is negotiate collective agreements between employers and trade unions.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är förhandla om kollektivavtal mellan arbetsgivare och fackförbund."
+      "en": "True or false: Negotiate collective agreements between employers and trade unions.",
+      "sv": "Sant eller falskt: Förhandla om kollektivavtal mellan arbetsgivare och fackförbund."
     },
     "opts": [
       {
@@ -18198,8 +18198,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they make it possible to finance many services collectively.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de gör att många tjänster kan finansieras gemensamt."
+      "en": "True or false: They make it possible to finance many services collectively.",
+      "sv": "Sant eller falskt: De gör att många tjänster kan finansieras gemensamt."
     },
     "opts": [
       {
@@ -18237,8 +18237,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they replace the responsibilities of regions and municipalities.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de ersätter regionernas och kommunernas ansvar."
+      "en": "True or false: They replace the responsibilities of regions and municipalities.",
+      "sv": "Sant eller falskt: De ersätter regionernas och kommunernas ansvar."
     },
     "opts": [
       {
@@ -18370,8 +18370,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is companies also pay tax, and VAT is paid when buying goods and services.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är företag betalar också skatt, och moms betalas vid köp av varor och tjänster."
+      "en": "True or false: Companies also pay tax, and VAT is paid when buying goods and services.",
+      "sv": "Sant eller falskt: Företag betalar också skatt, och moms betalas vid köp av varor och tjänster."
     },
     "opts": [
       {
@@ -18409,8 +18409,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is only people who work pay tax.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bara personer som arbetar betalar skatt."
+      "en": "True or false: Only people who work pay tax.",
+      "sv": "Sant eller falskt: Bara personer som arbetar betalar skatt."
     },
     "opts": [
       {
@@ -18543,8 +18543,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag."
+      "en": "True or false: Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance.",
+      "sv": "Sant eller falskt: Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag."
     },
     "opts": [
       {
@@ -18583,8 +18583,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is hospitals, health centres, and regional health care.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är sjukhus, vårdcentraler och regional sjukvård."
+      "en": "True or false: Hospitals, health centres, and regional health care.",
+      "sv": "Sant eller falskt: Sjukhus, vårdcentraler och regional sjukvård."
     },
     "opts": [
       {
@@ -18718,8 +18718,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is provide health and medical care for everyone.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är erbjuda hälso- och sjukvård till alla."
+      "en": "True or false: Provide health and medical care for everyone.",
+      "sv": "Sant eller falskt: Erbjuda hälso- och sjukvård till alla."
     },
     "opts": [
       {
@@ -18757,8 +18757,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is pay pensions and study support.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är betala pensioner och studiestöd."
+      "en": "True or false: Pay pensions and study support.",
+      "sv": "Sant eller falskt: Betala pensioner och studiestöd."
     },
     "opts": [
       {
@@ -18890,8 +18890,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is childcare, schools and education, elderly care, and social services.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst."
+      "en": "True or false: Childcare, schools and education, elderly care, and social services.",
+      "sv": "Sant eller falskt: Barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst."
     },
     "opts": [
       {
@@ -18929,8 +18929,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is pensions, sickness insurance, parental insurance, and study support.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är pensioner, sjukförsäkring, föräldraförsäkring och studiestöd."
+      "en": "True or false: Pensions, sickness insurance, parental insurance, and study support.",
+      "sv": "Sant eller falskt: Pensioner, sjukförsäkring, föräldraförsäkring och studiestöd."
     },
     "opts": [
       {
@@ -19234,8 +19234,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that As a typical agricultural country where almost everyone lived in the countryside describes Sweden two hundred years ago.",
-      "sv": "Sant eller falskt: Det är korrekt att Som ett typiskt jordbruksland där nästan alla bodde på landet beskriver Sverige för tvåhundra år sedan."
+      "en": "True or false: As a typical agricultural country where almost everyone lived in the countryside describes Sweden two hundred years ago.",
+      "sv": "Sant eller falskt: Som ett typiskt jordbruksland där nästan alla bodde på landet beskriver Sverige för tvåhundra år sedan."
     },
     "opts": [
       {
@@ -19273,8 +19273,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that As a high-tech information society describes Sweden two hundred years ago.",
-      "sv": "Sant eller falskt: Det är korrekt att Som ett högteknologiskt informationssamhälle beskriver Sverige för tvåhundra år sedan."
+      "en": "True or false: As a high-tech information society describes Sweden two hundred years ago.",
+      "sv": "Sant eller falskt: Som ett högteknologiskt informationssamhälle beskriver Sverige för tvåhundra år sedan."
     },
     "opts": [
       {
@@ -19407,8 +19407,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that better farming methods and medical advances.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att bättre jordbruksmetoder och medicinska framsteg."
+      "en": "True or false: One reason is that better farming methods and medical advances.",
+      "sv": "Sant eller falskt: En anledning är att bättre jordbruksmetoder och medicinska framsteg."
     },
     "opts": [
       {
@@ -19447,8 +19447,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that eU membership.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att eU-medlemskapet."
+      "en": "True or false: One reason is that eU membership.",
+      "sv": "Sant eller falskt: En anledning är att eU-medlemskapet."
     },
     "opts": [
       {
@@ -19582,8 +19582,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that More than one million Swedes emigrated to the United States between 1850 and 1920.",
-      "sv": "Sant eller falskt: Det är korrekt att Över en miljon svenskar utvandrade till USA mellan 1850 och 1920."
+      "en": "True or false: More than one million Swedes emigrated to the United States between 1850 and 1920.",
+      "sv": "Sant eller falskt: Över en miljon svenskar utvandrade till USA mellan 1850 och 1920."
     },
     "opts": [
       {
@@ -19621,8 +19621,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that About ten thousand Swedes emigrated to the United States between 1850 and 1920.",
-      "sv": "Sant eller falskt: Det är korrekt att Cirka tio tusen svenskar utvandrade till USA mellan 1850 och 1920."
+      "en": "True or false: About ten thousand Swedes emigrated to the United States between 1850 and 1920.",
+      "sv": "Sant eller falskt: Cirka tio tusen svenskar utvandrade till USA mellan 1850 och 1920."
     },
     "opts": [
       {
@@ -19754,8 +19754,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the change through the new constitution in 1809 was that the king’s power was limited.",
-      "sv": "Sant eller falskt: Det är korrekt att Förändringen genom den nya grundlagen år 1809 var att Kungens makt begränsades."
+      "en": "True or false: The change through the new constitution in 1809 was that the king’s power was limited.",
+      "sv": "Sant eller falskt: Förändringen genom den nya grundlagen år 1809 var att Kungens makt begränsades."
     },
     "opts": [
       {
@@ -19793,8 +19793,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the change through the new constitution in 1809 was that Sweden joined the EU.",
-      "sv": "Sant eller falskt: Det är korrekt att Förändringen genom den nya grundlagen år 1809 var att Sverige gick med i EU."
+      "en": "True or false: The change through the new constitution in 1809 was that Sweden joined the EU.",
+      "sv": "Sant eller falskt: Förändringen genom den nya grundlagen år 1809 var att Sverige gick med i EU."
     },
     "opts": [
       {
@@ -19926,8 +19926,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the labour movement, free church movement, women’s movement, and temperance movement.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
+      "en": "True or false: The labour movement, free church movement, women’s movement, and temperance movement.",
+      "sv": "Sant eller falskt: Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
     },
     "opts": [
       {
@@ -19965,8 +19965,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the banking movement, royal movement, court movement, and mining movement.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bankrörelsen, kungarörelsen, hovrörelsen och gruvrörelsen."
+      "en": "True or false: The banking movement, royal movement, court movement, and mining movement.",
+      "sv": "Sant eller falskt: Bankrörelsen, kungarörelsen, hovrörelsen och gruvrörelsen."
     },
     "opts": [
       {
@@ -20098,8 +20098,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 1921.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 1921."
+      "en": "True or false: 1921.",
+      "sv": "Sant eller falskt: 1921."
     },
     "opts": [
       {
@@ -20137,8 +20137,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 1809.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 1809."
+      "en": "True or false: 1809.",
+      "sv": "Sant eller falskt: 1809."
     },
     "opts": [
       {
@@ -20270,8 +20270,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is cooperation between trade unions and employers.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är samarbetet mellan fackföreningar och arbetsgivare."
+      "en": "True or false: Cooperation between trade unions and employers.",
+      "sv": "Sant eller falskt: Samarbetet mellan fackföreningar och arbetsgivare."
     },
     "opts": [
       {
@@ -20309,8 +20309,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is sweden’s entry into the EU.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är sveriges inträde i EU."
+      "en": "True or false: Sweden’s entry into the EU.",
+      "sv": "Sant eller falskt: Sveriges inträde i EU."
     },
     "opts": [
       {
@@ -20442,8 +20442,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that sweden had long-lasting strong economic growth and could carry out major reforms.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer."
+      "en": "True or false: One reason is that sweden had long-lasting strong economic growth and could carry out major reforms.",
+      "sv": "Sant eller falskt: En anledning är att sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer."
     },
     "opts": [
       {
@@ -20481,8 +20481,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that One reason is that sweden had almost no industry.",
-      "sv": "Sant eller falskt: Det är korrekt att en anledning är att sverige saknade nästan all industri."
+      "en": "True or false: One reason is that sweden had almost no industry.",
+      "sv": "Sant eller falskt: En anledning är att sverige saknade nästan all industri."
     },
     "opts": [
       {
@@ -20614,8 +20614,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is build one million homes in ten years.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bygga en miljon bostäder på tio år."
+      "en": "True or false: Build one million homes in ten years.",
+      "sv": "Sant eller falskt: Bygga en miljon bostäder på tio år."
     },
     "opts": [
       {
@@ -20653,8 +20653,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is plant one million trees.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är plantera en miljon träd."
+      "en": "True or false: Plant one million trees.",
+      "sv": "Sant eller falskt: Plantera en miljon träd."
     },
     "opts": [
       {
@@ -20786,8 +20786,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is how people work, study, communicate, and access information.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är hur människor arbetar, studerar, kommunicerar och tar del av information."
+      "en": "True or false: How people work, study, communicate, and access information.",
+      "sv": "Sant eller falskt: Hur människor arbetar, studerar, kommunicerar och tar del av information."
     },
     "opts": [
       {
@@ -20825,8 +20825,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is only how people celebrate Midsummer.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bara hur människor firar midsommar."
+      "en": "True or false: Only how people celebrate Midsummer.",
+      "sv": "Sant eller falskt: Bara hur människor firar midsommar."
     },
     "opts": [
       {
@@ -20958,8 +20958,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the Nordic Council and the Nordic Council of Ministers.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är nordiska rådet och Nordiska ministerrådet."
+      "en": "True or false: The Nordic Council and the Nordic Council of Ministers.",
+      "sv": "Sant eller falskt: Nordiska rådet och Nordiska ministerrådet."
     },
     "opts": [
       {
@@ -20997,8 +20997,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the Riksdag and municipal councils.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är riksdagen och kommunfullmäktige."
+      "en": "True or false: The Riksdag and municipal councils.",
+      "sv": "Sant eller falskt: Riksdagen och kommunfullmäktige."
     },
     "opts": [
       {
@@ -21130,8 +21130,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 1995.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 1995."
+      "en": "True or false: 1995.",
+      "sv": "Sant eller falskt: 1995."
     },
     "opts": [
       {
@@ -21169,8 +21169,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 1949.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 1949."
+      "en": "True or false: 1949.",
+      "sv": "Sant eller falskt: 1949."
     },
     "opts": [
       {
@@ -21302,8 +21302,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is that people can study, move, work, and sell goods freely between EU countries.",
-      "sv": "Sant eller falskt: Det är korrekt att EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder."
+      "en": "True or false: That people can study, move, work, and sell goods freely between EU countries.",
+      "sv": "Sant eller falskt: EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder."
     },
     "opts": [
       {
@@ -21341,8 +21341,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is that Sweden can decide other EU countries’ governments.",
-      "sv": "Sant eller falskt: Det är korrekt att EU:s fyra friheter innebär att sverige kan bestämma andra EU-länders regeringar."
+      "en": "True or false: That Sweden can decide other EU countries’ governments.",
+      "sv": "Sant eller falskt: EU:s fyra friheter innebär att sverige kan bestämma andra EU-länders regeringar."
     },
     "opts": [
       {
@@ -21474,8 +21474,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is human rights, democracy, and rule-of-law principles.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är mänskliga rättigheter, demokrati och rättsstatens principer."
+      "en": "True or false: Human rights, democracy, and rule-of-law principles.",
+      "sv": "Sant eller falskt: Mänskliga rättigheter, demokrati och rättsstatens principer."
     },
     "opts": [
       {
@@ -21513,8 +21513,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is only agricultural policy.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är endast jordbrukspolitik."
+      "en": "True or false: Only agricultural policy.",
+      "sv": "Sant eller falskt: Endast jordbrukspolitik."
     },
     "opts": [
       {
@@ -21646,8 +21646,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is reduce poverty and oppression in the world.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är minska fattigdom och förtryck i världen."
+      "en": "True or false: Reduce poverty and oppression in the world.",
+      "sv": "Sant eller falskt: Minska fattigdom och förtryck i världen."
     },
     "opts": [
       {
@@ -21685,8 +21685,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is judge criminal cases in Swedish courts.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är döma brottmål i svenska domstolar."
+      "en": "True or false: Judge criminal cases in Swedish courts.",
+      "sv": "Sant eller falskt: Döma brottmål i svenska domstolar."
     },
     "opts": [
       {
@@ -21818,8 +21818,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is apply for NATO membership at almost the same time.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är nästan samtidigt ansöka om medlemskap i Nato."
+      "en": "True or false: Apply for NATO membership at almost the same time.",
+      "sv": "Sant eller falskt: Nästan samtidigt ansöka om medlemskap i Nato."
     },
     "opts": [
       {
@@ -21857,8 +21857,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is leave the EU’s European cooperation.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är lämna EU:s europeiska samarbete."
+      "en": "True or false: Leave the EU’s European cooperation.",
+      "sv": "Sant eller falskt: Lämna EU:s europeiska samarbete."
     },
     "opts": [
       {
@@ -22162,8 +22162,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the state is religiously neutral and neither takes sides for nor discriminates against any religion describes that Sweden is a secular state.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att Sverige är en sekulär stat betyder staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion."
+      "en": "True or false: That Sweden is a secular state means the state is religiously neutral and neither takes sides for nor discriminates against any religion.",
+      "sv": "Sant eller falskt: Att Sverige är en sekulär stat betyder att staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion."
     },
     "opts": [
       {
@@ -22201,8 +22201,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Everyone must belong to the same religion describes that Sweden is a secular state.",
-      "sv": "Sant eller falskt: Det är korrekt att Det att Sverige är en sekulär stat betyder alla måste tillhöra samma religion."
+      "en": "True or false: That Sweden is a secular state means everyone must belong to the same religion.",
+      "sv": "Sant eller falskt: Att Sverige är en sekulär stat betyder att alla måste tillhöra samma religion."
     },
     "opts": [
       {
@@ -22334,8 +22334,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the Religious Freedom Act.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är religionsfrihetslagen."
+      "en": "True or false: The Religious Freedom Act.",
+      "sv": "Sant eller falskt: Religionsfrihetslagen."
     },
     "opts": [
       {
@@ -22373,8 +22373,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the Freedom of the Press Act.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är tryckfrihetsförordningen."
+      "en": "True or false: The Freedom of the Press Act.",
+      "sv": "Sant eller falskt: Tryckfrihetsförordningen."
     },
     "opts": [
       {
@@ -22678,8 +22678,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the Lutheran Protestant tradition.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är den lutherska, protestantiska traditionen."
+      "en": "True or false: The Lutheran Protestant tradition.",
+      "sv": "Sant eller falskt: Den lutherska, protestantiska traditionen."
     },
     "opts": [
       {
@@ -22717,8 +22717,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the Buddhist tradition.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är den buddhistiska traditionen."
+      "en": "True or false: The Buddhist tradition.",
+      "sv": "Sant eller falskt: Den buddhistiska traditionen."
     },
     "opts": [
       {
@@ -22850,8 +22850,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is islam.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är islam."
+      "en": "True or false: Islam.",
+      "sv": "Sant eller falskt: Islam."
     },
     "opts": [
       {
@@ -22889,8 +22889,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is judaism.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är judendom."
+      "en": "True or false: Judaism.",
+      "sv": "Sant eller falskt: Judendom."
     },
     "opts": [
       {
@@ -23022,8 +23022,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is celebrate with parties and dinners and at night with fireworks.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är fira med fester och middagar och på natten med fyrverkerier."
+      "en": "True or false: Celebrate with parties and dinners and at night with fireworks.",
+      "sv": "Sant eller falskt: Fira med fester och middagar och på natten med fyrverkerier."
     },
     "opts": [
       {
@@ -23061,8 +23061,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is large bonfires and spring songs.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är stora brasor och vårsånger."
+      "en": "True or false: Large bonfires and spring songs.",
+      "sv": "Sant eller falskt: Stora brasor och vårsånger."
     },
     "opts": [
       {
@@ -23195,8 +23195,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is flags are raised, speeches are held, and many municipalities welcome new citizens.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är flaggan hissas, tal hålls och många kommuner välkomnar nya medborgare."
+      "en": "True or false: Flags are raised, speeches are held, and many municipalities welcome new citizens.",
+      "sv": "Sant eller falskt: Flaggan hissas, tal hålls och många kommuner välkomnar nya medborgare."
     },
     "opts": [
       {
@@ -23235,8 +23235,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the labour movement arranges demonstrations.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är arbetarrörelsen arrangerar demonstrationer."
+      "en": "True or false: The labour movement arranges demonstrations.",
+      "sv": "Sant eller falskt: Arbetarrörelsen arrangerar demonstrationer."
     },
     "opts": [
       {
@@ -23371,8 +23371,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Midsummer Eve is observed on a Friday between 19 and 25 June.",
-      "sv": "Sant eller falskt: Det är korrekt att Midsommarafton firas på en fredag mellan 19 och 25 juni."
+      "en": "True or false: Midsummer Eve is observed on a Friday between 19 and 25 June.",
+      "sv": "Sant eller falskt: Midsommarafton firas på en fredag mellan 19 och 25 juni."
     },
     "opts": [
       {
@@ -23411,8 +23411,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Midsummer Eve is observed on New Year’s Eve, 31 December.",
-      "sv": "Sant eller falskt: Det är korrekt att Midsommarafton firas på nyårsafton den 31 december."
+      "en": "True or false: Midsummer Eve is observed on New Year’s Eve, 31 December.",
+      "sv": "Sant eller falskt: Midsommarafton firas på nyårsafton den 31 december."
     },
     "opts": [
       {
@@ -23547,8 +23547,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is spreading light when the year is at its darkest.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är sprida ljus när året är som mörkast."
+      "en": "True or false: Spreading light when the year is at its darkest.",
+      "sv": "Sant eller falskt: Sprida ljus när året är som mörkast."
     },
     "opts": [
       {
@@ -23587,8 +23587,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is welcoming spring with large bonfires.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är välkomna våren med stora brasor."
+      "en": "True or false: Welcoming spring with large bonfires.",
+      "sv": "Sant eller falskt: Välkomna våren med stora brasor."
     },
     "opts": [
       {
@@ -23722,8 +23722,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is easter.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är påsk."
+      "en": "True or false: Easter.",
+      "sv": "Sant eller falskt: Påsk."
     },
     "opts": [
       {
@@ -23761,8 +23761,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is advent.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är advent."
+      "en": "True or false: Advent.",
+      "sv": "Sant eller falskt: Advent."
     },
     "opts": [
       {
@@ -23895,8 +23895,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is bonfires, spring songs, and sometimes a speech welcoming spring.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är brasor, vårsånger och ibland ett tal till våren."
+      "en": "True or false: Bonfires, spring songs, and sometimes a speech welcoming spring.",
+      "sv": "Sant eller falskt: Brasor, vårsånger och ibland ett tal till våren."
     },
     "opts": [
       {
@@ -23935,8 +23935,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is fireworks at midnight to celebrate the new year.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är fyrverkerier vid midnatt för att fira det nya året."
+      "en": "True or false: Fireworks at midnight to celebrate the new year.",
+      "sv": "Sant eller falskt: Fyrverkerier vid midnatt för att fira det nya året."
     },
     "opts": [
       {
@@ -24071,8 +24071,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is workers' day with demonstrations and speeches.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är arbetarnas dag med demonstrationer och tal."
+      "en": "True or false: Workers' day with demonstrations and speeches.",
+      "sv": "Sant eller falskt: Arbetarnas dag med demonstrationer och tal."
     },
     "opts": [
       {
@@ -24111,8 +24111,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the new year with parties and fireworks.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är det nya året med fester och fyrverkerier."
+      "en": "True or false: The new year with parties and fireworks.",
+      "sv": "Sant eller falskt: Det nya året med fester och fyrverkerier."
     },
     "opts": [
       {
@@ -24247,8 +24247,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is light candles on graves to remember and honour people who have died.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är tända ljus på gravar för att minnas och hedra dem som har dött."
+      "en": "True or false: Light candles on graves to remember and honour people who have died.",
+      "sv": "Sant eller falskt: Tända ljus på gravar för att minnas och hedra dem som har dött."
     },
     "opts": [
       {
@@ -24287,8 +24287,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is open an Advent calendar every day until Christmas Eve.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är öppna en adventskalender varje dag fram till julafton."
+      "en": "True or false: Open an Advent calendar every day until Christmas Eve.",
+      "sv": "Sant eller falskt: Öppna en adventskalender varje dag fram till julafton."
     },
     "opts": [
       {
@@ -24423,8 +24423,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the four Sundays before Christmas Day, 25 December.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de fyra söndagarna före juldagen den 25 december."
+      "en": "True or false: The four Sundays before Christmas Day, 25 December.",
+      "sv": "Sant eller falskt: De fyra söndagarna före juldagen den 25 december."
     },
     "opts": [
       {
@@ -24463,8 +24463,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is a Saturday at the end of October or beginning of November.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är en lördag i slutet av oktober eller början av november."
+      "en": "True or false: A Saturday at the end of October or beginning of November.",
+      "sv": "Sant eller falskt: En lördag i slutet av oktober eller början av november."
     },
     "opts": [
       {
@@ -24599,8 +24599,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is gather, eat special Christmas food, and give each other Christmas presents.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är samlas, äta särskild julmat och ge varandra julklappar."
+      "en": "True or false: Gather, eat special Christmas food, and give each other Christmas presents.",
+      "sv": "Sant eller falskt: Samlas, äta särskild julmat och ge varandra julklappar."
     },
     "opts": [
       {
@@ -24639,8 +24639,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is light large bonfires and sing spring songs.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är tända stora brasor och sjunga vårsånger."
+      "en": "True or false: Light large bonfires and sing spring songs.",
+      "sv": "Sant eller falskt: Tända stora brasor och sjunga vårsånger."
     },
     "opts": [
       {
@@ -24775,8 +24775,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is eid al-Fitr and Nouruz/Newroz.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är id al-fitr samt Nouruz och Newroz."
+      "en": "True or false: Eid al-Fitr and Nouruz/Newroz.",
+      "sv": "Sant eller falskt: Id al-fitr samt Nouruz och Newroz."
     },
     "opts": [
       {
@@ -24815,8 +24815,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is midsummer and Lucia.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är midsommar och Lucia."
+      "en": "True or false: Midsummer and Lucia.",
+      "sv": "Sant eller falskt: Midsommar och Lucia."
     },
     "opts": [
       {
@@ -24951,8 +24951,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is buddhist and Hindu congregations and temples.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är buddhistiska och hinduiska församlingar och tempel."
+      "en": "True or false: Buddhist and Hindu congregations and temples.",
+      "sv": "Sant eller falskt: Buddhistiska och hinduiska församlingar och tempel."
     },
     "opts": [
       {
@@ -24991,8 +24991,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is government agencies that choose religion.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är statliga myndigheter som väljer religion."
+      "en": "True or false: Government agencies that choose religion.",
+      "sv": "Sant eller falskt: Statliga myndigheter som väljer religion."
     },
     "opts": [
       {
@@ -25127,8 +25127,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the role of religion has decreased, but religious questions have received more attention.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är religionens roll har minskat, men religionsfrågor har fått större uppmärksamhet."
+      "en": "True or false: The role of religion has decreased, but religious questions have received more attention.",
+      "sv": "Sant eller falskt: Religionens roll har minskat, men religionsfrågor har fått större uppmärksamhet."
     },
     "opts": [
       {
@@ -25167,8 +25167,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is all religious holidays have been banned in Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är alla religiösa högtider har förbjudits i Sverige."
+      "en": "True or false: All religious holidays have been banned in Sweden.",
+      "sv": "Sant eller falskt: Alla religiösa högtider har förbjudits i Sverige."
     },
     "opts": [
       {
@@ -25303,8 +25303,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is jews received full civil rights in Sweden only in 1870.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är judar fick fullständiga medborgerliga rättigheter i Sverige först 1870."
+      "en": "True or false: Jews received full civil rights in Sweden only in 1870.",
+      "sv": "Sant eller falskt: Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870."
     },
     "opts": [
       {
@@ -25343,8 +25343,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is judaism came to Sweden only after 2000.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är judendom kom till Sverige först efter år 2000."
+      "en": "True or false: Judaism came to Sweden only after 2000.",
+      "sv": "Sant eller falskt: Judendom kom till Sverige först efter år 2000."
     },
     "opts": [
       {
@@ -25479,8 +25479,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is promote understanding, tolerance, and respect for differences.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är främja förståelse, tolerans och respekt för olikheter."
+      "en": "True or false: Promote understanding, tolerance, and respect for differences.",
+      "sv": "Sant eller falskt: Främja förståelse, tolerans och respekt för olikheter."
     },
     "opts": [
       {
@@ -25519,8 +25519,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is decide which religion pupils should belong to.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bestämma vilken religion elever ska tillhöra."
+      "en": "True or false: Decide which religion pupils should belong to.",
+      "sv": "Sant eller falskt: Bestämma vilken religion elever ska tillhöra."
     },
     "opts": [
       {
@@ -25655,8 +25655,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is during the 1970s.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är under 1970-talet."
+      "en": "True or false: During the 1970s.",
+      "sv": "Sant eller falskt: Under 1970-talet."
     },
     "opts": [
       {
@@ -25695,8 +25695,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is at the beginning of the 20th century.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är i början av 1900-talet."
+      "en": "True or false: At the beginning of the 20th century.",
+      "sv": "Sant eller falskt: I början av 1900-talet."
     },
     "opts": [
       {
@@ -25831,8 +25831,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is orthodox churches, the Catholic Church, and Protestant churches.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor."
+      "en": "True or false: Orthodox churches, the Catholic Church, and Protestant churches.",
+      "sv": "Sant eller falskt: Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor."
     },
     "opts": [
       {
@@ -25871,8 +25871,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is only the Church of Sweden and no other communities.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bara Svenska kyrkan och inga andra samfund."
+      "en": "True or false: Only the Church of Sweden and no other communities.",
+      "sv": "Sant eller falskt: Bara Svenska kyrkan och inga andra samfund."
     },
     "opts": [
       {
@@ -26008,8 +26008,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is travel to Asia and increased interest in meditation and yoga.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är resor till Asien och ökat intresse för meditation och yoga."
+      "en": "True or false: Travel to Asia and increased interest in meditation and yoga.",
+      "sv": "Sant eller falskt: Resor till Asien och ökat intresse för meditation och yoga."
     },
     "opts": [
       {
@@ -26049,8 +26049,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is that Sweden's first mosques were built during the 1970s.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är sveriges första moskéer byggdes under 1970-talet."
+      "en": "True or false: That Sweden's first mosques were built during the 1970s.",
+      "sv": "Sant eller falskt: Sveriges första moskéer byggdes under 1970-talet."
     },
     "opts": [
       {
@@ -26187,8 +26187,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is leave the Church of Sweden, but only if they joined another Christian community.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är lämna Svenska kyrkan, men bara om man gick med i ett annat kristet samfund."
+      "en": "True or false: Leave the Church of Sweden, but only if they joined another Christian community.",
+      "sv": "Sant eller falskt: Lämna Svenska kyrkan, men bara om man gick med i ett annat kristet samfund."
     },
     "opts": [
       {
@@ -26227,8 +26227,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is choose any religion or no religion at all completely freely.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är helt fritt välja vilken religion som helst eller ingen religion alls."
+      "en": "True or false: Choose any religion or no religion at all completely freely.",
+      "sv": "Sant eller falskt: Helt fritt välja vilken religion som helst eller ingen religion alls."
     },
     "opts": [
       {
@@ -26363,8 +26363,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the right to practice one’s religion and protection from discrimination because of belief.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är rätten att utöva sin religion och skydd mot diskriminering på grund av tro."
+      "en": "True or false: The right to practice one’s religion and protection from discrimination because of belief.",
+      "sv": "Sant eller falskt: Rätten att utöva sin religion och skydd mot diskriminering på grund av tro."
     },
     "opts": [
       {
@@ -26403,8 +26403,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is that the state chooses a religion for each resident.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är staten väljer religion åt varje invånare."
+      "en": "True or false: That the state chooses a religion for each resident.",
+      "sv": "Sant eller falskt: Staten väljer religion åt varje invånare."
     },
     "opts": [
       {
@@ -26540,8 +26540,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is christmas and Easter.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är jul och påsk."
+      "en": "True or false: Christmas and Easter.",
+      "sv": "Sant eller falskt: Jul och påsk."
     },
     "opts": [
       {
@@ -26581,8 +26581,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is eid al-Fitr and Newroz.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är id al-fitr och Newroz."
+      "en": "True or false: Eid al-Fitr and Newroz.",
+      "sv": "Sant eller falskt: Id al-fitr och Newroz."
     },
     "opts": [
       {
@@ -26721,8 +26721,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is baptisms, church weddings, and Christian funerals.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är dop, bröllop i kyrkan och kristen begravning."
+      "en": "True or false: Baptisms, church weddings, and Christian funerals.",
+      "sv": "Sant eller falskt: Dop, bröllop i kyrkan och kristen begravning."
     },
     "opts": [
       {
@@ -26763,8 +26763,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is only state ceremonies without religious elements.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är endast statliga ceremonier utan religiösa inslag."
+      "en": "True or false: Only state ceremonies without religious elements.",
+      "sv": "Sant eller falskt: Endast statliga ceremonier utan religiösa inslag."
     },
     "opts": [
       {
@@ -26903,8 +26903,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is a Catholic country.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är ett katolskt land."
+      "en": "True or false: A Catholic country.",
+      "sv": "Sant eller falskt: Ett katolskt land."
     },
     "opts": [
       {
@@ -26943,8 +26943,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is a Buddhist kingdom.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är ett buddhistiskt kungarike."
+      "en": "True or false: A Buddhist kingdom.",
+      "sv": "Sant eller falskt: Ett buddhistiskt kungarike."
     },
     "opts": [
       {
@@ -27079,8 +27079,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is live in the country and practice their religion.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bo i landet och utöva sin religion."
+      "en": "True or false: Live in the country and practice their religion.",
+      "sv": "Sant eller falskt: Bo i landet och utöva sin religion."
     },
     "opts": [
       {
@@ -27119,8 +27119,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is become Sweden’s largest religious group.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bli Sveriges största religiösa grupp."
+      "en": "True or false: Become Sweden’s largest religious group.",
+      "sv": "Sant eller falskt: Bli Sveriges största religiösa grupp."
     },
     "opts": [
       {
@@ -27255,8 +27255,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is sunni and Shia.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är sunni och shia."
+      "en": "True or false: Sunni and Shia.",
+      "sv": "Sant eller falskt: Sunni och shia."
     },
     "opts": [
       {
@@ -27295,8 +27295,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is catholic and Orthodox churches.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är katolska och ortodoxa kyrkor."
+      "en": "True or false: Catholic and Orthodox churches.",
+      "sv": "Sant eller falskt: Katolska och ortodoxa kyrkor."
     },
     "opts": [
       {
@@ -27432,8 +27432,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is prayer, teaching, and community.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är bön, undervisning och gemenskap."
+      "en": "True or false: Prayer, teaching, and community.",
+      "sv": "Sant eller falskt: Bön, undervisning och gemenskap."
     },
     "opts": [
       {
@@ -27473,8 +27473,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is state decisions about which religion residents should have.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är statliga beslut om vilken religion invånare ska ha."
+      "en": "True or false: State decisions about which religion residents should have.",
+      "sv": "Sant eller falskt: Statliga beslut om vilken religion invånare ska ha."
     },
     "opts": [
       {
@@ -27611,8 +27611,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they are mainly among immigrants from countries where these religions are large.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de finns främst bland invandrare från länder där religionerna är stora."
+      "en": "True or false: They are mainly among immigrants from countries where these religions are large.",
+      "sv": "Sant eller falskt: De finns främst bland invandrare från länder där religionerna är stora."
     },
     "opts": [
       {
@@ -27651,8 +27651,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they are only in Church of Sweden congregations.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de finns bara i Svenska kyrkans församlingar."
+      "en": "True or false: They are only in Church of Sweden congregations.",
+      "sv": "Sant eller falskt: De finns bara i Svenska kyrkans församlingar."
     },
     "opts": [
       {
@@ -27787,8 +27787,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the event from 1523 was that Gustav Vasa was elected king of Sweden.",
-      "sv": "Sant eller falskt: Det är korrekt att Händelsen från 1523 var att Gustav Vasa valdes till svensk kung."
+      "en": "True or false: The event from 1523 was that Gustav Vasa was elected king of Sweden.",
+      "sv": "Sant eller falskt: Händelsen från 1523 var att Gustav Vasa valdes till svensk kung."
     },
     "opts": [
       {
@@ -27827,8 +27827,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the event from 1523 was that Sweden joined the EU.",
-      "sv": "Sant eller falskt: Det är korrekt att Händelsen från 1523 var att Sverige gick med i EU."
+      "en": "True or false: The event from 1523 was that Sweden joined the EU.",
+      "sv": "Sant eller falskt: Händelsen från 1523 var att Sverige gick med i EU."
     },
     "opts": [
       {
@@ -27964,8 +27964,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is outdoor parties, flower wreaths, dancing around the midsummer pole, and Midsummer food.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är utomhusfester, blomsterkransar, dans runt midsommarstången och midsommarmat."
+      "en": "True or false: Outdoor parties, flower wreaths, dancing around the midsummer pole, and Midsummer food.",
+      "sv": "Sant eller falskt: Utomhusfester, blomsterkransar, dans runt midsommarstången och midsommarmat."
     },
     "opts": [
       {
@@ -28005,8 +28005,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is fireworks at midnight and New Year dinners.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är fyrverkerier vid midnatt och nyårsmiddagar."
+      "en": "True or false: Fireworks at midnight and New Year dinners.",
+      "sv": "Sant eller falskt: Fyrverkerier vid midnatt och nyårsmiddagar."
     },
     "opts": [
       {
@@ -28143,8 +28143,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they come from Christian traditions and are often seen as part of cultural heritage.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de kommer ur kristna traditioner och ses ofta som en del av kulturarvet."
+      "en": "True or false: They come from Christian traditions and are often seen as part of cultural heritage.",
+      "sv": "Sant eller falskt: De kommer ur kristna traditioner och ses ofta som en del av kulturarvet."
     },
     "opts": [
       {
@@ -28183,8 +28183,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they were created only by modern companies and advertising.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de skapades bara av moderna företag och reklam."
+      "en": "True or false: They were created only by modern companies and advertising.",
+      "sv": "Sant eller falskt: De skapades bara av moderna företag och reklam."
     },
     "opts": [
       {
@@ -28319,8 +28319,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is eid al-Fitr.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är id al-fitr."
+      "en": "True or false: Eid al-Fitr.",
+      "sv": "Sant eller falskt: Id al-fitr."
     },
     "opts": [
       {
@@ -28359,8 +28359,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is nouruz.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är nouruz."
+      "en": "True or false: Nouruz.",
+      "sv": "Sant eller falskt: Nouruz."
     },
     "opts": [
       {
@@ -28495,8 +28495,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is at the spring equinox on 21 March.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är vid vårdagjämningen den 21 mars."
+      "en": "True or false: At the spring equinox on 21 March.",
+      "sv": "Sant eller falskt: Vid vårdagjämningen den 21 mars."
     },
     "opts": [
       {
@@ -28535,8 +28535,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is on Midsummer Eve between 19 and 25 June.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är på midsommarafton mellan 19 och 25 juni."
+      "en": "True or false: On Midsummer Eve between 19 and 25 June.",
+      "sv": "Sant eller falskt: På midsommarafton mellan 19 och 25 juni."
     },
     "opts": [
       {
@@ -28671,8 +28671,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is a crown of lights on their head.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är en ljuskrona på huvudet."
+      "en": "True or false: A crown of lights on their head.",
+      "sv": "Sant eller falskt: En ljuskrona på huvudet."
     },
     "opts": [
       {
@@ -28711,8 +28711,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is a flower wreath on their head.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är en blomsterkrans på huvudet."
+      "en": "True or false: A flower wreath on their head.",
+      "sv": "Sant eller falskt: En blomsterkrans på huvudet."
     },
     "opts": [
       {
@@ -28847,8 +28847,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the church service early on the morning of 25 December is called Julotta, a Christmas morning service.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är julotta."
+      "en": "True or false: The church service early on the morning of 25 December is called Julotta, a Christmas morning service.",
+      "sv": "Sant eller falskt: Julotta."
     },
     "opts": [
       {
@@ -28887,8 +28887,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the church service early on the morning of 25 December is called Lucia procession.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är luciatåg."
+      "en": "True or false: The church service early on the morning of 25 December is called Lucia procession.",
+      "sv": "Sant eller falskt: Luciatåg."
     },
     "opts": [
       {
@@ -29024,8 +29024,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is eating eggs, lamb, salmon, and herring, and children getting candy in Easter eggs.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är äta ägg, lamm, lax och sill och att barn får godis i påskägg."
+      "en": "True or false: Eating eggs, lamb, salmon, and herring, and children getting candy in Easter eggs.",
+      "sv": "Sant eller falskt: Äta ägg, lamm, lax och sill och att barn får godis i påskägg."
     },
     "opts": [
       {
@@ -29065,8 +29065,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is lighting Advent candles and opening Advent calendars.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är tända adventsljus och öppna adventskalendrar."
+      "en": "True or false: Lighting Advent candles and opening Advent calendars.",
+      "sv": "Sant eller falskt: Tända adventsljus och öppna adventskalendrar."
     },
     "opts": [
       {
@@ -29203,8 +29203,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is open one door each day until Christmas Eve.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är öppnar en lucka varje dag fram till julafton."
+      "en": "True or false: Open one door each day until Christmas Eve.",
+      "sv": "Sant eller falskt: Öppnar en lucka varje dag fram till julafton."
     },
     "opts": [
       {
@@ -29243,8 +29243,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is light large bonfires in the evening.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är tänder stora brasor på kvällen."
+      "en": "True or false: Light large bonfires in the evening.",
+      "sv": "Sant eller falskt: Tänder stora brasor på kvällen."
     },
     "opts": [
       {
@@ -29380,8 +29380,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 2005.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 2005."
+      "en": "True or false: 2005.",
+      "sv": "Sant eller falskt: 2005."
     },
     "opts": [
       {
@@ -29421,8 +29421,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is 1523.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är 1523."
+      "en": "True or false: 1523.",
+      "sv": "Sant eller falskt: 1523."
     },
     "opts": [
       {
@@ -29559,8 +29559,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that All Saints’ Day is observed on a Saturday at the end of October or the beginning of November.",
-      "sv": "Sant eller falskt: Det är korrekt att Alla helgons dag firas på en lördag i slutet av oktober eller början av november."
+      "en": "True or false: All Saints’ Day is observed on a Saturday at the end of October or the beginning of November.",
+      "sv": "Sant eller falskt: Alla helgons dag firas på en lördag i slutet av oktober eller början av november."
     },
     "opts": [
       {
@@ -29599,8 +29599,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that All Saints’ Day is observed on a Friday between 19 and 25 June.",
-      "sv": "Sant eller falskt: Det är korrekt att Alla helgons dag firas på en fredag mellan 19 och 25 juni."
+      "en": "True or false: All Saints’ Day is observed on a Friday between 19 and 25 June.",
+      "sv": "Sant eller falskt: Alla helgons dag firas på en fredag mellan 19 och 25 juni."
     },
     "opts": [
       {
@@ -29735,8 +29735,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is an Advent star in the window and an Advent candleholder with four candles.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är en adventsstjärna i fönstret och en adventsljusstake med fyra ljus."
+      "en": "True or false: An Advent star in the window and an Advent candleholder with four candles.",
+      "sv": "Sant eller falskt: En adventsstjärna i fönstret och en adventsljusstake med fyra ljus."
     },
     "opts": [
       {
@@ -29775,8 +29775,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is a midsummer pole in the living room and herring on the table.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är en midsommarstång i vardagsrummet och sill på bordet."
+      "en": "True or false: A midsummer pole in the living room and herring on the table.",
+      "sv": "Sant eller falskt: En midsommarstång i vardagsrummet och sill på bordet."
     },
     "opts": [
       {
@@ -29912,8 +29912,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is go to cemeteries and light candles on graves.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är går till kyrkogården och tänder ljus på gravar."
+      "en": "True or false: Go to cemeteries and light candles on graves.",
+      "sv": "Sant eller falskt: Går till kyrkogården och tänder ljus på gravar."
     },
     "opts": [
       {
@@ -29953,8 +29953,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is dance around a midsummer pole and make flower wreaths.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är dansar runt midsommarstången och binder blomsterkransar."
+      "en": "True or false: Dance around a midsummer pole and make flower wreaths.",
+      "sv": "Sant eller falskt: Dansar runt midsommarstången och binder blomsterkransar."
     },
     "opts": [
       {
@@ -30091,8 +30091,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they can be brought along and adapted to new places and people.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de kan tas med och anpassas till nya platser och människor."
+      "en": "True or false: They can be brought along and adapted to new places and people.",
+      "sv": "Sant eller falskt: De kan tas med och anpassas till nya platser och människor."
     },
     "opts": [
       {
@@ -30131,8 +30131,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is they must always disappear completely.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är de måste alltid försvinna helt."
+      "en": "True or false: They must always disappear completely.",
+      "sv": "Sant eller falskt: De måste alltid försvinna helt."
     },
     "opts": [
       {
@@ -30267,8 +30267,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is bring a tree into the house and decorate it with strings of lights, baubles, and tinsel.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter."
+      "en": "True or false: Bring a tree into the house and decorate it with strings of lights, baubles, and tinsel.",
+      "sv": "Sant eller falskt: Tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter."
     },
     "opts": [
       {
@@ -30307,8 +30307,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is plant a tree at the cemetery and light grave candles.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är planterar en gran på kyrkogården och tänder gravljus."
+      "en": "True or false: Plant a tree at the cemetery and light grave candles.",
+      "sv": "Sant eller falskt: Planterar en gran på kyrkogården och tänder gravljus."
     },
     "opts": [
       {
@@ -30443,8 +30443,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is jesus' birth.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är jesu födelse."
+      "en": "True or false: Jesus' birth.",
+      "sv": "Sant eller falskt: Jesu födelse."
     },
     "opts": [
       {
@@ -30483,8 +30483,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is the arrival of spring.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är vårens ankomst."
+      "en": "True or false: The arrival of spring.",
+      "sv": "Sant eller falskt: Vårens ankomst."
     },
     "opts": [
       {
@@ -30619,8 +30619,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is many people celebrate Christmas as a family holiday even without religious meaning.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är många firar jul som en familjehögtid även utan religiös betydelse."
+      "en": "True or false: Many people celebrate Christmas as a family holiday even without religious meaning.",
+      "sv": "Sant eller falskt: Många firar jul som en familjehögtid även utan religiös betydelse."
     },
     "opts": [
       {
@@ -30659,8 +30659,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is christmas is always celebrated with demonstrations about social issues.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är jul firas alltid med demonstrationer om sociala frågor."
+      "en": "True or false: Christmas is always celebrated with demonstrations about social issues.",
+      "sv": "Sant eller falskt: Jul firas alltid med demonstrationer om sociala frågor."
     },
     "opts": [
       {
@@ -30795,8 +30795,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is special saffron Lucia buns.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är särskilda lussebullar med saffran."
+      "en": "True or false: Special saffron Lucia buns.",
+      "sv": "Sant eller falskt: Särskilda lussebullar med saffran."
     },
     "opts": [
       {
@@ -30835,8 +30835,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that the answer is herring, new potatoes, and strawberries.",
-      "sv": "Sant eller falskt: Det är korrekt att Svaret är sill, färskpotatis och jordgubbar."
+      "en": "True or false: Herring, new potatoes, and strawberries.",
+      "sv": "Sant eller falskt: Sill, färskpotatis och jordgubbar."
     },
     "opts": [
       {
@@ -30971,8 +30971,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden has about 250,000 islands.",
-      "sv": "Sant eller falskt: Det är korrekt att Sverige har cirka 250 000 öar."
+      "en": "True or false: Sweden has about 250,000 islands.",
+      "sv": "Sant eller falskt: Sverige har cirka 250 000 öar."
     },
     "opts": [
       {
@@ -31011,8 +31011,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is correct that Sweden has about 25,000 islands.",
-      "sv": "Sant eller falskt: Det är korrekt att Sverige har cirka 25 000 öar."
+      "en": "True or false: Sweden has about 25,000 islands.",
+      "sv": "Sant eller falskt: Sverige har cirka 25 000 öar."
     },
     "opts": [
       {
