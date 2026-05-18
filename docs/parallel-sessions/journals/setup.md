@@ -659,3 +659,11 @@ Verification: after isolated latest-`origin/main` worktree rebase, `NODE_OPTIONS
 PR: #359 opened from `task/setup/account-scope-1779113563`; merge pending at handoff commit time.
 Blocked? no - this closes the static-site source portion of REVIEWER-ACCOUNT-SCOPE-1 without touching the broader native app account route/dependency question or unrelated dirty files in the shared checkout.
 Next suggested validator action: inspect the static-site account-scope guard and rerun the focused guard plus `#/ebook` browser smoke before accepting the static-site defect.
+
+## Iteration 202 - 2026-05-18
+Task completed: REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1 - updated static FAQ/privacy copy to describe Google AdSense on web, Google Mobile Ads in app, consent-aware ads, local study progress, and one-time 29 SEK Remove Ads without stale disabled-ad or future-premium claims.
+Artifacts changed: `site/app.js`, `site/index.html`, `scripts/static-site-privacy-copy.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-copy` exit 0 with 2/2 passing; `node --check site/app.js && node --check scripts/static-site-privacy-copy.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/static-site-privacy-copy.test.js package.json` exit 0; `git diff --check origin/main..HEAD` exit 0.
+PR: #368 opened from `task/setup/privacy-copy-1779114396`; merge pending at handoff commit time.
+Blocked? no - this closes the static privacy/monetization copy source atom; production deployment freshness remains separate external live-site evidence work.
+Next suggested validator action: inspect the new static privacy-copy guard and rerun `npm run test:static-site-privacy-copy` before accepting the reviewer copy defect.
