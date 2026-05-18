@@ -155,3 +155,16 @@ deleted. Do not route q020/q027/q028 automatically after q016. SITE-P0
 deployed-site blockers are active in `codex-tasks/blockers.txt`, so escalate
 fresh capacity to VALIDATOR for SITE lease/staffing before assigning any new
 non-site content.
+
+MANAGER-content validation hold 2026-05-18T15:01:10+02:00
+Clean `origin/main` at `82291b1` / `1e4445e` fails
+`npm run validate:content` before any CONTENT diff with upstream
+`components/quiz/AnswerOption.tsx` accessibility parity errors: missing shared
+Button import, explicit button role, feedback-aware visible label, and
+tone-to-variant mapping. This is outside the CONTENT lease.
+
+Hold CONTENT PR #295 / q142 and the in-flight q018 atom unless VALIDATOR
+explicitly allows a content merge over the red base or the COMPONENTS/UIUX
+gate is fixed. Do not duplicate q142/q018, do not start another
+`data/additionalQuestions.ts` count-gate atom, and do not edit `components/**`
+from CONTENT.
