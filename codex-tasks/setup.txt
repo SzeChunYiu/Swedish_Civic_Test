@@ -231,6 +231,19 @@ same targeted Prettier command still fails on
 follow-up PR that formats the committed visual-smoke manifest and reruns the
 focused visual-smoke gates before this atom can move to accepted.
 
+MANAGER-build recheck 2026-05-18T17:43+02:00:
+Current `origin/main` is `d4a2146`. Local readiness is still green:
+`node --test scripts/check-live-site.test.js` passes 7/7,
+`node scripts/export-site-question-bank.js --check` reports 715 questions and
+13 chapters, and `npm run validate:content` passes with static-site parity
+true. Production still fails the hash-aware live smoke:
+`node scripts/check-live-site.js
+https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` reports
+`expected c0db6739a52a, found 5d2710bebf7e` for `static question bank content`.
+Do not open another local source atom for this blocker unless new source drift
+appears; closure needs production deploy capacity or operator-verified deploy
+evidence for current `origin/main`.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
@@ -256,6 +269,12 @@ focused visual-smoke gates before this atom can move to accepted.
      `43101ee` failed before any steps; job `76557106333` reports the GitHub
      Actions payment/spending-limit blocker. This remains external deployment
      capacity, not a source-readiness task.
+   - Latest manager recheck, 2026-05-18T17:43+02:00: current `origin/main`
+     is `d4a2146`; local live-smoke unit coverage, static-site question-bank
+     parity, and content validation pass, but production still serves stale
+     static-bank content (`expected c0db6739a52a, found 5d2710bebf7e`). This
+     remains external deployment capacity/operator evidence, not a new local
+     source task.
 
 Accepted P0 SETUP source atom while live deploy is externally blocked:
 

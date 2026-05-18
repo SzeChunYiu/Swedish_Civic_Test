@@ -98,3 +98,14 @@ question-bank hash (`expected cbb24a108686`, `found 5d2710bebf7e`). This is an
 operator/external deployment-capacity blocker, not a local source-readiness
 blocker. Do not close SITE-P0-5 until production serves current `origin/main`
 and the hash-aware live smoke passes.
+
+MANAGER-build recheck 2026-05-18T17:43:37+02:00: current `origin/main`
+`d4a2146` remains locally ready: live-smoke unit coverage passed 7/7,
+static-site question-bank parity reports 715 questions and 13 chapters, and
+`validate:content` passes with static-site parity true. Production still serves
+the stale question-bank hash at
+`https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`: live smoke
+passes count/routes but fails `static question bank content` with
+`expected c0db6739a52a, found 5d2710bebf7e`. No new local source atom is
+unblocked by this recheck; keep this as external deploy capacity/operator
+evidence.
