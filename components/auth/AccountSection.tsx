@@ -4,19 +4,73 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../lib/auth/AuthContext';
 import { deriveDisplayInfo } from '../../lib/auth/displayName';
 import { useRemoteEntitlement } from '../../lib/auth/entitlements';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { Avatar } from './Avatar';
 
-export function AccountSection() {
+type AccountSectionCopy = {
+  accountTitle: string;
+  loadingSubtitle: string;
+  signInTitle: string;
+  signInSubtitle: string;
+  signInLabel: string;
+  signInAccessibilityLabel: string;
+  accountFallback: string;
+  accountAccessibilityLabel: (name: string) => string;
+  removeAdsActiveLabel: string;
+  manageAccountLabel: string;
+};
+
+const accountSectionCopy: Record<AppLanguage, AccountSectionCopy> = {
+  sv: {
+    accountTitle: 'Konto',
+    loadingSubtitle: 'Kontrollerar inloggningsstatus…',
+    signInTitle: 'Logga in',
+    signInSubtitle:
+      'Synkronisera dina framsteg mellan enheter och koppla annonsfri åtkomst till ditt konto. Det är valfritt; appen fungerar även utan konto.',
+    signInLabel: 'Logga in',
+    signInAccessibilityLabel: 'Öppna inloggning',
+    accountFallback: 'ditt konto',
+    accountAccessibilityLabel: (name) => `Öppna konto för ${name}`,
+    removeAdsActiveLabel: 'Annonsfritt · aktivt',
+    manageAccountLabel: 'Hantera konto →',
+  },
+  en: {
+    accountTitle: 'Account',
+    loadingSubtitle: 'Checking sign-in status…',
+    signInTitle: 'Sign in',
+    signInSubtitle:
+      'Sync your progress across devices and link ad-free access to your account. This is optional; the app still works without an account.',
+    signInLabel: 'Sign in',
+    signInAccessibilityLabel: 'Open sign-in',
+    accountFallback: 'your account',
+    accountAccessibilityLabel: (name) => `Open account for ${name}`,
+    removeAdsActiveLabel: 'Ad-free · active',
+    manageAccountLabel: 'Manage account →',
+  },
+};
+
+/**
+ * Account settings surface. Defaults to the current settings language unless
+ * a caller provides `languageOverride` for previews or focused tests.
+ */
+export interface AccountSectionProps {
+  languageOverride?: AppLanguage;
+}
+
+export function AccountSection({ languageOverride }: AccountSectionProps = {}) {
   const { status, user } = useAuth();
   const { entitlement } = useRemoteEntitlement();
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = accountSectionCopy[language];
   const info = deriveDisplayInfo(user);
 
   if (status === 'loading') {
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        <Text style={styles.subtitle}>Checking sign-in status…</Text>
+        <Text style={styles.sectionTitle}>{copy.accountTitle}</Text>
+        <Text style={styles.subtitle}>{copy.loadingSubtitle}</Text>
       </View>
     );
   }
@@ -24,26 +78,25 @@ export function AccountSection() {
   if (status === 'anonymous' || !user) {
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Sign in</Text>
-        <Text style={styles.subtitle}>
-          Sync your progress across devices and tie Remove-Ads to your account. Optional — the app
-          works fully anonymous.
-        </Text>
+        <Text style={styles.sectionTitle}>{copy.signInTitle}</Text>
+        <Text style={styles.subtitle}>{copy.signInSubtitle}</Text>
         <Link
-          accessibilityLabel="Open sign-in"
+          accessibilityLabel={copy.signInAccessibilityLabel}
           accessibilityRole="link"
           href="/(auth)/sign-in"
           style={styles.primaryButton}
         >
-          Sign in
+          {copy.signInLabel}
         </Link>
       </View>
     );
   }
 
+  const accountName = info.name ?? info.email ?? copy.accountFallback;
+
   return (
     <Link
-      accessibilityLabel={`Open account for ${info.name ?? info.email ?? 'your account'}`}
+      accessibilityLabel={copy.accountAccessibilityLabel(accountName)}
       accessibilityRole="link"
       href="/account"
       style={styles.linkSection}
@@ -55,7 +108,7 @@ export function AccountSection() {
             {info.name ?? info.email}
           </Text>
           <Text numberOfLines={1} style={styles.subtitle}>
-            {entitlement.removeAds ? 'Remove-Ads · active' : 'Manage account →'}
+            {entitlement.removeAds ? copy.removeAdsActiveLabel : copy.manageAccountLabel}
           </Text>
         </View>
       </View>
