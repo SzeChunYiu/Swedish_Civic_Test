@@ -21,9 +21,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sverige ligger i Norden i norra Europa. Det beskriver också Norden som en del av norra Europa, vilket gör alternativen om södra Europa, västra Asien och Nordamerika fel.',
+      'Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that Sweden is in the Nordic region in northern Europe. It also describes the Nordic region as part of northern Europe, which makes the alternatives about southern Europe, western Asia, and North America incorrect.',
+      'Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
