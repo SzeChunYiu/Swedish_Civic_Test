@@ -592,6 +592,6 @@ Next suggested validator action: inspect the scaffold manifest/test drift fix an
 Task completed: SITE-P0-1 - wired the deployed static `site/` Practice route to the shared static question bank and styled chapter hub without regressing Ebook.
 Artifacts changed: `site/index.html`, `site/app.js`, `site/practice.js`, `site/styles.css`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `node --check site/app.js`, `node --check site/practice.js`, and `node --check site/questions.js` exit 0; route/static-link assertion exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `npm run test:ownership` exit 0; `git diff --check -- site/index.html site/app.js site/practice.js site/styles.css` exit 0; local static-site smoke with system Chrome from `/` to `#/practice`, first chapter drill, and `#/ebook` exit 0 with 12 hub cards, 4 quiz options, Ebook rendered, and no browser console/page errors.
-PR: #242 opened from `task/setup/site-p0-1-1779104828`; merge pending at handoff update.
+PR: #242 squash-merged to `main` as `c4404d8`.
 Blocked? no - SITE-P0-1 source behavior and gates are complete on a latest-`origin/main` SETUP branch.
 Next suggested validator action: inspect the static Practice route wiring and rerun the route/static-link assertion plus local static-site smoke.
