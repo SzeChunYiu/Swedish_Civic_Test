@@ -207,6 +207,20 @@ site/deploy-path change at `43101ee` failed before steps; job `76557106333`
 reports the Actions payment/spending-limit blocker. Keep live deploy open;
 visual-smoke launch-overlay evidence remains the next unblocked source atom.
 
+MANAGER-build QA 2026-05-18T17:26+02:00:
+Do not accept PR #425 / `890aab1` for
+`REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1` yet. Clean PR-worktree verification
+passed `npm run test:screenshot-manifest` 2/2, `npm run typecheck -- --pretty
+false`, `npm run lint`, `npm run test:ownership`, and `git diff --check`, and
+the PR-triggered Release validation job failed before steps for the known
+Actions payment/spending-limit blocker. However,
+`npx --no-install prettier --check package.json
+scripts/visual-smoke-report.test.js tests/e2e/visual-smoke.spec.ts
+reports/2026-05-15-uiux-screenshots/manifest.json` fails on
+`reports/2026-05-15-uiux-screenshots/manifest.json`. Keep the atom active until
+the report manifest is formatted in the PR branch and the focused visual-smoke
+gates are rerun.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
@@ -242,6 +256,9 @@ Next unblocked P0 SETUP source atoms while live deploy is externally blocked:
      test-disabled before screenshots; duplicate screenshot hashes and visible
      launch overlays are rejected or explicitly explained. Keep exam no-ad
      behavior covered separately.
+   - Current caveat: PR #425 is not acceptable until the screenshot manifest
+     passes the targeted Prettier check recorded in the 2026-05-18T17:26+02:00
+     manager QA note.
    - Required gates: official
      `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1`
      or the nearest visual-smoke gate, plus assertions/evidence for duplicate
