@@ -3522,3 +3522,28 @@ Evidence: current main has seven remaining q501-q550 generated true/false standa
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep q501-q550 behind q451-q500 source routing, then route DATA-INTEGRITY to q501-q550 cleanup for q526/q527/q530/q531/q535/q542/q543 with generator, validator mirror, export/static parity, and current-main spot-check evidence.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-q551-q600-1779135700` / `task/reviewer/q551-q600-current-1779135700`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated true/false standalone/naturalness recheck for q551-q600.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active validator/data-integrity/setup queues, blockers, verify notes, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `2af6fa7`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Duplicate/current-state scan found older q551-q600 VERIFY residual evidence, but the current static bank has changed after later generator repairs, so this pass narrowed current evidence rather than re-filing stale rows.
+- Direct VM inspection of `site/questions.js` found 50 q551-q600 rows, 25 true/false rows, zero true/false prefix offenders, zero true/false stem meta offenders, zero generated unknown-material fallback options, and current naturalness offenders `q563`, `q574`, `q598`, and `q599`.
+- CSV/static spot check confirmed the same four texts are mirrored in `content/question-bank.csv` and `site/questions.js`.
+- `q563` English says `Advent occurs a Saturday...`; `q574` English renders lowercase `buddhist and Hindu`; `q598` English says `Travel to Asia and increased interest... is mentioned...`; and `q599` remains a stilted `That ... is mentioned...` true/false stem.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with validators green despite the four rows.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 29/29 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - first exit 2 because the temporary worktree had no local dependency tree; after linking `/home/billy/Swedish_Civic_Test/node_modules`, rerun exited 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1`.
+Evidence: current main has four remaining q551-q600 generated true/false naturalness defects while the existing validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep q551-q600 behind q451-q500 and q501-q550 source routing unless VALIDATOR reorders, then route DATA-INTEGRITY to q563/q574/q598/q599 cleanup with generator, validator mirror, export/static parity, and current-main spot-check evidence.
