@@ -723,3 +723,11 @@ Verification: `npm run test:native-account-scope` exit 0 with 4/4 passing; `npm 
 PR: pending from `task/setup/native-account-scope-1779120400` at handoff commit time.
 Blocked? no for the native account-scope source atom. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains open and externally blocked on production deploy capacity/operator evidence.
 Next suggested validator action: inspect that native account/auth routes and Supabase runtime dependencies are gone, rerun `npm run test:native-account-scope`, `npm run typecheck -- --pretty false`, and the focused profile/settings/legal parity bundle, then accept `REVIEWER-NATIVE-ACCOUNT-SCOPE-1` if no native account surface remains.
+
+## Iteration 210 - 2026-05-18
+Task completed: REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1 - added localized independent-study / not-a-real-exam disclaimers to static Practice answer feedback and Mock result review while keeping per-question UHR source citations visible.
+Artifacts changed: `site/app.js`, `site/practice.js`, `site/styles.css`, `scripts/static-site-question-feedback.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `npm run test:static-site-question-feedback` exit 0 with 2/2 passing; `node --test tests/content-static-site-source-citation-parity.test.js` exit 0 with 3/3 passing; `npm run validate:content` exit 0 with 715 questions and static-site parity true; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `node --check` for `site/app.js`, `site/practice.js`, and `scripts/static-site-question-feedback.test.js` exit 0; targeted Prettier for the new verifier/package metadata exit 0; `git diff --check` exit 0.
+PR: pending from `task/setup/site-citation-disclaimer-1779122510` at handoff commit time.
+Blocked? no - the source atom is covered by a focused VM DOM guard proving Practice post-answer feedback and Mock review rows render citation plus disclaimer without touching canonical content or question-bank generation.
+Next suggested validator action: inspect the static feedback disclaimer copy and rerun `npm run test:static-site-question-feedback`, source-citation parity, and the standard content/typecheck/ownership gates before accepting `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1`.

@@ -967,6 +967,12 @@ function smtQuizSourceCitation(question, lang) {
     : `Source: ${title}, ${source.chapter}, ${source.section}, p. ${source.page}`;
 }
 
+function smtQuizQuestionDisclaimer(lang) {
+  return lang === "sv"
+    ? "Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga."
+    : "Independent study practice, not a real exam or an official UHR question.";
+}
+
 function smtQuizHash() {
   return (location.hash || "#/").replace(/^#/, "");
 }
@@ -1087,9 +1093,13 @@ function smtQuizRender() {
   let feedback = "";
   if (answered) {
     const right = ans === q.answer;
+    const feedbackSource = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
+    const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
     feedback = `
       <div class="quiz__feedback ${right ? "" : "is-wrong"}">
         <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
+        <p class="quiz__feedback-source">${feedbackSource}</p>
+        <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
     `;
   }

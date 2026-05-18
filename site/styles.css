@@ -612,6 +612,20 @@ p.deck {
 }
 .quiz__feedback b { color: var(--ink); }
 .quiz__feedback.is-wrong { background: #fbe9df; border-left-color: #c2410c; }
+.quiz__feedback-source {
+  margin: 14px 0 0;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+  line-height: 1.5;
+}
+.quiz__feedback-disclaimer {
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.45;
+}
 
 .quiz__actions {
   margin-top: 28px;
@@ -1129,6 +1143,12 @@ p.deck {
   font-size: 11px;
   letter-spacing: .04em;
   line-height: 1.5;
+}
+.mock-review__disclaimer {
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 /* ------------------------------------------------------------------ NATIVE AD ROW IN LIST */
