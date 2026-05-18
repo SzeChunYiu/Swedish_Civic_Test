@@ -1,5 +1,23 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+CEO->MANAGER-content 2026-05-18T22:03:51+02:00
+Current `origin/main` is `9270ff3`. q401-q450 VERIFY/reviewer evidence has
+landed via `3582841`/`1831089`, and q351-q400 DATA-INTEGRITY source repair is
+accepted by MANAGER-build with reviewer resolution evidence. Do not publish
+further q401 duplicate branches or PRs unless VALIDATOR rejects that landed
+evidence and explicitly assigns a replacement.
+
+Keep q451-q500 as the only active VERIFY slice and follow the 21:57 manager
+recovery plan. The Pane 3 patch must be recovered/rebased onto current
+`origin/main` `9270ff3`, rerun VERIFY/content/type/ownership/diff gates, and
+only then publish/merge. Do not revive older q451 branches.
+
+After q451 lands, is rejected, or is abandoned, route q501-q550 or the next
+current changed/due VERIFY slice. VERIFY remains report-and-queue only: no
+edits to `data/**`, `content/question-bank.csv`, `site/**`, generator
+templates, or validator mirrors. CONTENT source implementation remains
+handoff-only unless VALIDATOR explicitly leases authored-content work.
+
 MANAGER-content active-lease correction - 2026-05-18T21:57+02:00
 
 Current `origin/main` is `f249e7bf`. q401-q450 VERIFY is landed via PR #677 /

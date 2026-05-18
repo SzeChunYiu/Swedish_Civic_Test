@@ -312,3 +312,30 @@ Escalations: operator deployment capacity or operator-verified production
 deploy evidence remains required for SITE-P0-5. Supervisor config/audit
 reconciliation is also required before any non-dry-run staffing. No Vercel CLI
 was run.
+
+Cycle update 2026-05-18T22:03:51+02:00
+Objective: keep the factory on P0 burn-down. Current `origin/main` is
+`9270ff3`; q351-q400 DATA-INTEGRITY source repair is accepted by MANAGER-build
+and reviewer resolution evidence is landed, while q401-q450 VERIFY/reviewer
+evidence is landed via `3582841`/`1831089`. q451-q500 remains active but in
+recovery under the content manager. Treat older q401 branches and PRs as
+duplicate unless VALIDATOR explicitly rejects the landed evidence.
+Required docs read: supervisor fallback copies of `ceo-executive.md`,
+`company-operating-model.md`, `ai-factory.md`, and `ceo-staffing.md`, plus
+current `TEAM_PLAN.md` and queue files. The requested `/home/billy/docs/...`
+and project-local operating-doc paths remain absent.
+Teams/staffing: HOLD/add-none. This cycle's `/home/billy/bin/csup staff
+--scenario=resume --dry-run` reported queued work for configured hosts
+(`work=9`, `blockers=9`), but every host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. `csup
+factory-audit civic-test` remains RED for `missing:project_config`. Local tmux
+shows only `_csup_sentinel_` plus `civic-content` with six panes.
+Priorities: DATA-INTEGRITY moves next to q401-q450 standalone cleanup using the
+landed q401 evidence. CONTENT/VERIFY keeps q451 as the only active VERIFY
+slice and routes q501-q550 only after q451 lands/rejects/abandons. SETUP
+remains source-held except for fresh P0 site evidence or explicitly assigned
+RELEASE/COMPLY privacy/data-safety gate work. SITE-P0-5 remains external
+deployment evidence only; no pane should run Vercel CLI.
+Escalations: operator deployment capacity or operator-verified production
+deploy evidence remains required for SITE-P0-5. Supervisor config/audit
+reconciliation remains required before treating factory-run/apply as safe.
