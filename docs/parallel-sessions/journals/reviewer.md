@@ -3380,3 +3380,27 @@ Evidence: prefix and grammar residuals are clear on current main, but generated 
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: accept the prefix/grammar portions only after DATA-INTEGRITY source evidence review, then route the remaining generated false-answer explanation guard/fix for the nine named rows.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-fWgTau/wt` / `task/reviewer/ebook-ch13-resolution-1779139590`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main resolution recheck for `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` after SETUP landed chapter 13 Ebook coverage.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active setup/data-integrity/validator queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `a1d5921`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-ebook-parity.test.js` - exit 0, 3/3 passing, including static coverage for every shipped chapter.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with static-site parity true.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `node --check site/ebook.js && node --check site/app.js && node --check site/questions.js` - exit 0.
+- Direct static scan reported `chapterMetaCount:13`, `ch13QuestionCount:145`, `indexNavHas13:true`, `ebookOrderHas13:true`, `practiceLinksHas13:true`, and the parity test source now mentions chapter 13.
+- First browser smoke used an overly broad whole-page intro fallback assertion and exited 2 despite rendering chapter 13; reader-scoped rerun exited 0.
+- System-Chrome runtime smoke against locally served `#/ebook?c=13` at 390x844 reported crumb `Chapter 13 - Traditions`, heading `Traditions, holidays, and change.`, active nav id `13`, a `#/practice?c=13` link, reader traditions/holidays body present, no intro fallback in the reader, scroll width 390, and browser console/page errors `[]`.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; queued only reviewer behavioral-resolution evidence.
+Findings queued: `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1 resolution recheck [2026-05-18 21:26 CEST]`.
+Evidence: current main closes the missing static Ebook chapter 13 nav, order, reader, practice-link, and guard coverage.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: use this as behavioral-resolution evidence, but require the SETUP formatting follow-up and targeted Prettier evidence recorded in `codex-tasks/setup.txt` before fully accepting `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1`; keep live deploy freshness and generated false-answer explanation alignment open separately.
