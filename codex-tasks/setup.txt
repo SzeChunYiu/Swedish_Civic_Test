@@ -155,26 +155,21 @@ Accepted P0 SETUP atoms:
       --check` for `site/app.js`, `site/practice.js`, and
       `scripts/static-site-answer-shuffle.test.js`, and `git diff --check
       cac0c85^..cac0c85` all exit 0.
+17. `REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1` accepted via PR #526 /
+    `8366d17`.
+    - Clean manager verification on current `origin/main` `8366d17` passed
+      `npm run test:static-site-question-feedback` 3/3 including active Mock,
+      `node --test tests/content-static-site-source-citation-parity.test.js`
+      3/3, `npm run test:static-site-answer-shuffle` 4/4,
+      `npm run validate:content` at 720 questions with static parity true,
+      `npm run typecheck -- --pretty false`, `npm run lint`,
+      `npm run test:ownership`, `node --check site/practice.js`,
+      `node --check scripts/static-site-question-feedback.test.js`, targeted
+      Prettier, and `git diff --check 8366d17^..8366d17` all exit 0.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
-1. `REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1`
-   - Scope: deployed static `site/` active Mock exam question surface before
-     submission.
-   - Required behavior: every active Mock exam question screen must show the
-     independent-study / not-a-real-exam disclaimer alongside the visible source
-     citation, not only after submission in the review accordion.
-   - Required gates: focused static browser or DOM guard proving an active
-     `#/mock?run=1` question renders both source and disclaimer before
-     submission; regression coverage must keep existing Practice feedback and
-     Mock review citation/disclaimer checks green; `node --check` for changed
-     `site/` scripts; `npm run validate:content`; typecheck; lint; ownership;
-     targeted Prettier/diff checks; journal handoff; PR/merge evidence.
-   - Reviewer evidence: after commit `1db08b3`, Practice feedback and Mock
-     review are green, but the active Mock exam question surface still reported
-     `hasSource:true` and `hasDisclaimer:false`.
-
-2. `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`
+1. `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`
    - Scope: deployed static `site/` Settings language changes while a Practice
      chapter quiz or Mock exam is active.
    - Required behavior: changing language through Settings must immediately
@@ -192,7 +187,7 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
      plus English answers, and active Mock still showed `MOCK EXAM`,
      `TIME LEFT`, `Submit`, and English navigation labels.
 
-3. `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`
+2. `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`
    - Scope: deployed static `site/` completed Practice result breakdown.
    - Required behavior: Practice completion result labels must be localized and
      spaced in Swedish and English; the Swedish result must not render
@@ -204,7 +199,7 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
    - Reviewer evidence: Swedish `#/practice?c=mix` completion rendered rows
      `["7Rätt","3Fel","70%score"]` with `hasEnglishScore:true`.
 
-4. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
+3. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
    - Scope: deployed static `site/` mobile header/navigation at <=390px width.
    - Required behavior: Practice, Mock exam, Ebook, Support, and Settings must
      be reachable without horizontal overflow or hidden 0x0 nav links.
@@ -217,7 +212,7 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
      scroll width in a 390px viewport, visible nav only `Home` and `Practice`,
      hidden `Mock exam`, `Ebook`, and `Support`, and no menu button.
 
-5. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
+4. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
    - Scope: deployed static `site/` user-visible question-count/product-count
      copy in `site/index.html`, `site/i18n-extras.js`, and any related static
      copy surface.
