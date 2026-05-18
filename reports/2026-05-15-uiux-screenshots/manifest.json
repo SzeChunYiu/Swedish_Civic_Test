@@ -1,0 +1,97 @@
+{
+  "capturedAt": "2026-05-18T05:22:30.901Z",
+  "viewport": "iPhone 12 via Playwright project config",
+  "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
+  "routes": [
+    {
+      "name": "index",
+      "route": "/",
+      "file": "index.png",
+      "bytes": 191534
+    },
+    {
+      "name": "onboarding",
+      "route": "/onboarding",
+      "file": "onboarding.png",
+      "bytes": 57800
+    },
+    {
+      "name": "home",
+      "route": "/home",
+      "file": "home.png",
+      "bytes": 57800
+    },
+    {
+      "name": "learn",
+      "route": "/learn",
+      "file": "learn.png",
+      "bytes": 57800
+    },
+    {
+      "name": "practice",
+      "route": "/practice",
+      "file": "practice.png",
+      "bytes": 157949
+    },
+    {
+      "name": "exam",
+      "route": "/exam",
+      "file": "exam.png",
+      "bytes": 154836
+    },
+    {
+      "name": "mistakes",
+      "route": "/mistakes",
+      "file": "mistakes.png",
+      "bytes": 57800
+    },
+    {
+      "name": "profile",
+      "route": "/profile",
+      "file": "profile.png",
+      "bytes": 57800
+    },
+    {
+      "name": "settings",
+      "route": "/settings",
+      "file": "settings.png",
+      "bytes": 57800
+    },
+    {
+      "name": "chapter-ch01",
+      "route": "/chapter/ch01",
+      "file": "chapter-ch01.png",
+      "bytes": 57800
+    },
+    {
+      "name": "disclaimer",
+      "route": "/disclaimer",
+      "file": "disclaimer.png",
+      "bytes": 178316
+    },
+    {
+      "name": "privacy",
+      "route": "/privacy",
+      "file": "privacy.png",
+      "bytes": 236784
+    },
+    {
+      "name": "terms",
+      "route": "/terms",
+      "file": "terms.png",
+      "bytes": 216700
+    },
+    {
+      "name": "sources",
+      "route": "/sources",
+      "file": "sources.png",
+      "bytes": 244271
+    },
+    {
+      "name": "support",
+      "route": "/support",
+      "file": "support.png",
+      "bytes": 221212
+    }
+  ]
+}

@@ -205,9 +205,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Skogar, sjöar och öar säger att Sverige har många sjöar spridda över hela landet och att de tre största är Vänern, Vättern och Mälaren. Alternativen med hav, öar eller städer blandar ihop andra geografiska begrepp med sjöar.',
+      'Sverige har många sjöar spridda över hela landet. De tre största är Vänern, Vättern och Mälaren, så alternativen med hav, öar eller städer blandar ihop andra geografiska begrepp med sjöar.',
     explanationEn:
-      'The UHR section Forests, lakes, and islands says Sweden has many lakes spread throughout the country and that the three largest are Vänern, Vättern, and Mälaren. The alternatives with seas, islands, or cities confuse other geographical concepts with lakes.',
+      'Sweden has many lakes spread throughout the country. The three largest are Vänern, Vättern, and Mälaren, so the alternatives with seas, islands, or cities confuse other geographical concepts with lakes.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Skogar, sjöar och öar', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -227,9 +227,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Befolkning säger att det bor nästan 11 miljoner människor i Sverige. Det beskriver också att befolkningen inte är jämnt fördelad och att de flesta bor i södra Sverige och längs kusterna.',
+      'Det bor nästan 11 miljoner människor i Sverige. Befolkningen är inte jämnt fördelad: de flesta bor i södra Sverige och längs kusterna, så de mycket lägre eller högre alternativen är fel.',
     explanationEn:
-      'The UHR section Population says almost 11 million people live in Sweden. It also describes the population as unevenly distributed, with most people living in southern Sweden and along the coasts.',
+      'Almost 11 million people live in Sweden. The population is not evenly distributed: most people live in southern Sweden and along the coasts, so the much lower or higher alternatives are wrong.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -265,9 +265,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Naturresurser säger att Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte stöds av avsnittet.',
+      'Sverige är rikt på järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt; olja, naturgas, ökenmark, tropiskt regn och liknande hör inte till den här uppräkningen.',
     explanationEn:
-      'The UHR section Natural resources says Sweden is rich in several important natural resources: iron ore and other minerals, forest, agricultural land, and water. That makes the option with those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items are not supported by the section.',
+      'Sweden is rich in iron ore and other minerals, forest, agricultural land, and water. That makes the option with those resources correct; oil, natural gas, desert land, tropical rain, and similar items are not part of this list.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Naturresurser',
@@ -291,9 +291,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Demokrati betyder folkstyre säger att demokrati är ett politiskt system där makten utgår från folket. Det betyder att medborgarna kan påverka beslut, välja mellan flera politiska alternativ och byta ut dem som får makten.',
+      'Demokrati är ett politiskt system där makten utgår från folket. Medborgarna kan påverka beslut, välja mellan flera politiska alternativ och byta ut dem som får makten; därför betyder demokrati folkstyre.',
     explanationEn:
-      'The UHR section Democracy means rule by the people says democracy is a political system where power comes from the people. This means citizens can influence decisions, choose between several political alternatives, and replace those who are given power.',
+      'Democracy is a political system where power comes from the people. Citizens can influence decisions, choose between several political alternatives, and replace those who are given power; that is why democracy means rule by the people.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -333,9 +333,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Demokrati betyder folkstyre säger att fria val innebär att alla som har rätt att rösta har en röst var. Det säger också att väljare ska kunna uttrycka åsikter utan hot eller tvång, att det ska finnas flera partier och att valet ska vara hemligt.',
+      'Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka åsikter utan hot eller tvång, det ska finnas flera partier att rösta på och valet ska vara hemligt.',
     explanationEn:
-      'The Democracy means rule by the people section says free elections mean everyone who has the right to vote has one vote each. It also says voters should be able to express opinions without threats or coercion, that there should be several parties, and that the vote should be secret.',
+      'Free elections mean everyone who has the right to vote has one vote each. Voters should be able to express opinions without threats or coercion, there should be several parties to vote for, and the vote should be secret.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -375,9 +375,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet En stark demokrati listar flera sätt att påverka och delta i samhället, bland annat att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. Därför är alternativet med politiker, demonstrationer och namninsamlingar rätt; de andra alternativen skulle begränsa demokratiskt deltagande.',
+      'Demokratin blir starkare när många röstar, engagerar sig och skaffar sig kunskap om samhällsfrågor. Att kontakta politiker, demonstrera och starta eller skriva på en namninsamling är exempel på deltagande; de andra alternativen skulle begränsa demokratisk delaktighet.',
     explanationEn:
-      'The A strong democracy section lists several ways to influence and participate in society, including contacting politicians, demonstrating, and starting or signing a petition. Therefore the option about politicians, demonstrations, and petitions is correct; the other options would restrict democratic participation.',
+      'Democracy becomes stronger when many people vote, get involved, and learn about public issues. Contacting politicians, demonstrating, and starting or signing a petition are examples of participation; the other options would restrict democratic participation.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'En stark demokrati',

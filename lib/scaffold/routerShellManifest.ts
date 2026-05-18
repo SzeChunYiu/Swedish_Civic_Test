@@ -31,6 +31,14 @@ export type ExpoRouterDynamicRoute = {
   readonly purpose: string;
 };
 
+export type ExpoRouterRootLayoutGlobalPlacement = {
+  readonly name: string;
+  readonly file: string;
+  readonly importFrom: string;
+  readonly contractSnippet: string;
+  readonly purpose: string;
+};
+
 export type ExpoRouterNativeIntentDynamicRoute = {
   readonly route: string;
   readonly routeFile: string;
@@ -156,6 +164,30 @@ export const expoRouterDynamicRoutes = [
     purpose: 'Routed quiz session registered by Expo Router file routing',
   },
 ] as const satisfies readonly ExpoRouterDynamicRoute[];
+
+export const expoRouterRootLayoutGlobalPlacements = [
+  {
+    name: 'native-canvas-color',
+    file: 'app/_layout.tsx',
+    importFrom: 'expo-system-ui',
+    contractSnippet: 'SystemUI.setBackgroundColorAsync(colors.canvas)',
+    purpose: 'Native root shell background follows the tokenized canvas color',
+  },
+  {
+    name: 'launch-popup-ad',
+    file: 'app/_layout.tsx',
+    importFrom: '../components/monetization/LaunchPopupAd',
+    contractSnippet: 'LaunchPopupAd entitlements={monetizationEntitlements}',
+    purpose: 'Global launch placement stays mounted outside exam-suppressed routes',
+  },
+  {
+    name: 'expo-status-bar',
+    file: 'app/_layout.tsx',
+    importFrom: 'expo-status-bar',
+    contractSnippet: 'StatusBar style=',
+    purpose: 'Expo status bar remains part of the root shell chrome',
+  },
+] as const satisfies readonly ExpoRouterRootLayoutGlobalPlacement[];
 
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
@@ -302,6 +334,8 @@ export type ExpoRouterTabScreenName = (typeof expoRouterTabScreens)[number]['nam
 export type ExpoRouterDynamicRouteName = (typeof expoRouterDynamicRoutes)[number]['name'];
 export type ExpoRouterDynamicRouteHrefSample =
   (typeof expoRouterDynamicRoutes)[number]['hrefSample'];
+export type ExpoRouterRootLayoutGlobalPlacementName =
+  (typeof expoRouterRootLayoutGlobalPlacements)[number]['name'];
 export type ExpoRouterNativeIntentStaticRoute = (typeof expoRouterNativeIntentStaticRoutes)[number];
 export type ExpoRouterNativeIntentDynamicRoutePath =
   (typeof expoRouterNativeIntentDynamicRoutes)[number]['route'];

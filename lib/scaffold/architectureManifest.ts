@@ -137,6 +137,16 @@ export const architectureAnswerShuffleRuntimeFiles = [
   'lib/quiz/examGenerator.ts',
 ] as const;
 
+export const architectureAnswerShuffleReviewRuntimeFiles = [
+  'lib/quiz/answerOptionShuffle.ts',
+  'lib/quiz/examGenerator.ts',
+  'lib/storage/mistakeReviewStore.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+] as const;
+
 export const architectureQuestionLanguageRuntimeFiles = [
   'lib/localization/language.ts',
   'lib/storage/settingsStore.ts',
@@ -160,6 +170,23 @@ export const architectureSourceCitationRuntimeFiles = [
   'app/(tabs)/practice.tsx',
   'app/quiz/[sessionId].tsx',
   'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/chapter/[chapterId].tsx',
+] as const;
+
+export const architectureQuestionSurfaceRuntimeFiles = [
+  'components/quiz/AnswerOption.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'lib/quiz/answerValidation.ts',
+  'lib/quiz/questionText.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/chapter/[chapterId].tsx',
 ] as const;
 
 export const architectureSettingsRuntimeFiles = [
@@ -546,10 +573,14 @@ export type ArchitectureSharedUiRuntimeFilePath = (typeof architectureSharedUiRu
 export type ArchitectureThemeRuntimeFilePath = (typeof architectureThemeRuntimeFiles)[number];
 export type ArchitectureAnswerShuffleRuntimeFilePath =
   (typeof architectureAnswerShuffleRuntimeFiles)[number];
+export type ArchitectureAnswerShuffleReviewRuntimeFilePath =
+  (typeof architectureAnswerShuffleReviewRuntimeFiles)[number];
 export type ArchitectureQuestionLanguageRuntimeFilePath =
   (typeof architectureQuestionLanguageRuntimeFiles)[number];
 export type ArchitectureSourceCitationRuntimeFilePath =
   (typeof architectureSourceCitationRuntimeFiles)[number];
+export type ArchitectureQuestionSurfaceRuntimeFilePath =
+  (typeof architectureQuestionSurfaceRuntimeFiles)[number];
 export type ArchitectureSettingsRuntimeFilePath = (typeof architectureSettingsRuntimeFiles)[number];
 export type ArchitectureTabNavigationRuntimeFilePath =
   (typeof architectureTabNavigationRuntimeFiles)[number];

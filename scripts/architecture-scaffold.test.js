@@ -201,6 +201,76 @@ const answerShuffleRuntimeFiles = [
   'lib/quiz/examGenerator.ts',
 ];
 
+const answerShuffleReviewRuntimeFiles = [
+  'lib/quiz/answerOptionShuffle.ts',
+  'lib/quiz/examGenerator.ts',
+  'lib/storage/mistakeReviewStore.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+];
+
+const answerShuffleReviewContracts = [
+  {
+    runtimeFile: 'app/(tabs)/practice.tsx',
+    snippets: [
+      'shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId)',
+      'const selectedOption = question.options.find((option) => option.id === optionId);',
+      'recordWrongAnswerReview({',
+      'selectedOptionTextEn: selectedOption.textEn',
+      'selectedOptionTextSv: selectedOption.textSv',
+    ],
+  },
+  {
+    runtimeFile: 'app/quiz/[sessionId].tsx',
+    snippets: [
+      'shuffleQuestionOptionsForSession(pickedQuestion, normalizedSessionId)',
+      'const selectedOption = question.options.find((option) => option.id === optionId);',
+      'recordWrongAnswerReview({',
+      'selectedOptionTextEn: selectedOption.textEn',
+      'selectedOptionTextSv: selectedOption.textSv',
+    ],
+  },
+  {
+    runtimeFile: 'lib/quiz/examGenerator.ts',
+    snippets: [
+      'return selected.map((question) => shuffleQuestionOptionsForSession(question, sessionId));',
+      'const selectedOption = question.options.find((option) => option.id === answers[question.id]);',
+      'const correctOption = question.options.find((option) => option.id === question.correctOptionId);',
+    ],
+  },
+  {
+    runtimeFile: 'app/(tabs)/exam.tsx',
+    snippets: [
+      'const examSessionId = `mock-exam-${examAttemptIndex}`;',
+      'sessionId: examSessionId',
+      'const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];',
+      "language === 'en' ? item.selectedOptionTextEn : item.selectedOptionTextSv",
+      "language === 'en' ? item.correctOptionTextEn : item.correctOptionTextSv",
+    ],
+  },
+  {
+    runtimeFile: 'lib/storage/mistakeReviewStore.ts',
+    snippets: [
+      'selectedOptionTextEn: string;',
+      'selectedOptionTextSv: string;',
+      'recordWrongAnswerReview: (review: {',
+      'selectedOptionTextEn,',
+      'selectedOptionTextSv,',
+    ],
+  },
+  {
+    runtimeFile: 'app/(tabs)/mistakes.tsx',
+    snippets: [
+      'const wrongAnswerReview = wrongAnswerReviews[question.id];',
+      'wrongAnswerReview.selectedOptionTextEn',
+      'wrongAnswerReview.selectedOptionTextSv',
+      'const correctAnswer = getOptionLabel(question, question.correctOptionId, language);',
+    ],
+  },
+];
+
 const questionLanguageRuntimeFiles = [
   'lib/localization/language.ts',
   'lib/storage/settingsStore.ts',
@@ -224,6 +294,46 @@ const sourceCitationRuntimeFiles = [
   'app/(tabs)/practice.tsx',
   'app/quiz/[sessionId].tsx',
   'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/chapter/[chapterId].tsx',
+];
+
+const questionSurfaceRuntimeFiles = [
+  'components/quiz/AnswerOption.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'lib/quiz/answerValidation.ts',
+  'lib/quiz/questionText.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/chapter/[chapterId].tsx',
+];
+
+const questionSurfaceRouteContracts = [
+  {
+    routeFile: 'app/(tabs)/practice.tsx',
+    sourceSnippet: '<UHRReferenceCard language={language} reference={question.uhrReference} />',
+  },
+  {
+    routeFile: 'app/quiz/[sessionId].tsx',
+    sourceSnippet: '<UHRReferenceCard language={language} reference={question.uhrReference} />',
+  },
+  {
+    routeFile: 'app/(tabs)/exam.tsx',
+    sourceSnippet: '<UHRReferenceCard language={language} reference={item.uhrReference} />',
+  },
+  {
+    routeFile: 'app/(tabs)/mistakes.tsx',
+    sourceSnippet: '<UHRReferenceCard language={language} reference={question.uhrReference} />',
+  },
+  {
+    routeFile: 'app/chapter/[chapterId].tsx',
+    sourceSnippet: '<UHRReferenceCard language={language} reference={question.uhrReference} />',
+  },
 ];
 
 const settingsRuntimeFiles = [
@@ -360,6 +470,42 @@ const learningProgressRuntimeFiles = [
   'app/chapter/[chapterId].tsx',
 ];
 
+const learningProgressSurfaceContracts = [
+  {
+    runtimeFile: 'app/(tabs)/home.tsx',
+    snippets: [
+      'const questionProgress = useProgressStore((state) => state.questionProgress);',
+      'const totalXp = useProgressStore((state) => state.totalXp);',
+      'const answerDates = useProgressStore((state) => state.answerDates);',
+      'const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);',
+      'const currentStreak = calculateStreak(answerDates);',
+      'const level = calculateLevel(totalXp);',
+      'const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;',
+      '<ProgressBar language={language} progress={progress} />',
+    ],
+  },
+  {
+    runtimeFile: 'app/(tabs)/learn.tsx',
+    snippets: [
+      'const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);',
+      'const questionCount = questionCountForChapter(chapter.id);',
+      'const completedCount = completedCountForChapter(chapter.id, completedQuestionIds);',
+      'completedCount={completedCount}',
+      'questionCount={questionCount}',
+    ],
+  },
+  {
+    runtimeFile: 'lib/storage/progressStore.ts',
+    snippets: [
+      'recordAnswer: (questionId, isCorrect) =>',
+      'const answerDate = getLocalDateKey(new Date(answeredAt));',
+      'nextReviewAt: getNextReviewAt({ isCorrect, correctStreak, answeredAt }),',
+      'totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),',
+      'answerDates,',
+    ],
+  },
+];
+
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
@@ -370,6 +516,10 @@ function readText(relativePath) {
 
 function exists(relativePath) {
   return fs.existsSync(path.join(repoRoot, relativePath));
+}
+
+function assertIncludes(source, snippet, message) {
+  assert.equal(source.includes(snippet), true, message);
 }
 
 function listFiles(relativePath) {
@@ -453,6 +603,10 @@ test('product architecture manifest matches the target scaffold files', () => {
     manifest,
     'architectureAnswerShuffleRuntimeFiles',
   );
+  const manifestAnswerShuffleReviewRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureAnswerShuffleReviewRuntimeFiles',
+  );
   const manifestQuestionLanguageRuntimeFiles = valuesInConstArray(
     manifest,
     'architectureQuestionLanguageRuntimeFiles',
@@ -460,6 +614,10 @@ test('product architecture manifest matches the target scaffold files', () => {
   const manifestSourceCitationRuntimeFiles = valuesInConstArray(
     manifest,
     'architectureSourceCitationRuntimeFiles',
+  );
+  const manifestQuestionSurfaceRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureQuestionSurfaceRuntimeFiles',
   );
   const manifestSettingsRuntimeFiles = valuesInConstArray(
     manifest,
@@ -514,8 +672,10 @@ test('product architecture manifest matches the target scaffold files', () => {
   assert.deepEqual(manifestSharedUiRuntimeFiles, sharedUiRuntimeFiles);
   assert.deepEqual(manifestThemeRuntimeFiles, themeRuntimeFiles);
   assert.deepEqual(manifestAnswerShuffleRuntimeFiles, answerShuffleRuntimeFiles);
+  assert.deepEqual(manifestAnswerShuffleReviewRuntimeFiles, answerShuffleReviewRuntimeFiles);
   assert.deepEqual(manifestQuestionLanguageRuntimeFiles, questionLanguageRuntimeFiles);
   assert.deepEqual(manifestSourceCitationRuntimeFiles, sourceCitationRuntimeFiles);
+  assert.deepEqual(manifestQuestionSurfaceRuntimeFiles, questionSurfaceRuntimeFiles);
   assert.deepEqual(manifestSettingsRuntimeFiles, settingsRuntimeFiles);
   assert.deepEqual(manifestTabNavigationRuntimeFiles, tabNavigationRuntimeFiles);
   assert.deepEqual(manifestSpeechRuntimeFiles, speechRuntimeFiles);
@@ -612,6 +772,27 @@ test('architecture answer shuffle runtime files exist', () => {
   );
 });
 
+test('architecture answer shuffle review runtime files exist', () => {
+  assert.deepEqual(
+    answerShuffleReviewRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('answer shuffle review surfaces preserve shuffled answer identity', () => {
+  for (const contract of answerShuffleReviewContracts) {
+    const source = readText(contract.runtimeFile);
+
+    for (const snippet of contract.snippets) {
+      assertIncludes(
+        source,
+        snippet,
+        `${contract.runtimeFile} should keep answer-shuffle review wiring: ${snippet}`,
+      );
+    }
+  }
+});
+
 test('architecture question language runtime files exist', () => {
   assert.deepEqual(
     questionLanguageRuntimeFiles.filter((relativePath) => !exists(relativePath)),
@@ -624,6 +805,35 @@ test('architecture source citation runtime files exist', () => {
     sourceCitationRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
+});
+
+test('architecture question surface runtime files exist', () => {
+  assert.deepEqual(
+    questionSurfaceRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('question-bearing routes keep disclaimer and source-citation surface wiring', () => {
+  for (const contract of questionSurfaceRouteContracts) {
+    const routeSource = readText(contract.routeFile);
+
+    assert.match(
+      routeSource,
+      /QuestionDisclaimer/,
+      `${contract.routeFile} should keep the not-real-exam disclaimer component`,
+    );
+    assert.match(
+      routeSource,
+      /UHRReferenceCard/,
+      `${contract.routeFile} should keep the source reference component import or usage`,
+    );
+    assert.equal(
+      routeSource.includes(contract.sourceSnippet),
+      true,
+      `${contract.routeFile} should keep its source reference card next to question content`,
+    );
+  }
 });
 
 test('architecture settings runtime files exist', () => {
@@ -694,6 +904,20 @@ test('architecture learning progress runtime files exist', () => {
     learningProgressRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
+});
+
+test('learning progress surfaces keep local progress wiring', () => {
+  for (const contract of learningProgressSurfaceContracts) {
+    const source = readText(contract.runtimeFile);
+
+    for (const snippet of contract.snippets) {
+      assertIncludes(
+        source,
+        snippet,
+        `${contract.runtimeFile} should keep learning-progress wiring: ${snippet}`,
+      );
+    }
+  }
 });
 
 test('Expo Router route scaffold files expose default component exports', () => {

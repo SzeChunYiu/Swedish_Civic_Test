@@ -119,6 +119,26 @@ function readRouterShellManifest() {
       'expoRouterDynamicRoutes',
       'hrefSample',
     ),
+    rootLayoutGlobalPlacementNames: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterRootLayoutGlobalPlacements',
+      'name',
+    ),
+    rootLayoutGlobalPlacementFiles: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterRootLayoutGlobalPlacements',
+      'file',
+    ),
+    rootLayoutGlobalPlacementImports: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterRootLayoutGlobalPlacements',
+      'importFrom',
+    ),
+    rootLayoutGlobalPlacementSnippets: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterRootLayoutGlobalPlacements',
+      'contractSnippet',
+    ),
     nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
     nativeIntentDynamicRoutes: valuesForFieldInSource(manifest, 'route'),
     nativeIntentDynamicRouteFiles: valuesForFieldInSource(manifest, 'routeFile'),
@@ -316,6 +336,27 @@ const dynamicRoutes = [
     name: 'quiz/[sessionId]',
     file: 'app/quiz/[sessionId].tsx',
     hrefSample: '/quiz/q001',
+  },
+];
+
+const rootLayoutGlobalPlacements = [
+  {
+    name: 'native-canvas-color',
+    file: 'app/_layout.tsx',
+    importFrom: 'expo-system-ui',
+    contractSnippet: 'SystemUI.setBackgroundColorAsync(colors.canvas)',
+  },
+  {
+    name: 'launch-popup-ad',
+    file: 'app/_layout.tsx',
+    importFrom: '../components/monetization/LaunchPopupAd',
+    contractSnippet: 'LaunchPopupAd entitlements={monetizationEntitlements}',
+  },
+  {
+    name: 'expo-status-bar',
+    file: 'app/_layout.tsx',
+    importFrom: 'expo-status-bar',
+    contractSnippet: 'StatusBar style=',
   },
 ];
 
@@ -642,6 +683,46 @@ test('dynamic route manifest stays aligned with file-based study routes', () => 
   }
 });
 
+test('root layout global placements stay aligned with the app shell contract', () => {
+  const manifest = readRouterShellManifest();
+  const rootLayout = read('app/_layout.tsx');
+
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementNames,
+    rootLayoutGlobalPlacements.map((placement) => placement.name),
+  );
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementFiles,
+    rootLayoutGlobalPlacements.map((placement) => placement.file),
+  );
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementImports,
+    rootLayoutGlobalPlacements.map((placement) => placement.importFrom),
+  );
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementSnippets,
+    rootLayoutGlobalPlacements.map((placement) => placement.contractSnippet),
+  );
+
+  for (const placement of rootLayoutGlobalPlacements) {
+    assert.equal(
+      fs.existsSync(path.join(repoRoot, placement.file)),
+      true,
+      `${placement.file} should resolve to the root shell file`,
+    );
+    assertContains(
+      rootLayout,
+      `from '${placement.importFrom}'`,
+      `${placement.name} should keep its root shell import`,
+    );
+    assertContains(
+      rootLayout,
+      placement.contractSnippet,
+      `${placement.name} should keep its root shell placement`,
+    );
+  }
+});
+
 test('not-found route redirects unknown routes to Home with a file-export fallback', () => {
   const notFoundRoute = read('app/+not-found.tsx');
 
@@ -763,6 +844,22 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(
     manifest.dynamicRouteHrefSamples,
     dynamicRoutes.map((route) => route.hrefSample),
+  );
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementNames,
+    rootLayoutGlobalPlacements.map((placement) => placement.name),
+  );
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementFiles,
+    rootLayoutGlobalPlacements.map((placement) => placement.file),
+  );
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementImports,
+    rootLayoutGlobalPlacements.map((placement) => placement.importFrom),
+  );
+  assert.deepEqual(
+    manifest.rootLayoutGlobalPlacementSnippets,
+    rootLayoutGlobalPlacements.map((placement) => placement.contractSnippet),
   );
   assert.deepEqual(manifest.nativeIntentStaticRoutes, Object.keys(nativeIntentStaticRouteFiles));
   assert.deepEqual(manifest.nativeIntentDynamicRoutes, Object.keys(nativeIntentDynamicRouteFiles));

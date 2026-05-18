@@ -2692,3 +2692,232 @@ Workspace contract: pass with caveats - no product source edited; current checko
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q063-SV-EN-NATURALNESS-1`.
 Evidence: `/quiz/q063` in English support mode showed `Session q063`, the English question `What share of the workforce works in Sweden's private sector?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, Så fungerar arbetsmarknaden, p. 27`, independent-study disclaimer, correct feedback for `About 70 percent`, score `1/1`, and the exact explanation `The How the labour market works section says that the labour market can be divided into public and private sectors. It describes the private sector as all privately owned companies and states that about 70 percent of the workforce works there, while about 30 percent works in the public sector.` Console/page errors were empty.
 Next manager action: assign a CONTENT-owned q063 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: workspace contract state on resume after the latest q063 TRANSLATE-COMPLETE pass.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, current reviewer journal, current queues, and the latest SETUP journal tail.
+- `git status --short --branch` - `main...origin/main [ahead 1, behind 11]` with dirty `eas.json`, `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, and `tests/architecture-public-exports.test.js`.
+- `git diff -- lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js tests/architecture-public-exports.test.js` - visible unaccepted source/test scope adds root-layout global placement manifest coverage.
+- `git diff -- eas.json` - release submit config again contains fake-looking submit credentials.
+Workspace contract: blocked - no new functional pass run because dirty-worktree ownership is ambiguous and the dirty scope changed during inspection.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 06:41 CEST]`.
+Evidence: the review target moved from one modified product file to four modified product/test/release-config files while REVIEWER was inspecting it; latest checked SETUP journal tail stops at Iteration 213 and does not bound the current root-layout global-placement diff. REVIEWER did not edit product source or tests.
+Next manager action: provide a clean or explicitly bounded artifact for the root-layout global placement atom, reject or clear the `eas.json` submit-credential drift, and reconcile the branch before the next focused REVIEWER functional pass. Do not count this queue/journal-only blocker as product acceptance.
+
+Lane: REVIEWER
+Artifact reviewed: post-handoff workspace status drift.
+Checks run:
+- `git status --short --branch` after the 06:41 blocker update.
+Workspace contract: blocked - dirty scope changed again after the blocker was recorded.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 06:42 CEST]`.
+Evidence: `eas.json` is no longer dirty, but `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, `tests/architecture-public-exports.test.js`, `tests/content-type-schema-parity.test.js`, `codex-tasks/verifier.log`, and screenshot report artifacts remain dirty alongside REVIEWER blocker/journal notes on `main...origin/main [ahead 1, behind 11]`.
+Next manager action: same as above - provide a stable artifact boundary before the next focused REVIEWER functional pass. Do not accept this queue/journal-only status update as product work.
+
+Lane: REVIEWER
+Artifact reviewed: final post-handoff workspace drift check.
+Checks run:
+- `git status --short --branch` after the 06:42 blocker update.
+Workspace contract: blocked - dirty scope is still moving.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 06:43 CEST]`.
+Evidence: `data/questions.ts` appeared in the dirty set during verification, alongside the router-shell source/test files, content type schema parity test, verifier log, screenshot report artifacts, and REVIEWER notes. REVIEWER did not edit product source or tests.
+Next manager action: stop REVIEWER churn until a stable artifact boundary is available.
+
+Lane: REVIEWER
+Artifact reviewed: SETUP Iteration 214 root-layout global placement coverage in `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, and `tests/architecture-public-exports.test.js`.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and the latest SETUP journal tail.
+- Inspected the bounded diff for `expoRouterRootLayoutGlobalPlacements` and compared it against `app/_layout.tsx`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` - exit 0, 15/15, including `root layout global placements stay aligned with the app shell contract`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/architecture-public-exports.test.js` - exit 0, 1/1.
+- `git diff --check -- lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js tests/architecture-public-exports.test.js` - exit 0.
+Workspace contract: pass with caveats - the SETUP Iteration 214 slice is now bounded by a producer handoff, but the shared checkout still has unrelated non-REVIEWER dirty scope and `main` is ahead 1/behind 11.
+Findings queued: none; no product defect found in this bounded router-shell slice.
+Evidence: the manifest lists `native-canvas-color`, `launch-popup-ad`, and `expo-status-bar`; `app/_layout.tsx` imports `expo-system-ui`, `LaunchPopupAd`, and `expo-status-bar`, calls `SystemUI.setBackgroundColorAsync(colors.canvas)`, mounts `LaunchPopupAd entitlements={monetizationEntitlements}` outside suppressed routes, and renders `StatusBar style="auto"`. The focused verifier and public-export guard both pass.
+Next manager action: VALIDATOR can review APP76/root-layout global placement coverage with manager verification. Do not count this REVIEWER journal-only pass as product acceptance.
+
+Lane: REVIEWER
+Artifact reviewed: DATA-INTEGRITY Chapter English-name TypeScript schema optionality coverage in `tests/content-type-schema-parity.test.js`.
+Checks run:
+- Re-read the latest DATA-INTEGRITY journal handoff for the Chapter `nameEn` optionality atom.
+- Inspected `types/content.ts` and confirmed `Chapter.nameEn` is required in the product content type.
+- Inspected the added negative test that mutates `nameEn: string` to `nameEn?: string` and expects the runtime validator to reject `Chapter.nameEn optional=true, expected false`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-type-schema-parity.test.js --test-name-pattern 'chapter English name optionality'` - exit 0; Node ran the full file, 28/28, including `content TypeScript schema parity rejects chapter English name optionality drift`.
+- `git diff --check -- tests/content-type-schema-parity.test.js docs/parallel-sessions/journals/data-integrity.md` - exit 0.
+Workspace contract: pass with caveats - the DATA-INTEGRITY slice is bounded by a producer handoff, but the shared checkout still has unrelated non-REVIEWER dirty scope and `main` is ahead 1/behind 11.
+Findings queued: none; no product defect found in this bounded schema-parity slice.
+Evidence: `types/content.ts` keeps `Chapter.nameEn: string`; the focused parity test rejects in-memory optionality drift and the full file passes 28/28.
+Next manager action: VALIDATOR can review the DI Chapter English-name schema coverage with manager verification. Do not count this REVIEWER journal-only pass as product acceptance.
+
+Lane: REVIEWER
+Artifact reviewed: CONTENT Iteration 278 q008 learner-facing lake explanation in `data/questions.ts`, verified through exported web `/quiz/q008`.
+Checks run:
+- Re-read the latest CONTENT journal handoff for q008.
+- Inspected `data/questions.ts` q008 source text and verified the English/Swedish explanations no longer use UHR source-section framing.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `/quiz/q008` in English support mode - exit 0.
+Workspace contract: pass with caveats - the CONTENT q008 slice is bounded by a producer handoff, but the shared checkout still has unrelated non-REVIEWER dirty scope and `main` is ahead 1/behind 11.
+Findings queued: none; no product defect found in this bounded q008 content/runtime slice.
+Evidence: `/quiz/q008` showed `Session q008`, the English question `Which are Sweden's three largest lakes?`, the Swedish secondary question, source citation `Source: Sverige i fokus, Landet Sverige, Skogar, sjöar och öar, p. 6`, correct feedback for `Vänern, Vättern, and Mälaren`, score `1/1`, and the updated explanation `Sweden has many lakes spread throughout the country. The three largest are Vänern, Vättern, and Mälaren, so the alternatives with seas, islands, or cities confuse other geographical concepts with lakes.` Stale `The UHR section` / `UHR-avsnittet` phrasing count was 0 and console/page errors were 0.
+Next manager action: VALIDATOR can review q008 with manager verification against UHR `Sverige i fokus`, Chapter 1, section `Skogar, sjöar och öar`, printed page 6. Do not count this REVIEWER journal-only pass as product acceptance.
+
+Lane: REVIEWER
+Artifact reviewed: post-pass bounded-handoff sweep.
+Checks run:
+- `git diff --check -- docs/parallel-sessions/journals/reviewer.md codex-tasks/blockers.txt` - exit 0 before this append.
+- `git status --short --branch` - still `main...origin/main [ahead 1, behind 11]` with mixed source/test/report/journal dirt.
+- Tailed SETUP, CONTENT, and DATA-INTEGRITY journals after the passes.
+Workspace contract: blocked/rate-limited - no newer producer handoff is visible beyond the three slices reviewed in this cycle.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 06:47 CEST]`; no product defects queued.
+Evidence: latest bounded producer handoffs checked are SETUP Iteration 214, DATA-INTEGRITY Chapter English-name schema parity, and CONTENT Iteration 278 q008. All three received focused REVIEWER passes with no defects. Remaining dirty scope includes reviewed-but-unaccepted source/test slices plus verifier log and screenshot report artifacts, not a fresh review target.
+Next manager action: VALIDATOR/manager should accept, reject, commit, clear, or provide the next bounded producer handoff before REVIEWER continues.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q064` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q064-SV-EN-NATURALNESS-1` item was present. q063 was the latest queued reviewer naturalness defect, and q064 is the next non-duplicative target in the current content sequence.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '1000,1030p'` - q064 source has Swedish explanation beginning `Avsnittet Arbetsmarknadens parter säger...` and English explanation beginning `The Labour-market parties section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First System-Chrome attempt reached `/settings` but the launch sponsor overlay intercepted the English-support click; reran with explicit overlay close.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q064` in English support mode - exit 2 by design after confirming the q064 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q064-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q064` in English support mode showed `Session q064`, the English question `What do trade unions do in the labour market?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, Arbetsmarknadens parter, p. 28`, independent-study disclaimer, correct feedback for `They represent employees, negotiate wages, and can help members`, score `1/1`, and the exact explanation `The Labour-market parties section says that union organizations represent employees. Trade unions work to improve employees’ conditions, negotiate wages with employers, and can help members who have problems at work.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q064 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q065` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q065-SV-EN-NATURALNESS-1` item was present. q064 was the latest queued reviewer naturalness defect, and q065 is the next non-duplicative target in the current content sequence.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '1018,1065p'` - q065 source has Swedish explanation beginning `Avsnittet Arbetsmarknadens parter beskriver...` and English explanation beginning `The Labour-market parties section describes...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First System-Chrome route attempt failed before app interaction because the temporary static server hit a transient `dist-web/index.html` read error; `dist-web/index.html` was present on disk immediately after inspection.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q065` in English support mode - exit 0 after confirming the q065 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q065-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q065` in English support mode showed `Session q065`, the English question `How are wages set in Sweden?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, Arbetsmarknadens parter, p. 28`, independent-study disclaimer, correct feedback for `Through negotiations between labour-market parties`, score `1/1`, and the exact explanation `The Labour-market parties section describes trade unions and employer organizations negotiating and signing collective agreements on wages and working conditions. It also states that wages in Sweden are set through negotiations between labour-market parties, not by the state.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q065 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q066` English-support explanation under TRANSLATE-COMPLETE, plus the current q065 content/source/export/build gate results reused for unchanged content state.
+Checks run:
+- Checked existing queue first; no `REVIEWER-Q066-SV-EN-NATURALNESS-1` item was present. q065 was the latest queued reviewer naturalness defect, and q066 is the next non-duplicative target in the current content sequence.
+- `nl -ba data/additionalQuestions.ts | sed -n '1054,1105p'` - q066 source has Swedish explanation beginning `Avsnittet Lagar och regler på arbetsmarknaden förklarar...` and English explanation beginning `The Labour-market laws and rules section explains...`.
+- Reused unchanged-content gates from the q065 pass: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`; focused source-citation/export/sentence-ending tests - exit 0, 6/6; export parity - exit 0; web export - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q066` in English support mode - exit 0 after confirming the q066 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q066-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q066` in English support mode showed `Session q066`, the English question `Why does Sweden have labour-market laws?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, Lagar och regler på arbetsmarknaden, p. 29`, independent-study disclaimer, correct feedback for `To protect employees’ rights and help create a safe work environment`, score `1/1`, and the exact explanation `The Labour-market laws and rules section explains that the laws protect employees’ rights and create a safe work environment. It also mentions rules on working hours, the work environment, and vacation, plus employer fees to the state for pension and health insurance.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q066 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q067` English-support explanation under TRANSLATE-COMPLETE, plus the current q065 content/source/export/build gate results reused for unchanged content state.
+Checks run:
+- Checked existing queue first; no `REVIEWER-Q067-SV-EN-NATURALNESS-1` item was present. q066 was the latest queued reviewer naturalness defect, and q067 is the next non-duplicative target in the current content sequence.
+- `nl -ba data/additionalQuestions.ts | sed -n '1054,1105p'` - q067 source has Swedish explanation beginning `Avsnittet A-kassan beskriver...` and English explanation beginning `The A-kassan section describes...`.
+- Reused unchanged-content gates from the q065 pass: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`; focused source-citation/export/sentence-ending tests - exit 0, 6/6; export parity - exit 0; web export - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q067` in English support mode - exit 0 after confirming the q067 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q067-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q067` in English support mode showed `Session q067`, the English question `What support can A-kassan provide to unemployed members?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, A-kassan, p. 29`, independent-study disclaimer, correct feedback for `It can pay money to unemployed members`, score `1/1`, and the exact explanation `The A-kassan section describes unemployment insurance as a way for an unemployed person to have an income. A-kassan is an economic association that pays money to unemployed members, and compensation requires, among other things, enough work during a set period and active job seeking.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q067 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: post-pass workspace and handoff boundary after q065-q067 findings.
+Checks run:
+- `git diff --check -- codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md` - exit 0 before this append.
+- `git status --short --branch` - still `main...origin/main [ahead 1, behind 11]` with mixed non-REVIEWER source/test/report dirt.
+- Tailed SETUP, CONTENT, and DATA-INTEGRITY journals after the passes; fresh CONTENT q010 and SETUP 215 handoffs appeared while the reviewer cycle was in progress.
+Workspace contract: blocked/rate-limited - q065-q067 defects are queued, but broader acceptance-grade REVIEWER work needs a manager/VALIDATOR-bounded next slice because the shared checkout is moving.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 07:01 CEST]`; product defects queued in this cycle were q065, q066, and q067 naturalness defects.
+Evidence: no product source or tests were edited by REVIEWER; only queue/journal/blocker notes were touched.
+Next manager action: bound or accept/reject the current CONTENT q010 and SETUP 215 source/test slices, then hand REVIEWER a concrete next artifact.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q068` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q068-SV-EN-NATURALNESS-1` item was present. q067 was the latest queued reviewer naturalness defect, and q068 is the next non-duplicative target in the current content sequence.
+- `nl -ba data/additionalQuestions.ts | sed -n '1090,1132p'` - q068 source has Swedish explanation beginning `Avsnittet Privatekonomi i Sverige beskriver...` and English explanation beginning `The Personal finance in Sweden section describes...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First System-Chrome route attempt reached `/settings` but the Swedish launch sponsor overlay intercepted the English-support click; reran with explicit `Stäng startannons` overlay close.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q068` in English support mode - exit 0 after confirming the q068 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q068-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q068` in English support mode showed `Session q068`, the English question `How does the Swedish Enforcement Authority help with debts?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, Privatekonomi i Sverige, p. 29`, independent-study disclaimer, correct feedback for `It makes sure debts are paid and can help with debt restructuring`, score `1/1`, and the exact explanation `The Personal finance in Sweden section describes the Swedish Enforcement Authority as a government agency that makes sure debts are paid. It also explains that the agency can help people with large debts get their finances in order through debt restructuring.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q068 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q069` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Completion audit after q068 found fresh producer handoffs, so REVIEWER continued instead of stopping early.
+- Checked existing queue first; no `REVIEWER-Q069-SV-EN-NATURALNESS-1` item was present. q068 was the latest queued reviewer naturalness defect, and q069 is the next non-duplicative target in the current content sequence.
+- `git diff --name-only -- data/additionalQuestions.ts content/question-bank.csv data/questions.ts` - only `data/questions.ts` was dirty; q069's `data/additionalQuestions.ts` source file and CSV row were not dirty.
+- `nl -ba data/additionalQuestions.ts | sed -n '1128,1178p'` - q069 source has Swedish explanation beginning `UHR-avsnittet Skatter för Sveriges välfärd säger...` and English explanation beginning `The UHR section Taxes for Sweden’s welfare says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q069` in English support mode - exit 0 after confirming the q069 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q069-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q069` in English support mode showed `Session q069`, the English question `What role do taxes have in Sweden's welfare system?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Skatter för Sveriges välfärd, p. 30`, independent-study disclaimer, correct feedback for `They make it possible to finance many services collectively`, score `1/1`, and the exact explanation `The UHR section Taxes for Sweden’s welfare says that a large share of welfare funding comes from taxes. Taxes make it possible to finance many important services collectively, such as schools, health care, and roads, and they are also paid by companies and through VAT on goods and services.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q069 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q070` English-support explanation under TRANSLATE-COMPLETE, reusing the q069 content/source/export/build gates because the checked source file remained unchanged.
+Checks run:
+- Checked existing queue first; no `REVIEWER-Q070-SV-EN-NATURALNESS-1` item was present. q069 was the latest queued reviewer naturalness defect, and q070 is the next non-duplicative target in the current content sequence.
+- `git diff --name-only -- data/additionalQuestions.ts content/question-bank.csv data/questions.ts` - only `data/questions.ts` was dirty; q070's `data/additionalQuestions.ts` source file and CSV row were not dirty.
+- `nl -ba data/additionalQuestions.ts | sed -n '1152,1198p'` - q070 source has Swedish explanation beginning `Avsnittet Skatter för Sveriges välfärd förklarar...` and English explanation beginning `The Taxes for Sweden's welfare section explains...`.
+- Reused unchanged-content gates from the q069 pass: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, focused source-citation/export/sentence-ending tests - exit 0, 6/6, export parity - exit 0, and web export - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q070` in English support mode - exit 0 after confirming the q070 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q070-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q070` in English support mode showed `Session q070`, the English question `Which statement about tax and VAT is correct?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Skatter för Sveriges välfärd, p. 30`, independent-study disclaimer, correct feedback for `Companies also pay tax, and VAT is paid when buying goods and services`, score `1/1`, and the exact explanation `The Taxes for Sweden's welfare section explains that tax is paid both by people who work and by companies. It also describes VAT as a tax on goods and services, and tax revenues contribute to the welfare budgets of the state, regions, and municipalities.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q070 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q071` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, current queues, and current producer journal tails.
+- Checked existing queue first; no `REVIEWER-Q071-SV-EN-NATURALNESS-1` item was present. q070 was the latest queued reviewer naturalness defect, and q071 is the next non-duplicative target in the current content sequence.
+- Checked `review-to-queue.sh`; no executable helper was present on PATH or at the previously used shared-project paths, so the reviewer fallback queue file was used.
+- `git diff --name-only -- data/additionalQuestions.ts content/question-bank.csv data/questions.ts` - only `data/questions.ts` was dirty; q071's `data/additionalQuestions.ts` source file and CSV row were not dirty.
+- `nl -ba data/additionalQuestions.ts | sed -n '1178,1235p'` - q071 source has Swedish explanation beginning `Avsnittet Statligt finansierad välfärd säger...` and English explanation beginning `The State-financed welfare section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q071` in English support mode - exit 0 after confirming the q071 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 1/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q071-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q071` in English support mode showed `Session q071`, the English question `What does the state finance within welfare?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Statligt finansierad välfärd, p. 30`, independent-study disclaimer, correct feedback for `Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance`, score `1/1`, and the exact explanation `The State-financed welfare section says that the state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also says the state finances higher education and research at colleges and universities.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q071 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: post-pass workspace and handoff boundary after q071 finding.
+Checks run:
+- `git diff --check -- codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md codex-tasks/blockers.txt` - exit 0 before this blocker append.
+- `rg -n "REVIEWER-Q072|q072|Q072" codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md codex-tasks/blockers.txt` - no q072 reviewer defect currently queued.
+- `nl -ba data/additionalQuestions.ts | sed -n '1210,1265p'` - q072/q073 appear to be possible next TRANSLATE-COMPLETE targets, but no runtime pass was run.
+- `git status --short --branch` - `main...origin/main [ahead 1, behind 11]` with mixed non-REVIEWER dirty scope now including `codex-prompts-team-build.txt`, `data/questions.ts`, scaffold manifests/tests, `tests/content-type-schema-parity.test.js`, verifier log, screenshot report artifacts, TEAM_PLAN, and worker journals.
+Workspace contract: blocked/rate-limited - q071 defect is queued, but q072 was not tested because the shared checkout/prompt state changed during target selection.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 07:17 CEST]`; product defect queued in this cycle was q071 naturalness.
+Evidence: REVIEWER edited no product source or tests; only queue/journal/blocker notes were touched. Fresh build/runtime evidence exists for q071, but the broader artifact remains unbounded.
+Next manager action: bound, accept/reject, commit, or clear the current CONTENT/SETUP/DATA-INTEGRITY/prompt/report slices before handing REVIEWER the next functional target, likely q072 if it remains unqueued and stable.
