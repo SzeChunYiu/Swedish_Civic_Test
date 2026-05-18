@@ -143,3 +143,9 @@ Next worker task queued: SETUP - take
 `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1` next, then
 `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`, mobile nav reachability, and static
 question-count copy. Keep the active-Mock disclaimer duplicate-guarded.
+
+Iteration: 2026-05-18T19:25+02:00
+Rows moved to accepted: none.
+Rows blocked: `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` remains open; PANE 4 hit the Codex usage limit during a partial DATA-INTEGRITY attempt.
+Evidence: tmux pane `civic-laptop-build:0.4` showed repeated usage-limit errors with retry date May 23, 2026 at 23:11. The visible partial attempt had edited generated-template/validator/test files for the residual true/false route, then `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` failed on `derivePublishedQuestions keeps generated single-choice variants at four options`. No PR, merge, handoff, or green gate exists for that attempt.
+Next worker task queued: DATA-INTEGRITY - restart from clean current `origin/main` and continue the full `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` route, covering q201-q720 residual evidence, regenerated `content/question-bank.csv` and `site/questions.js`, export/static parity, `validate:content`, `test:derived-content`, focused published-question/content gates, typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a current-main residual recheck. Keep `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` behind this route unless VALIDATOR explicitly rebundles it.
