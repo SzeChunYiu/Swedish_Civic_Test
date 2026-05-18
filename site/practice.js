@@ -110,6 +110,7 @@
       </div>
     `;
   }
+  window.smtRenderPracticeHub = renderPracticeHub;
 
   // ---------- mock exam ----------
 
@@ -557,7 +558,7 @@
 
   // Re-render hub when language changes
   document.addEventListener("click", (e) => {
-    if (e.target.closest(".lang-menu button[data-lang]") || e.target.closest('[data-set="language"], select[data-set="language"]')) {
+    if (e.target.closest(".lang button[data-lang]") || e.target.closest(".lang-menu button[data-lang]") || e.target.closest('[data-set="language"], select[data-set="language"]')) {
       setTimeout(() => { if (isOnPractice() && !activePracticeChapter()) renderPracticeHub(); }, 60);
     }
   });

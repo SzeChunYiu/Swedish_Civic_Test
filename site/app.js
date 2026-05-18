@@ -773,7 +773,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 /* ============================ PRACTICE QUIZ */
 
-const SMT_QUESTIONS = [
+const SMT_FALLBACK_QUESTIONS = [
   {
     chapter: "Ch. 7 · Nature",
     q: { en: "Which Swedish principle gives everyone the right to walk, swim, and pick berries on most land?", sv: "Vilken svensk princip ger alla rätt att gå, simma och plocka bär på det mesta av marken?" },
@@ -937,18 +937,66 @@ const SMT_QUIZ_COPY = {
   },
 };
 
-const SMT_QUIZ = { i: 0, score: 0, answers: [] };
+const SMT_QUIZ = { i: 0, score: 0, answers: [], scope: "" };
 
 function smtQuizCurrentLang() {
   try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
 }
 
+function smtQuizHash() {
+  return (location.hash || "#/").replace(/^#/, "");
+}
+
+function smtQuizPath() {
+  return smtQuizHash().split("?")[0];
+}
+
+function smtQuizScopeKey() {
+  const hash = smtQuizHash();
+  const match = hash.match(/[?&]c=([^&]+)/);
+  return match ? "chapter:" + match[1] : "all";
+}
+
+function smtQuizShouldRender() {
+  const hash = smtQuizHash();
+  if (smtQuizPath() !== "/practice") return false;
+  return /[?&]c=/.test(hash) || typeof window.smtRenderPracticeHub !== "function";
+}
+
+function smtQuizQuestionSet() {
+  const filtered = typeof window.smtPracticeFilterFor === "function"
+    ? window.smtPracticeFilterFor()
+    : null;
+  if (filtered && filtered.length) return filtered;
+  if (window.SMT_QUESTIONS && window.SMT_QUESTIONS.length) return window.SMT_QUESTIONS;
+  return SMT_FALLBACK_QUESTIONS;
+}
+
 function smtQuizRender() {
   const stage = document.getElementById("quiz-stage");
   if (!stage) return;
+  const scope = smtQuizScopeKey();
+  if (SMT_QUIZ.scope !== scope) {
+    SMT_QUIZ.i = 0;
+    SMT_QUIZ.score = 0;
+    SMT_QUIZ.answers = [];
+    SMT_QUIZ.scope = scope;
+  }
   const lang = smtQuizCurrentLang();
   const copy = SMT_QUIZ_COPY[lang] || SMT_QUIZ_COPY.en;
-  const n = SMT_QUESTIONS.length;
+  const questions = smtQuizQuestionSet();
+  const n = questions.length;
+
+  if (!n) {
+    stage.innerHTML = `
+      <div class="quiz__card">
+        <div class="quiz__crumb">Practice</div>
+        <h2 class="quiz__q">${lang === "sv" ? "Inga frågor hittades." : "No questions found."}</h2>
+        <p class="quiz__counter">${lang === "sv" ? "Välj ett annat kapitel." : "Pick another chapter."}</p>
+      </div>
+    `;
+    return;
+  }
 
   // result screen
   if (SMT_QUIZ.i >= n) {
@@ -987,12 +1035,12 @@ function smtQuizRender() {
     return;
   }
 
-  const q = SMT_QUESTIONS[SMT_QUIZ.i];
+  const q = questions[SMT_QUIZ.i];
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
   const dots = Array.from({ length: n }, (_, k) => {
     let cls = "";
-    if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === SMT_QUESTIONS[k].answer ? "is-right" : "is-wrong";
+    if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === questions[k].answer ? "is-right" : "is-wrong";
     else if (k === SMT_QUIZ.i) cls = "is-on";
     return `<span class="quiz__dot ${cls}"></span>`;
   }).join("");
@@ -1051,10 +1099,14 @@ document.addEventListener("click", (e) => {
   const opt = e.target.closest("#quiz-stage .quiz__opt");
   if (opt && !opt.hasAttribute("disabled")) {
     const k = parseInt(opt.dataset.i, 10);
-    const q = SMT_QUESTIONS[SMT_QUIZ.i];
+    const questions = smtQuizQuestionSet();
+    const q = questions[SMT_QUIZ.i];
     const correct = k === q.answer;
     SMT_QUIZ.answers[SMT_QUIZ.i] = k;
     if (correct) SMT_QUIZ.score++;
+    if (typeof window.smtRecordAnswer === "function" && q.chapterId) {
+      window.smtRecordAnswer(q.chapterId, correct);
+    }
 
     // ---- effects at click location ----
     const r = opt.getBoundingClientRect();
@@ -1069,7 +1121,7 @@ document.addEventListener("click", (e) => {
       // streak detection
       let streak = 0;
       for (let i = SMT_QUIZ.i; i >= 0; i--) {
-        if (SMT_QUIZ.answers[i] === SMT_QUESTIONS[i].answer) streak++;
+        if (SMT_QUIZ.answers[i] === questions[i].answer) streak++;
         else break;
       }
       if (streak >= 3 && fx) {
@@ -1119,19 +1171,16 @@ document.addEventListener("click", (e) => {
 
 // Re-render on route change to /practice, and on language change
 window.addEventListener("hashchange", () => {
-  const path = (location.hash || "#/").replace(/^#/, "");
-  if (path === "/practice") smtQuizRender();
+  if (smtQuizShouldRender()) smtQuizRender();
 });
 window.addEventListener("DOMContentLoaded", () => {
-  const path = (location.hash || "#/").replace(/^#/, "");
-  if (path === "/practice") smtQuizRender();
+  if (smtQuizShouldRender()) smtQuizRender();
 });
 document.addEventListener("click", (e) => {
   if (e.target.closest(".lang button[data-lang]")) {
     // applyLang already runs; re-render the quiz if visible
     setTimeout(() => {
-      const path = (location.hash || "#/").replace(/^#/, "");
-      if (path === "/practice") smtQuizRender();
+      if (smtQuizShouldRender()) smtQuizRender();
     }, 0);
   }
 });
