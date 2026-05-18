@@ -28,3 +28,15 @@ false`, focused QuestionCard/source-citation/disclaimer tests 12/12,
 `npm run validate:content`, `npm run test:ownership`, and `git diff --check`.
 Do not duplicate this component atom; fresh UIUX capacity still waits for an
 explicit VALIDATOR lease while SITE-P0 remains first.
+
+REVIEWER-COMPONENT-FALLBACK-COPY-1 [P0 TRANSLATE-COMPLETE][COMPONENTS]:
+Current `origin/main` `e5504a0` still has English-only fallback labels in
+`ResultSummary` after the Button, ProgressBar, ChapterProgressCard, and
+QuestionNavigator fallback fixes. Scope the source atom to that component's
+defaults and focused parity tests only: add settings-aware SV/EN fallback copy
+or require localized label props where defaults are unsafe; preserve caller
+overrides, token-only styling, and existing accessibility roles/states. Required
+gates: targeted Prettier, token grep on changed components, focused new parity
+tests for ResultSummary, `npm run test:a11y-labels`,
+`npm run test:theme-discipline`, `npm run typecheck -- --pretty false`,
+`npm run test:ownership`, and `git diff --check`.
