@@ -3057,3 +3057,23 @@ Evidence: current result markup still glues numeric values to labels and hardcod
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-PRACTICE-RESULT-I18N-1` first for SETUP/site; require spaced, localized correct/wrong/percent labels in SV and EN plus a static browser/DOM guard rejecting glued result strings.
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-practice-result-current/wt` / `task/reviewer/practice-result-i18n-resolution-1779126060`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Resolution recheck for `REVIEWER-SITE-PRACTICE-RESULT-I18N-1` after SETUP commit `d372521`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read current `origin/main` setup/validator queues and setup handoff after `origin/main` advanced to `853a13b`.
+- Source scan found `site/app.js` now defines `scoreLabel` for English and Swedish and renders Practice result rows with spaces: `<li><b>${correct}</b> ${copy.correctLabel}</li>`, `<li><b>${n - correct}</b> ${copy.wrongLabel}</li>`, and `<li><b>${pct}%</b> ${copy.scoreLabel}</li>`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-practice-result-i18n` - exit 0, 2/2 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` - exit 0, 4/4 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` - exit 0, 3/3 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and static-site parity true.
+- Served current `site/` with `python3 -m http.server 8258 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright completed `#/practice?c=mix` in Swedish and English. Swedish rows were `["2 Rätt","8 Fel","20% Poäng"]`; English rows were `["3 Correct","7 Wrong","30% Score"]`; glued-result detector was false for both and browser console/page errors were empty.
+Workspace contract: pass - no product source edited; existing finding updated with resolution evidence.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SITE-PRACTICE-RESULT-I18N-1 resolution recheck [2026-05-18 19:40 CEST]`.
+Evidence: SETUP commit `d372521` plus the new static result test and independent browser smoke clear the previously observed glued `4Rätt` / `6Correct` / `%score` output.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept the Practice result i18n atom after reviewing SETUP source/handoff, then keep static flag palette drift, mobile nav reachability, question-count copy, and live deploy freshness in the active route.
