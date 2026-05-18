@@ -137,3 +137,13 @@ A11y props: `OptionCard` provides default `accessibilityRole="radio"`, checked/d
 Verification: `./node_modules/.bin/prettier --check components/quiz/AnswerOption.tsx` -> pass; token discipline grep on `components/quiz/AnswerOption.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/quiz/AnswerOption.tsx` -> pass.
 Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
 Next: DESIGN-TOKENS needs to publish immutable `lib/theme/flag.ts` before COMPONENTS can complete the P0 Swedish-flag-constants atom for `SwedishFlagBand`.
+
+## Iteration 14 - 2026-05-18
+
+Component: ChapterProgressCard draft practice-hub card atom - `components/ChapterProgressCard.tsx`, exported from `components/index.ts`.
+Variants/states implemented: tokenized chapter card with optional press behavior, disabled and pressed states, emoji/chapter identity row, optional subtitle, clamped answered/correct counts, progress fill, and accuracy badge using success/warning status variants.
+Tokens used: `colors.surface`, `colors.border`, `colors.text`, `motion.pressedScale`, `radius.card`, `shadows.card`, `space[0.5]`, `space[1]`, `space[1.5]`, `space[2]`, `space[4]`, and `space.hairline`; child `PillBadge`, `ProgressBar`, and `Text` keep their own token usage.
+A11y props: default `accessibilityRole="button"` when `onPress` exists and `"summary"` otherwise; derived whole-card `accessibilityLabel`; caller-overridable localized progress label; merged disabled accessibility state; token-sized `hitSlop`; child layout marked `pointerEvents="none"` so the card remains the single interaction target.
+Verification: `./node_modules/.bin/prettier --check components/ChapterProgressCard.tsx components/index.ts` -> pass; token discipline grep on `components/ChapterProgressCard.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/ChapterProgressCard.tsx components/index.ts docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
+Next: SCREENS can use `ChapterProgressCard` when porting the practice-hub chapter grid from the 2026-05-18 design draft.

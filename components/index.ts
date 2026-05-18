@@ -1,4 +1,5 @@
 export * from './Button';
+export * from './ChapterProgressCard';
 export * from './ChapterRow';
 export * from './DisclaimerBanner';
 export * from './Divider';
