@@ -1397,3 +1397,12 @@ Current q251-q300 generated-output defects to fold into DATA-INTEGRITY routes:
 - `q270` and `q271` are generated true/false standalone-stem defects: `En anledning är...` / `One reason is...` does not name that the reason is for voting behind a screen in a polling station. Add these to the next generated true/false standalone/naturalness follow-up unless VALIDATOR bundles them with the generated single-choice cleanup.
 
 Acceptance for the relevant generated-output cleanup remains generator and validator mirror coverage, regenerated `content/question-bank.csv` and `site/questions.js`, export/static parity, `validate:content`, `test:derived-content`, focused content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot checks for the named rows.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-19T00:13:00+02:00
+
+`VERIFY-GENERATED-Q301-Q350-CURRENT-1` [P0 TRANSLATE-COMPLETE][generated-output][wording-rule][content-sync]: maintained VERIFY refresh on current `origin/main` `e90f82a` supersedes stale q301-q350 residual evidence from `8bb2ccf` and accounts for the later q301 true/false cleanup plus partial filler cleanup PR #788. The slice now has 50 rows, 25 true/false rows, zero `Sant eller falskt:` / `True or false:` prefix offenders, q318/q319 English age phrasing is natural, q331/q339 false-answer explanations are aligned, and q346/q347/q350 now stand alone in both `content/question-bank.csv` and `site/questions.js`. Facts, citations, answer keys, explanations, and ordinary distractors otherwise remain supported by UHR `Sverige i fokus` printed pages 17-22.
+
+Current q301-q350 generated-output defects to fold into DATA-INTEGRITY routes:
+- `q304`, `q308`, `q312`, `q316`, `q320`, `q324`, `q328`, `q336`, `q344`, and `q348` remain ordinary generated single-choice meta-stem rows with `Vilket svar är korrekt?` / `Which answer is correct?`. Fold into the remaining generated single-choice cleanup after q663/q670/q671 unless VALIDATOR reorders.
+
+Acceptance for the relevant generated-output cleanup remains generator and validator mirror coverage, regenerated `content/question-bank.csv` and `site/questions.js`, export/static parity, `validate:content`, `test:derived-content`, focused content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot checks for the named rows.

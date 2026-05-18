@@ -321,56 +321,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q298 | true-false | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 6ef2182 | ok | rolling-source-slice |
 | q299 | false-statement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 6ef2182 | ok | rolling-source-slice |
 | q300 | judgement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
-| q301 | section-practice | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q302 | true-false | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q303 | false-statement | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q304 | judgement | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q305 | section-practice | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q306 | true-false | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q307 | false-statement | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q308 | judgement | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | 8bb2ccf | ok | rolling-source-slice |
-| q309 | section-practice | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q310 | true-false | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q311 | false-statement | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q312 | judgement | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q313 | section-practice | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q314 | true-false | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q315 | false-statement | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q316 | judgement | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | 8bb2ccf | ok | rolling-source-slice |
-| q317 | section-practice | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | 8bb2ccf | ok | rolling-source-slice |
-| q318 | true-false | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | 8bb2ccf | defect | queued-data-integrity-residual-grammar |
-| q319 | false-statement | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | 8bb2ccf | defect | queued-data-integrity-residual-grammar |
-| q320 | judgement | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | 8bb2ccf | ok | rolling-source-slice |
-| q321 | section-practice | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q322 | true-false | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q323 | false-statement | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q324 | judgement | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q325 | section-practice | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q326 | true-false | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q327 | false-statement | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q328 | judgement | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q329 | section-practice | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q330 | true-false | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q331 | false-statement | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | defect | queued-data-integrity-false-explanation |
-| q332 | judgement | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 8bb2ccf | ok | rolling-source-slice |
-| q333 | section-practice | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q334 | true-false | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q335 | false-statement | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q336 | judgement | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q337 | section-practice | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q338 | true-false | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q339 | false-statement | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | defect | queued-data-integrity-false-explanation |
-| q340 | judgement | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q341 | section-practice | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q342 | true-false | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q343 | false-statement | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q344 | judgement | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | 8bb2ccf | ok | rolling-source-slice |
-| q345 | section-practice | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | 8bb2ccf | ok | rolling-source-slice |
-| q346 | true-false | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | 8bb2ccf | defect | queued-data-integrity-residual-grammar |
-| q347 | false-statement | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | 8bb2ccf | defect | queued-data-integrity-residual-grammar |
-| q348 | judgement | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | 8bb2ccf | ok | rolling-source-slice |
-| q349 | section-practice | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 8bb2ccf | ok | rolling-source-slice |
-| q350 | true-false | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 8bb2ccf | defect | queued-data-integrity-residual-grammar |
+| q301 | section-practice | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | e90f82a | ok | rolling-source-slice |
+| q302 | true-false | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | e90f82a | ok | rolling-source-slice |
+| q303 | false-statement | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | e90f82a | ok | rolling-source-slice |
+| q304 | judgement | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q305 | section-practice | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | e90f82a | ok | rolling-source-slice |
+| q306 | true-false | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | e90f82a | ok | rolling-source-slice |
+| q307 | false-statement | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | e90f82a | ok | rolling-source-slice |
+| q308 | judgement | q041 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättssäkerhet | 17 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q309 | section-practice | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | e90f82a | ok | rolling-source-slice |
+| q310 | true-false | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | e90f82a | ok | rolling-source-slice |
+| q311 | false-statement | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | e90f82a | ok | rolling-source-slice |
+| q312 | judgement | q042 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Domstolar | 18 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q313 | section-practice | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | e90f82a | ok | rolling-source-slice |
+| q314 | true-false | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | e90f82a | ok | rolling-source-slice |
+| q315 | false-statement | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | e90f82a | ok | rolling-source-slice |
+| q316 | judgement | q043 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Polisen | 18 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q317 | section-practice | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | e90f82a | ok | rolling-source-slice |
+| q318 | true-false | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | e90f82a | ok | rolling-source-slice |
+| q319 | false-statement | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | e90f82a | ok | rolling-source-slice |
+| q320 | judgement | q044 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Straffmyndighet och belastningsregister | 19 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q321 | section-practice | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q322 | true-false | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q323 | false-statement | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q324 | judgement | q045 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q325 | section-practice | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q326 | true-false | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q327 | false-statement | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q328 | judgement | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q329 | section-practice | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q330 | true-false | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q331 | false-statement | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q332 | judgement | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | e90f82a | ok | rolling-source-slice |
+| q333 | section-practice | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | ok | rolling-source-slice |
+| q334 | true-false | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | ok | rolling-source-slice |
+| q335 | false-statement | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | ok | rolling-source-slice |
+| q336 | judgement | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q337 | section-practice | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | ok | rolling-source-slice |
+| q338 | true-false | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | ok | rolling-source-slice |
+| q339 | false-statement | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | ok | rolling-source-slice |
+| q340 | judgement | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | e90f82a | ok | rolling-source-slice |
+| q341 | section-practice | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | e90f82a | ok | rolling-source-slice |
+| q342 | true-false | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | e90f82a | ok | rolling-source-slice |
+| q343 | false-statement | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | e90f82a | ok | rolling-source-slice |
+| q344 | judgement | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q345 | section-practice | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | e90f82a | ok | rolling-source-slice |
+| q346 | true-false | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | e90f82a | ok | rolling-source-slice |
+| q347 | false-statement | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | e90f82a | ok | rolling-source-slice |
+| q348 | judgement | q051 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | e90f82a | defect | queued-data-integrity-single-choice-meta-stem |
+| q349 | section-practice | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | e90f82a | ok | rolling-source-slice |
+| q350 | true-false | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | e90f82a | ok | rolling-source-slice |
 | q351 | false-statement | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 120d440 | ok | rolling-source-slice |
 | q352 | judgement | q052 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | 120d440 | ok | rolling-source-slice |
 | q353 | section-practice | q053 | lib/content/derivedQuestions.ts -> data/questions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | 120d440 | ok | rolling-source-slice |
