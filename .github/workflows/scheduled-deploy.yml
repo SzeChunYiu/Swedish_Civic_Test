@@ -1,14 +1,16 @@
 name: Scheduled Vercel deploy
 
-# Per-commit Vercel auto-deploy is disabled in vercel.json
-# (git.deploymentEnabled.main=false). The fast factory merges many PRs/hour;
-# deploying each one would blow Vercel's deploy quota. Instead, redeploy the
-# latest main on a fixed cadence so the live site is never more than ~30 min
-# stale while deploy count stays bounded (~48/day).
+# The fast factory merges many PRs/hour; per-commit Vercel auto-deploy
+# would blow the Hobby plan's hard 100-deploys/day cap. Instead redeploy
+# the latest main every 15 minutes: 96 deploys/day — safely under 100,
+# site never more than ~15 min stale. (Every 10 min = 144/day would
+# EXCEED the cap; 15 min is the tightest safe cadence.)
+# Activation requires repo secret VERCEL_DEPLOY_HOOK; until it exists,
+# per-commit auto-deploy stays ON in vercel.json so the site isn't frozen.
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 concurrency:
