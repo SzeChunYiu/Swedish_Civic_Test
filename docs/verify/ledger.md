@@ -171,56 +171,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q148 | section-practice | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
 | q149 | true-false | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
 | q150 | false-statement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
-| q151 | judgement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q152 | section-practice | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q153 | true-false | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q154 | false-statement | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q155 | judgement | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q156 | section-practice | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q157 | true-false | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q158 | false-statement | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q159 | judgement | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q160 | section-practice | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q161 | true-false | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q162 | false-statement | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q163 | judgement | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q164 | section-practice | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q165 | true-false | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q166 | false-statement | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q167 | judgement | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | - | restate | oldest-unverified |
-| q168 | section-practice | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | - | restate | oldest-unverified |
-| q169 | true-false | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | - | restate | oldest-unverified |
-| q170 | false-statement | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | - | restate | oldest-unverified |
-| q171 | judgement | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | - | restate | oldest-unverified |
-| q172 | section-practice | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | - | restate | oldest-unverified |
-| q173 | true-false | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | - | restate | oldest-unverified |
-| q174 | false-statement | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | - | restate | oldest-unverified |
-| q175 | judgement | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | - | restate | oldest-unverified |
-| q176 | section-practice | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | - | restate | oldest-unverified |
-| q177 | true-false | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | - | restate | oldest-unverified |
-| q178 | false-statement | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | - | restate | oldest-unverified |
-| q179 | judgement | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | - | restate | oldest-unverified |
-| q180 | section-practice | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | - | restate | oldest-unverified |
-| q181 | true-false | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | - | restate | oldest-unverified |
-| q182 | false-statement | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | - | restate | oldest-unverified |
-| q183 | judgement | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | - | restate | oldest-unverified |
-| q184 | section-practice | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q185 | true-false | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q186 | false-statement | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q187 | judgement | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q188 | section-practice | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q189 | true-false | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q190 | false-statement | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q191 | judgement | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q192 | section-practice | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | - | restate | oldest-unverified |
-| q193 | true-false | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | - | restate | oldest-unverified |
-| q194 | false-statement | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | - | restate | oldest-unverified |
-| q195 | judgement | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | - | restate | oldest-unverified |
-| q196 | section-practice | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q197 | true-false | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q198 | false-statement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q199 | judgement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | - | restate | oldest-unverified |
-| q200 | section-practice | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
+| q151 | judgement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q152 | section-practice | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q153 | true-false | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q154 | false-statement | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q155 | judgement | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q156 | section-practice | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q157 | true-false | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q158 | false-statement | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q159 | judgement | q004 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q160 | section-practice | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q161 | true-false | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q162 | false-statement | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q163 | judgement | q005 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q164 | section-practice | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q165 | true-false | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q166 | false-statement | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q167 | judgement | q006 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
+| q168 | section-practice | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | d4a2146 | ok | rolling-source-slice |
+| q169 | true-false | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | d4a2146 | ok | rolling-source-slice |
+| q170 | false-statement | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | d4a2146 | ok | rolling-source-slice |
+| q171 | judgement | q007 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Fjäll | 6 | d4a2146 | ok | rolling-source-slice |
+| q172 | section-practice | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d4a2146 | ok | rolling-source-slice |
+| q173 | true-false | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d4a2146 | ok | rolling-source-slice |
+| q174 | false-statement | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d4a2146 | defect | queued-data-integrity-residual |
+| q175 | judgement | q008 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d4a2146 | ok | rolling-source-slice |
+| q176 | section-practice | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | d4a2146 | ok | rolling-source-slice |
+| q177 | true-false | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | d4a2146 | ok | rolling-source-slice |
+| q178 | false-statement | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | d4a2146 | ok | rolling-source-slice |
+| q179 | judgement | q009 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Befolkning | 7 | d4a2146 | ok | rolling-source-slice |
+| q180 | section-practice | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | d4a2146 | ok | rolling-source-slice |
+| q181 | true-false | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | d4a2146 | ok | rolling-source-slice |
+| q182 | false-statement | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | d4a2146 | ok | rolling-source-slice |
+| q183 | judgement | q010 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Naturresurser | 7 | d4a2146 | ok | rolling-source-slice |
+| q184 | section-practice | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q185 | true-false | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q186 | false-statement | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q187 | judgement | q011 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q188 | section-practice | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q189 | true-false | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | defect | queued-data-integrity-residual |
+| q190 | false-statement | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | defect | queued-data-integrity-residual |
+| q191 | judgement | q012 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q192 | section-practice | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | d4a2146 | ok | rolling-source-slice |
+| q193 | true-false | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | d4a2146 | defect | queued-data-integrity-residual |
+| q194 | false-statement | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | d4a2146 | defect | queued-data-integrity-residual |
+| q195 | judgement | q013 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | En stark demokrati | 10 | d4a2146 | ok | rolling-source-slice |
+| q196 | section-practice | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q197 | true-false | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q198 | false-statement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q199 | judgement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
+| q200 | section-practice | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | d4a2146 | ok | rolling-source-slice |
 | q201 | true-false | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
 | q202 | false-statement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
 | q203 | judgement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
