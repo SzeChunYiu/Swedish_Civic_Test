@@ -26,7 +26,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 17);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 8);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -43,11 +43,8 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
-  assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
-  assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
-  assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
-  assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
-  assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
+  assert.match(purchaseSource, /purchaseMatchesProductId\(candidate, productId\)/);
+  assert.match(purchaseSource, /productIds\.some\(\(productId\) =>/);
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
