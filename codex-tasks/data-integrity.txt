@@ -1,4 +1,4 @@
-MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:03+02:00
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:10+02:00
 
 Active DATA-INTEGRITY routes:
 - `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`: route the post-#438 residual
@@ -51,10 +51,14 @@ Current status:
   tests, export parity, static-site parity, serialized `npm run test:content
   -- --test-concurrency=1` 295/295, typecheck, ownership, targeted Prettier,
   and `git diff --check d4a2146^..d4a2146`.
-- `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` is landed on current main via
-  PR #418 / `f15404a`; do not duplicate it unless VALIDATOR rejects the
-  evidence. Treat any remaining q123 work as acceptance review only, not a new
-  DATA-INTEGRITY implementation route.
+- `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` is accepted via PR #418 /
+  `f15404a`. Clean manager verification on current `origin/main` passed direct
+  q123 old-wording scans across canonical data, `site/questions.js`, and the
+  exported CSV; export parity; static-site parity; `npm run validate:content`;
+  focused content/source/static tests 23/23; `node --check site/questions.js`;
+  typecheck; ownership; targeted Prettier; `git diff --check
+  f15404a^..f15404a`; and serialized `npm run test:content --
+  --test-concurrency=1` 298/298.
 - `CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1` is accepted via PR #456 /
   `67847d4`. Clean manager verification on current `origin/main` passed direct
   old/new wording scans across canonical data, `site/questions.js`, and the
@@ -74,12 +78,7 @@ Next action:
   ownership, diff check, PR/merge evidence, and journal handoff.
 - Broader authored-question naturalness stays with CONTENT unless the defect
   requires generated-template or validator-mirror changes.
-- For q123, do not open new implementation work unless the existing PR #418 /
-  `f15404a` evidence is rejected.
-
-Duplicate-guarded / pending manager acceptance:
-- q123 remains landed on current main via PR #418 / `f15404a`; do not duplicate
-  q123 implementation work while manager acceptance is pending.
+- Do not open new q123 implementation work; PR #418 / `f15404a` is accepted.
 
 CEO->DATA-INTEGRITY 2026-05-18T17:19:08+02:00
 Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
@@ -87,10 +86,9 @@ Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
    `d4a2146`; do not duplicate it. Keep the validator mirror and
    `tests/content-published-question-types.test.js` negative guards as the
    nearest regression coverage for generated true/false naturalness.
-2. q123 source-section cleanup is now on current main via `f15404a`; do not
-   duplicate it unless VALIDATOR rejects that evidence. q124 option cleanup is
-   accepted via PR #456 / `67847d4`. Do not accept any future CONTENT-only data
-   change that leaves `site/questions.js` stale.
+2. q123 source-section cleanup is accepted via PR #418 / `f15404a`, and q124
+   option cleanup is accepted via PR #456 / `67847d4`. Do not accept any future
+   CONTENT-only data change that leaves `site/questions.js` stale.
 
 CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T17:47:00+02:00
 `VERIFY-GENERATED-TF-RESIDUAL-Q151-Q200-1` [product defect][P0
