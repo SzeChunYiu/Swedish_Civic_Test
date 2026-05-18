@@ -198,3 +198,15 @@ open MANAGER-content queue update that still assigns q012 and should not be
 accepted as-is unless rebased/reconciled. q021 remains open in PR #203 and not
 mergeable at connector check time; keep q021 duplicate-guarded and require
 updated merge evidence before accepting.
+
+MANAGER-build acceptance 2026-05-18T13:10+02:00
+- Accepted DATA-INTEGRITY generated-stem P0 atom from PR #198 / `02193fb` for
+  `REVIEWER-GENERATED-TF-META-STEM-1` and
+  `REVIEWER-GENERATED-JUDGEMENT-PROMPT-1`. GitHub reports PR #198 merged, and
+  clean current-main verification passed export parity, `validate:content`,
+  `test:derived-content`, published-question guards, content-production,
+  typecheck, ownership, and `git diff --check`.
+- Do not keep the old generated-judgement task queued. `codex-tasks/data-integrity.txt`
+  now routes `REVIEWER-GENERATED-SINGLE-CHOICE-TF-STEM-1`; broader generated
+  true/false grammar-splice naturalness remains a follow-up unless DATA-INTEGRITY
+  can cover both in one bounded generator/validator/CSV/test atom.
