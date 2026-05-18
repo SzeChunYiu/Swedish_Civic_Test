@@ -67,3 +67,13 @@ A11y props: default `accessibilityRole="progressbar"`; derives `accessibilityLab
 Verification: `./node_modules/.bin/prettier --check components/ProgressBar.tsx` -> pass; token discipline grep on `components/ProgressBar.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/ProgressBar.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review ProgressBar and then queue ChapterRow if accepted.
+
+## Iteration 7 - 2026-05-18
+
+Component: ChapterRow list atom - `components/ChapterRow.tsx`
+Variants/states implemented: pressable chapter list row with title, secondary text, chevron affordance, disabled state, pressed state, caller style passthrough, and optional hidden chevron.
+Tokens used: `colors.surface`, `colors.surfaceWarm`, `colors.border`, `colors.focus`, `colors.text`, `colors.textSecondary`, `colors.textPlaceholder`, `motion.pressedScale`, `radius.card`, `space[0.5]`, `space[1]`, `space[1.5]`, `space[2]`, `space[8]`, `space.hairline`, `typography.bodySemibold`, `typography.captionLight`, and `typography.sectionTitle`.
+A11y props: default `accessibilityRole="button"`; derives `accessibilityLabel` from title and secondary text; merges caller `accessibilityState` with `disabled`; default token-sized `hitSlop`; chevron hidden from the accessibility tree.
+Verification: `./node_modules/.bin/prettier --write components/ChapterRow.tsx` -> unchanged; token discipline grep on `components/ChapterRow.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; post-rebase `./node_modules/.bin/prettier --check components/ChapterRow.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; `git diff --check origin/main..HEAD -- components/ChapterRow.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review ChapterRow and then queue DisclaimerBanner if accepted.
