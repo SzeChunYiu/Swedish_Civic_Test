@@ -172,3 +172,9 @@ explicit defer decision before any new non-site content assignment. Local
 non-site worktrees for q018, q020, and q074 were observed after the CEO 13:32
 update and are unaccepted unless VALIDATOR explicitly leases content despite
 SITE-P0.
+
+2026-05-18T15:07+02:00: MANAGER-build verified `origin/main` `d42cb51` is red:
+`npm run validate:content` fails on AnswerOption accessibility parity after the
+OptionCard component refactor. `ANSWER-OPTION-OPTIONCARD-PARITY-1` is now the
+stop-the-line DATA-INTEGRITY atom; pause lower-priority site/account/content
+work until the validator/test mirror is repaired or the component is rejected.

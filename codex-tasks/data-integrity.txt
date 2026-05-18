@@ -1,4 +1,24 @@
-MANAGER-build DATA-INTEGRITY queue - 2026-05-18T13:39+02:00
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T15:07+02:00
+
+Active stop-the-line atom:
+- `ANSWER-OPTION-OPTIONCARD-PARITY-1`
+  - Scope: `scripts/validate-content.js`,
+    `tests/content-answer-option-accessibility-parity.test.js`, and
+    `docs/parallel-sessions/journals/data-integrity.md`.
+  - Problem: current `origin/main` `d42cb51` fails
+    `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` after
+    `components/quiz/AnswerOption.tsx` moved from the shared `Button` wrapper
+    to `OptionCard`.
+  - Required behavior: update the DATA-INTEGRITY validator/test mirror to the
+    new `OptionCard` contract, preserving localized SV/EN labels, result-label
+    accessibility, selected/disabled forwarding, and tone/state mapping; or
+    reject the component change with concrete evidence.
+  - Required gates: `npm run validate:content`, focused
+    `node --test tests/content-answer-option-accessibility-parity.test.js`,
+    `npm run typecheck -- --pretty false`, `npm run test:ownership`, and
+    `git diff --check`.
+  - Do not work on static account-scope, live deploy, or generated-content
+    follow-ups until this red content gate is green.
 
 Current status:
 - `REVIEWER-GENERATED-TF-META-STEM-1` and
