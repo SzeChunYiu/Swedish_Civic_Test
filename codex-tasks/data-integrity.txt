@@ -75,6 +75,14 @@ Current status:
 The active DATA-INTEGRITY implementation route is now
 `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`.
 
+MANAGER-build directive 2026-05-18T18:55+02:00
+Remote branch `task/data-integrity/unknown-material-option-1779123114` exists,
+but it is not accepted routing and must stay parked. Do not open, merge, or
+rebase it ahead of `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`. The
+unknown-material fallback option atom remains queued behind the true/false
+residual route until manager/validator acceptance closes the residual row set
+on current `origin/main`.
+
 MANAGER-build QA 2026-05-18T18:20+02:00
 PR #470 / `204e522` is merged but not accepted for
 `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; it is a partial repair only. Clean
