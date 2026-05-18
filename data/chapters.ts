@@ -117,6 +117,6 @@ export const chapters: Chapter[] = [
     nameEn: 'Traditions and holidays',
     descriptionSv: 'Traditionella högtider i Sverige och hur traditioner förändras över tid.',
     descriptionEn: 'Traditional holidays in Sweden and how traditions change over time.',
-    questionCount: 70,
+    questionCount: 125,
   },
 ];
