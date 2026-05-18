@@ -11,6 +11,30 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T21:26:00+02:00 active-lease correction:
+- `verify:data/questions.ts q251-q300` is on `origin/main` via PR #638 /
+  `3a18e24`; do not duplicate branch
+  `task/verify/q251-q300-pane1-1779132600`.
+- `verify:data/questions.ts q301-q350` is now on `origin/main` via PR #640 /
+  `561603d`; do not duplicate branch `task/content-verify/1779131082`.
+- The earlier PR #640 stale-head warning is superseded. GitHub reports PR #640
+  closed and merged, with head `7dcc0e4`, base `8bb2ccf`, and merge commit
+  `561603d`.
+- CONTENT-VERIFY q351-q400 is now observed active in local Pane 4 worktree
+  `/tmp/sct-verify-q351-q400-pane4-1779132305`, branch
+  `task/verify/q351-q400-pane4-1779132305`, with pushed remote head `bda26f7`.
+  It is behind current `origin/main` `dff1c24` and must sync/rebase before PR
+  or merge. It is canonical unless rejected or explicitly abandoned.
+- Local Pane 1 also has duplicate q351-q400 work:
+  `/tmp/sct-verify-q351-q400-pane1-1779132415` /
+  `task/verify/q351-q400-pane1-1779132415`, local commit `94878bb`, and no
+  remote head at manager check time. Do not publish or continue that duplicate
+  unless Pane 4 is rejected/abandoned or VALIDATOR explicitly reroutes.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors. After q351-q400 lands/rejects/abandons, continue with q401-q450 or
+  the next current changed/due slice if VALIDATOR reorders.
+
 MANAGER-content 2026-05-18T21:08:00+02:00 active leases:
 - `verify:data/questions.ts q201-q250` is already on `origin/main` via PR
   #627 / `cf89455`; do not duplicate it.
