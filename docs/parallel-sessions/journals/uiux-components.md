@@ -37,3 +37,13 @@ A11y props: default `accessibilityRole="button"`; derives `accessibilityLabel` f
 Verification: `./node_modules/.bin/prettier --check components/Button.tsx` -> pass; token discipline grep on `components/Button.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/Button.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review Button and then queue OptionCard if accepted.
+
+## Iteration 4 - 2026-05-18
+
+Component: OptionCard quiz answer atom - `components/OptionCard.tsx`
+Variants/states implemented: `idle`, `selected`, `correct`, and `incorrect` states; pressable card layout with radio marker, optional secondary description, optional result label, disabled state, and pressed transform.
+Tokens used: `colors.surface`, `colors.border`, `colors.badgeBlueBg`, `colors.badgeBlueText`, `colors.correctBg`, `colors.success`, `colors.incorrectBg`, `colors.warning`, `colors.text`, `colors.warmDark`, `colors.textSecondary`, `motion.pressedScale`, `radius.card`, `radius.circle`, `space[0.5]`, `space[1]`, `space[1.5]`, `space[2]`, `space[3]`, `space[8]`, `space.hairline`, `typography.bodySemibold`, `typography.captionLight`, and `typography.badge`.
+A11y props: default `accessibilityRole="radio"`; derives `accessibilityLabel` from label, description, result label, and state label; merges caller `accessibilityState` with `checked` and `disabled`; default token-sized `hitSlop`.
+Verification: `/home/billy/Swedish_Civic_Test/node_modules/.bin/prettier --check components/OptionCard.tsx` -> pass; token discipline grep on `components/OptionCard.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review OptionCard and then queue PillBadge if accepted.
