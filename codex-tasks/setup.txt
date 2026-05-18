@@ -166,28 +166,23 @@ Accepted P0 SETUP atoms:
       `npm run test:ownership`, `node --check site/practice.js`,
       `node --check scripts/static-site-question-feedback.test.js`, targeted
       Prettier, and `git diff --check 8366d17^..8366d17` all exit 0.
+18. `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1` accepted via PR #538 /
+    `51d5cb1`.
+    - Clean manager verification on current `origin/main` `51d5cb1` passed
+      `npm run test:static-site-settings-language` 4/4, `npm run
+      test:static-site-question-feedback` 3/3, `npm run
+      test:static-site-answer-shuffle` 4/4, `npm run validate:content` at 720
+      questions with static parity true, `npm run typecheck -- --pretty
+      false`, `npm run lint`, `npm run test:ownership`, `node --check` for
+      `site/app.js`, `site/practice.js`, `site/settings.js`, and
+      `scripts/static-site-settings-language.test.js`, targeted Prettier,
+      `git diff --check 51d5cb1^..51d5cb1`, and a system-Chrome static smoke
+      proving Settings EN-to-SV rerenders active Practice and Mock surfaces
+      without console or page errors.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
-1. `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`
-   - Scope: deployed static `site/` Settings language changes while a Practice
-     chapter quiz or Mock exam is active.
-   - Required behavior: changing language through Settings must immediately
-     rerender the active Practice question surface and Mock landing/exam/result
-     surfaces, not only save `localStorage` or update global chrome. The
-     Settings path and the existing inline language controls must share the
-     same rerender behavior.
-   - Required gates: static browser guard for Settings EN-to-SV on
-     `#/practice?c=1` and `#/mock?run=1`, proving active question/UI labels
-     switch language without a full reload; `node --check` for changed `site/`
-     scripts; typecheck; lint; ownership; targeted Prettier/diff checks;
-     journal handoff; PR/merge evidence.
-   - Reviewer evidence: Settings -> Language -> Svenska set `{doc:"sv",
-     saved:"sv"}`, but active Practice still showed `Where is Sweden located?`
-     plus English answers, and active Mock still showed `MOCK EXAM`,
-     `TIME LEFT`, `Submit`, and English navigation labels.
-
-2. `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`
+1. `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`
    - Scope: deployed static `site/` completed Practice result breakdown.
    - Required behavior: Practice completion result labels must be localized and
      spaced in Swedish and English; the Swedish result must not render
@@ -199,7 +194,7 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
    - Reviewer evidence: Swedish `#/practice?c=mix` completion rendered rows
      `["7Rätt","3Fel","70%score"]` with `hasEnglishScore:true`.
 
-3. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
+2. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
    - Scope: deployed static `site/` mobile header/navigation at <=390px width.
    - Required behavior: Practice, Mock exam, Ebook, Support, and Settings must
      be reachable without horizontal overflow or hidden 0x0 nav links.
@@ -212,7 +207,7 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
      scroll width in a 390px viewport, visible nav only `Home` and `Practice`,
      hidden `Mock exam`, `Ebook`, and `Support`, and no menu button.
 
-4. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
+3. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
    - Scope: deployed static `site/` user-visible question-count/product-count
      copy in `site/index.html`, `site/i18n-extras.js`, and any related static
      copy surface.

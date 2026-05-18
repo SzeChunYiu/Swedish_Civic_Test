@@ -149,3 +149,30 @@ Rows moved to accepted: none.
 Rows blocked: `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` remains open; PANE 4 hit the Codex usage limit during a partial DATA-INTEGRITY attempt.
 Evidence: tmux pane `civic-laptop-build:0.4` showed repeated usage-limit errors with retry date May 23, 2026 at 23:11. The visible partial attempt had edited generated-template/validator/test files for the residual true/false route, then `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` failed on `derivePublishedQuestions keeps generated single-choice variants at four options`. No PR, merge, handoff, or green gate exists for that attempt.
 Next worker task queued: DATA-INTEGRITY - restart from clean current `origin/main` and continue the full `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` route, covering q201-q720 residual evidence, regenerated `content/question-bank.csv` and `site/questions.js`, export/static parity, `validate:content`, `test:derived-content`, focused published-question/content gates, typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a current-main residual recheck. Keep `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` behind this route unless VALIDATOR explicitly rebundles it.
+
+Iteration: 2026-05-18T19:32+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1` as the queue-level closure for the
+static Settings language rerender defect.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence; `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`
+remains open after the pane 4 usage-limit note above.
+Evidence: PR #538 is closed and merged as `51d5cb1` on current `origin/main`.
+Clean manager verification in `/tmp/sct-manager-settings-atOzVE/wt` passed
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language`
+4/4, `NODE_OPTIONS='--v8-pool-size=1' npm run
+test:static-site-question-feedback` 3/3, `NODE_OPTIONS='--v8-pool-size=1' npm
+run test:static-site-answer-shuffle` 4/4, `NODE_OPTIONS='--v8-pool-size=1'
+npm run validate:content` at 720 questions with static parity true,
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run lint`, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:ownership`, `node --check` for `site/app.js`,
+`site/practice.js`, `site/settings.js`, and
+`scripts/static-site-settings-language.test.js`, targeted Prettier, and
+`git diff --check 51d5cb1^..51d5cb1`. A system-Chrome static smoke served
+`site/` at `http://127.0.0.1:8251` and confirmed Settings EN-to-SV rerendered
+active `#/practice?c=1` and `#/mock?run=1` surfaces without console or page
+errors.
+Next worker task queued: SETUP - take
+`REVIEWER-SITE-PRACTICE-RESULT-I18N-1` next, then mobile nav reachability, then
+static question-count copy. Keep Settings language rerender duplicate-guarded.
