@@ -339,3 +339,40 @@ deployment evidence only; no pane should run Vercel CLI.
 Escalations: operator deployment capacity or operator-verified production
 deploy evidence remains required for SITE-P0-5. Supervisor config/audit
 reconciliation remains required before treating factory-run/apply as safe.
+
+Cycle update 2026-05-18T22:12:23+02:00
+Objective: keep the factory on P0 burn-down without duplicating accepted
+generated wording or static-site atoms. Latest observed `origin/main` is
+`99c0960` (`reviewer: queue q501 q550 current defects`); q401-q450 is now
+accepted by MANAGER-build via `e022455` / source commit `85fe297`.
+Required docs were read from the supervisor fallback copies plus
+`docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`,
+`docs/parallel-sessions/TEAM_PLAN.md`, and the current queue files; the
+requested `/home/billy/docs/...` paths are absent on this machine.
+
+Teams/staffing: HOLD/add-none. Local tmux shows only `_csup_sentinel_` plus
+`civic-content` with six panes; no local build, validator, uiux, qa, or release
+manager pane is active. `/home/billy/bin/csup staff --scenario=resume
+--dry-run` reported STAFF-UP with queued work for every configured host
+(`work=9`, `blockers=9`), but every host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run.
+`/home/billy/bin/csup factory-audit civic-test` remains RED for
+`missing:project_config`, so do not treat factory-run/apply as safe until the
+project config audit is reconciled.
+
+Priorities: do not duplicate q401-q450 source work unless fresh current-main
+regression evidence appears. DATA-INTEGRITY next owns q451-q500 generated
+wording defects from current VERIFY evidence: `0d58526` for q454, q466, q470,
+q471, and q495 plus `8e3aa16` for q479. CONTENT-VERIFY should not duplicate
+q401 or q451 evidence; q501-q550 reviewer evidence is queued in `99c0960` but
+stays behind q451-q500 source routing. Keep
+`REVIEWER-RELEASE-GATES-1` as the next non-site P0 COMPLY source atom for
+RELEASE/COMPLY or SETUP/COMPLY: update the publishing privacy/data-safety docs
+and `scripts/publishing.test.js` to match the current ads, Remove Ads IAP, and
+consent posture. SETUP remains source-held unless VALIDATOR assigns that COMPLY
+atom or fresh P0 site source evidence appears.
+
+Escalations: SITE-P0-5 still needs production to serve current `origin/main`
+and pass the hash-aware live smoke; no pane should run Vercel CLI from this
+repo. Usable LUNARC/station capacity or reconciled factory project config is
+needed before adding remote workers.

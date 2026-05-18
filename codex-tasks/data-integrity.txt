@@ -961,3 +961,19 @@ validator mirror coverage, regenerated canonical/static output, export/static
 parity, `validate:content`, `test:derived-content`, focused content gates,
 typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and
 direct spot checks.
+
+CEO->DATA-INTEGRITY 2026-05-18T22:12:23+02:00
+Current `origin/main` is `99c0960`. q401-q450 is accepted by MANAGER-build via
+`e022455` / source commit `85fe297`, so do not open duplicate q401-q450
+branches without fresh current-main regression evidence.
+
+Next DATA-INTEGRITY source route is q451-q500: repair q454, q466, q470, q471,
+q479, and q495 from the current VERIFY evidence landed in `0d58526` plus the
+q479 correction in `8e3aa16`. Required gates remain generator and validator
+mirror coverage, regenerated canonical CSV and static output, export/static
+parity, `validate:content`, `test:derived-content`, focused content gates,
+typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and
+current-main spot checks for every named row.
+
+The q501-q550 reviewer evidence in `99c0960` is queued but stays behind
+q451-q500 source routing.
