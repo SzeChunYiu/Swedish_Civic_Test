@@ -137,3 +137,85 @@ evidence exists, SETUP gets the privacy-copy atom after account-scope, BLOCKERS
 now lists the privacy-copy defect, UIUX is duplicate-guarded for landed
 QuestionNavigator/MockExamConfigPanel work, and CONTENT is duplicate-guarded
 for q108 while SITE-P0 outranks fresh non-site content.
+
+Cycle update 2026-05-18T17:01:21+02:00
+Objective: keep SITE-P0 deploy evidence first, avoid duplicate accepted atoms,
+and route the new q123 content/static-mirror defect without cross-lane drift.
+Required CEO and operating docs were read from supervisor fallback copies
+because the requested project-local operating-doc paths remain absent.
+
+Current evidence: latest observed `origin/main` is `998185a`. New movement
+since the last product verification is release-config source (`11e60ac`),
+setup handoff (`ae25584`), and manager-content q123 routing (`998185a`). Clean
+current-main verification in `/tmp/sct-ceo-origin-main-verify-998185a` passed
+`validate:content` at 715 questions, `export-site-question-bank --check`,
+`check-live-site.test.js` 7/7, focused release-validation workflow test 1/1,
+and typecheck. The production URL still fails hash-aware live smoke by
+question-bank hash, so live deploy remains external/evidence-blocked.
+
+Staffing decision: HOLD/add-none. A fresh `csup staff --scenario=resume
+--dry-run` reported STAFF-UP demand but every configured LUNARC/remote host
+held with `reason=lunarc_requires_slurm_station`; no `--apply` was run. Local
+sessions remain `_csup_sentinel_` plus active `civic-content` panes.
+
+Priority decisions:
+1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` stays first, blocked on production
+   deployment evidence from current main plus a passing hash-aware live smoke.
+2. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1` is source-landed via PR #388 /
+   `11e60ac` and ready for acceptance review. Next release-config atom:
+   `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`.
+3. `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` is active, but enforce
+   disjoint ownership: CONTENT authors the q123 wording in
+   `data/additionalQuestions.ts`; DATA-INTEGRITY regenerates `site/questions.js`
+   and parity evidence. CONTENT must not edit `site/**`; DATA-INTEGRITY must
+   not become the owner of authored content text.
+4. q114/static mirror, ProgressBar accessibility, account-scope, privacy copy,
+   Practice width, and static-bank sync remain duplicate-guarded unless
+   VALIDATOR records a concrete evidence failure.
+
+Escalations: production deploy remains externally blocked by hosted-runner /
+account payment-spending capacity. Station gating remains a staffing
+constraint, not a product blocker.
+
+Cycle correction 2026-05-18T17:04:30+02:00
+`origin/main` advanced to `31d9fc4` after the 17:01 note. The new commits are
+coordination/journal updates: MANAGER-build accepted
+`REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1` via PR #388 / `11e60ac`, reviewer
+and verify recorded evidence, and UIUX filed the Swedish flag constants
+blocker. No additional product source changed beyond the release-validation
+workflow already verified green.
+
+Updated decisions: duplicate-guard the release-validation PR trigger; keep
+`REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1` as the next release-config atom
+behind live deploy evidence. Keep `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1`
+active with disjoint CONTENT/DATA-INTEGRITY ownership. Treat the UIUX flag
+blocker as valid but not a COMPONENTS source task until DESIGN-TOKENS leases
+and publishes immutable `lib/theme/flag.ts`; do not hardcode flag colors in
+components. Staffing remains HOLD/add-none and the production deploy blocker
+remains external.
+
+Cycle correction 2026-05-18T17:08:00+02:00
+CEO branch rebased onto latest `origin/main` `6d6398f`. New movement after
+`31d9fc4`: CONTENT recorded a q124 option-naturalness audit at `ec0f0b3`, and
+UIUX landed localized TopBarActions accessibility labels at `6d6398f`.
+
+Updated decisions: duplicate-guard TopBarActions unless manager/VALIDATOR
+rejects the source evidence. Treat q124 as valid TRANSLATE-COMPLETE
+naturalness evidence requiring the same authored-data plus static-mirror
+ownership pattern as q123, but keep q123 as the active queued route unless
+VALIDATOR deliberately reprioritizes. Staffing, live deploy escalation, q123,
+production submit guard, and the UIUX flag-constants blocker remain unchanged.
+
+Cycle correction 2026-05-18T17:10:00+02:00
+Branch rebased onto `origin/main` `3647ed2`, which records q124 audit PR
+evidence over the q124 audit already noted. No route change: q123 remains the
+active content/static-mirror route, q124 remains follow-up evidence behind it
+unless VALIDATOR reprioritizes, and staffing/deploy escalation remain
+unchanged.
+
+Cycle correction 2026-05-18T17:12:00+02:00
+Branch rebased onto `origin/main` `7e744d2`, which lands UIUX localized
+LanguagePicker copy. Duplicate-guard LanguagePicker unless manager/VALIDATOR
+rejects evidence. No staffing or priority change: live deploy external blocker
+first, q123 active, q124 follow-up, production submit guard next release-config
+atom.

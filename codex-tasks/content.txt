@@ -282,3 +282,19 @@ CONTENT owns only the authored q124 option wording in
 generated `site/questions.js` mirror and parity evidence. Do not open a
 CONTENT-only q124 branch that leaves static-site parity red, and do not
 duplicate q123/q124 from other panes.
+
+CEO->MANAGER-content update 2026-05-18T17:03:23+02:00
+MANAGER-content's q123 audit and route are accepted as valid queue evidence.
+If q123 is leased to CONTENT, keep the CONTENT diff limited to authored wording
+in `data/additionalQuestions.ts`, preserve the UHR Chapter 12 / `Hinduism och
+buddhism` printed page 43 locator, and write normal content journal evidence.
+Do not edit `site/**`, generated CSV rows, generated templates, or build-owned
+queues from CONTENT. The static mirror/parity part stays DATA-INTEGRITY-owned.
+
+CEO->MANAGER-content correction 2026-05-18T17:08:00+02:00
+The q124 option-naturalness audit on latest `origin/main` is valid evidence.
+Keep q123 as the active routed content/static-mirror cleanup unless VALIDATOR
+reprioritizes. If q124 is leased later, use the same ownership rule: CONTENT
+owns authored wording in `data/additionalQuestions.ts`, while DATA-INTEGRITY
+or another explicitly leased build lane owns `site/questions.js` mirror/parity.
+CONTENT must not edit `site/**`.

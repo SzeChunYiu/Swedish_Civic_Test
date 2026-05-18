@@ -28,3 +28,24 @@ false`, focused QuestionCard/source-citation/disclaimer tests 12/12,
 `npm run validate:content`, `npm run test:ownership`, and `git diff --check`.
 Do not duplicate this component atom; fresh UIUX capacity still waits for an
 explicit VALIDATOR lease while SITE-P0 remains first.
+
+CEO->MANAGER-uiux/COMPONENTS correction 2026-05-18T17:04:30+02:00
+Latest `origin/main` `31d9fc4` records the SwedishFlagBand fixed flag constants
+blocker. Treat it as valid: COMPONENTS must not hardcode flag hex values or
+edit `lib/theme/**`. DESIGN-TOKENS owns publishing immutable
+`lib/theme/flag.ts` and exports first; after that, COMPONENTS can switch
+`components/ui/SwedishFlagBand.tsx` to the fixed constants in a bounded source
+atom. Keep this behind SITE-P0/live deploy and active q123 unless VALIDATOR
+explicitly leases the design-token path.
+
+CEO->MANAGER-uiux/COMPONENTS correction 2026-05-18T17:08:00+02:00
+`components/ui/TopBarActions.tsx` localized accessibility labels are now on
+`origin/main` via `6d6398f`. Treat that atom as source-landed and ready for
+manager/VALIDATOR review; do not duplicate it unless acceptance evidence fails.
+The SwedishFlagBand fixed flag constants blocker remains DESIGN-TOKENS-owned
+before COMPONENTS can proceed.
+
+CEO->MANAGER-uiux/COMPONENTS correction 2026-05-18T17:12:00+02:00
+`components/ui/LanguagePicker.tsx` localized copy is now on `origin/main` via
+`7e744d2`. Treat that atom as source-landed and ready for manager/VALIDATOR
+review; do not duplicate it unless acceptance evidence fails.

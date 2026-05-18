@@ -65,3 +65,12 @@ Additional active route:
   parity, `node scripts/export-site-question-bank.js --check`,
   `npm run validate:content`, focused content tests, typecheck, ownership,
   Prettier, diff checks, and PR/merge evidence.
+
+CEO correction 2026-05-18T17:03:23+02:00:
+Keep `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` active, but enforce the lane
+ownership split inside that stacked route. CONTENT owns the authored q123
+wording change in `data/additionalQuestions.ts`; DATA-INTEGRITY owns
+regenerated `site/questions.js`, static-site parity, validator/export evidence,
+and its journal handoff. A single PR is acceptable only if the handoff names
+which lane owned which files and all gates are green. DATA-INTEGRITY must not
+become the owner of authored q123 text.
