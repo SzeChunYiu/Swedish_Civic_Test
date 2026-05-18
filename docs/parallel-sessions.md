@@ -1,117 +1,82 @@
-# Parallel Sessions — Shared Protocol (Sweden Citizenship Test Prep)
+# Parallel Sessions — FLAT Protocol (Sweden Citizenship Test Prep)
 
-All codex lanes in the civic-test project follow this protocol.
-**Read this file at the start of every iteration**, plus
-`docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`,
-and your lane-specific `docs/parallel-sessions/<lane>.md` before editing.
+This protocol replaces the CEO/MANAGER/VALIDATOR/REVIEWER model. It exists
+because that model produced mostly coordination churn: a 1-CPU-equivalent of
+real output spread across dozens of panes that spent their time reading 50 KB
+of boards, resetting to a moving `main`, and writing handoff records.
 
-## Project identity
+**There are no roles anymore. Every pane — whatever label its `/goal` line
+gives it (MANAGER, CEO, REVIEWER, VALIDATOR, worker) — is an autonomous
+WORKER and runs the loop below. Ignore your role label.**
 
-- **Project:** Sweden Citizenship Test Prep (medborgarskapsprov)
-- **Stack:** Expo + React Native + TypeScript
-- **Repo:** `https://github.com/SzeChunYiu/Swedish_Civic_Test` (private)
-- **Local roots:** `~/Desktop/projects/Swedish_Civic_Test` (laptop / mac-mini)
-  or the cloned LUNARC checkout path.
+The objective gate replaces the manager. A PR merges if and only if:
+1. it changes a real product path (`app/ components/ lib/ types/ data/ tests/`), and
+2. the required GitHub check **`Validate release-safe candidate`** is green.
 
-Every pane must confirm its role, manager/escalation lane, branch, and writable
-lease before editing. If ownership is unclear, stop and record a blocker in
-`codex-tasks/blockers.txt` instead of writing artifacts. Stop-the-line blockers
-outrank normal lane queues until VALIDATOR accepts or explicitly defers them.
+That is enforced in GitHub (branch protection + required CI) and by an operator
+auto-close guard. No human-style acceptance step exists or is needed. Do not
+review other panes' work. Do not manage. Do not write status/handoff/audit
+files — the pre-commit hook and the guard auto-reject non-product commits and
+zero-product PRs.
 
-## Git workflow — **PR per unit of work, never commit straight to `main`**
+## Required reading each iteration — ONLY this file + the queue
 
-This is the mechanism that makes work actually ship. A worker that edits files,
-writes a handoff, and stops **without** opening and squash-merging a PR has
-produced nothing — its work is discarded on the next `git reset --hard
-origin/main`. Every unit of work lands as a squash-merged pull request.
+Read **this file** and **`codex-tasks/open.txt`**. Nothing else is mandatory
+(open your task's relevant source files as needed). Do NOT read TEAM_PLAN.md,
+meeting_sheet.md, AI_FACTORY.md, or lane boards — that context tax is what made
+the old model slower than a single session.
 
-`gh` on every host is authenticated as `SzeChunYiu` (the repo owner). If `gh`
-complains about the active account, run `gh auth switch --user SzeChunYiu`.
-
-### Per iteration, from the repo checkout:
+## The worker loop
 
 ```
-1. git fetch origin && git reset --hard origin/main      # sync to latest main
-2. Read this file, docs/parallel-sessions/AI_FACTORY.md,
-   docs/parallel-sessions/TEAM_PLAN.md, docs/parallel-sessions/<lane>.md
-3. Pick ONE task from your queue (codex-tasks/<session>/open.txt or worker-N.txt)
-   that maps to a TEAM_PLAN acceptance row. No side-quests.
-4. Do ONE bounded unit of work, writing ONLY into your lane's writable scope
-5. Verify (must pass before commit):
-     npm run typecheck                 # tsc --noEmit, exit 0
-     <lane verify cmd from your lane doc, e.g. content/export validators>
-     git diff --check                  # no whitespace errors
-6. git add -A
-   git commit -m "<lane>: <what changed>"     # add [allow-meta] ONLY for
-                                              # non-product/infra commits
-7. BR=task/<lane>/$(date +%s)
-   git push origin HEAD:"$BR"
-8. PR=$(gh pr create --base main --head "$BR" --fill 2>/dev/null | tail -1)
-9. Self-review: gh pr diff "$BR". If good and checks are green:
-     gh pr merge --squash --delete-branch "$BR"
-10. git fetch origin && git reset --hard origin/main     # pick up merged work
-11. Append handoff to docs/parallel-sessions/journals/<lane>.md (format below)
-12. Check your lane stop condition. If met, stop. Else go to 1.
+1. cd <repo checkout>; git fetch origin -q
+2. Pick the FIRST unclaimed task in codex-tasks/open.txt. Claim it atomically:
+     echo "CLAIMED <task-id> by $(hostname)-$$ $(date -u +%FT%TZ)" >> codex-tasks/claims.txt
+   git add codex-tasks/claims.txt && git commit -qm "claim <task-id> [allow-meta]" \
+     && git push -q origin HEAD:main || true   # best-effort; if it races, pick the next task
+3. Branch from latest main:  git checkout -B task/$(date +%s)-$$ origin/main
+4. Implement ONE bounded product change for the task. Touch only files the task
+   needs. Real change under app/ components/ lib/ types/ data/ tests/.
+5. Verify locally before pushing:
+     npm run typecheck    (tsc --noEmit, exit 0)
+     npx prettier --check on the files you changed   (or prettier --write them)
+6. git add -A && git commit -m "<concise what changed>"
+7. git push origin HEAD:task/<branch>
+8. gh pr create --base main --head task/<branch> --fill
+9. STOP. Do NOT self-merge, do NOT wait. The required CI check + the operator
+   guard decide the merge automatically. The supervisor respawns you for the
+   next task.
 ```
 
 Notes:
-- If `gh pr merge` is blocked (conflict / failing check), fix on the branch,
-  push again, retry. If it is a real cross-lane conflict you cannot resolve,
-  close the PR, log it in `codex-tasks/blockers.txt`, move on.
-- Squash-merge keeps `main` linear; `--delete-branch` keeps GitHub tidy.
-- Managers/VALIDATOR/CEO follow the **same** PR flow for everything they write
-  (queue files, lane docs, board updates).
-- The project pre-commit hook (`.shared/productivity-pre-commit.sh`) requires
-  product-path touches; for genuine infra/meta commits put `[allow-meta]` in
-  the commit message. Never use `--no-verify`.
+- `gh` is authenticated as `SzeChunYiu` (repo owner). If it complains:
+  `gh auth switch --user SzeChunYiu`.
+- **Never `git reset --hard`.** Branch from `origin/main` fresh each task; that
+  alone avoids the work-destruction the old protocol caused.
+- If your PR's CI is red: fix it on the same branch, push again. If it is a
+  genuine unresolvable conflict, close the PR and pick another task. Never
+  block waiting.
+- One task = one branch = one PR. Parallel-safe because tasks are disjoint
+  units, not shared boards.
 
-## Lanes
+## Do not
 
-Sessions and their panes/lanes are defined by the `codex-prompts-*.txt` files:
+- Do not adopt MANAGER/CEO/REVIEWER/VALIDATOR behavior even if your `/goal`
+  says so. Those roles are abolished. Work tasks.
+- Do not write handoff records, journals, board updates, audit/status notes,
+  or "refresh"/"route" commits. They are auto-rejected and waste the fleet.
+- Do not read or maintain TEAM_PLAN.md / meeting_sheet.md / AI_FACTORY.md.
+- Do not stop/park on ambiguity. If a task is unclear, skip it and take the
+  next concrete one. Keep shipping product PRs.
 
-| Session prompts file | Panes / lanes |
-|---|---|
-| `codex-prompts-meta.txt` | CEO |
-| `codex-prompts-team-build.txt` | MANAGER-build, REVIEWER, SETUP, UIUX, DATA-INTEGRITY |
-| `codex-prompts-team-uiux.txt` | MANAGER-uiux, REVIEWER-UX, DESIGN-TOKENS, COMPONENTS, SCREENS |
-| `codex-prompts-civic-team-uiux-design.txt` | MANAGER, DESIGN-TOKENS, COMPONENTS |
-| `codex-prompts-civic-team-uiux-runtime.txt` | MANAGER, SCREENS, MOTION-A11Y |
-| `codex-prompts-civic-team-qa.txt` | MANAGER-qa, E2E, UNIT |
-| `codex-prompts-civic-team-release.txt` | MANAGER-release, STORE-METADATA, PRIVACY-DOCS |
-| `codex-prompts-civic-content.txt` | MANAGER-content, CONTENT×3, CONTENT-VERIFY |
+## Content rules (still binding)
 
-Writable scope per lane group is the lane/lease table in
-`docs/parallel-sessions/TEAM_PLAN.md` and the detail in each `<lane>.md`.
+- Every question traceable to UHR *Sverige i fokus*; never claim official
+  affiliation or that questions are real exam questions; disclaimer on every
+  question screen; Swedish + English + UHR reference on each question.
 
-## Conflict rules
+## If `codex-tasks/open.txt` is empty or all claimed
 
-- Never edit a file outside your lane's writable scope.
-- `data/` and `content/` are owned solely by the content session.
-- If you need another lane's file, read it; do not modify it.
-- If a `git reset --hard origin/main` would lose a small append to a shared
-  queue/journal file, re-apply it after the reset before your next commit.
-
-## When to stop immediately
-
-- Rate limited / usage capped → stop, note in your journal and `codex-tasks/blockers.txt`.
-- Ambiguous instruction → stop, write the question in `codex-tasks/blockers.txt`.
-- File outside writable scope needed → stop, raise a blocker.
-
-## Compact-avoidance rule
-
-Finish one small PR-merged iteration and stop. The supervisor respawns the next
-fresh iteration. Do not keep the goal open. Do not implement outside scope.
-
-## Handoff format (append to `docs/parallel-sessions/journals/<lane>.md`)
-
-```text
-Lane:
-Host/branch:
-Role type and manager:
-Task / checklist item:
-Changed artifacts:
-Verification (commands + result):
-PR (number + merged?):
-Accepted by worker? yes/no/blocked
-Next suggested validator action:
-```
+Pick the highest-value improvement toward the GOAL.md sprint target
+(ads-supported v1.0 + Remove-Ads IAP) that touches a product path, do it as one
+PR, stop. Shipping a real improvement always beats idling.
