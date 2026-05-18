@@ -26,27 +26,49 @@ Read **this file** and **`codex-tasks/open.txt`**. Nothing else is mandatory
 meeting_sheet.md, AI_FACTORY.md, or lane boards — that context tax is what made
 the old model slower than a single session.
 
-## The worker loop
+## The worker loop — THINK, then PLAN, then SHIP (autonomous)
+
+You are autonomous. Nobody tells you what to do. Each iteration you decide the
+single highest-value next step yourself, plan it, build it, ship it.
 
 ```
 1. cd <repo checkout>; git fetch origin -q
-2. Pick the FIRST unclaimed task in codex-tasks/open.txt. Claim it atomically:
-     echo "CLAIMED <task-id> by $(hostname)-$$ $(date -u +%FT%TZ)" >> codex-tasks/claims.txt
-   git add codex-tasks/claims.txt && git commit -qm "claim <task-id> [allow-meta]" \
-     && git push -q origin HEAD:main || true   # best-effort; if it races, pick the next task
-3. Branch from latest main:  git checkout -B task/$(date +%s)-$$ origin/main
-4. Implement ONE bounded product change for the task. Touch only files the task
-   needs. Real change under app/ components/ lib/ types/ data/ tests/.
-5. Verify locally before pushing:
-     npm run typecheck    (tsc --noEmit, exit 0)
-     npx prettier --check on the files you changed   (or prettier --write them)
-6. git add -A && git commit -m "<concise what changed>"
-7. git push origin HEAD:task/<branch>
-8. gh pr create --base main --head task/<branch> --fill
-9. STOP. Do NOT self-merge, do NOT wait. The required CI check + the operator
-   guard decide the merge automatically. The supervisor respawns you for the
-   next task.
+
+2. THINK — decide the ONE most valuable next step (bounded: minutes, in your
+   head, NO written artifact). Consider, in priority order:
+     a. the first unclaimed concrete atom in codex-tasks/open.txt (esp. P0/ADS/IAP),
+     b. a real gap between GOAL.md's acceptance test and the current code,
+     c. a concrete bug/regression you can see.
+   Pick exactly ONE bounded, product-scoped unit. If torn between options,
+   pick the SMALLEST one that ships real value. Never expand scope.
+
+3. PLAN — before editing, think through (again: in your head / it becomes your
+   commit message — NOT a doc): which files, the approach, the smallest correct
+   slice, and how you will verify it. If it looks large or risky, cut it down
+   to the smallest shippable increment and do only that.
+
+4. CLAIM it so peers don't duplicate (atomic, best-effort, never block):
+     echo "CLAIMED <id> by $(hostname)-$$ $(date -u +%FT%TZ)" >> codex-tasks/claims.txt
+     git add codex-tasks/claims.txt && git commit -qm "claim <id> [allow-meta]" \
+       && git push -q origin HEAD:main || true     # race? just pick another unit
+
+5. Branch from latest main:  git checkout -B task/$(date +%s)-$$ origin/main
+6. IMPLEMENT the one bounded product change. Only the files the plan needs.
+   Real change under app/ components/ lib/ types/ data/ tests/.
+7. VERIFY:  npm run typecheck (exit 0); prettier --write your changed files.
+8. git add -A && git commit -m "<what changed + the why from your plan>"
+9. git push origin HEAD:task/<branch>;  gh pr create --base main --head task/<branch> --fill
+10. STOP. Do NOT self-merge, do NOT wait. The required CI check + operator guard
+    decide the merge. The supervisor respawns you for the next iteration.
 ```
+
+**The iron rule that keeps thinking from becoming the disease:** every
+iteration MUST end in a pushed product PR. THINK and PLAN are mental preamble
+— time-boxed, never written as standalone analysis/handoff/plan/doc files. A
+pane whose output is reasoning artifacts instead of a product PR is
+auto-reverted by the gate, exactly like the old manager churn. Plan in your
+head; prove the plan by shipping it. No analysis paralysis: when unsure, ship
+the smallest correct thing and let the next iteration build on it.
 
 Notes:
 - `gh` is authenticated as `SzeChunYiu` (repo owner). If it complains:
