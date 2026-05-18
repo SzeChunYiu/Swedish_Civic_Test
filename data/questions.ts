@@ -265,9 +265,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Naturresurser säger att Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte stöds av avsnittet.',
+      'Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser.',
     explanationEn:
-      'The UHR section Natural resources says Sweden is rich in several important natural resources: iron ore and other minerals, forest, agricultural land, and water. That makes the option with those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items are not supported by the section.',
+      "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Naturresurser',
