@@ -6609,8 +6609,8 @@
         "sv": "I södra Europa"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -6656,8 +6656,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -6780,8 +6780,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -6955,8 +6955,8 @@
         "sv": "Cirka 160 kilometer"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -7128,8 +7128,8 @@
         "sv": "Nordsjön"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -7303,8 +7303,8 @@
         "sv": "Hisingen och Orust"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -7351,8 +7351,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -7475,8 +7475,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -7647,8 +7647,8 @@
         "sv": "Smygehuk"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -7825,8 +7825,8 @@
         "sv": "Östersjön, Kattegatt och Skagerrak"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -7999,8 +7999,8 @@
         "sv": "Nästan 1 miljon"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -8174,8 +8174,8 @@
         "sv": "Olja, naturgas, ökenmark och tropiskt regn"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -8347,8 +8347,8 @@
         "sv": "Militärstyre"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -8519,8 +8519,8 @@
         "sv": "Bara ett parti får ställa upp"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -8691,8 +8691,8 @@
         "sv": "Förbjuda andra från att rösta i politiska val"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -8863,8 +8863,8 @@
         "sv": "Censur"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -9035,8 +9035,8 @@
         "sv": "Alla väljare får två röster var i nästa val"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -9207,8 +9207,8 @@
         "sv": "Domstolarna väljer alla riksdagsledamöter"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -9379,8 +9379,8 @@
         "sv": "21"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -9551,8 +9551,8 @@
         "sv": "Kungen ensam"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -9723,8 +9723,8 @@
         "sv": "16 år"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -9895,8 +9895,8 @@
         "sv": "Politikerna måste alltid följa resultatet"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -10067,8 +10067,8 @@
         "sv": "Kung, kyrka och adel"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -10239,8 +10239,8 @@
         "sv": "Att sköta regionernas kollektivtrafik"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -10286,8 +10286,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -10411,8 +10411,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -10583,8 +10583,8 @@
         "sv": "De ersätter domstolarna i brottmål"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -10755,8 +10755,8 @@
         "sv": "Att döma i brottmål"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -10927,8 +10927,8 @@
         "sv": "Att skicka ambassadörer till andra länder"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11099,8 +11099,8 @@
         "sv": "Att monarken har all politisk makt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11146,8 +11146,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11271,8 +11271,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11443,8 +11443,8 @@
         "sv": "Varje år"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11615,8 +11615,8 @@
         "sv": "Man måste äga en bostad i Sverige"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11662,8 +11662,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11787,8 +11787,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -11959,8 +11959,8 @@
         "sv": "För att rösterna ska räknas snabbare"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -12131,8 +12131,8 @@
         "sv": "De ersätter domstolarna"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -12303,8 +12303,8 @@
         "sv": "Partiet får alla platser"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -12475,8 +12475,8 @@
         "sv": "Minst 1 procent av rösterna"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -12647,8 +12647,8 @@
         "sv": "Skollagen, socialtjänstlagen, miljöbalken och semesterlagen"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -12819,8 +12819,8 @@
         "sv": "All offentlig makt utgår från domstolarna"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -12991,8 +12991,8 @@
         "sv": "Hur kollektivavtal tecknas"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -13163,8 +13163,8 @@
         "sv": "Den ger rätt att gå på åkrar och in i privata trädgårdar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -13335,8 +13335,8 @@
         "sv": "Riksdag, regering, regioner och kommuner"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -13507,8 +13507,8 @@
         "sv": "Regering eller riksdag kan bestämma hur domstolar ska döma"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -13679,8 +13679,8 @@
         "sv": "Domstolarna avgör bara frågor mellan föräldrar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -13851,8 +13851,8 @@
         "sv": "Att besluta statens budget"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14023,8 +14023,8 @@
         "sv": "13 år"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14195,8 +14195,8 @@
         "sv": "De ska ersätta politiska val"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14367,8 +14367,8 @@
         "sv": "Genom att staten bestämmer vad medier får skriva"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14414,8 +14414,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14539,8 +14539,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14714,8 +14714,8 @@
         "sv": "Polisen, Skatteverket och Migrationsverket"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14762,8 +14762,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -14887,8 +14887,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -15059,8 +15059,8 @@
         "sv": "Att aldrig läsa nyheter"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -15231,8 +15231,8 @@
         "sv": "För att bestämma svenska kommunalskatter"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -15403,8 +15403,8 @@
         "sv": "Den presenterades 1918 och gäller bara Europa"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -15575,8 +15575,8 @@
         "sv": "Att jämställdhet bara handlar om hur många kvinnor som finns i politiken"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -15750,8 +15750,8 @@
         "sv": "Det är alltid en privat familjefråga och inte ett brott"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -15923,8 +15923,8 @@
         "sv": "Det är alltid lagligt att köpa sex"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -16095,8 +16095,8 @@
         "sv": "1979"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -16267,8 +16267,8 @@
         "sv": "Att barnkonventionen blev svensk lag"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -16439,8 +16439,8 @@
         "sv": "Danskar, norrmän, islänningar, tyskar och fransmän"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -16611,8 +16611,8 @@
         "sv": "Att besluta statens budget"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -16783,8 +16783,8 @@
         "sv": "Det är förbjudet att gifta sig med en person av samma kön"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -16955,8 +16955,8 @@
         "sv": "Att se till att skulder blir betalda och besluta om skuldsanering"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -17127,8 +17127,8 @@
         "sv": "Alla privatägda företag"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -17299,8 +17299,8 @@
         "sv": "Cirka 30 procent"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -17471,8 +17471,8 @@
         "sv": "De bestämmer vilka som får rösta i riksdagsval"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -17643,8 +17643,8 @@
         "sv": "Genom att staten bestämmer alla löner"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -17815,8 +17815,8 @@
         "sv": "För att bestämma vem som blir statschef"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -17987,8 +17987,8 @@
         "sv": "En myndighet som dömer i arbetsmiljöbrott"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -18162,8 +18162,8 @@
         "sv": "Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -18335,8 +18335,8 @@
         "sv": "De ersätter regionernas och kommunernas ansvar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -18507,8 +18507,8 @@
         "sv": "Bara personer som arbetar betalar skatt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -18682,8 +18682,8 @@
         "sv": "Sjukhus, vårdcentraler och regional sjukvård"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -18855,8 +18855,8 @@
         "sv": "Att betala pensioner och studiestöd"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -19027,8 +19027,8 @@
         "sv": "Pensioner, sjukförsäkring, föräldraförsäkring och studiestöd"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -19074,8 +19074,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -19199,8 +19199,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -19371,8 +19371,8 @@
         "sv": "Som ett högteknologiskt informationssamhälle"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -19546,8 +19546,8 @@
         "sv": "EU-medlemskapet"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -19719,8 +19719,8 @@
         "sv": "Cirka tio tusen"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -19891,8 +19891,8 @@
         "sv": "Sverige gick med i EU"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -20063,8 +20063,8 @@
         "sv": "Bankrörelsen, kungarörelsen, hovrörelsen och gruvrörelsen"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -20235,8 +20235,8 @@
         "sv": "1809"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -20407,8 +20407,8 @@
         "sv": "Sveriges inträde i EU"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -20579,8 +20579,8 @@
         "sv": "Sverige saknade nästan all industri"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -20751,8 +20751,8 @@
         "sv": "Att plantera en miljon träd"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -20923,8 +20923,8 @@
         "sv": "Bara hur människor firar midsommar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -21095,8 +21095,8 @@
         "sv": "Riksdagen och kommunfullmäktige"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -21267,8 +21267,8 @@
         "sv": "1949"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -21439,8 +21439,8 @@
         "sv": "Att Sverige kan bestämma andra EU-länders regeringar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -21611,8 +21611,8 @@
         "sv": "Endast jordbrukspolitik"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -21783,8 +21783,8 @@
         "sv": "Att döma brottmål i svenska domstolar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -21955,8 +21955,8 @@
         "sv": "Lämna EU:s europeiska samarbete"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22002,8 +22002,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22127,8 +22127,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22299,8 +22299,8 @@
         "sv": "Alla måste tillhöra samma religion"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22471,8 +22471,8 @@
         "sv": "Tryckfrihetsförordningen"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22518,8 +22518,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22643,8 +22643,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22815,8 +22815,8 @@
         "sv": "Den buddhistiska traditionen"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -22987,8 +22987,8 @@
         "sv": "Judendom"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -23159,8 +23159,8 @@
         "sv": "Stora brasor och vårsånger"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -23334,8 +23334,8 @@
         "sv": "Arbetarrörelsen arrangerar demonstrationer"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -23510,8 +23510,8 @@
         "sv": "På nyårsafton den 31 december"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -23686,8 +23686,8 @@
         "sv": "Att välkomna våren med stora brasor"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -23859,8 +23859,8 @@
         "sv": "Advent"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -24034,8 +24034,8 @@
         "sv": "Fyrverkerier vid midnatt för att fira det nya året"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -24210,8 +24210,8 @@
         "sv": "Det nya året med fester och fyrverkerier"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -24386,8 +24386,8 @@
         "sv": "Öppna en adventskalender varje dag fram till julafton"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -24562,8 +24562,8 @@
         "sv": "En lördag i slutet av oktober eller början av november"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -24738,8 +24738,8 @@
         "sv": "Tända stora brasor och sjunga vårsånger"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -24914,8 +24914,8 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -25090,8 +25090,8 @@
         "sv": "Statliga myndigheter som väljer religion"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -25266,8 +25266,8 @@
         "sv": "Alla religiösa högtider har förbjudits i Sverige"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -25442,8 +25442,8 @@
         "sv": "Judendom kom till Sverige först efter år 2000"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -25618,8 +25618,8 @@
         "sv": "Att bestämma vilken religion elever ska tillhöra"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -25794,8 +25794,8 @@
         "sv": "I början av 1900-talet"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -25970,8 +25970,8 @@
         "sv": "Bara Svenska kyrkan och inga andra samfund"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -26149,8 +26149,8 @@
         "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -26326,8 +26326,8 @@
         "sv": "Att helt fritt välja vilken religion som helst eller ingen religion alls"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -26502,8 +26502,8 @@
         "sv": "Att staten väljer religion åt varje invånare"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -26681,8 +26681,8 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -26864,8 +26864,8 @@
         "sv": "Endast statliga ceremonier utan religiösa inslag"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -27042,8 +27042,8 @@
         "sv": "Ett buddhistiskt kungarike"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -27218,8 +27218,8 @@
         "sv": "Bli Sveriges största religiösa grupp"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -27394,8 +27394,8 @@
         "sv": "Katolska och ortodoxa kyrkor"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -27573,8 +27573,8 @@
         "sv": "Statliga beslut om vilken religion invånare ska ha"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -27750,8 +27750,8 @@
         "sv": "De finns bara i Svenska kyrkans församlingar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -27926,8 +27926,8 @@
         "sv": "Sverige gick med i EU"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -28105,8 +28105,8 @@
         "sv": "Fyrverkerier vid midnatt och nyårsmiddagar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -28282,8 +28282,8 @@
         "sv": "De skapades bara av moderna företag och reklam"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -28458,8 +28458,8 @@
         "sv": "Nouruz"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -28634,8 +28634,8 @@
         "sv": "På midsommarafton mellan 19 och 25 juni"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -28810,8 +28810,8 @@
         "sv": "En blomsterkrans på huvudet"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -28986,8 +28986,8 @@
         "sv": "Luciatåg"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -29165,8 +29165,8 @@
         "sv": "Att tända adventsljus och öppna adventskalendrar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -29342,8 +29342,8 @@
         "sv": "Tänder stora brasor på kvällen"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -29521,8 +29521,8 @@
         "sv": "1523"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -29698,8 +29698,8 @@
         "sv": "På en fredag mellan 19 och 25 juni"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -29874,8 +29874,8 @@
         "sv": "En midsommarstång i vardagsrummet och sill på bordet"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -30053,8 +30053,8 @@
         "sv": "Dansar runt midsommarstången och binder blomsterkransar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -30230,8 +30230,8 @@
         "sv": "De måste alltid försvinna helt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -30406,8 +30406,8 @@
         "sv": "Planterar en gran på kyrkogården och tänder gravljus"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -30582,8 +30582,8 @@
         "sv": "Vårens ankomst"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -30758,8 +30758,8 @@
         "sv": "Jul firas alltid med demonstrationer om sociala frågor"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -30934,8 +30934,8 @@
         "sv": "Sill, färskpotatis och jordgubbar"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -31110,8 +31110,8 @@
         "sv": "Cirka 25 000"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -31158,8 +31158,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -31289,8 +31289,8 @@
         "sv": "Falskt"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",
@@ -31466,8 +31466,8 @@
         "sv": "21 landskap"
       },
       {
-        "en": "It cannot be determined from the material",
-        "sv": "Det går inte att avgöra av materialet"
+        "en": "None of the options is correct",
+        "sv": "Inget av alternativen stämmer"
       },
       {
         "en": "Only sometimes",

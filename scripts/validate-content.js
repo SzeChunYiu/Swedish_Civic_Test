@@ -42,8 +42,8 @@ const GENERATED_VARIANT_CONVENTIONS = [
 ];
 const UNKNOWN_OPTION = {
   id: 'unknown',
-  textSv: 'Det går inte att avgöra av materialet',
-  textEn: 'It cannot be determined from the material',
+  textSv: 'Inget av alternativen stämmer',
+  textEn: 'None of the options is correct',
 };
 const SOMETIMES_OPTION = {
   id: 'sometimes',
@@ -140,6 +140,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bTrue or false:\s*(?:By|Apply|Leave|Live)\b/i,
   /\bSant eller falskt:\s*(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
 ];
+const GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [/\bmaterialet\b/i, /\bfrom the material\b/i];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -3245,6 +3246,20 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findGeneratedOptionSourceMaterialIssue(question) {
+  if (!Array.isArray(question.options)) return null;
+
+  for (const [index, option] of question.options.entries()) {
+    const text = [option?.textSv, option?.textEn].filter(Boolean).join(' ');
+    const pattern = GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS.find((candidate) =>
+      candidate.test(text),
+    );
+    if (pattern) return { index, pattern };
+  }
+
+  return null;
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -5093,6 +5108,7 @@ let chapterGenerationParityValidated = 0;
 let generatedSourceMetadataParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
+let generatedOptionSourceMaterialWordingValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
@@ -11755,6 +11771,13 @@ function validateGeneratedAnswerTemplateParity() {
       }
 
       if (variantIsValid) generatedAnswerTemplateParityValidated += 1;
+
+      const sourceMaterialIssue = findGeneratedOptionSourceMaterialIssue(variant);
+      if (sourceMaterialIssue) {
+        fail(`${label} option[${sourceMaterialIssue.index}] uses source-material fallback wording`);
+      } else {
+        generatedOptionSourceMaterialWordingValidated += 1;
+      }
     });
   });
 }
@@ -12556,6 +12579,7 @@ console.log(
       generatedSourceMetadataParityValidated,
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
+      generatedOptionSourceMaterialWordingValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
       publishedQuestionTypesValidated,
