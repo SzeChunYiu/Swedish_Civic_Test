@@ -19801,7 +19801,7 @@
     "type": "true_false",
     "q": {
       "en": "The change through the new constitution in 1809 was that the king’s power was limited.",
-      "sv": "Förändringen genom den nya grundlagen år 1809 var att Kungens makt begränsades."
+      "sv": "Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades."
     },
     "opts": [
       {
@@ -20316,8 +20316,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The 1938 Saltsjöbaden Agreement became important for Cooperation between trade unions and employers.",
-      "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för Samarbetet mellan fackföreningar och arbetsgivare."
+      "en": "The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.",
+      "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare."
     },
     "opts": [
       {
@@ -20488,8 +20488,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "One reason is that Sweden had long-lasting strong economic growth and could carry out major reforms.",
-      "sv": "En anledning är att Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer."
+      "en": "The period after the Second World War is often called the Swedish record years because Sweden had long-lasting strong economic growth and could carry out major reforms.",
+      "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer."
     },
     "opts": [
       {
@@ -20527,8 +20527,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "One reason is that Sweden had almost no industry.",
-      "sv": "En anledning är att Sverige saknade nästan all industri."
+      "en": "The period after the Second World War is often called the Swedish record years because Sweden had almost no industry.",
+      "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige saknade nästan all industri."
     },
     "opts": [
       {
@@ -20871,8 +20871,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The digital revolution has changed only how people celebrate Midsummer.",
-      "sv": "Den digitala revolutionen har förändrat bara hur människor firar midsommar."
+      "en": "The digital revolution has only changed how people celebrate Midsummer.",
+      "sv": "Den digitala revolutionen har bara förändrat hur människor firar midsommar."
     },
     "opts": [
       {
@@ -21559,8 +21559,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "The Council of Europe works for only agricultural policy.",
-      "sv": "Europarådet arbetar för endast jordbrukspolitik."
+      "en": "The Council of Europe works only for agricultural policy.",
+      "sv": "Europarådet arbetar endast för jordbrukspolitik."
     },
     "opts": [
       {

@@ -160,6 +160,15 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Sverige beslutade att barnkonventionen blev svensk lag\b/i,
   /\bär (?:Judar|Danskar),/,
   /^(?:De|They) (?:företräder|bestämmer|represent|decide)\b/i,
+  /\batt Kungens makt\b/,
+  /\bför Samarbetet mellan\b/,
+  /\bfor Cooperation between\b/,
+  /^En anledning är att Sverige (?:hade|saknade)\b/,
+  /^One reason is that Sweden had\b/,
+  /\bhar förändrat bara hur\b/i,
+  /\bhas changed only how\b/i,
+  /\barbetar för endast\b/i,
+  /\bworks for only\b/i,
 ];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -3386,11 +3395,13 @@ function lowerLeadingEnglishArticle(value) {
   return value.replace(/^(The|In|A|An|At|On|Almost)\b/, (match) => match.toLowerCase());
 }
 function lowerLeadingSwedishCommonStart(value) {
-  return value.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När)\b/, (match) => match.toLowerCase());
+  return value.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När|Kungens)\b/, (match) =>
+    match.toLowerCase(),
+  );
 }
 function lowerLeadingSwedishClauseStart(value) {
   return value.replace(
-    /^(Havet|Nästan|Ungefär|Ett|En|Den|Det|Man|När|År|Oppositionen|Politiker|All)\b/,
+    /^(Havet|Nästan|Ungefär|Ett|En|Den|Det|Man|När|År|Oppositionen|Politiker|All|Samarbetet)\b/,
     (match) => match.toLowerCase(),
   );
 }
@@ -3485,6 +3496,9 @@ function embeddedSwedishClause(value) {
     .replace(/^sverige\b/i, 'Sverige')
     .replace(/^det är alltid\s+/i, 'det alltid är ')
     .replace(/^domstolarna avgör bara\s+/i, 'domstolarna bara avgör ');
+}
+function embeddedEnglishClause(value) {
+  return lowerLeadingEnglishClauseStart(stripLeadingPurposeEn(value));
 }
 function replaceLeadingSwedishSubject(subject, value) {
   const normalizedSubject = upperFirst(subject.trim());
@@ -3855,6 +3869,9 @@ function civicStatementSv(source, option) {
     return `Lagar på arbetsmarknaden i Sverige finns för att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Varför ökade Sveriges befolkning under 1800-talet$/i);
   if (match) return `Sveriges befolkning ökade under 1800-talet på grund av ${lowerFirst(answer)}`;
+  match = q.match(/^Varför kallas (.+?) ofta (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
   match = q.match(/^Varför (.+)$/i);
   if (match) return reasonStatementSv(answer);
   match = q.match(/^Vad har (.+?) gemensamt$/i);
@@ -3925,7 +3942,12 @@ function civicStatementSv(source, option) {
   if (match)
     return `${upperFirst(match[1])} mål under ${match[2]} var ${swedishPurposeClause(answer)}`;
   match = q.match(/^Vad har (.+?) förändrat$/i);
-  if (match) return `${upperFirst(match[1])} har förändrat ${lowerFirst(answer)}`;
+  if (match) {
+    if (/^Bara\s+hur\b/i.test(answer)) {
+      return `${upperFirst(match[1])} har bara förändrat ${lowerFirst(answer.replace(/^Bara\s+/i, ''))}`;
+    }
+    return `${upperFirst(match[1])} har förändrat ${lowerFirst(answer)}`;
+  }
   match = q.match(/^Genom vilka två organ sker (.+?) främst$/i);
   if (match) return `${upperFirst(match[1])} sker främst genom ${answer}`;
   match = q.match(/^Vilket år blev (.+?) medlem i (.+)$/i);
@@ -3934,6 +3956,9 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} är lag i Sverige sedan ${answer}`;
   match = q.match(/^Vad arbetar (.+?) för$/i);
   if (match) {
+    if (/^Endast\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} arbetar endast för ${lowerFirst(answer.replace(/^Endast\s+/i, ''))}`;
+    }
     const object = /^Att\s+/i.test(answer) ? swedishPurposeClause(answer) : lowerFirst(answer);
     return `${upperFirst(match[1])} arbetar för ${object}`;
   }
@@ -4129,6 +4154,9 @@ function civicStatementEn(source, option) {
   match = q.match(/^Why did Sweden’s population grow during the 19th century$/i);
   if (match)
     return `Sweden’s population grew during the 19th century because of ${lowerFirst(answer)}`;
+  match = q.match(/^Why is (.+?) often called (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} is often called ${match[2]} because ${embeddedEnglishClause(answer)}`;
   match = q.match(/^Why (.+)$/i);
   if (match) return reasonStatementEn(answer);
   match = q.match(/^What do (.+?) have in common$/i);
@@ -4192,12 +4220,17 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} was in ${answer}`;
   match = q.match(/^What did (.+?) become important for$/i);
   if (match)
-    return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(answer)}`;
+    return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
     return `The goal of ${match[1]} during ${match[2]} was to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What has (.+?) changed$/i);
-  if (match) return `${upperFirst(match[1])} has changed ${lowerFirst(answer)}`;
+  if (match) {
+    if (/^Only\s+how\b/i.test(answer)) {
+      return `${upperFirst(match[1])} has only changed ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
+    }
+    return `${upperFirst(match[1])} has changed ${lowerFirst(answer)}`;
+  }
   match = q.match(/^Through which two bodies does (.+?) mainly take place$/i);
   if (match)
     return `${upperFirst(match[1])} mainly takes place through ${lowerLeadingEnglishArticle(answer)}`;
@@ -4208,7 +4241,12 @@ function civicStatementEn(source, option) {
   match = q.match(/^What does (.+?) work to do$/i);
   if (match) return `${upperFirst(match[1])} works to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What does (.+?) work for$/i);
-  if (match) return `${upperFirst(match[1])} works for ${lowerFirst(answer)}`;
+  if (match) {
+    if (/^Only\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} works only for ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
+    }
+    return `${upperFirst(match[1])} works for ${lowerFirst(answer)}`;
+  }
   match = q.match(/^What did (.+?) choose to do (.+)$/i);
   if (match)
     return `${upperFirst(match[1])} chose to ${lowerFirst(stripLeadingPurposeEn(answer))} ${match[2]}`;
