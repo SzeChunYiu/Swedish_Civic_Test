@@ -287,6 +287,22 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
+test('tierComparison: Pro does not grant the v1.0 Remove Ads entitlement', () => {
+  const tier = loadTs('lib/monetization/tierComparison.ts');
+  const premium = loadTs('lib/monetization/premium.ts');
+  const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
+
+  assert.equal(premium.REMOVE_ADS_ENTITLEMENTS.adsDisabled, true);
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
+  assert.equal(adsRow.flag, undefined);
+  assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
+  assert.deepEqual(adsRow.pro, {
+    kind: 'text',
+    sv: 'vid sessionsskifte',
+    en: 'at session boundaries',
+  });
+});
+
 test('tierComparison: three columns in canonical order', () => {
   const { TIER_COLUMNS } = loadTs('lib/monetization/tierComparison.ts');
   assert.deepEqual(
