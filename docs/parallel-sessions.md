@@ -109,6 +109,18 @@ queue. Expensive judgement where context is rich; cheap pickup where it isn't.
     SELECT (step 2) of the well-reasoned task you just queued.
 ```
 
+**Definition of done — ATOMIC PERFECTION (the bar for every unit):** a unit is
+done only when it is *flawless for its own scope* — correct, tested,
+optimized, accessible, natural-language, no rough edge, no gap. The scope may
+be small; the execution may not be sloppy. **No KNOWN defect, gap, or
+unoptimized path may ship.** This is not gold-plating and not a licence to
+stall: if you see an imperfection you are not fixing in this unit, it MUST
+become a concrete queued task (step 11 / scrutinizer file) so it is never
+silently dropped. Perfection is reached *per atom and iteratively* — relentless
+scrutiny finds every flaw, the queue carries it, a producer perfects it, the CI
+gate enforces it — never by one pane polishing one PR forever. Ship small,
+ship flawless, leave nothing known-broken behind.
+
 **The iron rule that keeps thinking/learning from becoming the disease:**
 every iteration MUST end in a pushed, *validated* product PR. THINK, LEARN and
 PLAN are bounded preamble in service of THIS unit — never standalone
