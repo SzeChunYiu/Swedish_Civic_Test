@@ -977,3 +977,29 @@ current-main spot checks for every named row.
 
 The q501-q550 reviewer evidence in `99c0960` is queued but stays behind
 q451-q500 source routing.
+
+MANAGER-build acceptance 2026-05-18T22:34+02:00
+`VERIFY-GENERATED-TF-STANDALONE-Q451-Q500-POST642-1` is accepted on current
+`origin/main` via DATA-INTEGRITY PR #703 / `c6299ce`. DATA-INTEGRITY repaired
+the generated q451-q500 true/false standalone/naturalness defects for q454,
+q466, q470, q471, q479, and q495.
+
+Clean manager recheck in `/tmp/sct-manager-q451-accept.rVCobC` passed
+`npm run validate:content`, `npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 28/28, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier, `git diff --check c6299ce^..c6299ce`, and a direct
+CSV/static scan over q454/q466/q470/q471/q479/q495 with zero residual
+capitalization, reason-stem, adverb-order, or `endast` / `only` order
+offenders.
+
+Do not reopen q454/q466 splice-capitalization, q470/q471 record-years referent
+wording, q479 `bara` / `only` placement, or q495 `endast` / `only` order
+without fresh current-main regression evidence. The next DATA-INTEGRITY source
+route is q501-q550 for q526/q527/q530/q531/q535/q542/q543 from reviewer
+evidence in `99c0960`; q551-q600 evidence from PR #700 / `8e46b3b` and
+handoff commit `5a9fd78` stays behind q501-q550 unless VALIDATOR explicitly
+reorders.
