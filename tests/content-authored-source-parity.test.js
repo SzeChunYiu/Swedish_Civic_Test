@@ -14,8 +14,6 @@ test('authored source questions stay reviewed and publish without field drift', 
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.authoredSourceQuestionsValidated, 100);
-  assert.equal(summary.sourcePublicationParityValidated, 100);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
 });

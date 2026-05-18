@@ -14,7 +14,6 @@ test('published question IDs are unique and sequential', () => {
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionIdSequencesValidated, 500);
   assert.equal(summary.questionIdSequencesValidated, summary.publishedQuestions);
 });
 

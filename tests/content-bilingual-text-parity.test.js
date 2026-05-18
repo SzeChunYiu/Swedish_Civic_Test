@@ -18,7 +18,6 @@ function readValidationSummary() {
 test('published question prompts and explanations keep distinct Swedish and English text', () => {
   const summary = readValidationSummary();
 
-  assert.equal(summary.questionBilingualTextPairsValidated, 500);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
 });
 

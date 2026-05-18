@@ -80,10 +80,10 @@ function assertQuestionSourceExportWiring(source) {
     source.includes(
       `export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
-  101,
+  sourceQuestions.length + 1,
 );`,
     ),
-    'generatedPublishedQuestions export must derive from sourceQuestions at q101',
+    'generatedPublishedQuestions export must derive after the authored source question range',
   );
   assert.ok(
     source.includes(
