@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
@@ -474,9 +475,12 @@ export default function Screen() {
               </Badge>
             </View>
             <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
-            <Text style={styles.questionSourceCitation}>
-              {getQuestionSourceCitation(item, language)}
-            </Text>
+            <QuestionSourceCitation
+              bodyStyle={styles.questionSourceCitation}
+              citationText={getQuestionSourceCitation(item, language)}
+              language={language}
+              question={item}
+            />
             <View style={styles.answerGrid}>
               <View style={styles.answerCard}>
                 <Text style={styles.answerLabel}>{copy.selectedAnswerLabel}</Text>
@@ -533,9 +537,12 @@ export default function Screen() {
         <View key={question.id} style={styles.questionCard}>
           <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
           <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
-          <Text style={styles.questionSourceCitation}>
-            {getQuestionSourceCitation(question, language)}
-          </Text>
+          <QuestionSourceCitation
+            bodyStyle={styles.questionSourceCitation}
+            citationText={getQuestionSourceCitation(question, language)}
+            language={language}
+            question={question}
+          />
           <View style={styles.options}>
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
