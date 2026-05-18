@@ -1,4 +1,4 @@
-/* Almost Swedish — Effects (confetti, shake, toast, count-up)
+/* Sveriges Medborgartest — Effects (confetti, shake, toast, count-up)
    No dependencies. Drop into any click handler.
 */
 

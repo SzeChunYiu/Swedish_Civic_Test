@@ -124,7 +124,6 @@ export const architectureSharedUiRuntimeFiles = [
 export const architectureThemeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
-  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',

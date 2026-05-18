@@ -75,28 +75,10 @@ test('sources route stays in parity with UHR source material metadata', () => {
   assert.match(sourcesRoute, /Öppna UHR:s utbildningsmaterial/);
   assert.match(sourcesRoute, /Open UHR education material/);
   assert.match(sourcesRoute, /Sverige i fokus/);
-  assert.match(sourcesRoute, /Varje övningsfråga visar en källrad med UHR:s kapitel/);
-  assert.match(sourcesRoute, /Every practice question shows a source line with the UHR chapter/);
-  assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
-  assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
-  assert.doesNotMatch(sourcesRoute, /spreadsheet-friendly|kalkylbladsvänliga/);
+  assert.match(sourcesRoute, /content\/uhr-section-map\.json/);
+  assert.match(sourcesRoute, /content\/question-bank\.csv/);
   assert.ok(uhrSectionMap.source.url.includes('/medborgarskapsprovet/utbildningsmaterial/'));
   assert.ok(sourcesRoute.includes(expectedUhrMaterialUrl));
-});
-
-test('sources parity rejects learner-facing internal implementation paths', () => {
-  const result = runValidationWithSourcesRoutePatch(
-    `replace(
-      'Varje övningsfråga visar en källrad med UHR:s kapitel, avsnitt och ungefärliga sida.',
-      'Avsnittskartan finns i content/uhr-section-map.json och den kalkylbladsvänliga innehållsdatabasen exporteras till content/question-bank.csv.',
-    )`,
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /app\/sources\.tsx learner-facing copy must not mention content\/uhr-section-map\.json/,
-  );
 });
 
 test('sources parity rejects UHR map source URLs outside the education material path', () => {

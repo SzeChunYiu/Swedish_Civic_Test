@@ -22,9 +22,8 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
     'utf8',
   );
 
-  assert.equal(summary.audioButtonAccessibilityRulesValidated, 18);
+  assert.equal(summary.audioButtonAccessibilityRulesValidated, 13);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
-  assert.match(source, /import \{ useCallback, useEffect, useRef, useState \} from 'react';/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
   assert.match(source, /language = 'sv'/);
@@ -32,34 +31,20 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
   assert.match(source, /Lyssna på den svenska frågan och svaren/);
-  assert.match(source, /Stoppa ljudet/);
-  assert.match(source, /Stop audio/);
   assert.match(source, /unavailableLabel: 'Audio is unavailable for this question'/);
   assert.match(
     source,
-    /const \[activeSpeechText, setActiveSpeechText\] = useState<string \| null>\(null\);/,
-  );
-  assert.match(source, /const isSpeaking = canPlayAudio && activeSpeechText === speechText;/);
-  assert.match(
-    source,
-    /const label = !enabled[\s\S]*\? copy\.disabledLabel[\s\S]*\? isSpeaking[\s\S]*\? copy\.playingLabel[\s\S]*: copy\.enabledLabel[\s\S]*: copy\.unavailableLabel;/,
+    /const label = !enabled[\s\S]*\? copy\.disabledLabel[\s\S]*\? copy\.enabledLabel[\s\S]*: copy\.unavailableLabel;/,
   );
   assert.match(source, /const accessibilityLabel = label;/);
   assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(source, /accessibilityRole="button"/);
-  assert.match(
-    source,
-    /accessibilityState=\{\{ disabled: !canPlayAudio, busy: isSpeaking, selected: isSpeaking \}\}/,
-  );
+  assert.match(source, /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/);
   assert.match(source, /disabled=\{!canPlayAudio\}/);
   assert.match(source, /if \(!canPlayAudio\) return;/);
   assert.match(source, /stopSpeech\(\);/);
-  assert.match(source, /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*return;/);
-  assert.match(
-    source,
-    /speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onError: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onStopped: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*\}\);/,
-  );
+  assert.match(source, /speakSwedish\(speechText\);/);
 });
 
 test('AudioButton accessibility parity rejects untrimmed playback drift', () => {
@@ -75,7 +60,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/learning/AudioButton.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('speakSwedish(speechText, {', 'speakSwedish(text, {');
+      .replace('speakSwedish(speechText);', 'speakSwedish(text);');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

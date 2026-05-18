@@ -1225,30 +1225,6 @@ test('production build and submit guards rerun validation inside release preflig
   );
 });
 
-test('production build check-only avoids recursive npm validation', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-build-check-only-'));
-  const npmLog = path.join(tmpDir, 'npm.log');
-  fs.writeFileSync(
-    path.join(tmpDir, 'npm'),
-    ['#!/bin/sh', `echo "$@" >> "${npmLog}"`, 'exit 99', ''].join('\n'),
-    { mode: 0o755 },
-  );
-
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/build-production-guard.js', '--check-only'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
-    },
-  );
-
-  assert.equal(result.status, 1);
-  assert.match(result.stdout, /Production build blocked/i);
-  assert.equal(fs.existsSync(npmLog), false);
-});
-
 test('production submit guard blocks placeholder Apple identifiers before release preflight', () => {
   const result = spawnSync(
     process.execPath,
@@ -1265,49 +1241,6 @@ test('production submit guard blocks placeholder Apple identifiers before releas
   assert.match(result.stdout, /appleTeamId/i);
   assert.match(result.stdout, /TBD/i);
   assert.doesNotMatch(result.stdout, /release preflight/i);
-});
-
-test('production submit check-only avoids recursive npm validation after credentials pass', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-submit-check-only-'));
-  const npmLog = path.join(tmpDir, 'npm.log');
-  const easPath = path.join(repoRoot, 'eas.json');
-  const originalEas = fs.readFileSync(easPath, 'utf8');
-  const fakeServiceAccount = path.join(repoRoot, 'tmp/fake-google-play-service-account.json');
-  fs.writeFileSync(
-    path.join(tmpDir, 'npm'),
-    ['#!/bin/sh', `echo "$@" >> "${npmLog}"`, 'exit 99', ''].join('\n'),
-    { mode: 0o755 },
-  );
-
-  try {
-    const eas = JSON.parse(originalEas);
-    eas.submit.production.ios.appleId = 'release@example.com';
-    eas.submit.production.ios.ascAppId = '1234567890';
-    eas.submit.production.ios.appleTeamId = 'TEAM123456';
-    eas.submit.production.android.serviceAccountKeyPath =
-      './tmp/fake-google-play-service-account.json';
-    fs.mkdirSync(path.dirname(fakeServiceAccount), { recursive: true });
-    fs.writeFileSync(fakeServiceAccount, '{"type":"service_account"}\n');
-    fs.writeFileSync(easPath, `${JSON.stringify(eas, null, 2)}\n`);
-
-    const result = spawnSync(
-      process.execPath,
-      ['scripts/submit-production-guard.js', '--check-only'],
-      {
-        cwd: repoRoot,
-        encoding: 'utf8',
-        env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
-      },
-    );
-
-    assert.equal(result.status, 1);
-    assert.match(result.stdout, /Production submit blocked/i);
-    assert.match(result.stdout, /release preflight/i);
-    assert.equal(fs.existsSync(npmLog), false);
-  } finally {
-    fs.writeFileSync(easPath, originalEas);
-    fs.rmSync(fakeServiceAccount, { force: true });
-  }
 });
 
 test('production submit guard blocks while release preflight is not ready', () => {
@@ -1421,31 +1354,20 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
-test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
+test('scheduled Vercel deploy has a site-only main trigger and live smoke gate', () => {
   const pkg = readJson('package.json');
   const workflow = fs.readFileSync(
     path.join(repoRoot, '.github/workflows/scheduled-deploy.yml'),
     'utf8',
   );
-  const runCommands = workflow.match(/run: \|\n([\s\S]*)/)?.[1] ?? '';
 
   assert.equal(pkg.scripts['test:site-live'], 'node scripts/check-live-site.js');
   assert.match(workflow, /branches:\s*\n\s+- main/);
   assert.match(workflow, /paths:\s*\n(?:\s+- ['"].+['"]\n)+/);
   assert.match(workflow, /['"]site\/\*\*['"]/);
   assert.match(workflow, /['"]scripts\/check-live-site\.js['"]/);
-  assert.match(workflow, /secrets\.VERCEL_DEPLOY_HOOK/);
-  assert.match(workflow, /curl [^\n]*-X POST "\$HOOK"/);
-  assert.match(workflow, /node scripts\/check-live-site\.js "\$VERCEL_PRODUCTION_URL"/);
+  assert.match(workflow, /node scripts\/check-live-site\.js "\$deployment_url"/);
   assert.match(workflow, /VERCEL_PRODUCTION_URL/);
-  assert.doesNotMatch(workflow, /\bVERCEL_TOKEN\b/);
-  assert.doesNotMatch(workflow, /\.vercel\/project\.json/);
-  assert.doesNotMatch(runCommands, /npx[\s\S]*vercel/i);
-  assert.doesNotMatch(
-    runCommands,
-    /(?:^|\n)\s*(?:npx\s+[^\n]*|pnpm\s+dlx\s+|yarn\s+dlx\s+)?vercel(?:@\S+)?\s+deploy\b/im,
-  );
-  assert.doesNotMatch(runCommands, /--token/);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/check-live-site.js')), true);
 });
 

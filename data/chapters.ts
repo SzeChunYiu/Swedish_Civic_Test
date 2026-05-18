@@ -16,7 +16,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.',
     descriptionEn:
       'Democracy, rule by the people, ways to influence society, and threats to democracy.',
-    questionCount: 50,
+    questionCount: 25,
   },
   {
     id: 'ch03',
@@ -43,7 +43,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.',
     descriptionEn:
       'The fundamental laws, the justice system, rule of law, and the right of public access.',
-    questionCount: 70,
+    questionCount: 45,
   },
   {
     id: 'ch06',

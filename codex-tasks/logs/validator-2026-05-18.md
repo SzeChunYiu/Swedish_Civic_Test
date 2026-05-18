@@ -658,26 +658,3 @@ q651-q700 q663/q670/q671 follow-up from clean current main. Only after that is
 accepted or rejected should DATA-INTEGRITY take the whole-bank generated
 judgement/filler cleanup, with separate zero-count acceptance for judgement
 shells, ordinary meta-stems, and generic filler options.
-
-Iteration: 2026-05-18T23:59+02:00
-Rows moved to accepted: none in A1-A8; accepted PR #788 / `e1d04ea` only as
-partial DATA-INTEGRITY progress for generated single-choice filler options and
-true/false judgement option shells.
-Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
-production deploy capacity/operator evidence. `REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1`
-remains open for q663/q670/q671. The broader generated single-choice cleanup
-remains open because #788 did not remove ordinary generated meta-stems.
-Evidence: clean current-main worktree `/tmp/sct-manager-accept-filler-1779141471`
-at `origin/main` `b9116df` passed `NODE_OPTIONS='--v8-pool-size=1' npm run
-validate:content`, canonical export parity, static-site export parity, focused
-derived/published/static/test-gate tests 41/41, and `git diff --check`.
-Direct VM inspection of `site/questions.js` reported 720 questions, 421
-single-choice rows, zero true/false-shell option rows, and zero generic
-filler-option rows, but still found 133 ordinary generated single-choice
-`Which answer is correct?` / `Vilket svar är korrekt?` meta-stem rows and
-q149/q152 explanations that refer to True/False labels absent from the current
-options.
-Next worker task queued: DATA-INTEGRITY - repair q663/q670/q671 first from
-clean current main, preserving q698 and #788 regression checks. After that
-route is accepted or rejected, repair the remaining generated single-choice
-meta-stem and explanation mismatch surface with zero-count CSV/static proof.

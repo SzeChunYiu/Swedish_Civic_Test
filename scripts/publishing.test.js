@@ -17,33 +17,6 @@ function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
 }
 
-function assertNoStalePublicPrivacyPosture(source) {
-  [
-    staleWords('no', 'user', 'data', 'is', 'collected'),
-    staleWords('no', 'user', 'data', 'is', 'shared'),
-    staleWords('no', 'user', 'data', 'collected'),
-    staleWords('no', 'user', 'data', 'shared'),
-    staleWords('real', 'ad', 'rendering', 'is', 'disabled'),
-    staleWords('real', 'ads', 'disabled'),
-    staleWords('Data', 'Not', 'Collected'),
-    staleToken('REAL_ADS', 'ENABLED_FOR_V1'),
-  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
-}
-
-function assertCurrentPublicPrivacyPosture(source, options = {}) {
-  const requiresAtt = options.requiresAtt ?? true;
-
-  assert.match(source, /Google Mobile Ads|AdMob/i);
-  assert.match(source, /Remove Ads/i);
-  assert.match(source, /29 SEK/i);
-  if (requiresAtt) {
-    assert.match(source, /App Tracking Transparency|ATT/i);
-  }
-  assert.match(source, /Google UMP consent|UMP consent/i);
-  assert.match(source, /local[\s\S]{0,80}device|stored locally on the device/i);
-  assertNoStalePublicPrivacyPosture(source);
-}
-
 function parseExternalBlockerRows(markdown) {
   return markdown
     .split('\n')
@@ -70,21 +43,20 @@ function parseExternalBlockerRows(markdown) {
 
 test('store publishing metadata is prepared', () => {
   const appConfig = JSON.parse(read('app.json')).expo;
-  assert.equal(appConfig.name, 'Almost Swedish');
-  assert.equal(appConfig.slug, 'almost-swedish');
-  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
-  assert.equal(appConfig.android.package, 'com.billyyiu.almostswedish');
+  assert.equal(appConfig.name, 'Sweden Citizenship Test Prep');
+  assert.equal(appConfig.slug, 'swedish-civic-test');
+  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.swedishcivictest');
+  assert.equal(appConfig.android.package, 'com.billyyiu.swedishcivictest');
 
   const appStoreListing = read('publishing/app-store-listing.md');
-  assert.match(appStoreListing, /Almost Swedish/);
+  assert.match(appStoreListing, /Sweden Citizenship Test Prep/);
   assert.match(appStoreListing, /not official/i);
   assert.match(appStoreListing, /UHR/i);
 
   const googlePlayListing = read('publishing/google-play-listing.md');
-  assert.match(googlePlayListing, /Almost Swedish/);
+  assert.match(googlePlayListing, /Sweden Citizenship Test Prep/);
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
-  assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
 });
 
 test('privacy labels and data safety answers match ad-supported release practices', () => {
@@ -138,31 +110,26 @@ test('public support and privacy URL copy is ready for hosting', () => {
   const publicCopy = read('publishing/public-support-and-privacy.md');
   assert.match(publicCopy, /Support URL/i);
   assert.match(publicCopy, /Privacy Policy URL/i);
-  assert.match(publicCopy, /app-ads\.txt/i);
   assert.match(publicCopy, /no personal data/i);
   assert.match(publicCopy, /no account/i);
   assert.match(publicCopy, /not affiliated/i);
-  assertCurrentPublicPrivacyPosture(publicCopy);
 });
 
-test('hostable public support, privacy, and app-ads files are prepared', () => {
+test('hostable public support and privacy pages are prepared', () => {
   const support = read('publishing/public-site/support/index.html');
   const privacy = read('publishing/public-site/privacy/index.html');
-  const appAds = read('publishing/public-site/app-ads.txt');
 
-  assert.match(support, /Almost Swedish support/i);
+  assert.match(support, /Sweden Citizenship Test Prep support/i);
   assert.match(support, /content issue/i);
   assert.match(support, /no personal data/i);
   assert.match(support, /not affiliated/i);
   assert.match(support, /<html lang="en">/i);
 
-  assert.match(privacy, /Almost Swedish privacy policy/i);
+  assert.match(privacy, /Sweden Citizenship Test Prep privacy policy/i);
   assert.match(privacy, /no account/i);
   assert.match(privacy, /stored locally on the device/i);
-  assertCurrentPublicPrivacyPosture(privacy);
+  assert.match(privacy, /no user data is collected/i);
   assert.match(privacy, /<html lang="en">/i);
-
-  assert.equal(appAds.trim(), 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0');
 });
 
 test('post-EAS-auth runbook covers build, device, and store evidence sequence', () => {

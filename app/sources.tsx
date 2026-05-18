@@ -35,7 +35,7 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
         title: 'Primärt studiematerial',
       },
       questionReferences: {
-        body: 'Varje övningsfråga visar en källrad med UHR:s kapitel, avsnitt och ungefärliga sida. Källraden ligger under frågan och är skild från själva frågetexten, så du kan kontrollera uppgiften mot studiematerialet.',
+        body: 'Varje övningsfråga sparar UHR-kapitel, avsnitt och ungefärlig sidmetadata. Avsnittskartan finns i content/uhr-section-map.json och den kalkylbladsvänliga innehållsdatabasen exporteras till content/question-bank.csv.',
         title: 'Frågereferenser',
       },
     },
@@ -53,7 +53,7 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
         title: 'Primary study material',
       },
       questionReferences: {
-        body: 'Every practice question shows a source line with the UHR chapter, section, and approximate page. The source line appears below the question and stays separate from the question text, so you can check the fact against the study material.',
+        body: 'Each practice question stores UHR chapter, section, and approximate page metadata. The section map is tracked in content/uhr-section-map.json and the spreadsheet-friendly content database is exported to content/question-bank.csv.',
         title: 'Question references',
       },
     },
