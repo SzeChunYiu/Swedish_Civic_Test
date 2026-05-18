@@ -1120,3 +1120,12 @@ Verification: clean worktree rebased onto current `origin/main` `de4aa11`; sourc
 PR: pending from `task/setup/live-deploy-recheck-1779149119` at handoff commit time.
 Blocked? yes - SITE-P0-5 remains external deploy capacity/operator production evidence; no SETUP-owned source drift or unblocked local SETUP source atom was found, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held until fresh current-main P0 site or release source evidence appears; keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes.
+
+## Iteration 243 - 2026-05-19
+
+Task completed: REVIEWER-SCHEDULED-DEPLOY-VERCEL-CLI-1 - converted the scheduled production deploy workflow to Deploy Hook only and expanded the build-config guard so the scheduled deploy path rejects Vercel CLI/token/project-file deployment.
+Artifacts changed: `.github/workflows/scheduled-deploy.yml`, `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` before push; `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 38/38 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `/home/billy/Swedish_Civic_Test/node_modules/.bin/prettier --check .github/workflows/scheduled-deploy.yml scripts/build-config.test.js` exit 0; `node --check scripts/build-config.test.js` exit 0; `rg -n "VERCEL_TOKEN|vercel@latest|vercel deploy|\\.vercel/project\\.json|deploy_output|deployment_url|Vercel CLI" .github/workflows/scheduled-deploy.yml` exit 1 with no matches; `git diff --check HEAD~1..HEAD` exit 0 before this journal append.
+PR: pending from `task/setup/scheduled-deploy-hook-1779146323` at handoff commit time.
+Blocked? no for this workflow source atom - SITE-P0-5 still needs production to serve current main, and no Vercel CLI was run.
+Next suggested validator action: inspect the scheduled deploy workflow and rerun `npm run test:build-config`; keep SITE-P0-5 external until the Deploy Hook path produces current production live-smoke evidence.
