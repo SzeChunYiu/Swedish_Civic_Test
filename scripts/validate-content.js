@@ -151,6 +151,10 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bThe statement is true:/i,
   /\b(?:Det är inte sant att|Det stämmer inte att|Det stämmer att)\b/i,
   /\b(?:It is not true that|It is true that)\b/i,
+  /^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)/i,
+  /^Sverige beslutade att barnkonventionen blev svensk lag\b/i,
+  /\bär (?:Judar|Danskar),/,
+  /^(?:De|They) (?:företräder|bestämmer|represent|decide)\b/i,
 ];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -3547,6 +3551,22 @@ function appliesStatementEn(subject, answer) {
   }
   return answer;
 }
+function decisionStatementSv(subject, context, answer) {
+  const normalizedAnswer = lowerFirst(stripLeadingPurposeSv(answer));
+  const yearContext = context.match(/^(.+?)\s+(\d{4})$/);
+  if (yearContext) {
+    return `År ${yearContext[2]} beslutade ${upperFirst(subject)} som ${yearContext[1]} att ${normalizedAnswer}`;
+  }
+  return `${upperFirst(subject)} beslutade som ${context} att ${normalizedAnswer}`;
+}
+function decisionStatementEn(subject, context, answer) {
+  const normalizedAnswer = lowerFirst(stripLeadingThatEn(answer));
+  const yearContext = context.match(/^(.+?)\s+in\s+(\d{4})$/i);
+  if (yearContext) {
+    return `In ${yearContext[2]}, ${upperFirst(subject)} was ${yearContext[1]} to decide that ${normalizedAnswer}`;
+  }
+  return `${upperFirst(subject)} decided as ${context} that ${normalizedAnswer}`;
+}
 function stripTrueFalsePromptSv(value) {
   return stripFinalPunctuation(value.replace(/^Sant eller falskt:\s*/i, ''));
 }
@@ -3750,6 +3770,8 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} heter ${answer}`;
   match = q.match(/^Vilka öar är Sveriges två största$/i);
   if (match) return `Sveriges två största öar är ${answer}`;
+  match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
+  if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
   match = q.match(/^Vilka tre företag kallas (.+) i Sverige$/i);
@@ -3834,7 +3856,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
   if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
   match = q.match(/^Vad gäller för (.+)$/i);
-  if (match) return upperFirst(answer);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Hur stor del av (.+?) (jobbar .+)$/i);
   if (match) return `${upperFirst(answer)} av ${match[1]} ${match[2]}`;
   match = q.match(/^Hur bestäms (.+) i Sverige$/i);
@@ -3848,6 +3870,8 @@ function civicStatementSv(source, option) {
     }
     return replaceLeadingSwedishSubject(match[1], answer);
   }
+  match = q.match(/^Vad gör (.+?) på arbetsmarknaden$/i);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vilken roll har (.+?) i (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad finansierar staten inom (.+)$/i);
@@ -3870,8 +3894,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vilket svar beskriver (.+)$/i);
   if (match) return describesStatementSv(match[1], answer);
   match = q.match(/^Vad beslutade (.+?) som (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])} beslutade att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) return decisionStatementSv(match[1], match[2], answer);
   match = q.match(/^Vilket år hölls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hölls ${answer}`;
   match = q.match(/^Vad blev (.+?) viktigt för$/i);
@@ -4115,6 +4138,8 @@ function civicStatementEn(source, option) {
     }
     return replaceLeadingEnglishSubject(match[1], answer);
   }
+  match = q.match(/^What do (.+?) do in the labour market$/i);
+  if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What role do (.+?) have in (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does the state finance within (.+)$/i);
@@ -4136,8 +4161,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^Which answer describes (.+)$/i);
   if (match) return describesStatementEn(match[1], answer);
   match = q.match(/^What did (.+?) decide as (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])} decided that ${lowerFirst(stripLeadingThatEn(answer))}`;
+  if (match) return decisionStatementEn(match[1], match[2], answer);
   match = q.match(/^In which year was (.+)$/i);
   if (match) return `${upperFirst(match[1])} was in ${answer}`;
   match = q.match(/^What did (.+?) become important for$/i);
