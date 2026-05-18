@@ -2517,6 +2517,6 @@ Verification (commands + result):
 - Focused Node scan over `site/ebook.js` - returned `svStubCount:12` while the English ebook has 12 factbox-backed chapter bodies.
 - Served `site/` with `python3 -m http.server 8204 --bind 127.0.0.1`.
 - System-Chrome static-site pass on `#/ebook?c=1` with `localStorage.smt_lang="sv"` - exit 2 by design because the reader body contains `Svenska översättningen kommer i v1.1`; the Swedish heading/lede rendered, ebook nav had 13 links, ebook tools were loaded, and console/page errors were 0.
-PR (number + merged?): pending
+PR (number + merged?): #276 / merged yes via squash commit `3be67cf`
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/content-supported SITE-P0-4 work to replace all Swedish ebook placeholders with natural Swedish prose matching the English chapter coverage, remove v1.1/placeholder copy, and add a static ebook parity guard before SITE-P0-4 acceptance.
