@@ -431,3 +431,32 @@ generator/validator/static-mirror repair, focused negative guards for
 `materialet` / `from the material`, regenerated CSV/static output,
 export/static parity, `validate:content`, typecheck, ownership,
 Prettier/diff checks, PR/merge evidence, and current-main spot checks.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T20:04:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q651-Q700-POST570-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: post-#570 independent VERIFY pass
+on current `origin/main` `90935ff` confirms five remaining q651-q700 generated
+true/false naturalness defects against the official UHR `Sverige i fokus` PDF.
+Facts, citations, answer keys, and ordinary distractors remain supported, and
+PR #570 fixed most pre-existing fragment prompts, but current generated output
+still has learner-visible wording defects in `q663`, `q666`, `q667`, `q671`,
+and `q699`. Fold `docs/verify/q651-q700-2026-05-18.md` and the ledger row
+statuses into a follow-up DATA-INTEGRITY generator/validator/static-mirror
+repair; acceptance requires focused negative guards for missing-article,
+`common to <gerund>`, context-splice, and capitalization residuals,
+regenerated CSV/static output, export/static parity, `validate:content`,
+typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a
+current-main residual row recheck.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T20:04:00+02:00
+`VERIFY-GENERATED-UNKNOWN-OPTION-Q651-Q700-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: the same q651-q700 VERIFY pass
+also confirms generated single-choice variants `q652`, `q656`, `q660`, `q664`,
+`q668`, `q672`, `q676`, `q680`, `q684`, `q688`, `q692`, `q696`, and `q700`
+include `Det går inte att avgöra av materialet` / `It cannot be determined from
+the material` in the generated static question bank. Fold this evidence into
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards for
+`materialet` / `from the material`, regenerated CSV/static output,
+export/static parity, `validate:content`, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks.

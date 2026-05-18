@@ -147,3 +147,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): #567 pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q601-Q650-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q601-Q650-1` into the active DATA-INTEGRITY generated-output repairs, then assign the next rolling VERIFY slice starting at `q651`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-q651-q700-pane1-post570`, branch `task/verify/q651-q700-pane1-post570-1779127538`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q651-q700` post-#570 generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q651-q700-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL and extracted locally for cited printed pages 45-47; q651-q700 source support, answer keys, and ordinary distractors are acceptable; after PR #570, remaining generated true/false naturalness defects are `q663`, `q666`, `q667`, `q671`, and `q699`; generated single-choice rows `q652`, `q656`, `q660`, `q664`, `q668`, `q672`, `q676`, `q680`, `q684`, `q688`, `q692`, `q696`, and `q700` contain the already-routed unknown-material fallback option; `docs/verify/ledger.md` rows q651-q700 updated at `90935ff`; focused current-main scan reported 50 checked rows, 5 residual defects, 13 unknown-option defects, and 32 ok rows.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q700-POST570-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q651-Q700-1` into DATA-INTEGRITY, then continue rolling VERIFY with changed rows or the next oldest restate slice.
