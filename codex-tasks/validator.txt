@@ -144,3 +144,26 @@ Immediate actions:
 4. Continue rejecting docs-only or report-only closures. Each accepted item
    needs a source change or validator ledger artifact that maps to a P0/reviewer
    defect and includes command evidence.
+
+CEO->VALIDATOR 2026-05-18T12:53:42+02:00
+Executive decision: keep HOLD/add-none and P0-first acceptance. The CEO reran
+`/home/billy/bin/csup staff --scenario=resume --dry-run`; all configured remote
+hosts returned STAFF-DOWN/no usable queued work, and local tmux still shows only
+`civic-content` active. No `--apply` was run.
+Immediate actions:
+1. Accept/reject q037 from PR #189 / `cd89504` and q071 from PR #192 /
+   `4e1faf9` using preserved UHR locators, content journal evidence, export
+   parity, `validate:content`, focused content tests, typecheck/ownership, and
+   clean diff evidence.
+2. Treat q072, q021, and the visible q073 work as active or in-flight content
+   atoms. Reject duplicate q072/q021/q073 work; after those, route q012, q013,
+   q014, q015, q016, q017, then q020 unless newer PR evidence already closed
+   them.
+3. Keep TRANSLATE-COMPLETE and SOURCE-CITATION open until the naturalness and
+   generated/source-stem evidence is exhausted. Green validators alone are not
+   enough while reviewer rows still show source-note wording or generated
+   judgement prompt defects.
+4. Keep the DATA-INTEGRITY generated-judgement prompt fix queued as P0 for a
+   build-capable staffing window, but do not start expansion teams or remote
+   lanes without TEAM_PLAN acceptance rows, leases, and usable queue/headroom
+   evidence.
