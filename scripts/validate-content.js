@@ -203,6 +203,18 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Endast ibland',
   'Only sometimes',
 ]);
+const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
+  /^\s*Vilket svar är korrekt\?/i,
+  /^\s*Which answer is correct\?/i,
+];
+const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
+  /\bPåståendet är sant\b/i,
+  /\balternativet\s+Sant\b/i,
+  /\bmedan\s+Falskt\b/i,
+  /\bThat makes True correct\b/i,
+  /\bTrue is correct\b/i,
+  /\bwhile False\b/i,
+];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -3362,6 +3374,38 @@ function findGeneratedSingleChoiceFillerOptionIssue(question) {
   return null;
 }
 
+function findGeneratedSingleChoiceMetaStemIssue(question) {
+  if (question.type !== 'single_choice') return null;
+
+  return GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS.find(
+    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  );
+}
+
+function singleChoiceHasTrueFalseOptionLabels(question) {
+  if (question.type !== 'single_choice' || !Array.isArray(question.options)) return false;
+
+  const labels = new Set(
+    question.options.flatMap((option) => [
+      normalizeOptionText(option?.textSv),
+      normalizeOptionText(option?.textEn),
+    ]),
+  );
+
+  return labels.has('Sant') || labels.has('Falskt') || labels.has('True') || labels.has('False');
+}
+
+function findGeneratedSingleChoiceExplanationLabelIssue(question) {
+  if (question.type !== 'single_choice' || singleChoiceHasTrueFalseOptionLabels(question)) {
+    return null;
+  }
+
+  const text = [question.explanationSv, question.explanationEn].filter(Boolean).join(' ');
+  return GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -3934,6 +3978,18 @@ function falseStatementExplanationEn(source) {
   return source.explanationEn;
 }
 
+function trueFalseSingleChoiceExplanationSv(source) {
+  return `${ensureSentence(
+    trueFalseSourceStatementSv(source, true),
+  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
+}
+
+function trueFalseSingleChoiceExplanationEn(source) {
+  return `${ensureSentence(
+    trueFalseSourceStatementEn(source, true),
+  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
+}
+
 function statementTopicSv(source) {
   const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
 
@@ -4007,13 +4063,13 @@ function judgementPromptSv(source) {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
-  return `Vilket svar är korrekt? ${source.questionSv}`;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
     return `Which statement best matches ${statementTopicEn(source)}?`;
   }
-  return `Which answer is correct? ${source.questionEn}`;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
@@ -4659,6 +4715,13 @@ function expectedGeneratedExplanation(sourceQuestion, variantIndex) {
     return {
       explanationSv: falseStatementExplanationSv(sourceQuestion),
       explanationEn: falseStatementExplanationEn(sourceQuestion),
+    };
+  }
+
+  if ((variantIndex === 0 || variantIndex === 3) && isTrueFalseSource(sourceQuestion)) {
+    return {
+      explanationSv: trueFalseSingleChoiceExplanationSv(sourceQuestion),
+      explanationEn: trueFalseSingleChoiceExplanationEn(sourceQuestion),
     };
   }
 
@@ -5667,6 +5730,8 @@ let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
 let generatedOptionSourceMaterialWordingValidated = 0;
 let generatedSingleChoiceFillerOptionsValidated = 0;
+let generatedSingleChoiceMetaStemsValidated = 0;
+let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
@@ -12387,6 +12452,21 @@ function validateGeneratedAnswerTemplateParity() {
       } else {
         generatedSingleChoiceFillerOptionsValidated += 1;
       }
+
+      const singleChoiceMetaStemIssue = findGeneratedSingleChoiceMetaStemIssue(variant);
+      if (singleChoiceMetaStemIssue) {
+        fail(`${label} uses generated single-choice meta-stem wording`);
+      } else {
+        generatedSingleChoiceMetaStemsValidated += 1;
+      }
+
+      const singleChoiceExplanationLabelIssue =
+        findGeneratedSingleChoiceExplanationLabelIssue(variant);
+      if (singleChoiceExplanationLabelIssue) {
+        fail(`${label} explanation refers to True/False labels absent from the options`);
+      } else {
+        generatedSingleChoiceExplanationLabelsValidated += 1;
+      }
     });
   });
 }
@@ -13201,6 +13281,8 @@ console.log(
       generatedAnswerTemplateParityValidated,
       generatedOptionSourceMaterialWordingValidated,
       generatedSingleChoiceFillerOptionsValidated,
+      generatedSingleChoiceMetaStemsValidated,
+      generatedSingleChoiceExplanationLabelsValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
       publishedQuestionTypesValidated,

@@ -754,6 +754,18 @@ function falseStatementExplanationEn(source: PracticeQuestion): string {
   return source.explanationEn;
 }
 
+function trueFalseSingleChoiceExplanationSv(source: PracticeQuestion): string {
+  return `${ensureSentence(
+    trueFalseSourceStatementSv(source, true),
+  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
+}
+
+function trueFalseSingleChoiceExplanationEn(source: PracticeQuestion): string {
+  return `${ensureSentence(
+    trueFalseSourceStatementEn(source, true),
+  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
+}
+
 function statementTopicSv(source: PracticeQuestion): string {
   const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
 
@@ -837,14 +849,14 @@ function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
-  return `Vilket svar är korrekt? ${source.questionSv}`;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which statement best matches ${statementTopicEn(source)}?`;
   }
-  return `Which answer is correct? ${source.questionEn}`;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
@@ -1720,6 +1732,8 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
     singleChoiceOptions(source),
     sourceIsTrueFalse ? 'true-statement' : source.correctOptionId,
     ['published-variant', 'section-practice'],
+    sourceIsTrueFalse ? trueFalseSingleChoiceExplanationSv(source) : source.explanationSv,
+    sourceIsTrueFalse ? trueFalseSingleChoiceExplanationEn(source) : source.explanationEn,
   );
 }
 
@@ -1769,6 +1783,8 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
     options,
     sourceIsTrueFalse ? 'true-statement' : correct.id,
     ['published-variant', 'judgement'],
+    sourceIsTrueFalse ? trueFalseSingleChoiceExplanationSv(source) : source.explanationSv,
+    sourceIsTrueFalse ? trueFalseSingleChoiceExplanationEn(source) : source.explanationEn,
   );
 }
 
