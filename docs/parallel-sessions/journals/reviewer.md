@@ -3712,3 +3712,29 @@ Evidence: q148, q156, q160, q164, q172, q176, q180, and q184 all show natural st
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route DATA-INTEGRITY to replace or suppress generic generated single-choice fallback options with generator/validator/static guards and regenerated canonical/static output; this can be bundled with the existing true/false judgement-filler cleanup only if acceptance separately proves both ordinary fallback rows and true/false-shell rows are zero.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-meta-stem-771yEX/wt` / `task/reviewer/single-choice-meta-stems-1779147700`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated single-choice meta-stem acceptance update for `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/data-integrity/open queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `9f585d4`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo-local `.shared/review-to-queue.sh` were absent, so REVIEWER appended directly to `codex-tasks/validator.txt` as in prior lane fallback.
+- Duplicate scan found the existing `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1`; this pass updated that finding instead of filing a duplicate.
+- Direct VM inspection of `site/questions.js` found 720 total questions, 421 `single_choice` rows, and 133 generated ordinary single-choice rows beginning with `Vilket svar är korrekt?` / `Which answer is correct?`.
+- The same scan found all 133 meta-stem rows also carry the already-queued generic fallback options; `content/question-bank.csv` has the same 133 meta-stem rows.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions, `questionJudgementMetaStemsValidated:720`, `generatedPromptTemplateParityValidated:576`, and static-site parity true.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 with 720 questions.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 34/34 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing DATA-INTEGRITY finding updated with non-duplicate acceptance criteria.
+Findings queued: `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1 update [2026-05-18 23:31 CEST]`.
+Evidence: current main still publishes 133 ordinary generated single-choice rows with meta-stem prefixes and generic fallback options while current validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route DATA-INTEGRITY to clean or suppress generated ordinary single-choice variants so acceptance proves zero `Vilket svar är korrekt?` / `Which answer is correct?` meta-prefix rows, zero ordinary fallback-option rows, and zero true/false judgement-shell rows.
