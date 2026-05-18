@@ -613,9 +613,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Folkomröstningar säger att folkomröstningar kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet.',
+      'Folkomröstningar kan hållas på nationell, regional eller kommunal nivå. När de är rådgivande får politikerna väga in resultatet, men de måste inte följa det.',
     explanationEn:
-      'The Referendums section says referendums can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.',
+      'Referendums can be held at national, regional, or municipal level. When they are advisory, politicians can take the result into account, but they do not have to follow it.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Folkomröstningar',
