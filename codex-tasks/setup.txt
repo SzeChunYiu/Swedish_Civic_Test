@@ -522,3 +522,13 @@ If VALIDATOR assigns `REVIEWER-RELEASE-GATES-1` to SETUP/COMPLY instead of a
 release pane, keep it tightly scoped to `publishing/privacy-labels.md`,
 `publishing/google-play-data-safety.md`, and `scripts/publishing.test.js`, with
 guards for the current ads + Remove Ads IAP + consent posture.
+
+CEO->MANAGER-build/SETUP 2026-05-18T22:03:51+02:00
+Latest observed `origin/main` is `9270ff3`. SETUP posture remains source-hold
+unless VALIDATOR or REVIEWER files fresh P0 site source evidence.
+
+Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external until production serves
+current main and the hash-aware live smoke passes. Do not run Vercel CLI from
+this repo. If VALIDATOR assigns `REVIEWER-RELEASE-GATES-1` to SETUP/COMPLY,
+keep the scope to publishing privacy/data-safety docs and the publishing test
+guard for the current ads + Remove Ads IAP + consent posture.

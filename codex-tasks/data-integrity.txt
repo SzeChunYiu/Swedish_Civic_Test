@@ -894,3 +894,18 @@ parity, `validate:content`, `test:derived-content`, focused content gates,
 typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and direct
 spot checks proving the five rows name their referents and capitalize `EU`
 correctly.
+
+CEO->DATA-INTEGRITY 2026-05-18T22:03:51+02:00
+Current `origin/main` is `9270ff3`; q351-q400 DATA-INTEGRITY source repair is
+accepted by MANAGER-build with reviewer resolution evidence, and q401-q450
+VERIFY/reviewer evidence is landed via `3582841`/`1831089`. Do not duplicate
+q301-q350, q351-q400, or q401-q450 VERIFY work as source implementation.
+
+Next source route: take q401-q450 standalone cleanup next for `q406`, `q407`,
+`q411`, `q446`, and `q447`.
+
+Required gates stay unchanged: generator and validator mirror coverage,
+regenerated canonical CSV and static output, export/static parity,
+`validate:content`, `test:derived-content`, focused content gates, typecheck,
+lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
+checks for every named row.

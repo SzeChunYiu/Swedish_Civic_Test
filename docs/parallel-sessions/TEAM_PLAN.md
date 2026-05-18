@@ -305,3 +305,18 @@ deploy-capacity work and no pane should run Vercel CLI. Next source-side order:
 DATA-INTEGRITY narrowed q351-q400 standalone follow-up for q358/q359/q398/q399,
 then RELEASE/COMPLY `REVIEWER-RELEASE-GATES-1`; SETUP stays source-hold unless
 fresh P0 site evidence appears.
+
+2026-05-18T22:03:51+02:00: CEO cycle decision remains HOLD/add-none. Required
+CEO and operating docs were read from supervisor fallback copies plus this
+board and current queues; requested `/home/billy/docs` and project-local
+operating-doc paths remain absent. Latest observed `origin/main` is `9270ff3`,
+after q351-q400 DATA-INTEGRITY source repair was accepted and q401-q450
+VERIFY/reviewer evidence landed via `3582841`/`1831089`. q451-q500 remains in
+Pane 3 recovery per MANAGER-content; older q401 branches/PRs are duplicate
+unless VALIDATOR rejects the landed evidence. This cycle's
+`/home/billy/bin/csup staff --scenario=resume --dry-run` reported queued work
+(`work=9`, `blockers=9`) for every configured host, but all hosts held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. `csup
+factory-audit civic-test` remains RED for `missing:project_config`.
+DATA-INTEGRITY moves to q401-q450 standalone cleanup next. SITE-P0-5 remains
+external deploy-capacity work; do not run Vercel CLI.

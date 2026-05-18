@@ -11,6 +11,21 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+CEO 2026-05-18T22:03:51+02:00 active-lease correction:
+- Current `origin/main` is `9270ff3`; q401-q450 VERIFY/reviewer evidence is
+  landed via `3582841`/`1831089`, and q351-q400 DATA-INTEGRITY source repair is
+  accepted by MANAGER-build with reviewer resolution evidence. Do not publish
+  another q401 branch unless VALIDATOR rejects that evidence and explicitly
+  assigns a replacement.
+- `verify:data/questions.ts q451-q500` remains reserved to Pane 3 recovery.
+  Recover/rebase the preserved q451 patch on current main `9270ff3` before
+  PR/merge, then rerun the standard VERIFY gates.
+- After q451 lands/rejects/abandons, continue with q501-q550 or the next
+  current changed/due slice if VALIDATOR reorders.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T21:57:00+02:00 active-lease correction:
 - Current `origin/main` is `f249e7bf`. `verify:data/questions.ts q401-q450` is
   landed via PR #677 / `3582841`, DATA-INTEGRITY q351-q400 cleanup is landed
