@@ -3292,3 +3292,24 @@ Evidence: current main closes the active Mock question-screen disclaimer residua
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: close the active-Mock disclaimer residual after inspecting SETUP source/PR evidence plus this reviewer recheck.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-9f007d8` / detached `origin/main` `9f007d8`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` after DATA-INTEGRITY landed `data-integrity: clean generated true-false negative stems`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active setup/data-integrity/validator queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `9f007d8`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- VM inspection of `site/questions.js` found `720` total questions, `299` true-false questions, `299` redundant true/false prefix offenders, `0` stem meta offenders for `Påståendet är sant:` / `The statement is true:` / `Det är inte sant att` / `It is not true that`, and `7` false-answer rows whose explanations still begin `The statement is true` / `Påståendet är sant`: `q151`, `q167`, `q235`, `q255`, `q331`, `q339`, and `q715`.
+- CSV scan of `content/question-bank.csv` found `299` true_false rows, `299` prefix rows, and `0` matching stem meta rows.
+- Spot check confirmed q666/q667/q699 still have learner-visible English stem issues: `common to eating`, `common to lighting`, and capitalized `The arrival of spring`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionGeneratedTrueFalseNaturalnessValidated: 720`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+Workspace contract: pass - no product source edited; existing finding updated instead of filing a duplicate.
+Findings queued: `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1 update [2026-05-18 20:55 CEST]`.
+Evidence: current main clears stem-level meta wording but still violates the no-redundant-prefix wording rule on every true-false question; validators remain green despite the prefix, false-explanation, and q666/q667/q699 naturalness residuals.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep DATA-INTEGRITY on one bounded generated true/false cleanup covering prefix removal, the seven false-answer explanations, and q666/q667/q699 grammar/capitalization with regenerated canonical/static mirrors and validator guards.
