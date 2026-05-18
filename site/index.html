@@ -34,13 +34,6 @@
       <a href="#/support" data-route="/support" data-i18n="nav.support">Support</a>
     </nav>
     <div class="topbar__tools">
-      <button class="icon-btn" id="signin-open" aria-label="Sign in">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="8" r="4"></circle>
-          <path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path>
-        </svg>
-        <span data-i18n="nav.signin">Sign in</span>
-      </button>
       <button class="icon-btn icon-btn--square" id="settings-open" aria-label="Settings">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"></circle>
@@ -224,6 +217,7 @@
         <span data-i18n="ebook.title">The Field Guide</span>
       </div>
       <p class="ebook__sub" data-i18n="ebook.sub">An unofficial companion to the citizenship test.</p>
+      <p class="ebook__local-note">Highlights and notes stay in this browser. No account is needed.</p>
       <nav class="ebook__nav" aria-label="Ebook chapters">
         <a href="#/ebook?c=intro" data-eb="intro" class="is-active"><span class="ebook__nav-n">00</span><span data-i18n="ebook.ch.intro.title">How to read this book</span></a>
         <a href="#/ebook?c=1" data-eb="1"><span class="ebook__nav-n">01</span><span data-i18n="ebook.ch.1.title">A very short history of Sweden</span></a>
@@ -746,41 +740,6 @@
   </div>
 </div>
 
-<!-- ============================================================ SIGN-IN MODAL -->
-<div class="modal" id="signin-modal" hidden role="dialog" aria-modal="true" aria-labelledby="signin-title">
-  <div class="modal__backdrop" data-close="signin"></div>
-  <div class="modal__panel modal__panel--signin">
-    <button class="modal__close" data-close="signin" aria-label="Close">✕</button>
-    <div class="signin__head">
-      <span class="brand__mark" aria-hidden="true" style="width:46px;height:32px"></span>
-      <h2 id="signin-title" class="signin__title" data-i18n="signin.title">Sync your progress.</h2>
-      <p class="signin__lede" data-i18n="signin.lede">Optional, always free. Sign in to keep streaks, bookmarks, and mistakes across devices. The MVP runs perfectly fine without an account.</p>
-    </div>
-    <div class="signin__providers">
-      <button class="signin__btn signin__btn--google" type="button">
-        <span class="signin__icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.92c-.26 1.36-1.04 2.51-2.21 3.28v2.72h3.57c2.09-1.93 3.29-4.76 3.29-8.03z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.72c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.85A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.15A6.6 6.6 0 0 1 5.47 12c0-.75.13-1.47.37-2.15V6.99H2.16A11 11 0 0 0 1 12c0 1.77.42 3.45 1.16 4.94l3.68-2.79z"/><path fill="#EA4335" d="M12 5.39c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.13 14.97 1 12 1A11 11 0 0 0 2.16 7l3.68 2.85C6.71 7.32 9.14 5.39 12 5.39z"/></svg>
-        </span>
-        <span data-i18n="signin.google">Continue with Google</span>
-      </button>
-      <button class="signin__btn signin__btn--apple" type="button">
-        <span class="signin__icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.65c-.02-2.18 1.78-3.22 1.86-3.27-1.01-1.48-2.59-1.68-3.16-1.7-1.35-.13-2.63.79-3.31.79-.69 0-1.74-.77-2.86-.75-1.47.02-2.83.85-3.59 2.17-1.53 2.65-.39 6.58 1.1 8.74.73 1.05 1.59 2.24 2.72 2.2 1.1-.05 1.51-.71 2.84-.71 1.33 0 1.71.71 2.87.69 1.19-.02 1.94-1.08 2.66-2.13.84-1.22 1.19-2.41 1.21-2.47-.03-.01-2.32-.89-2.34-3.56zm-2.21-6.55c.6-.74 1.01-1.76.9-2.78-.87.04-1.95.6-2.57 1.33-.55.66-1.04 1.71-.91 2.71.97.08 1.97-.5 2.58-1.26z"/></svg>
-        </span>
-        <span data-i18n="signin.apple">Continue with Apple</span>
-      </button>
-      <div class="signin__or"><span data-i18n="signin.or">or</span></div>
-      <label class="signin__field">
-        <span data-i18n="signin.email">Email</span>
-        <input type="email" placeholder="you@example.com" />
-      </label>
-      <button class="btn btn--gold btn--full" type="button" data-i18n="signin.magic">Send magic link</button>
-    </div>
-    <p class="signin__fine" data-i18n="signin.fine">By signing in you agree to our <a href="#/terms">terms</a> and <a href="#/privacy">privacy policy</a>. No password — we email a one-time link.</p>
-    <p class="signin__soon" data-i18n="signin.soon"><b>Beta:</b> accounts are rolling out gradually. The app works fully without one.</p>
-  </div>
-</div>
-
 <!-- ============================================================ ANCHOR AD (mobile, dismissible) -->
 <div class="ad-anchor" data-ad-slot="anchor" hidden>
   <button class="ad-anchor__close" id="ad-anchor-close" aria-label="Close ad">✕</button>
@@ -827,7 +786,6 @@
 <script src="practice.js"></script>
 <script src="ebook-tools.js"></script>
 <script src="fx.js"></script>
-<script src="signin.js"></script>
 <script src="settings.js"></script>
 <script src="buddies.js"></script>
 <script src="extras.js"></script>

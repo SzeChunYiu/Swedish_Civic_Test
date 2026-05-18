@@ -1419,26 +1419,7 @@ p.deck {
 
 @media (max-width: 540px) { .set-palettes { grid-template-columns: 1fr; } }
 
-/* SIGN-IN */
-
-.modal__panel--signin { padding: 36px 32px 28px; width: min(440px, calc(100vw - 32px)); }
-.signin__head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 22px; }
-.signin__title { font-family: var(--display); font-weight: 700; font-size: 28px; letter-spacing: -.02em; margin: 4px 0 0; text-wrap: balance; }
-.signin__lede { color: var(--ink-soft); font-size: 14.5px; line-height: 1.5; margin: 0; max-width: 36ch; }
-.signin__providers { display: flex; flex-direction: column; gap: 10px; }
-.signin__btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 13px 16px; background: var(--white); color: var(--ink); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; font: inherit; font-weight: 700; font-size: 15px; }
-.signin__btn:hover { background: var(--paper-warm); }
-.signin__btn--apple { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.signin__icon { display: inline-grid; place-items: center; width: 18px; height: 18px; }
-.signin__or { display: flex; align-items: center; gap: 12px; margin: 6px 0; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: .14em; text-transform: uppercase; }
-.signin__or::before, .signin__or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-.signin__field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-soft); font-weight: 700; letter-spacing: .04em; }
-.signin__field input { border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 14px; font: inherit; font-size: 15px; background: var(--white); color: var(--ink); }
-.signin__field input:focus { outline: 0; border-color: var(--blue); }
 .btn--full { width: 100%; justify-content: center; }
-.signin__fine { font-size: 12px; color: var(--ink-soft); margin: 14px 0 0; text-align: center; line-height: 1.5; }
-.signin__soon { font-size: 12px; color: var(--ink-soft); margin: 8px 0 0; padding: 10px 12px; background: var(--gold-soft); border-radius: 10px; text-align: center; }
-.signin__soon b { color: var(--ink); }
 
 /* EBOOK */
 
@@ -1449,6 +1430,7 @@ p.deck {
 .ebook__brand-mark::before { content: ""; position: absolute; left: 9px; top: 0; bottom: 0; width: 3px; background: var(--gold); }
 .ebook__brand-mark::after { content: ""; position: absolute; top: 8.5px; left: 0; right: 0; height: 3px; background: var(--gold); }
 .ebook__sub { color: var(--ink-soft); font-size: 13px; margin: 8px 0 22px; line-height: 1.5; }
+.ebook__local-note { color: var(--ink-soft); font-size: 12.5px; line-height: 1.45; margin: -12px 0 18px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-warm); }
 .ebook__nav { display: flex; flex-direction: column; gap: 1px; border-top: 1px solid var(--line); }
 .ebook__nav a { display: flex; align-items: baseline; gap: 12px; padding: 10px 6px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--ink); font-weight: 600; font-family: var(--body); }
 .ebook__nav a:hover { background: var(--paper-warm); text-decoration: none; }
@@ -1728,17 +1710,6 @@ p.deck {
   background: var(--blue);
   color: var(--gold);
 }
-:root[data-theme="dark"] .signin__btn--apple {
-  background: #0e1620;
-  color: #f1ede0;
-  border-color: #1f2a36;
-}
-:root[data-theme="dark"] .signin__btn--apple:hover { background: #18222e; }
-:root[data-theme="dark"] .signin__btn         { background: #18222e; color: var(--ink); border-color: #25313e; }
-:root[data-theme="dark"] .signin__btn:hover   { background: #1f2c3a; }
-
-:root[data-theme="dark"] .signin__field input { background: #0e1620; color: var(--ink); }
-
 /* nav active pill — flip back to dark bg + gold text */
 :root[data-theme="dark"] .nav a.is-active { background: var(--blue); color: var(--gold); }
 :root[data-theme="dark"] .icon-btn        { color: var(--ink); border-color: #2a3540; }
@@ -1908,8 +1879,6 @@ p.deck {
 :root[data-theme="dark"] .qcard__explain b,
 :root[data-theme="dark"] .quiz__feedback,
 :root[data-theme="dark"] .quiz__feedback b,
-:root[data-theme="dark"] .signin__soon,
-:root[data-theme="dark"] .signin__soon b,
 :root[data-theme="dark"] .ebook__factbox p,
 :root[data-theme="dark"] .ebook__factbox h4,
 :root[data-theme="dark"] .ebook__reader blockquote,

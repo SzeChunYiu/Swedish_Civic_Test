@@ -1,7 +1,7 @@
 /* Sveriges Medborgartest — Ebook highlights + custom notes
-   - Highlight selected text (logged-in users only)
+   - Highlight selected text
    - Add a note to a highlight, edit later
-   - Persisted in localStorage per chapter
+   - Persisted locally in localStorage per chapter
    - Restored when chapter is rendered
 */
 
@@ -9,7 +9,6 @@
   "use strict";
 
   function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
-  function isSignedIn() { try { return localStorage.getItem("smt_signed_in") === "1"; } catch { return false; } }
   function uid() { return "h_" + Math.random().toString(36).slice(2, 9) + Date.now().toString(36); }
 
   function activeChapter() {
@@ -140,12 +139,6 @@
     if (!sel || sel.isCollapsed) { hidePop(); return; }
     const reader = document.getElementById("ebook-reader");
     if (!reader || !reader.contains(sel.anchorNode)) { hidePop(); return; }
-    if (!isSignedIn()) {
-      // Show login nudge instead
-      const r = sel.getRangeAt(0).getBoundingClientRect();
-      showSigninNudge(r);
-      return;
-    }
     const range = sel.getRangeAt(0);
     const r = range.getBoundingClientRect();
     const p = ensurePop();
@@ -159,42 +152,6 @@
       r.left + window.scrollX + r.width / 2 - popW / 2));
     p.style.top = top + "px";
     p.style.left = left + "px";
-  }
-
-  /* ---------- sign-in nudge (when not logged in) ---------- */
-
-  let nudgeTimer = null;
-  function showSigninNudge(rect) {
-    let nudge = document.getElementById("eb-signin-nudge");
-    if (!nudge) {
-      nudge = document.createElement("div");
-      nudge.id = "eb-signin-nudge";
-      nudge.className = "eb-pop eb-pop--nudge";
-      nudge.innerHTML = `
-        <span class="eb-pop__msg"></span>
-        <button class="eb-pop__btn eb-pop__btn--cta" data-act="signin">
-          ${lang() === "sv" ? "Logga in" : "Sign in"} →
-        </button>
-      `;
-      document.body.appendChild(nudge);
-    }
-    nudge.querySelector(".eb-pop__msg").textContent =
-      lang() === "sv"
-        ? "Logga in för att markera och anteckna"
-        : "Sign in to highlight & note";
-    nudge.hidden = false;
-    const popW = 260, popH = 38;
-    const top = rect.top + window.scrollY - popH - 10;
-    const left = Math.max(8, Math.min(window.innerWidth - popW - 8,
-      rect.left + window.scrollX + rect.width / 2 - popW / 2));
-    nudge.style.top = top + "px";
-    nudge.style.left = left + "px";
-    clearTimeout(nudgeTimer);
-    nudgeTimer = setTimeout(() => { nudge.hidden = true; }, 3500);
-  }
-  function hideNudge() {
-    const n = document.getElementById("eb-signin-nudge");
-    if (n) n.hidden = true;
   }
 
   /* ---------- create / edit ---------- */
@@ -349,7 +306,6 @@
       const act = popBtn.dataset.act;
       if (act === "hl") createHighlightFromSelection(false);
       else if (act === "note") createHighlightFromSelection(true);
-      else if (act === "signin") { hideNudge(); if (window.smtOpenSignin) window.smtOpenSignin(); }
       return;
     }
     // clicking a highlight: open its note
