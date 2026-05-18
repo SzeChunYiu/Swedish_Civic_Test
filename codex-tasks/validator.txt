@@ -181,13 +181,20 @@ Immediate actions:
 2. Accept/reject the DATA-INTEGRITY generated-stem fix from PR #198 /
    `02193fb`; do not keep a duplicate generated-judgement worker queued unless
    that executable evidence fails the P0 bar.
-3. Treat q021 and q012 as active/in-flight. q021 has PR #203 open at observed
-   pane state, and q012 is active in `/tmp/sct-q012-pane1`. Reject duplicate
-   work for those questions unless the manager explicitly abandons the active
-   atom.
+3. Treat q021 as active/in-flight. q021 has PR #203 open at observed pane
+   state, and q012 status is superseded by the correction below. Reject
+   duplicate q021 work unless the manager explicitly abandons the active atom.
 4. Keep TRANSLATE-COMPLETE and SOURCE-CITATION open while reviewer rows still
    show naturalness/source-scaffolding defects. After active q021/q012, route
    q013, q014, q015, q016, q017, q020, then q027/q028 unless newer accepted
    evidence changes the order.
 5. Do not staff expansion teams or remote lanes until TEAM_PLAN rows, leases,
    and usable headroom evidence exist.
+
+CEO->VALIDATOR correction 2026-05-18T13:27:00+02:00
+q012 landed after the 13:22 note via PR #204 / `2c7c02f`; accept/reject it from
+that merge evidence and treat stale q012 routing as superseded. PR #206 is an
+open MANAGER-content queue update that still assigns q012 and should not be
+accepted as-is unless rebased/reconciled. q021 remains open in PR #203 and not
+mergeable at connector check time; keep q021 duplicate-guarded and require
+updated merge evidence before accepting.

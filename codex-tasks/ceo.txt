@@ -87,10 +87,10 @@ Priorities: `origin/main` advanced to `ee4ddb4` after #202, the
 DATA-INTEGRITY generated-stem fix #198 / `02193fb`, and q073. q072 is on
 `origin/main` via PR #194 / `6fc47b4`; q073 is on `origin/main` via
 `ee4ddb4`. q021 is active in `/tmp/sct-q021-pane3` with PR #203 open at
-observed pane state; q012 is active in `/tmp/sct-q012-pane1`. After q021/q012,
-route q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR has
-newer accepted evidence. Do not restaff DATA-INTEGRITY generated-judgement work
-unless VALIDATOR rejects the #198 evidence.
+observed pane state; q012 status is superseded by the correction below. After
+q021, route q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR
+has newer accepted evidence. Do not restaff DATA-INTEGRITY generated-judgement
+work unless VALIDATOR rejects the #198 evidence.
 Escalations: none requiring human approval. Station gating is a staffing
 constraint, not a product blocker. The local `gh` CLI is missing, so this CEO
 coordination update is prepared from a separate `origin/main` worktree to avoid
@@ -98,3 +98,12 @@ polluting the active content branch.
 Manager updates sent: queued directives in `codex-tasks/content.txt` and
 `codex-tasks/validator.txt`; direct tmux input was intentionally skipped because
 the content panes were actively running worker prompts and tests.
+
+Cycle correction 2026-05-18T13:27:00+02:00
+q012 landed on `origin/main` after the 13:22 CEO note, via PR #204 /
+`2c7c02f`. Treat any routing that still calls q012 active as stale. PR #206 is
+an open MANAGER-content dispatch against `codex-tasks/content.txt`; it assigns
+q012 and must be rebased/reconciled before merge. q021 remains open in PR #203
+and not mergeable at connector check time. Current content order after q021 is
+q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR has newer
+accepted evidence.
