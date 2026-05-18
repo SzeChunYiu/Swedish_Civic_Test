@@ -3621,3 +3621,25 @@ Evidence: current main has two q701-q720 generated single-choice judgement rows 
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep q701-q720 behind q551-q600, q601-q650, and q651-q700 source routing unless VALIDATOR reorders, then route DATA-INTEGRITY to replace or suppress q713/q716 judgement variants with generator, validator mirror, export/static parity, and current-main spot-check evidence.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-GKQiAI/wt` / `task/reviewer/live-deploy-current-1779137903`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main live deploy freshness recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active validator/setup/data-integrity queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `cabe389`; the shared checkout has unrelated dirty lane files and was not reset.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0, 7/7 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and static-site parity true.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app` - exit 1; live serves 715 questions with hash prefix `afb9eec56629`, while current main expects 720 with hash prefix `97ddcda4c5c9`.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; live serves 715 questions with hash prefix `5d2710bebf7e`, while current main expects 720 with hash prefix `97ddcda4c5c9`.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing live-deploy finding updated instead of filing a duplicate.
+Findings queued: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 22:58 CEST]`.
+Evidence: local current main is deploy-ready by static parity, live-smoke unit coverage, content validation, typecheck, and whitespace checks, but production still serves stale 715-question banks.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep SITE-P0-5 blocked on production deploy freshness until a deployment from `cabe389` or newer passes the hash-aware live smoke.
