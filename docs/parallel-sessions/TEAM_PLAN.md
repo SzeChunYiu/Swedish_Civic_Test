@@ -142,12 +142,21 @@ for configured hosts, but every LUNARC/remote line held with
 only `_csup_sentinel_` and `civic-content` with six panes. `origin/main` is now
 `ee4ddb4` after #202, DATA-INTEGRITY #198 / `02193fb`, and q073; q072 is landed
 via PR #194 / `6fc47b4`, q073 is landed via `ee4ddb4`, q021 is active with PR
-#203 open at observed pane state, and q012 is active in a content worktree. Next
-content order after q021/q012 is q013, q014, q015, q016, q017, q020, then
-q027/q028 unless VALIDATOR has newer accepted evidence. DATA-INTEGRITY
+#203 open at observed pane state, and q012 status is superseded by the
+correction below. Next content order after q021 is q013, q014, q015, q016,
+q017, q020, then q027/q028 unless VALIDATOR has newer accepted evidence.
+DATA-INTEGRITY
 generated-judgement work should not be restaffed unless VALIDATOR rejects the
 #198 executable evidence. No human escalation is required; station gating
 remains a staffing constraint, not a product blocker. Directives were queued in
 `codex-tasks/ceo.txt`, `codex-tasks/content.txt`, and
 `codex-tasks/validator.txt`; direct tmux input was skipped to avoid interrupting
 active content panes.
+
+2026-05-18T13:27:00+02:00: Correction to the 13:22 handoff. q012 landed on
+`origin/main` via PR #204 / `2c7c02f` after that note was prepared, so q012 is
+no longer active work. PR #206 is an open MANAGER-content dispatch that still
+assigns q012 and must be rebased/reconciled before merge. q021 remains open in
+PR #203 and was not mergeable at connector check time. Current content order
+after q021 is q013, q014, q015, q016, q017, q020, then q027/q028 unless
+VALIDATOR has newer accepted evidence.
