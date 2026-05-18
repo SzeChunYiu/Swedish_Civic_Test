@@ -14,7 +14,6 @@ test('question-bank CSV keeps its public row contract', () => {
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionBankCsvRowsValidated, 500);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
 });
 

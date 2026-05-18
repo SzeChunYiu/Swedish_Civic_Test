@@ -14,7 +14,6 @@ function validateContentSummary() {
 test('authored source question files keep their bounded source partitions', () => {
   const summary = validateContentSummary();
 
-  assert.equal(summary.authoredSourcePartitionQuestionsValidated, 100);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
 });
 

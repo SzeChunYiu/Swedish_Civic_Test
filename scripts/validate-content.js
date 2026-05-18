@@ -23,9 +23,11 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 100;
+const EXPECTED_SOURCE_QUESTIONS = 120;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
+const EXPECTED_PUBLISHED_QUESTIONS =
+  EXPECTED_SOURCE_QUESTIONS * (GENERATED_VARIANTS_PER_SOURCE + 1);
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
 const GENERATED_VARIANT_CONVENTIONS = [
@@ -11127,7 +11129,9 @@ if (Array.isArray(chapters)) {
 }
 
 if (Array.isArray(questions)) {
-  if (questions.length !== 500) fail(`expected 500 questions, found ${questions.length}`);
+  if (questions.length !== EXPECTED_PUBLISHED_QUESTIONS) {
+    fail(`expected ${EXPECTED_PUBLISHED_QUESTIONS} questions, found ${questions.length}`);
+  }
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
   const promptTexts = {
     questionSv: new Map(),
