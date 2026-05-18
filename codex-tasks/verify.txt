@@ -11,6 +11,21 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T20:53:00+02:00 update:
+- `docs/verify/generated-tf-post600-2026-05-18.md` is landed via PR #611 /
+  `a7823b8`; do not duplicate that focused post-#600 generated true/false
+  report.
+- Current generated true/false defects from that report are routed to
+  DATA-INTEGRITY as `VERIFY-GENERATED-TF-POST600-CURRENT-1` and folded into
+  `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`: the global prefix surface,
+  false-answer explanation or negative-meta rows q151, q167, q235, q255, q266,
+  q331, q339, q439, q507, q519, and q715, plus residual grammar rows q666,
+  q667, and q699.
+- Next VERIFY capacity should continue the rolling queue from the next
+  due/changed slice after the latest generated-output fixes. Keep VERIFY
+  report-and-queue only: no `data/**`, generated CSV/static mirrors, generator
+  templates, validator mirrors, or `site/**` edits.
+
 MANAGER-content 2026-05-18T20:45:00+02:00 update:
 - `verify:data/questions.ts q151-q200` post-#570/#584 refresh is landed via
   PR #609 / `47f3983`; do not duplicate that branch or its stale pre-rebase

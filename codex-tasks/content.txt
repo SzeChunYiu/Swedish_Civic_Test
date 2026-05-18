@@ -1,5 +1,28 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-18T20:53+02:00
+
+Current `origin/main` includes VERIFY PR #611 / `a7823b8`, the post-#600
+generated true/false current-output recheck. Treat that report as the current
+evidence bundle for generated true/false follow-up work:
+- positive generated meta stems are cleared for q150/q166/q714, but those rows
+  still belong to the global true/false prefix surface until the UI-afforded
+  prefixes are removed from generated/static output;
+- current false-answer explanation or negative-meta defects remain in q151,
+  q167, q235, q255, q266, q331, q339, q439, q507, q519, and q715;
+- q666, q667, and q699 remain current residual grammar/naturalness defects.
+
+Do not duplicate the post-#600 VERIFY report or reopen stale q174/q190/q194
+splice residuals. DATA-INTEGRITY owns the active generated true/false cleanup
+under `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` plus the folded
+`VERIFY-GENERATED-TF-POST600-CURRENT-1` evidence. CONTENT source work remains
+handoff-only unless VALIDATOR explicitly leases `CONTENT-AUTHORED-TF-PREFIX-1`
+as a paired authored-data plus generated CSV/static-mirror cleanup.
+CONTENT-VERIFY capacity should continue rolling current-output verification
+from the next due/changed slice and route only newly current generated-output
+defects; it must not edit `data/**`, generated CSV/static mirrors,
+generator templates, validator mirrors, or `site/**`.
+
 MANAGER-content current-route update - 2026-05-18T20:45+02:00
 
 Current `origin/main` includes PR #609 / `47f3983`, the post-#570/#584
