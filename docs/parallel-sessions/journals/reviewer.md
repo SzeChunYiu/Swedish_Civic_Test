@@ -3207,3 +3207,23 @@ Evidence: current main closes stale Twelve/Tolv copy and visible Home chapter-li
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: accept/reject the SETUP chapter-count source atom using the source diff, handoff, focused guard, and this reviewer resolution evidence; keep live deploy freshness open until production serves current main.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-origin-main-1779128968` / `task/reviewer/tf-prefix-current-1779129093`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main content wording-rule pass for true-false prefix/meta stems.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active setup/content/data-integrity/validator queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `50aca39`; the shared checkout has unrelated dirty queue/report files and is on a gone task branch.
+- Confirmed `/home/billy/Desktop/projects/.shared/review-to-queue.sh` and `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so the validator queue was updated directly.
+- VM inspection of `site/questions.js` found 720 questions, 299 true-false questions, 299 true-false prefix offenders, and 11 `The statement is true` / `Påståendet är sant` meta-stem offenders: q150, q166, q234, q254, q267, q330, q338, q438, q506, q518, and q714.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including `questionGeneratedTrueFalseNaturalnessValidated: 720`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 5/5 passing.
+- `npm run test:static-site-question-count-copy` and `npm run test:static-site-chapter-count-copy` - exit 0, 4/4 combined passing.
+Workspace contract: pass - no product source edited; a new non-duplicate P0 wording defect was queued.
+Findings queued: `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`.
+Evidence: current canonical/static true-false output violates the no-redundant-prefix wording rule while current validators still pass.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route DATA-INTEGRITY to strip true-false prefixes and statement-is-true meta stems from canonical/static generated output, with validator mirror coverage and export/static parity before acceptance.
