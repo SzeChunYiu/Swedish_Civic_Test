@@ -386,3 +386,27 @@ Next worker task queued: DATA-INTEGRITY - continue the active prefix-surface
 atom from clean current main or rebase before PR; keep live deploy freshness
 external until production serves current main and the hash-aware live smoke
 passes.
+
+Iteration: 2026-05-18T21:35+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` as the queue-level closure for static
+Ebook chapter 13 coverage.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #648 / `a1d5921` is on current main for the chapter 13
+implementation, and formatting follow-up `dff1c24` is on current `origin/main`.
+Clean manager verification in
+`/tmp/sct-setup-ebook-format-1779140000` passed `node --test
+tests/content-static-site-ebook-parity.test.js` 3/3, `npm run
+test:static-site-chapter-count-copy` 2/2, targeted Prettier for the
+Ebook/static files, `node scripts/export-site-question-bank.js --check` with
+720 questions and 13 chapters, `npm run validate:content`,
+`npm run typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+`node --check` for the changed static test/script surfaces, and `git diff
+--check a1d5921^..dff1c24`. Direct source/test audit confirms `#/ebook?c=13`
+selects chapter 13, renders English and Swedish traditions copy, shows
+`13 / 13`, and links to `#/practice?c=13`.
+Next worker task queued: none for local SETUP source. Keep live deploy
+freshness external until production serves current main and the hash-aware live
+smoke passes; keep `REVIEWER-SEARCH-PLACEHOLDER-1` on P1 hold unless VALIDATOR
+elevates it.

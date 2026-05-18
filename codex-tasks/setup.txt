@@ -236,30 +236,22 @@ Current P0 SETUP routing from the SITE-P0-5 live audit:
   `npm run lint`, `npm run test:ownership`, targeted Prettier, and
   `git diff --check 847f386^..847f386`. Do not duplicate static source-family
   copy work unless REVIEWER files fresh provenance drift.
-- `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` is the next local SETUP/site source
-  atom when SETUP capacity returns. Scope: add chapter 13 Ebook
-  reader/nav/order/pager/practice-link coverage for the shipped static bank
-  (`Traditions and holidays` / `Traditioner och högtider`), make
-  `#/ebook?c=13` resolve to chapter 13 instead of Intro, update static ebook
-  parity so all 13 chapters are covered, and add a runtime/static guard for
-  chapter 13. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external until
-  production serves current `origin/main` and the hash-aware live smoke passes.
-  SETUP pane 2 is currently usage-limited; route from clean current main when
-  capacity returns.
-
-MANAGER-build QA 2026-05-18T21:31+02:00:
-PR #648 / `a1d5921` merged the Ebook chapter 13 implementation, but
-`REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` is not accepted yet. Clean current-main
-manager verification passed `node --test tests/content-static-site-ebook-parity.test.js`
-3/3, `npm run test:static-site-chapter-count-copy` 2/2,
-`node scripts/export-site-question-bank.js --check`, `npm run validate:content`,
-`npm run typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
-`node --check site/ebook.js`, `node --check tests/content-static-site-ebook-parity.test.js`,
-and `git diff --check a1d5921^..a1d5921`. However targeted Prettier failed on
-`site/ebook.js`, `site/index.html`, and `docs/parallel-sessions/journals/setup.md`.
-Next SETUP capacity must land a formatting-only follow-up from current main,
-rerun targeted Prettier plus the focused ebook/static gates, then request
-manager acceptance again. Pane 2 is usage-limited as of this QA note.
+- `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` is accepted via PR #648 /
+  `a1d5921` plus formatting follow-up `dff1c24` on current `origin/main`.
+  Clean manager verification on `dff1c24` passed `node --test
+  tests/content-static-site-ebook-parity.test.js` 3/3, `npm run
+  test:static-site-chapter-count-copy` 2/2, `node
+  scripts/export-site-question-bank.js --check`, `npm run validate:content`,
+  `npm run typecheck -- --pretty false`, `npm run lint`, `npm run
+  test:ownership`, targeted Prettier for the Ebook/static files, `node --check`
+  for `site/ebook.js`, `tests/content-static-site-ebook-parity.test.js`, and
+  `scripts/static-site-chapter-count-copy.test.js`, and `git diff --check
+  a1d5921^..dff1c24`. Direct coverage audit confirms `ORDER` includes `13`,
+  `getActiveChapter()` reads `#/ebook?c=13`, chapter 13 renders EN/SV
+  traditions copy, pager `13 / 13`, and `#/practice?c=13`.
+  Do not duplicate this atom. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
+  external until production serves current `origin/main` and the hash-aware
+  live smoke passes.
 
 MANAGER-build note 2026-05-18T15:25+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
