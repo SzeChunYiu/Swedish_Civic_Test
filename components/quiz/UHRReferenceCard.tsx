@@ -3,6 +3,7 @@ import type { UHRReference } from '../../types/content';
 import { Card } from '../ui/Card';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
+import { SourceCitation } from './SourceCitation';
 
 type UHRReferenceCardCopy = {
   accessibilityLabelPrefix: string;
@@ -44,11 +45,19 @@ export function UHRReferenceCard({
 
   return (
     <Card accessibilityLabel={referenceAccessibilityLabel}>
-      <Text accessibilityRole="header" style={styles.title}>
-        {copy.title}
-      </Text>
-      <Text style={styles.body}>{label}</Text>
-      {pageLabel ? <Text style={styles.meta}>{pageLabel}</Text> : null}
+      <SourceCitation
+        accessibilityLabel={referenceAccessibilityLabel}
+        label={copy.title}
+        language={language}
+        reference={reference}
+        showLabel={false}
+      >
+        <Text accessibilityRole="header" style={styles.title}>
+          {copy.title}
+        </Text>
+        <Text style={styles.body}>{label}</Text>
+        {pageLabel ? <Text style={styles.meta}>{pageLabel}</Text> : null}
+      </SourceCitation>
     </Card>
   );
 }

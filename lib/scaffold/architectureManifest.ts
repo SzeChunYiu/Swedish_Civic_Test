@@ -37,6 +37,10 @@ export const architectureSupplementalRouteFiles = [
 export const architectureRouterShellRuntimeFiles = [
   'app/index.tsx',
   'app/_layout.tsx',
+  'app/(auth)/_layout.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/account.tsx',
+  'app/search.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -127,6 +131,15 @@ export const architectureThemeRuntimeFiles = [
   'lib/theme/shadows.ts',
   'lib/theme/spacing.ts',
   'lib/theme/typography.ts',
+] as const;
+
+export const architectureAudioRuntimeFiles = [
+  'lib/audio/speak.ts',
+  'components/learning/AudioButton.tsx',
+  'lib/storage/settingsStore.ts',
+  'app/settings.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
 ] as const;
 
 export const architectureAnswerShuffleRuntimeFiles = [
@@ -349,6 +362,22 @@ export const architectureLearningProgressRuntimeFiles = [
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
   'app/chapter/[chapterId].tsx',
+] as const;
+
+export const architectureProfileSettingsRuntimeFiles = [
+  'app/(tabs)/profile.tsx',
+  'app/settings.tsx',
+  'lib/storage/settingsStore.ts',
+  'lib/storage/progressStore.ts',
+  'lib/learning/badges.ts',
+  'lib/learning/streaks.ts',
+  'lib/learning/xp.ts',
+  'components/ui/Badge.tsx',
+  'components/ui/Card.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ScreenShell.tsx',
+  'components/monetization/PremiumBanner.tsx',
+  'components/compliance/ComplianceLinks.tsx',
 ] as const;
 
 export const architectureScaffoldFiles = [
@@ -599,6 +628,7 @@ export type ArchitectureDesignSystemSupportFilePath =
   (typeof architectureDesignSystemSupportFiles)[number];
 export type ArchitectureSharedUiRuntimeFilePath = (typeof architectureSharedUiRuntimeFiles)[number];
 export type ArchitectureThemeRuntimeFilePath = (typeof architectureThemeRuntimeFiles)[number];
+export type ArchitectureAudioRuntimeFilePath = (typeof architectureAudioRuntimeFiles)[number];
 export type ArchitectureAnswerShuffleRuntimeFilePath =
   (typeof architectureAnswerShuffleRuntimeFiles)[number];
 export type ArchitectureAnswerShuffleReviewRuntimeFilePath =
@@ -632,3 +662,5 @@ export type ArchitectureRemoveAdsRuntimeFilePath =
   (typeof architectureRemoveAdsRuntimeFiles)[number];
 export type ArchitectureLearningProgressRuntimeFilePath =
   (typeof architectureLearningProgressRuntimeFiles)[number];
+export type ArchitectureProfileSettingsRuntimeFilePath =
+  (typeof architectureProfileSettingsRuntimeFiles)[number];

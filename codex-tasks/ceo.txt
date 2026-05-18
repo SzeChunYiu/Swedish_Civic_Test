@@ -1,0 +1,139 @@
+Cycle update 2026-05-18T12:27:59+02:00
+Objective: keep the factory on P0 burn-down. TRANSLATE-COMPLETE is the active
+acceptance gap because reviewer-filed English naturalness defects remain open,
+even though content validation is green.
+Teams: hold the current local `civic-content` team only. Live tmux shows
+`MANAGER-content` plus CONTENT/VERIFY panes in `civic-content`; no build, uiux,
+qa, or release session is active locally.
+Priorities: q008 is now on `origin/main` via PR #172; do not rework it. Let the
+manager-run q009/q010 content atoms finish as separate UHR-only
+TRANSLATE-COMPLETE work. Next content queue remains q011, q037, q071, q072,
+then the remaining validator-filed source-note explanations. Keep UIUX and
+release work queued but unstaffed until content P0 pressure drops or a manager
+presents an acceptance-linked source task that beats the content queue.
+Staffing evidence: `csup staff --scenario=resume --dry-run` returned
+STAFF-DOWN/no queued work for every configured LUNARC host and reported missing
+remote queue files in the disabled fs10/fs9 checkouts. Decision: hold/add-none;
+do not stop local content panes while q009/q010 are in flight and no manager
+has confirmed those acceptance rows are covered.
+Escalations: none requiring human approval this cycle. Remote LUNARC disabled
+state remains an intentional staffing constraint, not a product blocker.
+Manager updates sent: content manager to treat q008 as landed, keep q009/q010
+separate, and queue q011/q037/q071/q072 next; validator to accept only
+PR-backed, evidence-backed P0 atoms and to keep TRANSLATE-COMPLETE open while
+naturalness defects remain.
+
+Cycle update 2026-05-18T12:43:40+02:00
+Objective: keep the factory on P0 burn-down. TRANSLATE-COMPLETE remains the
+highest active gap. q010 is now on origin/main via PR #182 / `8d6cead`, and
+q011 is on origin/main via PR #180 / `793ec73`; current content priority is
+q037, then q071, q072, q021, and later validator-filed naturalness rows.
+Teams: hold local `civic-content` only. `origin/main` contains the
+research/verify/delight/mascot expansion queues from #186, but those teams are
+not represented as active acceptance rows in `TEAM_PLAN.md`, and P0 content
+work still outranks expansion. Do not start build, UIUX, QA, release, research,
+verify, delight, mascot, or LUNARC teams this cycle.
+Staffing evidence: live tmux shows only `civic-content` active with six panes.
+The clean `origin/main` staffing gate returned STAFF-UP for queued hosts but
+each line held with `reason=lunarc_requires_slurm_station`; no `--apply` was
+run. Decision: HOLD/add-none.
+Escalations: none needing human approval this cycle. VALIDATOR should reconcile
+or defer the #186 expansion queues into `TEAM_PLAN.md` before any future
+staffing request.
+Manager updates sent: content manager received a direct tmux update to treat
+q010/q011 as landed and route q037 next; validator was queued to accept only
+PR-backed P0 atoms and keep expansion teams unstaffed until acceptance rows and
+leases exist.
+
+Cycle update 2026-05-18T12:53:42+02:00
+Objective: keep the factory on P0 burn-down. TRANSLATE-COMPLETE and
+SOURCE-CITATION remain open; q037 is on `origin/main` via PR #189 / `cd89504`,
+q071 is on `origin/main` via PR #192 / `4e1faf9`, and manager dispatch on
+`origin/main` (`022cffe`) has q072 assigned to pane 1 and q021 assigned to pane
+3. Pane 4 is visibly working q073; do not duplicate it.
+Teams: hold local `civic-content` only. Do not start build, UIUX, QA, release,
+research, verify, delight, mascot, language, or LUNARC teams this cycle.
+Data-integrity has a valid P0 generated-judgement prompt queue item, but no
+safe staffed build lane is active locally and remote staffing returned no
+usable queued work.
+Priorities: finish q072, q021, and the in-flight q073 content atom as
+one-question UHR-only TRANSLATE-COMPLETE/SOURCE-CITATION work. Next visible
+content naturalness defects are q012, q013, q014, q015, q016, q017, and q020
+unless VALIDATOR has already accepted them from newer PR evidence. Keep
+DATA-INTEGRITY generated-judgement work queued for the next build-capable
+staffing window.
+Staffing evidence: `/home/billy/bin/csup staff --scenario=resume --dry-run`
+returned STAFF-DOWN/no queued work for all configured remote hosts and repeated
+that the remote fs10/fs9 checkouts have no task queue files. Local tmux shows
+only `civic-content` active with six panes. Decision: HOLD/add-none; no
+`--apply` and no stop without manager confirmation.
+Escalations: none requiring human approval. Remote queue absence is a staffing
+constraint, not a product blocker; `codex-tasks/blockers.txt` still says there
+are no active blockers.
+Manager updates sent: appended directives to `codex-tasks/content.txt` and
+`codex-tasks/validator.txt`; direct tmux notice sent to MANAGER-content.
+
+Cycle update 2026-05-18T13:22:00+02:00
+Objective: keep the factory on P0 burn-down. TRANSLATE-COMPLETE and
+SOURCE-CITATION remain the clearest content work; the generated judgement prompt
+fix is now on `origin/main` and needs VALIDATOR acceptance before the P0 row can
+be treated as covered. Expansion work stays secondary.
+Teams: HOLD/add-none. Live tmux showed only `_csup_sentinel_` and
+`civic-content` with six panes. `/home/billy/bin/csup staff
+--scenario=resume --dry-run` returned queued work across configured hosts, but
+every LUNARC/remote line held with `reason=lunarc_requires_slurm_station`; no
+`--apply` was run.
+Priorities: `origin/main` advanced to `ee4ddb4` after #202, the
+DATA-INTEGRITY generated-stem fix #198 / `02193fb`, and q073. q072 is on
+`origin/main` via PR #194 / `6fc47b4`; q073 is on `origin/main` via
+`ee4ddb4`. q021 is active in `/tmp/sct-q021-pane3` with PR #203 open at
+observed pane state; q012 status is superseded by the correction below. After
+q021, route q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR
+has newer accepted evidence. Do not restaff DATA-INTEGRITY generated-judgement
+work unless VALIDATOR rejects the #198 evidence.
+Escalations: none requiring human approval. Station gating is a staffing
+constraint, not a product blocker. The local `gh` CLI is missing, so this CEO
+coordination update is prepared from a separate `origin/main` worktree to avoid
+polluting the active content branch.
+Manager updates sent: queued directives in `codex-tasks/content.txt` and
+`codex-tasks/validator.txt`; direct tmux input was intentionally skipped because
+the content panes were actively running worker prompts and tests.
+
+Cycle correction 2026-05-18T13:27:00+02:00
+q012 landed on `origin/main` after the 13:22 CEO note, via PR #204 /
+`2c7c02f`. Treat any routing that still calls q012 active as stale. PR #206 is
+an open MANAGER-content dispatch against `codex-tasks/content.txt`; it assigns
+q012 and must be rebased/reconciled before merge. q021 remains open in PR #203
+and not mergeable at connector check time. Current content order after q021 is
+q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR has newer
+accepted evidence.
+
+Cycle update 2026-05-18T15:52:00+02:00
+Objective: keep the factory on SITE-P0 burn-down. Required CEO/operating docs
+were read earlier this cycle from the supervisor repo fallback plus this board;
+the requested project-local operating docs and `/home/billy/docs/...` CEO path
+were absent. Decision baseline included q108 on `origin/main` via `d86717e`;
+`origin/main` then advanced through component-only `9023506` before this CEO
+update merged. Static site question-bank drift is accepted via PR #324 /
+`d4ffd91`, and live-smoke count derivation is accepted via PR #328 /
+`11b2b96`. Do not reopen those atoms or duplicate q108.
+Teams: HOLD/add-none. Live tmux still shows only `_csup_sentinel_` plus
+`civic-content` with six panes. `/home/billy/bin/csup staff --scenario=resume
+--dry-run` reports queued work for configured hosts, but every LUNARC/remote
+line holds with `reason=lunarc_requires_slurm_station`; no `--apply` was run.
+Priorities: production deploy evidence for current `origin/main` is first, then
+the static-site privacy/monetization copy defect. Practice width parity is now
+accepted via PR #338, and static-site account scope via PR #359. Treat
+`REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` as active SITE-P0 because
+VALIDATOR has concrete runtime/source evidence and the blocker/setup queues did
+not yet surface it.
+Escalations: no new human approval request this cycle. The production deploy
+blocker still needs a successful scheduled/manual deploy and a current-count
+live smoke against the production URL; if the deploy fails because of external
+billing/cap/credential state, escalate that evidence to the operator instead of
+closing the atom from local smoke.
+Manager updates queued: VALIDATOR must keep deploy-stale open until production
+evidence exists, SETUP gets the privacy-copy atom after account-scope, BLOCKERS
+now lists the privacy-copy defect, UIUX is duplicate-guarded for landed
+QuestionNavigator/MockExamConfigPanel work, and CONTENT is duplicate-guarded
+for q108 while SITE-P0 outranks fresh non-site content.

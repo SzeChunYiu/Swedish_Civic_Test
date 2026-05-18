@@ -9,6 +9,30 @@ target languages at **native, publication quality**.
 
 ## Non-negotiable quality contract
 
+0. **Research the native language BEFORE writing (mandatory first step).**
+   Every translation atom begins with a documented research pass — you do
+   not start writing until it is done. Research and record (in the handoff
+   and `locales/<lang>/glossary.md`):
+   - The target locale's **civic/officialese register** — how government,
+     citizenship, law and rights are actually phrased for that audience
+     (formal but plain; the register a real authority/textbook uses).
+   - **Authoritative terminology** for institutions and legal concepts:
+     prefer the official/government-recognized rendering in that locale;
+     cite the source you took it from.
+   - **Regional lexical choice, not just script.** Languages with variants
+     differ in *word choice*, not orthography alone. Simplified Chinese as
+     used in **Mainland China** vs Traditional as used in **Taiwan/Hong
+     Kong** pick different words for the same concept (e.g. 软件/軟體,
+     信息/資訊, 网络/網路, 打印/列印, PRC vs ROC institutional names),
+     plus punctuation and measure-word conventions. The same applies to
+     other pluricentric languages (Persian: Iran Farsi vs Afghan Dari;
+     Kurdish Sorani regional usage; Arabic MSA vs audience expectations).
+     Translate into the *specific* variant's native usage — never the
+     "other" variant's vocabulary, and never a mechanical script convert.
+   - Known false friends / civic terms that mistranslate if taken literally.
+   A translation atom whose handoff has no research notes is rejected by
+   the manager regardless of how fluent the prose looks.
+
 1. **Native fluency, not mechanical translation.** Every string must read
    as if written by an educated native speaker of that language for that
    audience. Literal/word-for-word or machine-style output is a defect and
@@ -46,9 +70,19 @@ unclaimed language per worker pane per iteration:
 6. English (`en`)
 7. Polish (`pl`)
 8. Ukrainian (`uk`)
+9. Chinese — Simplified (`zh-Hans`)
+10. Chinese — Traditional (`zh-Hant`)
 
-(Ramp adds more as panes/sessions scale. The 8-language UI picker shipped
-in #141 is the minimum coverage target.)
+**Chinese-specific rule:** `zh-Hans` and `zh-Hant` are distinct
+deliverables, never a script-conversion of each other — each must read as
+written by a native speaker of that variant (Mainland vs. Taiwan/Hong Kong
+conventions: vocabulary, phrasing, civic terminology, punctuation 。，
+vs ., measure words, and register). Mechanical Simplified↔Traditional
+conversion is a defect. Both owned by panes fluent in that specific
+variant.
+
+(Ramp adds more as panes/sessions scale. The multi-language UI picker
+shipped in #141 is the minimum coverage target.)
 
 ## Writable scope
 
@@ -65,11 +99,16 @@ Never edit `data/` (source questions — owned by content), `app/`,
 1. Sync per the shared protocol (`docs/parallel-sessions.md`).
 2. Read `codex-tasks/language.txt`; claim ONE unclaimed `<lang>:<scope>`
    atom (e.g. `ar:questions q001-q020`, `fa:ebook ch3`, `so:ui-strings`).
-3. Translate that bounded slice to native quality using the glossary.
-4. Self-review as a native reader; then run the verification below.
-5. Commit, push, PR, squash-merge per the protocol (`<lang>: <scope>`),
+3. **Research the target language first** (contract item 0): study the
+   locale's civic register, authoritative terminology, and regional
+   word-choice; update `locales/<lang>/glossary.md` with sourced terms
+   BEFORE translating. Skipping this is an automatic rejection.
+4. Translate that bounded slice to native quality using the researched
+   glossary — in the specific variant's native vocabulary.
+5. Self-review as a native reader; then run the verification below.
+6. Commit, push, PR, squash-merge per the protocol (`<lang>: <scope>`),
    e.g. `git commit -m "ar: native questions q001-q020"`.
-6. Append a handoff to `journals/language.md` including: language, scope,
+7. Append a handoff to `journals/language.md` including: language, scope,
    glossary terms added, the second-pass reviewer, residual ambiguities.
 
 ## Verification (must pass before commit)

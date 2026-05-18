@@ -110,7 +110,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
   assert.equal(summary.questionCardAccessibilityRulesValidated, 19);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
-  assert.equal(summary.answerOptionAccessibilityRulesValidated, 15);
+  assert.equal(summary.answerOptionAccessibilityRulesValidated, 19);
   assert.equal(summary.answerOptionAccessibilityParityValidated, true);
   assert.equal(summary.explanationPanelAccessibilityRulesValidated, 10);
   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
@@ -212,7 +212,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(summary.masteryRulesValidated, 7);
   assert.equal(summary.masteryRulesParityValidated, true);
-  assert.equal(summary.sourceQuestions, 141);
+  assert.equal(summary.sourceQuestions, 143);
   assert.equal(summary.generatedPublishedQuestions, expectedGeneratedQuestions);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
@@ -232,7 +232,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionTextFieldsNormalizedValidated, summary.publishedQuestions);
   assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
-  assert.equal(summary.questionGeneratedTrueFalseMetaStemValidated, summary.publishedQuestions);
+  assert.equal(summary.questionNestedMetaStemsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionJudgementMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionPromptTextUniquenessValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionTextLabelsValidated, summary.publishedQuestions);
   assert.equal(summary.questionTypeOptionCountsValidated, summary.publishedQuestions);
@@ -241,6 +242,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.trueFalseOptionLabelsValidated, summary.trueFalseQuestions);
   assert.equal(summary.questionTagsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.staticSiteQuestionBankQuestionsValidated, summary.publishedQuestions);
+  assert.equal(summary.staticSiteQuestionBankChaptersValidated, 13);
+  assert.equal(summary.staticSiteQuestionBankParityValidated, true);
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapExactSchemaKeysValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);

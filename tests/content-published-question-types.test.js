@@ -106,6 +106,154 @@ require('./scripts/validate-content.js');
   assert.match(`${result.stdout}\n${result.stderr}`, /q001 has duplicate option id a/);
 });
 
+test('published question schema rejects nested generated true/false meta-stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Sant eller falskt: Ett korrekt svar på frågan "Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln." är "Sant".',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'True or false: A correct answer to "True or false: Sweden is in northern Europe." is "True".',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false meta-stem instead of a civic statement/,
+  );
+});
+
+test('published question schema rejects nested single-choice true/false source prompts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Vilket svar stämmer bäst? Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'Which answer best matches? True or false: Sweden is in northern Europe.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false meta-stem instead of a civic statement/,
+  );
+});
+
+test('published question schema rejects generated judgement meta-stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Vilket alternativ motsvarar rätt bedömning av påståendet? Var ligger Sverige?',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'Which option gives the correct judgment of the statement? Where is Sweden located?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated judgement meta-stem instead of a civic-study prompt/,
+  );
+});
+
+test('published question schema rejects generated true/false grammar-splice stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Sant eller falskt: Det stämmer att Ungefär nästan 11 miljoner människor bor i Sverige.',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'True or false: It is true that Approximately almost 11 million people live in Sweden.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
 test('published question metadata schema rejects invalid difficulty values', () => {
   const result = spawnSync(
     process.execPath,

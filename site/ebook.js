@@ -1,10 +1,21 @@
 /* Sveriges Medborgartest — Ebook reader
-   12 chapters; first 3 written in full, rest are friendly stubs.
+   Intro + 12 study chapters with EN reader text and SV study briefs.
    Hash: #/ebook?c=intro|1|2|...|12
 */
 
 (function () {
   "use strict";
+
+  function svStudyBrief(points, facts, practiceHint) {
+    const items = points.map((point) => `<li>${point}</li>`).join("");
+    return `
+      <h2>Det viktigaste</h2>
+      <ul>${items}</ul>
+      <h2>Plugga smart</h2>
+      <p>${practiceHint || "Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om."}</p>
+      <div class="ebook__factbox"><h4>Fakta att kunna</h4><p>${facts}</p></div>
+    `;
+  }
 
   const CHAPTERS = {
     intro: {
@@ -33,17 +44,26 @@
         `,
         sv: `
           <h2>Vad den här boken är</h2>
-          <p>En läsbar genomgång av medborgarskapsprovet. Skriven för vuxna som lär sig svenskt samhällsliv från noll — av någon som varit där.</p>
+          <p>En lugn genomgång av svensk samhällskunskap inför medborgarskapsprovet. Den är skriven för vuxna som vill förstå sammanhangen, inte bara memorera lösryckta ord.</p>
           <h2>Vad den <em>inte</em> är</h2>
-          <p>Inte officiellt material. Inte juridiskt dokument. Inte ett substitut för källorna — varje påstående har fotnot i <a href="#/sources">källor</a>.</p>
+          <p>Inte officiellt material. Inte juridisk rådgivning. Inte ett substitut för källorna. Använd alltid <a href="#/sources">källsidan</a> och UHR:s material när du vill kontrollera en uppgift.</p>
+          <h2>Så använder du den</h2>
+          <ul>
+            <li>Läs ett kapitel i taget, helst i tio minuters pass.</li>
+            <li>Öppna sedan <a href="#/practice">Öva</a> och träna på samma område.</li>
+            <li>Markera meningar du vill komma tillbaka till och skriv korta anteckningar.</li>
+            <li>Avsluta veckan med ett <a href="#/mock">provexempel</a> så att tidskänslan sitter.</li>
+          </ul>
+          <blockquote><p>Du behöver inte kunna allt på en gång. Du behöver veta vad som är värt att repetera.</p></blockquote>
+          <div class="ebook__factbox"><h4>Tips</h4><p>Växla mellan svenska och engelska om ett begrepp känns tungt. Provet kräver svenska, men förståelsen kan byggas på båda språken.</p></div>
         `,
       },
     },
 
     "1": {
       kicker: { en: "Chapter 01 · History", sv: "Kapitel 01 · Historia" },
-      title:  { en: "A very short", sv: "En mycket kort" },
-      title_em: { en: "history of Sweden.", sv: "Sveriges historia." },
+      title:  { en: "A very short", sv: "En kort historia" },
+      title_em: { en: "history of Sweden.", sv: "om Sverige." },
       lede: {
         en: "From Vikings to NATO in under 4,000 words. The dynasties are skippable. The patterns are not.",
         sv: "Från vikingar till NATO på under 4 000 ord. Dynastierna kan du hoppa över. Mönstren kan du inte.",
@@ -71,7 +91,15 @@
           </ul>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>National day: June 6 · Joined EU: 1995 · Joined NATO: 2024 · Longest period of peace: continuous since 1814.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1 — på engelska tills vidare. Klicka <a href="#/practice">Öva</a> för svenska frågor.</p>`,
+        sv: svStudyBrief(
+          [
+            "Sveriges historia handlar om hur ett äldre kungarike blev en modern demokrati med riksdag, grundlagar och offentlig välfärd.",
+            "Nationaldagen den 6 juni kopplas till Gustav Vasas val till kung 1523 och till 1809 års regeringsform.",
+            "Under 1900-talet byggdes folkhemmet ut med skola, vård, pensioner och socialförsäkringar finansierade med skatter.",
+            "I modern tid är EU-medlemskapet 1995, euroomröstningen 2003 och NATO-medlemskapet 2024 centrala hållpunkter.",
+          ],
+          "Nationaldag: 6 juni · EU: 1995 · Euroomröstning: 2003 · NATO: 2024.",
+        ),
       },
     },
 
@@ -108,7 +136,15 @@
           <p>You vote in three separate elections on the same day: Riksdag, region, and kommun. You also vote in EU elections every five years. Swedish citizens vote in all four; permanent residents vote in regional and municipal elections after three years.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Riksdag size: 349 · Threshold: 4% · Election interval: 4 years · Number of regions: 21 · Number of municipalities: 290.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Sverige är både en konstitutionell monarki och en parlamentarisk demokrati: kungen har ceremoniella uppgifter, medan riksdag och regering fattar politiska beslut.",
+            "Riksdagen har 349 ledamöter, beslutar om lagar och statsbudget och kontrollerar regeringen.",
+            "Regionerna ansvarar främst för hälso- och sjukvård och kollektivtrafik. Kommunerna ansvarar bland annat för skola, socialtjänst, vatten och avfall.",
+            "Allmänna val hålls vart fjärde år. Svenska medborgare röstar till riksdagen, regionen och kommunen.",
+          ],
+          "Riksdag: 349 ledamöter · Val: vart fjärde år · Regioner: 21 · Kommuner: 290.",
+        ),
       },
     },
 
@@ -143,7 +179,15 @@
           <p>Your employer can't ask about your religion. Your landlord can't refuse you for your ethnicity. You can criticise the government on television, in writing, online — even meanly — without legal consequence. (Defamation, threats, and incitement remain crimes.)</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Number of basic laws: 4 · Oldest: Tryckfrihetsförordningen (1766) · Inheritance rule: oldest child regardless of gender (since 1980).</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Sverige har fyra grundlagar: regeringsformen, successionsordningen, tryckfrihetsförordningen och yttrandefrihetsgrundlagen.",
+            "Grundlagarna skyddar bland annat yttrandefrihet, religionsfrihet, föreningsfrihet och rätten att demonstrera.",
+            "Offentlighetsprincipen betyder att många handlingar hos myndigheter är offentliga, om de inte omfattas av sekretess.",
+            "Rättigheter hör ihop med ansvar: hot, hets mot folkgrupp, förtal och diskriminering kan fortfarande vara förbjudet.",
+          ],
+          "Grundlagar: 4 · Tryckfrihetsförordningen: 1766 · Offentlighetsprincipen: insyn i myndigheter.",
+        ),
       },
     },
 
@@ -168,7 +212,15 @@
           <p>For your taxes you get: tax-funded healthcare (with small fees), schools and university (free for citizens and permanent residents), parental leave (480 days per child, split between parents), unemployment benefit (via your a-kassa), sickness benefit, and a basic state pension.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Arbetsmarknaden bygger mycket på kollektivavtal mellan fackförbund och arbetsgivare. Där regleras ofta lön, arbetstid och villkor.",
+            "Skatter finansierar gemensam välfärd som skola, vård, omsorg, pensioner och socialförsäkringar.",
+            "Skatteverket hanterar skatt och folkbokföring. Personnummer och folkbokföringsadress används i många vardagliga kontakter.",
+            "Privatekonomi i Sverige handlar ofta om lön efter skatt, räkningar, försäkringar, sparande och att betala i tid.",
+          ],
+          "Kollektivavtal · Kommunalskatt · Skatteverket · Välfärd finansieras gemensamt.",
+        ),
       },
     },
 
@@ -194,13 +246,21 @@
           <p>Women's labour-force participation is among the world's highest (~80%). The gender pay gap is real (~10–12%) but shrinking. Maternal mortality is among the world's lowest.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Jämställdhet betyder att kvinnor och män ska ha samma rättigheter, skyldigheter och möjligheter.",
+            "Diskrimineringslagen skyddar mot diskriminering i till exempel arbetsliv, utbildning, vård och samhällsservice.",
+            "Sverige erkänner samkönade äktenskap och familjer med olika sammansättning.",
+            "Föräldraförsäkringen är byggd för att båda föräldrarna ska kunna ta ansvar för barn och arbete.",
+          ],
+          "Diskrimineringslagen · Samkönade äktenskap: 2009 · Föräldraledighet: 480 dagar per barn.",
+        ),
       },
     },
 
     "6": {
       kicker: { en: "Chapter 06 · Society", sv: "Kapitel 06 · Samhälle" },
-      title:  { en: "Society, school,", sv: "Samhälle, skola," },
+      title:  { en: "Society, school,", sv: "Samhälle, skola" },
       title_em: { en: "and healthcare.", sv: "och vård." },
       lede: {
         en: "Sweden runs the boring parts of life — school, healthcare, eldercare — through the public sector, and is largely on first-name terms with its bureaucrats.",
@@ -220,13 +280,21 @@
           <p>Socialtjänsten supports anyone unable to support themselves — financial assistance (försörjningsstöd), child welfare, addiction support, family help. They also have legal obligations to intervene where a child is at risk.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Skolan ska ge barn kunskaper och likvärdiga möjligheter. Grundskolan omfattar förskoleklass och årskurs 1-9.",
+            "Regionerna ansvarar för hälso- och sjukvård. 1177 används för sjukvårdsrådgivning och kontakt med vården.",
+            "Kommunerna ansvarar för äldreomsorg, socialtjänst och många vardagliga välfärdstjänster.",
+            "Socialtjänsten kan ge stöd när någon behöver skydd, råd, ekonomisk hjälp eller omsorg.",
+          ],
+          "Grundskola: 10 år · 1177 · Regioner ansvarar för vård · Kommuner ansvarar för omsorg och socialtjänst.",
+        ),
       },
     },
 
     "7": {
       kicker: { en: "Chapter 07 · Nature", sv: "Kapitel 07 · Natur" },
-      title:  { en: "Nature, climate,", sv: "Natur, klimat," },
+      title:  { en: "Nature, climate,", sv: "Natur, klimat" },
       title_em: { en: "and allemansrätten.", sv: "och allemansrätten." },
       lede: {
         en: "Sweden is mostly forest, and the forest is mostly open to you. The rule is simple: don't disturb, don't destroy.",
@@ -245,13 +313,21 @@
           <p>Sweden recycles obsessively. Glass, metal, paper, plastic, food waste, batteries, and electronics all go to dedicated bins, often at the local <em>återvinningscentral</em>. Bottle and can returns (<em>pant</em>) come back as a small cash refund.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Allemansrätten — the right of public access · Net-zero target year: 2045 · Largest lake: Vänern · Coastline incl. islands: ~35 000 km.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Allemansrätten gör det möjligt att röra sig i naturen, plocka bär och svamp och vistas ute med hänsyn.",
+            "Huvudregeln är enkel: inte störa och inte förstöra. Du får inte skada mark, djur, växter eller gå in på privat tomt.",
+            "Sverige har stora skogar, många sjöar, fjäll i norr och lång kust. Klimatet varierar mycket mellan norr och söder.",
+            "Miljöarbete märks i vardagen genom återvinning, pant, naturvård och mål för minskade utsläpp.",
+          ],
+          "Allemansrätten · Inte störa, inte förstöra · Vänern är största sjön · Miljömål och återvinning.",
+        ),
       },
     },
 
     "8": {
       kicker: { en: "Chapter 08 · Culture", sv: "Kapitel 08 · Kultur" },
-      title:  { en: "Culture, traditions,", sv: "Kultur, traditioner," },
+      title:  { en: "Culture, traditions,", sv: "Kultur, traditioner" },
       title_em: { en: "and the Swedish calendar.", sv: "och svenska kalendern." },
       lede: {
         en: "If you don't know when midsummer is, you'll get a polite explanation. If you don't know what fika is, you'll get one whether you want it or not.",
@@ -274,7 +350,15 @@
           <p>Sweden has long absorbed new traditions through migration: Eid al-Fitr (Muslim), Nouruz (Persian New Year), Newroz (Kurdish New Year, also 21 March), Diwali, and others. These are increasingly part of public life — celebrated in schools, workplaces, and city squares.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Traditioner förändras över tid, men de hjälper människor att känna igen året och skapa gemenskap.",
+            "Midsommar, jul, påsk, nyår, lucia, första maj, nationaldagen och alla helgons dag är vanliga provnära exempel.",
+            "Fika är en vardaglig social vana: kaffe eller te, något litet att äta och tid att prata.",
+            "Nya traditioner från människor som flyttat till Sverige är också en del av dagens samhälle.",
+          ],
+          "Nationaldag: 6 juni · Midsommar: tredje fredagen i juni · Lucia: 13 december · Jul firas främst 24 december.",
+        ),
       },
     },
 
@@ -300,7 +384,15 @@
           <p>Three layers: state pension (allmän pension), occupational pension via your employer (tjänstepension), and any private savings. The state pension covers the basics; the rest matters more than people expect.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Currency: Swedish krona (SEK) · Riksbank: world's oldest central bank (1668) · Voted against euro: 2003 · Payment app: Swish · Digital ID: BankID.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Sverige använder svenska kronor, SEK. Sverige röstade nej till euron i folkomröstningen 2003.",
+            "Riksbanken är Sveriges centralbank och ansvarar för penningpolitiken.",
+            "BankID och Swish är vanliga i vardagen, men de är bankanknutna tjänster och inte samma sak som medborgarskap.",
+            "Pensionen består ofta av allmän pension, tjänstepension och eventuellt privat sparande.",
+          ],
+          "Valuta: svensk krona · Euroomröstning: 2003 · Riksbanken · Swish · BankID.",
+        ),
       },
     },
 
@@ -326,13 +418,21 @@
           <p>Conscription (<em>värnplikt</em>) was reactivated in 2017 and applies to both men and women born 1999 onwards. Not everyone is called up — selection is based on tests and motivation. Service is typically 9–12 months.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Joined EU: 1995 · Voted against euro: 2003 · Joined NATO: 2024 · UN member since: 1946 · Conscription reactivated: 2017.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Sverige är medlem i EU sedan 1995 och deltar i europeiskt samarbete om bland annat handel, miljö och fri rörlighet.",
+            "Sverige använder fortfarande kronan efter folkomröstningen om euron 2003.",
+            "Sverige blev medlem i NATO 2024 efter en lång period av militär alliansfrihet.",
+            "Sverige är också medlem i FN och deltar i internationellt samarbete, bistånd och säkerhetspolitik.",
+          ],
+          "EU: 1995 · Euroomröstning: 2003 · NATO: 2024 · FN-medlem: 1946.",
+        ),
       },
     },
 
     "11": {
       kicker: { en: "Chapter 11 · Migration", sv: "Kapitel 11 · Migration" },
-      title:  { en: "Migration, residence,", sv: "Migration, uppehåll," },
+      title:  { en: "Migration, residence,", sv: "Migration, uppehåll" },
       title_em: { en: "and citizenship.", sv: "och medborgarskap." },
       lede: {
         en: "Becoming a Swedish citizen is a process more than an event. The paperwork is long, but the rules are unusually clear.",
@@ -361,7 +461,16 @@
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Citizenship test starts: 6 June 2026 · Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.",
+            "Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.",
+            "Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.",
+            "Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.",
+          ],
+          "Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.",
+          "Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.",
+        ),
       },
     },
 
@@ -396,7 +505,15 @@
           <p>You may retake the test. There is a small fee. Treat the result as a study guide: the topics you missed are the chapters you re-read.</p>
           <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Test provider: UHR · Official material: Sverige i fokus · Language requirement: A2–B1 (separate test) · Retakes: allowed.</p></div>
         `,
-        sv: `<p>Svenska översättningen kommer i v1.1.</p>`,
+        sv: svStudyBrief(
+          [
+            "Provträning ska likna provsituationen: tidsgräns, blandade frågor och ingen återkoppling förrän du är klar.",
+            "Efter ett provexempel ska du inte bara titta på poängen. Läs igenom fel svar och gå tillbaka till kapitlen där du tappade flest poäng.",
+            "Använd UHR:s officiella studiematerial som kontrollpunkt veckan före provet.",
+            "På provdagen är giltig legitimation, god marginal och lugn läsning viktigare än sista-minuten-plugg.",
+          ],
+          "UHR · Sverige i fokus · Tidsatt provträning · Repetera svaga kapitel efter resultatet.",
+        ),
       },
     },
   };
@@ -411,13 +528,33 @@
     const m = hash.match(/[?&]c=([^&]+)/);
     return m ? m[1] : "intro";
   }
+  const PRACTICE_LINKS = {
+    intro: { href: "#/practice", en: "Open practice", sv: "Öppna övning" },
+    "1": { href: "#/practice?c=10", en: "Practice history", sv: "Öva historia" },
+    "2": { href: "#/practice?c=3", en: "Practice government", sv: "Öva statsskick" },
+    "3": { href: "#/practice?c=5", en: "Practice rights", sv: "Öva rättigheter" },
+    "4": { href: "#/practice?c=8", en: "Practice work and money", sv: "Öva arbete och ekonomi" },
+    "5": { href: "#/practice?c=7", en: "Practice equality", sv: "Öva jämställdhet" },
+    "6": { href: "#/practice?c=9", en: "Practice welfare", sv: "Öva välfärd" },
+    "7": { href: "#/practice?c=1", en: "Practice nature", sv: "Öva natur" },
+    "8": { href: "#/practice?c=13", en: "Practice traditions", sv: "Öva traditioner" },
+    "9": { href: "#/practice?c=8", en: "Practice money", sv: "Öva ekonomi" },
+    "10": { href: "#/practice?c=11", en: "Practice EU and world", sv: "Öva EU och omvärld" },
+    "11": { href: "#/practice?c=mix", en: "Practice mixed questions", sv: "Öva blandade frågor" },
+    "12": { href: "#/mock", en: "Start mock exam", sv: "Starta provexempel" },
+  };
+  function practiceLink(id) {
+    return PRACTICE_LINKS[id] || { href: "#/practice", en: "Open practice", sv: "Öppna övning" };
+  }
 
   function render() {
     const reader = document.getElementById("ebook-reader");
     if (!reader) return;
-    const id = getActiveChapter();
+    const requestedId = getActiveChapter();
+    const id = ORDER.includes(requestedId) ? requestedId : "intro";
     const lang = getLang();
     const ch = CHAPTERS[id] || CHAPTERS.intro;
+    const sv = lang === "sv";
 
     const titleHtml = ch.title
       ? `<h1 class="ebook__h1"><span>${(ch.title[lang] || ch.title.en)}</span> <em>${(ch.title_em[lang] || ch.title_em.en)}</em></h1>`
@@ -430,19 +567,42 @@
     const bodyHtml = ch.body
       ? (ch.body[lang] || ch.body.en)
       : `<div class="ebook__stub">
-          <h3>${lang === "sv" ? "Kommer snart" : "Coming soon"}</h3>
-          <p>${lang === "sv"
-              ? "Vi skriver det här kapitlet just nu. Tills dess kan du öva på frågorna eller läsa ett av de färdiga kapitlen i sidofältet."
-              : "We're writing this chapter now. In the meantime, drill the questions in Practice, or jump to one of the completed chapters in the sidebar."}</p>
+          <h3>${sv ? "Kapitlet kunde inte öppnas" : "Chapter could not be opened"}</h3>
+          <p>${sv
+              ? "Välj ett kapitel i listan eller gå tillbaka till introduktionen."
+              : "Choose a chapter from the list or return to the introduction."}</p>
         </div>`;
 
     const idx = ORDER.indexOf(id);
     const prev = idx > 0 ? ORDER[idx - 1] : null;
     const next = idx < ORDER.length - 1 ? ORDER[idx + 1] : null;
+    const practice = practiceLink(id);
+    const progressLabel = id === "intro" ? (sv ? "Guide" : "Guide") : `${idx} / 12`;
+    const actions = `
+      <aside class="ebook__study-actions" aria-label="${sv ? "Nästa steg" : "Next study steps"}">
+        <div>
+          <span class="ebook__progress">${progressLabel}</span>
+          <p>${sv
+            ? "Gör kapitlet aktivt: öva direkt, kontrollera källor eller kör ett provexempel när du har läst klart."
+            : "Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading."}</p>
+        </div>
+        <div class="ebook__study-links">
+          <a class="btn btn--gold btn--sm" href="${practice.href}">${practice[lang]} →</a>
+          <a class="btn btn--ghost btn--sm" href="#/mock">${sv ? "Provexempel" : "Mock exam"}</a>
+          <a class="btn btn--ghost btn--sm" href="#/sources">${sv ? "Källor" : "Sources"}</a>
+        </div>
+      </aside>
+    `;
+    const notes = `
+      <section class="ebook__notes" aria-label="${sv ? "Dina markeringar" : "Your highlights"}">
+        <h2>${sv ? "Markeringar i kapitlet" : "Chapter highlights"}</h2>
+        <div id="eb-notes-list"></div>
+      </section>
+    `;
     const pager = `
       <nav class="ebook__pager">
-        ${prev ? `<a href="#/ebook?c=${prev}"><span class="lbl">${lang === "sv" ? "Förra" : "Previous"}</span><span>${(CHAPTERS[prev].kicker[lang] || CHAPTERS[prev].kicker.en)}</span></a>` : `<span></span>`}
-        ${next ? `<a href="#/ebook?c=${next}" class="next"><span class="lbl">${lang === "sv" ? "Nästa" : "Next"}</span><span>${(CHAPTERS[next].kicker[lang] || CHAPTERS[next].kicker.en)}</span></a>` : `<span></span>`}
+        ${prev ? `<a href="#/ebook?c=${prev}"><span class="lbl">${sv ? "Förra" : "Previous"}</span><span>${(CHAPTERS[prev].kicker[lang] || CHAPTERS[prev].kicker.en)}</span></a>` : `<span></span>`}
+        ${next ? `<a href="#/ebook?c=${next}" class="next"><span class="lbl">${sv ? "Nästa" : "Next"}</span><span>${(CHAPTERS[next].kicker[lang] || CHAPTERS[next].kicker.en)}</span></a>` : `<span></span>`}
       </nav>
     `;
 
@@ -451,6 +611,8 @@
       ${titleHtml}
       ${ledeHtml}
       ${bodyHtml}
+      ${actions}
+      ${notes}
       ${pager}
     `;
 
@@ -461,6 +623,7 @@
 
     // scroll reader to top
     reader.scrollTop = 0;
+    if (window.smtApplyEbookHighlights) window.smtApplyEbookHighlights();
   }
 
   function isOnEbook() {
@@ -468,6 +631,7 @@
     return path === "/ebook";
   }
 
+  window.smtEbookRender = render;
   window.addEventListener("hashchange", () => { if (isOnEbook()) render(); });
   window.addEventListener("DOMContentLoaded", () => { if (isOnEbook()) render(); });
   document.addEventListener("click", (e) => {

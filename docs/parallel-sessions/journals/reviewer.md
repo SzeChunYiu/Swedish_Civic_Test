@@ -2425,3 +2425,301 @@ Verification (commands + result):
 PR (number + merged?): #152 / pending before merge attempt.
 Accepted by worker? yes
 Next suggested validator action: assign a CONTENT-owned q037 naturalness atom; keep TRANSLATE-COMPLETE open because current validators remain green while this user-visible English defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-q074` / `task/reviewer/q074-en-naturalness-1779103580`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q074 English naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, and current queues.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Removed a candidate q073 finding before queueing because `origin/main` already has the q073 content fix and validator notes q073 as active/accepted evidence.
+- `git show origin/main:data/additionalQuestions.ts | nl -ba | sed -n '1260,1325p'` - q074 still starts `explanationEn` with `The UHR section Municipalities have a large responsibility says...` on `origin/main`.
+- `git show origin/main:codex-tasks/validator.txt | rg -n "REVIEWER-Q074|q074|Q074" -S || true` and the same scan over the reviewer journal - no q074 duplicate found.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0 in the shared checkout.
+- First System-Chrome exported-web pass on `/quiz/q074` timed out on an overly strict `^True` role-name locator; the rerun used `/True/i`.
+- System-Chrome exported-web pass on `/quiz/q074` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, 705 questions.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `git diff --check -- data/additionalQuestions.ts content/question-bank.csv` - exit 0 in the shared checkout.
+- `git diff --check -- codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md` - exit 0 in this clean reviewer worktree.
+PR (number + merged?): #227 / merged yes
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q074 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 31 elderly-care municipal responsibility facts and citation; keep TRANSLATE-COMPLETE open because current validators stay green while this user-visible English defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-main.clsyyS` / `task/reviewer/q078-en-naturalness-1779104365`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q078 English naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, `codex-tasks/content.txt`, and current reviewer/content queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on `task/data-integrity/1779098835` and is 66 commits behind / 6 ahead of `origin/main`.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Duplicate scan for `REVIEWER-Q078-EN-NATURALNESS` / q078 naturalness rows - exit 1; existing q078 rows cover older source-citation prompt cleanup, not the learner-facing English explanation.
+- `nl -ba data/additionalQuestions.ts | sed -n '1332,1352p'` - q078 `explanationEn` begins `The UHR section Sweden’s path to democracy says...`; `explanationSv` begins `UHR-avsnittet Sveriges väg till demokrati säger...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 705 questions and 705 bilingual text pairs validated.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 705-question export parity OK.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0; 6/6 passing.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 1 because Expo could not resolve the configured `expo-web-browser` plugin from the shared `node_modules`; no dependency install was performed in the shared checkout.
+PR (number + merged?): #234 / merged yes
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q078 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 1809 constitution / limited royal power / restricted suffrage facts; keep TRANSLATE-COMPLETE open because current validators stay green while this defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-origin-main-1779104550` / `task/reviewer/q079-en-naturalness-1779104550`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q079 English naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, and current reviewer/content queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on another lane branch with local uncommitted task/report files.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Duplicate scan for `REVIEWER-Q079-EN-NATURALNESS` / q079 naturalness rows - exit 1; existing q079 rows cover older source-citation prompt cleanup, not the learner-facing English explanation.
+- `nl -ba data/additionalQuestions.ts | sed -n '1353,1375p'` - q079 `explanationEn` begins `The UHR section Popular movements describes...`; `explanationSv` begins `UHR-avsnittet Folkrörelserna beskriver...`.
+- `rg -n "explanationEn|ExplanationPanel|selectedLanguage|language" app/quiz components/quiz app/'(tabs)'/practice.tsx -S` - routed quiz and practice pass `question.explanationEn` to `ExplanationPanel` for the selected language.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 705 questions and 705 bilingual text pairs validated.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 705-question export parity OK.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0; 6/6 passing.
+PR (number + merged?): #238 / merged yes via squash commit `69b2220`.
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q079 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 popular-movements facts about labour, free church, women, and temperance movements; keep TRANSLATE-COMPLETE open because current validators stay green while this defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-origin-main` / `task/reviewer/site-static-wiring-1779105600`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 SITE reviewer audit for deployed `site/` practice/mock/ebook wiring.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, `codex-tasks/setup.txt`, and current reviewer/setup queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on `task/data-integrity/1779098835` with unrelated dirty task/report files.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Duplicate scan for `SITE-P0`, `STATIC-SITE`, `site.*mock`, `practice.js`, `questions.js`, and `mockStage` found the setup queue but no existing reviewer defect for static site script/route wiring.
+- `for f in site/app.js site/practice.js site/questions.js site/ebook.js site/ebook-tools.js site/settings.js site/signin.js site/extras.js site/buddies.js site/fx.js; do node --check "$f" || exit 1; done` - exit 0.
+- `rg -n "practice.js|questions.js|ebook-tools.js|i18n-extras.js|data-page=\"/mock\"|#/mock|known =" site -S` after rebasing onto `origin/main` `c4404d8` - exit 0; output shows `questions.js` and `practice.js` are now loaded, `#/mock` links are only inside `site/practice.js`, `site/app.js` still allow-lists no `/mock` route, and `ebook-tools.js` / `i18n-extras.js` are still not loaded.
+- Served `/tmp/sct-review-origin-main/site` with `python3 -m http.server 8197 --bind 127.0.0.1`.
+- System-Chrome static-site smoke after the rebase - exit 2 by design. Home script list includes `questions.js` and `practice.js`; `window.smtRecordAnswer` is present; `window.SMT_QUESTIONS` has 57 questions; `/practice` shows the new hub with `hubCards:12` and one `#/mock` link; `#/mock` still falls back to active page `/` with `mockStageExists:false`; `/ebook` still renders with 13 chapter links and `ebookToolsLoaded:false`.
+PR (number + merged?): #244 / merged yes via squash commit `9071fef`
+Accepted by worker? yes
+Next suggested validator action: assign SETUP to add the static `/mock` route shell/stage, allow-list `/mock`, make the Practice mock link open the live mock exam flow, preserve/load ebook helper tooling, and add a static smoke guard that fails when present SITE P0 files are not reachable through the deployed page shell.
+
+Lane: REVIEWER
+Host/branch: `/home/billy/sct-reviewer-post-site-parity-cbjoV7` / `task/reviewer/site-ebook-sv-parity-1779107800`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 SITE reviewer audit for SITE-P0-4 static ebook SV/EN parity.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout had unrelated dirty task/report files and concurrent lane updates.
+- Duplicate scan for SITE-P0-4 / ebook reviewer defects found only the older static-wiring row and manager acceptance notes; no existing Swedish ebook parity defect was queued.
+- `rg -n "Svenska översättningen kommer|friendly stubs|We're writing this chapter now|kommer i v1.1|v1.1" site/ebook.js site/index.html -S` - found the ebook file header saying 12 chapters include friendly stubs, twelve Swedish chapter-body placeholders, and the generic unwritten-chapter fallback.
+- Focused Node scan over `site/ebook.js` - returned `svStubCount:12` while the English ebook has 12 factbox-backed chapter bodies.
+- Served `site/` with `python3 -m http.server 8204 --bind 127.0.0.1`.
+- System-Chrome static-site pass on `#/ebook?c=1` with `localStorage.smt_lang="sv"` - exit 2 by design because the reader body contains `Svenska översättningen kommer i v1.1`; the Swedish heading/lede rendered, ebook nav had 13 links, ebook tools were loaded, and console/page errors were 0.
+PR (number + merged?): #276 / merged yes via squash commit `3be67cf`
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/content-supported SITE-P0-4 work to replace all Swedish ebook placeholders with natural Swedish prose matching the English chapter coverage, remove v1.1/placeholder copy, and add a static ebook parity guard before SITE-P0-4 acceptance.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-account-aPBrl8` / `task/reviewer/site-account-scope-1779109300`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 no-account MVP scope recheck for deployed static `site/`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout had unrelated dirty task/report files and active lane work.
+- Duplicate scan found the existing app-shell `REVIEWER-ACCOUNT-SCOPE-1`, but no site-specific account-scope evidence; this pass updates that item instead of creating a new top-level defect.
+- `rg -n "signin|Sign in|Sync your progress|Google|Apple|magic link|accounts are rolling out|smt_signed_in|highlight|note" site/index.html site/signin.js site/ebook-tools.js site/app.js -S` - found the global Sign in button/modal, Google/Apple/magic-link copy, and ebook highlight/note account gating.
+- `for f in site/app.js site/signin.js site/ebook-tools.js; do node --check "$f" || exit 1; done` - exit 0.
+- Served `site/` with `python3 -m http.server 8206 --bind 127.0.0.1`.
+- System-Chrome static-site pass on `#/` - exit 2 by design because one Sign in button was reachable and opened a modal with `Sync your progress.`, `Continue with Google`, `Continue with Apple`, `Email`, `Send magic link`, and `Beta: accounts are rolling out gradually`; console/page errors were 0.
+PR (number + merged?): #281 / merged yes via squash commit `b919f0c`
+Accepted by worker? yes
+Next suggested validator action: include `site/` in `REVIEWER-ACCOUNT-SCOPE-1`; remove or hide static Sign in/OAuth/magic-link/account-sync UI, make ebook highlights/notes local-only or defer them without account prompts, and add a static-site guard rejecting reachable account/auth copy.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-origin-main` / `task/reviewer/site-p0-5-live-audit-1779108980`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 live deployed static-site audit vs `docs/design/drafts/practice-mockexam-2026-05-18/`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer/setup queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on another lane branch with unrelated dirty queue/report/release files.
+- Duplicate scan for `DEPLOYMENT`, `STALE`, `PRODUCTION.*SITE`, `PRACTICE-WIDTH`, `practice__inner--wide`, and `1080px` found no existing reviewer queue rows.
+- GitHub workflows API: `Scheduled Vercel deploy` is active as workflow `278713304`, but `actions/workflows/278713304/runs` returned `total 0`.
+- GitHub deployments API: latest Production success is deployment `4726822421` from `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`; latest Preview deployment `4728409781` failed with `Deployment was blocked`; latest successful Preview `4727923786` is `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`.
+- System-Chrome live Production smoke exited 0 as evidence collection, but observed product failure: `/practice` had `qCount:0`, `hubCards:0`, and no mock nav; `#/mock` fell back to active page `/` with no `#mock-stage`; Swedish `#/ebook?c=1` still showed `Svenska översättningen kommer i v1.1`.
+- System-Chrome latest successful Preview smoke exited 0 as evidence collection, but observed stale output: 57 questions and the same old Swedish ebook placeholder.
+- Served clean `origin/main` `site/` locally with `python3 -m http.server 8210 --bind 127.0.0.1`; local smoke showed 705 questions, 13 Practice cards, `#/mock`, and Swedish ebook chapter 1 with no placeholder.
+- Source parity diff against the draft showed the draft uses `practice__inner practice__inner--wide` plus `.practice__inner--wide { max-width: 1080px; }`, while current `site/index.html` uses only `practice__inner`.
+- System-Chrome layout probe at 1440px on current `origin/main` returned `hasWideClass:false`, `innerClientWidth:720`, `innerMaxWidth:"720px"`, grid columns `353px 353px`, and card widths `353`; the latest successful Preview returned the same 720px container.
+- `git diff --check` - exit 0 after queue/journal edits.
+PR (number + merged?): #296 / merged yes via squash commit `82291b1`
+Accepted by worker? yes
+Next suggested validator action: route `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` before more local-only SITE closure, then route `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` to SETUP/UI for the draft wide Practice layout.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-privacy-aDc7rD` / `task/reviewer/site-privacy-monetization-1779110037`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 SITE static privacy/monetization copy audit.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, current SITE/setup queues, and current reviewer queue entries.
+- Used a clean temporary worktree at `origin/main` because the shared checkout has unrelated dirty queue, component, report, and screenshot files from active lanes.
+- Duplicate scan for `SITE.*PRIVACY`, `PRIVACY.*SITE`, `static.*privacy`, `site/app.js`, `site/index.html`, `real ad rendering is disabled`, and `riktig annonsvisning` found the older exported-app privacy defect and the live-deploy stale-site blocker, but no static `site/app.js` i18n privacy/monetization row.
+- Source grep showed `site/index.html` now has AdSense/AdMob privacy paragraphs, while `site/app.js` still has stale EN/SV `privacy.lede`, `privacy.s5.p`, and FAQ monetization strings claiming no sales, disabled real ads, and only future premium features.
+- Served `/tmp/sct-reviewer-site-privacy-aDc7rD/site` with `python3 -m http.server 4317 --bind 127.0.0.1`.
+- System-Chrome static-site pass on `#/privacy` with `localStorage.smt_lang="en"` and `"sv"` - exit 0 as evidence collection, but observed product failure: English reported `disabledAdsEn:true`, `dontSellEn:true`, and `removeAds:false`; Swedish reported `disabledAdsSv:true`, `dontSellSv:true`, and `removeAds:false`; console/page errors were 0.
+PR (number + merged?): #306 / pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site copy work to update `site/app.js` EN/SV privacy and FAQ monetization strings for AdSense, AdMob/Google Mobile Ads consent, and Remove Ads 29 SEK, then add a static/browser guard rejecting stale disabled-ads/future-premium strings.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-recheck-KRg3qX` / `task/reviewer/site-live-recheck-1779111600`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Recheck `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after current `origin/main` advanced.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, and current blocker/setup/data-integrity/validator queues.
+- Rebased clean temporary worktree to `origin/main` `4636321e1287` after concurrent UI/content merges.
+- GitHub workflows/deployments API: `Scheduled Vercel deploy` is active with `runCount:0`; latest Production is still deployment `4726822421` from `2026-05-18T10:26:13Z`, SHA `3d921720f8c4`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`; latest Preview `4728409781` remains blocked; latest successful Preview remains `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`.
+- Served current local `site/` with `python3 -m http.server 4321 --bind 127.0.0.1`.
+- System-Chrome smoke across current local, latest Production, and latest successful Preview - exit 0 as evidence collection. Current local had `qCount:705`, `hubCards:13`, `mockLinks:2`, `mockStageExists:true`, and no Swedish ebook placeholder. Latest Production still had `qCount:0`, `hubCards:0`, `mockLinks:0`, `mockActivePage:"/"`, `mockStageExists:false`, and the old Swedish ebook placeholder. Latest successful Preview still had only `qCount:57`, `hubCards:12`, and the old Swedish ebook placeholder.
+PR (number + merged?): #313 / pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the first site P0 follow-up until a production deploy from current `origin/main` is live and protected by a live smoke gate.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-qbank-P63WVc` / `task/reviewer/site-question-bank-drift-1779113100`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Static `site/questions.js` parity audit after q142 source-expansion landed.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, and current blocker/setup/validator queues.
+- Used a clean temporary worktree at `origin/main` `056c4d4` because the shared checkout has unrelated dirty lane files.
+- Duplicate scan for static-site question-bank / q142 drift found the accepted SITE-P0-3 sync and content q142 handoff saying `site/questions.js` was not touched by CONTENT, but no reviewer row for the new q142 static-site drift.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questions:710`, `sourceQuestions:142`, and `generatedPublishedQuestions:568`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 at 710 questions.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 1: `site/questions.js is out of sync; run node scripts/export-site-question-bank.js`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` - exit 1, 0/2 passing, with canonical 710 vs site 705 count mismatch.
+- Direct VM inspection of `site/questions.js` reported `siteCount:705`, `hasQ142:true`, `hasQ707:false`, `hasQ710:false`, and last IDs `q694`-`q705`.
+PR (number + merged?): #315 / pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: route SETUP/DATA-INTEGRITY to regenerate `site/questions.js` from current canonical content, update static/live smoke expectations from 705 to 710 or derive them dynamically, and keep the static-site question-bank parity guard green.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-qbank-rkVhJ5` / `task/reviewer/site-current-bank-drift-1779111380`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Resolution recheck for `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` after the DATA-INTEGRITY static-bank sync landed.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, and current blocker/setup/validator queues.
+- Used a clean temporary worktree rebased to `origin/main` `d4ffd91` because the shared checkout has unrelated dirty lane files.
+- Current queues already route the q142-named defect as the first current static-bank drift atom; this pass updated the same item with resolution evidence rather than creating a duplicate defect.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questions:715`, `sourceQuestions:143`, and `generatedPublishedQuestions:572`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 at 715 questions.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 at 715 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` - exit 0, 2/2 passing.
+- Direct VM inspection of `site/questions.js` reported `siteCount:715`, `hasQ142:true`, `hasQ143:true`, `hasQ707:true`, `hasQ710:true`, `hasQ711:true`, `hasQ715:true`, and last IDs `q704`-`q715`.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: review/accept the DATA-INTEGRITY static-bank sync for `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`, then return to `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` with live smoke using 715 or a derived canonical count.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-current-NnJEol` / `task/reviewer/live-deploy-current-1779111776`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Recheck `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after the live-smoke count derivation fix landed.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, and current blocker/setup/validator queues.
+- Used a clean temporary worktree rebased to `origin/main` `11b2b96` because the shared checkout has unrelated dirty lane files.
+- `node --test scripts/check-live-site.test.js` - exit 0, 5/5 passing, including local static-bank count derivation.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and live smoke gate' scripts/build-config.test.js` - exit 0, 1/1 passing.
+- Local current `site/` served at `http://127.0.0.1:4331`: default `node scripts/check-live-site.js http://127.0.0.1:4331` - exit 0 with 715 questions, Practice, Mock, Ebook, and no placeholder copy.
+- GitHub Actions API: latest scheduled deploy runs now exist but all are failing; newest run `26037443794` for `11b2b96` completed `failure`, and prior runs `26037143042` for `d4ffd91` and `26036978641` for `3a323ff` also completed `failure`.
+- GitHub deployments API: latest Production success remains deployment `4726822421`, SHA `3d921720f8c4`, created `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app` - exit 1 because `/practice.js` returns HTTP 404.
+- Latest successful Preview remains `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`; the default live check exits 1 with 57 questions, missing Ebook helper wiring, and stale v1.1 placeholder copy.
+- `git diff --check` - exit 0 before queue/journal edits.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: accept/review the SETUP live-smoke count fix, but keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until scheduled/manual production deploy succeeds from current main and the live production URL passes `npm run test:site-live` without overrides.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-now` / `task/reviewer/live-deploy-runlog-1779112439`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Recheck `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` at current `origin/main` and inspect the failed scheduled deploy run evidence.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer/validator queues.
+- Used a clean temporary worktree at `origin/main` `9023506` because the shared checkout has unrelated dirty lane files.
+- GitHub Actions API: latest scheduled deploy runs remain `26037443794` for `11b2b96` (failure), `26037143042` for `d4ffd91` (failure), and `26036978641` for `3a323ff` (failure); no newer scheduled deploy run exists for current `9023506`.
+- GitHub deployment API: latest Production success remains deployment `4726822421`, SHA `3d921720`, created `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`.
+- Downloaded the run `26037443794` log archive; it contains only `Deploy static site to Vercel production/system.txt` and ends while waiting for a hosted runner before workflow steps start.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0, 5/5 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and live smoke gate' scripts/build-config.test.js` - exit 0, 1/1 passing.
+- Served current local `site/` at `http://127.0.0.1:4339`; `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js http://127.0.0.1:4339` - exit 0 with 715 questions, Practice, Mock, Ebook, and no placeholder copy.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app` - exit 1 because `/questions.js` returns HTTP 404.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app` - exit 1 with `expected 715, found 57`, missing current Ebook helper wiring, and stale Swedish placeholder copy.
+- Workspace contract: pass; no product source files were edited.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` first for SETUP/release infrastructure; rerun or repair the scheduled/manual Production deployment path until a deployment from current `origin/main` exists and `npm run test:site-live` passes against that URL without overrides.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-current-R5crPQ` / `task/reviewer/live-deploy-green-1779113018`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after a new Production deployment appeared and `origin/main` advanced again.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, current `codex-tasks/validator.txt`, current `codex-tasks/setup.txt`, and current reviewer journal context.
+- Used a clean temporary worktree because the shared checkout has unrelated dirty lane files; rebased the reviewer branch onto current `origin/main` `9d6b55f`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0, 5/5 passing.
+- `/home/billy/.local/bin/gh api 'repos/{owner}/{repo}/deployments/4729276163/statuses?per_page=5'` - latest Production deployment state is `success`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`, created `2026-05-18T14:00:23Z`.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 0 with 715 questions, Practice, wide Practice layout, Mock, Ebook, and no placeholder copy.
+- `/home/billy/.local/bin/gh run list --workflow scheduled-deploy.yml --limit 5 --json ...` - newest scheduled run remains `26038147705` for `c7227b6`, conclusion `failure`.
+- `git log 767c87d944a00e4cda4ba5ab937d244b56586a27..HEAD -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json` - shows `76b3bde content: improve q018 prime minister explanation`, so current main has a canonical content delta after the successful production deployment SHA.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questions:715`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 1: `site/questions.js is out of sync; run node scripts/export-site-question-bank.js`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` - exit 1, 1/2 passing; generated current bank differs from checked-in `site/questions.js`.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: route DATA-INTEGRITY/SETUP to regenerate `site/questions.js` from current canonical content after q018, then rerun export-site parity and production live smoke before closing `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-current-check-1779113740` / `task/reviewer/live-q018-content-drift-1779113740`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1` and live same-count content drift.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, current `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree at `origin/main` `2c4dce6` because the shared checkout has unrelated dirty lane files.
+- Duplicate/current-state scan found existing `REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1` and `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` rows, so this pass updates those defects instead of creating a new top-level item.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 715 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` - exit 0 with 2/2 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0 with 5/5 passing.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 0 with 715 questions, Practice, wide Practice layout, Mock, Ebook, and no placeholder copy.
+- `git show origin/main:site/questions.js | sha256sum` returned `159954bb98a34ae54e7fc0e2cb0a6dce91807c6eb2db2abea3e073ff4434f975`; live `curl .../questions.js | sha256sum` returned `5d2710bebf7e38a6ca5bb893eb927940e5454548cf7aa74020586d160e1f6aa1`.
+- Direct VM comparison of current local vs live `questions.js` found both arrays contain 715 questions, but q018 differs: current local `why.en` begins `The Riksdag chooses the prime minister...`, while live still begins `The State section says...`; `allEqual:false`.
+- GitHub Actions/deployments API: latest scheduled deploy run `26038950515` for `1376794` completed `failure`; latest Production success remains deployment `4729276163`, SHA `767c87d`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: update routing so local q018/static-bank sync is treated as fixed unless parity goes red again; keep the live deploy/content-drift defect open until Production serves current `site/questions.js`, and add a live content-hash or q018 sentinel check so same-count stale content cannot pass `test:site-live`.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-live-1779114438` / `task/reviewer/site-live-deploy-1779114438`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after the live hash guard acceptance and latest scheduled deploy failures.
+Changed artifacts: `codex-tasks/validator.txt`; `codex-tasks/blockers.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, current `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree rebased to `origin/main` `9df0988` because the shared checkout has unrelated dirty lane files.
+- Duplicate/current-state scan found existing `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, so this pass updates that defect instead of creating a new top-level item.
+- GitHub Actions API: newest Scheduled Vercel deploy runs `26039712170`, `26039467016`, `26038950515`, `26038147705`, `26037443794`, `26037143042`, and `26036978641` all completed `failure`; latest job `76547582762` has a check-run annotation reporting account payment/spending-limit failure before runner execution.
+- GitHub deployments API: latest Production success remains deployment `4729276163`, SHA `767c87d`, created `2026-05-18T14:00:23Z`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; count/assets pass, but static question-bank content fails with expected hash prefix `159954bb98a3` and live hash prefix `5d2710bebf7e`.
+- Workspace contract: pass; no product source files were edited.
+PR (number + merged?): #364 / merged yes via `cf00a31`
+Accepted by worker? yes
+Next suggested validator action: keep SITE-P0 live deploy first; restore GitHub Actions billing/spending capacity or provide an operator-verified production deployment, then rerun the hash-aware live check and REVIEWER live parity pass before closing SITE-P0-5.

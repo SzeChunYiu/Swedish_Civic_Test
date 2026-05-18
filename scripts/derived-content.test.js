@@ -50,6 +50,34 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
+  assert.equal(
+    derived[1].questionSv,
+    'Sant eller falskt: Det är korrekt att Sverige ligger i Norden.',
+  );
+  assert.equal(
+    derived[1].questionEn,
+    'True or false: It is correct that Sweden is located in the Nordic region.',
+  );
+  assert.equal(
+    derived[2].questionSv,
+    'Sant eller falskt: Det är korrekt att Sverige ligger i Asien.',
+  );
+  assert.equal(
+    derived[2].questionEn,
+    'True or false: It is correct that Sweden is located in Asia.',
+  );
+  assert.equal(derived[3].questionSv, 'Vilket svar är korrekt? Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Which answer is correct? Where is Sweden located?');
+  assert.ok(
+    derived
+      .filter((question) => question.type === 'true_false')
+      .every(
+        (question) =>
+          !/Ett korrekt svar på frågan|A correct answer to/.test(
+            `${question.questionSv} ${question.questionEn}`,
+          ),
+      ),
+  );
 });
 
 test('derivePublishedQuestions keeps generated single-choice variants at four options', () => {
@@ -85,48 +113,175 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     );
   });
   assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
-});
+  assert.equal(
+    derived[0].questionSv,
+    'Välj rätt alternativ för påståendet: Sverige ligger i Norden.',
+  );
+  assert.equal(
+    derived[0].questionEn,
+    'Choose the correct option for the statement: Sweden is in the Nordic region.',
+  );
+  assert.ok(
+    singleChoiceVariants.every(
+      (question) =>
+        !/Vilket svar stämmer bäst\?\s*Sant eller falskt:|Which answer best matches\?\s*True or false:/.test(
+          `${question.questionSv} ${question.questionEn}`,
+        ),
+    ),
+  );
 
-test('derivePublishedQuestions avoids nested meta-stems for true/false source questions', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q002',
-    chapterId: 'ch01',
-    type: 'true_false',
-    questionSv: 'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-    questionEn: "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-    options: [
-      { id: 'true', textSv: 'Sant', textEn: 'True' },
-      { id: 'false', textSv: 'Falskt', textEn: 'False' },
-    ],
-    correctOptionId: 'true',
-    explanationSv: 'Sveriges nordligaste del ligger norr om polcirkeln.',
-    explanationEn: "Sweden's northernmost part lies north of the Arctic Circle.",
-    uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
-    difficulty: 'easy',
-    reviewStatus: 'reviewed',
-    tags: ['geography', 'arctic-circle', 'true-false'],
-  };
-
-  const derived = derivePublishedQuestions([source], 105);
   const trueFalseVariants = derived.filter((question) => question.type === 'true_false');
-
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionSv),
     [
-      'Sant eller falskt: Påståendet "Sveriges nordligaste del ligger norr om polcirkeln" är sant.',
-      'Sant eller falskt: Påståendet "Sveriges nordligaste del ligger norr om polcirkeln" är falskt.',
+      'Sant eller falskt: Det stämmer i sak att Sverige ligger i Norden.',
+      'Sant eller falskt: Det stämmer inte att Sverige ligger i Norden.',
     ],
   );
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionEn),
     [
-      'True or false: The statement "Sweden\'s northernmost part lies north of the Arctic Circle" is true.',
-      'True or false: The statement "Sweden\'s northernmost part lies north of the Arctic Circle" is false.',
+      'True or false: It is factually true that Sweden is in the Nordic region.',
+      'True or false: It is not true that Sweden is in the Nordic region.',
     ],
   );
-  trueFalseVariants.forEach((question) => {
-    assert.doesNotMatch(question.questionSv, /Ett korrekt svar på frågan "Sant eller falskt:/);
-    assert.doesNotMatch(question.questionEn, /A correct answer to "True or false:/);
-  });
+  assert.equal(
+    derived[3].questionSv,
+    'Vilket alternativ stämmer med påståendet? Sverige ligger i Norden.',
+  );
+  assert.equal(
+    derived[3].questionEn,
+    'Which option matches the statement? Sweden is in the Nordic region.',
+  );
+  assert.ok(
+    trueFalseVariants.every(
+      (question) =>
+        !/Sant eller falskt:\s*Ett korrekt svar|True or false:\s*A correct answer/.test(
+          `${question.questionSv} ${question.questionEn}`,
+        ),
+    ),
+  );
+});
+
+test('derivePublishedQuestions writes natural generated true/false civic statements', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const sources = [
+    {
+      id: 'q003',
+      chapterId: 'ch01',
+      type: 'single_choice',
+      questionSv: 'Vad heter havet vid Sveriges östra kust?',
+      questionEn: "What is the sea along Sweden's eastern coast called?",
+      options: [
+        { id: 'a', textSv: 'Västerhavet', textEn: 'The Western Sea' },
+        { id: 'b', textSv: 'Bottenviken', textEn: 'The Bothnian Bay' },
+        { id: 'c', textSv: 'Östersjön', textEn: 'The Baltic Sea' },
+        { id: 'd', textSv: 'Nordsjön', textEn: 'The North Sea' },
+      ],
+      correctOptionId: 'c',
+      explanationSv: 'Östersjön ligger vid Sveriges östra kust.',
+      explanationEn: "The Baltic Sea lies along Sweden's eastern coast.",
+      uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
+      difficulty: 'easy',
+      reviewStatus: 'reviewed',
+      tags: ['geography'],
+    },
+    {
+      id: 'q009',
+      chapterId: 'ch01',
+      type: 'single_choice',
+      questionSv: 'Ungefär hur många människor bor i Sverige?',
+      questionEn: 'Approximately how many people live in Sweden?',
+      options: [
+        { id: 'a', textSv: 'nästan 11 miljoner', textEn: 'almost 11 million' },
+        { id: 'b', textSv: 'nästan 1 miljon', textEn: 'almost 1 million' },
+        { id: 'c', textSv: 'nästan 30 miljoner', textEn: 'almost 30 million' },
+        { id: 'd', textSv: 'nästan 50 miljoner', textEn: 'almost 50 million' },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Sverige har nästan 11 miljoner invånare.',
+      explanationEn: 'Sweden has almost 11 million residents.',
+      uhrReference: { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
+      difficulty: 'easy',
+      reviewStatus: 'reviewed',
+      tags: ['population'],
+    },
+    {
+      id: 'q035',
+      chapterId: 'ch04',
+      type: 'single_choice',
+      questionSv:
+        'Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?',
+      questionEn: 'What minimum share of votes must a party receive to enter the Riksdag?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'minst 4 procent av rösterna',
+          textEn: 'at least 4 percent of the votes',
+        },
+        {
+          id: 'b',
+          textSv: 'minst 1 procent av rösterna',
+          textEn: 'at least 1 percent of the votes',
+        },
+        {
+          id: 'c',
+          textSv: 'minst 25 procent av rösterna',
+          textEn: 'at least 25 percent of the votes',
+        },
+        {
+          id: 'd',
+          textSv: 'minst 50 procent av rösterna',
+          textEn: 'at least 50 percent of the votes',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Ett parti behöver minst 4 procent för att komma in i riksdagen.',
+      explanationEn: 'A party needs at least 4 percent to enter the Riksdag.',
+      uhrReference: {
+        chapter: 'Politiska val och partier',
+        section: 'Proportionella val',
+        pageApprox: 15,
+      },
+      difficulty: 'easy',
+      reviewStatus: 'reviewed',
+      tags: ['elections'],
+    },
+  ];
+
+  const derived = derivePublishedQuestions(sources, 201);
+  const generatedTrueFalse = derived.filter((question) => question.type === 'true_false');
+
+  assert.ok(
+    generatedTrueFalse.every(
+      (question) =>
+        !/Det stämmer att (?:Ungefär|Havet)|It is true that (?:The|In|Approximately)|belongs to proportionella val|hör till proportionella val/.test(
+          `${question.questionSv} ${question.questionEn}`,
+        ),
+    ),
+  );
+  assert.equal(
+    derived[1].questionSv,
+    'Sant eller falskt: Det är korrekt att havet vid Sveriges östra kust heter Östersjön.',
+  );
+  assert.equal(
+    derived[1].questionEn,
+    "True or false: It is correct that the sea along Sweden's eastern coast is called the Baltic Sea.",
+  );
+  assert.equal(
+    derived[5].questionSv,
+    'Sant eller falskt: Det är korrekt att nästan 11 miljoner människor bor i Sverige.',
+  );
+  assert.equal(
+    derived[5].questionEn,
+    'True or false: It is correct that almost 11 million people live in Sweden.',
+  );
+  assert.equal(
+    derived[9].questionSv,
+    'Sant eller falskt: Det är korrekt att ett parti måste få minst 4 procent av rösterna för att komma in i riksdagen.',
+  );
+  assert.equal(
+    derived[9].questionEn,
+    'True or false: It is correct that a party must receive at least 4 percent of the votes to enter the Riksdag.',
+  );
 });

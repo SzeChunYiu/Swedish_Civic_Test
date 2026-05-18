@@ -105,31 +105,408 @@ function answerLabel(option: QuestionOption): string {
   return `${option.textSv}`.replace(/[.!?]\s*$/, '');
 }
 
-function isTrueFalseSource(question: PracticeQuestion): boolean {
-  return question.type === 'true_false' && ['true', 'false'].includes(question.correctOptionId);
+function answerTextEn(option: QuestionOption): string {
+  return `${option.textEn}`.replace(/[.!?]\s*$/, '');
 }
 
-function trueFalseStatementBody(questionText: string, language: 'sv' | 'en'): string {
-  const prefix = language === 'sv' ? /^\s*Sant eller falskt:\s*/i : /^\s*True or false:\s*/i;
-  return questionText
-    .replace(prefix, '')
-    .replace(/[.!?]\s*$/, '')
-    .trim();
+function stripFinalPunctuation(value: string): string {
+  return value.trim().replace(/[.!?]\s*$/, '');
 }
 
-function trueFalsePromptForSource(
-  source: PracticeQuestion,
-  expectedTruth: boolean,
-): { questionSv: string; questionEn: string } {
+function ensureSentence(value: string): string {
+  const trimmed = value.trim();
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+}
+
+function lowerFirst(value: string): string {
+  return value ? `${value[0].toLowerCase()}${value.slice(1)}` : value;
+}
+
+function upperFirst(value: string): string {
+  return value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
+}
+
+function lowerLeadingEnglishArticle(value: string): string {
+  return value.replace(/^(The|In|A|An|At|On|Almost)\b/, (match) => match.toLowerCase());
+}
+
+function lowerLeadingSwedishCommonStart(value: string): string {
+  return value.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När)\b/, (match) => match.toLowerCase());
+}
+
+function stripLeadingPurposeSv(value: string): string {
+  return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
+}
+
+function stripLeadingPurposeEn(value: string): string {
+  return value.replace(/^to\s+/i, '').replace(/^because\s+/i, '');
+}
+
+function stripTrueFalsePromptSv(value: string): string {
+  return stripFinalPunctuation(value.replace(/^Sant eller falskt:\s*/i, ''));
+}
+
+function stripTrueFalsePromptEn(value: string): string {
+  return stripFinalPunctuation(value.replace(/^True or false:\s*/i, ''));
+}
+
+function isTrueFalseSource(source: PracticeQuestion): boolean {
+  return source.type === 'true_false' && source.options.length === 2;
+}
+
+function truthStatementSv(statement: string): string {
+  return `Det är korrekt att ${lowerLeadingSwedishCommonStart(statement)}`;
+}
+
+function truthStatementEn(statement: string): string {
+  return `It is correct that ${lowerLeadingEnglishArticle(statement)}`;
+}
+
+function sourceStatementJudgementSv(statement: string, isTrue: boolean): string {
+  return `${isTrue ? 'Det stämmer i sak att' : 'Det stämmer inte att'} ${statement}`;
+}
+
+function sourceStatementJudgementEn(statement: string, isTrue: boolean): string {
+  return `${isTrue ? 'It is factually true that' : 'It is not true that'} ${lowerLeadingEnglishArticle(
+    statement,
+  )}`;
+}
+
+function trueFalseSourceStatementSv(source: PracticeQuestion, variantIsTrue: boolean): string {
   const sourceStatementIsTrue = source.correctOptionId === 'true';
-  const svStatement = trueFalseStatementBody(source.questionSv, 'sv');
-  const enStatement = trueFalseStatementBody(source.questionEn, 'en');
-  const assertion = sourceStatementIsTrue === expectedTruth;
+  const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
+  return sourceStatementJudgementSv(stripTrueFalsePromptSv(source.questionSv), assertionIsTrue);
+}
 
-  return {
-    questionSv: `Sant eller falskt: Påståendet "${svStatement}" är ${assertion ? 'sant' : 'falskt'}.`,
-    questionEn: `True or false: The statement "${enStatement}" is ${assertion ? 'true' : 'false'}.`,
-  };
+function trueFalseSourceStatementEn(source: PracticeQuestion, variantIsTrue: boolean): string {
+  const sourceStatementIsTrue = source.correctOptionId === 'true';
+  const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
+  return sourceStatementJudgementEn(stripTrueFalsePromptEn(source.questionEn), assertionIsTrue);
+}
+
+function generatedTrueFalseStatementSv(
+  source: PracticeQuestion,
+  option: QuestionOption,
+  variantIsTrue: boolean,
+): string {
+  if (isTrueFalseSource(source)) return trueFalseSourceStatementSv(source, variantIsTrue);
+  return truthStatementSv(civicStatementSv(source, option));
+}
+
+function generatedTrueFalseStatementEn(
+  source: PracticeQuestion,
+  option: QuestionOption,
+  variantIsTrue: boolean,
+): string {
+  if (isTrueFalseSource(source)) return trueFalseSourceStatementEn(source, variantIsTrue);
+  return truthStatementEn(civicStatementEn(source, option));
+}
+
+function judgementPromptSv(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source)) {
+    return `Vilket alternativ stämmer med påståendet? ${ensureSentence(
+      stripTrueFalsePromptSv(source.questionSv),
+    )}`;
+  }
+  return `Vilket svar är korrekt? ${source.questionSv}`;
+}
+
+function judgementPromptEn(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source)) {
+    return `Which option matches the statement? ${ensureSentence(
+      stripTrueFalsePromptEn(source.questionEn),
+    )}`;
+  }
+  return `Which answer is correct? ${source.questionEn}`;
+}
+
+function singleChoicePromptSv(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source)) {
+    return `Välj rätt alternativ för påståendet: ${ensureSentence(
+      stripTrueFalsePromptSv(source.questionSv),
+    )}`;
+  }
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+}
+
+function singleChoicePromptEn(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source)) {
+    return `Choose the correct option for the statement: ${ensureSentence(
+      stripTrueFalsePromptEn(source.questionEn),
+    )}`;
+  }
+  return `Which answer best matches? ${source.questionEn}`;
+}
+
+function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
+  if (isTrueFalseSource(source)) {
+    return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
+  }
+
+  const answer = stripFinalPunctuation(answerLabel(option));
+  const q = stripFinalPunctuation(source.questionSv);
+  let match = q.match(/^Var ligger (.+)$/i);
+  if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
+
+  match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
+  if (match) return `${upperFirst(match[1])} sträcker sig ${lowerFirst(answer)} ${match[2]}`;
+
+  match = q.match(/^Vad heter (.+)$/i);
+  if (match) return `${upperFirst(match[1])} heter ${answer}`;
+
+  match = q.match(/^Vilka öar är Sveriges två största$/i);
+  if (match) return `Sveriges två största öar är ${answer}`;
+
+  match = q.match(/^Vilka är (.+)$/i);
+  if (match) return `${upperFirst(match[1])} är ${answer}`;
+
+  match = q.match(/^Ungefär hur många (.+)$/i);
+  if (match) return `${upperFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Vilka (.+?) är viktiga i Sverige$/i);
+  if (match) return `${upperFirst(answer)} är viktiga ${match[1]} i Sverige`;
+
+  match = q.match(/^Vad betyder (.+)$/i);
+  if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket av följande ingår i (.+)$/i);
+  if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
+
+  match = q.match(/^Vilket är ett sätt att (.+)$/i);
+  if (match) return `${upperFirst(answer)} är ett sätt att ${match[1]}`;
+
+  match = q.match(/^Vad kallas det när (.+)$/i);
+  if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
+
+  match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
+  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
+
+  match = q.match(/^Hur väljer (.+?) (.+)$/i);
+  if (match) return `${upperFirst(match[1])} väljer ${match[2]} ${lowerFirst(answer)}`;
+
+  match = q.match(/^Hur många (.+?) har (.+)$/i);
+  if (match) return `${upperFirst(match[2])} har ${lowerFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Vem väljer (.+)$/i);
+  if (match) return `${upperFirst(answer)} väljer ${lowerFirst(match[1])}`;
+
+  match = q.match(/^Hur gammal måste man ha fyllt för att (.+)$/i);
+  if (match) return `Man måste ha fyllt ${lowerFirst(answer)} för att ${match[1]}`;
+
+  match = q.match(/^Vad betyder det att (.+)$/i);
+  if (match) return `${upperFirst(stripLeadingPurposeSv(answer))} beskriver att ${match[1]}`;
+
+  match = q.match(/^Vilka tre nivåer delar (.+)$/i);
+  if (match) return `${upperFirst(answer)} delar ${match[1]}`;
+
+  match = q.match(/^Vilken av följande uppgifter har (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} har uppgiften att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+
+  match = q.match(/^Vilket påstående beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
+
+  match = q.match(/^Vilken är (.+)$/i);
+  if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket exempel beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} är ett exempel på ${match[1]}`;
+
+  match = q.match(/^Hur ofta hålls (.+)$/i);
+  if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilka krav gäller för (.+)$/i);
+  if (match) return `${upperFirst(answer)} gäller för ${match[1]}`;
+
+  match = q.match(/^Varför (.+)$/i);
+  if (match) return `En anledning är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+
+  match = q.match(/^Vad har (.+?) gemensamt$/i);
+  if (match) return `${upperFirst(match[1])} har ${lowerFirst(answer)} gemensamt`;
+
+  match = q.match(/^Vad händer i (.+?) om (.+)$/i);
+  if (match) return `I ${match[1]} händer det att ${lowerFirst(answer)} om ${match[2]}`;
+
+  match = q.match(/^Vilken lista innehåller (.+)$/i);
+  if (match) return `${upperFirst(answer)} är listan som innehåller ${match[1]}`;
+
+  match = q.match(/^Vad säger (.+?) om (.+)$/i);
+  if (match) return `${upperFirst(match[1])} säger att ${lowerFirst(answer)} om ${match[2]}`;
+
+  match = q.match(/^Vad reglerar (.+)$/i);
+  if (match) return `${upperFirst(match[1])} reglerar ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vad innebär (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} innebär att ${lowerFirst(
+      stripLeadingPurposeSv(answer)
+        .replace(/^den\s+/i, '')
+        .replace(/^det\s+/i, ''),
+    )}`;
+
+  match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
+  if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
+
+  match = q.match(/^Vad gäller för (.+)$/i);
+  if (match) return `${upperFirst(answer)} gäller för ${match[1]}`;
+
+  match = q.match(/^Från vilken ålder är (.+)$/i);
+  if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
+
+  match = q.match(/^Vad förändrades genom (.+)$/i);
+  if (match)
+    return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^När firas (.+?) i Sverige$/i);
+  if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket svar beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
+
+  match = q.match(
+    /^Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen$/i,
+  );
+  if (match) return `Ett parti måste få ${lowerFirst(answer)} för att komma in i riksdagen`;
+
+  return `Svaret är ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+}
+
+function civicStatementEn(source: PracticeQuestion, option: QuestionOption): string {
+  if (isTrueFalseSource(source)) {
+    return trueFalseSourceStatementEn(source, option.id === source.correctOptionId);
+  }
+
+  const answer = stripFinalPunctuation(answerTextEn(option));
+  const q = stripFinalPunctuation(source.questionEn);
+  let match = q.match(/^Where is (.+) located$/i);
+  if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
+
+  match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
+  if (match) return `${upperFirst(match[1])} stretches ${lowerFirst(answer)} ${match[2]}`;
+
+  match = q.match(/^What is (.+) called$/i);
+  if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^What is the name of (.+)$/i);
+  if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which islands are Sweden's two largest$/i);
+  if (match) return `Sweden's two largest islands are ${answer}`;
+
+  match = q.match(/^Which islands are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${answer}`;
+
+  match = q.match(/^Which are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${answer}`;
+
+  match = q.match(/^Approximately how many (.+)$/i);
+  if (match) return `${upperFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Which (.+?) are important in Sweden$/i);
+  if (match) return `${upperFirst(answer)} are important ${match[1]} in Sweden`;
+
+  match = q.match(/^What does (.+) mean$/i);
+  if (match) return `${upperFirst(match[1])} means ${lowerFirst(answer)}`;
+
+  match = q.match(/^Which of the following is part of (.+)$/i);
+  if (match) return `${upperFirst(answer)} is part of ${match[1]}`;
+
+  match = q.match(/^Which is a way to (.+)$/i);
+  if (match) return `${upperFirst(answer)} is a way to ${match[1]}`;
+
+  match = q.match(/^What is it called when (.+)$/i);
+  if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
+
+  match = q.match(/^How can (.+?) affect (.+)$/i);
+  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
+
+  match = q.match(/^How do (.+?) choose (.+)$/i);
+  if (match) return `${upperFirst(match[1])} choose ${match[2]} ${lowerFirst(answer)}`;
+
+  match = q.match(/^How many (.+?) does (.+?) have$/i);
+  if (match) return `${upperFirst(match[2])} has ${lowerFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Who chooses (.+)$/i);
+  if (match) return `${upperFirst(answer)} chooses ${lowerFirst(match[1])}`;
+
+  match = q.match(/^How old must (.+?) be to (.+)$/i);
+  if (match) return `${upperFirst(match[1])} must be ${lowerFirst(answer)} to ${match[2]}`;
+
+  match = q.match(/^What does it mean that (.+)$/i);
+  if (match) return `${upperFirst(stripLeadingPurposeEn(answer))} describes that ${match[1]}`;
+
+  match = q.match(/^Which three levels share (.+)$/i);
+  if (match) return `${upperFirst(answer)} share ${match[1]}`;
+
+  match = q.match(/^Which of the following tasks belongs to (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} has the task to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^Which statement describes (.+)$/i);
+  if (match) return `${upperFirst(answer)} describes ${match[1]}`;
+
+  match = q.match(/^What is the foremost task of (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])}'s foremost task is ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^Which example describes (.+)$/i);
+  if (match) return `${upperFirst(answer)} is an example of ${match[1]}`;
+
+  match = q.match(/^How often are (.+) held in Sweden$/i);
+  if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
+
+  match = q.match(/^Which requirements apply to (.+)$/i);
+  if (match) return `${upperFirst(answer)} applies to ${match[1]}`;
+
+  match = q.match(/^Why (.+)$/i);
+  if (match) return `One reason is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^What do (.+?) have in common$/i);
+  if (match) return `${upperFirst(match[1])} have ${lowerFirst(answer)} in common`;
+
+  match = q.match(/^What happens in (.+?) if (.+)$/i);
+  if (match) return `In ${match[1]}, ${lowerFirst(answer)} if ${match[2]}`;
+
+  match = q.match(/^Which list contains (.+)$/i);
+  if (match) return `${upperFirst(answer)} is the list that contains ${match[1]}`;
+
+  match = q.match(/^What does (.+?) say about (.+)$/i);
+  if (match) return `${upperFirst(match[1])} says that ${lowerFirst(answer)} about ${match[2]}`;
+
+  match = q.match(/^What does (.+?) regulate$/i);
+  if (match) return `${upperFirst(match[1])} regulates ${lowerFirst(answer)}`;
+
+  match = q.match(/^What does (.+?) mean$/i);
+  if (match) return `${upperFirst(match[1])} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^Which authorities are part of (.+)$/i);
+  if (match) return `${upperFirst(answer)} are part of ${match[1]}`;
+
+  match = q.match(/^What applies to (.+)$/i);
+  if (match) return `${upperFirst(answer)} applies to ${match[1]}`;
+
+  match = q.match(/^From what age is (.+)$/i);
+  if (match) return `From ${lowerFirst(answer)}, ${match[1]}`;
+
+  match = q.match(/^What changed through (.+)$/i);
+  if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
+  if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
+
+  match = q.match(/^Which answer describes (.+)$/i);
+  if (match) return `${upperFirst(answer)} describes ${match[1]}`;
+
+  match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
+  if (match) return `A party must receive ${lowerFirst(answer)} to enter the Riksdag`;
+
+  return `The answer is ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 }
 
 function buildSingleChoiceVariant(source: PracticeQuestion, id: string): PracticeQuestion {
@@ -137,8 +514,8 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
     source,
     id,
     'single_choice',
-    `Vilket svar stämmer bäst? ${source.questionSv}`,
-    `Which answer best matches? ${source.questionEn}`,
+    singleChoicePromptSv(source),
+    singleChoicePromptEn(source),
     singleChoiceOptions(source),
     source.correctOptionId,
     ['published-variant', 'section-practice'],
@@ -147,19 +524,12 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
 
 function buildTrueStatementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const option = correctOption(source);
-  const prompt = isTrueFalseSource(source)
-    ? trueFalsePromptForSource(source, true)
-    : {
-        questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${source.questionSv}" är "${answerLabel(option)}".`,
-        questionEn: `True or false: A correct answer to "${source.questionEn}" is "${option.textEn}".`,
-      };
-
   return withSharedFields(
     source,
     id,
     'true_false',
-    prompt.questionSv,
-    prompt.questionEn,
+    `Sant eller falskt: ${ensureSentence(generatedTrueFalseStatementSv(source, option, true))}`,
+    `True or false: ${ensureSentence(generatedTrueFalseStatementEn(source, option, true))}`,
     trueFalseOptions(),
     'true',
     ['published-variant', 'true-false'],
@@ -168,19 +538,12 @@ function buildTrueStatementVariant(source: PracticeQuestion, id: string): Practi
 
 function buildFalseStatementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const option = wrongOption(source);
-  const prompt = isTrueFalseSource(source)
-    ? trueFalsePromptForSource(source, false)
-    : {
-        questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${source.questionSv}" är "${answerLabel(option)}".`,
-        questionEn: `True or false: A correct answer to "${source.questionEn}" is "${option.textEn}".`,
-      };
-
   return withSharedFields(
     source,
     id,
     'true_false',
-    prompt.questionSv,
-    prompt.questionEn,
+    `Sant eller falskt: ${ensureSentence(generatedTrueFalseStatementSv(source, option, false))}`,
+    `True or false: ${ensureSentence(generatedTrueFalseStatementEn(source, option, false))}`,
     trueFalseOptions(),
     'false',
     ['published-variant', 'false-statement'],
@@ -190,7 +553,8 @@ function buildFalseStatementVariant(source: PracticeQuestion, id: string): Pract
 function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const correct = correctOption(source);
   const wrong = wrongOption(source);
-  const options = isTrueFalseSource(source)
+  const sourceIsTrueFalse = isTrueFalseSource(source);
+  const options = sourceIsTrueFalse
     ? [...source.options, UNKNOWN_OPTION, SOMETIMES_OPTION]
     : [correct, wrong, UNKNOWN_OPTION, SOMETIMES_OPTION];
 
@@ -198,8 +562,8 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
     source,
     id,
     'single_choice',
-    `Vilket alternativ motsvarar rätt bedömning av påståendet? ${source.questionSv}`,
-    `Which option gives the correct judgment of the statement? ${source.questionEn}`,
+    judgementPromptSv(source),
+    judgementPromptEn(source),
     options,
     correct.id,
     ['published-variant', 'judgement'],

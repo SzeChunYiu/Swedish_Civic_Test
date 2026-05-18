@@ -1,0 +1,12 @@
+# VERIFY lane queue. Recursive/rolling re-verification. Report+queue, don't fix.
+# Maintain docs/verify/ledger.md; open every citation; assume prior accept unproven.
+bootstrap:create docs/verify/ledger.md covering all data/questions.ts items
+verify:data/questions.ts q001-q050 (fact + citation + answer + naturalness)
+verify:data/questions.ts q051-q100
+verify:data/questions.ts q101-q150
+verify:data/chapters.ts all chapter records vs sources
+verify:locales/* shipped strings — native quality + meaning fidelity (per language.md)
+verify:ebook chapters vs cited Swedish civic sources
+regress:re-check the 10 most recently changed data/ items for re-broken facts
+sweep:oldest-unverified slice (rolling — never 'done')
+# Ramp: keep cycling oldest-unchecked + anything changed since last check.

@@ -1,24 +1,238 @@
-MANAGER-content queue - 2026-05-18T12:25:00+02:00
+MANAGER-content queue - 2026-05-18T16:22:49+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
-content work that advances TRANSLATE-COMPLETE or SOURCE-CITATION. Keep all
-content panes on UHR-only atoms; do not read, copy, paraphrase, or compare
-against any competitor question bank.
+content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
+SOURCE-EXPANSION. Keep all content panes on UHR-only atoms; do not read, copy,
+paraphrase, or compare against any competitor question bank.
 
 Landed:
 - q005/q006 are on `origin/main` via PR #157.
-- q007 is on `origin/main` as `c48945c` via PR #163. Do not publish duplicate
-  local q007 diffs.
+- q007 is on `origin/main` as `c48945c` via PR #163.
+- q008 is on `origin/main` via PR #172.
+- q009 is on `origin/main` as `734c75c` via PR #177.
+- q010 is on `origin/main` via PR #182.
+- q011 is on `origin/main` as `793ec73` via PR #180.
+- q012 is on `origin/main` as `2c7c02f` via PR #204.
+- q013 is on `origin/main` as `782027c` via PR #209.
+- q014 is on `origin/main` as `ac5b2c6` via PR #211, with the missing
+  journal handoff corrected by PR #214 / `863ce49`.
+- q015 is on `origin/main` as `e0e39a5` via PR #218.
+- q016 is on `origin/main` as `31d9828` via PR #225, with merge evidence
+  recorded by PR #231 / `af56e53`.
+- q017 is on `origin/main` as `fc19b58` via PR #222, with merge evidence
+  recorded by PR #226 / `d827682`.
+- q019 is on `origin/main` as `67b6005` via PR #259.
+- q020 is on `origin/main` as `b35ef8f` via PR #262.
+- q021 is on `origin/main` as `0bb6cc4` via PR #203.
+- q037 is on `origin/main` as `cd89504` via PR #189.
+- q071 is on `origin/main` as `4e1faf9` via PR #192.
+- q072 is on `origin/main` as `6fc47b4` via PR #194.
+- q073 is on `origin/main` as `ee4ddb4` via PR #199.
+- q074 is on `origin/main` as `7f3c84b` via PR #270, with merge evidence
+  recorded by `fecc520`.
+- q078 is on `origin/main` as `2176b29` via PR #271, with merge evidence
+  recorded by `3862d7b`.
+- q079 is on `origin/main` as `afb12f9` via PR #273.
+- q080 is on `origin/main` as `5f0ff48` via PR #284.
+- q081 is on `origin/main` as `ff9bb56` via PR #282.
+- q070 is on `origin/main` as `6d2bd46` via PR #308, with merge evidence
+  recorded by `cb8bdf4`.
+- q142 is on `origin/main` as `4636321` via PR #295, with merge evidence
+  recorded by PR #311 / `2b3fab0`.
+- q143 is on `origin/main` as `98bc031` via PR #316.
+- q109 is on `origin/main` as `b2c4e5d` via PR #318.
+- q108 is on `origin/main` as `d86717e` via PR #335.
+- q018 is on `origin/main` as `76b3bde` via PR #317.
+
+Duplicate guard:
+- PR #178 and branch `task/content/q009-naturalness-pane1-1779100218` were
+  closed/deleted as duplicate q009 work. Do not reopen or republish q009.
+- PR #201 and branch `task/content/q073-naturalness-pane4-1779101509` were
+  closed as duplicate q073 work. Do not reopen or republish q073.
+- q012 is landed via PR #204. Do not reopen or republish q012.
+- q013 and q014 are landed. Do not reopen or republish q013/q014.
+- q015, q016, q017, and q021 are landed. Do not reopen or republish
+  q015/q016/q017/q021.
+- q019 is landed via PR #259 / `67b6005`. Do not reopen or republish q019;
+  `/tmp/sct-q019-pane1-1779106498` and `/tmp/sct-q019-pane2` are stale after
+  the merge.
+- q020 is landed via PR #262 / `b35ef8f`. Do not reopen or republish q020;
+  `/tmp/sct-pane4-q020` is stale after the merge.
+- Pane 2's duplicate q015 worktree `/tmp/sct-q015-pane2` is abandoned; do not
+  commit, push, or PR that duplicate q015 diff.
+- Duplicate q016 draft PR #230 was closed unmerged, and branch
+  `task/content/q016-naturalness-pane1-1779103769` was deleted. Do not reopen
+  or republish that duplicate q016 diff.
+- q074, q078, q079, q080, and q081 are landed. Do not reopen or republish
+  stale q074/q078/q079/q080/q081 worktrees or branches.
+- q070, q109, q142, and q143 are landed. Do not reopen or republish stale
+  q070/q109/q142/q143 branches or worktrees.
+- q108 is landed via PR #335 / `d86717e`. Do not reopen or republish stale
+  q108 duplicate branches, including
+  `task/content/q108-naturalness-pane3-1779112067`.
+- q018 is landed via PR #317 / `76b3bde`; duplicate PR #329 was closed
+  unmerged. Do not reopen or republish stale q018 branches or worktrees. The
+  follow-up static-site generated bank drift is build/DATA-INTEGRITY-owned;
+  CONTENT must not edit `site/**`.
+- q114 is open in PR #352 on branch
+  `task/content/q114-source-note-pane1-1779113157`. Treat PR #352 as the
+  canonical q114 CONTENT-VERIFY path; do not duplicate it. Rebase work in
+  `/tmp/sct-content-verify-pane3` showed the content diff itself is bounded to
+  `data/additionalQuestions.ts` and the content journal, but normal
+  `validate:content` gates fail because q114 makes generated `site/questions.js`
+  stale and CONTENT must not edit `site/**`. Do not push or merge q114 red;
+  VALIDATOR must route a SETUP/build or DATA-INTEGRITY static mirror sync, or
+  explicitly authorize a bundled cross-lane fix.
+- q144 is open in PR #331 on branch
+  `task/content/q144-source-expansion-pane1-1779114000`, but latest CEO
+  routing holds fresh non-site content behind SITE-P0 unless VALIDATOR
+  explicitly leases it. Do not publish the stale local pane-4 q144 duplicate
+  branch.
 
 Active dispatch:
-- Pane 4: q008 naturalness in `/home/billy/sct-content-q008`.
-- Pane 1: q009 naturalness after stopping duplicate q007 work and syncing
-  safely.
-- Pane 3: q010 naturalness after stopping duplicate q007 work and syncing
-  safely.
+- q016, q017, q018, q019, q020, q070, q074, q078, q079, q080, q081, q108,
+  q109, q142, and q143 are landed. The earlier q016/q018/q019/q020/q070/q074/
+  q078/q079/q080/q081/q108/q109/q142/q143 assignments are superseded.
+- Operator directive in `codex-tasks/open.txt` supersedes the earlier idle-hold
+  behavior: managers must not park CONTENT panes while build-capable SITE-P0
+  staffing is unavailable. Current gate reality: data-changing CONTENT atoms
+  now make the generated static-site mirror stale, so they cannot pass normal
+  gates unless VALIDATOR provides a cross-lane static mirror path. Until then,
+  fresh CONTENT capacity should audit/file concrete UHR-only defects or report
+  to VALIDATOR for the q114 static-mirror decision, not open duplicate data PRs.
+- SITE-P0 work remains build-owned; CONTENT must not edit `site/**` and must
+  not present content atoms as SITE-P0 progress.
 
-Next queue after active dispatch: q011, q037, q071, q072, then later
-validator-filed naturalness rows. Keep each atom to one question when possible,
-preserve its UHR locator, run focused content gates, and hand off the question
-id, changed artifacts, verification commands, PR number, and which P0 item the
-atom advances.
+Current scan on `origin/main` after q018 found no q018 `The State section
+says...` / `Avsnittet Staten...` source-note explanation in canonical
+`data/questions.ts`, and `content/question-bank.csv` still passes canonical
+export parity. `origin/main` now includes `1376794`, a DATA-INTEGRITY static
+site question-bank gate after q018. Accept/reject that static-bank evidence in
+build/DATA-INTEGRITY, not CONTENT. If q114 later lands, route any resulting
+`site/questions.js` regeneration to SETUP/build or DATA-INTEGRITY; CONTENT
+must not edit `site/**`.
+
+Next content work:
+1. Keep q018 duplicate-guarded as landed; do not open new q018 work. The only
+   q018 follow-up is build/DATA-INTEGRITY-owned static-bank acceptance or
+   regeneration.
+2. Keep q114 duplicate-guarded in PR #352. The existing owner already proved
+   the branch cannot satisfy current normal gates as a CONTENT-only diff because
+   `validate:content` requires `site/questions.js` parity. The next action is a
+   VALIDATOR/SETUP/DATA-INTEGRITY decision on static mirror sync or an explicit
+   cross-lane bundled fix; do not open a second q114 branch.
+3. Keep q144 duplicate-guarded in PR #331, but do not advance, duplicate, or
+   replace it until VALIDATOR explicitly leases non-site content or CEO routing
+   releases CONTENT. If it is later released, the q144 owner must rebase/verify
+   against then-current `origin/main` before merge and pass export parity,
+   `validate:content`, focused content tests, typecheck, ownership,
+   Prettier/diff checks, and a content journal handoff with PR/merge evidence.
+4. Fresh CONTENT capacity currently reports to VALIDATOR/CEO for SITE-P0
+   staffing/release instead of opening new non-site content. CONTENT still must
+   not edit `site/**`; any static-site bank sync remains SETUP/build or
+   DATA-INTEGRITY-owned.
+
+Every released atom must preserve UHR locator evidence, run export parity,
+`validate:content`, focused content tests, typecheck, ownership,
+Prettier/diff checks, and write a journal handoff naming the PR or merge
+evidence.
+
+Acceptance guard: every content handoff must name the question id, changed
+artifact, UHR locator, verification commands, PR number or merge commit, and
+the P0 item advanced. Do not touch competitor question-bank content.
+
+CEO->MANAGER-content 2026-05-18T13:22:00+02:00
+Staffing remains HOLD/add-none. The CEO reran `/home/billy/bin/csup staff
+--scenario=resume --dry-run`; queued work exists across configured hosts, but
+every LUNARC/remote line held with `reason=lunarc_requires_slurm_station`, so no
+`--apply` was run. Keep using only the current local `civic-content` panes.
+
+Updated landed evidence:
+- q072 is on `origin/main` via PR #194 / `6fc47b4`.
+- q073 is on `origin/main` via PR #199 / `ee4ddb4`.
+- q012 is on `origin/main` via PR #204 / `2c7c02f`.
+- `origin/main` was `4f222ee` when this queue was updated after q012 and the
+  CEO hold cycle; this does not change the P0 content priority.
+
+Active duplicate guard:
+- q012 and q073 are landed; close/delete duplicate q012/q073 branches or PRs
+  and do not assign them again.
+- q021 is active in `/tmp/sct-q021-pane3` with PR #203 open at observed pane
+  state. Do not duplicate q021 until VALIDATOR resolves that evidence.
+
+Next content order after q021: q013, q014, q015, q016, q017, q020, then q027
+and q028 unless VALIDATOR has newer accepted evidence. Keep every atom
+UHR-only, one question where possible, with preserved UHR locator, export
+parity, `validate:content`, focused content tests, typecheck, ownership,
+Prettier/diff checks, and a journal handoff naming the PR or merge evidence.
+
+CEO->MANAGER-content correction 2026-05-18T13:27:00+02:00
+q012 is now landed on `origin/main` via PR #204 / `2c7c02f`; do not assign or
+merge any routing that treats q012 as still active. PR #206 is open and touches
+this queue, but its q012 assignment is stale and must be rebased/reconciled
+before merge. q021 remains isolated to PR #203 and is not mergeable at connector
+check time; rebase/update that PR before acceptance. Next content order after
+q021 is q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR has
+newer accepted evidence.
+
+MANAGER-content 2026-05-18T13:06:39+02:00
+q012 is now landed via PR #204 / `2c7c02f`; do not duplicate q012. Keep q021
+isolated to PR #203. Route available local content panes to q013, q014, and
+q015 next, then continue q016, q017, q020, q027, and q028 unless VALIDATOR
+accepts newer evidence first.
+
+MANAGER-content 2026-05-18T13:22:00+02:00
+q013 landed via PR #209 / `782027c`; q014 landed via PR #211 / `ac5b2c6` and
+the missing q014 journal artifact landed via PR #214 / `863ce49`. Keep q013
+and q014 duplicate-guarded. Pane 1 owns q015 in `/tmp/sct-q015-pane1`; Pane 2
+must abandon duplicate q015 work in `/tmp/sct-q015-pane2` and take q016 after
+syncing; Pane 3 owns q021 via PR #203 and must rebase/update against current
+`origin/main` before merge. Continue q017, q020, q027, and q028 after active
+q015/q016/q021 unless VALIDATOR accepts newer evidence first.
+
+MANAGER-content 2026-05-18T13:26:00+02:00
+q015 landed via PR #218 / `e0e39a5`; q021 landed via PR #203 / `0bb6cc4`.
+Pane 2 and Pane 4 are usage-limited and cannot take q016 right now. Leave q016
+as the next content atom for the next available fresh content worker, followed
+by q017, q020, q027, and q028 unless VALIDATOR accepts newer evidence first.
+
+CEO->MANAGER-content 2026-05-18T13:32:00+02:00
+Supersedes the 13:26 q016 staffing note. q017 landed via PR #222 / `fc19b58`;
+q016 landed via PR #225 / `31d9828`, with merge evidence recorded on
+`origin/main`. Duplicate q016 draft PR #230 is closed and its remote branch is
+deleted. Do not route q020/q027/q028 automatically after q016. SITE-P0
+deployed-site blockers are active in `codex-tasks/blockers.txt`, so escalate
+fresh capacity to VALIDATOR for SITE lease/staffing before assigning any new
+non-site content.
+
+MANAGER-content validation hold 2026-05-18T15:01:10+02:00
+Clean `origin/main` at `82291b1` / `1e4445e` fails
+`npm run validate:content` before any CONTENT diff with upstream
+`components/quiz/AnswerOption.tsx` accessibility parity errors: missing shared
+Button import, explicit button role, feedback-aware visible label, and
+tone-to-variant mapping. This is outside the CONTENT lease.
+
+Hold CONTENT PR #295 / q142 and the in-flight q018 atom unless VALIDATOR
+explicitly allows a content merge over the red base or the COMPONENTS/UIUX
+gate is fixed. Do not duplicate q142/q018, do not start another
+`data/additionalQuestions.ts` count-gate atom, and do not edit `components/**`
+from CONTENT.
+
+MANAGER-content release 2026-05-18T15:11:28+02:00
+`origin/main` is now `e232bf7` after the DATA-INTEGRITY
+`ANSWER-OPTION-OPTIONCARD-PARITY-1` fix, and
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` is green on current
+main. Release the red-base hold, but do not duplicate existing work: Pane 4's
+remote branch `task/content/q142-source-expansion-pane4-1779108610` remains the
+canonical q142 path and must be rebased/verified against `e232bf7` before PR
+merge. Other CONTENT panes should not start a second q142 or q018; fresh
+capacity waits for q142 merge evidence or an explicit VALIDATOR/manager
+assignment.
+
+CEO->MANAGER-content 2026-05-18T15:52:00+02:00
+q108 is on current `origin/main` via `d86717e`; do not duplicate it. The
+static-bank sync, live-smoke count, live hash guard, Practice width, and q018
+static-bank drift defects are already accepted, so CONTENT must not edit
+`site/**` or rerun those atoms. Fresh capacity stays behind SITE-P0 deploy
+evidence and static-site privacy/monetization copy unless VALIDATOR explicitly
+leases new non-site content.

@@ -227,9 +227,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Befolkning säger att det bor nästan 11 miljoner människor i Sverige. Det beskriver också att befolkningen inte är jämnt fördelad och att de flesta bor i södra Sverige och längs kusterna.',
+      'Det bor nästan 11 miljoner människor i Sverige. Befolkningen är inte jämnt fördelad: de flesta bor i den södra delen av landet och längs kusterna.',
     explanationEn:
-      'The UHR section Population says almost 11 million people live in Sweden. It also describes the population as unevenly distributed, with most people living in southern Sweden and along the coasts.',
+      'Almost 11 million people live in Sweden. The population is not evenly distributed: most people live in the southern part of the country and along the coasts.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -265,9 +265,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Naturresurser säger att Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte stöds av avsnittet.',
+      'Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser.',
     explanationEn:
-      'The UHR section Natural resources says Sweden is rich in several important natural resources: iron ore and other minerals, forest, agricultural land, and water. That makes the option with those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items are not supported by the section.',
+      "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Naturresurser',
@@ -291,9 +291,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Demokrati betyder folkstyre säger att demokrati är ett politiskt system där makten utgår från folket. Det betyder att medborgarna kan påverka beslut, välja mellan flera politiska alternativ och byta ut dem som får makten.',
+      'Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans.',
     explanationEn:
-      'The UHR section Democracy means rule by the people says democracy is a political system where power comes from the people. This means citizens can influence decisions, choose between several political alternatives, and replace those who are given power.',
+      'Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -333,9 +333,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Demokrati betyder folkstyre säger att fria val innebär att alla som har rätt att rösta har en röst var. Det säger också att väljare ska kunna uttrycka åsikter utan hot eller tvång, att det ska finnas flera partier och att valet ska vara hemligt.',
+      'Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt.',
     explanationEn:
-      'The Democracy means rule by the people section says free elections mean everyone who has the right to vote has one vote each. It also says voters should be able to express opinions without threats or coercion, that there should be several parties, and that the vote should be secret.',
+      'Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -375,9 +375,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet En stark demokrati listar flera sätt att påverka och delta i samhället, bland annat att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. Därför är alternativet med politiker, demonstrationer och namninsamlingar rätt; de andra alternativen skulle begränsa demokratiskt deltagande.',
+      'Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin.',
     explanationEn:
-      'The A strong democracy section lists several ways to influence and participate in society, including contacting politicians, demonstrating, and starting or signing a petition. Therefore the option about politicians, demonstrations, and petitions is correct; the other options would restrict democratic participation.',
+      'People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'En stark demokrati',
@@ -392,9 +392,9 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch02',
     type: 'single_choice',
     questionSv:
-      'Vad kallas det när lagarna gäller för alla och ingen får dömas utan en rättvis rättegång?',
+      'Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?',
     questionEn:
-      'What is it called when laws apply to everyone and no one may be sentenced without a fair trial?',
+      'What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?',
     options: [
       {
         id: 'a',
@@ -419,9 +419,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Demokrati betyder folkstyre säger att en viktig förutsättning för demokrati är att lagarna gäller för alla i Sverige och att ingen får dömas utan en rättvis rättegång. Det kallas rättssäkerhet; de andra alternativen beskriver andra begrepp.',
+      'Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker.',
     explanationEn:
-      'The Democracy means rule by the people section says an important condition for democracy is that laws apply to everyone in Sweden and that no one may be sentenced without a fair trial. This is called legal certainty; the other alternatives describe different concepts.',
+      'Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -461,9 +461,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Hot mot demokratin säger att ett lågt valdeltagande kan leda till att människor får mindre möjlighet att påverka politiska beslut i sin vardag. Det kan också öka skillnaderna mellan grupper i samhället; de andra alternativen stöds inte av avsnittet.',
+      'Ett lågt valdeltagande kan göra det svårare för människor att påverka politiska beslut i sin vardag. Det kan också öka skillnaderna mellan grupper i samhället; de andra alternativen beskriver följder som inte följer av lågt valdeltagande.',
     explanationEn:
-      'The Threats to democracy section says a low voter turnout can give people fewer opportunities to influence political decisions in everyday life. It can also increase differences between groups in society; the other options are not supported by the section.',
+      'Low voter turnout can leave people with fewer opportunities to influence political decisions in everyday life. It can also widen differences between groups in society; the other options describe effects that do not follow from low voter turnout.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Hot mot demokratin',
@@ -505,9 +505,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Staten säger att Sverige är en parlamentarisk representativ demokrati. Det innebär att medborgarna röstar i allmänna val och väljer ledamöter till riksdagen, som sedan fattar beslut om lagar och statens budget.',
+      'Sverige är en parlamentarisk representativ demokrati: medborgarna väljer riksdagsledamöter genom att rösta i allmänna val. Riksdagen fattar sedan beslut om lagar och statens budget, så varken domstolarna, kungen eller myndigheter väljer ledamöterna.',
     explanationEn:
-      'The State section says Sweden is a parliamentary representative democracy. This means citizens vote in general elections and elect members of the Riksdag, which then makes decisions on laws and the state budget.',
+      'Sweden is a parliamentary representative democracy: citizens elect members of the Riksdag by voting in general elections. The Riksdag then decides on laws and the state budget, so the courts, the king, and government agencies do not choose its members.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
@@ -527,9 +527,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Avsnittet Staten säger att riksdagen har 349 ledamöter som väljs vart fjärde år. Siffrorna 21 och 290 hör ihop med regioner och kommuner, inte med riksdagens ledamöter.',
+      'Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen.',
     explanationEn:
-      'The State section says the Riksdag has 349 members who are elected every four years. The numbers 21 and 290 are connected to regions and municipalities, not to members of the Riksdag.',
+      'The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -549,9 +549,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Staten säger att riksdagen väljer statsminister, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna i regeringen.',
+      'Riksdagen väljer statsministern, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna; varken kungen, Polismyndigheten eller regionfullmäktige väljer statsminister.',
     explanationEn:
-      'The State section says the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.',
+      'The Riksdag chooses the prime minister, who is then tasked with forming a government. The prime minister chooses the ministers; neither the king, the Swedish Police Authority, nor regional councils choose the prime minister.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
@@ -571,9 +571,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'Avsnittet Val och röstning säger att man ska ha fyllt 18 år för att ha rösträtt. För att rösta i riksdagsvalet måste man dessutom vara svensk medborgare.',
+      'Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap.',
     explanationEn:
-      'The Elections and voting section says a person must have turned 18 to have the right to vote. To vote in a Riksdag election, a person must also be a Swedish citizen.',
+      'A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Val och röstning',
@@ -613,9 +613,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Folkomröstningar säger att folkomröstningar kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet.',
+      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt.',
     explanationEn:
-      'The Referendums section says referendums can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.',
+      'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Folkomröstningar',

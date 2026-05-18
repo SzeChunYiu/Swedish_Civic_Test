@@ -1,0 +1,208 @@
+MANAGER-build queue - 2026-05-18T15:47+02:00
+
+P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
+items, SETUP should take only atoms that close validator/reviewer defects with
+source, test, command, and PR/merge evidence. Do not accept local-only or
+docs-only closure. The `site/` deployed static surface is now in the build
+lease because Vercel serves `site/`, not the Expo app bundle.
+
+Accepted P0 SETUP atoms:
+
+1. `SITE-P0-1` accepted via PR #242 / `c4404d8`.
+   - Clean manager verification on `origin/main`: `node --check site/app.js`,
+     `node --check site/practice.js`, `node --check site/questions.js`,
+     route/static-link assertion, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+     `npm run test:ownership`, targeted `git diff --check`, and local
+     static-site smoke from `/` to `#/practice`, first chapter drill, and
+     `#/ebook` all exit 0.
+2. `SITE-P0-2` accepted via PR #252 / `5e834b9` plus handoff PR #254 /
+   `bfd6c7e`.
+   - Clean manager verification on current `origin/main` after `npm ci`:
+     `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+     `node --check` for `site/app.js`, `site/practice.js`, `site/questions.js`,
+     `site/i18n-extras.js`, and `site/ebook-tools.js`, targeted `git diff --check`,
+     and static-site Chrome smoke from `/` to `#/mock`, 5-question exam
+     completion/result review, `#/practice`, and `#/ebook` all exit 0.
+3. `SITE-P0-3` accepted via PR #264 / `19a420e` plus handoff PR #267 /
+   `4f2f9c5`.
+   - Clean manager verification on current `origin/main`: `node
+     scripts/export-site-question-bank.js --check`, `node --test
+     tests/content-static-site-question-bank-parity.test.js`, `node
+     scripts/export-question-bank.js --check`, `node --check site/questions.js`,
+     `npm run validate:content`, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+     `npm run test:ownership`, targeted `git diff --check`, and static-site
+     Chrome smoke showing 13 Practice cards, 705-question total, q001 feedback,
+     5-row Mock review, and no console/page errors all exit 0.
+4. `SITE-P0-4` accepted via PR #279 / `9def23a` plus handoff PR #280 /
+   `41a6bcb`.
+   - Clean manager verification on current `origin/main`: `node --check
+     site/ebook.js`, `node --check site/ebook-tools.js`, focused ebook
+     copy/navigation source assertion, `npm run validate:content`,
+     `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+     `npm run test:ownership`, `git diff --check HEAD~2..HEAD`, and static-site
+     Chrome smoke for English and Swedish Ebook, notes host, chapter practice
+     navigation, and no console/page errors all exit 0.
+5. `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` accepted via PR #324 /
+   `d4ffd91`.
+   - Clean manager verification on current `origin/main`: `node
+     scripts/export-site-question-bank.js --check` passed with 715 questions
+     and 13 chapters; `node --test
+     tests/content-static-site-question-bank-parity.test.js` passed 2/2;
+     `node scripts/export-question-bank.js --check`; `npm run
+     validate:content` at 715 questions; `node --check site/questions.js`;
+     direct VM inspection found q142, q143, q715, and 715 static questions;
+     `npm run typecheck -- --pretty false`; `npm run test:ownership`; and
+     `git diff --check` all exit 0.
+6. `REVIEWER-SITE-LIVE-SMOKE-COUNT-1` accepted via PR #328 / `11b2b96`.
+   - Clean manager verification on current `origin/main`: `node --test
+     scripts/check-live-site.test.js` passed 5/5; local default `checkLiveSite`
+     smoke against current `site/` derived 715 and passed without
+     `SITE_LIVE_REQUIRED_QUESTION_COUNT`; a synthetic current shell serving a
+     stale 705-question `questions.js` failed with `expected 715, found 705`;
+     `node scripts/export-site-question-bank.js --check` passed with 715
+     questions and 13 chapters; `node --test
+     tests/content-static-site-question-bank-parity.test.js` passed 2/2;
+     `npm run validate:content` passed at 715 questions; `npm run typecheck -- --pretty false`;
+     `npm run test:ownership`; and `git diff --check HEAD^..HEAD` all exit 0.
+7. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` accepted via PR #338 / `c7227b6`.
+   - Clean manager verification on current `origin/main`: `node --test
+     scripts/check-live-site.test.js` passed 5/5; local `npm run test:site-live`
+     passed with `practice wide layout`; `npm run typecheck -- --pretty false`;
+     `npm run test:ownership`; and `git diff --check c7227b6^..c7227b6` all exit 0.
+8. `REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1` accepted via PR #355 / `1376794`.
+   - Clean manager verification on current `origin/main`: `npm run
+     validate:content` reports `staticSiteQuestionBankParityValidated:true`;
+     `node scripts/export-site-question-bank.js --check`; focused static-bank
+     parity 2/2; `node scripts/export-question-bank.js --check`; `node --check
+     site/questions.js`; `npm run typecheck -- --pretty false`; `npm run
+     test:ownership`; and `git diff --check 1376794^..1376794` all exit 0.
+9. Static-site `REVIEWER-ACCOUNT-SCOPE-1` accepted via PR #359 / `392b84e`.
+   - Clean manager verification on current `origin/main`: `npm run
+     test:static-site-account-scope` passed 2/2; `node --check` for
+     `site/ebook-tools.js`, `site/i18n-extras.js`, and
+     `scripts/static-site-account-scope.test.js`; `npm run typecheck -- --pretty
+     false`; `npm run test:ownership`; and `git diff --check 392b84e^..392b84e`
+     all exit 0.
+10. `REVIEWER-SITE-LIVE-HASH-GUARD-1` accepted via PR #361 / `701a181`.
+    - Clean manager verification on current `origin/main`: `node --test
+      scripts/check-live-site.test.js`; local `npm run test:site-live`; `npm run
+      typecheck -- --pretty false`; `npm run test:ownership`; and `git diff
+      --check 701a181^..701a181` all exit 0.
+
+Active P0 SETUP atoms from the SITE-P0-5 live audit:
+
+MANAGER-build note 2026-05-18T15:25+02:00:
+PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
+hit the Codex usage cap. Do not resume that stale account-scope attempt as the
+current task. The active order remains: live deploy stale first, Practice width
+parity second, account-scope third.
+
+MANAGER-build note 2026-05-18T15:30+02:00:
+PR #315 / `bab3190` queued `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` after
+q142 first exposed static-bank drift. Current `origin/main` has since advanced
+through q143 and validates at 715 canonical questions while `site/questions.js`
+still exports 705. Do not deploy current `site/` until this sync is repaired.
+The active order is now: current static-bank drift first, live deploy stale
+second, Practice width parity third, account-scope fourth.
+
+MANAGER-build acceptance 2026-05-18T15:41+02:00:
+PR #324 closed the current static bank drift, but local `npm run
+test:site-live` still fails by default because `scripts/check-live-site.js`
+expects 705 questions while current `site/questions.js` has 715. The active
+order is now: live-smoke count default first, production deploy evidence
+second, Practice width parity third, account-scope fourth.
+
+MANAGER-build acceptance 2026-05-18T15:47+02:00:
+PR #328 / `11b2b96` closed the live-smoke count default. The active order is
+now: production deploy evidence first, Practice width parity second,
+account-scope third.
+
+MANAGER-build acceptance 2026-05-18T15:58+02:00:
+PR #345 / `7876dd2` closed the current q108 wording static-bank drift. Clean
+manager verification passed static-bank export/parity, `validate:content`,
+`node --check site/questions.js`, `test:ownership`, and `git diff --check`.
+The active order remains: production deploy evidence first, Practice width
+parity second, account-scope third, privacy copy fourth.
+
+MANAGER-build acceptance 2026-05-18T16:24+02:00:
+PR #338 closed Practice width parity and PR #355 closed q018 static-bank drift
+with the validator mirror in `validate:content`. The active order is now:
+production deploy evidence first, account-scope second, privacy copy third.
+
+MANAGER-build acceptance 2026-05-18T16:28+02:00:
+PR #359 closed the static-site account-scope cleanup. The active order is now:
+production deploy evidence first, privacy copy second.
+
+MANAGER-build acceptance 2026-05-18T16:32+02:00:
+PR #361 closed the same-count live hash guard. The active order remains:
+production deploy evidence first, privacy copy second.
+
+1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
+   - Scope: deployment workflow/config, production deploy evidence, and a
+     focused live-site smoke gate.
+   - Required behavior: production must serve current `origin/main` `site/`,
+     not an older Vercel deployment. The live production URL must show the
+     current canonical static question count, the Practice hub, `#/mock` with
+     `#mock-stage`, and Swedish Ebook chapters without v1.1 placeholder copy.
+   - Required gates: deploy run or Vercel evidence for current main, live smoke
+     assertions for the checks above, relevant syntax/build checks for changed
+     files, `npm run test:ownership`, and `git diff --check`.
+   - Current caveat: PR #321 / `3a323ff` landed a useful deploy workflow and
+     PR #328 / `11b2b96` fixed the current-count live-smoke behavior, but this
+     is not accepted as live-deploy closure until production serves current
+     `origin/main` and live smoke passes with the hash guard.
+
+2. `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`
+   - Scope: `site/app.js` privacy and FAQ i18n copy plus focused stale-copy
+     assertions.
+   - Required behavior: static `site/` accurately says web ads use Google
+     AdSense, the mobile app uses Google Mobile Ads/AdMob with consent, Remove
+     Ads is a one-time 29 SEK purchase that removes ads, and ads never collect
+     study answers or progress. English and Swedish runtime copy must not
+     claim ad rendering is disabled, the service sells nothing, or premium may
+     be added later.
+   - Required gates: focused static or browser assertion rejecting stale
+     strings such as `real ad rendering is disabled`, `avstängd för v1.0`,
+     `If we ever add premium`, and `Om vi någonsin lägger till premium`;
+     relevant `node --check` for changed site JS; `npm run test:ownership`;
+     and `git diff --check`.
+
+Existing P0 SETUP atoms behind the live-site P0 queue:
+
+3. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+   - Scope: release-config/tooling.
+   - Required behavior: `.github/workflows/release-validation.yml` runs on
+     `pull_request` targeting `main`, while preserving the existing manual/tag
+     release validation paths.
+   - Required gates: focused
+     `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/build-config.test.js --test-name-pattern 'GitHub release validation workflow runs safe validation and blocker evidence checks'`,
+     then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
+     nearest full release-validation gate, plus `git diff --check`.
+
+4. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+   - Scope: release-config/tooling.
+   - Required behavior: `submit-production-guard --check-only` reports
+     placeholder Apple submit identifiers (`appleId`, `ascAppId`,
+     `appleTeamId`, `TBD`) before release-preflight blockers can mask them.
+   - Required gates: focused
+     `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/build-config.test.js --test-name-pattern 'EAS build and submit profiles are configured|production submit guard blocks placeholder Apple identifiers'`,
+     then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
+     nearest release validation gate, plus `git diff --check`.
+
+5. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+   - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
+   - Required behavior: visual-smoke screenshots are route-specific,
+     inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
+     test-disabled before screenshots; duplicate screenshot hashes and visible
+     launch overlays are rejected or explicitly explained. Keep exam no-ad
+     behavior covered separately.
+   - Required gates: official
+     `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1`
+     or the nearest visual-smoke gate, plus assertions/evidence for duplicate
+     hash rejection and launch-overlay absence, plus `git diff --check`.
+
+P1 hold:
+- `REVIEWER-SEARCH-PLACEHOLDER-1` remains open but behind the P0
+  language/release/scope/visual-evidence queue. Address it later by
+  implementing real local search or removing the reachable placeholder route
+  and navigation affordance.

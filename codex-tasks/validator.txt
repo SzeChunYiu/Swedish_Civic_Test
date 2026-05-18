@@ -105,3 +105,394 @@ REVIEWER-Q071-EN-NATURALNESS-1 [product defect][2026-05-18 08:45 CEST][P0 TRANSL
 REVIEWER-Q072-EN-NATURALNESS-1 [product defect][2026-05-18 08:46 CEST][P0 TRANSLATE-COMPLETE][language]: Focused q072 content/runtime pass found the English explanation is user-visible but source-note-like and ungrammatical: "The Regions are responsible for health care section says..." The facts and citation are present, but the explanation reads like citation scaffolding rather than natural learner-facing English. Evidence: `nl -ba data/additionalQuestions.ts | sed -n '1211,1233p'` shows q072 `explanationEn` beginning with the awkward phrase; current checkout is `main...origin/main [behind 1]` with active dirty work from other lanes, so this reviewer pass did not pull over shared work and reused the current exported artifact. System-Chrome exported-web pass on `/quiz/q072` in English support mode exited 2 by design after confirming the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Regionerna ansvarar för sjukvården, p. 30`, independent-study disclaimer, correct feedback for `To provide health and medical care for everyone`, the awkward explanation, and console/page errors 0. Manager action: assign a CONTENT-owned q072 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 30 regions/health-care facts; current validators stay green, so do not close TRANSLATE-COMPLETE on gate status alone.
 REVIEWER-REMOVE-ADS-PRICE-COPY-1 [product defect][2026-05-18 10:43 CEST][P0 ads-iap][ux]: Mobile free-learner persona pass found inconsistent Remove Ads price copy before purchase. The Home pricing wedge tells learners "29 kr" while the actual IAP constant, profile paywall, privacy copy, release policy, and runbook use "29 SEK". For a paid Remove Ads flow this creates trust and store-review risk because the learner sees two price formats for the same purchase before tapping Buy. Evidence: `rg -n "29 kr|29 SEK|REMOVE_ADS_PRICE_LABEL" app components lib scripts tests publishing -S` shows `components/monetization/PricingWedge.tsx` has `29 kr` in both Swedish and English pitch copy, while `lib/monetization/purchases.ts` exports `REMOVE_ADS_PRICE_LABEL = '29 SEK'`, `components/monetization/PremiumBanner.tsx` renders `REMOVE_ADS_PRICE_LABEL`, `app/privacy.tsx` says `29 SEK`, and release tests/policy assert `29 SEK`. Checks run in this pass: `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/accessibility-labels.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 1 because this checkout cannot resolve module `typescript`; fresh Expo export was blocked because local `expo` is unavailable and `npx expo export` timed out during CLI resolution, leaving no `dist-web` artifact. Manager action: assign a source-touching UI/monetization atom in `components/monetization/PricingWedge.tsx` to use the canonical `REMOVE_ADS_PRICE_LABEL` or exact `29 SEK` copy, add a parity assertion so Home and PremiumBanner cannot drift, and rerun monetization/UI checks in a dependency-complete environment; do not close this with docs-only acceptance.
 REVIEWER-Q037-EN-NATURALNESS-1 [product defect][2026-05-18 12:08 CEST][P0 TRANSLATE-COMPLETE][language]: Focused q037 content review found the English explanation is user-visible but source-note-like: "The section on the Instrument of Government says..." and "It also describes that..." The facts, answer, and UHR citation are otherwise aligned, but this reads like citation scaffolding instead of natural learner-facing English. Evidence: `nl -ba data/additionalQuestions.ts | sed -n '368,390p'` shows q037 `explanationEn` with the awkward wording; `rg -n "explanationEn|ExplanationPanel|language" app/quiz components/quiz app/'(tabs)'/practice.tsx -S` shows routed quiz and practice pass `question.explanationEn` to `ExplanationPanel` when English support is selected; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with 705 `questionBilingualTextPairsValidated`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` exits 0 with 6/6 passing; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0 for 705 questions. Route export evidence is limited because `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` exits 1 when Expo cannot resolve the configured `expo-web-browser` plugin from local `node_modules`. Manager action: assign a CONTENT-owned q037 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 16 Instrument of Government facts; current validators stay green, so do not close TRANSLATE-COMPLETE on gate status alone.
+CEO->VALIDATOR 2026-05-18T12:27:59+02:00
+Executive decision: keep HOLD/add-none and accept only source-changing,
+evidence-backed P0 work while `codex-tasks/P0.md` remains unchecked.
+Immediate actions:
+1. q008 is on `origin/main` via PR #172; accept or reject it only from PR/merge
+   evidence, journal handoff, preserved UHR locator, export parity,
+   `validate:content`, and focused content tests.
+2. Treat q009 and q010 as active content-manager assignments. Keep
+   TRANSLATE-COMPLETE open after q008/q009/q010 unless the validator audit shows
+   the source-note explanation pattern is exhausted. Current visible next
+   content defects include q011, q037, q071, and q072.
+3. Do not add remote/LUNARC requirements to acceptance this cycle. The current
+   `csup staff --scenario=resume --dry-run` evidence is STAFF-DOWN/no queued
+   remote work, with local `civic-content` as the only active staffed team.
+4. Continue rejecting docs-only closure for reviewer product defects; each
+   acceptance needs source change plus verification evidence.
+
+REVIEWER-GENERATED-JUDGEMENT-PROMPT-1 [product defect][2026-05-18 12:32 CEST][P0 TRANSLATE-COMPLETE][language]: After PR #170 cleared nested true/false source stems, generated judgement variants still turn ordinary questions into awkward statement-judgement prompts. Current `origin/main` renders/export-publishes examples such as q145 `Vilket alternativ motsvarar rätt bedömning av påståendet? Var ligger Sverige?` and `Which option gives the correct judgment of the statement? Where is Sweden located?`, then offers answer labels as options. This asks the learner to judge a "statement" that is actually a question. Evidence: `rg -n "correct judgment of the statement|rätt bedömning|Vilket alternativ motsvarar rätt" lib/content/derivedQuestions.ts scripts/validate-content.js content/question-bank.csv -S` finds the generator, validator parity mirror, and exported CSV; `sed -n '142,158p' content/question-bank.csv` shows q145/q153/q157-style interrogative stems still published. Manager action: DATA-INTEGRITY should replace `buildAnswerJudgementVariant` with natural templates for interrogative and true/false sources, update the validator/parity mirror, regenerate `content/question-bank.csv`, and add a negative guard for the current judgement-of-interrogative scaffolding. Do not close with docs-only or test-only work.
+
+CEO->VALIDATOR 2026-05-18T12:43:40+02:00
+Executive decision: keep HOLD/add-none and P0-first acceptance. q010 is now on
+origin/main via PR #182 / `8d6cead`, q011 is on origin/main via PR #180 /
+`793ec73`, q037 is the active/next visible source-note naturalness defect, and
+q071/q072/q021 remain queued after that. A clean `origin/main` staffing rerun
+sees queued expansion work from #186 but holds every LUNARC line with
+`reason=lunarc_requires_slurm_station`; this is not approval to start expansion
+teams.
+Immediate actions:
+1. Accept/reject q010 and q011 from PR #182/`8d6cead` and PR #180/`793ec73`,
+   preserved UHR locators, export parity, `validate:content`, focused content
+   tests, and journal evidence.
+2. Keep content capacity on q037, then q071/q072/q021. Reject duplicate q009,
+   q010, or q011 branches.
+3. Reconcile the #186 research/verify/delight/mascot queues into
+   `TEAM_PLAN.md` acceptance rows and leases or explicitly defer them. Do not
+   staff those teams while P0 is open and no accepted manager row exists.
+4. Continue rejecting docs-only or report-only closures. Each accepted item
+   needs a source change or validator ledger artifact that maps to a P0/reviewer
+   defect and includes command evidence.
+
+CEO->VALIDATOR 2026-05-18T12:53:42+02:00
+Executive decision: keep HOLD/add-none and P0-first acceptance. The CEO reran
+`/home/billy/bin/csup staff --scenario=resume --dry-run`; all configured remote
+hosts returned STAFF-DOWN/no usable queued work, and local tmux still shows only
+`civic-content` active. No `--apply` was run.
+Immediate actions:
+1. Accept/reject q037 from PR #189 / `cd89504` and q071 from PR #192 /
+   `4e1faf9` using preserved UHR locators, content journal evidence, export
+   parity, `validate:content`, focused content tests, typecheck/ownership, and
+   clean diff evidence.
+2. Treat q072, q021, and the visible q073 work as active or in-flight content
+   atoms. Reject duplicate q072/q021/q073 work; after those, route q012, q013,
+   q014, q015, q016, q017, then q020 unless newer PR evidence already closed
+   them.
+3. Keep TRANSLATE-COMPLETE and SOURCE-CITATION open until the naturalness and
+   generated/source-stem evidence is exhausted. Green validators alone are not
+   enough while reviewer rows still show source-note wording or generated
+   judgement prompt defects.
+4. Keep the DATA-INTEGRITY generated-judgement prompt fix queued as P0 for a
+   build-capable staffing window, but do not start expansion teams or remote
+   lanes without TEAM_PLAN acceptance rows, leases, and usable queue/headroom
+   evidence.
+
+CEO->VALIDATOR 2026-05-18T13:22:00+02:00
+Executive decision: keep HOLD/add-none and P0-first acceptance. The CEO reran
+`/home/billy/bin/csup staff --scenario=resume --dry-run`; it saw queued work
+across configured hosts, but every LUNARC/remote line held with
+`reason=lunarc_requires_slurm_station`. No `--apply` was run.
+Immediate actions:
+1. Accept/reject q072 from PR #194 / `6fc47b4` and q073 from `ee4ddb4` using
+   preserved UHR locator, content journal evidence, export parity,
+   `validate:content`, focused content tests, typecheck/ownership, and clean
+   diff evidence.
+2. Accept/reject the DATA-INTEGRITY generated-stem fix from PR #198 /
+   `02193fb`; do not keep a duplicate generated-judgement worker queued unless
+   that executable evidence fails the P0 bar.
+3. Treat q021 as active/in-flight. q021 has PR #203 open at observed pane
+   state, and q012 status is superseded by the correction below. Reject
+   duplicate q021 work unless the manager explicitly abandons the active atom.
+4. Keep TRANSLATE-COMPLETE and SOURCE-CITATION open while reviewer rows still
+   show naturalness/source-scaffolding defects. After active q021/q012, route
+   q013, q014, q015, q016, q017, q020, then q027/q028 unless newer accepted
+   evidence changes the order.
+5. Do not staff expansion teams or remote lanes until TEAM_PLAN rows, leases,
+   and usable headroom evidence exist.
+
+CEO->VALIDATOR correction 2026-05-18T13:27:00+02:00
+q012 landed after the 13:22 note via PR #204 / `2c7c02f`; accept/reject it from
+that merge evidence and treat stale q012 routing as superseded. PR #206 is an
+open MANAGER-content queue update that still assigns q012 and should not be
+accepted as-is unless rebased/reconciled. q021 remains open in PR #203 and not
+mergeable at connector check time; keep q021 duplicate-guarded and require
+updated merge evidence before accepting.
+
+MANAGER-build acceptance 2026-05-18T13:10+02:00
+- Accepted DATA-INTEGRITY generated-stem P0 atom from PR #198 / `02193fb` for
+  `REVIEWER-GENERATED-TF-META-STEM-1` and
+  `REVIEWER-GENERATED-JUDGEMENT-PROMPT-1`. GitHub reports PR #198 merged, and
+  clean current-main verification passed export parity, `validate:content`,
+  `test:derived-content`, published-question guards, content-production,
+  typecheck, ownership, and `git diff --check`.
+- Do not keep the old generated-judgement task queued. `codex-tasks/data-integrity.txt`
+  now routes `REVIEWER-GENERATED-SINGLE-CHOICE-TF-STEM-1`; broader generated
+  true/false grammar-splice naturalness remains a follow-up unless DATA-INTEGRITY
+  can cover both in one bounded generator/validator/CSV/test atom.
+
+MANAGER-build acceptance 2026-05-18T13:17+02:00
+- Accepted DATA-INTEGRITY nested single-choice true/false prompt atom from PR
+  #212 / `22d0d42` for `REVIEWER-GENERATED-SINGLE-CHOICE-TF-STEM-1`.
+  Clean `origin/main` verification passed: CSV scan found no rejected
+  single-choice/nested true-false/judgement scaffolding; `node scripts/export-question-bank.js --check`;
+  `npm run validate:content`; `npm run test:derived-content`;
+  `node --test tests/content-published-question-types.test.js`; `npm run typecheck`;
+  `npm run test:ownership`; and `git diff --check`.
+- `codex-tasks/data-integrity.txt` now routes `REVIEWER-GENERATED-TF-NATURALNESS-1`
+  as the next bounded generator-naturalness atom. Keep broader content
+  naturalness defects in CONTENT unless they require generated-template changes.
+REVIEWER-Q074-EN-NATURALNESS-1 [product defect][2026-05-18 13:26 CEST][P0 TRANSLATE-COMPLETE][language]: Focused English-support quiz pass found q074 still has unnatural user-visible English explanation prose on both the current checkout and `origin/main`. Static source evidence from `origin/main:data/additionalQuestions.ts:1267`-`:1268`: q074 `explanationEn` begins `The UHR section Municipalities have a large responsibility says...`, a source-note splice rather than idiomatic learner-facing English. Runtime evidence: after selecting English support, exported web `/quiz/q074` rendered the English question, Swedish secondary prompt, localized source citation, independent-study disclaimer, correct feedback for `True`, and the same awkward explanation; browser console/page errors were empty. Gate evidence: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 for 705 questions, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0, and no existing `REVIEWER-Q074` row was found, so current validators do not enforce this naturalness bar. Manager action: assign a CONTENT-owned q074 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 31 elderly-care municipal responsibility facts and citation; do not close TRANSLATE-COMPLETE on green validation alone.
+REVIEWER-Q078-EN-NATURALNESS-1 [product defect][2026-05-18 13:39 CEST][P0 TRANSLATE-COMPLETE][language]: Focused q078 content review found the English explanation is user-visible but still written as source-note scaffolding: `The UHR section Sweden’s path to democracy says...`. The question stem, answer, UHR citation, and source-citation cleanup are otherwise present, but the explanation reads like a source note instead of idiomatic learner-facing English. Evidence from clean `origin/main`: `nl -ba data/additionalQuestions.ts | sed -n '1332,1352p'` shows q078 `explanationEn` starts with the awkward phrase and the Swedish explanation starts `UHR-avsnittet Sveriges väg till demokrati säger...`; duplicate scan found no existing q078 English-naturalness row, only older source-citation prompt cleanup entries. Gates remain green: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 for 705 questions, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0, and focused source-citation/export/sentence tests pass 6/6. Runtime export evidence was limited because the clean temporary worktree could not resolve the configured `expo-web-browser` plugin from the shared `node_modules`, but routed quiz/practice source passes `question.explanationEn` into `ExplanationPanel` for English support. Manager action: assign a CONTENT-owned q078 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 1809 constitution / limited royal power / restricted suffrage facts; do not close TRANSLATE-COMPLETE on green validation alone.
+
+MANAGER-content -> VALIDATOR 2026-05-18T13:39:36+02:00
+q016 landed via PR #225 / `31d9828`, q017 landed via PR #222 / `fc19b58`, and
+duplicate q016 draft PR #230 was closed unmerged with its remote branch deleted.
+Per CEO 13:32, do not route q020/q027/q028 or other non-site content
+automatically while SITE-P0 deployed-site blockers are active in
+`codex-tasks/blockers.txt`. Please decide SITE lease/staffing for fresh
+capacity, or explicitly defer SITE before content naturalness continuation.
+q074 and q078 remain reviewer-filed content defects, but they should not
+preempt SITE-P0 without VALIDATOR/CEO direction. Local non-site worktrees for
+q018, q020, and q074 were observed after the CEO 13:32 update; treat them as
+unaccepted unless VALIDATOR explicitly leases content despite SITE-P0.
+
+MANAGER-build acceptance 2026-05-18T13:57+02:00
+- Accepted `SITE-P0-1` from PR #242 / `c4404d8`. Clean `origin/main`
+  verification passed: `node --check site/app.js`; `node --check
+  site/practice.js`; `node --check site/questions.js`; route/static-link
+  assertion for `#/practice`, `questions.js`, `practice.js`, and `.hub__grid`;
+  `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`;
+  `npm run test:ownership`; targeted `git diff --check`; and local static-site
+  smoke with system Chrome from `/` to `#/practice`, first chapter drill, and
+  `#/ebook` showing 12 hub cards, 4 quiz options, Ebook rendered, and no browser
+  console/page errors.
+- Keep SITE-P0 stop-the-line active, but remove `SITE-P0-1` from active work.
+  Next SETUP/build atom is `SITE-P0-2`: static Mock exam in `site/` with timed
+  flow, answer submission, result/review UX, no console errors, `node --check`
+  for changed site JS, and clean `git diff --check`.
+
+REVIEWER-Q079-EN-NATURALNESS-1 [product defect][2026-05-18 13:44 CEST][P0 TRANSLATE-COMPLETE][language]: Focused q079 content review found the English explanation is user-visible but still written as source-note scaffolding: `The UHR section Popular movements describes...` and `the material mentions...`. The question stem, answer, UHR citation, and source-citation cleanup are otherwise present, but the explanation reads like a source note instead of idiomatic learner-facing English. Evidence from clean `origin/main`: `nl -ba data/additionalQuestions.ts | sed -n '1353,1375p'` shows q079 `explanationEn` starts with the awkward phrase and the Swedish explanation starts `UHR-avsnittet Folkrörelserna beskriver...`; duplicate scan found no existing q079 English-naturalness row, only older source-citation prompt cleanup entries. Gates remain green when run from the clean worktree with the shared dependency path: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 for 705 questions, `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0, and focused source-citation/export/sentence tests pass 6/6. Runtime export evidence was not rerun for this atom because the clean worktree has no local `node_modules`, but routed quiz/practice source passes `question.explanationEn` into `ExplanationPanel` for English support. Manager action: assign a CONTENT-owned q079 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 popular-movements facts about labour, free church, women, and temperance movements; do not close TRANSLATE-COMPLETE on green validation alone.
+
+REVIEWER-SITE-STATIC-WIRING-1 [product defect][2026-05-18 14:00 CEST][P0 SITE][functional]: Focused static-site audit after rebasing onto `origin/main` `c4404d8` found SITE-P0-1 is partly fixed, but SITE-P0-2 and SITE-P0-4 are still not wired into the deployed page shell. `site/index.html` now loads `site/questions.js` and `site/practice.js`, and `/practice` renders the new hub; however `site/app.js` still only allow-lists `/`, `/practice`, `/ebook`, `/privacy`, `/support`, `/terms`, and `/sources`, and there is still no `data-page="/mock"` / `#mock-stage` shell. `site/index.html` also still does not load `site/ebook-tools.js` or `site/i18n-extras.js`, so the richer ebook helper surface is bypassed. Runtime evidence from the rebased clean worktree served at `http://127.0.0.1:8197`: Home script list includes `questions.js` and `practice.js`; `window.smtRecordAnswer` is present; `window.SMT_QUESTIONS` has 57 questions; `/practice` shows `hubCards:12` and one `#/mock` link; but `#/mock` falls back to active page `/` with `mockStageExists:false` and no `Build your exam` copy; `/ebook` still renders with 13 chapter links while `ebookToolsLoaded:false`. Gate evidence: `node --check` passes for `site/app.js`, `site/practice.js`, `site/questions.js`, `site/ebook.js`, `site/ebook-tools.js`, `site/settings.js`, `site/signin.js`, `site/extras.js`, `site/buddies.js`, and `site/fx.js`, so syntax is not the blocker. Duplicate scan found no existing SITE static-wiring reviewer row. Manager action: assign SETUP to add the static `/mock` route shell/stage, allow-list `/mock`, ensure the Practice mock link opens the live mock exam flow, load/preserve the ebook helper tooling, and add a static smoke/assertion that fails when present SITE P0 files are not reachable through the deployed page shell. Do not accept SITE-P0-2, SITE-P0-4, or SITE-P0-5 while `#/mock` falls back to Home and ebook helpers are bypassed.
+
+MANAGER-build acceptance 2026-05-18T14:08+02:00
+- Accepted `SITE-P0-2` from PR #252 / `5e834b9`, with SETUP handoff PR #254 /
+  `bfd6c7e`. This closes the `/mock` route-shell and mock-exam portion of
+  `REVIEWER-SITE-STATIC-WIRING-1`; keep its ebook-helper/SITE-P0-4 portion open.
+- Clean manager verification on current `origin/main` passed after a fresh
+  `npm ci`: `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`;
+  `node --check` for `site/app.js`, `site/practice.js`, `site/questions.js`,
+  `site/i18n-extras.js`, and `site/ebook-tools.js`; targeted `git diff --check`;
+  and static-site Chrome smoke from `/` to `#/mock`, 5-question exam completion
+  and result review, `#/practice`, and `#/ebook` with no browser console/page
+  errors.
+- Next SETUP/build atom is `SITE-P0-3`: sync `site/questions.js` from canonical
+  app data and add/keep a parity guard before the SITE-P0-4 ebook quality pass.
+
+MANAGER-build acceptance 2026-05-18T14:29+02:00
+- Accepted `SITE-P0-3` from PR #264 / `19a420e`, with SETUP handoff PR #267 /
+  `4f2f9c5`. This closes the static question-bank drift portion of SITE-P0.
+- Clean manager verification on current `origin/main` passed: `node
+  scripts/export-site-question-bank.js --check`; `node --test
+  tests/content-static-site-question-bank-parity.test.js`; `node
+  scripts/export-question-bank.js --check`; `node --check site/questions.js`;
+  `npm run validate:content`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`;
+  `npm run test:ownership`; targeted `git diff --check`; and static-site Chrome
+  smoke showing 13 Practice cards, 705-question total, q001 feedback, 5-row Mock
+  review, and no browser console/page errors.
+- Next SETUP/build atom is `SITE-P0-4`: preserve the richer `site/ebook.js` and
+  `site/ebook-tools.js` surface while improving visible writing/navigation
+  quality. Keep `SITE-P0-5` as reviewer audit only after SITE-P0-4 lands.
+
+REVIEWER-SITE-EBOOK-SV-PARITY-1 [product defect][2026-05-18 14:34 CEST][P0 SITE][language]: Focused SITE-P0-4 ebook pass found the deployed static ebook still violates the active SV/EN parity bar. Static evidence from clean `origin/main` `7f3c84b`: `rg -n "Svenska översättningen kommer|friendly stubs|We're writing this chapter now|kommer i v1.1|v1.1" site/ebook.js site/index.html -S` finds the file header `12 chapters; first 3 written in full, rest are friendly stubs`, twelve Swedish chapter-body placeholders saying `Svenska översättningen kommer i v1.1`, and the generic unwritten-chapter fallback. A focused Node scan reports `svStubCount:12` while the English ebook has 12 `Facts you'll see on the test` chapter bodies. Runtime evidence from a local static serve of `site/` at `http://127.0.0.1:8204`: system Chrome with `localStorage.smt_lang="sv"` on `#/ebook?c=1` renders the Swedish heading and lede, but the body is only `Svenska översättningen kommer i v1.1 - på engelska tills vidare. Klicka Öva för svenska frågor.`; ebook nav has 13 links, ebook tools are loaded, and browser console/page errors are 0. Manager action: assign SETUP/content-supported SITE-P0-4 work to replace all Swedish ebook placeholders with natural Swedish chapter prose matching the English coverage, remove v1.1/placeholder copy from the deployed site, and add a static ebook parity guard that fails on untranslated chapter bodies before accepting SITE-P0-4 or starting SITE-P0-5.
+
+REVIEWER-ACCOUNT-SCOPE-1 site update [2026-05-18 14:40 CEST][P0 SITE][scope/privacy]: Rechecked the deployed static `site/` surface against the same no-account MVP contract. The previous app-shell account cleanup does not cover the static site: `site/index.html` still exposes a global `Sign in` button and `#signin-modal`, `site/signin.js` opens the modal, and `site/ebook-tools.js` gates highlights/notes on `localStorage["smt_signed_in"] === "1"` with sign-in nudges. Runtime evidence from clean `origin/main` `c37bf5a` served at `http://127.0.0.1:8206`: system Chrome on `#/` found one Sign in button; clicking it opened a modal with `Sync your progress.`, `Continue with Google`, `Continue with Apple`, `Email`, `Send magic link`, and `Beta: accounts are rolling out gradually`; console/page errors were 0. Static syntax checks for `site/app.js`, `site/signin.js`, and `site/ebook-tools.js` pass, so syntax gates do not cover this scope drift. Manager action: include `site/` in `REVIEWER-ACCOUNT-SCOPE-1`: remove or hide static Sign in/OAuth/magic-link/account-sync UI and make ebook highlights/notes purely local or defer them without account prompts; add a static-site guard rejecting reachable account/auth copy before accepting the no-account MVP scope.
+
+MANAGER-build acceptance 2026-05-18T14:43+02:00
+- Accepted `SITE-P0-4` from PR #279 / `9def23a`, with SETUP handoff PR #280 /
+  `41a6bcb`. This closes `REVIEWER-SITE-EBOOK-SV-PARITY-1` and the remaining
+  ebook-helper/SITE-P0-4 portion of `REVIEWER-SITE-STATIC-WIRING-1`.
+- Clean current-main manager verification passed: `node --check site/ebook.js`;
+  `node --check site/ebook-tools.js`; focused ebook copy/navigation source
+  assertion for no stale Swedish placeholders, exposed `window.smtEbookRender`,
+  `smtApplyEbookHighlights`, chapter practice links, notes host, Swedish study
+  briefs, and source caveat; `NODE_OPTIONS='--v8-pool-size=1' npm run
+  typecheck -- --pretty false`; `NODE_OPTIONS='--v8-pool-size=1' npm run
+  validate:content`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`;
+  `git diff --check HEAD~2..HEAD`; and static-site Chrome smoke rooted at
+  `site/` for English and Swedish Ebook, `11 / 12` progress, `Öva kapitlet`
+  navigation to `#/practice?c=11`, active Practice question render, and browser
+  console/page errors 0.
+- SITE-P0 stop-the-line remains active only for `SITE-P0-5`: REVIEWER must
+  audit the live deployed static site against the draft mockups and queue
+  concrete parity defects. Do not close `SITE-P0-5` with a report-only audit.
+
+REVIEWER-SITE-LIVE-DEPLOY-STALE-1 [product/deploy defect][2026-05-18 14:55 CEST][P0 SITE][functional]: SITE-P0-5 live audit found production is not serving the accepted SITE-P0-1 through SITE-P0-4 state. GitHub workflow API shows `Scheduled Vercel deploy` is active, but `actions/workflows/278713304/runs` reports `total 0`; GitHub deployments show the latest Production success is deployment `4726822421` from `2026-05-18T10:26:13Z` at `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`, while the latest Preview deployment `4728409781` failed with `Deployment was blocked`. Runtime evidence against the latest Production URL: `/practice` has `qCount:0`, `hubCards:0`, and no mock nav; `#/mock` falls back to active page `/` with no `#mock-stage`; Swedish `#/ebook?c=1` still renders the old `Svenska översättningen kommer i v1.1` placeholder. Runtime evidence against the latest successful Preview URL `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`: only 57 questions load and the Swedish ebook still has the old placeholder. Clean local `origin/main` `04886a5` served from `site/` loads 705 questions, 13 Practice cards, `#/mock`, and Swedish ebook chapter 1 with no placeholder. Manager action: fix the production deploy path/cap/blocking state so a scheduled or manual production deploy actually runs from current `origin/main`, then add a live smoke gate that fails unless the production URL shows `window.SMT_QUESTIONS.length === 705`, `#/mock` renders `#mock-stage`, `/practice` has the current hub, and Swedish ebook chapters contain no v1.1 placeholders. Do not close SITE-P0-5 on local static evidence while production remains stale.
+
+REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 15:22 CEST][P0 SITE][functional]: Rechecked the live deployment after the AnswerOption stop-line was cleared and current `origin/main` advanced to `4636321e1287`. GitHub still reports `Scheduled Vercel deploy` active with `runCount:0`. Latest Production remains deployment `4726822421` from `2026-05-18T10:26:13Z`, SHA `3d921720f8c4`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`; latest Preview remains blocked (`4728409781`, `Deployment was blocked`), and latest successful Preview is still `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`. Runtime recheck with System Chrome: clean local `site/` from `4636321e1287` has `qCount:705`, `hubCards:13`, `mockLinks:2`, `mockStageExists:true`, and Swedish ebook chapter 1 has no placeholder; latest Production still has `qCount:0`, `hubCards:0`, `mockLinks:0`, `mockActivePage:"/"`, `mockStageExists:false`, and Swedish ebook placeholder text; latest successful Preview still has only `qCount:57`, `hubCards:12`, and the old Swedish ebook placeholder. Manager action remains unchanged: route the deploy path/cap/blocking fix before treating local SITE work as live; add a live smoke gate tied to current production so this stale-site state cannot pass again.
+
+REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1 [product defect][2026-05-18 14:55 CEST][P0 SITE][ux-parity]: SITE-P0-5 design parity audit found the current Practice hub still uses the old narrow shell instead of the draft's wide chapter-hub layout. The reference draft has `docs/design/drafts/practice-mockexam-2026-05-18/site/index.html:204` using `class="practice__inner practice__inner--wide"` and `docs/design/drafts/practice-mockexam-2026-05-18/site/styles.css:1515` setting `.practice__inner--wide { max-width: 1080px; }`. Current `origin/main` has only `site/index.html:189` `class="practice__inner"` and no production `practice__inner--wide` rule. Runtime evidence from clean local `origin/main` at 1440px: `hasWideClass:false`, `innerClientWidth:720`, `innerMaxWidth:"720px"`, grid columns `353px 353px`, and hub card widths `353`; latest successful Preview shows the same 720px container. This compresses the chapter hub/stats against the visual target even after the route is functionally wired. Manager action: assign SETUP/UI to port the draft wide Practice container and responsive guard into `site/index.html`/`site/styles.css`, preserving current question data and mock behavior; add a static or browser assertion that the desktop Practice hub uses the intended wide layout.
+
+MANAGER-build blocker 2026-05-18T15:07+02:00
+- Current `origin/main` `d42cb51` fails
+  `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` with four
+  AnswerOption accessibility parity errors: missing shared `Button` import,
+  explicit button role, feedback-aware visible label, and tone-to-variant
+  mapping.
+- Root cause is a validator/test mirror mismatch after the accepted
+  `OptionCard` component refactor. The DATA-INTEGRITY queue now routes
+  `ANSWER-OPTION-OPTIONCARD-PARITY-1` as the stop-the-line atom.
+- Do not accept additional manager/build/content/site work until
+  `validate:content` is green on current `origin/main`.
+
+MANAGER-build acceptance 2026-05-18T15:15+02:00
+- Accepted `ANSWER-OPTION-OPTIONCARD-PARITY-1` from PR #303 / `e232bf7`.
+  GitHub reports PR #303 closed and merged; current `origin/main` is `ff117b1`
+  after later docs/UIUX/reviewer merges and contains the repair.
+- Clean manager verification on current `origin/main` passed:
+  `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` with
+  `answerOptionAccessibilityParityValidated:true`; focused
+  `node --test tests/content-answer-option-accessibility-parity.test.js` 4/4;
+  `npm run typecheck -- --pretty false`; `npm run test:ownership`; and
+  `git diff --check`.
+- The AnswerOption stop-line blocker is resolved. Resume site-first P0 routing:
+  `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, then
+  `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`, with static
+  `REVIEWER-ACCOUNT-SCOPE-1` still ahead of release-config, visual-smoke, and
+  search-placeholder work.
+
+REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1 [product defect][2026-05-18 15:15 CEST][P0 SITE][privacy/monetization]: Focused static-site privacy audit on clean `origin/main` `9217f48` found the deployed `site/` JavaScript translations still overwrite the updated static HTML with the old disabled-ads/no-sales privacy contract. Source evidence: `site/index.html` now says the website uses Google AdSense and the mobile app uses Google Mobile Ads/AdMob, but `site/app.js` English `privacy.lede` still says "we don't sell anything", English `privacy.s5.p` still says "real ad rendering is disabled for the v1.0 release candidate", Swedish `privacy.lede` still says `säljer ingenting`, and Swedish `privacy.s5.p` still says `riktig annonsvisning är avstängd för v1.0-kandidaten`. Runtime evidence from locally served `site/` at `http://127.0.0.1:4317/#/privacy`: System Chrome with `localStorage.smt_lang="en"` reported `disabledAdsEn:true`, `dontSellEn:true`, and `removeAds:false`; the same route with `localStorage.smt_lang="sv"` reported `disabledAdsSv:true`, `dontSellSv:true`, and `removeAds:false`; browser console/page errors were 0. Duplicate scan found the older exported-app privacy finding and the live-deploy stale-site blocker, but no static `site/app.js` i18n privacy/monetization row. Manager action: assign SETUP/site copy work to update `site/app.js` EN/SV privacy and FAQ monetization strings so the current static site accurately states web ads use AdSense, the app uses AdMob/Google Mobile Ads with consent, Remove Ads is a one-time 29 SEK IAP that removes ads, and ads never collect study answers/progress; add a static or browser guard rejecting stale strings such as `real ad rendering is disabled`, `avstängd för v1.0`, `If we ever add premium`, and `Om vi någonsin lägger till premium`.
+
+REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1 [product defect][2026-05-18 15:29 CEST][P0 SITE][content-sync]: Focused static-site question-bank parity check on clean `origin/main` `056c4d4` found `site/questions.js` is stale after the q142 source-expansion merge. Canonical content gates are green at 710 published questions: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with `questions:710`, `sourceQuestions:142`, and `generatedPublishedQuestions:568`; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0 at 710 questions. Static-site gates are red: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 1 with `site/questions.js is out of sync`; focused `node --test tests/content-static-site-question-bank-parity.test.js` exits 1 with 0/2 passing and reports canonical 710 vs site 705. Direct `site/questions.js` VM inspection reports `siteCount:705`, `hasQ142:true`, `hasQ707:false`, `hasQ710:false`, and last IDs `q694`-`q705`, so the deployed static bank is missing the generated q142 variants and any live smoke target still expecting 705 is now stale. Duplicate scan found the accepted SITE-P0-3 static-bank sync and content q142 handoff noting `site/questions.js` was intentionally not touched by CONTENT, but no reviewer row for the new q142 drift. Manager action: route SETUP/DATA-INTEGRITY to regenerate `site/questions.js` from current canonical content, update live/static smoke expectations from 705 to 710 or derive the count dynamically, and keep `scripts/export-site-question-bank.js --check` plus `tests/content-static-site-question-bank-parity.test.js` green before accepting SITE content sync.
+
+MANAGER-build routing 2026-05-18T15:30+02:00
+- `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` is now first in the SETUP/site
+  queue because live deployment of current `origin/main` would still ship a
+  stale 705-question static bank after source expansions moved canonical
+  content beyond it.
+- Live deploy stale remains P0 but moves behind this sync repair. Its smoke
+  must use the current canonical/static count or derive it dynamically; do not
+  accept a hard-coded 705/710-question gate.
+- SETUP pane 2 received a direct tmux redirect to fetch/rebase before
+  continuing deploy work.
+
+MANAGER-build correction 2026-05-18T15:36+02:00
+- `origin/main` advanced through q143 and validates at 715 questions. Treat the
+  q142-named static-bank defect as the current static-bank drift atom, not a
+  frozen 710-question task. DATA-INTEGRITY/SETUP must fetch/rebase, regenerate
+  `site/questions.js` from the latest canonical content, and keep count checks
+  derived from canonical data.
+
+MANAGER-build review 2026-05-18T15:39+02:00
+- PR #321 / `3a323ff` landed a useful deploy workflow and
+  `scripts/check-live-site.js` harness, but do not close
+  `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` from this evidence. The handoff only
+  tested local assets at 705 questions, `check-live-site` defaults to 705, and
+  no production deploy run/live URL evidence is recorded.
+- Keep `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` first. Its repair must
+  regenerate `site/questions.js` from current canonical content and fix the
+  live-smoke count expectation so it cannot pass or require stale 705 output.
+
+REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1 resolution recheck [2026-05-18 15:40 CEST][P0 SITE][content-sync]: Rechecked current `origin/main` `d4ffd91` after `data-integrity: sync static site question bank`. The static-bank drift is now green at the current 715-question canonical count: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with `questions:715`, `sourceQuestions:143`, and `generatedPublishedQuestions:572`; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0 with `Question bank export parity OK (715 questions)`; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 0 with `Static site question-bank parity OK (715 questions, 13 chapters)`; focused `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` exits 0 with 2/2 passing. Direct VM inspection of `site/questions.js` reports `siteCount:715`, `hasQ142:true`, `hasQ143:true`, `hasQ707:true`, `hasQ710:true`, `hasQ711:true`, `hasQ715:true`, and last IDs `q704`-`q715`. Manager/VALIDATOR action: accept the static-bank drift atom only after reviewing the DATA-INTEGRITY handoff/PR evidence, then move back to `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`; any live smoke gate must now derive the count or expect 715, not stale 705.
+
+MANAGER-build acceptance 2026-05-18T15:41+02:00
+- Accepted the static-bank portion of `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`
+  from PR #324 / `d4ffd91`. Clean manager verification passed `node
+  scripts/export-site-question-bank.js --check` with 715 questions and 13
+  chapters; `node --test tests/content-static-site-question-bank-parity.test.js`
+  2/2; `node scripts/export-question-bank.js --check`; `npm run
+  validate:content` at 715 questions; `node --check site/questions.js`; direct
+  VM inspection for q142/q143/q715; `npm run typecheck -- --pretty false`;
+  `npm run test:ownership`; and `git diff --check`.
+- Split the remaining live-smoke default into `REVIEWER-SITE-LIVE-SMOKE-COUNT-1`.
+  Current local `site/` fails `npm run test:site-live` by default with
+  `expected 705, found 715`, but passes only with
+  `SITE_LIVE_REQUIRED_QUESTION_COUNT=715`. Fix that before production deploy
+  closure.
+REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 15:47 CEST][P0 SITE][functional]: Rechecked current `origin/main` `11b2b96` after `setup: derive live site question count`. The local live-smoke count gate is now green: `node --test scripts/check-live-site.test.js` exits 0 with 5/5 passing, `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and live smoke gate' scripts/build-config.test.js` exits 0, and default `node scripts/check-live-site.js http://127.0.0.1:4331` against locally served current `site/` exits 0 with 715 questions, Practice, Mock, Ebook, and no placeholder copy. The production deploy blocker is still open: GitHub Actions scheduled deploy run `26037443794` for `11b2b96` completed `failure` at `2026-05-18T13:45:19Z`; earlier runs for `d4ffd91` and `3a323ff` also failed. GitHub deployments still show latest Production success as deployment `4726822421`, SHA `3d921720f8c4`, created `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`; default `node scripts/check-live-site.js` against that URL exits 1 because `/practice.js` returns HTTP 404. Latest successful Preview remains `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`; the default live check exits 1 with 57 questions, missing current Ebook helper wiring, and stale v1.1 placeholder copy. Manager action: accept the live-smoke count fix only after reviewing SETUP PR evidence, but keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until a scheduled/manual production deployment from current main succeeds and the live URL passes `npm run test:site-live` without count overrides.
+
+MANAGER-build acceptance 2026-05-18T15:47+02:00
+- Accepted `REVIEWER-SITE-LIVE-SMOKE-COUNT-1` from PR #328 / `11b2b96`.
+  Clean current-main verification passed: `node --test
+  scripts/check-live-site.test.js` 5/5; local default `checkLiveSite` smoke
+  against current `site/` derived 715 and passed without
+  `SITE_LIVE_REQUIRED_QUESTION_COUNT`; synthetic stale-705 `questions.js`
+  failed with `expected 715, found 705`; `node
+  scripts/export-site-question-bank.js --check`; `node --test
+  tests/content-static-site-question-bank-parity.test.js` 2/2; `npm run
+  validate:content` at 715 questions; `npm run typecheck -- --pretty false`;
+  `npm run test:ownership`; and `git diff --check HEAD^..HEAD`.
+- Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open. The smoke harness now uses
+  current-count behavior, but there is still no production deploy evidence for
+  current `origin/main`.
+
+CEO->VALIDATOR 2026-05-18T15:52:00+02:00
+Treat PR #324 / `d4ffd91` static-bank sync and PR #328 / `11b2b96` live-smoke
+count derivation as accepted unless newer evidence contradicts them. Keep
+`REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until a scheduled/manual production
+deploy from current `origin/main` succeeds and the production URL passes
+`npm run test:site-live` without count overrides. Surface
+`REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` in BLOCKERS/SETUP as active SITE-P0
+behind deploy, Practice width, and account-scope; the validator evidence is
+already concrete enough for manager routing. Duplicate-guard q108 from
+`d86717e`, QuestionNavigator from `dd126cd`, and MockExamConfigPanel from
+`84f787b`.
+
+REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 15:53 CEST][P0 SITE][functional]: Rechecked current `origin/main` `9023506` after the latest UIUX/content merges. No newer scheduled deploy run exists for `9023506`; the newest `Scheduled Vercel deploy` run remains `26037443794` for `11b2b96`, completed `failure` at `2026-05-18T13:45:19Z`. The run log archive contains only `Deploy static site to Vercel production/system.txt` and stops while waiting for a hosted runner before any checkout, Vercel CLI, or live-smoke step runs, so the open issue is deployment infrastructure/evidence, not current `site/` source readiness. Current local gates are green from a clean worktree: `node --test scripts/check-live-site.test.js` exits 0 with 5/5 passing, the focused scheduled-deploy build-config test exits 0 with 1/1 passing, and `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js http://127.0.0.1:4339` exits 0 with 715 questions plus Practice, Mock, Ebook, and no placeholder copy. Live evidence remains red: latest Production success is still deployment `4726822421`, SHA `3d921720`, created `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`; `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js` against it exits 1 because `/questions.js` returns HTTP 404. Latest successful Preview `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app` still exits 1 with `expected 715, found 57`, missing current Ebook helper wiring, and stale Swedish placeholder copy. Manager action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` first for SETUP/release infrastructure; rerun or repair the scheduled/manual production deployment path until a Production deployment from current `origin/main` exists and `npm run test:site-live` passes against that production URL without overrides.
+
+MANAGER-build acceptance 2026-05-18T15:58+02:00
+- Accepted current-main static-bank sync from PR #345 / `7876dd2` after
+  rebasing the worker branch onto current `origin/main`. Clean manager
+  verification passed: `node scripts/export-site-question-bank.js --check`
+  with 715 questions and 13 chapters; focused static-site bank parity 2/2;
+  `npm run validate:content` at 715 questions; `node --check
+  site/questions.js`; `npm run test:ownership`; and `git diff --check`.
+- Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` first. The deployed production URL
+  still lacks current `site/` assets, and production deploy evidence remains
+  required before moving to Practice width, account scope, or privacy copy.
+
+REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1 [product defect][2026-05-18 16:08 CEST][P0 SITE][content-sync]: Rechecked after rebasing onto current `origin/main` `9d6b55f`. The latest Production deployment `4729276163`, SHA `767c87d`, created `2026-05-18T14:00:23Z`, is now successful at `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`, and `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js` against that URL exits 0 with 715 questions, Practice, wide Practice layout, Mock, Ebook, and no placeholder copy. However current `origin/main` moved after that deploy through `76b3bde` (`content: improve q018 prime minister explanation`), which touches `data/questions.ts`; `git log 767c87d..HEAD -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json` shows that q018 content delta. Current content validates (`NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with `questions:715`), but the deployed static bank is stale again: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 1 with `site/questions.js is out of sync`, and focused static-site parity exits 1 with 1/2 passing. `node --test scripts/check-live-site.test.js` still exits 0, so the live smoke count/asset harness does not cover same-count content drift. Manager action: route DATA-INTEGRITY/SETUP to regenerate `site/questions.js` from current canonical content after q018, then rerun export-site parity and production live smoke before closing `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`; do not close live deploy solely on the green Production URL while current static-bank parity is red.
+
+MANAGER-build acceptance 2026-05-18T16:16+02:00
+- Accepted UIUX `QuestionCard` source-citation composition from PR #349 /
+  `529480f`. Current-main verification in a clean manager worktree passed
+  `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+  focused QuestionCard/source-citation/disclaimer tests 12/12,
+  `npm run test:theme-discipline`, `npm run test:a11y-labels`,
+  `npm run validate:content`, `npm run test:ownership`, and `git diff --check`.
+- Keep SITE-P0 first. Current `origin/main` still has
+  `REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1`: clean manager evidence shows
+  `validate:content` passes at 715 questions while
+  `node scripts/export-site-question-bank.js --check` and focused static-site
+  parity fail. DATA-INTEGRITY already owns the active repair; do not duplicate
+  the source-sync work from UIUX or CONTENT.
+
+REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1 update [2026-05-18 16:18 CEST][P0 SITE][content-sync]: Rechecked clean current `origin/main` `2c4dce6` after the DATA-INTEGRITY guard/sync movement. Local static-site parity is now green again: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 0 with 715 questions and 13 chapters, focused `tests/content-static-site-question-bank-parity.test.js` exits 0 with 2/2 passing, and `node --test scripts/check-live-site.test.js` exits 0 with 5/5 passing. Production still serves stale same-count content: `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` exits 0, but `sha256sum` differs for current `origin/main:site/questions.js` (`159954bb...`) vs live `/questions.js` (`5d2710be...`), and a VM comparison of q018 shows current local `why.en` begins `The Riksdag chooses the prime minister...` while live still begins `The State section says...`; full static question arrays are not equal despite both containing 715 questions. GitHub evidence: latest scheduled deploy run `26038950515` for `1376794` completed `failure`, while latest Production success remains deployment `4729276163`, SHA `767c87d`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`. Manager action: treat the local q018/static-bank regenerate as fixed unless parity goes red again; keep live deploy/content-drift open until Production serves current `site/questions.js`, and extend the live gate to compare a content hash or sentinel question such as q018 instead of only count/assets.
+
+MANAGER-content -> VALIDATOR 2026-05-18T16:22:49+02:00
+q114 PR #352 is still the canonical CONTENT-VERIFY path; do not duplicate it.
+The existing q114 owner rebased locally in `/tmp/sct-content-verify-pane3` and
+found a gate/lease conflict, not a content-quality failure: q114's
+`data/additionalQuestions.ts` explanation cleanup makes generated
+`site/questions.js` stale, so `validate:content` fails, while CONTENT remains
+barred from `site/**`. Please decide whether SETUP/build or DATA-INTEGRITY owns
+the companion static mirror sync, or explicitly authorize a bundled cross-lane
+fix for q114. Keep q144 in PR #331 held unless non-site content is explicitly
+leased.
+
+MANAGER-build acceptance 2026-05-18T16:24+02:00
+- Accepted `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` from PR #338 / `c7227b6`
+  and the local q018 static-bank parity/validator gate from PR #355 / `1376794`.
+- Clean current-main verification passed `npm run validate:content` with
+  `staticSiteQuestionBankParityValidated:true`, `node
+  scripts/export-site-question-bank.js --check`, focused static-bank parity
+  2/2, `node scripts/export-question-bank.js --check`, `node --check
+  site/questions.js`, `node --test scripts/check-live-site.test.js` 5/5, local
+  `npm run test:site-live` including `practice wide layout`, typecheck,
+  ownership, and `git diff --check` over both accepted PR commits.
+- Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open and first. Reviewer evidence
+  now shows production can pass count/assets while still serving stale q018
+  content, so the next SETUP action is current production deploy evidence plus
+  production live smoke, then static privacy monetization copy.
+
+MANAGER-build acceptance 2026-05-18T16:28+02:00
+- Accepted the static-site portion of `REVIEWER-ACCOUNT-SCOPE-1` from PR #359 /
+  `392b84e`. Clean current-main verification passed `npm run
+  test:static-site-account-scope` 2/2, syntax checks for changed site JS and the
+  guard script, typecheck, ownership, and `git diff --check 392b84e^..392b84e`.
+- Do not duplicate static `site/` account cleanup. If the broader native
+  account route/dependency question remains in P0 scope, route it separately;
+  current SITE-P0 order is production deploy/hash evidence, then static privacy
+  monetization copy.
+
+MANAGER-build acceptance 2026-05-18T16:32+02:00
+- Accepted the live question-bank hash guard from PR #361 / `701a181`.
+  Verification to keep before deploy closure: `node --test
+  scripts/check-live-site.test.js`, local `npm run test:site-live`, typecheck,
+  ownership, and `git diff --check 701a181^..701a181`.
+- Current SITE-P0 order is production deploy/current live smoke evidence, then
+  static privacy monetization copy. Keep q114 as a separate VALIDATOR routing
+  decision because CONTENT cannot write the required static mirror.
+
+REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 16:30 CEST][P0 SITE][external/live]: Rechecked current `origin/main` `9df0988` after the live hash-guard acceptance. Production is still stale: latest Production deployment remains `4729276163`, SHA `767c87d`, created `2026-05-18T14:00:23Z`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`, while current main is `9df0988`. The current hash-aware live check exits 1 against that URL: question count and Practice/Mock/Ebook assets pass, but static question-bank content fails with expected hash prefix `159954bb98a3` and live hash prefix `5d2710bebf7e`. The controlled deploy path is externally blocked: Scheduled Vercel deploy runs `26039712170`, `26039467016`, `26038950515`, `26038147705`, `26037443794`, `26037143042`, and `26036978641` all completed `failure`; the latest check-run annotation for job `76547582762` reports account payment/spending-limit failure before the job starts. Manager action: keep this first in SITE-P0; restore GitHub Actions billing/spending capacity or provide an operator-verified production deployment, then rerun `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js <production-url>` and a reviewer live parity pass before closing SITE-P0-5.

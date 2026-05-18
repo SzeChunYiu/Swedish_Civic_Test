@@ -1353,6 +1353,23 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
+test('scheduled Vercel deploy has a site-only main trigger and live smoke gate', () => {
+  const pkg = readJson('package.json');
+  const workflow = fs.readFileSync(
+    path.join(repoRoot, '.github/workflows/scheduled-deploy.yml'),
+    'utf8',
+  );
+
+  assert.equal(pkg.scripts['test:site-live'], 'node scripts/check-live-site.js');
+  assert.match(workflow, /branches:\s*\n\s+- main/);
+  assert.match(workflow, /paths:\s*\n(?:\s+- ['"].+['"]\n)+/);
+  assert.match(workflow, /['"]site\/\*\*['"]/);
+  assert.match(workflow, /['"]scripts\/check-live-site\.js['"]/);
+  assert.match(workflow, /node scripts\/check-live-site\.js "\$deployment_url"/);
+  assert.match(workflow, /VERCEL_PRODUCTION_URL/);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/check-live-site.js')), true);
+});
+
 test('native appearance config has its required Expo module', () => {
   const pkg = readJson('package.json');
   const appConfig = readJson('app.json').expo;

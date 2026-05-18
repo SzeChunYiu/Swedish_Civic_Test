@@ -2,6 +2,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+const {
+  buildSiteQuestionBank,
+  generateStaticSiteQuestionBankJs,
+} = require('./export-site-question-bank');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -23,7 +27,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 141;
+const EXPECTED_SOURCE_QUESTIONS = 143;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -92,9 +96,23 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
 ];
-const GENERATED_TRUE_FALSE_META_STEM_PATTERNS = [
-  /\bEtt korrekt svar på frågan\s+["“]Sant eller falskt:/i,
-  /\bA correct answer to\s+["“]True or false:/i,
+const QUESTION_NESTED_META_STEM_PATTERNS = [
+  /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
+  /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
+  /\bEtt korrekt svar på frågan\s+"Sant eller falskt:/i,
+  /\bA correct answer to\s+"True or false:/i,
+  /\bVilket svar stämmer bäst\?\s*Sant eller falskt:/i,
+  /\bWhich answer best matches\?\s*True or false:/i,
+];
+const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
+  /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
+  /\bWhich option gives the correct judgment of the statement\?/i,
+];
+const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
+  /\bSant eller falskt:\s*Det stämmer att\s+(?:Ungefär|Havet)\b/i,
+  /\bTrue or false:\s*It is true that\s+(?:The|In|Approximately)\b/i,
+  /\bTrue or false:.*\bbelongs to\s+[a-zåäö][^.,"]*/i,
+  /\bSant eller falskt:.*\bhör till\s+[a-zåäö][^.,"]*/i,
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
@@ -2055,8 +2073,12 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   {
-    label: 'shared Button import',
-    pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
+    label: 'shared OptionCard import',
+    pattern: /import \{ OptionCard \} from '\.\.\/OptionCard';/,
+  },
+  {
+    label: 'OptionCard state type import',
+    pattern: /import type \{ OptionCardState \} from '\.\.\/OptionCard';/,
   },
   {
     label: 'disabled prop',
@@ -2073,6 +2095,10 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   {
     label: 'language-specific copy map',
     pattern: /const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy>/,
+  },
+  {
+    label: 'localized option state label contract',
+    pattern: /stateLabels: Record<Exclude<OptionCardState, 'idle'>, string>;/,
   },
   {
     label: 'Swedish select-answer accessibility copy',
@@ -2092,8 +2118,8 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
       /const accessibilityLabel = resultLabel\s*\?\s*`\$\{label\}, \$\{resultLabel\}`\s*:\s*copy\.selectAccessibilityLabel\(label\);/,
   },
   {
-    label: 'explicit button role',
-    pattern: /accessibilityRole="button"/,
+    label: 'localized OptionCard state label selection',
+    pattern: /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   },
   {
     label: 'selected and disabled state forwarding',
@@ -2104,13 +2130,21 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /disabled=\{disabled\}/,
   },
   {
-    label: 'feedback-aware visible label',
-    pattern: /\{resultLabel \? `\$\{label\}[^`]*\$\{resultLabel\}` : label\}/,
+    label: 'feedback-aware visible label handoff',
+    pattern: /resultLabel=\{resultLabel\}/,
   },
   {
-    label: 'tone-to-variant mapping',
+    label: 'OptionCard state forwarding',
+    pattern: /state=\{state\}/,
+  },
+  {
+    label: 'OptionCard state label forwarding',
+    pattern: /stateLabel=\{stateLabel\}/,
+  },
+  {
+    label: 'tone-to-OptionCard state mapping',
     pattern:
-      /const variant = tone === 'correct' \? 'success' : tone === 'incorrect' \? 'danger' : 'option';/,
+      /function getOptionCardState\(tone: AnswerTone, selected: boolean\): OptionCardState \{\s*if \(tone !== 'idle'\) return tone;\s*return selected \? 'selected' : 'idle';\s*\}/,
   },
   {
     label: 'English and Swedish option label switch',
@@ -3143,10 +3177,22 @@ function findQuestionStemSourceAuthorityReference(question) {
   return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
 }
 
-function findGeneratedTrueFalseMetaStem(question) {
+function findQuestionNestedMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
-  return GENERATED_TRUE_FALSE_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
+  return QUESTION_NESTED_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionJudgementMetaStem(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function isSlugTag(value) {
@@ -3202,28 +3248,418 @@ function answerLabel(option) {
   return `${option?.textSv ?? ''}`.replace(/[.!?]\s*$/, '');
 }
 
-function isTrueFalseSourceQuestion(question) {
-  return question?.type === 'true_false' && ['true', 'false'].includes(question.correctOptionId);
+function answerTextEn(option) {
+  return `${option?.textEn ?? ''}`.replace(/[.!?]\s*$/, '');
 }
 
-function trueFalseStatementBody(questionText, language) {
-  const prefix = language === 'sv' ? /^\s*Sant eller falskt:\s*/i : /^\s*True or false:\s*/i;
-  return String(questionText ?? '')
-    .replace(prefix, '')
-    .replace(/[.!?]\s*$/, '')
-    .trim();
+function stripFinalPunctuation(value) {
+  return `${value ?? ''}`.trim().replace(/[.!?]\s*$/, '');
 }
 
-function expectedTrueFalsePromptForSource(sourceQuestion, expectedTruth) {
+function ensureSentence(value) {
+  const trimmed = `${value ?? ''}`.trim();
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+}
+
+function lowerFirst(value) {
+  return value ? `${value[0].toLowerCase()}${value.slice(1)}` : value;
+}
+
+function upperFirst(value) {
+  return value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
+}
+
+function lowerLeadingEnglishArticle(value) {
+  return `${value ?? ''}`.replace(/^(The|In|A|An|At|On|Almost)\b/, (match) => match.toLowerCase());
+}
+
+function lowerLeadingSwedishCommonStart(value) {
+  return `${value ?? ''}`.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När)\b/, (match) =>
+    match.toLowerCase(),
+  );
+}
+
+function stripLeadingPurposeSv(value) {
+  return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
+}
+
+function stripLeadingPurposeEn(value) {
+  return value.replace(/^to\s+/i, '').replace(/^because\s+/i, '');
+}
+
+function stripTrueFalsePromptSv(value) {
+  return stripFinalPunctuation(`${value ?? ''}`.replace(/^Sant eller falskt:\s*/i, ''));
+}
+
+function stripTrueFalsePromptEn(value) {
+  return stripFinalPunctuation(`${value ?? ''}`.replace(/^True or false:\s*/i, ''));
+}
+
+function isTrueFalseSource(sourceQuestion) {
+  return sourceQuestion?.type === 'true_false' && sourceQuestion.options?.length === 2;
+}
+
+function truthStatementSv(statement) {
+  return `Det är korrekt att ${lowerLeadingSwedishCommonStart(statement)}`;
+}
+
+function truthStatementEn(statement) {
+  return `It is correct that ${lowerLeadingEnglishArticle(statement)}`;
+}
+
+function sourceStatementJudgementSv(statement, isTrue) {
+  return `${isTrue ? 'Det stämmer i sak att' : 'Det stämmer inte att'} ${statement}`;
+}
+
+function sourceStatementJudgementEn(statement, isTrue) {
+  return `${isTrue ? 'It is factually true that' : 'It is not true that'} ${lowerLeadingEnglishArticle(
+    statement,
+  )}`;
+}
+
+function trueFalseSourceStatementSv(sourceQuestion, variantIsTrue) {
   const sourceStatementIsTrue = sourceQuestion.correctOptionId === 'true';
-  const svStatement = trueFalseStatementBody(sourceQuestion.questionSv, 'sv');
-  const enStatement = trueFalseStatementBody(sourceQuestion.questionEn, 'en');
-  const assertion = sourceStatementIsTrue === expectedTruth;
+  const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
+  return sourceStatementJudgementSv(
+    stripTrueFalsePromptSv(sourceQuestion.questionSv),
+    assertionIsTrue,
+  );
+}
 
-  return {
-    questionSv: `Sant eller falskt: Påståendet "${svStatement}" är ${assertion ? 'sant' : 'falskt'}.`,
-    questionEn: `True or false: The statement "${enStatement}" is ${assertion ? 'true' : 'false'}.`,
-  };
+function trueFalseSourceStatementEn(sourceQuestion, variantIsTrue) {
+  const sourceStatementIsTrue = sourceQuestion.correctOptionId === 'true';
+  const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
+  return sourceStatementJudgementEn(
+    stripTrueFalsePromptEn(sourceQuestion.questionEn),
+    assertionIsTrue,
+  );
+}
+
+function generatedTrueFalseStatementSv(sourceQuestion, option, variantIsTrue) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return trueFalseSourceStatementSv(sourceQuestion, variantIsTrue);
+  }
+  return truthStatementSv(civicStatementSv(sourceQuestion, option));
+}
+
+function generatedTrueFalseStatementEn(sourceQuestion, option, variantIsTrue) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return trueFalseSourceStatementEn(sourceQuestion, variantIsTrue);
+  }
+  return truthStatementEn(civicStatementEn(sourceQuestion, option));
+}
+
+function judgementPromptSv(sourceQuestion) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return `Vilket alternativ stämmer med påståendet? ${ensureSentence(
+      stripTrueFalsePromptSv(sourceQuestion.questionSv),
+    )}`;
+  }
+  return `Vilket svar är korrekt? ${sourceQuestion.questionSv}`;
+}
+
+function judgementPromptEn(sourceQuestion) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return `Which option matches the statement? ${ensureSentence(
+      stripTrueFalsePromptEn(sourceQuestion.questionEn),
+    )}`;
+  }
+  return `Which answer is correct? ${sourceQuestion.questionEn}`;
+}
+
+function singleChoicePromptSv(sourceQuestion) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return `Välj rätt alternativ för påståendet: ${ensureSentence(
+      stripTrueFalsePromptSv(sourceQuestion.questionSv),
+    )}`;
+  }
+  return `Vilket svar stämmer bäst? ${sourceQuestion.questionSv}`;
+}
+
+function singleChoicePromptEn(sourceQuestion) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return `Choose the correct option for the statement: ${ensureSentence(
+      stripTrueFalsePromptEn(sourceQuestion.questionEn),
+    )}`;
+  }
+  return `Which answer best matches? ${sourceQuestion.questionEn}`;
+}
+
+function civicStatementSv(sourceQuestion, option) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return trueFalseSourceStatementSv(
+      sourceQuestion,
+      option?.id === sourceQuestion.correctOptionId,
+    );
+  }
+
+  const answer = stripFinalPunctuation(answerLabel(option));
+  const q = stripFinalPunctuation(sourceQuestion.questionSv);
+  let match = q.match(/^Var ligger (.+)$/i);
+  if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
+
+  match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
+  if (match) return `${upperFirst(match[1])} sträcker sig ${lowerFirst(answer)} ${match[2]}`;
+
+  match = q.match(/^Vad heter (.+)$/i);
+  if (match) return `${upperFirst(match[1])} heter ${answer}`;
+
+  match = q.match(/^Vilka öar är Sveriges två största$/i);
+  if (match) return `Sveriges två största öar är ${answer}`;
+
+  match = q.match(/^Vilka är (.+)$/i);
+  if (match) return `${upperFirst(match[1])} är ${answer}`;
+
+  match = q.match(/^Ungefär hur många (.+)$/i);
+  if (match) return `${upperFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Vilka (.+?) är viktiga i Sverige$/i);
+  if (match) return `${upperFirst(answer)} är viktiga ${match[1]} i Sverige`;
+
+  match = q.match(/^Vad betyder (.+)$/i);
+  if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket av följande ingår i (.+)$/i);
+  if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
+
+  match = q.match(/^Vilket är ett sätt att (.+)$/i);
+  if (match) return `${upperFirst(answer)} är ett sätt att ${match[1]}`;
+
+  match = q.match(/^Vad kallas det när (.+)$/i);
+  if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
+
+  match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
+  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
+
+  match = q.match(/^Hur väljer (.+?) (.+)$/i);
+  if (match) return `${upperFirst(match[1])} väljer ${match[2]} ${lowerFirst(answer)}`;
+
+  match = q.match(/^Hur många (.+?) har (.+)$/i);
+  if (match) return `${upperFirst(match[2])} har ${lowerFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Vem väljer (.+)$/i);
+  if (match) return `${upperFirst(answer)} väljer ${lowerFirst(match[1])}`;
+
+  match = q.match(/^Hur gammal måste man ha fyllt för att (.+)$/i);
+  if (match) return `Man måste ha fyllt ${lowerFirst(answer)} för att ${match[1]}`;
+
+  match = q.match(/^Vad betyder det att (.+)$/i);
+  if (match) return `${upperFirst(stripLeadingPurposeSv(answer))} beskriver att ${match[1]}`;
+
+  match = q.match(/^Vilka tre nivåer delar (.+)$/i);
+  if (match) return `${upperFirst(answer)} delar ${match[1]}`;
+
+  match = q.match(/^Vilken av följande uppgifter har (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} har uppgiften att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+
+  match = q.match(/^Vilket påstående beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
+
+  match = q.match(/^Vilken är (.+)$/i);
+  if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket exempel beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} är ett exempel på ${match[1]}`;
+
+  match = q.match(/^Hur ofta hålls (.+)$/i);
+  if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilka krav gäller för (.+)$/i);
+  if (match) return `${upperFirst(answer)} gäller för ${match[1]}`;
+
+  match = q.match(/^Varför (.+)$/i);
+  if (match) return `En anledning är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+
+  match = q.match(/^Vad har (.+?) gemensamt$/i);
+  if (match) return `${upperFirst(match[1])} har ${lowerFirst(answer)} gemensamt`;
+
+  match = q.match(/^Vad händer i (.+?) om (.+)$/i);
+  if (match) return `I ${match[1]} händer det att ${lowerFirst(answer)} om ${match[2]}`;
+
+  match = q.match(/^Vilken lista innehåller (.+)$/i);
+  if (match) return `${upperFirst(answer)} är listan som innehåller ${match[1]}`;
+
+  match = q.match(/^Vad säger (.+?) om (.+)$/i);
+  if (match) return `${upperFirst(match[1])} säger att ${lowerFirst(answer)} om ${match[2]}`;
+
+  match = q.match(/^Vad reglerar (.+)$/i);
+  if (match) return `${upperFirst(match[1])} reglerar ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vad innebär (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} innebär att ${lowerFirst(
+      stripLeadingPurposeSv(answer)
+        .replace(/^den\s+/i, '')
+        .replace(/^det\s+/i, ''),
+    )}`;
+
+  match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
+  if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
+
+  match = q.match(/^Vad gäller för (.+)$/i);
+  if (match) return `${upperFirst(answer)} gäller för ${match[1]}`;
+
+  match = q.match(/^Från vilken ålder är (.+)$/i);
+  if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
+
+  match = q.match(/^Vad förändrades genom (.+)$/i);
+  if (match)
+    return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^När firas (.+?) i Sverige$/i);
+  if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket svar beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
+
+  match = q.match(
+    /^Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen$/i,
+  );
+  if (match) return `Ett parti måste få ${lowerFirst(answer)} för att komma in i riksdagen`;
+
+  return `Svaret är ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+}
+
+function civicStatementEn(sourceQuestion, option) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return trueFalseSourceStatementEn(
+      sourceQuestion,
+      option?.id === sourceQuestion.correctOptionId,
+    );
+  }
+
+  const answer = stripFinalPunctuation(answerTextEn(option));
+  const q = stripFinalPunctuation(sourceQuestion.questionEn);
+  let match = q.match(/^Where is (.+) located$/i);
+  if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
+
+  match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
+  if (match) return `${upperFirst(match[1])} stretches ${lowerFirst(answer)} ${match[2]}`;
+
+  match = q.match(/^What is (.+) called$/i);
+  if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^What is the name of (.+)$/i);
+  if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which islands are Sweden's two largest$/i);
+  if (match) return `Sweden's two largest islands are ${answer}`;
+
+  match = q.match(/^Which islands are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${answer}`;
+
+  match = q.match(/^Which are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${answer}`;
+
+  match = q.match(/^Approximately how many (.+)$/i);
+  if (match) return `${upperFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Which (.+?) are important in Sweden$/i);
+  if (match) return `${upperFirst(answer)} are important ${match[1]} in Sweden`;
+
+  match = q.match(/^What does (.+) mean$/i);
+  if (match) return `${upperFirst(match[1])} means ${lowerFirst(answer)}`;
+
+  match = q.match(/^Which of the following is part of (.+)$/i);
+  if (match) return `${upperFirst(answer)} is part of ${match[1]}`;
+
+  match = q.match(/^Which is a way to (.+)$/i);
+  if (match) return `${upperFirst(answer)} is a way to ${match[1]}`;
+
+  match = q.match(/^What is it called when (.+)$/i);
+  if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
+
+  match = q.match(/^How can (.+?) affect (.+)$/i);
+  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
+
+  match = q.match(/^How do (.+?) choose (.+)$/i);
+  if (match) return `${upperFirst(match[1])} choose ${match[2]} ${lowerFirst(answer)}`;
+
+  match = q.match(/^How many (.+?) does (.+?) have$/i);
+  if (match) return `${upperFirst(match[2])} has ${lowerFirst(answer)} ${match[1]}`;
+
+  match = q.match(/^Who chooses (.+)$/i);
+  if (match) return `${upperFirst(answer)} chooses ${lowerFirst(match[1])}`;
+
+  match = q.match(/^How old must (.+?) be to (.+)$/i);
+  if (match) return `${upperFirst(match[1])} must be ${lowerFirst(answer)} to ${match[2]}`;
+
+  match = q.match(/^What does it mean that (.+)$/i);
+  if (match) return `${upperFirst(stripLeadingPurposeEn(answer))} describes that ${match[1]}`;
+
+  match = q.match(/^Which three levels share (.+)$/i);
+  if (match) return `${upperFirst(answer)} share ${match[1]}`;
+
+  match = q.match(/^Which of the following tasks belongs to (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} has the task to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^Which statement describes (.+)$/i);
+  if (match) return `${upperFirst(answer)} describes ${match[1]}`;
+
+  match = q.match(/^What is the foremost task of (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])}'s foremost task is ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^Which example describes (.+)$/i);
+  if (match) return `${upperFirst(answer)} is an example of ${match[1]}`;
+
+  match = q.match(/^How often are (.+) held in Sweden$/i);
+  if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
+
+  match = q.match(/^Which requirements apply to (.+)$/i);
+  if (match) return `${upperFirst(answer)} applies to ${match[1]}`;
+
+  match = q.match(/^Why (.+)$/i);
+  if (match) return `One reason is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^What do (.+?) have in common$/i);
+  if (match) return `${upperFirst(match[1])} have ${lowerFirst(answer)} in common`;
+
+  match = q.match(/^What happens in (.+?) if (.+)$/i);
+  if (match) return `In ${match[1]}, ${lowerFirst(answer)} if ${match[2]}`;
+
+  match = q.match(/^Which list contains (.+)$/i);
+  if (match) return `${upperFirst(answer)} is the list that contains ${match[1]}`;
+
+  match = q.match(/^What does (.+?) say about (.+)$/i);
+  if (match) return `${upperFirst(match[1])} says that ${lowerFirst(answer)} about ${match[2]}`;
+
+  match = q.match(/^What does (.+?) regulate$/i);
+  if (match) return `${upperFirst(match[1])} regulates ${lowerFirst(answer)}`;
+
+  match = q.match(/^What does (.+?) mean$/i);
+  if (match) return `${upperFirst(match[1])} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^Which authorities are part of (.+)$/i);
+  if (match) return `${upperFirst(answer)} are part of ${match[1]}`;
+
+  match = q.match(/^What applies to (.+)$/i);
+  if (match) return `${upperFirst(answer)} applies to ${match[1]}`;
+
+  match = q.match(/^From what age is (.+)$/i);
+  if (match) return `From ${lowerFirst(answer)}, ${match[1]}`;
+
+  match = q.match(/^What changed through (.+)$/i);
+  if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
+  if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
+
+  match = q.match(/^Which answer describes (.+)$/i);
+  if (match) return `${upperFirst(answer)} describes ${match[1]}`;
+
+  match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
+  if (match) return `A party must receive ${lowerFirst(answer)} to enter the Riksdag`;
+
+  return `The answer is ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 }
 
 function correctOption(question) {
@@ -3242,36 +3678,38 @@ function wrongOption(question) {
 function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   if (variantIndex === 0) {
     return {
-      questionSv: `Vilket svar stämmer bäst? ${sourceQuestion.questionSv}`,
-      questionEn: `Which answer best matches? ${sourceQuestion.questionEn}`,
+      questionSv: singleChoicePromptSv(sourceQuestion),
+      questionEn: singleChoicePromptEn(sourceQuestion),
     };
   }
 
   if (variantIndex === 1) {
     const option = correctOption(sourceQuestion);
-    if (isTrueFalseSourceQuestion(sourceQuestion)) {
-      return expectedTrueFalsePromptForSource(sourceQuestion, true);
-    }
     return {
-      questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
-      questionEn: `True or false: A correct answer to "${sourceQuestion.questionEn}" is "${option?.textEn}".`,
+      questionSv: `Sant eller falskt: ${ensureSentence(
+        generatedTrueFalseStatementSv(sourceQuestion, option, true),
+      )}`,
+      questionEn: `True or false: ${ensureSentence(
+        generatedTrueFalseStatementEn(sourceQuestion, option, true),
+      )}`,
     };
   }
 
   if (variantIndex === 2) {
     const option = wrongOption(sourceQuestion);
-    if (isTrueFalseSourceQuestion(sourceQuestion)) {
-      return expectedTrueFalsePromptForSource(sourceQuestion, false);
-    }
     return {
-      questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
-      questionEn: `True or false: A correct answer to "${sourceQuestion.questionEn}" is "${option?.textEn}".`,
+      questionSv: `Sant eller falskt: ${ensureSentence(
+        generatedTrueFalseStatementSv(sourceQuestion, option, false),
+      )}`,
+      questionEn: `True or false: ${ensureSentence(
+        generatedTrueFalseStatementEn(sourceQuestion, option, false),
+      )}`,
     };
   }
 
   return {
-    questionSv: `Vilket alternativ motsvarar rätt bedömning av påståendet? ${sourceQuestion.questionSv}`,
-    questionEn: `Which option gives the correct judgment of the statement? ${sourceQuestion.questionEn}`,
+    questionSv: judgementPromptSv(sourceQuestion),
+    questionEn: judgementPromptEn(sourceQuestion),
   };
 }
 
@@ -4238,7 +4676,9 @@ let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
 let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
-let questionGeneratedTrueFalseMetaStemValidated = 0;
+let questionNestedMetaStemsValidated = 0;
+let questionJudgementMetaStemsValidated = 0;
+let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
@@ -4247,6 +4687,9 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let staticSiteQuestionBankQuestionsValidated = 0;
+let staticSiteQuestionBankChaptersValidated = 0;
+let staticSiteQuestionBankParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -10526,6 +10969,40 @@ function validateQuestionBankCsvContract() {
   });
 }
 
+function validateStaticSiteQuestionBankParity() {
+  if (failures.length > 0) return;
+
+  const siteQuestionBankPath = path.join(repoRoot, 'site/questions.js');
+  let expected = '';
+  let bank;
+  let actual = '';
+
+  try {
+    expected = generateStaticSiteQuestionBankJs();
+    bank = buildSiteQuestionBank();
+  } catch (error) {
+    fail(`site/questions.js parity could not be generated: ${error.message}`);
+    return;
+  }
+
+  try {
+    actual = fs.readFileSync(siteQuestionBankPath, 'utf8');
+  } catch (error) {
+    fail(`site/questions.js could not be read: ${error.message}`);
+    return;
+  }
+
+  staticSiteQuestionBankQuestionsValidated = bank.questions.length;
+  staticSiteQuestionBankChaptersValidated = bank.chapters.length;
+
+  if (actual !== expected) {
+    fail('site/questions.js is out of sync; run node scripts/export-site-question-bank.js');
+    return;
+  }
+
+  staticSiteQuestionBankParityValidated = true;
+}
+
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'id',
   'chapterId',
@@ -11275,7 +11752,10 @@ if (Array.isArray(questions)) {
       }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
-      const generatedTrueFalseMetaStem = findGeneratedTrueFalseMetaStem(question);
+      const nestedMetaStem = findQuestionNestedMetaStem(question);
+      const judgementMetaStem = findQuestionJudgementMetaStem(question);
+      const generatedTrueFalseNaturalnessIssue =
+        findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
       } else if (stemSourceAuthorityReference) {
@@ -11283,10 +11763,20 @@ if (Array.isArray(questions)) {
       } else {
         questionAuthorityBoundaryTextValidated += 1;
       }
-      if (generatedTrueFalseMetaStem) {
-        fail(`${label} nests a generated true/false meta-stem`);
+      if (nestedMetaStem) {
+        fail(`${label} contains a generated true/false meta-stem instead of a civic statement`);
       } else {
-        questionGeneratedTrueFalseMetaStemValidated += 1;
+        questionNestedMetaStemsValidated += 1;
+      }
+      if (judgementMetaStem) {
+        fail(`${label} contains a generated judgement meta-stem instead of a civic-study prompt`);
+      } else {
+        questionJudgementMetaStemsValidated += 1;
+      }
+      if (generatedTrueFalseNaturalnessIssue) {
+        fail(`${label} contains a generated true/false grammar-splice stem`);
+      } else {
+        questionGeneratedTrueFalseNaturalnessValidated += 1;
       }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
@@ -11448,6 +11938,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
+validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
 
 if (failures.length) {
@@ -11691,7 +12182,9 @@ console.log(
       questionTextFieldsNormalizedValidated,
       questionSentenceEndingsValidated,
       questionAuthorityBoundaryTextValidated,
-      questionGeneratedTrueFalseMetaStemValidated,
+      questionNestedMetaStemsValidated,
+      questionJudgementMetaStemsValidated,
+      questionGeneratedTrueFalseNaturalnessValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,
@@ -11700,6 +12193,9 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      staticSiteQuestionBankQuestionsValidated,
+      staticSiteQuestionBankChaptersValidated,
+      staticSiteQuestionBankParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,

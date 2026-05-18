@@ -32,7 +32,7 @@ export default function AccountScreen() {
   if (status === 'anonymous' || !user) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.title}>You're not signed in</Text>
+        <Text style={styles.title}>You are not signed in</Text>
         <Text style={styles.muted}>
           Sign in to sync progress across devices and tie Remove-Ads to your account.
         </Text>
@@ -61,9 +61,11 @@ export default function AccountScreen() {
     if (trimmed === (info.name ?? '')) return;
     setSavingName(true);
     try {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({ id: user.id, display_name: trimmed || null, updated_at: new Date().toISOString() });
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id: user.id,
+        display_name: trimmed || null,
+        updated_at: new Date().toISOString(),
+      });
       if (profileError) throw profileError;
       const { error: metaError } = await supabase.auth.updateUser({
         data: { full_name: trimmed || null },
@@ -129,9 +131,7 @@ export default function AccountScreen() {
           onPress={handleSaveName}
           style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed]}
         >
-          <Text style={styles.secondaryButtonText}>
-            {savingName ? 'Saving…' : 'Save name'}
-          </Text>
+          <Text style={styles.secondaryButtonText}>{savingName ? 'Saving…' : 'Save name'}</Text>
         </Pressable>
       </View>
 
@@ -147,8 +147,8 @@ export default function AccountScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Privacy & data</Text>
         <Text style={styles.muted}>
-          We store your profile, study progress, and entitlement in Supabase (EU, Frankfurt).
-          To export or delete your data, email support — automated deletion is coming.
+          We store your profile, study progress, and entitlement in Supabase (EU, Frankfurt). To
+          export or delete your data, email support — automated deletion is coming.
         </Text>
         <Link
           accessibilityLabel="Open privacy policy"
