@@ -2,12 +2,9 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
-import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
-import { PracticeInterstitialAd } from '../../components/monetization/PracticeInterstitialAd';
-import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
+import { AdBanner } from '../../components/monetization/AdBanner';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
-import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -15,25 +12,17 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
-import {
-  getCompletedQuestionIdsForQuestionBank,
-  getPracticeQuestionForSession,
-} from '../../lib/quiz/practiceFlow';
-import {
-  getPracticeInterstitialShowKey,
-  usePracticeSessionStore,
-} from '../../lib/quiz/practiceSessionStore';
+import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
+import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
-
-type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 type PracticeCopy = {
   badge: string;
@@ -118,7 +107,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     provenanceSupplementaryLabel: 'Supplementary',
     provenanceEditorialLabel: 'Editorial',
     aboutSourcesShow: 'About the sources',
-    aboutSourcesHide: 'Close source details',
+    aboutSourcesHide: 'Close about-the-sources',
     aboutSourcesUhrTitle: 'UHR source',
     aboutSourcesUhrBody:
       "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
@@ -150,21 +139,14 @@ export default function Screen() {
     (state) => state.setIncludeSupplementaryQuestions,
   );
   const [aboutSourcesOpen, setAboutSourcesOpen] = useState(false);
-  const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
-    null,
-  );
   const copy = practiceCopy[language];
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
-  const visibleCompletedQuestionIds = useMemo(
-    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
-    [completedQuestionIds, filteredQuestions],
-  );
   const rawQuestion = getPracticeQuestionForSession(
     filteredQuestions,
-    visibleCompletedQuestionIds,
+    completedQuestionIds,
     activeQuestionId,
   );
   const question = useMemo(
@@ -186,10 +168,6 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
-  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
-  const celebrationStreak = selectedIsCorrect
-    ? (questionProgress[question.id]?.correctStreak ?? 1)
-    : 0;
   const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
@@ -218,77 +196,45 @@ export default function Screen() {
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>
-          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
-        </Text>
-        <View style={styles.headerControls}>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-selected={isBookmarked}
-            accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isBookmarked }}
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('bookmark')}
-            onPress={() => toggleBookmark(question.id)}
-            style={({ pressed }) => [
-              styles.bookmarkButton,
-              isBookmarked ? styles.bookmarkButtonActive : null,
-              focusedHeaderControl === 'bookmark' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
+        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
+        <Pressable
+          aria-selected={isBookmarked}
+          accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: isBookmarked }}
+          onPress={() => toggleBookmark(question.id)}
+          style={[styles.bookmarkButton, isBookmarked ? styles.bookmarkButtonActive : null]}
+        >
+          <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
+            {isBookmarked ? copy.bookmarked : copy.bookmark}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="switch"
+          accessibilityState={{ checked: includeSupplementary }}
+          accessibilityLabel={
+            includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+          }
+          onPress={() => setIncludeSupplementary(!includeSupplementary)}
+          style={[styles.bookmarkButton, includeSupplementary ? styles.bookmarkButtonActive : null]}
+        >
+          <Text
+            style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
           >
-            <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
-              {isBookmarked ? copy.bookmarked : copy.bookmark}
-            </Text>
-          </Pressable>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-checked={includeSupplementary}
-            accessibilityRole="switch"
-            accessibilityState={{ checked: includeSupplementary }}
-            accessibilityLabel={
-              includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
-            }
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('supplementary')}
-            onPress={() => setIncludeSupplementary(!includeSupplementary)}
-            style={({ pressed }) => [
-              styles.bookmarkButton,
-              includeSupplementary ? styles.bookmarkButtonActive : null,
-              focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
-          >
-            <Text
-              style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
-            >
-              {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
-            </Text>
-          </Pressable>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-expanded={aboutSourcesOpen}
-            accessibilityRole="button"
-            accessibilityState={{ expanded: aboutSourcesOpen }}
-            accessibilityLabel={aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('sources')}
-            onPress={() => setAboutSourcesOpen((value) => !value)}
-            style={({ pressed }) => [
-              styles.aboutSourcesTrigger,
-              focusedHeaderControl === 'sources' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
-          >
-            <Text style={styles.aboutSourcesTriggerText}>
-              {aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
-            </Text>
-          </Pressable>
-        </View>
+            {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ expanded: aboutSourcesOpen }}
+          accessibilityLabel={aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
+          onPress={() => setAboutSourcesOpen((value) => !value)}
+          style={styles.aboutSourcesTrigger}
+        >
+          <Text style={styles.aboutSourcesTriggerText}>
+            {aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
+          </Text>
+        </Pressable>
         {aboutSourcesOpen ? (
           <View accessibilityRole="text" style={styles.aboutSourcesPanel}>
             <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesUhrTitle}</Text>
@@ -334,11 +280,6 @@ export default function Screen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
-          <CelebrationBurst
-            active={selectedIsCorrect}
-            languageOverride={language}
-            streak={celebrationStreak}
-          />
           {currentScore ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
@@ -349,14 +290,8 @@ export default function Screen() {
             explanationSv={question.explanationSv}
             language={language}
           />
-          <FeedbackAudioButton
-            enabled={audioEnabled}
-            language={language}
-            text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
-          />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <PracticeInterstitialAd showKey={practiceInterstitialShowKey} />
-          <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
+          <AdBanner placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Button
               accessibilityLabel={copy.nextQuestionAccessibilityLabel}
@@ -444,22 +379,12 @@ const styles = StyleSheet.create({
   },
   aboutSourcesTrigger: {
     alignSelf: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    maxWidth: '100%',
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
+    paddingHorizontal: space[0.5],
+    paddingVertical: space[0.5],
   },
   aboutSourcesTriggerText: {
     color: colors.accent,
     fontSize: typography.caption.fontSize,
-    textAlign: 'center',
     textDecorationLine: 'underline',
   },
   aboutSourcesPanel: {
@@ -481,31 +406,12 @@ const styles = StyleSheet.create({
     lineHeight: typography.caption.lineHeight,
     marginBottom: space[0.5],
   },
-  headerControls: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  headerControlFocused: {
-    borderColor: colors.focus,
-  },
-  headerControlPressed: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
   bookmarkButton: {
     alignSelf: 'flex-start',
-    alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    maxWidth: '100%',
-    minHeight: space[6],
-    minWidth: space[6],
     paddingHorizontal: space[1.5],
     paddingVertical: space[0.75],
   },
@@ -518,7 +424,6 @@ const styles = StyleSheet.create({
     fontSize: typography.badge.fontSize,
     fontWeight: typography.badge.fontWeight,
     letterSpacing: typography.badge.letterSpacing,
-    textAlign: 'center',
     textTransform: 'uppercase',
   },
   bookmarkTextActive: {

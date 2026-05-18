@@ -698,28 +698,3 @@ lint or a justified skip if no TypeScript/source path is touched, ownership,
 targeted Prettier/diff checks, PR/merge evidence, and a current-main recheck.
 SITE-P0-5 remains external until production serves current main; do not run
 Vercel CLI from this repo.
-
-MANAGER-build acceptance 2026-05-19T01:57+02:00
-`REVIEWER-SCHEDULED-DEPLOY-VERCEL-CLI-1` is accepted on current
-`origin/main` via source commit `716e60c`. SETUP removed the scheduled
-workflow's Vercel CLI/token branch, `.vercel/project.json` write, and CLI-first
-deployment path, leaving production deployment on `VERCEL_DEPLOY_HOOK` with a
-post-hook live smoke against `VERCEL_PRODUCTION_URL`. The build-config guard
-now rejects `VERCEL_TOKEN`, Vercel CLI deploy commands, and
-`.vercel/project.json` in `.github/workflows/scheduled-deploy.yml`.
-
-Manager recheck in `/tmp/sct-manager-current-1779148` on latest
-`origin/main` `2b53617` passed direct workflow inspection,
-`NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled
-Vercel deploy has a site-only main trigger and deploy-hook live smoke gate'
-scripts/build-config.test.js` 1/1, `npm run typecheck -- --pretty false`,
-`npm run lint`, `npm run test:ownership`, `node --check
-scripts/build-config.test.js`, targeted Prettier, and `git diff --check
-716e60c^..716e60c`. A direct workflow scan for `VERCEL_TOKEN`,
-`vercel@latest`, `vercel deploy`, `.vercel/project.json`, `deploy_output`,
-`deployment_url`, and `Vercel CLI` returned no matches.
-
-Do not reopen the scheduled deploy CLI blocker without fresh current-main
-workflow regression evidence. `SITE-P0-5` remains open only for external
-production freshness: production still must serve current main and pass the
-hash-aware live smoke. No pane should run Vercel CLI from this repo.

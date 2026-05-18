@@ -60,11 +60,6 @@ function startOfWeek(date: Date): Date {
   return d;
 }
 
-function localDateFromKey(dayKey: string): Date {
-  const [year, month, day] = dayKey.split('-').map(Number);
-  return new Date(year, month - 1, day);
-}
-
 function previousDayKey(dayKey: string): string {
   const d = new Date(`${dayKey}T00:00:00.000Z`);
   return new Date(d.getTime() - DAY_MS).toISOString().slice(0, 10);
@@ -75,23 +70,22 @@ function previousDayKey(dayKey: string): string {
  * earn. Pure — returns a new state, does not mutate.
  */
 export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
-  const currentWeekStart = startOfWeek(now);
-  const lastEarnedDate = startOfWeek(localDateFromKey(state.lastEarnedAt));
-  const weeksSince = Math.floor(
-    (currentWeekStart.getTime() - lastEarnedDate.getTime()) / (7 * DAY_MS),
-  );
-  if (weeksSince <= 0) return state;
+  const currentWeekStartKey = getLocalDateKey(startOfWeek(now));
+  if (currentWeekStartKey <= state.lastEarnedAt) return state;
+
+  // Use noon UTC anchors so DST shifts don't change the rounded week count.
+  const lastNoon = new Date(`${state.lastEarnedAt}T12:00:00.000Z`).getTime();
+  const currentNoon = new Date(`${currentWeekStartKey}T12:00:00.000Z`).getTime();
+  const weeksSince = Math.max(1, Math.round((currentNoon - lastNoon) / (7 * DAY_MS)));
 
   const earned = Math.min(weeksSince * FREEZES_PER_WEEK, MAX_STOCKPILE - state.available);
   if (earned <= 0) {
-    // Still advance lastEarnedAt to the current week so we don't keep computing
-    // huge weeksSince counts.
-    return { ...state, lastEarnedAt: getLocalDateKey(currentWeekStart) };
+    return { ...state, lastEarnedAt: currentWeekStartKey };
   }
   return {
     ...state,
     available: state.available + earned,
-    lastEarnedAt: getLocalDateKey(currentWeekStart),
+    lastEarnedAt: currentWeekStartKey,
     lifetimeEarned: state.lifetimeEarned + earned,
   };
 }
@@ -176,6 +170,6 @@ export function freezeBannerCopy(
 ): string | null {
   if (result.rescuedThisRun.length === 0) return null;
   return language === 'sv'
-    ? `Sviten är räddad — du har ${result.freezeState.available} svitskydd kvar.`
+    ? `Strecket räddat — du har ${result.freezeState.available} fryser kvar.`
     : `Streak protected — ${result.freezeState.available} freezes left.`;
 }
