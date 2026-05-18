@@ -247,3 +247,13 @@ A11y props: existing decorative band behavior remains unchanged with `accessibil
 Verification: read required COMPONENTS iteration docs from `origin/main`; `git ls-tree -r --name-only origin/main lib/theme` confirmed no `lib/theme/flag.ts`; `git show origin/main:components/ui/SwedishFlagBand.tsx` confirmed the palette-token dependency; `codex-tasks/blockers.txt` now records `B-UIUX-COMPONENTS-FLAG-CONSTANTS-20260518` via PR #392 / `1e960aa`; journal-only verification ran `git diff --check`, `prettier --check docs/parallel-sessions/journals/uiux-components.md`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`.
 Blocked? yes - COMPONENTS cannot edit `lib/theme/**`, and hardcoding the flag hex in `components/**` would violate `scripts/theme-discipline.test.js`.
 Next: DESIGN-TOKENS should publish immutable flag constants from `lib/theme/flag.ts` and export them; then COMPONENTS can switch `SwedishFlagBand` to the fixed constants in a source-code iteration.
+
+## Iteration 25 - 2026-05-18
+
+Component: TopBarActions localized accessibility labels - `components/ui/TopBarActions.tsx`
+Variants/states implemented: preserved the existing top-bar icon layout while adding Swedish and English copy for audio switch on/off states, search, saved questions, and settings link accessible names.
+Tokens used: no new visual tokens; existing `space[0.5]`, `space[0.75]`, and `space[1.5]` layout tokens remain unchanged.
+A11y props: `Pressable` keeps `accessibilityRole="switch"` and checked state, now with localized `accessibilityLabel`; `Link` controls keep `accessibilityRole="link"` with localized labels from the selected settings language.
+Verification: `./node_modules/.bin/prettier --check components/ui/TopBarActions.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/ui/TopBarActions.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/ui/TopBarActions.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
+Next: Manager can review this bounded TRANSLATE-COMPLETE a11y atom; DESIGN-TOKENS still owns the separate `lib/theme/flag.ts` prerequisite for `SwedishFlagBand`.
