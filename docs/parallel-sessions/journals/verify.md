@@ -27,3 +27,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF opened for 
 PR (number + merged?): #372 merged via squash (`6a21fcb`)
 Accepted by worker? yes
 Next suggested validator action: review the q001-q050 VERIFY report and then assign `verify:data/questions.ts q051-q100`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-q051-pane3`, branch `task/verify/q051-q100-pane3-1779115492`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q051-q100` authored-source citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q051-q100-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF opened from the current UHR utbildningsmaterial page for every cited chapter/section/page group; no q051-q100 defects found; `q051`-`q100` authored-source ledger rows marked `ok` at `ca00008`; generated variants remain separate `restate` rows. `node scripts/export-question-bank.js --check` passed at 715 questions; ledger assertion passed for all 50 rows; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed after linking the ignored shared `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed; `git diff --check` and `git diff --cached --check` passed.
+PR (number + merged?): #381 merged via squash (`2b342b9`)
+Accepted by worker? yes
+Next suggested validator action: review the q051-q100 VERIFY report and then assign `verify:data/questions.ts q101-q150`.
