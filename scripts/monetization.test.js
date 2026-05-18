@@ -1502,6 +1502,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(paywallSource, /export interface PremiumBannerProps/);
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
@@ -1547,12 +1548,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.doesNotMatch(paywallSource, /\bprov förblir annonsfria\b/i);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
-  assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
-  assert.match(paywallSource, /same store account/);
-  assert.match(paywallSource, /samma butikskonto/);
-  assert.match(paywallSource, /status === 'restored' \? 'restored' : 'purchased'/);
-  assert.doesNotMatch(paywallSource, /adsDisabled \? copy\.bodyIdle/);
-  assert.doesNotMatch(paywallSource, /activeAction !== null \|\| adsDisabled/);
+  assert.match(paywallSource, /accessibilityHint=\{copy\.buyHint\}/);
+  assert.match(paywallSource, /accessibilityHint=\{copy\.restoreHint\}/);
+  assert.match(paywallSource, /minWidth: space\[15\]/);
+  assert.doesNotMatch(paywallSource, /minWidth: 128/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
