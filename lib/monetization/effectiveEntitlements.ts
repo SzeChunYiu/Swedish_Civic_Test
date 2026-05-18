@@ -9,7 +9,8 @@
 // This module is the single resolver consumers should call to get the
 // gating-ready ProTierEntitlements. Pure function, no I/O — the caller
 // fetches each input from its respective source (purchase storage,
-// SecureStore, Supabase) and passes it in.
+// secure local storage, or the optional remote account backend) and
+// passes it in.
 
 import { PRO_LIFETIME_ENTITLEMENTS, unionEntitlements } from './premium';
 import type { PremiumEntitlements, ProTierEntitlements } from '../../types/monetization';
