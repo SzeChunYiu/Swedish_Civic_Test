@@ -2706,3 +2706,20 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: update routing so local q018/static-bank sync is treated as fixed unless parity goes red again; keep the live deploy/content-drift defect open until Production serves current `site/questions.js`, and add a live content-hash or q018 sentinel check so same-count stale content cannot pass `test:site-live`.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-live-1779114438` / `task/reviewer/site-live-deploy-1779114438`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after the live hash guard acceptance and latest scheduled deploy failures.
+Changed artifacts: `codex-tasks/validator.txt`; `codex-tasks/blockers.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, current `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree rebased to `origin/main` `9df0988` because the shared checkout has unrelated dirty lane files.
+- Duplicate/current-state scan found existing `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, so this pass updates that defect instead of creating a new top-level item.
+- GitHub Actions API: newest Scheduled Vercel deploy runs `26039712170`, `26039467016`, `26038950515`, `26038147705`, `26037443794`, `26037143042`, and `26036978641` all completed `failure`; latest job `76547582762` has a check-run annotation reporting account payment/spending-limit failure before runner execution.
+- GitHub deployments API: latest Production success remains deployment `4729276163`, SHA `767c87d`, created `2026-05-18T14:00:23Z`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; count/assets pass, but static question-bank content fails with expected hash prefix `159954bb98a3` and live hash prefix `5d2710bebf7e`.
+- Workspace contract: pass; no product source files were edited.
+PR (number + merged?): #364 / pending before merge
+Accepted by worker? yes
+Next suggested validator action: keep SITE-P0 live deploy first; restore GitHub Actions billing/spending capacity or provide an operator-verified production deployment, then rerun the hash-aware live check and REVIEWER live parity pass before closing SITE-P0-5.
