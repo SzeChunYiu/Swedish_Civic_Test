@@ -358,3 +358,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: accept the q145-q200 stale-defect cleanup if gates pass, then continue rolling VERIFY with q201-q250 or the next current changed/due slice.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-pane3-q201-q250-1779139723`, branch `task/content-verify/pane3-q201-q250-1779139723`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-generated-cleanup rolling current-output refresh for `verify:data/questions.ts q201-q250`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q201-q250-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL, inspected with `pdfinfo`, and extracted with `pdftotext -layout` for printed pages 11-14; q201-q250 facts, citations, answer keys, explanations, and ordinary non-defect distractors remain supported. Current output at `origin/main` `719cb3b` clears stale true/false prefix evidence and the stale q235 false-answer explanation mismatch. Current remaining generated single-choice defects are filler-option rows `q204`, `q208`, `q212`, `q216`, `q220`, `q224`, `q228`, `q232`, `q240`, `q244`, and `q248`, plus true/false judgement-shell rows `q233` and `q236`; these were queued/folded into DATA-INTEGRITY routes. Focused CSV/static/ledger/report/queue assertion passed with 50 checked rows, 25 true_false rows, zero stale true/false prefix/meta/explanation mismatches, 11 filler-option defects, and 2 judgement-shell defects. `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` passed 6/6; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: accept the q201-q250 current-output refresh if gates pass, then keep DATA-INTEGRITY on q651/q698 first and fold q201-q250 filler/judgement evidence into the broader generated single-choice filler and true/false-judgement cleanup routes.

@@ -221,56 +221,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q198 | true-false | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d96376d | ok | rolling-source-slice |
 | q199 | false-statement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d96376d | ok | rolling-source-slice |
 | q200 | judgement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d96376d | ok | rolling-source-slice |
-| q201 | section-practice | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 75310c8 | ok | rolling-source-slice |
-| q202 | true-false | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q203 | false-statement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q204 | judgement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 75310c8 | ok | rolling-source-slice |
-| q205 | section-practice | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q206 | true-false | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q207 | false-statement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q208 | judgement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q209 | section-practice | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q210 | true-false | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q211 | false-statement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q212 | judgement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q213 | section-practice | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q214 | true-false | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q215 | false-statement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q216 | judgement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q217 | section-practice | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 75310c8 | ok | rolling-source-slice |
-| q218 | true-false | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q219 | false-statement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q220 | judgement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 75310c8 | ok | rolling-source-slice |
-| q221 | section-practice | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 75310c8 | ok | rolling-source-slice |
-| q222 | true-false | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q223 | false-statement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q224 | judgement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 75310c8 | ok | rolling-source-slice |
-| q225 | section-practice | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 75310c8 | ok | rolling-source-slice |
-| q226 | true-false | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q227 | false-statement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q228 | judgement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 75310c8 | ok | rolling-source-slice |
-| q229 | section-practice | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q230 | true-false | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q231 | false-statement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q232 | judgement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q233 | section-practice | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q234 | true-false | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q235 | false-statement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | defect | queued-data-integrity-false-explanation+tf-prefix |
-| q236 | judgement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 75310c8 | ok | rolling-source-slice |
-| q237 | section-practice | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 75310c8 | ok | rolling-source-slice |
-| q238 | true-false | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q239 | false-statement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q240 | judgement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 75310c8 | ok | rolling-source-slice |
-| q241 | section-practice | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 75310c8 | ok | rolling-source-slice |
-| q242 | true-false | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q243 | false-statement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q244 | judgement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 75310c8 | ok | rolling-source-slice |
-| q245 | section-practice | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 75310c8 | ok | rolling-source-slice |
-| q246 | true-false | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q247 | false-statement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
-| q248 | judgement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 75310c8 | ok | rolling-source-slice |
-| q249 | section-practice | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 75310c8 | ok | rolling-source-slice |
-| q250 | true-false | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 75310c8 | defect | queued-data-integrity-tf-prefix-surface |
+| q201 | section-practice | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 719cb3b | ok | rolling-source-slice |
+| q202 | true-false | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 719cb3b | ok | rolling-source-slice |
+| q203 | false-statement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 719cb3b | ok | rolling-source-slice |
+| q204 | judgement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q205 | section-practice | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q206 | true-false | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q207 | false-statement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q208 | judgement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q209 | section-practice | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q210 | true-false | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q211 | false-statement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q212 | judgement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q213 | section-practice | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q214 | true-false | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q215 | false-statement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q216 | judgement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q217 | section-practice | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 719cb3b | ok | rolling-source-slice |
+| q218 | true-false | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 719cb3b | ok | rolling-source-slice |
+| q219 | false-statement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 719cb3b | ok | rolling-source-slice |
+| q220 | judgement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q221 | section-practice | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 719cb3b | ok | rolling-source-slice |
+| q222 | true-false | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 719cb3b | ok | rolling-source-slice |
+| q223 | false-statement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 719cb3b | ok | rolling-source-slice |
+| q224 | judgement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q225 | section-practice | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 719cb3b | ok | rolling-source-slice |
+| q226 | true-false | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 719cb3b | ok | rolling-source-slice |
+| q227 | false-statement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 719cb3b | ok | rolling-source-slice |
+| q228 | judgement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q229 | section-practice | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q230 | true-false | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q231 | false-statement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q232 | judgement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q233 | section-practice | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | defect | queued-data-integrity-judgement-truefalse-filler-all |
+| q234 | true-false | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q235 | false-statement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | ok | rolling-source-slice |
+| q236 | judgement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 719cb3b | defect | queued-data-integrity-judgement-truefalse-filler-all |
+| q237 | section-practice | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 719cb3b | ok | rolling-source-slice |
+| q238 | true-false | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 719cb3b | ok | rolling-source-slice |
+| q239 | false-statement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 719cb3b | ok | rolling-source-slice |
+| q240 | judgement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q241 | section-practice | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 719cb3b | ok | rolling-source-slice |
+| q242 | true-false | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 719cb3b | ok | rolling-source-slice |
+| q243 | false-statement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 719cb3b | ok | rolling-source-slice |
+| q244 | judgement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q245 | section-practice | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 719cb3b | ok | rolling-source-slice |
+| q246 | true-false | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 719cb3b | ok | rolling-source-slice |
+| q247 | false-statement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 719cb3b | ok | rolling-source-slice |
+| q248 | judgement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
+| q249 | section-practice | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 719cb3b | ok | rolling-source-slice |
+| q250 | true-false | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 719cb3b | ok | rolling-source-slice |
 | q251 | false-statement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
 | q252 | judgement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | b8e66f7 | ok | rolling-source-slice |
 | q253 | section-practice | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | b8e66f7 | ok | rolling-source-slice |
