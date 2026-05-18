@@ -11,7 +11,9 @@ type ButtonProps = PropsWithChildren<
 export function Button({
   accessibilityHint,
   accessibilityLabel,
+  android_ripple,
   children,
+  hitSlop,
   style,
   accessibilityRole = 'button',
   accessibilityState,
@@ -45,7 +47,9 @@ export function Button({
       accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
+      android_ripple={android_ripple ?? { color: colors.focusSoft, borderless: false }}
       disabled={disabled}
+      hitSlop={hitSlop ?? space[0.5]}
       style={({ pressed }) => [
         styles.button,
         styles[variant],
