@@ -2444,6 +2444,6 @@ Verification (commands + result):
 - `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
 - `git diff --check -- data/additionalQuestions.ts content/question-bank.csv` - exit 0 in the shared checkout.
 - `git diff --check -- codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md` - exit 0 in this clean reviewer worktree.
-PR (number + merged?): pending
+PR (number + merged?): #227 / merged yes
 Accepted by worker? yes
 Next suggested validator action: assign a CONTENT-owned q074 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 31 elderly-care municipal responsibility facts and citation; keep TRANSLATE-COMPLETE open because current validators stay green while this user-visible English defect exists.
