@@ -341,3 +341,98 @@ upgrade conversion. Reuse existing lib/monetization (ADS-*/IAP-*); keep
 adsDisabled/entitlement gating intact; tsc + npm test -- monetization clean.
 One atom per change; research atom first, then policy test, then tuning.
 === END MONETIZATION-OPT ===
+
+=== PRIORITY: I18N + CONTENT-PROVENANCE + WORDING (operator 2026-05-18, user directive) ===
+Context: user flagged (a) language picker only works on tab routes, missing
+on /sources, /settings, /quiz/*, /chapter/*, /ebook/*, etc.; (b) only sv+en
+actually work — ar/fa/so/ti/pl/tr are "Coming soon" stubs and Chinese is
+absent (now added as zh-Hans/zh-Hant placeholders); (c) auto-generated
+true/false questions read like translation puzzles: 262 of them use the
+nested template "True or false: A correct answer to <q> is <a>" / "Sant
+eller falskt: Ett korrekt svar på frågan ..."; (d) no UI label distinguishes
+UHR-sourced content from algorithmically derived or hand-written
+supplementary content; (e) no "What is the Swedish civic test?" onboarding
+screen exists. Operator landed three small fixes already on
+feat/lang-picker-global-wording-rules: LanguagePicker mounted on root Stack
+header so it shows on every non-tab route; "True or false:" / "Sant eller
+falskt:" stripped at render time in lib/quiz/questionText.ts (and mirror
+test); zh-Hans/zh-Hant added to locales (available:false placeholders).
+Canonical wording rules now live at docs/content/wording-rules.md — every
+session writing content MUST follow them. AGENTS.md links to it. The
+following atoms turn the placeholders into real features.
+
+I18N-1 [P1, feature]: schema migration — replace hardcoded questionSv /
+questionEn pairs in types/content.ts with
+questionText: Record<LocaleCode, string> (same for options and explanations).
+Backwards-compatible: lib/quiz/questionText.ts maps {sv, en} pairs to the
+new shape on read. Acceptance: tsc clean, every existing question still
+renders identically in sv + en, new schema accepts adding any locale from
+lib/i18n/locales.ts without touching question rendering code.
+
+I18N-2 [P2, feature]: actual translation pipeline for the 6+2 placeholder
+locales (ar/fa/so/ti/pl/tr/zh-Hans/zh-Hant). Approach: LLM first pass with
+strict instruction to follow docs/content/wording-rules.md, then human
+translator review per locale, gated by an `available` flag promotion. RTL
+layout flip when locale.rtl=true. Acceptance: any one new locale can be
+fully selected end-to-end (UI strings + question content + ebook) with
+correct script direction.
+
+I18N-3 [P2, feature]: per-screen translation completeness badge — when a
+locale renders content that has not been human-reviewed in that locale, a
+small "Translation not yet reviewed" pill shows on the question card. The
+fallback locale text appears in lighter style underneath. Never silently
+substitute.
+
+PROV-1 [P1, feature]: add provenance: 'uhr' | 'derived' | 'editorial' to
+PracticeQuestion. uhrReference becomes optional when provenance !== 'uhr'.
+Add sourceNotes?: string for derived/editorial. Backfill: every existing
+question with tag 'published-variant' → provenance='derived', referencing
+its source question id; every other published question → provenance='uhr';
+none → editorial (none exist yet). Acceptance: tsc + every content
+validation test green; bank shows the same questions but now each has an
+honest provenance value.
+
+PROV-2 [P1, feature]: UI provenance badge on every question card and ebook
+chapter heading — UHR (blue), Supplementary (orange), Editorial (grey).
+Tooltip on tap reveals the source notes. Acceptance: every question/chapter
+visibly carries its badge; a11y label includes provenance.
+
+PROV-3 [P1, feature]: practice config gains a toggle "Include supplementary
+questions (non-UHR)" — default OFF. When OFF, only provenance='uhr'
+questions are drawn. Persists in settings store. Mock exam mode hardcodes
+provenance==='uhr' regardless of the practice toggle.
+
+PROV-4 [P2, content]: write an "About sources" expandable panel — explains
+the three provenance types in plain Swedish + English, why we include
+derived/editorial, and how to opt in/out. Links from the practice config
+toggle and from the question card tooltip.
+
+WORDING-1 [P1, content+code]: retire buildTrueStatementVariant and
+buildAnswerJudgementVariant in lib/content/derivedQuestions.ts — they
+produce stilted nested-quote questions that violate
+docs/content/wording-rules.md §2. Drop them and regenerate the bank.
+
+WORDING-2 [P2, content+code]: rewrite buildFalseStatementVariant to emit a
+flat declarative statement (with answer: false) instead of "True or false:
+A correct answer to <q> is <wrong>". Approach: take the source single_choice
+question's correct option, generate a clearly-wrong assertion, run an LLM
+pass to phrase it naturally in sv + en, then CONTENT-team review before
+publish. Acceptance: every regenerated TF question reads as a natural
+declarative statement; CONTENT manager accepts a sampled batch.
+
+ONBOARD-1 [P1, content+feature]: "What is the Swedish civic test?" first-run
+modal + permanent /about-the-test screen linked from home footer and from
+settings. Covers: UHR Sverige i fokus origin, purpose of the test, who
+takes it (citizenship applicants), what's covered, format, disclaimer that
+this app is independent and unofficial. Multilingual (uses I18N-1 schema
+when landed; until then, sv + en only).
+
+SITE-AUDIT-1 [P2, audit]: walk every screen (home, learn, practice, exam,
+mistakes, profile, chapter/*, quiz/*, ebook/*, sources, settings, account,
+search, terms, privacy, support, disclaimer, onboarding, /about-the-test
+once it lands) on web build and mobile, file every missing element / dead
+button / unclear copy / broken navigation as a routed reviewer finding via
+.shared/review-to-queue.sh. Findings become work for the responsible team
+queue. Acceptance: a single audit report at reports/site-audit-2026-05-18.md
+plus N routed findings, no "noted in docs" closures.
+=== END I18N + CONTENT-PROVENANCE + WORDING ===
