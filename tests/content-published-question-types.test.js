@@ -254,6 +254,80 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated true/false answer-scaffold stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Sant eller falskt: Det är korrekt att Svaret är genom att kontrollera information.',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'True or false: It is correct that the answer is checking information.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects generated true/false describes-that stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Sant eller falskt: Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att statschefen saknar politisk makt.',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'True or false: That the head of state lacks political power describes that Sweden is a constitutional monarchy.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
 test('published question metadata schema rejects invalid difficulty values', () => {
   const result = spawnSync(
     process.execPath,
