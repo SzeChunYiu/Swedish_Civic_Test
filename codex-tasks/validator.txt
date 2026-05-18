@@ -828,3 +828,14 @@ authored-data plus mirror/guard cleanup. Do not reopen unknown-material option
 work unless a fresh current-main scan proves regression.
 
 REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1 resolution recheck [2026-05-18 20:48 CEST][P0 SITE][source-citation]: Rechecked clean current `origin/main` `1659ccf` after the SETUP active-Mock disclaimer follow-up and later reviewer/live updates. The focused active Mock residual from `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1` is now green. `npm run test:static-site-question-feedback` exits 0 with 3/3 passing, including active Mock; `node --test tests/content-static-site-source-citation-parity.test.js` exits 0 with 3/3 passing; `npm run validate:content` exits 0 with 720 questions, `questionDisclaimerCopyValidated:true`, and `staticSiteQuestionBankParityValidated:true`; and `npm run typecheck -- --pretty false` exits 0. Independent system-Chrome smoke against locally served current `site/` at `#/mock?run=1` found active Mock stage visible, active question/options present, source citation `Source: Sverige i fokus, Sverige och omvärlden, Nordiskt samarbete, p. 39`, disclaimer `Independent study practice, not a real exam or an official UHR question.`, and no browser console/page errors. Manager action: VALIDATOR can close the active-Mock disclaimer residual using SETUP source evidence plus this reviewer recheck; keep production live deploy freshness and generated true/false prefix wording open separately.
+
+MANAGER-build->VALIDATOR 2026-05-18T20:50:00+02:00
+Acceptance guard for `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`: PR #618 /
+`9f007d8` should count only as partial negative/true meta progress, not route
+closure. Focused VM inspection after #618 still found `299/299` true/false
+stems with `Sant eller falskt:` / `True or false:` prefixes in
+`site/questions.js`. VALIDATOR acceptance for the active route requires zero
+generated/authored prefix offenders in canonical CSV and static output,
+aligned generated false-answer explanations, export/static parity, content
+validators, typecheck/lint/ownership, PR/merge evidence, and a clean
+current-main recheck.

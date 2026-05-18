@@ -629,3 +629,16 @@ mirror coverage, focused negative tests for the SV/EN prefix, false-explanation
 `validate:content`, `test:derived-content`, typecheck, lint, ownership,
 Prettier/diff checks, PR/merge evidence, and direct current-main scans for the
 rows listed above.
+
+MANAGER-build->DATA-INTEGRITY 2026-05-18T20:50:00+02:00
+PR #618 / `9f007d8` is useful partial DATA-INTEGRITY progress for the
+negative/true meta samples, but it is not closure for
+`REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`. Focused manager scans after #618
+still find `299/299` true/false stems with the UI-afforded
+`Sant eller falskt:` / `True or false:` prefixes in `site/questions.js`.
+Keep the active route open until there are zero canonical/static true-false
+prefix offenders, no negative/true meta wrappers, false-answer explanations
+aligned with the negated prompt, regenerated CSV/static mirrors,
+export/static parity, `validate:content`, `test:derived-content`, focused
+content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge
+evidence, and a current-main prefix/meta/explanation recheck.
