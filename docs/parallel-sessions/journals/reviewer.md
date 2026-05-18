@@ -2466,3 +2466,22 @@ Verification (commands + result):
 PR (number + merged?): #234 / merged yes
 Accepted by worker? yes
 Next suggested validator action: assign a CONTENT-owned q078 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 1809 constitution / limited royal power / restricted suffrage facts; keep TRANSLATE-COMPLETE open because current validators stay green while this defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-origin-main-1779104550` / `task/reviewer/q079-en-naturalness-1779104550`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q079 English naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, and current reviewer/content queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on another lane branch with local uncommitted task/report files.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Duplicate scan for `REVIEWER-Q079-EN-NATURALNESS` / q079 naturalness rows - exit 1; existing q079 rows cover older source-citation prompt cleanup, not the learner-facing English explanation.
+- `nl -ba data/additionalQuestions.ts | sed -n '1353,1375p'` - q079 `explanationEn` begins `The UHR section Popular movements describes...`; `explanationSv` begins `UHR-avsnittet Folkrörelserna beskriver...`.
+- `rg -n "explanationEn|ExplanationPanel|selectedLanguage|language" app/quiz components/quiz app/'(tabs)'/practice.tsx -S` - routed quiz and practice pass `question.explanationEn` to `ExplanationPanel` for the selected language.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 705 questions and 705 bilingual text pairs validated.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 705-question export parity OK.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0; 6/6 passing.
+PR (number + merged?): #238 / pending before merge attempt.
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q079 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 popular-movements facts about labour, free church, women, and temperance movements; keep TRANSLATE-COMPLETE open because current validators stay green while this defect exists.
