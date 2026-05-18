@@ -619,3 +619,11 @@ Verification: after isolated latest-`origin/main` worktree rebase, `node --check
 PR: #279 squash-merged to `main` as `9def23a`.
 Blocked? no - SITE-P0-4 source behavior and gates are complete on latest `origin/main`; the shared checkout had unrelated dirty queue/verifier/screenshot/UIUX files, so this atom was committed from an isolated SETUP worktree and did not stage them.
 Next suggested validator action: inspect the static Ebook reader diff, rerun the focused copy/navigation assertion and static-site Ebook smoke, then route SITE-P0-5 reviewer audit.
+
+## Iteration 197 - 2026-05-18
+Task completed: SITE-P0-4 follow-up - aligned the deployed static Ebook reader practice CTAs to explicit canonical destinations so the Migration/citizenship chapter no longer opens the unrelated outside-world chapter practice set.
+Artifacts changed: `site/ebook.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `node --check site/ebook.js` exit 0; `node --check site/ebook-tools.js` exit 0; focused ebook copy/navigation source assertion exit 0 for explicit `PRACTICE_LINKS`, no stale Swedish placeholders, render/highlight hooks, mixed-practice migration CTA, mock/source links, and notes host; static-site Chrome smoke on rebased code verified `#/ebook?c=1`, Swedish `#/ebook?c=11`, no placeholder copy, `Öva blandade frågor` routing to `#/practice?c=mix`, a rendered 10-question mixed practice round, and browser console/page errors 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `git diff --check origin/main..HEAD` exit 0 before merge and `git diff --check -- docs/parallel-sessions/journals/setup.md` exit 0 for this handoff.
+PR: #288 squash-merged to `main` as `ea3c8dd`.
+Blocked? no - SITE-P0-4 navigation semantics are corrected on latest `origin/main`; this handoff was committed from an isolated SETUP worktree and did not stage unrelated dirty files from the shared checkout.
+Next suggested validator action: rerun the static Ebook smoke and then route SITE-P0-5 reviewer audit against the live deployed static site.
