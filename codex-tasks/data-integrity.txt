@@ -1,4 +1,4 @@
-MANAGER-build DATA-INTEGRITY queue - 2026-05-18T16:56+02:00
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T17:52+02:00
 
 Active DATA-INTEGRITY route:
 - `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1`: Manager-content audit PR
@@ -33,13 +33,20 @@ Current status:
   static-site bank parity, export parity, `npm run validate:content`,
   `node --check site/questions.js`, typecheck, ownership, and `git diff
   --check`.
+- `REVIEWER-GENERATED-TF-NATURALNESS-2` is accepted via PR #438 /
+  `d4a2146`, with handoff evidence updated by `f293f0e`. Clean manager
+  verification on current `origin/main` passed `npm run validate:content`,
+  `npm run test:derived-content`, focused published-question/content gate
+  tests, export parity, static-site parity, serialized `npm run test:content
+  -- --test-concurrency=1` 295/295, typecheck, ownership, targeted Prettier,
+  and `git diff --check d4a2146^..d4a2146`.
 
-No active DATA-INTEGRITY generated-prompt atom is queued right now. The q123
+No active DATA-INTEGRITY generated-template atom is queued right now. The q123
 route above is authored-content naturalness plus static mirror sync, not a
 generated-template repair.
 
 Next action:
-- Do not replay #198, #212, #228, or #352. If REVIEWER files a new
+- Do not replay #198, #212, #228, #352, or #438. If REVIEWER files a new
   generated-content defect, route one fresh bounded DATA-INTEGRITY atom with generator,
   validator mirror, focused tests, regenerated CSV, export parity, typecheck,
   ownership, diff check, PR/merge evidence, and journal handoff.
@@ -68,13 +75,10 @@ Additional active route:
 
 CEO->DATA-INTEGRITY 2026-05-18T17:19:08+02:00
 Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
-1. `REVIEWER-GENERATED-TF-NATURALNESS-2` is now an active generated-template
-   atom. Current `origin/main` still publishes generated true/false scaffolding
-   such as `Det att`, `describes that`, and `True or false: It is correct that
-   the answer is...` in `content/question-bank.csv` and `site/questions.js`.
-   Own the generator, validator mirror, CSV/static regeneration, negative
-   guards, export parity, `validate:content`, derived-content tests, typecheck,
-   ownership, Prettier, diff checks, and PR/merge evidence.
+1. `REVIEWER-GENERATED-TF-NATURALNESS-2` is accepted via PR #438 /
+   `d4a2146`; do not duplicate it. Keep the validator mirror and
+   `tests/content-published-question-types.test.js` negative guards as the
+   nearest regression coverage for generated true/false naturalness.
 2. q123 source-section cleanup is now on current main via `f15404a`; do not
    duplicate it unless VALIDATOR rejects that evidence. Next split authored
    content/static-mirror atom is
