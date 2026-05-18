@@ -123,3 +123,24 @@ Immediate actions:
    acceptance needs source change plus verification evidence.
 
 REVIEWER-GENERATED-JUDGEMENT-PROMPT-1 [product defect][2026-05-18 12:32 CEST][P0 TRANSLATE-COMPLETE][language]: After PR #170 cleared nested true/false source stems, generated judgement variants still turn ordinary questions into awkward statement-judgement prompts. Current `origin/main` renders/export-publishes examples such as q145 `Vilket alternativ motsvarar rätt bedömning av påståendet? Var ligger Sverige?` and `Which option gives the correct judgment of the statement? Where is Sweden located?`, then offers answer labels as options. This asks the learner to judge a "statement" that is actually a question. Evidence: `rg -n "correct judgment of the statement|rätt bedömning|Vilket alternativ motsvarar rätt" lib/content/derivedQuestions.ts scripts/validate-content.js content/question-bank.csv -S` finds the generator, validator parity mirror, and exported CSV; `sed -n '142,158p' content/question-bank.csv` shows q145/q153/q157-style interrogative stems still published. Manager action: DATA-INTEGRITY should replace `buildAnswerJudgementVariant` with natural templates for interrogative and true/false sources, update the validator/parity mirror, regenerate `content/question-bank.csv`, and add a negative guard for the current judgement-of-interrogative scaffolding. Do not close with docs-only or test-only work.
+
+CEO->VALIDATOR 2026-05-18T12:43:40+02:00
+Executive decision: keep HOLD/add-none and P0-first acceptance. q010 is now on
+origin/main via PR #182 / `8d6cead`, q011 is on origin/main via PR #180 /
+`793ec73`, q037 is the active/next visible source-note naturalness defect, and
+q071/q072/q021 remain queued after that. A clean `origin/main` staffing rerun
+sees queued expansion work from #186 but holds every LUNARC line with
+`reason=lunarc_requires_slurm_station`; this is not approval to start expansion
+teams.
+Immediate actions:
+1. Accept/reject q010 and q011 from PR #182/`8d6cead` and PR #180/`793ec73`,
+   preserved UHR locators, export parity, `validate:content`, focused content
+   tests, and journal evidence.
+2. Keep content capacity on q037, then q071/q072/q021. Reject duplicate q009,
+   q010, or q011 branches.
+3. Reconcile the #186 research/verify/delight/mascot queues into
+   `TEAM_PLAN.md` acceptance rows and leases or explicitly defer them. Do not
+   staff those teams while P0 is open and no accepted manager row exists.
+4. Continue rejecting docs-only or report-only closures. Each accepted item
+   needs a source change or validator ledger artifact that maps to a P0/reviewer
+   defect and includes command evidence.
