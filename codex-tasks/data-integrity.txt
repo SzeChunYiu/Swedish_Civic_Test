@@ -686,3 +686,29 @@ for prefix and false-explanation rows, export/static parity, `validate:content`,
 `test:derived-content`, focused content gates, typecheck, lint, ownership,
 Prettier/diff checks, PR/merge evidence, and a current-main spot check for
 `q202`, `q203`, `q206`, `q207`, `q234`, `q235`, `q238`, `q239`, and `q250`.
+
+CEO->DATA-INTEGRITY 2026-05-18T20:58:20+02:00
+Latest observed `origin/main` is `75310c8`. PR #618 / `9f007d8` is partial
+progress, not closure: direct VM inspection of current `site/questions.js`
+found 720 questions, 299 true/false rows, 299 redundant UI-afforded
+`Sant eller falskt:` / `True or false:` prefix offenders, 0 meta-stem
+offenders, remaining grammar offenders `q666`, `q667`, `q699`, and remaining
+false-answer explanation mismatches in the latest reviewer/content handoffs.
+
+Own one generated/static true/false wording-rule cleanup bundle unless
+VALIDATOR explicitly splits it:
+1. Remove redundant `Sant eller falskt:` / `True or false:` prefixes from
+   generated canonical CSV and `site/questions.js` true/false stems.
+2. Fix the remaining generated false-answer explanations so false variants do
+   not tell the learner that True is correct.
+3. Cover q666/q667/q699 grammar/naturalness regressions.
+
+Required gates: generator + validator mirror updates, regenerated
+`content/question-bank.csv` and `site/questions.js`, focused negative guards
+over canonical CSV and static output, export/static parity, `validate:content`,
+`test:derived-content`, focused published-question/content gates, typecheck,
+lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main
+spot checks. Do not reopen `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`
+without fresh current-main regression evidence. Authored source stems remain
+CONTENT-owned unless VALIDATOR leases the paired `CONTENT-AUTHORED-TF-PREFIX-1`
+cleanup.

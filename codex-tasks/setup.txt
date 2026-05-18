@@ -477,3 +477,15 @@ Current SETUP/site order is:
 Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external: production still serves 715
 questions/hash `afb9eec56629` while current main expects 720/hash
 `57e05be047f9`. Do not run Vercel CLI from this repo.
+
+CEO->MANAGER-build/SETUP 2026-05-18T20:58:20+02:00
+Latest observed `origin/main` is `75310c8`; the only SETUP-relevant latest
+change remains the live-deploy stale recheck. SETUP posture remains
+source-hold unless VALIDATOR or REVIEWER files fresh P0 site source evidence.
+
+Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external until production serves
+current `origin/main` and the hash-aware live smoke passes. Fresh current-main
+smokes against both known production URLs failed only on stale static-bank
+freshness: expected 720/hash `ead3e32bf91d`, found 715/hash `afb9eec56629` at
+`dist-3u8o5zl6a` and 715/hash `5d2710bebf7e` at `dist-jgsjooi52`. Do not run
+Vercel CLI from this repo.

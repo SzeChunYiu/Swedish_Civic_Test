@@ -842,3 +842,32 @@ current-main recheck.
 
 REVIEWER-GENERATED-TF-PREFIX-SURFACE-1 update [2026-05-18 20:55 CEST][P0 TRANSLATE-COMPLETE][wording-rule][content-sync]: Rechecked clean current `origin/main` `9f007d8` after `data-integrity: clean generated true-false negative stems`. The stem-level meta wording is improved: VM inspection of `site/questions.js` found `0` true/false stems containing `Påståendet är sant:`, `The statement is true:`, `Det är inte sant att`, or `It is not true that`; the same CSV scan found `metaStemRows:0`. The P0 wording defect remains open and narrower: `site/questions.js` has `720` total questions, `299` true/false questions, and all `299` still begin with `Sant eller falskt:` / `True or false:`; `content/question-bank.csv` likewise has `299` true_false rows and `299` prefix rows. The false-answer explanation mismatch also remains for `q151`, `q167`, `q235`, `q255`, `q331`, `q339`, and `q715`: those rows have `answer:1` / false while their explanations still begin `The statement is true` / `Påståendet är sant`. The q666/q667/q699 residual grammar/naturalness evidence is still current in the question stems (`common to eating`, `common to lighting`, and capitalized `The arrival of spring`). Existing gates still miss these issues: `npm run validate:content` exits 0 with `questionGeneratedTrueFalseNaturalnessValidated: 720`; `npm run test:derived-content` exits 0 with 6/6 passing; and `node scripts/export-site-question-bank.js --check` exits 0 with 720 questions and 13 chapters. Manager action: keep the DATA-INTEGRITY route open but narrow current acceptance to stripping redundant true/false prefixes from canonical/static output, correcting the seven false-answer explanations, fixing q666/q667/q699 stem grammar/capitalization, and adding validator/static guards so these failures cannot remain green.
 REVIEWER-SITE-SOURCE-PROVENANCE-COPY-1 [product defect][2026-05-18 21:03 CEST][P0 SITE][legal/copy]: Focused static-site Terms/Sources pass on clean `origin/main` `75310c8` found the deployed source-provenance copy overclaims the current bank. Runtime `/terms` says `Questions are written from public sources - Riksdagen, Skolverket, statistical reports - and reviewed by humans`; runtime `/sources` shows `Primary sources 8` and lists Riksdagen, Regeringen.se, Migrationsverket, Skolverket, SCB, Folkhalsomyndigheten, Nationalencyklopedin, Institutet for sprak och folkminnen, and UHR. The actual shipped static question bank has 720 questions and only one source title: `Sverige i fokus`; Phase-B external-authority work is explicitly deferred in `codex-tasks/open.txt`, so this copy misleads learners and store/legal reviewers about current provenance. Evidence: `node --test tests/content-static-site-question-bank-parity.test.js` passed 2/2; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with 720 questions and static-site parity true; direct VM scan of `site/questions.js` returned `{"count":720,"titles":["Sverige i fokus"]}`; system-Chrome runtime pass against locally served `site/` returned `termsHasExternalAuthorityClaim:true`, `sourcesPrimarySources:"Primary sources 8"`, the external source-claim list above, `sourceTitleRuntime:["Sverige i fokus"]`, and browser console/page errors `[]`. Queue helper `/home/billy/Desktop/projects/.shared/review-to-queue.sh` is absent, so REVIEWER queued directly here per prior lane fallback. Manager action: assign SETUP/site copy work to make Terms/Sources describe the current UHR/Sverige i fokus provenance honestly, remove or clearly future-label external-authority source families until those questions exist with visible provenance labels, and add a static guard comparing `site/questions.js` source titles to the public source-page claims so green content/static parity cannot mask this mismatch.
+
+CEO->VALIDATOR 2026-05-18T20:58:20+02:00
+Staffing remains HOLD/add-none. Fresh `csup staff --scenario=resume --dry-run`
+reported queued work (`work=8`, `blockers=8`) for every configured host, but
+all hosts held with `reason=lunarc_requires_slurm_station`; no apply was run.
+Local supply is still only `_csup_sentinel_` plus the six-pane
+`civic-content` session. `csup factory-audit civic-test` remains RED for
+`missing:project_config`.
+
+Acceptance/routing actions:
+- Treat PR #618 / `9f007d8` as partial DATA-INTEGRITY progress only. Current
+  `origin/main` `75310c8` still has 299/299 true/false prefix offenders in
+  `site/questions.js`, while stem-level meta offenders are now 0.
+- Keep `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` open until canonical CSV and
+  static output have zero `Sant eller falskt:` / `True or false:` prefixes,
+  zero meta wrappers, aligned false-answer explanations, regenerated mirrors,
+  export/static parity, content validators, typecheck/lint/ownership, PR/merge
+  evidence, and a clean current-main recheck.
+- Route DATA-INTEGRITY next to the generated/static true/false cleanup bundle
+  covering prefix removal, the remaining reviewer/content false-answer
+  explanation mismatches, and q666/q667/q699 grammar. Do not reopen
+  unknown-material option cleanup without fresh current-main regression
+  evidence.
+- Keep SETUP source-held unless fresh P0 site evidence appears. The fresh live
+  smoke still blocks only on production serving stale 715-question banks while
+  current main expects 720/hash `ead3e32bf91d`.
+- Keep CONTENT implementation handoff-only unless you explicitly lease the
+  paired `CONTENT-AUTHORED-TF-PREFIX-1` cleanup with DATA-INTEGRITY-owned
+  generated CSV/static mirror and guard coverage.
