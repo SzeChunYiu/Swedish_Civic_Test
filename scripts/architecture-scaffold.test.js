@@ -298,6 +298,69 @@ const sourceCitationRuntimeFiles = [
   'app/chapter/[chapterId].tsx',
 ];
 
+const sourceCitationBoundaryRuntimeFiles = [
+  'lib/quiz/questionText.ts',
+  'lib/audio/speak.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+];
+
+const sourceCitationBoundaryContracts = [
+  {
+    runtimeFile: 'lib/quiz/questionText.ts',
+    snippets: [
+      'const SOURCE_AUTHORITY_REPLACEMENTS = [',
+      'export function stripSourceAuthorityPhrasing',
+      'export function getQuestionSourceCitation',
+      'Källa: Sverige i fokus',
+      'Source: Sverige i fokus',
+      'Källhänvisning saknas',
+      'Source citation unavailable',
+    ],
+  },
+  {
+    runtimeFile: 'lib/audio/speak.ts',
+    snippets: [
+      "import { stripSourceAuthorityPhrasing } from '../quiz/questionText';",
+      'const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;',
+      'Alternativ ${optionLetter(index)}',
+    ],
+  },
+  {
+    runtimeFile: 'components/quiz/QuestionCard.tsx',
+    snippets: [
+      'getQuestionDisplayText',
+      'getQuestionSourceCitation',
+      'getQuestionTranslationText',
+      'const sourceCitation = getQuestionSourceCitation(question, language);',
+      '<Text style={styles.sourceCitation}>{sourceCitation}</Text>',
+      'sourceCitationLabel: ',
+    ],
+  },
+  {
+    runtimeFile: 'components/quiz/QuestionDisclaimer.tsx',
+    snippets: [
+      'Oberoende studieverktyg',
+      'Inte officiellt',
+      'är inte riktiga provfrågor',
+      'Independent study tool',
+      'Not official',
+      'not real exam questions',
+    ],
+  },
+  {
+    runtimeFile: 'components/quiz/UHRReferenceCard.tsx',
+    snippets: [
+      'UHR-källa',
+      'UHR reference',
+      'const label = reference ? `${reference.chapter} · ${reference.section}` : copy.unavailable;',
+      'reference?.pageApprox',
+      '`${copy.approximatePage} ${reference.pageApprox}`',
+    ],
+  },
+];
+
 const questionSurfaceRuntimeFiles = [
   'components/quiz/AnswerOption.tsx',
   'components/quiz/ExplanationPanel.tsx',
@@ -347,6 +410,75 @@ const settingsRuntimeFiles = [
   'app/(tabs)/profile.tsx',
   'app/onboarding.tsx',
   'app/settings.tsx',
+];
+
+const settingsPreferenceRuntimeFiles = [
+  'lib/storage/settingsStore.ts',
+  'app/settings.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/onboarding.tsx',
+];
+
+const settingsPreferenceContracts = [
+  {
+    runtimeFile: 'lib/storage/settingsStore.ts',
+    snippets: [
+      "const languageKey = 'language';",
+      "const audioEnabledKey = 'audioEnabled';",
+      "const dailyGoalKey = 'dailyGoalAnswers';",
+      'language: readLanguage()',
+      'audioEnabled: readAudioEnabled()',
+      'dailyGoalAnswers: readDailyGoalAnswers()',
+      'settingsStorage?.set(languageKey, language);',
+      'settingsStorage?.set(audioEnabledKey, audioEnabled);',
+      'const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));',
+      'settingsStorage?.set(dailyGoalKey, safeGoal);',
+    ],
+  },
+  {
+    runtimeFile: 'app/settings.tsx',
+    snippets: [
+      'const language = useSettingsStore((state) => state.language);',
+      'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
+      'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
+      'const setLanguage = useSettingsStore((state) => state.setLanguage);',
+      'const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);',
+      'const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);',
+      'const copy = settingsCopy[language];',
+      'accessibilityRole="switch"',
+      'onPress={() => setAudioEnabled(!audioEnabled)}',
+      'onPress={() => setDailyGoalAnswers(goal)}',
+    ],
+  },
+  {
+    runtimeFile: 'app/(tabs)/_layout.tsx',
+    snippets: [
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = tabTitleCopy[language];',
+      '<Tabs.Screen name="home" options={getTabOptions(copy.home)} />',
+      '<Tabs.Screen name="profile" options={getTabOptions(copy.profile)} />',
+    ],
+  },
+  {
+    runtimeFile: 'app/(tabs)/profile.tsx',
+    snippets: [
+      'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = profileCopy[language];',
+      '{dailyGoalAnswers} {copy.answersPerDay}',
+      'href="/settings"',
+    ],
+  },
+  {
+    runtimeFile: 'app/onboarding.tsx',
+    snippets: [
+      'const language = useSettingsStore((state) => state.language);',
+      'const copy = onboardingCopy[language];',
+      'href="/settings"',
+      'accessibilityLabel={copy.adjustSettingsAccessibilityLabel}',
+    ],
+  },
 ];
 
 const tabNavigationRuntimeFiles = [
@@ -452,6 +584,104 @@ const monetizationRuntimeFiles = [
   'app/(tabs)/learn.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/(tabs)/exam.tsx',
+];
+
+const removeAdsRuntimeFiles = [
+  'lib/monetization/premium.ts',
+  'lib/monetization/purchases.ts',
+  'lib/monetization/useRemoveAdsEntitlements.ts',
+  'components/monetization/PremiumBanner.tsx',
+  'components/monetization/AdBanner.tsx',
+  'components/monetization/AdBanner.native.tsx',
+  'components/monetization/NativeAdCard.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/profile.tsx',
+];
+
+const removeAdsRuntimeContracts = [
+  {
+    runtimeFile: 'lib/monetization/premium.ts',
+    snippets: [
+      'export const REMOVE_ADS_ENTITLEMENTS',
+      'adsDisabled: true,',
+      'unlimitedMockExams: false,',
+      'fullMistakeReview: false,',
+      'return entitlements.unlimitedMockExams && entitlements.fullMistakeReview;',
+    ],
+  },
+  {
+    runtimeFile: 'lib/monetization/purchases.ts',
+    snippets: [
+      "export const REMOVE_ADS_PRICE_LABEL = '29 SEK';",
+      'requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID)',
+      'restorePurchases([REMOVE_ADS_PRODUCT_ID])',
+      'isConsumable: false',
+    ],
+  },
+  {
+    runtimeFile: 'lib/monetization/useRemoveAdsEntitlements.ts',
+    snippets: [
+      'AD_BLOCKED_PENDING_ENTITLEMENTS',
+      'getPurchaseEntitlements(purchaseRuntime)',
+      'publishRemoveAdsEntitlements(storedEntitlements)',
+      'entitlements: explicitEntitlements',
+      'entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS',
+    ],
+  },
+  {
+    runtimeFile: 'components/monetization/PremiumBanner.tsx',
+    snippets: [
+      'buyRemoveAds',
+      'restoreRemoveAdsPurchase',
+      'createDefaultPurchaseRuntimeOptions',
+      'onEntitlementsChange',
+      'copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)',
+      'copy.restoreAccessibilityLabel',
+      'statusAccessibilityLabel(statusMessage)',
+    ],
+  },
+  {
+    runtimeFile: 'components/monetization/AdBanner.tsx',
+    snippets: [
+      'useResolvedAdEntitlements(entitlements)',
+      'if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;',
+    ],
+  },
+  {
+    runtimeFile: 'components/monetization/AdBanner.native.tsx',
+    snippets: [
+      'useResolvedAdEntitlements(entitlements)',
+      'mobileAdsConsent.initialized',
+      'shouldShowAd(placement, resolvedEntitlements, mobileAdsConsent.decision.consentDecision)',
+    ],
+  },
+  {
+    runtimeFile: 'components/monetization/NativeAdCard.tsx',
+    snippets: [
+      'useResolvedAdEntitlements(entitlements)',
+      "shouldShowAd('results_native', resolvedEntitlements)",
+    ],
+  },
+  {
+    runtimeFile: 'app/(tabs)/home.tsx',
+    snippets: [
+      'useRemoveAdsEntitlements()',
+      'entitlements: monetizationEntitlements',
+      'setEntitlements: setMonetizationEntitlements',
+      'onEntitlementsChange={setMonetizationEntitlements}',
+      '<AdBanner entitlements={monetizationEntitlements} placement="home_banner" />',
+    ],
+  },
+  {
+    runtimeFile: 'app/(tabs)/profile.tsx',
+    snippets: [
+      'useRemoveAdsEntitlements()',
+      'entitlements: monetizationEntitlements',
+      'setEntitlements: setMonetizationEntitlements',
+      'onEntitlementsChange={setMonetizationEntitlements}',
+      'runtimeOptions={purchaseRuntime}',
+    ],
+  },
 ];
 
 const learningProgressRuntimeFiles = [
@@ -615,6 +845,10 @@ test('product architecture manifest matches the target scaffold files', () => {
     manifest,
     'architectureSourceCitationRuntimeFiles',
   );
+  const manifestSourceCitationBoundaryRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureSourceCitationBoundaryRuntimeFiles',
+  );
   const manifestQuestionSurfaceRuntimeFiles = valuesInConstArray(
     manifest,
     'architectureQuestionSurfaceRuntimeFiles',
@@ -622,6 +856,10 @@ test('product architecture manifest matches the target scaffold files', () => {
   const manifestSettingsRuntimeFiles = valuesInConstArray(
     manifest,
     'architectureSettingsRuntimeFiles',
+  );
+  const manifestSettingsPreferenceRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureSettingsPreferenceRuntimeFiles',
   );
   const manifestTabNavigationRuntimeFiles = valuesInConstArray(
     manifest,
@@ -652,6 +890,10 @@ test('product architecture manifest matches the target scaffold files', () => {
     manifest,
     'architectureMonetizationRuntimeFiles',
   );
+  const manifestRemoveAdsRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureRemoveAdsRuntimeFiles',
+  );
   const manifestLearningProgressRuntimeFiles = valuesInConstArray(
     manifest,
     'architectureLearningProgressRuntimeFiles',
@@ -675,8 +917,10 @@ test('product architecture manifest matches the target scaffold files', () => {
   assert.deepEqual(manifestAnswerShuffleReviewRuntimeFiles, answerShuffleReviewRuntimeFiles);
   assert.deepEqual(manifestQuestionLanguageRuntimeFiles, questionLanguageRuntimeFiles);
   assert.deepEqual(manifestSourceCitationRuntimeFiles, sourceCitationRuntimeFiles);
+  assert.deepEqual(manifestSourceCitationBoundaryRuntimeFiles, sourceCitationBoundaryRuntimeFiles);
   assert.deepEqual(manifestQuestionSurfaceRuntimeFiles, questionSurfaceRuntimeFiles);
   assert.deepEqual(manifestSettingsRuntimeFiles, settingsRuntimeFiles);
+  assert.deepEqual(manifestSettingsPreferenceRuntimeFiles, settingsPreferenceRuntimeFiles);
   assert.deepEqual(manifestTabNavigationRuntimeFiles, tabNavigationRuntimeFiles);
   assert.deepEqual(manifestSpeechRuntimeFiles, speechRuntimeFiles);
   assert.deepEqual(manifestPracticeFlowRuntimeFiles, practiceFlowRuntimeFiles);
@@ -685,6 +929,7 @@ test('product architecture manifest matches the target scaffold files', () => {
   assert.deepEqual(manifestQuizFeedbackRuntimeFiles, quizFeedbackRuntimeFiles);
   assert.deepEqual(manifestMistakeReviewRuntimeFiles, mistakeReviewRuntimeFiles);
   assert.deepEqual(manifestMonetizationRuntimeFiles, monetizationRuntimeFiles);
+  assert.deepEqual(manifestRemoveAdsRuntimeFiles, removeAdsRuntimeFiles);
   assert.deepEqual(manifestLearningProgressRuntimeFiles, learningProgressRuntimeFiles);
 });
 
@@ -807,6 +1052,35 @@ test('architecture source citation runtime files exist', () => {
   );
 });
 
+test('architecture source citation boundary runtime files exist', () => {
+  assert.deepEqual(
+    sourceCitationBoundaryRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('source citation, disclaimer, and speech boundaries stay separated', () => {
+  for (const contract of sourceCitationBoundaryContracts) {
+    const source = readText(contract.runtimeFile);
+
+    for (const snippet of contract.snippets) {
+      assertIncludes(
+        source,
+        snippet,
+        `${contract.runtimeFile} should keep source-citation boundary wiring: ${snippet}`,
+      );
+    }
+  }
+
+  const disclaimerSource = readText('components/quiz/QuestionDisclaimer.tsx');
+  const questionCardSource = readText('components/quiz/QuestionCard.tsx');
+  const speechSource = readText('lib/audio/speak.ts');
+
+  assert.doesNotMatch(disclaimerSource, /getQuestionSourceCitation|UHRReferenceCard|uhrReference/);
+  assert.doesNotMatch(questionCardSource, /QuestionDisclaimer/);
+  assert.doesNotMatch(speechSource, /getQuestionSourceCitation|UHRReferenceCard|Källa:|Source:/);
+});
+
 test('architecture question surface runtime files exist', () => {
   assert.deepEqual(
     questionSurfaceRuntimeFiles.filter((relativePath) => !exists(relativePath)),
@@ -841,6 +1115,27 @@ test('architecture settings runtime files exist', () => {
     settingsRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
+});
+
+test('architecture settings preference runtime files exist', () => {
+  assert.deepEqual(
+    settingsPreferenceRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('settings preference surfaces keep persisted language, audio, and daily-goal wiring', () => {
+  for (const contract of settingsPreferenceContracts) {
+    const source = readText(contract.runtimeFile);
+
+    for (const snippet of contract.snippets) {
+      assertIncludes(
+        source,
+        snippet,
+        `${contract.runtimeFile} should keep settings-preference wiring: ${snippet}`,
+      );
+    }
+  }
 });
 
 test('architecture tab navigation runtime files exist', () => {
@@ -897,6 +1192,27 @@ test('architecture monetization runtime files exist', () => {
     monetizationRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
+});
+
+test('architecture Remove Ads runtime files exist', () => {
+  assert.deepEqual(
+    removeAdsRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('Remove Ads runtime surfaces keep purchase, entitlement, and ad gating wiring', () => {
+  for (const contract of removeAdsRuntimeContracts) {
+    const source = readText(contract.runtimeFile);
+
+    for (const snippet of contract.snippets) {
+      assertIncludes(
+        source,
+        snippet,
+        `${contract.runtimeFile} should keep Remove Ads wiring: ${snippet}`,
+      );
+    }
+  }
 });
 
 test('architecture learning progress runtime files exist', () => {

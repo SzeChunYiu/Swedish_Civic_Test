@@ -37,6 +37,16 @@ type HomeCopy = {
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
+  quickActionExam: string;
+  quickActionExamAccessibilityLabel: string;
+  quickActionMistakes: string;
+  quickActionMistakesAccessibilityLabel: string;
+  quickActionPractice: string;
+  quickActionPracticeAccessibilityLabel: string;
+  quickActionSettings: string;
+  quickActionSettingsAccessibilityLabel: string;
+  quickActionsSubtitle: string;
+  quickActionsTitle: string;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
@@ -77,6 +87,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
+    quickActionExam: 'Gör prov',
+    quickActionExamAccessibilityLabel: 'Öppna tidsatt provträning',
+    quickActionMistakes: 'Repetera fel',
+    quickActionMistakesAccessibilityLabel: 'Öppna fel svar att repetera',
+    quickActionPractice: 'Snabb övning',
+    quickActionPracticeAccessibilityLabel: 'Starta en snabb övningsfråga',
+    quickActionSettings: 'Justera mål',
+    quickActionSettingsAccessibilityLabel: 'Öppna inställningar för språk, ljud och dagligt mål',
+    quickActionsSubtitle: 'Välj ett konkret nästa steg utan att leta i flikarna.',
+    quickActionsTitle: 'Nästa steg',
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
@@ -117,6 +137,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
+    quickActionExam: 'Take exam',
+    quickActionExamAccessibilityLabel: 'Open timed mock exam practice',
+    quickActionMistakes: 'Review mistakes',
+    quickActionMistakesAccessibilityLabel: 'Open wrong answers to review',
+    quickActionPractice: 'Quick practice',
+    quickActionPracticeAccessibilityLabel: 'Start a quick practice question',
+    quickActionSettings: 'Adjust goals',
+    quickActionSettingsAccessibilityLabel: 'Open language, audio, and daily goal settings',
+    quickActionsSubtitle: 'Pick a concrete next step without hunting through tabs.',
+    quickActionsTitle: 'Next actions',
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
@@ -215,6 +245,42 @@ export default function Screen() {
         />
       </View>
 
+      <SectionHeader title={copy.quickActionsTitle} subtitle={copy.quickActionsSubtitle} />
+      <View style={styles.quickActionGrid}>
+        <Link
+          accessibilityLabel={copy.quickActionPracticeAccessibilityLabel}
+          accessibilityRole="link"
+          href="/practice"
+          style={[styles.quickActionLink, styles.quickActionPrimary]}
+        >
+          {copy.quickActionPractice}
+        </Link>
+        <Link
+          accessibilityLabel={copy.quickActionExamAccessibilityLabel}
+          accessibilityRole="link"
+          href="/exam"
+          style={styles.quickActionLink}
+        >
+          {copy.quickActionExam}
+        </Link>
+        <Link
+          accessibilityLabel={copy.quickActionMistakesAccessibilityLabel}
+          accessibilityRole="link"
+          href="/mistakes"
+          style={styles.quickActionLink}
+        >
+          {copy.quickActionMistakes}
+        </Link>
+        <Link
+          accessibilityLabel={copy.quickActionSettingsAccessibilityLabel}
+          accessibilityRole="link"
+          href="/settings"
+          style={styles.quickActionLink}
+        >
+          {copy.quickActionSettings}
+        </Link>
+      </View>
+
       <Card style={styles.feedbackCard}>
         <Badge tone="blue">{copy.feedbackBadge}</Badge>
         <Text accessibilityRole="header" style={styles.feedbackTitle}>
@@ -305,6 +371,33 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     gap: space[1.5],
+  },
+  quickActionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1.5],
+  },
+  quickActionLink: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    color: colors.text,
+    flexGrow: 1,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
+    minHeight: space[6],
+    minWidth: space[15],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.5],
+    textAlign: 'center',
+    textDecorationLine: 'none',
+  },
+  quickActionPrimary: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+    color: colors.surface,
   },
   feedbackCard: {
     gap: space[1],

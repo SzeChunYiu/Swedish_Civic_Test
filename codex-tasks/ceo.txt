@@ -1,0 +1,66 @@
+
+
+- `/home/billy/Desktop/projects/codex-supervisor/docs/ceo-staffing.md`
+- `docs/parallel-sessions/TEAM_PLAN.md`
+- `docs/parallel-sessions.md`
+- `codex-tasks/ceo-inbox.txt`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, manager queues
+
+Evidence:
+- `/Users/billy/Desktop/projects/codex-supervisor/...` paths are absent on this host; equivalent files exist under `/home/billy/Desktop/projects/codex-supervisor/...`.
+- `csup staff civic-test --scenario=resume --dry-run` failed because this checkout is not registered in `csup ls` by project name.
+- `csup staff /home/billy/Swedish_Civic_Test --scenario=resume --dry-run` completed and recommended STAFF-DOWN for LUNARC hosts because remote `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks` queues were not visible there.
+- `csup factory-audit /home/billy/Swedish_Civic_Test` reported GREEN by `/goal` queue count, but local queue files still contain non-`/goal` P0/product demand.
+- `csup steward /home/billy/Swedish_Civic_Test --sample-secs=5` reported `total=0`, while local tmux shows `civic-laptop-build` active with six panes.
+- `csup status /home/billy/Swedish_Civic_Test` reports every LUNARC host unreachable.
+- `tmux -L civic-laptop-build list-panes` shows six active local panes in `/home/billy/Swedish_Civic_Test`.
+
+Decision:
+- HOLD new LUNARC staffing. Do not start, apply, or stop remote teams until the remote queue path and project registration mismatch is fixed.
+- Keep the active local `civic-laptop-build` six-pane team as the only staffed execution surface for now.
+- Treat `P0.md` as the acceptance governor: while any P0 item is unchecked, manager acceptance must demonstrate P0 advancement, not generic polish.
+- Highest priority order: SHUFFLE-FIX correctness, TRANSLATE-COMPLETE naturalness defects, SOURCE-CITATION/runtime citation coverage, critical reviewer defects, then non-P0 UI/release polish.
+- Manager-build should accept/reject the in-flight SETUP/UIUX/DATA-INTEGRITY handoffs only after their journal handoffs and current-tree checks are complete.
+
+Team posture:
+- Active: `civic-laptop-build` local convergence team. Manager: MANAGER-build. Workers/equivalents: REVIEWER, SETUP, UIUX, DATA-INTEGRITY, plus this CEO pane. Scope: current checkout, source-touching app/content/test atoms only.
+- Held: LUNARC `civic-meta-lunarc`, `civic-team-build-lunarc`, `civic-team-uiux-lunarc`, `civic-team-uiux-design-lunarc`, `civic-team-uiux-runtime-lunarc`, `civic-team-qa-lunarc`, `civic-team-release-lunarc`, and legacy `civic-lunarc` because host status is unreachable and remote queues are not visible to `csup staff`.
+- Future expansion condition: only reopen split UIUX/QA/release teams after P0 acceptance pressure is under control and `csup staff` sees the same queued work as the local checkout.
+
+Escalations:
+- Infra: `csup` project lookup only finds Desktop projects by name; this checkout needs registration or `CSUP_EXTRA_PROJECT_ROOTS=/home/billy` for name-based commands.
+- Infra: LUNARC project path queue files are absent or not synced, causing `csup staff` to see no queued work remotely.
+- Version control: local `main` is ahead 2 / behind 11 from `origin/main`; defer reconciliation until current manager acceptance boundary is stable.
+
+## CEO staffing cycle — 2026-05-18 07:56 CEST
+
+Read:
+- `/home/billy/Desktop/projects/codex-supervisor/docs/parallel-sessions/ceo-executive.md`
+- `/home/billy/Desktop/projects/codex-supervisor/docs/company-operating-model.md`
+- `/home/billy/Desktop/projects/codex-supervisor/docs/ai-factory.md`
+- `/home/billy/Desktop/projects/codex-supervisor/docs/ceo-staffing.md`
+- `docs/parallel-sessions/TEAM_PLAN.md`
+- `docs/parallel-sessions.md`
+- `codex-tasks/P0.md`, `codex-tasks/open.txt`, `codex-tasks/ceo-inbox.txt`, `codex-tasks/validator.txt`, `codex-tasks/blockers.txt`
+
+Evidence:
+- The requested `/Users/billy/Desktop/projects/codex-supervisor/...` docs are not present on this host; the equivalent supervisor docs are present under `/home/billy/Desktop/projects/codex-supervisor/...`.
+- `csup staff civic-test --scenario=resume --dry-run` still fails with `no .codex-supervisor.toml found for project 'civic-test'`.
+- `csup staff /home/billy/Swedish_Civic_Test --scenario=resume --dry-run` still recommends STAFF-DOWN for all configured LUNARC hosts and reports no remote task queue files under `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks`.
+- `csup factory-audit /home/billy/Swedish_Civic_Test` reports GREEN by `/goal` queue count, but this is not sufficient evidence of acceptance because local `P0.md`, `open.txt`, `validator.txt`, and reviewer blocker notes still contain product demand.
+- `csup status /home/billy/Swedish_Civic_Test` reports every configured LUNARC host unreachable.
+- `csup steward /home/billy/Swedish_Civic_Test --sample-secs=5` reports `total=0` and recommends keeping current staffing while auditing acceptance evidence.
+- `tmux -L civic-laptop-build list-panes` shows the local six-pane session active. Live tails show MANAGER-build verifying current atoms, REVIEWER starting a bounded monetization/home pass, SETUP verifying source-citation/scaffold coverage, UIUX working a Button atom, DATA-INTEGRITY working glossary schema parity, and this CEO pane.
+- `git status --short --branch` shows `main` ahead 2 / behind 11 with dirty app/UI/scaffold/test/coordination files; do not treat the dirty bundle as one accepted artifact.
+
+Decision:
+- HOLD remote/LUNARC staffing. Do not run `--apply`, start, stop, or shrink LUNARC teams from the current `csup` signal because project-name lookup, remote queue visibility, and host reachability are still inconsistent.
+- Keep `civic-laptop-build` as the only active execution surface for this cycle.
+- RECYCLE/MOVE the next free non-manager local lane toward the highest P0 gap: CONTENT-owned TRANSLATE-COMPLETE naturalness defects currently queued by REVIEWER, especially q063-q071 section-framed explanations. There is no active CONTENT pane visible in the local six-pane roster.
+- MANAGER-build may finish already-running bounded verification, but acceptance notes must explicitly state whether each atom advances an unchecked P0 item. Defer or reject non-P0 polish if it cannot be tied to current operator-approved P0/product demand.
+- Priority order for the next manager cycle: bound/accept/reject the in-flight APP/UIUX/DATA-INTEGRITY atoms; assign or recycle capacity to q063-q071 TRANSLATE-COMPLETE fixes; let REVIEWER continue only on stable, bounded functional slices; leave UI/release polish behind P0 naturalness and source/runtime citation coverage.
+
+Escalations:
+- Infra: register this checkout for name-based `csup staff civic-test` or set the equivalent project-root discovery path.
+- Infra: sync or create the remote LUNARC `codex-tasks` files before relying on LUNARC staff/audit output.
+- Staffing: local roster lacks an active CONTENT lane while the highest visible P0 queue is CONTENT naturalness work; manager should recycle the next free worker-equivalent rather than launch unreachable remote teams.
+- Version control: branch remains ahead 2 / behind 11; defer reconciliation until MANAGER-build has a stable acceptance boundary.

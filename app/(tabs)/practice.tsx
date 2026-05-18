@@ -9,6 +9,7 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
@@ -146,6 +147,7 @@ export default function Screen() {
           accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
           accessibilityRole="button"
           accessibilityState={{ selected: isBookmarked }}
+          hitSlop={space[0.75]}
           onPress={() => toggleBookmark(question.id)}
           style={[styles.bookmarkButton, isBookmarked ? styles.bookmarkButtonActive : null]}
         >
@@ -201,22 +203,26 @@ export default function Screen() {
           <UHRReferenceCard language={language} reference={question.uhrReference} />
           <AdBanner placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
-            <Pressable
+            <Button
               accessibilityLabel={copy.nextQuestionAccessibilityLabel}
               accessibilityRole="button"
               onPress={advanceQuestion}
-              style={styles.nextQuestion}
+              size="lg"
+              style={styles.feedbackAction}
+              variant="primary"
             >
-              <Text style={styles.nextQuestionText}>{copy.nextQuestion}</Text>
-            </Pressable>
-            <Pressable
+              {copy.nextQuestion}
+            </Button>
+            <Button
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               onPress={resetSelection}
-              style={styles.tryAgain}
+              size="lg"
+              style={styles.feedbackAction}
+              variant="secondary"
             >
-              <Text style={styles.tryAgainText}>{copy.tryAgain}</Text>
-            </Pressable>
+              {copy.tryAgain}
+            </Button>
           </View>
         </View>
       ) : null}
@@ -262,13 +268,16 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
   },
   bookmarkButton: {
+    alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
+    justifyContent: 'center',
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
   },
   bookmarkButtonActive: {
     backgroundColor: colors.badgeBlueBg,
@@ -295,34 +304,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
+  feedbackAction: {
+    flexBasis: space[15],
+    flexGrow: 1,
+  },
   score: {
     color: colors.success,
     fontSize: typography.body.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
-  },
-  nextQuestion: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  nextQuestionText: {
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  tryAgain: {
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  tryAgainText: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
   },
 });

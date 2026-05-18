@@ -174,6 +174,14 @@ export const architectureSourceCitationRuntimeFiles = [
   'app/chapter/[chapterId].tsx',
 ] as const;
 
+export const architectureSourceCitationBoundaryRuntimeFiles = [
+  'lib/quiz/questionText.ts',
+  'lib/audio/speak.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+] as const;
+
 export const architectureQuestionSurfaceRuntimeFiles = [
   'components/quiz/AnswerOption.tsx',
   'components/quiz/ExplanationPanel.tsx',
@@ -200,6 +208,14 @@ export const architectureSettingsRuntimeFiles = [
   'app/(tabs)/profile.tsx',
   'app/onboarding.tsx',
   'app/settings.tsx',
+] as const;
+
+export const architectureSettingsPreferenceRuntimeFiles = [
+  'lib/storage/settingsStore.ts',
+  'app/settings.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/onboarding.tsx',
 ] as const;
 
 export const architectureTabNavigationRuntimeFiles = [
@@ -305,6 +321,18 @@ export const architectureMonetizationRuntimeFiles = [
   'app/(tabs)/learn.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/(tabs)/exam.tsx',
+] as const;
+
+export const architectureRemoveAdsRuntimeFiles = [
+  'lib/monetization/premium.ts',
+  'lib/monetization/purchases.ts',
+  'lib/monetization/useRemoveAdsEntitlements.ts',
+  'components/monetization/PremiumBanner.tsx',
+  'components/monetization/AdBanner.tsx',
+  'components/monetization/AdBanner.native.tsx',
+  'components/monetization/NativeAdCard.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/profile.tsx',
 ] as const;
 
 export const architectureLearningProgressRuntimeFiles = [
@@ -579,9 +607,13 @@ export type ArchitectureQuestionLanguageRuntimeFilePath =
   (typeof architectureQuestionLanguageRuntimeFiles)[number];
 export type ArchitectureSourceCitationRuntimeFilePath =
   (typeof architectureSourceCitationRuntimeFiles)[number];
+export type ArchitectureSourceCitationBoundaryRuntimeFilePath =
+  (typeof architectureSourceCitationBoundaryRuntimeFiles)[number];
 export type ArchitectureQuestionSurfaceRuntimeFilePath =
   (typeof architectureQuestionSurfaceRuntimeFiles)[number];
 export type ArchitectureSettingsRuntimeFilePath = (typeof architectureSettingsRuntimeFiles)[number];
+export type ArchitectureSettingsPreferenceRuntimeFilePath =
+  (typeof architectureSettingsPreferenceRuntimeFiles)[number];
 export type ArchitectureTabNavigationRuntimeFilePath =
   (typeof architectureTabNavigationRuntimeFiles)[number];
 export type ArchitectureSpeechRuntimeFilePath = (typeof architectureSpeechRuntimeFiles)[number];
@@ -596,5 +628,7 @@ export type ArchitectureMistakeReviewRuntimeFilePath =
   (typeof architectureMistakeReviewRuntimeFiles)[number];
 export type ArchitectureMonetizationRuntimeFilePath =
   (typeof architectureMonetizationRuntimeFiles)[number];
+export type ArchitectureRemoveAdsRuntimeFilePath =
+  (typeof architectureRemoveAdsRuntimeFiles)[number];
 export type ArchitectureLearningProgressRuntimeFilePath =
   (typeof architectureLearningProgressRuntimeFiles)[number];

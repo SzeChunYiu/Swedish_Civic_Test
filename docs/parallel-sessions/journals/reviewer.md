@@ -2921,3 +2921,72 @@ Workspace contract: blocked/rate-limited - q071 defect is queued, but q072 was n
 Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 07:17 CEST]`; product defect queued in this cycle was q071 naturalness.
 Evidence: REVIEWER edited no product source or tests; only queue/journal/blocker notes were touched. Fresh build/runtime evidence exists for q071, but the broader artifact remains unbounded.
 Next manager action: bound, accept/reject, commit, or clear the current CONTENT/SETUP/DATA-INTEGRITY/prompt/report slices before handing REVIEWER the next functional target, likely q072 if it remains unqueued and stable.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q072` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, current queues, and current producer journal tails.
+- Checked existing queue first; no `REVIEWER-Q072-SV-EN-NATURALNESS-1` item was present. q071 was the latest queued reviewer naturalness defect, and q072 was explicitly named as the next likely target.
+- Checked `review-to-queue.sh`; no executable helper was present on PATH or at the previously used shared-project paths, so the reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '1210,1233p'` - q072 source has Swedish explanation beginning `Avsnittet Regionerna ansvarar för sjukvården säger...` and English explanation beginning `The Regions are responsible for health care section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q072` in English support mode - exit 2 by design after confirming the q072 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 2/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q072-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q072` in English support mode showed the English question `What responsibility do Sweden's regions have within welfare?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Regionerna ansvarar för sjukvården, p. 30`, independent-study disclaimer, correct feedback for `To provide health and medical care for everyone`, score `1/1`, and the exact explanation `The Regions are responsible for health care section says that Sweden’s 21 regions tax their residents and should provide health and medical care for everyone. To do this, the regions run and finance hospitals and health centres.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q072 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q073` English-support explanation under TRANSLATE-COMPLETE, reusing the q072 content/source/export/build gates because the checked source file remained unchanged.
+Checks run:
+- Checked existing queue first; no `REVIEWER-Q073-SV-EN-NATURALNESS-1` item was present.
+- `git diff --name-only -- data/additionalQuestions.ts content/question-bank.csv data/questions.ts codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md` - only REVIEWER queue/journal files were dirty among those paths; q073's `data/additionalQuestions.ts` source file and CSV row were not dirty.
+- `nl -ba data/additionalQuestions.ts | sed -n '1234,1260p'` - q073 source has Swedish explanation beginning `UHR-avsnittet Kommunerna har ett stort ansvar säger...` and English explanation beginning `The UHR section Municipalities have a large responsibility says...`.
+- Reused unchanged-content gates from the q072 pass: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, focused source-citation/export/sentence-ending tests - exit 0, 6/6, export parity - exit 0, and web export - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q073` in English support mode - exit 2 by design after confirming the q073 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 2/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q073-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q073` in English support mode showed the English question `Which answer gives examples of municipal welfare?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Kommunerna har ett stort ansvar, p. 31`, independent-study disclaimer, correct feedback for `Childcare, schools and education, elderly care, and social services`, score `1/1`, and the exact explanation `The UHR section Municipalities have a large responsibility says municipalities ensure access to schools and education and are responsible for help for older and sick people. It lists childcare, schools and education, elderly care, and social services as examples of municipal welfare.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q073 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q074` English-support explanation under TRANSLATE-COMPLETE, reusing the q072 content/source/export/build gates because the checked source file remained unchanged.
+Checks run:
+- Checked existing queue first; no `REVIEWER-Q074-SV-EN-NATURALNESS-1` item was present.
+- `nl -ba data/additionalQuestions.ts | sed -n '1260,1272p'` - q074 source has Swedish explanation beginning `UHR-avsnittet Kommunerna har ett stort ansvar säger...` and English explanation beginning `The UHR section Municipalities have a large responsibility says...`.
+- Reused unchanged-content gates from the q072 pass: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, focused source-citation/export/sentence-ending tests - exit 0, 6/6, export parity - exit 0, and web export - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q074` in English support mode - exit 2 by design after confirming the q074 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 2/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q074-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q074` in English support mode showed the English question `True or false: Swedish municipalities must offer older people support and help.`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Kommunerna har ett stort ansvar, p. 31`, independent-study disclaimer, correct feedback for `True`, score `1/1`, and the exact explanation `The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q074 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: post-pass workspace and handoff boundary after q072-q074 findings.
+Checks run:
+- `git diff --check -- codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md` - exit 0 before this blocker append.
+- `git status --short --branch` - `main...origin/main [ahead 2, behind 11]` with mixed non-REVIEWER dirty scope now including `app/(tabs)/home.tsx`, `app/settings.tsx`, `components/ui/Button.tsx`, scaffold manifests/tests, `tests/content-type-schema-parity.test.js`, verifier log, screenshot report artifacts, TEAM_PLAN, and worker journals.
+Workspace contract: blocked/rate-limited - q072-q074 defects are queued, but broader acceptance-grade REVIEWER work needs a manager/VALIDATOR-bounded next slice because the shared checkout is still mixed.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 08:01 CEST]`; product defects queued in this cycle were q072, q073, and q074 naturalness defects.
+Evidence: REVIEWER edited no product source or tests; only queue/journal/blocker notes were touched. Fresh build/runtime evidence exists for q072-q074, but the broader artifact remains unbounded.
+Next manager action: bound, accept/reject, commit, or clear the current source-owner slices before handing REVIEWER the next functional target, likely q075 if it remains unqueued and stable.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q075` English-support explanation under TRANSLATE-COMPLETE, plus nearest content/source/export gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer queue entries, and producer journal tails.
+- Checked the documented review-to-queue helper availability; both expected paths were absent, so the reviewer fallback queue was used.
+- Checked existing queue first; no `REVIEWER-Q075-SV-EN-NATURALNESS-1` item was present.
+- `nl -ba data/additionalQuestions.ts | sed -n '1268,1315p'` - q075 source has Swedish explanation beginning `UHR-avsnittet Från jordbrukssamhälle till industrisamhälle säger...` and English explanation beginning `The UHR section From agricultural society to industrial society says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q075` in English support mode - exit 2 by design after confirming q075 renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is ahead 2/behind 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q075-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q075` in English support mode showed `Session q075`, English question `Which statement describes Sweden two hundred years ago?`, Swedish secondary question, localized source citation `Source: Sverige i fokus, Sveriges moderna historia, Från jordbrukssamhälle till industrisamhälle, p. 32`, independent-study disclaimer, correct feedback for `As a typical agricultural country where almost everyone lived in the countryside`, score `1/1`, and the exact explanation `The UHR section From agricultural society to industrial society says Sweden was a typical agricultural country two hundred years ago. Almost the whole population lived in the countryside and worked by farming and caring for animals, and Sweden was poor compared with other European countries.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q075 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.

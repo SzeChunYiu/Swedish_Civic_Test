@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { Badge } from '../../components/ui/Badge';
@@ -24,6 +24,8 @@ type MistakesCopy = {
   bookmarkedMeta: string;
   bookmarkedTitle: string;
   correctAnswerLabel: string;
+  emptyBadge: string;
+  emptyHint: string;
   emptyPracticeAccessibilityLabel: string;
   emptyPracticeLink: string;
   emptyText: string;
@@ -47,6 +49,8 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
     bookmarkedMeta: 'Sparad för fokuserad repetition',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
+    emptyBadge: 'Redo när du är redo',
+    emptyHint: 'En kort övning räcker för att fylla den här listan med rätt nästa steg.',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
     emptyText: 'Svara fel på en övningsfråga så visas den här.',
@@ -69,6 +73,8 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
     bookmarkedMeta: 'Saved for focused review',
     bookmarkedTitle: 'Bookmarked questions',
     correctAnswerLabel: 'Correct answer',
+    emptyBadge: 'Ready when you are',
+    emptyHint: 'One short practice round is enough to fill this list with the right next step.',
     emptyPracticeAccessibilityLabel: 'Practice weak questions',
     emptyPracticeLink: 'Start practice',
     emptyText: 'Answer a practice question incorrectly and it will appear here.',
@@ -197,18 +203,31 @@ export default function Screen() {
         </View>
       ) : bookmarkedQuestions.length === 0 ? (
         <View style={styles.emptyCard}>
-          <Text accessibilityRole="header" style={styles.emptyTitle}>
-            {copy.emptyTitle}
-          </Text>
-          <Text style={styles.emptyText}>{copy.emptyText}</Text>
+          <View style={styles.emptyCopy}>
+            <Badge tone="warm">{copy.emptyBadge}</Badge>
+            <Text accessibilityRole="header" style={styles.emptyTitle}>
+              {copy.emptyTitle}
+            </Text>
+            <Text style={styles.emptyText}>{copy.emptyText}</Text>
+          </View>
           <Link
             accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
             accessibilityRole="link"
             href="/practice"
-            style={styles.practiceLink}
+            asChild
           >
-            {copy.emptyPracticeLink}
+            <Pressable
+              accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
+              accessibilityRole="link"
+              style={({ pressed }) => [
+                styles.practiceButton,
+                pressed ? styles.practiceButtonPressed : null,
+              ]}
+            >
+              <Text style={styles.practiceButtonText}>{copy.emptyPracticeLink}</Text>
+            </Pressable>
           </Link>
+          <Text style={styles.emptyHint}>{copy.emptyHint}</Text>
         </View>
       ) : null}
     </ScrollView>
@@ -298,30 +317,54 @@ const styles = StyleSheet.create({
   },
   emptyCard: {
     backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
     borderRadius: radius.card,
-    gap: space[1],
-    padding: space[2],
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.5],
+    padding: space[2.25],
+  },
+  emptyCopy: {
+    gap: space[0.75],
   },
   emptyTitle: {
     color: colors.text,
     fontSize: typography.sectionTitle.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.sectionTitle.lineHeight,
   },
   emptyText: {
     color: colors.textMuted,
-    fontSize: typography.navButton.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
-  practiceLink: {
+  practiceButton: {
+    alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
-    borderRadius: radius.micro,
+    borderColor: colors.accent,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    minHeight: space[6],
+    minWidth: space[15],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.25],
+  },
+  practiceButtonPressed: {
+    backgroundColor: colors.accentActive,
+    borderColor: colors.accentActive,
+  },
+  practiceButtonText: {
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    marginTop: space[1],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
+    lineHeight: typography.navButton.lineHeight,
+    textAlign: 'center',
     textDecorationLine: 'none',
+  },
+  emptyHint: {
+    color: colors.textDisclaimer,
+    fontSize: typography.captionLight.fontSize,
+    lineHeight: typography.captionLight.lineHeight,
   },
 });

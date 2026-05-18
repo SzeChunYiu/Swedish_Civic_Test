@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-18T05:22:30.901Z",
+  "capturedAt": "2026-05-18T06:06:02.313Z",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "routes": [
@@ -7,7 +7,7 @@
       "name": "index",
       "route": "/",
       "file": "index.png",
-      "bytes": 191534
+      "bytes": 188960
     },
     {
       "name": "onboarding",

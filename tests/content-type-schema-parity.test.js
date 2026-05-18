@@ -290,6 +290,102 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('content TypeScript schema parity rejects glossary Swedish explanation optionality drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/types/content.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        "export interface GlossaryTerm {\\n  id: string;\\n  termSv: string;\\n  termEn: string;\\n  explanationSv: string;\\n  explanationEn: string;",
+        "export interface GlossaryTerm {\\n  id: string;\\n  termSv: string;\\n  termEn: string;\\n  explanationSv?: string;\\n  explanationEn: string;",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /GlossaryTerm\.explanationSv optional=true, expected false/,
+  );
+});
+
+test('content TypeScript schema parity rejects glossary English explanation optionality drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/types/content.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        "export interface GlossaryTerm {\\n  id: string;\\n  termSv: string;\\n  termEn: string;\\n  explanationSv: string;\\n  explanationEn: string;",
+        "export interface GlossaryTerm {\\n  id: string;\\n  termSv: string;\\n  termEn: string;\\n  explanationSv: string;\\n  explanationEn?: string;",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /GlossaryTerm\.explanationEn optional=true, expected false/,
+  );
+});
+
+test('content TypeScript schema parity rejects glossary chapter id type drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/types/content.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('chapterId?: string;', 'chapterId?: number;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /GlossaryTerm\.chapterId type is number, expected string/,
+  );
+});
+
 test('content TypeScript schema parity rejects UHR page locator optionality drift', () => {
   const result = spawnSync(
     process.execPath,
