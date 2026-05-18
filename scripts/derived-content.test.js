@@ -695,6 +695,14 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     byId.get('q151')?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",
   );
+  assert.equal(
+    byId.get('q150')?.explanationSv,
+    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området.',
+  );
+  assert.equal(
+    byId.get('q150')?.explanationEn,
+    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+  );
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
@@ -710,6 +718,21 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     )
     .map((question) => question.id);
   assert.deepEqual(falseExplanationOffenders, []);
+
+  const trueExplanationOffenders = [...byId.values()]
+    .filter(
+      (question) =>
+        question.type === 'true_false' &&
+        question.correctOptionId === 'true' &&
+        question.tags.includes('published-variant'),
+    )
+    .filter((question) =>
+      /Påståendet är sant|(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)|alternativet\s+Sant|medan\s+Falskt|The statement is true|so the statement is true|that makes the statement true|That makes True correct|True is correct|while False/i.test(
+        `${question.explanationSv} ${question.explanationEn}`,
+      ),
+    )
+    .map((question) => question.id);
+  assert.deepEqual(trueExplanationOffenders, []);
 });
 
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
