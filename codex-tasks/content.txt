@@ -1,5 +1,26 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T21:43+02:00
+
+Current `origin/main` is `caa4fd9`. q351-q400 VERIFY has a newer landed
+refresh via `2607e11`, which supersedes the earlier `e563670` routing note and
+the local q351 duplicate warnings below. Treat q351-q400 as closed for current
+routing unless VALIDATOR rejects the `2607e11` evidence.
+
+q401-q450 remains active in local Pane 1 worktree
+`/tmp/sct-verify-q401-q450-pane1-1779133017`, branch
+`task/verify/q401-q450-pane1-1779133017`, with `codex-tasks/data-integrity.txt`,
+`docs/verify/ledger.md`, and `docs/verify/q401-q450-2026-05-18.md` changes in
+progress. q451-q500 remains active in local Pane 3 worktree
+`/tmp/sct-content-verify-q451-q500-pane3-1779133136`, branch
+`task/content-verify/q451-q500-pane3-1779133136`, with
+`docs/verify/q451-q500-2026-05-18.md` changes in progress. Both must
+sync/rebase current `origin/main` before PR/merge.
+
+Do not publish duplicate q401/q451 work from any other branch unless those
+owners are rejected or explicitly abandoned. After both slices land/reject/
+abandon, route q501-q550 or the next current changed/due slice.
+
 MANAGER-content active-lease correction - 2026-05-18T21:35+02:00
 
 Current `origin/main` is `84e340d`. q351-q400 VERIFY is now landed via
