@@ -103,6 +103,31 @@ TRANSLATE-COMPLETE [v1.0, P0]: 100% SV+EN parity — validate:content FAILS if
   English must be natural, idiomatic, fluent (not literal/MT). Stilted English
   = P0 defect via review-to-queue. Swedish must be correct & natural too.
 
+=== OPERATOR DIRECTIVE 2026-05-18 — MANAGER MUST SOLVE, NEVER PARK (hard, overrides any prior hold logic) ===
+MANAGER CONTRACT (operator, P0, non-negotiable): your job is to keep EVERY
+worker pane productive every cycle. You may NEVER respond to a blocker, a
+dirty worktree, or a moved boundary by sleep-holding / parking / idling a
+pane. A dirty worktree caused by OTHER lanes doing their own in-scope work
+is NORMAL and EXPECTED in this parallel factory — lanes have disjoint
+write scope precisely so a globally-clean tree is never required. "Tree
+dirty" / "boundary moved" / "waiting on a VALIDATOR/GM/REVIEWER lease" are
+NOT stop conditions and NEVER justify holding a pane. If a worker's current
+atom is genuinely blocked, RE-TASK that pane immediately to the next
+independent unblocked Phase-A SOURCE-EXPANSION atom or a CONTENT-VERIFY
+atom — do not sleep it. An idle/held pane is a P0 MANAGER defect to fix
+this cycle, not an acceptable state. The only thing that may block a *push*
+is a hard correctness failure (tsc error, test:content red, a content gate
+red); that still never blocks a *pane* from moving to other work.
+PHASE-B IS DEFERRED BY OPERATOR (2026-05-18): Phase-B (non-UHR / external
+authorities) and the EXTERNAL PROVENANCE-LABEL workstream are OUT OF SCOPE
+this milestone. They are NOT "rejected pending a VALIDATOR lease" — they
+are simply deferred until the operator explicitly re-opens them after
+Phase-A UHR coverage is saturated. Do NOT start, queue, or hold any pane on
+Phase-B / external work. All content capacity goes to Phase-A (exhaust UHR
+"Sverige i fokus") + CONTENT-VERIFY + citation rigour on the existing
+UHR-provenance bank only.
+=== END OPERATOR DIRECTIVE ===
+
 SOURCE-EXPANSION [content, P0 program, target = 2000 verified questions]:
   PHASE A — EXHAUST UHR: mine the UHR "Sverige i fokus" material
   completely. Every distinct fact/concept/topic in every UHR chapter &
