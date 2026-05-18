@@ -933,6 +933,7 @@ const SMT_QUIZ_COPY = {
     cta: "Get the app",
     correctLabel: "Correct",
     wrongLabel: "Wrong",
+    scoreLabel: "Score",
   },
   sv: {
     next: "Nästa →",
@@ -952,6 +953,7 @@ const SMT_QUIZ_COPY = {
     cta: "Hämta appen",
     correctLabel: "Rätt",
     wrongLabel: "Fel",
+    scoreLabel: "Poäng",
   },
 };
 
@@ -1151,9 +1153,9 @@ function smtQuizRender() {
         <p class="quiz__score"><span id="score-num">0</span><em>/</em>${n}</p>
         <p class="quiz__verdict">${copy.verdict(pct)}</p>
         <ul class="quiz__breakdown">
-          <li><b>${correct}</b>${copy.correctLabel}</li>
-          <li><b>${n - correct}</b>${copy.wrongLabel}</li>
-          <li><b>${pct}%</b>score</li>
+          <li><b>${correct}</b> ${copy.correctLabel}</li>
+          <li><b>${n - correct}</b> ${copy.wrongLabel}</li>
+          <li><b>${pct}%</b> ${copy.scoreLabel}</li>
         </ul>
         <div class="quiz__cta">
           <button class="btn btn--ghost" id="quiz-again">${copy.again} ↻</button>
