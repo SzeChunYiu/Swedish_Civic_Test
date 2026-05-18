@@ -323,6 +323,16 @@ function stripTrueFalsePromptEn(value: string): string {
   return stripFinalPunctuation(value.replace(/^True or false:\s*/i, ''));
 }
 
+function firstSentence(value: string): string {
+  const trimmed = value.trim();
+  const match = trimmed.match(/^(.+?[.!?])(?:\s|$)/);
+  return stripFinalPunctuation(match?.[1] ?? trimmed);
+}
+
+function normalizeStatementForComparison(value: string): string {
+  return stripFinalPunctuation(value).replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
 function isTrueFalseSource(source: PracticeQuestion): boolean {
   return source.type === 'true_false' && source.options.length === 2;
 }
@@ -335,26 +345,72 @@ function truthStatementEn(statement: string): string {
   return upperFirst(statement);
 }
 
+function sourceDirectStatementSv(
+  source: PracticeQuestion,
+  statement: string,
+  sourceStatementIsTrue: boolean,
+): string {
+  if (sourceStatementIsTrue) {
+    const fromExplanation = firstSentence(
+      source.explanationSv.replace(/^Påståendet är sant[:.]?\s*/i, ''),
+    );
+    if (
+      fromExplanation &&
+      normalizeStatementForComparison(fromExplanation) !==
+        normalizeStatementForComparison(statement)
+    ) {
+      return upperFirst(fromExplanation);
+    }
+  }
+
+  return `Det stämmer att ${lowerLeadingSwedishClauseStart(statement)}`;
+}
+
+function sourceDirectStatementEn(
+  source: PracticeQuestion,
+  statement: string,
+  sourceStatementIsTrue: boolean,
+): string {
+  if (sourceStatementIsTrue) {
+    const fromExplanation = firstSentence(
+      source.explanationEn.replace(/^The statement is true[:.]?\s*/i, ''),
+    );
+    if (
+      fromExplanation &&
+      normalizeStatementForComparison(fromExplanation) !==
+        normalizeStatementForComparison(statement)
+    ) {
+      return upperFirst(fromExplanation);
+    }
+  }
+
+  return `It is true that ${lowerLeadingEnglishClauseStart(statement)}`;
+}
+
 function sourceStatementJudgementSv(statement: string, isTrue: boolean): string {
-  if (isTrue) return `Påståendet är sant: ${ensureSentence(statement)}`;
+  if (isTrue) return truthStatementSv(statement);
   return `Det är inte sant att ${lowerLeadingSwedishClauseStart(statement)}`;
 }
 
 function sourceStatementJudgementEn(statement: string, isTrue: boolean): string {
-  if (isTrue) return `The statement is true: ${ensureSentence(statement)}`;
+  if (isTrue) return truthStatementEn(statement);
   return `It is not true that ${lowerLeadingEnglishClauseStart(statement)}`;
 }
 
 function trueFalseSourceStatementSv(source: PracticeQuestion, variantIsTrue: boolean): string {
   const sourceStatementIsTrue = source.correctOptionId === 'true';
   const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
-  return sourceStatementJudgementSv(stripTrueFalsePromptSv(source.questionSv), assertionIsTrue);
+  const statement = stripTrueFalsePromptSv(source.questionSv);
+  if (assertionIsTrue) return sourceDirectStatementSv(source, statement, sourceStatementIsTrue);
+  return sourceStatementJudgementSv(statement, assertionIsTrue);
 }
 
 function trueFalseSourceStatementEn(source: PracticeQuestion, variantIsTrue: boolean): string {
   const sourceStatementIsTrue = source.correctOptionId === 'true';
   const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
-  return sourceStatementJudgementEn(stripTrueFalsePromptEn(source.questionEn), assertionIsTrue);
+  const statement = stripTrueFalsePromptEn(source.questionEn);
+  if (assertionIsTrue) return sourceDirectStatementEn(source, statement, sourceStatementIsTrue);
+  return sourceStatementJudgementEn(statement, assertionIsTrue);
 }
 
 function generatedTrueFalseStatementSv(

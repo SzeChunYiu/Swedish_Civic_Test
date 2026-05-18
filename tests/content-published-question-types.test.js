@@ -513,6 +513,43 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated true/false statement-about-statement stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Var ligger Sverige?',
+        'Sant eller falskt: Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln.',
+      )
+      .replace(
+        'Where is Sweden located?',
+        'True or false: The statement is true: Sweden is in the Nordic region.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
 test('published question schema rejects source-material generated option fallbacks', () => {
   const result = spawnSync(
     process.execPath,

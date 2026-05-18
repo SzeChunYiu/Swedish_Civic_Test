@@ -152,14 +152,14 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionSv),
     [
-      'Sant eller falskt: Påståendet är sant: Sverige ligger i Norden.',
+      'Sant eller falskt: Det stämmer att Sverige ligger i Norden.',
       'Sant eller falskt: Det är inte sant att Sverige ligger i Norden.',
     ],
   );
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionEn),
     [
-      'True or false: The statement is true: Sweden is in the Nordic region.',
+      'True or false: It is true that Sweden is in the Nordic region.',
       'True or false: It is not true that Sweden is in the Nordic region.',
     ],
   );
