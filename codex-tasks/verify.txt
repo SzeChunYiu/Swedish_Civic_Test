@@ -25,3 +25,17 @@ MANAGER-content 2026-05-18T19:44:50+02:00 active lease:
   defects to `codex-tasks/data-integrity.txt`.
 - Do not edit `data/**`, `content/question-bank.csv`, `site/**`, generated
   templates, or validator mirrors from VERIFY work.
+
+MANAGER-content 2026-05-18T20:00:00+02:00 update:
+- `verify:data/questions.ts q601-q650` is now landed via PR #567 / `db77064`.
+- PR #570 / `225af56` merged after that and changes generated true/false
+  output across q201-q720. Any q651-q700 VERIFY work started from an older base
+  must rebase or restart from current `origin/main` before committing.
+- q651-q700 remains the active next slice, but it must be a post-#570 audit.
+  Do not mark pre-#570 true/false residuals as current defects. Re-open the UHR
+  citation groups, verify facts/answers/distractors, and route only defects
+  still present in current `content/question-bank.csv` and `site/questions.js`.
+- Keep VERIFY scope to `docs/verify/**`, `docs/parallel-sessions/journals/verify.md`,
+  and append-only DATA-INTEGRITY queue entries. Do not edit `data/**`,
+  generated CSV/static mirrors, generator templates, validator mirrors, or
+  `site/**`.
