@@ -3035,3 +3035,25 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route SITE/SETUP to add immutable static-site flag colors plus a browser guard that cycles all palettes in light and dark mode and proves visible flag surfaces stay official blue/yellow.
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-practice-result-current/wt` / `task/reviewer/practice-result-i18n-current-1779125940`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-PRACTICE-RESULT-I18N-1` after Settings language rerender was accepted.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `codex-tasks/P0.md`, `codex-tasks/blockers.txt`, current `origin/main` setup/validator queues, and current reviewer journal context.
+- Used a clean temporary worktree on `origin/main` `810c091` because the shared checkout has unrelated dirty queue/report files and is on a gone task branch.
+- Confirmed the configured `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh` helpers are absent, so the existing validator queue row was updated directly.
+- `node --check site/app.js` and `node --check site/practice.js` - exit 0.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- Served current `site/` with `python3 -m http.server 8257 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright completed `#/practice?c=mix` in Swedish and English. Swedish rows were `["4Rätt","6Fel","40%score"]`; English rows were `["6Correct","4Wrong","60%score"]`; browser console/page errors were empty.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` - exit 0, 4/4 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` - exit 0, 3/3 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and static-site parity true.
+Workspace contract: pass - no product source edited; existing finding updated instead of filing a duplicate.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SITE-PRACTICE-RESULT-I18N-1 update [2026-05-18 19:38 CEST]`.
+Evidence: current result markup still glues numeric values to labels and hardcodes the percent row as English `score`; current green static-site language/feedback/content gates do not cover the completed Practice result screen.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-PRACTICE-RESULT-I18N-1` first for SETUP/site; require spaced, localized correct/wrong/percent labels in SV and EN plus a static browser/DOM guard rejecting glued result strings.
