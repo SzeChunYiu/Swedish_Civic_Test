@@ -69,6 +69,39 @@ Notes:
 - Do not stop/park on ambiguity. If a task is unclear, skip it and take the
   next concrete one. Keep shipping product PRs.
 
+## Feeding the queue — follow-up work (this is how the swarm stays alive)
+
+While doing your task you will discover concrete follow-up work: a bug you hit,
+the next logical atom, a gap the task exposed. Capture it so the queue
+replenishes itself without any manager — but only as a *side effect* of
+shipping, never instead of it.
+
+Mechanism (cheap, atomic, no waiting):
+```
+After step 8 (PR opened), if you found ONE concrete product follow-up:
+  echo "<NEW-ID> <product/path>: <specific change> | verify: <cmd/criteria>" >> codex-tasks/open.txt
+  git add codex-tasks/open.txt && git commit -qm "queue: +<NEW-ID> [allow-meta]" \
+    && git push -q origin HEAD:main || true     # races are fine, skip on fail
+```
+
+Hard rules (these keep it from rotting back into meta-churn):
+- You MUST still ship your product PR this iteration. A queue append is NEVER a
+  substitute for product work — a pane whose only output is queue/docs edits is
+  auto-reverted by the gate.
+- A follow-up entry MUST be concrete and product-scoped: name the file/path,
+  the specific change, and how to verify. **Banned** follow-up entries:
+  "investigate / review / audit / refactor someday / write docs / improve X" —
+  vague or non-product entries are noise and get pruned.
+- **Max ONE** follow-up per iteration. Capture the single most valuable next
+  step you actually saw — do not brainstorm a backlog.
+- Skip if a near-duplicate line already exists in `open.txt`.
+- Follow-up goes to the END of `open.txt`; the P0/ADS/IAP atoms keep priority
+  (workers always take the FIRST unclaimed task).
+
+Why: consumers that are also producers make the swarm self-sustaining and let
+emergent work be picked up by whoever claims it next — with the CI gate as the
+only acceptance, and zero coordination tax.
+
 ## Content rules (still binding)
 
 - Every question traceable to UHR *Sverige i fokus*; never claim official
