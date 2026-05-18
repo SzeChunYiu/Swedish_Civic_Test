@@ -46,9 +46,19 @@ unclaimed language per worker pane per iteration:
 6. English (`en`)
 7. Polish (`pl`)
 8. Ukrainian (`uk`)
+9. Chinese — Simplified (`zh-Hans`)
+10. Chinese — Traditional (`zh-Hant`)
 
-(Ramp adds more as panes/sessions scale. The 8-language UI picker shipped
-in #141 is the minimum coverage target.)
+**Chinese-specific rule:** `zh-Hans` and `zh-Hant` are distinct
+deliverables, never a script-conversion of each other — each must read as
+written by a native speaker of that variant (Mainland vs. Taiwan/Hong Kong
+conventions: vocabulary, phrasing, civic terminology, punctuation 。，
+vs ., measure words, and register). Mechanical Simplified↔Traditional
+conversion is a defect. Both owned by panes fluent in that specific
+variant.
+
+(Ramp adds more as panes/sessions scale. The multi-language UI picker
+shipped in #141 is the minimum coverage target.)
 
 ## Writable scope
 
