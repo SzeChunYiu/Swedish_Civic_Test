@@ -518,3 +518,27 @@ true/false stems, regenerated `content/question-bank.csv` and
 `site/questions.js`, export/static parity, `validate:content`, focused content
 gates, typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a
 current-main recheck of q150 plus the other post-#570 changed true/false rows.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T20:38:00+02:00
+`VERIFY-GENERATED-TF-FALSE-EXPLANATION-Q151-Q200-POST584-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent q151-q200 VERIFY
+follow-up on current `origin/main` `476afdb` found the old q151-q200 generated
+splice residuals are no longer current, but two generated false-statement rows
+still have answer/explanation mismatch in the static question bank. `q151` and
+`q167` both have answer key `False`, while their explanations still describe
+the original source statement as true and tell the learner that `True` is
+correct. The facts and UHR locators are supported (`Landet Sverige` /
+`Geografi, klimat och natur`, printed page 5), but the generated explanation
+does not match the generated false-statement answer. A direct all-bank scan
+found the same pattern in `q151`, `q167`, `q235`, `q255`, `q331`, `q339`,
+`q439`, and `q715`. Own this as a generator/validator/static-mirror follow-up:
+generated false-statement variants derived from true/false source rows need
+explanations that state the underlying fact and explicitly support `False` for
+the negated prompt, without saying `True` is correct. Acceptance requires
+focused negative guards for false-answer generated rows whose explanations say
+`True` is correct / `Sant` is correct, regenerated `content/question-bank.csv`
+and `site/questions.js` if outputs change, export/static parity,
+`validate:content`, focused content gates, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main recheck of the eight
+named rows. This can be bundled with `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`
+if VALIDATOR keeps a single generated true/false cleanup atom.
