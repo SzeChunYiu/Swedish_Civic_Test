@@ -856,6 +856,57 @@ require('./scripts/validate-content.js');
   }
 });
 
+test('published question schema rejects residual q501-q550 true/false wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "const q501Residuals = {",
+        "  q526: { questionEn: 'Islam is described as the second largest in Sweden.' },",
+        "  q527: { questionEn: 'Judaism is described as the second largest in Sweden.' },",
+        "  q530: { questionEn: 'On New Year’s Eve, 31 December,, it is common to celebrate with parties and dinners and at night with fireworks.' },",
+        "  q531: { questionEn: 'On New Year’s Eve, 31 December,, it is common to large bonfires and spring songs.' },",
+        "  q535: { questionSv: 'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangerar demonstrationer.' },",
+        "  q542: { questionEn: 'Lucia celebration is largely about spreadinging light when the year is at its darkest.' },",
+        "  q543: { questionEn: 'Lucia celebration is largely about welcominging spring with large bonfires.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  q501Residuals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...q501Residuals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  for (const id of ['q526', 'q527', 'q530', 'q531', 'q535', 'q542', 'q543']) {
+    assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
+  }
+});
+
 test('published question schema rejects source-material generated option fallbacks', () => {
   const result = spawnSync(
     process.execPath,
