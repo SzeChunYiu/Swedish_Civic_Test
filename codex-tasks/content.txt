@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T16:56:00+02:00
+MANAGER-content queue - 2026-05-18T17:05:00+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
@@ -115,6 +115,13 @@ Active dispatch:
   for this; the fix belongs to DATA-INTEGRITY because it must change
   `lib/content/derivedQuestions.ts`, the validator mirror, generated exports,
   and any required static mirror in one gated atom.
+- CONTENT Pane 2 q151-q200 audit on `origin/main` `e1bcef6` adds slice evidence
+  to `REVIEWER-GENERATED-TF-NATURALNESS-2`: all 50 rows are generated
+  `published-variant` rows, and 18 true/false rows (`q153`, `q154`, `q161`,
+  `q162`, `q169`, `q170`, `q173`, `q174`, `q181`, `q182`, `q185`, `q186`,
+  `q189`, `q190`, `q193`, `q194`, `q197`, `q198`) carry template naturalness
+  defects. Keep this DATA-INTEGRITY-owned; CONTENT must not hand-edit generated
+  CSV rows or generated templates.
 - Manager-content audit on current `origin/main` `2010bc8` routes
   `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` to DATA-INTEGRITY/VALIDATOR:
   q123 still says `avsnittet` / `this section` in authored explanations and in
