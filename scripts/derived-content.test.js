@@ -912,6 +912,10 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'På påskafton är det vanligt att tända adventsljus och öppna adventskalendrar.',
       'On Easter Saturday, it is common to light Advent candles and open Advent calendars.',
     ],
+    q698: [
+      'Julen firar traditionellt Jesu födelse inom kristendomen.',
+      "Christmas traditionally celebrates Jesus' birth in Christianity.",
+    ],
     q699: [
       'Julen firar traditionellt vårens ankomst inom kristendomen.',
       'Christmas traditionally celebrates the arrival of spring in Christianity.',
@@ -944,7 +948,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
   residualQuestions.forEach((question) => {
     assert.doesNotMatch(question.questionSv, /är (?:Judar|Danskar),/, question.id);
     assert.doesNotMatch(question.questionEn, /celebrates The/, question.id);
-    assert.doesNotMatch(question.questionSv, /firar traditionellt [A-ZÅÄÖ]/, question.id);
+    assert.doesNotMatch(
+      question.questionSv,
+      /firar traditionellt (?!Jesu födelse\b)[A-ZÅÄÖ]|firar traditionellt jesu födelse/,
+      question.id,
+    );
+    assert.doesNotMatch(question.questionEn, /celebrates jesus' birth/, question.id);
     assert.doesNotMatch(question.questionEn, /there are buddhist and Hindu/, question.id);
     assert.doesNotMatch(question.questionEn, /^(?:By|Apply|Leave|Live)\b/i, question.id);
     assert.doesNotMatch(

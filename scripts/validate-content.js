@@ -149,7 +149,9 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bhar\s+[^.?!]*\bgemensamt\b/i,
   /\bcommon to\s+(?:eating|lighting|opening|holding)\b/i,
   /\bcelebrates The\b/,
-  /\bfirar traditionellt [A-ZÅÄÖ]/,
+  /\bfirar traditionellt (?!Jesu födelse\b)[A-ZÅÄÖ]/,
+  /\bfirar traditionellt jesu födelse\b/,
+  /\bcelebrates jesus' birth\b/,
   /^(?:By|Apply|Leave|Live)\b/i,
   /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
   /\bPåståendet är sant:/i,
@@ -3525,6 +3527,14 @@ function lowerEnglishNounPhrase(value) {
   if (/^(?:The|In|A|An|At|On|Almost)\b/.test(phrase)) return lowerLeadingEnglishArticle(phrase);
   return lowerFirst(phrase);
 }
+function swedishTraditionalCelebrationAnswer(answer) {
+  if (/^Jesu födelse\b/.test(answer)) return answer;
+  return lowerFirst(answer);
+}
+function englishTraditionalCelebrationAnswer(answer) {
+  if (/^Jesus' birth\b/.test(answer)) return answer;
+  return lowerFirst(answer);
+}
 function swedishMentionedExample(answer, category) {
   const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
   if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
@@ -4168,7 +4178,9 @@ function civicStatementSv(source, option) {
   if (match) return `Vid ${match[2]} ${frontedManyActionSv(answer)}`;
   match = q.match(/^Vad firar (.+?) traditionellt inom (.+)$/i);
   if (match)
-    return `${upperFirst(match[1])} firar traditionellt ${lowerFirst(answer)} inom ${match[2]}`;
+    return `${upperFirst(match[1])} firar traditionellt ${swedishTraditionalCelebrationAnswer(
+      answer,
+    )} inom ${match[2]}`;
   match = q.match(/^Vad brukar man bjuda på (.+?) i samband med (.+)$/i);
   if (match) return `${upperFirst(match[1])} brukar man bjuda på ${lowerFirst(answer)}`;
   match = q.match(/^Hur många landskap är Sverige indelat i$/i);
@@ -4463,7 +4475,9 @@ function civicStatementEn(source, option) {
   if (match) return `At ${match[2]}, ${manyPeopleActionEn(answer)}`;
   match = q.match(/^What does (.+?) traditionally celebrate in (.+)$/i);
   if (match)
-    return `${upperFirst(match[1])} traditionally celebrates ${lowerFirst(answer)} in ${match[2]}`;
+    return `${upperFirst(match[1])} traditionally celebrates ${englishTraditionalCelebrationAnswer(
+      answer,
+    )} in ${match[2]}`;
   match = q.match(/^What is commonly served on (.+?) in connection with (.+)$/i);
   if (match) return `On ${match[1]}, people commonly serve ${lowerFirst(answer)}`;
   match = q.match(/^How many historical provinces is Sweden divided into$/i);
