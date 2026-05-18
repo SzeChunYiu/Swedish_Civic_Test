@@ -263,3 +263,12 @@ close it from local source readiness alone and do not run Vercel CLI from this
 repo. Do not stop the meta pane.
 Escalations: usable worker capacity or operator-verified production deployment
 evidence is still required. The active thread goal remains open.
+
+Cycle correction 2026-05-18T21:31:00+02:00
+`origin/main` advanced before PR #653 merged. Current `origin/main` is
+`dff1c24`, and generated true/false cleanup acceptance remains recorded by
+`a269684` (`manager-build: accept generated true-false cleanup`). The 21:16
+DATA-INTEGRITY acceptance-needed line is superseded by that manager-build
+acceptance. HOLD/add-none remains the staffing decision because the clean
+staffing gate still holds configured hosts behind SLURM station requirements,
+and SITE-P0 deploy freshness still needs operator/deploy evidence.
