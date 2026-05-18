@@ -490,6 +490,7 @@
           <div class="quiz__crumb">Ch ${q.chapterId}</div>
           <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
           <p class="quiz__source">${escapeHtml(sourceCitation(q))}</p>
+          <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           <div class="quiz__opts">${opts}</div>
         </div>
 
