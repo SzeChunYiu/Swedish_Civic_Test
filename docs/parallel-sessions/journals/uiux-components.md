@@ -237,3 +237,13 @@ A11y props: default `accessibilityRole="progressbar"`; derived or caller-provide
 Verification: `./node_modules/.bin/prettier --check components/ProgressBar.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/ProgressBar.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/ProgressBar.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
 Next: DESIGN-TOKENS still needs to publish immutable `lib/theme/flag.ts` before COMPONENTS can complete the fixed Swedish flag color atom for `components/ui/SwedishFlagBand.tsx`.
+
+## Iteration 24 - 2026-05-18
+
+Component: SwedishFlagBand fixed flag constants blocker - `components/ui/SwedishFlagBand.tsx`
+Variants/states implemented: no component source change; confirmed the remaining fixed-flag-colors atom is blocked because `SwedishFlagBand` still consumes palette tokens while `origin/main` has no `lib/theme/flag.ts` export for COMPONENTS to import.
+Tokens used: existing `colors.swedishBlue`, `colors.swedishGold`, and `radius.pill` remain in place; the intended immutable flag constants are unavailable because DESIGN-TOKENS owns `lib/theme/**`.
+A11y props: existing decorative band behavior remains unchanged with `accessibilityElementsHidden` and `importantForAccessibility="no"`.
+Verification: read required COMPONENTS iteration docs from `origin/main`; `git ls-tree -r --name-only origin/main lib/theme` confirmed no `lib/theme/flag.ts`; `git show origin/main:components/ui/SwedishFlagBand.tsx` confirmed the palette-token dependency; `codex-tasks/blockers.txt` now records `B-UIUX-COMPONENTS-FLAG-CONSTANTS-20260518` via PR #392 / `1e960aa`; journal-only verification ran `git diff --check`, `prettier --check docs/parallel-sessions/journals/uiux-components.md`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`.
+Blocked? yes - COMPONENTS cannot edit `lib/theme/**`, and hardcoding the flag hex in `components/**` would violate `scripts/theme-discipline.test.js`.
+Next: DESIGN-TOKENS should publish immutable flag constants from `lib/theme/flag.ts` and export them; then COMPONENTS can switch `SwedishFlagBand` to the fixed constants in a source-code iteration.
