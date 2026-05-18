@@ -324,4 +324,20 @@ MANAGER-build blocker 2026-05-18T15:07+02:00
 - Do not accept additional manager/build/content/site work until
   `validate:content` is green on current `origin/main`.
 
+MANAGER-build acceptance 2026-05-18T15:15+02:00
+- Accepted `ANSWER-OPTION-OPTIONCARD-PARITY-1` from PR #303 / `e232bf7`.
+  GitHub reports PR #303 closed and merged; current `origin/main` is `ff117b1`
+  after later docs/UIUX/reviewer merges and contains the repair.
+- Clean manager verification on current `origin/main` passed:
+  `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` with
+  `answerOptionAccessibilityParityValidated:true`; focused
+  `node --test tests/content-answer-option-accessibility-parity.test.js` 4/4;
+  `npm run typecheck -- --pretty false`; `npm run test:ownership`; and
+  `git diff --check`.
+- The AnswerOption stop-line blocker is resolved. Resume site-first P0 routing:
+  `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, then
+  `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`, with static
+  `REVIEWER-ACCOUNT-SCOPE-1` still ahead of release-config, visual-smoke, and
+  search-placeholder work.
+
 REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1 [product defect][2026-05-18 15:15 CEST][P0 SITE][privacy/monetization]: Focused static-site privacy audit on clean `origin/main` `9217f48` found the deployed `site/` JavaScript translations still overwrite the updated static HTML with the old disabled-ads/no-sales privacy contract. Source evidence: `site/index.html` now says the website uses Google AdSense and the mobile app uses Google Mobile Ads/AdMob, but `site/app.js` English `privacy.lede` still says "we don't sell anything", English `privacy.s5.p` still says "real ad rendering is disabled for the v1.0 release candidate", Swedish `privacy.lede` still says `säljer ingenting`, and Swedish `privacy.s5.p` still says `riktig annonsvisning är avstängd för v1.0-kandidaten`. Runtime evidence from locally served `site/` at `http://127.0.0.1:4317/#/privacy`: System Chrome with `localStorage.smt_lang="en"` reported `disabledAdsEn:true`, `dontSellEn:true`, and `removeAds:false`; the same route with `localStorage.smt_lang="sv"` reported `disabledAdsSv:true`, `dontSellSv:true`, and `removeAds:false`; browser console/page errors were 0. Duplicate scan found the older exported-app privacy finding and the live-deploy stale-site blocker, but no static `site/app.js` i18n privacy/monetization row. Manager action: assign SETUP/site copy work to update `site/app.js` EN/SV privacy and FAQ monetization strings so the current static site accurately states web ads use AdSense, the app uses AdMob/Google Mobile Ads with consent, Remove Ads is a one-time 29 SEK IAP that removes ads, and ads never collect study answers/progress; add a static or browser guard rejecting stale strings such as `real ad rendering is disabled`, `avstängd för v1.0`, `If we ever add premium`, and `Om vi någonsin lägger till premium`.
