@@ -227,9 +227,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Befolkning säger att det bor nästan 11 miljoner människor i Sverige. Det beskriver också att befolkningen inte är jämnt fördelad och att de flesta bor i södra Sverige och längs kusterna.',
+      'I Sverige bor nästan 11 miljoner människor. Befolkningen är inte jämnt fördelad: de flesta bor i södra Sverige och längs kusterna.',
     explanationEn:
-      'The UHR section Population says almost 11 million people live in Sweden. It also describes the population as unevenly distributed, with most people living in southern Sweden and along the coasts.',
+      'Almost 11 million people live in Sweden. The population is not evenly distributed: most people live in southern Sweden and along the coasts.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
