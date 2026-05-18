@@ -178,3 +178,9 @@ SITE-P0.
 OptionCard component refactor. `ANSWER-OPTION-OPTIONCARD-PARITY-1` is now the
 stop-the-line DATA-INTEGRITY atom; pause lower-priority site/account/content
 work until the validator/test mirror is repaired or the component is rejected.
+
+2026-05-18T15:15+02:00: MANAGER-build accepted the AnswerOption parity repair
+from PR #303 / `e232bf7`; current `origin/main` `ff117b1` is green for
+`validate:content`, focused AnswerOption parity, typecheck, ownership, and
+`git diff --check`. Resume site-first P0 routing: live deploy staleness, then
+Practice width parity, then static account-scope before lower-priority work.
