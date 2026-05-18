@@ -2848,4 +2848,22 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['geography', 'landsdelar', 'gotaland', 'svealand', 'norrland'],
     'easy',
   ),
+  single(
+    'q144',
+    'ch01',
+    { chapter: 'Landet Sverige', section: 'Sveriges indelning', pageApprox: 6 },
+    'Hur många landskap är Sverige indelat i?',
+    'How many historical provinces is Sweden divided into?',
+    [
+      ['25 landskap', '25 historical provinces'],
+      ['21 landskap', '21 historical provinces'],
+      ['290 landskap', '290 historical provinces'],
+      ['3 landskap', '3 historical provinces'],
+    ],
+    0,
+    'Sverige är indelat i 25 landskap. Landskapen hade förr egna lagar, men i dag styrs Sverige inte genom landskapen; 21 avser län, 290 avser kommuner och tre avser de stora landsdelarna.',
+    'Sweden is divided into 25 historical provinces. The provinces used to have their own laws, but Sweden is not governed through them today; 21 refers to counties, 290 to municipalities, and three to the major parts.',
+    ['geography', 'landskap', 'counties', 'municipalities'],
+    'medium',
+  ),
 ];
