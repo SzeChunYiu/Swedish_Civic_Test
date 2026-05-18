@@ -328,3 +328,14 @@ ownership, and diff whitespace checks. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
 open as the remaining SITE-P0 blocker; it needs production deploy capacity or
 operator-verified production deploy evidence, not another local visual-smoke
 source atom.
+
+REVIEWER-NATIVE-ACCOUNT-SCOPE-1 [P0 scope/privacy][SETUP/build]:
+The static-site account cleanup is accepted, but the native Expo app still
+ships account/auth/Supabase surfaces despite the current v1.0 no-account MVP
+scope. See `codex-tasks/validator.txt` for evidence. Route one source atom to
+remove or hide the native `(auth)` and `account` flows, AccountHeader/
+AccountSection/WelcomeBanner sign-in/sync copy, remote entitlement reads, and
+Supabase runtime dependency/copy, or obtain an explicit operator scope change
+for accounts. Acceptance needs source changes in `app/`, `components/`, `lib/`,
+or dependency manifests, a native account-scope guard, typecheck, ownership,
+relevant compliance/profile tests, and `git diff --check`.
