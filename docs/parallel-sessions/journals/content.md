@@ -1607,3 +1607,11 @@ Question count / verification: No content source changed. Routing evidence: curr
 Verification for this manager note: `git diff --check -- codex-tasks/content.txt docs/parallel-sessions/journals/content.md`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`.
 PR: #382 (opened; merge pending at handoff time).
 Blocked / next validator action: no CONTENT-owned source work - keep q114 and q144 duplicate-guarded; route generated true/false naturalness to DATA-INTEGRITY, and release new authored content only with explicit VALIDATOR/CEO lease.
+
+## Iteration 348 - 2026-05-18
+Task completed: CONTENT Pane 2 routing audit - re-read the required lane docs, synced remote state, and confirmed the current manager route leaves no fresh CONTENT-owned data atom releasable without duplicating q114/q144 or crossing into DATA-INTEGRITY/build scope.
+Artifacts changed: `docs/parallel-sessions/journals/content.md`.
+Question count / verification: No content source changed by Pane 2. Current `origin/main` is `61c77c7`; manager routing already records q144 hold evidence, q114 source/static-mirror evidence, and q114 duplicate-guarding. `q144` remains held in PR #331 until VALIDATOR/CEO explicitly releases non-site content. `REVIEWER-GENERATED-TF-NATURALNESS-2` remains DATA-INTEGRITY-owned because the fix must change generated templates, validator mirror, regenerated exports, and any required static mirror rather than hand-editing authored CONTENT rows.
+Verification: `git diff --check -- docs/parallel-sessions/journals/content.md`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`.
+PR: pending for this journal-only handoff.
+Blocked / next validator action: blocked by routing decision - manager/VALIDATOR should explicitly release the next CONTENT-owned UHR-only atom if desired. CONTENT must not edit `site/**`, duplicate q114/q144, or hand-edit generated true/false output.
