@@ -3141,3 +3141,27 @@ Evidence: current static site still hides required top-level routes on narrow mo
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep this as the next SETUP/site atom; require an accessible mobile navigation path and a <=390px regression guard before accepting SITE-P0-5 local readiness.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-main-NI6IMv` / `task/reviewer/site-current-recheck-1779127600`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main SITE recheck for active mobile navigation and question-count copy defects.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active setup/data-integrity/validator queues, blockers, and reviewer journal context.
+- Used a clean temporary worktree on `origin/main` because the shared checkout has unrelated dirty queue/report files and is on a gone task branch; current reviewed commit was `bc20f8c`.
+- Confirmed `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/.shared/review-to-queue.sh`, and repo-local `.shared/review-to-queue.sh` are absent, so the existing validator queue rows were updated directly.
+- Served current `site/` with `python3 -m http.server 8241 --bind 127.0.0.1 --directory site`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-mobile-nav` - exit 0, 1/1 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` - exit 0, 3/3 passing, including active Mock question disclaimer coverage.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` - exit 0, 4/4 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-practice-result-i18n` - exit 0, 2/2 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- System-Chrome mobile-nav smoke at 390x844 showed no horizontal overflow and menu links for Home, Practice, Mock exam, Ebook, and Support, with Settings visible and no console/page errors.
+- System-Chrome question-count smoke against `#/` reported `window.SMT_QUESTIONS.length:720` and footer copy `Free for the core 500 questions, always.`, so the count-copy defect remains red.
+Workspace contract: pass - no product source edited; existing rows updated instead of filing duplicate defects.
+Findings queued: `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1 resolution recheck [2026-05-18 20:04 CEST]`; `REVIEWER-SITE-QUESTION-COUNT-COPY-1 update [2026-05-18 20:04 CEST]`.
+Evidence: current main closes the mobile-nav reachability row but still publishes stale 500-question count copy while exporting a 720-question static bank.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept/reject the mobile-nav SETUP atom from source/handoff evidence, keep question-count copy as the next local SITE/source atom, and keep live deploy freshness open until production serves current main.
