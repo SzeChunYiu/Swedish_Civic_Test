@@ -1,4 +1,31 @@
 
+MANAGER-build current-route update - 2026-05-18T21:18+02:00
+
+Post-#642/#ebe18cc routing state:
+- PR #642 / `ebe18cc` is accepted as partial progress for
+  `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`: canonical/static true_false prefix
+  offenders are zero, and the q666/q667/q699 grammar/capitalization residuals
+  are fixed.
+- Clean manager verification on current `origin/main` `eeeffb9` passed
+  `npm run validate:content`, `npm run test:derived-content`, focused
+  content/static published-question gates 23/23,
+  `node scripts/export-question-bank.js --check`,
+  `node scripts/export-site-question-bank.js --check`,
+  `npm run typecheck -- --pretty false`, `npm run lint`,
+  `npm run test:ownership`, and `git diff --check ebe18cc^..ebe18cc`.
+- Do not close the full reviewer route yet. A precise current-main scan still
+  finds false-answer explanation mismatches for `q151`, `q167`, `q235`,
+  `q255`, `q331`, `q339`, and `q715`: false propositions still explain that
+  the statement is true / `Påståendet är sant`.
+- Next DATA-INTEGRITY route:
+  `REVIEWER-GENERATED-TF-FALSE-EXPLANATION-1`, starting from clean current
+  main. Own generator, validator, and static-mirror cleanup for those
+  false-answer explanations; regenerate `content/question-bank.csv` and
+  `site/questions.js`; add focused negative guards; rerun export/static parity,
+  `validate:content`, `test:derived-content`, focused content gates,
+  typecheck, lint, ownership, Prettier/diff; provide PR/merge evidence and a
+  direct recheck of all seven rows.
+
 MANAGER-build current-route update - 2026-05-18T21:01+02:00
 
 Post-#618/#64bdae6 routing state:
