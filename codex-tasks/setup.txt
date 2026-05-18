@@ -247,6 +247,20 @@ Current P0 SETUP routing from the SITE-P0-5 live audit:
   SETUP pane 2 is currently usage-limited; route from clean current main when
   capacity returns.
 
+MANAGER-build QA 2026-05-18T21:31+02:00:
+PR #648 / `a1d5921` merged the Ebook chapter 13 implementation, but
+`REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` is not accepted yet. Clean current-main
+manager verification passed `node --test tests/content-static-site-ebook-parity.test.js`
+3/3, `npm run test:static-site-chapter-count-copy` 2/2,
+`node scripts/export-site-question-bank.js --check`, `npm run validate:content`,
+`npm run typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+`node --check site/ebook.js`, `node --check tests/content-static-site-ebook-parity.test.js`,
+and `git diff --check a1d5921^..a1d5921`. However targeted Prettier failed on
+`site/ebook.js`, `site/index.html`, and `docs/parallel-sessions/journals/setup.md`.
+Next SETUP capacity must land a formatting-only follow-up from current main,
+rerun targeted Prettier plus the focused ebook/static gates, then request
+manager acceptance again. Pane 2 is usage-limited as of this QA note.
+
 MANAGER-build note 2026-05-18T15:25+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
 hit the Codex usage cap. Do not resume that stale account-scope attempt as the
