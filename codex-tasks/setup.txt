@@ -219,48 +219,23 @@ Accepted P0 SETUP atoms:
       viewport guard proves Practice, Mock exam, Ebook, Support, and Settings
       are reachable at 390px without document/body horizontal overflow.
 
-Active P0 SETUP atoms from the SITE-P0-5 live audit:
+Current P0 SETUP routing from the SITE-P0-5 live audit:
 
-1. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
-   - Scope: deployed static `site/` user-visible question-count/product-count
-     copy in `site/index.html`, `site/i18n-extras.js`, and any related static
-     copy surface.
-   - Required behavior: visible copy must not promise a stale "core 500"
-     question set while `site/questions.js` exports 720 questions. Prefer
-     deriving count copy from the static bank or using non-numeric wording that
-     cannot drift across localized variants.
-   - Required gates: static copy guard comparing visible count claims against
-     `window.SMT_QUESTIONS.length` or rejecting stale hardcoded counts, static
-     question-bank parity, `node --check` for changed `site/` scripts,
-     typecheck, lint, ownership, targeted Prettier/diff checks, journal handoff,
-     and PR/merge evidence.
-   - Reviewer evidence: current static site exports 720 questions, but the
-     footer still says "Free for the core 500 questions, always." and
-     `site/i18n-extras.js` repeats `500` in extra-language footer strings.
-
-2. `REVIEWER-SITE-CHAPTER-COUNT-COPY-1`
-   - Scope: deployed static `site/` user-visible chapter-count copy in
-     `site/index.html`, `site/app.js`, and any related localized static copy
-     surface.
-   - Required behavior: visible copy must not promise "Twelve chapters" /
-     "Tolv kapitel" while `window.SMT_CHAPTERS_META.length` is 13. Prefer
-     deriving the chapter count from static metadata or using non-numeric
-     wording that cannot drift across localized variants.
-   - Required gates: static copy guard comparing visible chapter-count claims
-     against `window.SMT_CHAPTERS_META.length` or rejecting stale hardcoded
-     chapter counts, static question-bank parity, `node --check` for changed
-     `site/` scripts, typecheck, lint, ownership, targeted Prettier/diff
-     checks, journal handoff, and PR/merge evidence.
-   - Reviewer evidence: after the question-count copy fix on `origin/main`
-     `60f5827`, a current Home smoke still shows English `Twelve chapters...`
-     and Swedish `Tolv kapitel...` while the static chapter metadata has 13
-     chapters and no stale 500-question claim remains.
-   - Reviewer resolution recheck 2026-05-18T20:25+02:00 on current
-     `origin/main` `0b26519`: `npm run test:static-site-chapter-count-copy`
-     passes 2/2, static parity reports 720 questions and 13 chapters, and a
-     system-Chrome Home smoke renders 13 overview rows in both English and
-     Swedish. VALIDATOR can accept this atom once the SETUP source commit and
-     handoff evidence are reviewed.
+- `REVIEWER-SITE-QUESTION-COUNT-COPY-1` is accepted via PR #585 /
+  `60f5827`. Current `origin/main` passes
+  `npm run test:static-site-question-count-copy` 2/2 and static-bank parity
+  reports 720 questions and 13 chapters. Do not duplicate the stale core-500
+  copy branch.
+- `REVIEWER-SITE-CHAPTER-COUNT-COPY-1` is accepted via PR #593 /
+  `0b26519`. Current `origin/main` passes
+  `npm run test:static-site-chapter-count-copy` 2/2 and static-bank parity
+  reports 720 questions and 13 chapters. Do not duplicate stale Twelve/Tolv
+  chapter-count work.
+- No unblocked local SETUP source atom is currently ahead of
+  `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`. Keep live deploy freshness external
+  until production serves current `origin/main` and the hash-aware live smoke
+  passes. If REVIEWER files a new static-site defect, route it as one fresh
+  source atom from clean current main.
 
 MANAGER-build note 2026-05-18T15:25+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
