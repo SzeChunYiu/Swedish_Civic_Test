@@ -6,7 +6,6 @@ import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { PremiumEntitlements } from '../../types/monetization';
-import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';
 
 let launchPopupShownThisRuntime = false;
 
@@ -46,31 +45,12 @@ export interface LaunchPopupAdProps {
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }
 
-function getInitialVisibility(entitlements: Pick<PremiumEntitlements, 'adsDisabled'>): boolean {
-  const shouldShow = shouldShowLaunchPopupAd({
-    alreadyShownThisLaunch: launchPopupShownThisRuntime,
-    entitlements,
-  });
-
-  if (shouldShow) {
-    deferFirstRunAboutModalForLaunchSession();
-  }
-
-  return shouldShow;
-}
-
 export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupAdProps) {
   const language = useSettingsStore((state) => state.language);
   const copy = launchPopupAdCopy[language];
-  const [visible, setVisible] = useState(() => getInitialVisibility(entitlements));
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (visible) {
-      launchPopupShownThisRuntime = true;
-      deferFirstRunAboutModalForLaunchSession();
-      return;
-    }
-
     if (
       !shouldShowLaunchPopupAd({
         alreadyShownThisLaunch: launchPopupShownThisRuntime,
@@ -81,9 +61,8 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
     }
 
     launchPopupShownThisRuntime = true;
-    deferFirstRunAboutModalForLaunchSession();
     setVisible(true);
-  }, [entitlements, visible]);
+  }, [entitlements]);
 
   const unit = getAdUnit('app_open_launch');
 

@@ -1,1 +1,5 @@
+# app-ads.txt — Sweden Citizenship Test Prep
+# Spec: https://iabtechlab.com/app-ads-txt/
+# Hosted on the public GitHub Pages site (same site as support/privacy).
+# Publisher ID from AdMob App ID ca-app-pub-2451892671779738~XXXX (iOS+Android share it).
 google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0

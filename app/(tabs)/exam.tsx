@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
-import { ResultSummary } from '../../components/ResultSummary';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -28,7 +26,6 @@ import {
 import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
-import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -219,7 +216,6 @@ export default function Screen() {
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
-  const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
   const {
@@ -263,8 +259,6 @@ export default function Screen() {
   }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
-  const resultCorrectCount = result?.correctCount ?? 0;
-  const resultTotalCount = result?.totalCount ?? 0;
   const chapterBreakdown = result
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
@@ -346,15 +340,7 @@ export default function Screen() {
     if (!submitted || completionRecorded) return undefined;
 
     let isMounted = true;
-    recordMockExamSession({
-      sessionId: examSessionId,
-      score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: new Date().toISOString(),
-      correctCount: resultCorrectCount,
-      totalCount: resultTotalCount,
-    });
-
-    void recordExamCompletion(examSessionId)
+    void recordExamCompletion()
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -367,16 +353,7 @@ export default function Screen() {
     return () => {
       isMounted = false;
     };
-  }, [
-    completionRecorded,
-    copy.completionStoreFailure,
-    examSessionId,
-    recordExamCompletion,
-    recordMockExamSession,
-    resultCorrectCount,
-    resultTotalCount,
-    submitted,
-  ]);
+  }, [completionRecorded, copy.completionStoreFailure, recordExamCompletion, submitted]);
 
   if (!result && !examUnlocked) {
     return (
@@ -419,7 +396,7 @@ export default function Screen() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Badge tone={endedByTime ? 'orange' : 'blue'}>
+          <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
           </Badge>
           <Text accessibilityRole="header" style={styles.title}>
@@ -431,14 +408,13 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <ResultSummary
-          correctCount={result.correctCount}
-          languageOverride={language}
-          metricLabel={copy.correctCount(result.correctCount, result.totalCount)}
-          status={endedByTime ? 'review' : undefined}
-          subtitle={copy.resultNote}
-          totalCount={result.totalCount}
-        />
+        <View style={styles.resultCard}>
+          <Text style={styles.metric}>{result.percent}%</Text>
+          <Text style={styles.subtitle}>
+            {copy.correctCount(result.correctCount, result.totalCount)}
+          </Text>
+          <Text style={styles.resultNote}>{copy.resultNote}</Text>
+        </View>
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -572,20 +548,21 @@ export default function Screen() {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <OptionCard
+                <Pressable
                   key={option.id}
-                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isSelected, selected: isSelected }}
-                  label={optionText}
-                  languageOverride={language}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
                   onPress={() =>
                     setAnswers((current) => ({ ...current, [question.id]: option.id }))
                   }
-                  state={isSelected ? 'selected' : 'idle'}
-                />
+                  style={[styles.option, isSelected ? styles.optionSelected : null]}
+                >
+                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
+                    {optionText}
+                  </Text>
+                </Pressable>
               );
             })}
           </View>
@@ -685,8 +662,42 @@ const styles = StyleSheet.create({
   options: {
     gap: space[1],
   },
+  option: {
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space[1.5],
+  },
+  optionSelected: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueText,
+  },
+  optionText: {
+    color: colors.textSoft,
+    fontSize: typography.navButton.fontSize,
+  },
+  optionTextSelected: {
+    color: colors.badgeBlueText,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
   actionButton: {
     minHeight: space[5] + space[0.5],
+  },
+  resultCard: {
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    padding: space[2],
+  },
+  metric: {
+    color: colors.text,
+    fontSize: typography.subHeadingLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  resultNote: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+    marginTop: space[1],
   },
   breakdownRow: {
     alignItems: 'center',

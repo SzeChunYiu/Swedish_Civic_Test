@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Almost Swedish",
-    "slug": "almost-swedish",
+    "name": "Sweden Citizenship Test Prep",
+    "slug": "swedish-civic-test",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "scheme": "almost-swedish",
+    "scheme": "swedish-civic-test",
     "plugins": [
       "expo-router",
       [
@@ -31,20 +31,20 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#fffcf9"
+      "backgroundColor": "#f5f8ff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.billyyiu.almostswedish"
+      "bundleIdentifier": "com.billyyiu.swedishcivictest"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#fffcf9"
+        "backgroundColor": "#005293"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.billyyiu.almostswedish"
+      "package": "com.billyyiu.swedishcivictest"
     },
     "web": {
       "output": "single"

@@ -1,31 +1,3 @@
-MANAGER-build acceptance/current-route update - 2026-05-19T01:16+02:00
-
-`REVIEWER-GENERATED-TF-Q270-Q271-REASON-TARGET-1` is accepted on current
-`origin/main` via DATA-INTEGRITY PR #809 / `81c3295`, and
-`REVIEWER-GENERATED-TF-EXPLANATION-META-1` is accepted via PR #819 /
-`8782487`.
-
-Manager verification in `/tmp/sct-manager-di-accept-IHenjj/wt` on
-`origin/main` `69b94c4` passed a direct CSV/static scan showing 720 CSV rows,
-720 static rows, 576 generated rows, 288 generated true/false rows, zero stale
-q270/q271 generic `En anledning är att...` / `One reason is that...` reason
-stems, and zero generated true/false explanation answer-judgement/meta rows.
-Executable gates passed: `npm run validate:content`,
-`npm run test:derived-content`, focused
-`tests/content-published-question-types.test.js`
-`tests/content-static-site-question-bank-parity.test.js`
-`tests/content-test-gate-parity.test.js` plus `scripts/content-production.test.js`
-38/38, canonical export parity, static-site export parity, `node --check
-site/questions.js`, `npm run typecheck -- --pretty false`, `npm run lint`,
-`npm run test:ownership`, and `git diff --check`.
-
-Do not reopen q270/q271 reason-target wording or generated true/false
-explanation-meta cleanup without fresh current-main regression evidence. No
-fresh DATA-INTEGRITY source route is visible after #809, #819, and the current
-route audit #825 / `5861846`; route new DATA-INTEGRITY work only from new
-reviewer/VERIFY evidence. Keep SITE-P0-5 external and do not run Vercel CLI
-from this repo.
-
 MANAGER-build acceptance/current-route update - 2026-05-19T00:32+02:00
 
 `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1` remaining ordinary
