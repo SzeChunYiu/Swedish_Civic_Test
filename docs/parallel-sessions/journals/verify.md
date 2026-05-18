@@ -227,3 +227,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold q301-q350 current evidence into the active DATA-INTEGRITY generated true/false cleanup for false-explanation guards and the q318/q319/q346/q347/q350 standalone-stem follow-up, then route the next non-overlapping rolling VERIFY slice.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q351-q400-pane3-1779132479`, branch `task/content-verify/q351-q400-pane3-1779132479`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-prefix/false-explanation-cleanup rolling current-output refresh for `verify:data/questions.ts q351-q400`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q351-q400-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL and opened/extracted for printed pages 22-28; q351-q400 facts, citations, answer keys, and ordinary distractors remain supported. After syncing to current `origin/main` `dff1c24`, the false-explanation cleanup fixed the q331/q339 class but q351-q400 still has five standalone-stem defects: `q351`, `q358`, `q359`, `q398`, and `q399`. Focused CSV/static/ledger assertion passed with 50 checked rows, 25 true/false rows, zero prefix rows, five current defects, 45 ok rows, no missing static rows, no static text mismatches, and no bad ledger rows. `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check`, `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content`, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and `git diff --check` passed.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: fold `VERIFY-GENERATED-STANDALONE-STEMS-Q351-Q400-POSTPREFIX-1` into the active DATA-INTEGRITY generated true/false standalone-stem cleanup, then route the next non-overlapping rolling VERIFY slice.

@@ -782,3 +782,25 @@ spot checks. Do not reopen `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`
 without fresh current-main regression evidence. Authored source stems remain
 CONTENT-owned unless VALIDATOR leases the paired `CONTENT-AUTHORED-TF-PREFIX-1`
 cleanup.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T21:34:00+02:00
+`VERIFY-GENERATED-STANDALONE-STEMS-Q351-Q400-POSTPREFIX-1` [product
+defect][P0 TRANSLATE-COMPLETE][wording-rule][content-sync]: current-output
+VERIFY refresh on `origin/main` `dff1c24` supersedes the older q351-q400
+fragment report. Current q351-q400 CSV/static output has 50 rows, 25
+true/false rows, zero redundant true/false prefixes, no static mirror missing
+IDs, and no CSV/static text mismatches. Most earlier q351-q400 generated
+fragment defects are clean, and the false-answer explanation cleanup on current
+main fixes the q331/q339 class, but five learner-visible generated true/false
+stems remain non-standalone: `q351` uses `Den` / `It` without naming the UN
+Universal Declaration of Human Rights; `q358` and `q359` use Swedish `Det är`
+without naming violence in close relationships and honour-related violence and
+oppression; and `q398` / `q399` use `De` / `They` without naming trade unions.
+Facts, UHR locators, answer keys, and ordinary distractors remain supported.
+Own this as a generator/validator/static-mirror wording-rule follow-up.
+Acceptance requires generated stem fixes, validator mirror coverage,
+regenerated `content/question-bank.csv` and `site/questions.js`, focused guards
+for the five named rows, export/static parity, `validate:content`,
+`test:derived-content`, typecheck, ownership, Prettier/diff checks,
+PR/merge evidence, and a current-main recheck of ledger rows `q351`, `q358`,
+`q359`, `q398`, and `q399`.
