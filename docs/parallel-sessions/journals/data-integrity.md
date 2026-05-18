@@ -794,3 +794,13 @@ Verification (commands + result): clean `origin/main` `d42cb51` reproduced the r
 PR (number + merged?): #303, open at handoff update.
 Accepted by worker? yes
 Next suggested validator action: accept this DATA-INTEGRITY parity repair if the PR merges cleanly, then unblock content/site work that was held only by the stale AnswerOption Button-contract validator.
+
+Lane: DATA-INTEGRITY
+Host/branch: local `/tmp/sct-data-integrity-site-current`, `task/data-integrity/site-current-bank-sync-1779111322`
+Role type and manager: dynamic-worker under MANAGER-build / VALIDATOR
+Task / checklist item: `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` static deployed-site question-bank sync, 2026-05-18 15:38 CEST.
+Changed artifacts: `site/questions.js`, `tests/content-static-site-question-bank-parity.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification (commands + result): after rebasing onto `origin/main` `3a323ff`, `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 715 questions and 13 chapters; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` passed 2/2; `node --check site/questions.js` passed; direct VM inspection found 715 static questions with q142, q143, and q715 present; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with 715 questions, 143 source questions, and 572 generated published questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 715-question parity; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed; `npx --no-install prettier --check tests/content-static-site-question-bank-parity.test.js` passed; `git diff --check origin/main..HEAD` passed. Serialized `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` passed 290/290 before the final rebase; the final rebase only added deploy-gate metadata/tooling and the focused post-rebase gates above passed.
+PR (number + merged?): #324, yes after squash merge.
+Accepted by worker? yes
+Next suggested validator action: accept this DATA-INTEGRITY static-bank sync as closure for the current q142/q143 site bank drift, and keep `node scripts/export-site-question-bank.js --check` plus `tests/content-static-site-question-bank-parity.test.js` as the nearest drift gates with question counts derived from canonical content.

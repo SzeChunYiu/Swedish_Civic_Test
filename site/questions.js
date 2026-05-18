@@ -3093,8 +3093,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Taxes for Sweden's welfare section explains that tax is paid both by people who work and by companies. It also describes VAT as a tax on goods and services, and tax revenues contribute to the welfare budgets of the state, regions, and municipalities.",
-      "sv": "Avsnittet Skatter för Sveriges välfärd förklarar att skatt betalas både av personer som arbetar och av företag. Det beskriver också moms som en skatt på varor och tjänster, och skatteintäkter bidrar till statens, regionernas och kommunernas välfärdsbudgetar."
+      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
+      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4830,8 +4830,8 @@
         "sv": "Bara en världsreligion är representerad i Sverige"
       },
       {
-        "en": "Church of Sweden membership is increasing according to the section",
-        "sv": "Svenska kyrkans medlemsantal ökar enligt avsnittet"
+        "en": "Church of Sweden membership is increasing",
+        "sv": "Svenska kyrkans medlemsantal ökar"
       }
     ],
     "answer": 0,
@@ -6340,6 +6340,91 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
+      "en": "How many islands does Sweden have?",
+      "sv": "Hur många öar har Sverige?"
+    },
+    "opts": [
+      {
+        "en": "About 250,000",
+        "sv": "Cirka 250 000"
+      },
+      {
+        "en": "About 25,000",
+        "sv": "Cirka 25 000"
+      },
+      {
+        "en": "About 2,500",
+        "sv": "Cirka 2 500"
+      },
+      {
+        "en": "About 250",
+        "sv": "Cirka 250"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden"
+    ]
+  },
+  {
+    "id": "q143",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "True or false: Sweden is usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Sant eller falskt: Sverige brukar delas in i Götaland, Svealand och Norrland."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Sveriges indelning",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "landsdelar",
+      "gotaland",
+      "svealand",
+      "norrland"
+    ]
+  },
+  {
+    "id": "q144",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
       "en": "Which answer best matches? Where is Sweden located?",
       "sv": "Vilket svar stämmer bäst? Var ligger Sverige?"
     },
@@ -6382,7 +6467,7 @@
     ]
   },
   {
-    "id": "q143",
+    "id": "q145",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6421,7 +6506,7 @@
     ]
   },
   {
-    "id": "q144",
+    "id": "q146",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6460,7 +6545,7 @@
     ]
   },
   {
-    "id": "q145",
+    "id": "q147",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6507,7 +6592,7 @@
     ]
   },
   {
-    "id": "q146",
+    "id": "q148",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6554,7 +6639,7 @@
     ]
   },
   {
-    "id": "q147",
+    "id": "q149",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6592,7 +6677,7 @@
     ]
   },
   {
-    "id": "q148",
+    "id": "q150",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6631,7 +6716,7 @@
     ]
   },
   {
-    "id": "q149",
+    "id": "q151",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6678,7 +6763,7 @@
     ]
   },
   {
-    "id": "q150",
+    "id": "q152",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6726,7 +6811,7 @@
     ]
   },
   {
-    "id": "q151",
+    "id": "q153",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6766,7 +6851,7 @@
     ]
   },
   {
-    "id": "q152",
+    "id": "q154",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6806,7 +6891,7 @@
     ]
   },
   {
-    "id": "q153",
+    "id": "q155",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6854,7 +6939,7 @@
     ]
   },
   {
-    "id": "q154",
+    "id": "q156",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6901,7 +6986,7 @@
     ]
   },
   {
-    "id": "q155",
+    "id": "q157",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6940,7 +7025,7 @@
     ]
   },
   {
-    "id": "q156",
+    "id": "q158",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6979,7 +7064,7 @@
     ]
   },
   {
-    "id": "q157",
+    "id": "q159",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7026,7 +7111,7 @@
     ]
   },
   {
-    "id": "q158",
+    "id": "q160",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7074,7 +7159,7 @@
     ]
   },
   {
-    "id": "q159",
+    "id": "q161",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7114,7 +7199,7 @@
     ]
   },
   {
-    "id": "q160",
+    "id": "q162",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7154,7 +7239,7 @@
     ]
   },
   {
-    "id": "q161",
+    "id": "q163",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7202,7 +7287,7 @@
     ]
   },
   {
-    "id": "q162",
+    "id": "q164",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7249,7 +7334,7 @@
     ]
   },
   {
-    "id": "q163",
+    "id": "q165",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7287,7 +7372,7 @@
     ]
   },
   {
-    "id": "q164",
+    "id": "q166",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7326,7 +7411,7 @@
     ]
   },
   {
-    "id": "q165",
+    "id": "q167",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7373,7 +7458,7 @@
     ]
   },
   {
-    "id": "q166",
+    "id": "q168",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7420,7 +7505,7 @@
     ]
   },
   {
-    "id": "q167",
+    "id": "q169",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7459,7 +7544,7 @@
     ]
   },
   {
-    "id": "q168",
+    "id": "q170",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7498,7 +7583,7 @@
     ]
   },
   {
-    "id": "q169",
+    "id": "q171",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7545,7 +7630,7 @@
     ]
   },
   {
-    "id": "q170",
+    "id": "q172",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7594,7 +7679,7 @@
     ]
   },
   {
-    "id": "q171",
+    "id": "q173",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7635,7 +7720,7 @@
     ]
   },
   {
-    "id": "q172",
+    "id": "q174",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7676,7 +7761,7 @@
     ]
   },
   {
-    "id": "q173",
+    "id": "q175",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7725,7 +7810,7 @@
     ]
   },
   {
-    "id": "q174",
+    "id": "q176",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7772,7 +7857,7 @@
     ]
   },
   {
-    "id": "q175",
+    "id": "q177",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7811,7 +7896,7 @@
     ]
   },
   {
-    "id": "q176",
+    "id": "q178",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7850,7 +7935,7 @@
     ]
   },
   {
-    "id": "q177",
+    "id": "q179",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7897,7 +7982,7 @@
     ]
   },
   {
-    "id": "q178",
+    "id": "q180",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7945,7 +8030,7 @@
     ]
   },
   {
-    "id": "q179",
+    "id": "q181",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7985,7 +8070,7 @@
     ]
   },
   {
-    "id": "q180",
+    "id": "q182",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8025,7 +8110,7 @@
     ]
   },
   {
-    "id": "q181",
+    "id": "q183",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8073,7 +8158,7 @@
     ]
   },
   {
-    "id": "q182",
+    "id": "q184",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8120,7 +8205,7 @@
     ]
   },
   {
-    "id": "q183",
+    "id": "q185",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8159,7 +8244,7 @@
     ]
   },
   {
-    "id": "q184",
+    "id": "q186",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8198,7 +8283,7 @@
     ]
   },
   {
-    "id": "q185",
+    "id": "q187",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8245,7 +8330,7 @@
     ]
   },
   {
-    "id": "q186",
+    "id": "q188",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8292,7 +8377,7 @@
     ]
   },
   {
-    "id": "q187",
+    "id": "q189",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8331,7 +8416,7 @@
     ]
   },
   {
-    "id": "q188",
+    "id": "q190",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8370,7 +8455,7 @@
     ]
   },
   {
-    "id": "q189",
+    "id": "q191",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8417,7 +8502,7 @@
     ]
   },
   {
-    "id": "q190",
+    "id": "q192",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8464,7 +8549,7 @@
     ]
   },
   {
-    "id": "q191",
+    "id": "q193",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8503,7 +8588,7 @@
     ]
   },
   {
-    "id": "q192",
+    "id": "q194",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8542,7 +8627,7 @@
     ]
   },
   {
-    "id": "q193",
+    "id": "q195",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8589,7 +8674,7 @@
     ]
   },
   {
-    "id": "q194",
+    "id": "q196",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8636,7 +8721,7 @@
     ]
   },
   {
-    "id": "q195",
+    "id": "q197",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8675,7 +8760,7 @@
     ]
   },
   {
-    "id": "q196",
+    "id": "q198",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8714,7 +8799,7 @@
     ]
   },
   {
-    "id": "q197",
+    "id": "q199",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8761,7 +8846,7 @@
     ]
   },
   {
-    "id": "q198",
+    "id": "q200",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8808,7 +8893,7 @@
     ]
   },
   {
-    "id": "q199",
+    "id": "q201",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8847,7 +8932,7 @@
     ]
   },
   {
-    "id": "q200",
+    "id": "q202",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8886,7 +8971,7 @@
     ]
   },
   {
-    "id": "q201",
+    "id": "q203",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8933,7 +9018,7 @@
     ]
   },
   {
-    "id": "q202",
+    "id": "q204",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -8980,7 +9065,7 @@
     ]
   },
   {
-    "id": "q203",
+    "id": "q205",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9019,7 +9104,7 @@
     ]
   },
   {
-    "id": "q204",
+    "id": "q206",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9058,7 +9143,7 @@
     ]
   },
   {
-    "id": "q205",
+    "id": "q207",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9105,7 +9190,7 @@
     ]
   },
   {
-    "id": "q206",
+    "id": "q208",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9152,7 +9237,7 @@
     ]
   },
   {
-    "id": "q207",
+    "id": "q209",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9191,7 +9276,7 @@
     ]
   },
   {
-    "id": "q208",
+    "id": "q210",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9230,7 +9315,7 @@
     ]
   },
   {
-    "id": "q209",
+    "id": "q211",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9277,7 +9362,7 @@
     ]
   },
   {
-    "id": "q210",
+    "id": "q212",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9324,7 +9409,7 @@
     ]
   },
   {
-    "id": "q211",
+    "id": "q213",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9363,7 +9448,7 @@
     ]
   },
   {
-    "id": "q212",
+    "id": "q214",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9402,7 +9487,7 @@
     ]
   },
   {
-    "id": "q213",
+    "id": "q215",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9449,7 +9534,7 @@
     ]
   },
   {
-    "id": "q214",
+    "id": "q216",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -9496,7 +9581,7 @@
     ]
   },
   {
-    "id": "q215",
+    "id": "q217",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -9535,7 +9620,7 @@
     ]
   },
   {
-    "id": "q216",
+    "id": "q218",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -9574,7 +9659,7 @@
     ]
   },
   {
-    "id": "q217",
+    "id": "q219",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -9621,7 +9706,7 @@
     ]
   },
   {
-    "id": "q218",
+    "id": "q220",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -9668,7 +9753,7 @@
     ]
   },
   {
-    "id": "q219",
+    "id": "q221",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -9707,7 +9792,7 @@
     ]
   },
   {
-    "id": "q220",
+    "id": "q222",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -9746,7 +9831,7 @@
     ]
   },
   {
-    "id": "q221",
+    "id": "q223",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -9793,7 +9878,7 @@
     ]
   },
   {
-    "id": "q222",
+    "id": "q224",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9840,7 +9925,7 @@
     ]
   },
   {
-    "id": "q223",
+    "id": "q225",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9879,7 +9964,7 @@
     ]
   },
   {
-    "id": "q224",
+    "id": "q226",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9918,7 +10003,7 @@
     ]
   },
   {
-    "id": "q225",
+    "id": "q227",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9965,7 +10050,7 @@
     ]
   },
   {
-    "id": "q226",
+    "id": "q228",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10012,7 +10097,7 @@
     ]
   },
   {
-    "id": "q227",
+    "id": "q229",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10051,7 +10136,7 @@
     ]
   },
   {
-    "id": "q228",
+    "id": "q230",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10090,7 +10175,7 @@
     ]
   },
   {
-    "id": "q229",
+    "id": "q231",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10137,7 +10222,7 @@
     ]
   },
   {
-    "id": "q230",
+    "id": "q232",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10184,7 +10269,7 @@
     ]
   },
   {
-    "id": "q231",
+    "id": "q233",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10223,7 +10308,7 @@
     ]
   },
   {
-    "id": "q232",
+    "id": "q234",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10262,7 +10347,7 @@
     ]
   },
   {
-    "id": "q233",
+    "id": "q235",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10309,7 +10394,7 @@
     ]
   },
   {
-    "id": "q234",
+    "id": "q236",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10356,7 +10441,7 @@
     ]
   },
   {
-    "id": "q235",
+    "id": "q237",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10395,7 +10480,7 @@
     ]
   },
   {
-    "id": "q236",
+    "id": "q238",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10434,7 +10519,7 @@
     ]
   },
   {
-    "id": "q237",
+    "id": "q239",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10481,7 +10566,7 @@
     ]
   },
   {
-    "id": "q238",
+    "id": "q240",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10528,7 +10613,7 @@
     ]
   },
   {
-    "id": "q239",
+    "id": "q241",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10567,7 +10652,7 @@
     ]
   },
   {
-    "id": "q240",
+    "id": "q242",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10606,7 +10691,7 @@
     ]
   },
   {
-    "id": "q241",
+    "id": "q243",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10653,7 +10738,7 @@
     ]
   },
   {
-    "id": "q242",
+    "id": "q244",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10700,7 +10785,7 @@
     ]
   },
   {
-    "id": "q243",
+    "id": "q245",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10739,7 +10824,7 @@
     ]
   },
   {
-    "id": "q244",
+    "id": "q246",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10778,7 +10863,7 @@
     ]
   },
   {
-    "id": "q245",
+    "id": "q247",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10825,7 +10910,7 @@
     ]
   },
   {
-    "id": "q246",
+    "id": "q248",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10872,7 +10957,7 @@
     ]
   },
   {
-    "id": "q247",
+    "id": "q249",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10911,7 +10996,7 @@
     ]
   },
   {
-    "id": "q248",
+    "id": "q250",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10950,7 +11035,7 @@
     ]
   },
   {
-    "id": "q249",
+    "id": "q251",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10997,7 +11082,7 @@
     ]
   },
   {
-    "id": "q250",
+    "id": "q252",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11044,7 +11129,7 @@
     ]
   },
   {
-    "id": "q251",
+    "id": "q253",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11083,7 +11168,7 @@
     ]
   },
   {
-    "id": "q252",
+    "id": "q254",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11122,7 +11207,7 @@
     ]
   },
   {
-    "id": "q253",
+    "id": "q255",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11169,7 +11254,7 @@
     ]
   },
   {
-    "id": "q254",
+    "id": "q256",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11216,7 +11301,7 @@
     ]
   },
   {
-    "id": "q255",
+    "id": "q257",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11255,7 +11340,7 @@
     ]
   },
   {
-    "id": "q256",
+    "id": "q258",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11294,7 +11379,7 @@
     ]
   },
   {
-    "id": "q257",
+    "id": "q259",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11341,7 +11426,7 @@
     ]
   },
   {
-    "id": "q258",
+    "id": "q260",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11388,7 +11473,7 @@
     ]
   },
   {
-    "id": "q259",
+    "id": "q261",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11427,7 +11512,7 @@
     ]
   },
   {
-    "id": "q260",
+    "id": "q262",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11466,7 +11551,7 @@
     ]
   },
   {
-    "id": "q261",
+    "id": "q263",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11513,7 +11598,7 @@
     ]
   },
   {
-    "id": "q262",
+    "id": "q264",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11560,7 +11645,7 @@
     ]
   },
   {
-    "id": "q263",
+    "id": "q265",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11599,7 +11684,7 @@
     ]
   },
   {
-    "id": "q264",
+    "id": "q266",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11638,7 +11723,7 @@
     ]
   },
   {
-    "id": "q265",
+    "id": "q267",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11685,7 +11770,7 @@
     ]
   },
   {
-    "id": "q266",
+    "id": "q268",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11732,7 +11817,7 @@
     ]
   },
   {
-    "id": "q267",
+    "id": "q269",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11771,7 +11856,7 @@
     ]
   },
   {
-    "id": "q268",
+    "id": "q270",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11810,7 +11895,7 @@
     ]
   },
   {
-    "id": "q269",
+    "id": "q271",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11857,7 +11942,7 @@
     ]
   },
   {
-    "id": "q270",
+    "id": "q272",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11904,7 +11989,7 @@
     ]
   },
   {
-    "id": "q271",
+    "id": "q273",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11943,7 +12028,7 @@
     ]
   },
   {
-    "id": "q272",
+    "id": "q274",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11982,7 +12067,7 @@
     ]
   },
   {
-    "id": "q273",
+    "id": "q275",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12029,7 +12114,7 @@
     ]
   },
   {
-    "id": "q274",
+    "id": "q276",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12076,7 +12161,7 @@
     ]
   },
   {
-    "id": "q275",
+    "id": "q277",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12115,7 +12200,7 @@
     ]
   },
   {
-    "id": "q276",
+    "id": "q278",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12154,7 +12239,7 @@
     ]
   },
   {
-    "id": "q277",
+    "id": "q279",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12201,7 +12286,7 @@
     ]
   },
   {
-    "id": "q278",
+    "id": "q280",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12248,7 +12333,7 @@
     ]
   },
   {
-    "id": "q279",
+    "id": "q281",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12287,7 +12372,7 @@
     ]
   },
   {
-    "id": "q280",
+    "id": "q282",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12326,7 +12411,7 @@
     ]
   },
   {
-    "id": "q281",
+    "id": "q283",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12373,7 +12458,7 @@
     ]
   },
   {
-    "id": "q282",
+    "id": "q284",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12420,7 +12505,7 @@
     ]
   },
   {
-    "id": "q283",
+    "id": "q285",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12459,7 +12544,7 @@
     ]
   },
   {
-    "id": "q284",
+    "id": "q286",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12498,7 +12583,7 @@
     ]
   },
   {
-    "id": "q285",
+    "id": "q287",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12545,7 +12630,7 @@
     ]
   },
   {
-    "id": "q286",
+    "id": "q288",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12592,7 +12677,7 @@
     ]
   },
   {
-    "id": "q287",
+    "id": "q289",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12631,7 +12716,7 @@
     ]
   },
   {
-    "id": "q288",
+    "id": "q290",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12670,7 +12755,7 @@
     ]
   },
   {
-    "id": "q289",
+    "id": "q291",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12717,7 +12802,7 @@
     ]
   },
   {
-    "id": "q290",
+    "id": "q292",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12764,7 +12849,7 @@
     ]
   },
   {
-    "id": "q291",
+    "id": "q293",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12803,7 +12888,7 @@
     ]
   },
   {
-    "id": "q292",
+    "id": "q294",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12842,7 +12927,7 @@
     ]
   },
   {
-    "id": "q293",
+    "id": "q295",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12889,7 +12974,7 @@
     ]
   },
   {
-    "id": "q294",
+    "id": "q296",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12936,7 +13021,7 @@
     ]
   },
   {
-    "id": "q295",
+    "id": "q297",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12975,7 +13060,7 @@
     ]
   },
   {
-    "id": "q296",
+    "id": "q298",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13014,7 +13099,7 @@
     ]
   },
   {
-    "id": "q297",
+    "id": "q299",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13061,7 +13146,7 @@
     ]
   },
   {
-    "id": "q298",
+    "id": "q300",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13108,7 +13193,7 @@
     ]
   },
   {
-    "id": "q299",
+    "id": "q301",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13147,7 +13232,7 @@
     ]
   },
   {
-    "id": "q300",
+    "id": "q302",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13186,7 +13271,7 @@
     ]
   },
   {
-    "id": "q301",
+    "id": "q303",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13233,7 +13318,7 @@
     ]
   },
   {
-    "id": "q302",
+    "id": "q304",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13280,7 +13365,7 @@
     ]
   },
   {
-    "id": "q303",
+    "id": "q305",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13319,7 +13404,7 @@
     ]
   },
   {
-    "id": "q304",
+    "id": "q306",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13358,7 +13443,7 @@
     ]
   },
   {
-    "id": "q305",
+    "id": "q307",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13405,7 +13490,7 @@
     ]
   },
   {
-    "id": "q306",
+    "id": "q308",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13452,7 +13537,7 @@
     ]
   },
   {
-    "id": "q307",
+    "id": "q309",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13491,7 +13576,7 @@
     ]
   },
   {
-    "id": "q308",
+    "id": "q310",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13530,7 +13615,7 @@
     ]
   },
   {
-    "id": "q309",
+    "id": "q311",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13577,7 +13662,7 @@
     ]
   },
   {
-    "id": "q310",
+    "id": "q312",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13624,7 +13709,7 @@
     ]
   },
   {
-    "id": "q311",
+    "id": "q313",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13663,7 +13748,7 @@
     ]
   },
   {
-    "id": "q312",
+    "id": "q314",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13702,7 +13787,7 @@
     ]
   },
   {
-    "id": "q313",
+    "id": "q315",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13749,7 +13834,7 @@
     ]
   },
   {
-    "id": "q314",
+    "id": "q316",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13796,7 +13881,7 @@
     ]
   },
   {
-    "id": "q315",
+    "id": "q317",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13835,7 +13920,7 @@
     ]
   },
   {
-    "id": "q316",
+    "id": "q318",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13874,7 +13959,7 @@
     ]
   },
   {
-    "id": "q317",
+    "id": "q319",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13921,7 +14006,7 @@
     ]
   },
   {
-    "id": "q318",
+    "id": "q320",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -13968,7 +14053,7 @@
     ]
   },
   {
-    "id": "q319",
+    "id": "q321",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14007,7 +14092,7 @@
     ]
   },
   {
-    "id": "q320",
+    "id": "q322",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14046,7 +14131,7 @@
     ]
   },
   {
-    "id": "q321",
+    "id": "q323",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14093,7 +14178,7 @@
     ]
   },
   {
-    "id": "q322",
+    "id": "q324",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14140,7 +14225,7 @@
     ]
   },
   {
-    "id": "q323",
+    "id": "q325",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14179,7 +14264,7 @@
     ]
   },
   {
-    "id": "q324",
+    "id": "q326",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14218,7 +14303,7 @@
     ]
   },
   {
-    "id": "q325",
+    "id": "q327",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14265,7 +14350,7 @@
     ]
   },
   {
-    "id": "q326",
+    "id": "q328",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14312,7 +14397,7 @@
     ]
   },
   {
-    "id": "q327",
+    "id": "q329",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14351,7 +14436,7 @@
     ]
   },
   {
-    "id": "q328",
+    "id": "q330",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14390,7 +14475,7 @@
     ]
   },
   {
-    "id": "q329",
+    "id": "q331",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14437,7 +14522,7 @@
     ]
   },
   {
-    "id": "q330",
+    "id": "q332",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14485,7 +14570,7 @@
     ]
   },
   {
-    "id": "q331",
+    "id": "q333",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14525,7 +14610,7 @@
     ]
   },
   {
-    "id": "q332",
+    "id": "q334",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14565,7 +14650,7 @@
     ]
   },
   {
-    "id": "q333",
+    "id": "q335",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14613,7 +14698,7 @@
     ]
   },
   {
-    "id": "q334",
+    "id": "q336",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14660,7 +14745,7 @@
     ]
   },
   {
-    "id": "q335",
+    "id": "q337",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14699,7 +14784,7 @@
     ]
   },
   {
-    "id": "q336",
+    "id": "q338",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14738,7 +14823,7 @@
     ]
   },
   {
-    "id": "q337",
+    "id": "q339",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14785,7 +14870,7 @@
     ]
   },
   {
-    "id": "q338",
+    "id": "q340",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14832,7 +14917,7 @@
     ]
   },
   {
-    "id": "q339",
+    "id": "q341",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14871,7 +14956,7 @@
     ]
   },
   {
-    "id": "q340",
+    "id": "q342",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14910,7 +14995,7 @@
     ]
   },
   {
-    "id": "q341",
+    "id": "q343",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14957,7 +15042,7 @@
     ]
   },
   {
-    "id": "q342",
+    "id": "q344",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15004,7 +15089,7 @@
     ]
   },
   {
-    "id": "q343",
+    "id": "q345",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15043,7 +15128,7 @@
     ]
   },
   {
-    "id": "q344",
+    "id": "q346",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15082,7 +15167,7 @@
     ]
   },
   {
-    "id": "q345",
+    "id": "q347",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15129,7 +15214,7 @@
     ]
   },
   {
-    "id": "q346",
+    "id": "q348",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15176,7 +15261,7 @@
     ]
   },
   {
-    "id": "q347",
+    "id": "q349",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15215,7 +15300,7 @@
     ]
   },
   {
-    "id": "q348",
+    "id": "q350",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15254,7 +15339,7 @@
     ]
   },
   {
-    "id": "q349",
+    "id": "q351",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15301,7 +15386,7 @@
     ]
   },
   {
-    "id": "q350",
+    "id": "q352",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15348,7 +15433,7 @@
     ]
   },
   {
-    "id": "q351",
+    "id": "q353",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15387,7 +15472,7 @@
     ]
   },
   {
-    "id": "q352",
+    "id": "q354",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15426,7 +15511,7 @@
     ]
   },
   {
-    "id": "q353",
+    "id": "q355",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15473,7 +15558,7 @@
     ]
   },
   {
-    "id": "q354",
+    "id": "q356",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15521,7 +15606,7 @@
     ]
   },
   {
-    "id": "q355",
+    "id": "q357",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15561,7 +15646,7 @@
     ]
   },
   {
-    "id": "q356",
+    "id": "q358",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15601,7 +15686,7 @@
     ]
   },
   {
-    "id": "q357",
+    "id": "q359",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15649,7 +15734,7 @@
     ]
   },
   {
-    "id": "q358",
+    "id": "q360",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15696,7 +15781,7 @@
     ]
   },
   {
-    "id": "q359",
+    "id": "q361",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15735,7 +15820,7 @@
     ]
   },
   {
-    "id": "q360",
+    "id": "q362",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15774,7 +15859,7 @@
     ]
   },
   {
-    "id": "q361",
+    "id": "q363",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15821,7 +15906,7 @@
     ]
   },
   {
-    "id": "q362",
+    "id": "q364",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15868,7 +15953,7 @@
     ]
   },
   {
-    "id": "q363",
+    "id": "q365",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15907,7 +15992,7 @@
     ]
   },
   {
-    "id": "q364",
+    "id": "q366",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15946,7 +16031,7 @@
     ]
   },
   {
-    "id": "q365",
+    "id": "q367",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15993,7 +16078,7 @@
     ]
   },
   {
-    "id": "q366",
+    "id": "q368",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16040,7 +16125,7 @@
     ]
   },
   {
-    "id": "q367",
+    "id": "q369",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16079,7 +16164,7 @@
     ]
   },
   {
-    "id": "q368",
+    "id": "q370",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16118,7 +16203,7 @@
     ]
   },
   {
-    "id": "q369",
+    "id": "q371",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16165,7 +16250,7 @@
     ]
   },
   {
-    "id": "q370",
+    "id": "q372",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16212,7 +16297,7 @@
     ]
   },
   {
-    "id": "q371",
+    "id": "q373",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16251,7 +16336,7 @@
     ]
   },
   {
-    "id": "q372",
+    "id": "q374",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16290,7 +16375,7 @@
     ]
   },
   {
-    "id": "q373",
+    "id": "q375",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16337,7 +16422,7 @@
     ]
   },
   {
-    "id": "q374",
+    "id": "q376",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16384,7 +16469,7 @@
     ]
   },
   {
-    "id": "q375",
+    "id": "q377",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16423,7 +16508,7 @@
     ]
   },
   {
-    "id": "q376",
+    "id": "q378",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16462,7 +16547,7 @@
     ]
   },
   {
-    "id": "q377",
+    "id": "q379",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16509,7 +16594,7 @@
     ]
   },
   {
-    "id": "q378",
+    "id": "q380",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16556,7 +16641,7 @@
     ]
   },
   {
-    "id": "q379",
+    "id": "q381",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16595,7 +16680,7 @@
     ]
   },
   {
-    "id": "q380",
+    "id": "q382",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16634,7 +16719,7 @@
     ]
   },
   {
-    "id": "q381",
+    "id": "q383",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16681,7 +16766,7 @@
     ]
   },
   {
-    "id": "q382",
+    "id": "q384",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16728,7 +16813,7 @@
     ]
   },
   {
-    "id": "q383",
+    "id": "q385",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16767,7 +16852,7 @@
     ]
   },
   {
-    "id": "q384",
+    "id": "q386",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16806,7 +16891,7 @@
     ]
   },
   {
-    "id": "q385",
+    "id": "q387",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16853,7 +16938,7 @@
     ]
   },
   {
-    "id": "q386",
+    "id": "q388",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -16900,7 +16985,7 @@
     ]
   },
   {
-    "id": "q387",
+    "id": "q389",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -16939,7 +17024,7 @@
     ]
   },
   {
-    "id": "q388",
+    "id": "q390",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -16978,7 +17063,7 @@
     ]
   },
   {
-    "id": "q389",
+    "id": "q391",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17025,7 +17110,7 @@
     ]
   },
   {
-    "id": "q390",
+    "id": "q392",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17072,7 +17157,7 @@
     ]
   },
   {
-    "id": "q391",
+    "id": "q393",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17111,7 +17196,7 @@
     ]
   },
   {
-    "id": "q392",
+    "id": "q394",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17150,7 +17235,7 @@
     ]
   },
   {
-    "id": "q393",
+    "id": "q395",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17197,7 +17282,7 @@
     ]
   },
   {
-    "id": "q394",
+    "id": "q396",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17244,7 +17329,7 @@
     ]
   },
   {
-    "id": "q395",
+    "id": "q397",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17283,7 +17368,7 @@
     ]
   },
   {
-    "id": "q396",
+    "id": "q398",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17322,7 +17407,7 @@
     ]
   },
   {
-    "id": "q397",
+    "id": "q399",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17369,7 +17454,7 @@
     ]
   },
   {
-    "id": "q398",
+    "id": "q400",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17416,7 +17501,7 @@
     ]
   },
   {
-    "id": "q399",
+    "id": "q401",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17455,7 +17540,7 @@
     ]
   },
   {
-    "id": "q400",
+    "id": "q402",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17494,7 +17579,7 @@
     ]
   },
   {
-    "id": "q401",
+    "id": "q403",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17541,7 +17626,7 @@
     ]
   },
   {
-    "id": "q402",
+    "id": "q404",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17588,7 +17673,7 @@
     ]
   },
   {
-    "id": "q403",
+    "id": "q405",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17627,7 +17712,7 @@
     ]
   },
   {
-    "id": "q404",
+    "id": "q406",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17666,7 +17751,7 @@
     ]
   },
   {
-    "id": "q405",
+    "id": "q407",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17713,7 +17798,7 @@
     ]
   },
   {
-    "id": "q406",
+    "id": "q408",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17760,7 +17845,7 @@
     ]
   },
   {
-    "id": "q407",
+    "id": "q409",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17799,7 +17884,7 @@
     ]
   },
   {
-    "id": "q408",
+    "id": "q410",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17838,7 +17923,7 @@
     ]
   },
   {
-    "id": "q409",
+    "id": "q411",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17885,7 +17970,7 @@
     ]
   },
   {
-    "id": "q410",
+    "id": "q412",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17933,7 +18018,7 @@
     ]
   },
   {
-    "id": "q411",
+    "id": "q413",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17973,7 +18058,7 @@
     ]
   },
   {
-    "id": "q412",
+    "id": "q414",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18013,7 +18098,7 @@
     ]
   },
   {
-    "id": "q413",
+    "id": "q415",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18061,7 +18146,7 @@
     ]
   },
   {
-    "id": "q414",
+    "id": "q416",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18108,7 +18193,7 @@
     ]
   },
   {
-    "id": "q415",
+    "id": "q417",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18147,7 +18232,7 @@
     ]
   },
   {
-    "id": "q416",
+    "id": "q418",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18186,7 +18271,7 @@
     ]
   },
   {
-    "id": "q417",
+    "id": "q419",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18233,7 +18318,7 @@
     ]
   },
   {
-    "id": "q418",
+    "id": "q420",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18261,8 +18346,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Taxes for Sweden's welfare section explains that tax is paid both by people who work and by companies. It also describes VAT as a tax on goods and services, and tax revenues contribute to the welfare budgets of the state, regions, and municipalities.",
-      "sv": "Avsnittet Skatter för Sveriges välfärd förklarar att skatt betalas både av personer som arbetar och av företag. Det beskriver också moms som en skatt på varor och tjänster, och skatteintäkter bidrar till statens, regionernas och kommunernas välfärdsbudgetar."
+      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
+      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18280,7 +18365,7 @@
     ]
   },
   {
-    "id": "q419",
+    "id": "q421",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18300,8 +18385,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Taxes for Sweden's welfare section explains that tax is paid both by people who work and by companies. It also describes VAT as a tax on goods and services, and tax revenues contribute to the welfare budgets of the state, regions, and municipalities.",
-      "sv": "Avsnittet Skatter för Sveriges välfärd förklarar att skatt betalas både av personer som arbetar och av företag. Det beskriver också moms som en skatt på varor och tjänster, och skatteintäkter bidrar till statens, regionernas och kommunernas välfärdsbudgetar."
+      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
+      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18319,7 +18404,7 @@
     ]
   },
   {
-    "id": "q420",
+    "id": "q422",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18339,8 +18424,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Taxes for Sweden's welfare section explains that tax is paid both by people who work and by companies. It also describes VAT as a tax on goods and services, and tax revenues contribute to the welfare budgets of the state, regions, and municipalities.",
-      "sv": "Avsnittet Skatter för Sveriges välfärd förklarar att skatt betalas både av personer som arbetar och av företag. Det beskriver också moms som en skatt på varor och tjänster, och skatteintäkter bidrar till statens, regionernas och kommunernas välfärdsbudgetar."
+      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
+      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18358,7 +18443,7 @@
     ]
   },
   {
-    "id": "q421",
+    "id": "q423",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18386,8 +18471,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Taxes for Sweden's welfare section explains that tax is paid both by people who work and by companies. It also describes VAT as a tax on goods and services, and tax revenues contribute to the welfare budgets of the state, regions, and municipalities.",
-      "sv": "Avsnittet Skatter för Sveriges välfärd förklarar att skatt betalas både av personer som arbetar och av företag. Det beskriver också moms som en skatt på varor och tjänster, och skatteintäkter bidrar till statens, regionernas och kommunernas välfärdsbudgetar."
+      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
+      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18405,7 +18490,7 @@
     ]
   },
   {
-    "id": "q422",
+    "id": "q424",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18453,7 +18538,7 @@
     ]
   },
   {
-    "id": "q423",
+    "id": "q425",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18493,7 +18578,7 @@
     ]
   },
   {
-    "id": "q424",
+    "id": "q426",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18533,7 +18618,7 @@
     ]
   },
   {
-    "id": "q425",
+    "id": "q427",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18581,7 +18666,7 @@
     ]
   },
   {
-    "id": "q426",
+    "id": "q428",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18628,7 +18713,7 @@
     ]
   },
   {
-    "id": "q427",
+    "id": "q429",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18667,7 +18752,7 @@
     ]
   },
   {
-    "id": "q428",
+    "id": "q430",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18706,7 +18791,7 @@
     ]
   },
   {
-    "id": "q429",
+    "id": "q431",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18753,7 +18838,7 @@
     ]
   },
   {
-    "id": "q430",
+    "id": "q432",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18800,7 +18885,7 @@
     ]
   },
   {
-    "id": "q431",
+    "id": "q433",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18839,7 +18924,7 @@
     ]
   },
   {
-    "id": "q432",
+    "id": "q434",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18878,7 +18963,7 @@
     ]
   },
   {
-    "id": "q433",
+    "id": "q435",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18925,7 +19010,7 @@
     ]
   },
   {
-    "id": "q434",
+    "id": "q436",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18972,7 +19057,7 @@
     ]
   },
   {
-    "id": "q435",
+    "id": "q437",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19011,7 +19096,7 @@
     ]
   },
   {
-    "id": "q436",
+    "id": "q438",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19050,7 +19135,7 @@
     ]
   },
   {
-    "id": "q437",
+    "id": "q439",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19097,7 +19182,7 @@
     ]
   },
   {
-    "id": "q438",
+    "id": "q440",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19144,7 +19229,7 @@
     ]
   },
   {
-    "id": "q439",
+    "id": "q441",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19183,7 +19268,7 @@
     ]
   },
   {
-    "id": "q440",
+    "id": "q442",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19222,7 +19307,7 @@
     ]
   },
   {
-    "id": "q441",
+    "id": "q443",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19269,7 +19354,7 @@
     ]
   },
   {
-    "id": "q442",
+    "id": "q444",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19317,7 +19402,7 @@
     ]
   },
   {
-    "id": "q443",
+    "id": "q445",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19357,7 +19442,7 @@
     ]
   },
   {
-    "id": "q444",
+    "id": "q446",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19397,7 +19482,7 @@
     ]
   },
   {
-    "id": "q445",
+    "id": "q447",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19445,7 +19530,7 @@
     ]
   },
   {
-    "id": "q446",
+    "id": "q448",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19492,7 +19577,7 @@
     ]
   },
   {
-    "id": "q447",
+    "id": "q449",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19531,7 +19616,7 @@
     ]
   },
   {
-    "id": "q448",
+    "id": "q450",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19570,7 +19655,7 @@
     ]
   },
   {
-    "id": "q449",
+    "id": "q451",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19617,7 +19702,7 @@
     ]
   },
   {
-    "id": "q450",
+    "id": "q452",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19664,7 +19749,7 @@
     ]
   },
   {
-    "id": "q451",
+    "id": "q453",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19703,7 +19788,7 @@
     ]
   },
   {
-    "id": "q452",
+    "id": "q454",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19742,7 +19827,7 @@
     ]
   },
   {
-    "id": "q453",
+    "id": "q455",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19789,7 +19874,7 @@
     ]
   },
   {
-    "id": "q454",
+    "id": "q456",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19836,7 +19921,7 @@
     ]
   },
   {
-    "id": "q455",
+    "id": "q457",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19875,7 +19960,7 @@
     ]
   },
   {
-    "id": "q456",
+    "id": "q458",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19914,7 +19999,7 @@
     ]
   },
   {
-    "id": "q457",
+    "id": "q459",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19961,7 +20046,7 @@
     ]
   },
   {
-    "id": "q458",
+    "id": "q460",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20008,7 +20093,7 @@
     ]
   },
   {
-    "id": "q459",
+    "id": "q461",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20047,7 +20132,7 @@
     ]
   },
   {
-    "id": "q460",
+    "id": "q462",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20086,7 +20171,7 @@
     ]
   },
   {
-    "id": "q461",
+    "id": "q463",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20133,7 +20218,7 @@
     ]
   },
   {
-    "id": "q462",
+    "id": "q464",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20180,7 +20265,7 @@
     ]
   },
   {
-    "id": "q463",
+    "id": "q465",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20219,7 +20304,7 @@
     ]
   },
   {
-    "id": "q464",
+    "id": "q466",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20258,7 +20343,7 @@
     ]
   },
   {
-    "id": "q465",
+    "id": "q467",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20305,7 +20390,7 @@
     ]
   },
   {
-    "id": "q466",
+    "id": "q468",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20352,7 +20437,7 @@
     ]
   },
   {
-    "id": "q467",
+    "id": "q469",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20391,7 +20476,7 @@
     ]
   },
   {
-    "id": "q468",
+    "id": "q470",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20430,7 +20515,7 @@
     ]
   },
   {
-    "id": "q469",
+    "id": "q471",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20477,7 +20562,7 @@
     ]
   },
   {
-    "id": "q470",
+    "id": "q472",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20524,7 +20609,7 @@
     ]
   },
   {
-    "id": "q471",
+    "id": "q473",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20563,7 +20648,7 @@
     ]
   },
   {
-    "id": "q472",
+    "id": "q474",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20602,7 +20687,7 @@
     ]
   },
   {
-    "id": "q473",
+    "id": "q475",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20649,7 +20734,7 @@
     ]
   },
   {
-    "id": "q474",
+    "id": "q476",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20696,7 +20781,7 @@
     ]
   },
   {
-    "id": "q475",
+    "id": "q477",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20735,7 +20820,7 @@
     ]
   },
   {
-    "id": "q476",
+    "id": "q478",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20774,7 +20859,7 @@
     ]
   },
   {
-    "id": "q477",
+    "id": "q479",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20821,7 +20906,7 @@
     ]
   },
   {
-    "id": "q478",
+    "id": "q480",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -20868,7 +20953,7 @@
     ]
   },
   {
-    "id": "q479",
+    "id": "q481",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -20907,7 +20992,7 @@
     ]
   },
   {
-    "id": "q480",
+    "id": "q482",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -20946,7 +21031,7 @@
     ]
   },
   {
-    "id": "q481",
+    "id": "q483",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -20993,7 +21078,7 @@
     ]
   },
   {
-    "id": "q482",
+    "id": "q484",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21040,7 +21125,7 @@
     ]
   },
   {
-    "id": "q483",
+    "id": "q485",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21079,7 +21164,7 @@
     ]
   },
   {
-    "id": "q484",
+    "id": "q486",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21118,7 +21203,7 @@
     ]
   },
   {
-    "id": "q485",
+    "id": "q487",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21165,7 +21250,7 @@
     ]
   },
   {
-    "id": "q486",
+    "id": "q488",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21212,7 +21297,7 @@
     ]
   },
   {
-    "id": "q487",
+    "id": "q489",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21251,7 +21336,7 @@
     ]
   },
   {
-    "id": "q488",
+    "id": "q490",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21290,7 +21375,7 @@
     ]
   },
   {
-    "id": "q489",
+    "id": "q491",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21337,7 +21422,7 @@
     ]
   },
   {
-    "id": "q490",
+    "id": "q492",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21384,7 +21469,7 @@
     ]
   },
   {
-    "id": "q491",
+    "id": "q493",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21423,7 +21508,7 @@
     ]
   },
   {
-    "id": "q492",
+    "id": "q494",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21462,7 +21547,7 @@
     ]
   },
   {
-    "id": "q493",
+    "id": "q495",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21509,7 +21594,7 @@
     ]
   },
   {
-    "id": "q494",
+    "id": "q496",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21556,7 +21641,7 @@
     ]
   },
   {
-    "id": "q495",
+    "id": "q497",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21595,7 +21680,7 @@
     ]
   },
   {
-    "id": "q496",
+    "id": "q498",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21634,7 +21719,7 @@
     ]
   },
   {
-    "id": "q497",
+    "id": "q499",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21681,7 +21766,7 @@
     ]
   },
   {
-    "id": "q498",
+    "id": "q500",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21728,7 +21813,7 @@
     ]
   },
   {
-    "id": "q499",
+    "id": "q501",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21767,7 +21852,7 @@
     ]
   },
   {
-    "id": "q500",
+    "id": "q502",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21806,7 +21891,7 @@
     ]
   },
   {
-    "id": "q501",
+    "id": "q503",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21853,7 +21938,7 @@
     ]
   },
   {
-    "id": "q502",
+    "id": "q504",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21900,7 +21985,7 @@
     ]
   },
   {
-    "id": "q503",
+    "id": "q505",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21939,7 +22024,7 @@
     ]
   },
   {
-    "id": "q504",
+    "id": "q506",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21978,7 +22063,7 @@
     ]
   },
   {
-    "id": "q505",
+    "id": "q507",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22025,7 +22110,7 @@
     ]
   },
   {
-    "id": "q506",
+    "id": "q508",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22072,7 +22157,7 @@
     ]
   },
   {
-    "id": "q507",
+    "id": "q509",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22111,7 +22196,7 @@
     ]
   },
   {
-    "id": "q508",
+    "id": "q510",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22150,7 +22235,7 @@
     ]
   },
   {
-    "id": "q509",
+    "id": "q511",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22197,7 +22282,7 @@
     ]
   },
   {
-    "id": "q510",
+    "id": "q512",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22244,7 +22329,7 @@
     ]
   },
   {
-    "id": "q511",
+    "id": "q513",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22283,7 +22368,7 @@
     ]
   },
   {
-    "id": "q512",
+    "id": "q514",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22322,7 +22407,7 @@
     ]
   },
   {
-    "id": "q513",
+    "id": "q515",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22369,7 +22454,7 @@
     ]
   },
   {
-    "id": "q514",
+    "id": "q516",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22416,7 +22501,7 @@
     ]
   },
   {
-    "id": "q515",
+    "id": "q517",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22455,7 +22540,7 @@
     ]
   },
   {
-    "id": "q516",
+    "id": "q518",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22494,7 +22579,7 @@
     ]
   },
   {
-    "id": "q517",
+    "id": "q519",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22541,7 +22626,7 @@
     ]
   },
   {
-    "id": "q518",
+    "id": "q520",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22588,7 +22673,7 @@
     ]
   },
   {
-    "id": "q519",
+    "id": "q521",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22627,7 +22712,7 @@
     ]
   },
   {
-    "id": "q520",
+    "id": "q522",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22666,7 +22751,7 @@
     ]
   },
   {
-    "id": "q521",
+    "id": "q523",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22713,7 +22798,7 @@
     ]
   },
   {
-    "id": "q522",
+    "id": "q524",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22760,7 +22845,7 @@
     ]
   },
   {
-    "id": "q523",
+    "id": "q525",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22799,7 +22884,7 @@
     ]
   },
   {
-    "id": "q524",
+    "id": "q526",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22838,7 +22923,7 @@
     ]
   },
   {
-    "id": "q525",
+    "id": "q527",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22885,7 +22970,7 @@
     ]
   },
   {
-    "id": "q526",
+    "id": "q528",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -22932,7 +23017,7 @@
     ]
   },
   {
-    "id": "q527",
+    "id": "q529",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -22971,7 +23056,7 @@
     ]
   },
   {
-    "id": "q528",
+    "id": "q530",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23010,7 +23095,7 @@
     ]
   },
   {
-    "id": "q529",
+    "id": "q531",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23057,7 +23142,7 @@
     ]
   },
   {
-    "id": "q530",
+    "id": "q532",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23105,7 +23190,7 @@
     ]
   },
   {
-    "id": "q531",
+    "id": "q533",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23145,7 +23230,7 @@
     ]
   },
   {
-    "id": "q532",
+    "id": "q534",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23185,7 +23270,7 @@
     ]
   },
   {
-    "id": "q533",
+    "id": "q535",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23233,7 +23318,7 @@
     ]
   },
   {
-    "id": "q534",
+    "id": "q536",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23281,7 +23366,7 @@
     ]
   },
   {
-    "id": "q535",
+    "id": "q537",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23321,7 +23406,7 @@
     ]
   },
   {
-    "id": "q536",
+    "id": "q538",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23361,7 +23446,7 @@
     ]
   },
   {
-    "id": "q537",
+    "id": "q539",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23409,7 +23494,7 @@
     ]
   },
   {
-    "id": "q538",
+    "id": "q540",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23457,7 +23542,7 @@
     ]
   },
   {
-    "id": "q539",
+    "id": "q541",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23497,7 +23582,7 @@
     ]
   },
   {
-    "id": "q540",
+    "id": "q542",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23537,7 +23622,7 @@
     ]
   },
   {
-    "id": "q541",
+    "id": "q543",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23585,7 +23670,7 @@
     ]
   },
   {
-    "id": "q542",
+    "id": "q544",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23632,7 +23717,7 @@
     ]
   },
   {
-    "id": "q543",
+    "id": "q545",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23671,7 +23756,7 @@
     ]
   },
   {
-    "id": "q544",
+    "id": "q546",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23710,7 +23795,7 @@
     ]
   },
   {
-    "id": "q545",
+    "id": "q547",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23757,7 +23842,7 @@
     ]
   },
   {
-    "id": "q546",
+    "id": "q548",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23805,7 +23890,7 @@
     ]
   },
   {
-    "id": "q547",
+    "id": "q549",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23845,7 +23930,7 @@
     ]
   },
   {
-    "id": "q548",
+    "id": "q550",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23885,7 +23970,7 @@
     ]
   },
   {
-    "id": "q549",
+    "id": "q551",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23933,7 +24018,7 @@
     ]
   },
   {
-    "id": "q550",
+    "id": "q552",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23981,7 +24066,7 @@
     ]
   },
   {
-    "id": "q551",
+    "id": "q553",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24021,7 +24106,7 @@
     ]
   },
   {
-    "id": "q552",
+    "id": "q554",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24061,7 +24146,7 @@
     ]
   },
   {
-    "id": "q553",
+    "id": "q555",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24109,7 +24194,7 @@
     ]
   },
   {
-    "id": "q554",
+    "id": "q556",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24157,7 +24242,7 @@
     ]
   },
   {
-    "id": "q555",
+    "id": "q557",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24197,7 +24282,7 @@
     ]
   },
   {
-    "id": "q556",
+    "id": "q558",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24237,7 +24322,7 @@
     ]
   },
   {
-    "id": "q557",
+    "id": "q559",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24285,7 +24370,7 @@
     ]
   },
   {
-    "id": "q558",
+    "id": "q560",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24333,7 +24418,7 @@
     ]
   },
   {
-    "id": "q559",
+    "id": "q561",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24373,7 +24458,7 @@
     ]
   },
   {
-    "id": "q560",
+    "id": "q562",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24413,7 +24498,7 @@
     ]
   },
   {
-    "id": "q561",
+    "id": "q563",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24461,7 +24546,7 @@
     ]
   },
   {
-    "id": "q562",
+    "id": "q564",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24509,7 +24594,7 @@
     ]
   },
   {
-    "id": "q563",
+    "id": "q565",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24549,7 +24634,7 @@
     ]
   },
   {
-    "id": "q564",
+    "id": "q566",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24589,7 +24674,7 @@
     ]
   },
   {
-    "id": "q565",
+    "id": "q567",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24637,7 +24722,7 @@
     ]
   },
   {
-    "id": "q566",
+    "id": "q568",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24685,7 +24770,7 @@
     ]
   },
   {
-    "id": "q567",
+    "id": "q569",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24725,7 +24810,7 @@
     ]
   },
   {
-    "id": "q568",
+    "id": "q570",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24765,7 +24850,7 @@
     ]
   },
   {
-    "id": "q569",
+    "id": "q571",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24813,7 +24898,7 @@
     ]
   },
   {
-    "id": "q570",
+    "id": "q572",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -24861,7 +24946,7 @@
     ]
   },
   {
-    "id": "q571",
+    "id": "q573",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -24901,7 +24986,7 @@
     ]
   },
   {
-    "id": "q572",
+    "id": "q574",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -24941,7 +25026,7 @@
     ]
   },
   {
-    "id": "q573",
+    "id": "q575",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -24989,7 +25074,7 @@
     ]
   },
   {
-    "id": "q574",
+    "id": "q576",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25011,8 +25096,8 @@
         "sv": "Bara en världsreligion är representerad i Sverige"
       },
       {
-        "en": "Church of Sweden membership is increasing according to the section",
-        "sv": "Svenska kyrkans medlemsantal ökar enligt avsnittet"
+        "en": "Church of Sweden membership is increasing",
+        "sv": "Svenska kyrkans medlemsantal ökar"
       }
     ],
     "answer": 0,
@@ -25037,7 +25122,7 @@
     ]
   },
   {
-    "id": "q575",
+    "id": "q577",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25077,7 +25162,7 @@
     ]
   },
   {
-    "id": "q576",
+    "id": "q578",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25117,7 +25202,7 @@
     ]
   },
   {
-    "id": "q577",
+    "id": "q579",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25165,7 +25250,7 @@
     ]
   },
   {
-    "id": "q578",
+    "id": "q580",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25213,7 +25298,7 @@
     ]
   },
   {
-    "id": "q579",
+    "id": "q581",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25253,7 +25338,7 @@
     ]
   },
   {
-    "id": "q580",
+    "id": "q582",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25293,7 +25378,7 @@
     ]
   },
   {
-    "id": "q581",
+    "id": "q583",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25341,7 +25426,7 @@
     ]
   },
   {
-    "id": "q582",
+    "id": "q584",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25389,7 +25474,7 @@
     ]
   },
   {
-    "id": "q583",
+    "id": "q585",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25429,7 +25514,7 @@
     ]
   },
   {
-    "id": "q584",
+    "id": "q586",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25469,7 +25554,7 @@
     ]
   },
   {
-    "id": "q585",
+    "id": "q587",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25517,7 +25602,7 @@
     ]
   },
   {
-    "id": "q586",
+    "id": "q588",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25565,7 +25650,7 @@
     ]
   },
   {
-    "id": "q587",
+    "id": "q589",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25605,7 +25690,7 @@
     ]
   },
   {
-    "id": "q588",
+    "id": "q590",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25645,7 +25730,7 @@
     ]
   },
   {
-    "id": "q589",
+    "id": "q591",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25693,7 +25778,7 @@
     ]
   },
   {
-    "id": "q590",
+    "id": "q592",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25741,7 +25826,7 @@
     ]
   },
   {
-    "id": "q591",
+    "id": "q593",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25781,7 +25866,7 @@
     ]
   },
   {
-    "id": "q592",
+    "id": "q594",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25821,7 +25906,7 @@
     ]
   },
   {
-    "id": "q593",
+    "id": "q595",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25869,7 +25954,7 @@
     ]
   },
   {
-    "id": "q594",
+    "id": "q596",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25918,7 +26003,7 @@
     ]
   },
   {
-    "id": "q595",
+    "id": "q597",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25959,7 +26044,7 @@
     ]
   },
   {
-    "id": "q596",
+    "id": "q598",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26000,7 +26085,7 @@
     ]
   },
   {
-    "id": "q597",
+    "id": "q599",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26049,7 +26134,7 @@
     ]
   },
   {
-    "id": "q598",
+    "id": "q600",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26097,7 +26182,7 @@
     ]
   },
   {
-    "id": "q599",
+    "id": "q601",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26137,7 +26222,7 @@
     ]
   },
   {
-    "id": "q600",
+    "id": "q602",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26177,7 +26262,7 @@
     ]
   },
   {
-    "id": "q601",
+    "id": "q603",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26225,7 +26310,7 @@
     ]
   },
   {
-    "id": "q602",
+    "id": "q604",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26273,7 +26358,7 @@
     ]
   },
   {
-    "id": "q603",
+    "id": "q605",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26313,7 +26398,7 @@
     ]
   },
   {
-    "id": "q604",
+    "id": "q606",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26353,7 +26438,7 @@
     ]
   },
   {
-    "id": "q605",
+    "id": "q607",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26401,7 +26486,7 @@
     ]
   },
   {
-    "id": "q606",
+    "id": "q608",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26450,7 +26535,7 @@
     ]
   },
   {
-    "id": "q607",
+    "id": "q609",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26491,7 +26576,7 @@
     ]
   },
   {
-    "id": "q608",
+    "id": "q610",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26532,7 +26617,7 @@
     ]
   },
   {
-    "id": "q609",
+    "id": "q611",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26581,7 +26666,7 @@
     ]
   },
   {
-    "id": "q610",
+    "id": "q612",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26631,7 +26716,7 @@
     ]
   },
   {
-    "id": "q611",
+    "id": "q613",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26673,7 +26758,7 @@
     ]
   },
   {
-    "id": "q612",
+    "id": "q614",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26715,7 +26800,7 @@
     ]
   },
   {
-    "id": "q613",
+    "id": "q615",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26765,7 +26850,7 @@
     ]
   },
   {
-    "id": "q614",
+    "id": "q616",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26813,7 +26898,7 @@
     ]
   },
   {
-    "id": "q615",
+    "id": "q617",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26853,7 +26938,7 @@
     ]
   },
   {
-    "id": "q616",
+    "id": "q618",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26893,7 +26978,7 @@
     ]
   },
   {
-    "id": "q617",
+    "id": "q619",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26941,7 +27026,7 @@
     ]
   },
   {
-    "id": "q618",
+    "id": "q620",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26989,7 +27074,7 @@
     ]
   },
   {
-    "id": "q619",
+    "id": "q621",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27029,7 +27114,7 @@
     ]
   },
   {
-    "id": "q620",
+    "id": "q622",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27069,7 +27154,7 @@
     ]
   },
   {
-    "id": "q621",
+    "id": "q623",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27117,7 +27202,7 @@
     ]
   },
   {
-    "id": "q622",
+    "id": "q624",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27165,7 +27250,7 @@
     ]
   },
   {
-    "id": "q623",
+    "id": "q625",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27205,7 +27290,7 @@
     ]
   },
   {
-    "id": "q624",
+    "id": "q626",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27245,7 +27330,7 @@
     ]
   },
   {
-    "id": "q625",
+    "id": "q627",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27293,7 +27378,7 @@
     ]
   },
   {
-    "id": "q626",
+    "id": "q628",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27342,7 +27427,7 @@
     ]
   },
   {
-    "id": "q627",
+    "id": "q629",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27383,7 +27468,7 @@
     ]
   },
   {
-    "id": "q628",
+    "id": "q630",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27424,7 +27509,7 @@
     ]
   },
   {
-    "id": "q629",
+    "id": "q631",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27473,7 +27558,7 @@
     ]
   },
   {
-    "id": "q630",
+    "id": "q632",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27521,7 +27606,7 @@
     ]
   },
   {
-    "id": "q631",
+    "id": "q633",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27561,7 +27646,7 @@
     ]
   },
   {
-    "id": "q632",
+    "id": "q634",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27601,7 +27686,7 @@
     ]
   },
   {
-    "id": "q633",
+    "id": "q635",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27649,7 +27734,7 @@
     ]
   },
   {
-    "id": "q634",
+    "id": "q636",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -27697,7 +27782,7 @@
     ]
   },
   {
-    "id": "q635",
+    "id": "q637",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -27737,7 +27822,7 @@
     ]
   },
   {
-    "id": "q636",
+    "id": "q638",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -27777,7 +27862,7 @@
     ]
   },
   {
-    "id": "q637",
+    "id": "q639",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -27825,7 +27910,7 @@
     ]
   },
   {
-    "id": "q638",
+    "id": "q640",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -27874,7 +27959,7 @@
     ]
   },
   {
-    "id": "q639",
+    "id": "q641",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -27915,7 +28000,7 @@
     ]
   },
   {
-    "id": "q640",
+    "id": "q642",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -27956,7 +28041,7 @@
     ]
   },
   {
-    "id": "q641",
+    "id": "q643",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28005,7 +28090,7 @@
     ]
   },
   {
-    "id": "q642",
+    "id": "q644",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28053,7 +28138,7 @@
     ]
   },
   {
-    "id": "q643",
+    "id": "q645",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28093,7 +28178,7 @@
     ]
   },
   {
-    "id": "q644",
+    "id": "q646",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28133,7 +28218,7 @@
     ]
   },
   {
-    "id": "q645",
+    "id": "q647",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28181,7 +28266,7 @@
     ]
   },
   {
-    "id": "q646",
+    "id": "q648",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28229,7 +28314,7 @@
     ]
   },
   {
-    "id": "q647",
+    "id": "q649",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28269,7 +28354,7 @@
     ]
   },
   {
-    "id": "q648",
+    "id": "q650",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28309,7 +28394,7 @@
     ]
   },
   {
-    "id": "q649",
+    "id": "q651",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28357,7 +28442,7 @@
     ]
   },
   {
-    "id": "q650",
+    "id": "q652",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28405,7 +28490,7 @@
     ]
   },
   {
-    "id": "q651",
+    "id": "q653",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28445,7 +28530,7 @@
     ]
   },
   {
-    "id": "q652",
+    "id": "q654",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28485,7 +28570,7 @@
     ]
   },
   {
-    "id": "q653",
+    "id": "q655",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28533,7 +28618,7 @@
     ]
   },
   {
-    "id": "q654",
+    "id": "q656",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28581,7 +28666,7 @@
     ]
   },
   {
-    "id": "q655",
+    "id": "q657",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28621,7 +28706,7 @@
     ]
   },
   {
-    "id": "q656",
+    "id": "q658",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28661,7 +28746,7 @@
     ]
   },
   {
-    "id": "q657",
+    "id": "q659",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28709,7 +28794,7 @@
     ]
   },
   {
-    "id": "q658",
+    "id": "q660",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28757,7 +28842,7 @@
     ]
   },
   {
-    "id": "q659",
+    "id": "q661",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28797,7 +28882,7 @@
     ]
   },
   {
-    "id": "q660",
+    "id": "q662",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28837,7 +28922,7 @@
     ]
   },
   {
-    "id": "q661",
+    "id": "q663",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28885,7 +28970,7 @@
     ]
   },
   {
-    "id": "q662",
+    "id": "q664",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28934,7 +29019,7 @@
     ]
   },
   {
-    "id": "q663",
+    "id": "q665",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28975,7 +29060,7 @@
     ]
   },
   {
-    "id": "q664",
+    "id": "q666",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29016,7 +29101,7 @@
     ]
   },
   {
-    "id": "q665",
+    "id": "q667",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29065,7 +29150,7 @@
     ]
   },
   {
-    "id": "q666",
+    "id": "q668",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29113,7 +29198,7 @@
     ]
   },
   {
-    "id": "q667",
+    "id": "q669",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29153,7 +29238,7 @@
     ]
   },
   {
-    "id": "q668",
+    "id": "q670",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29193,7 +29278,7 @@
     ]
   },
   {
-    "id": "q669",
+    "id": "q671",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29241,7 +29326,7 @@
     ]
   },
   {
-    "id": "q670",
+    "id": "q672",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29290,7 +29375,7 @@
     ]
   },
   {
-    "id": "q671",
+    "id": "q673",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29331,7 +29416,7 @@
     ]
   },
   {
-    "id": "q672",
+    "id": "q674",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29372,7 +29457,7 @@
     ]
   },
   {
-    "id": "q673",
+    "id": "q675",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29421,7 +29506,7 @@
     ]
   },
   {
-    "id": "q674",
+    "id": "q676",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29469,7 +29554,7 @@
     ]
   },
   {
-    "id": "q675",
+    "id": "q677",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29509,7 +29594,7 @@
     ]
   },
   {
-    "id": "q676",
+    "id": "q678",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29549,7 +29634,7 @@
     ]
   },
   {
-    "id": "q677",
+    "id": "q679",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29597,7 +29682,7 @@
     ]
   },
   {
-    "id": "q678",
+    "id": "q680",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29645,7 +29730,7 @@
     ]
   },
   {
-    "id": "q679",
+    "id": "q681",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29685,7 +29770,7 @@
     ]
   },
   {
-    "id": "q680",
+    "id": "q682",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29725,7 +29810,7 @@
     ]
   },
   {
-    "id": "q681",
+    "id": "q683",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29773,7 +29858,7 @@
     ]
   },
   {
-    "id": "q682",
+    "id": "q684",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29822,7 +29907,7 @@
     ]
   },
   {
-    "id": "q683",
+    "id": "q685",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29863,7 +29948,7 @@
     ]
   },
   {
-    "id": "q684",
+    "id": "q686",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29904,7 +29989,7 @@
     ]
   },
   {
-    "id": "q685",
+    "id": "q687",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29953,7 +30038,7 @@
     ]
   },
   {
-    "id": "q686",
+    "id": "q688",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30001,7 +30086,7 @@
     ]
   },
   {
-    "id": "q687",
+    "id": "q689",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30041,7 +30126,7 @@
     ]
   },
   {
-    "id": "q688",
+    "id": "q690",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30081,7 +30166,7 @@
     ]
   },
   {
-    "id": "q689",
+    "id": "q691",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30129,7 +30214,7 @@
     ]
   },
   {
-    "id": "q690",
+    "id": "q692",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30177,7 +30262,7 @@
     ]
   },
   {
-    "id": "q691",
+    "id": "q693",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30217,7 +30302,7 @@
     ]
   },
   {
-    "id": "q692",
+    "id": "q694",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30257,7 +30342,7 @@
     ]
   },
   {
-    "id": "q693",
+    "id": "q695",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30305,7 +30390,7 @@
     ]
   },
   {
-    "id": "q694",
+    "id": "q696",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30353,7 +30438,7 @@
     ]
   },
   {
-    "id": "q695",
+    "id": "q697",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30393,7 +30478,7 @@
     ]
   },
   {
-    "id": "q696",
+    "id": "q698",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30433,7 +30518,7 @@
     ]
   },
   {
-    "id": "q697",
+    "id": "q699",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30481,7 +30566,7 @@
     ]
   },
   {
-    "id": "q698",
+    "id": "q700",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30529,7 +30614,7 @@
     ]
   },
   {
-    "id": "q699",
+    "id": "q701",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30569,7 +30654,7 @@
     ]
   },
   {
-    "id": "q700",
+    "id": "q702",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30609,7 +30694,7 @@
     ]
   },
   {
-    "id": "q701",
+    "id": "q703",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30657,7 +30742,7 @@
     ]
   },
   {
-    "id": "q702",
+    "id": "q704",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30705,7 +30790,7 @@
     ]
   },
   {
-    "id": "q703",
+    "id": "q705",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30745,7 +30830,7 @@
     ]
   },
   {
-    "id": "q704",
+    "id": "q706",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30785,7 +30870,7 @@
     ]
   },
   {
-    "id": "q705",
+    "id": "q707",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30831,6 +30916,362 @@
       "published-variant",
       "judgement"
     ]
+  },
+  {
+    "id": "q708",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? How many islands does Sweden have?",
+      "sv": "Vilket svar stämmer bäst? Hur många öar har Sverige?"
+    },
+    "opts": [
+      {
+        "en": "About 250,000",
+        "sv": "Cirka 250 000"
+      },
+      {
+        "en": "About 25,000",
+        "sv": "Cirka 25 000"
+      },
+      {
+        "en": "About 2,500",
+        "sv": "Cirka 2 500"
+      },
+      {
+        "en": "About 250",
+        "sv": "Cirka 250"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q709",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "True or false: It is correct that Sweden has about 250,000 islands.",
+      "sv": "Sant eller falskt: Det är korrekt att Sverige har cirka 250 000 öar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q710",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "True or false: It is correct that Sweden has about 25,000 islands.",
+      "sv": "Sant eller falskt: Det är korrekt att Sverige har cirka 25 000 öar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q711",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer is correct? How many islands does Sweden have?",
+      "sv": "Vilket svar är korrekt? Hur många öar har Sverige?"
+    },
+    "opts": [
+      {
+        "en": "About 250,000",
+        "sv": "Cirka 250 000"
+      },
+      {
+        "en": "About 25,000",
+        "sv": "Cirka 25 000"
+      },
+      {
+        "en": "It cannot be determined from the material",
+        "sv": "Det går inte att avgöra av materialet"
+      },
+      {
+        "en": "Only sometimes",
+        "sv": "Endast ibland"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q712",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option for the statement: Sweden is usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Välj rätt alternativ för påståendet: Sverige brukar delas in i Götaland, Svealand och Norrland."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      },
+      {
+        "en": "It cannot be determined from the material",
+        "sv": "Det går inte att avgöra av materialet"
+      },
+      {
+        "en": "Only sometimes",
+        "sv": "Endast ibland"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Sveriges indelning",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "landsdelar",
+      "gotaland",
+      "svealand",
+      "norrland",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q713",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "True or false: It is factually true that Sweden is usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Sant eller falskt: Det stämmer i sak att Sverige brukar delas in i Götaland, Svealand och Norrland."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Sveriges indelning",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "landsdelar",
+      "gotaland",
+      "svealand",
+      "norrland",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q714",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "True or false: It is not true that Sweden is usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Sant eller falskt: Det stämmer inte att Sverige brukar delas in i Götaland, Svealand och Norrland."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Sveriges indelning",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "landsdelar",
+      "gotaland",
+      "svealand",
+      "norrland",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q715",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which option matches the statement? Sweden is usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Vilket alternativ stämmer med påståendet? Sverige brukar delas in i Götaland, Svealand och Norrland."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      },
+      {
+        "en": "It cannot be determined from the material",
+        "sv": "Det går inte att avgöra av materialet"
+      },
+      {
+        "en": "Only sometimes",
+        "sv": "Endast ibland"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Sveriges indelning",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "landsdelar",
+      "gotaland",
+      "svealand",
+      "norrland",
+      "published-variant",
+      "judgement"
+    ]
   }
 ];
 
@@ -30846,7 +31287,7 @@
       "en": "Geography, climate, nature, population, natural resources, and climate change.",
       "sv": "Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar."
     },
-    "questionCount": 50
+    "questionCount": 60
   },
   {
     "id": 2,
