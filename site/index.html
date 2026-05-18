@@ -427,7 +427,7 @@
           <p data-i18n="terms.s2.p">Use the app to study. Don't scrape it, reverse-engineer it, or rebrand it as your own product. Don't use it to harass anyone. Treat the app the way you'd treat a borrowed bicycle: well.</p>
 
           <h2 id="t3" data-i18n="terms.s3.t">Content &amp; accuracy</h2>
-          <p data-i18n="terms.s3.p">Questions are written from public sources — Riksdagen, Skolverket, statistical reports — and reviewed by humans. Humans miss things. If you find an error, the <a href="#/support">support page</a> is the fastest fix.</p>
+          <p data-i18n="terms.s3.p">The current question bank is written from UHR's public study material <em>Sverige i fokus</em>, and every question shows its section and page citation. Humans miss things. If you find an error, the <a href="#/support">support page</a> is the fastest fix.</p>
 
           <h2 id="t4" data-i18n="terms.s4.t">No guarantees</h2>
           <p data-i18n="terms.s4.p">We don't guarantee you'll pass the official test. We don't guarantee the app works perfectly on every device on every day. We do guarantee we'll keep trying.</p>
@@ -456,50 +456,50 @@
         <em data-i18n="sources.h1b">actually come from.</em>
       </h1>
       <p class="doc__lede" data-i18n="sources.lede">
-        Every question in the app is grounded in a public source. We don't have a back-channel
-        to UHR. We just read carefully and cite obsessively.
+        The current question bank cites UHR's public study material <em>Sverige i fokus</em>.
+        We don't list other source families until questions backed by them actually ship.
       </p>
       <div class="doc__meta">
-        <span><b data-i18n="sources.meta1.b">Primary sources</b> <span data-i18n="sources.meta1.v">8</span></span>
+        <span><b data-i18n="sources.meta1.b">Primary source</b> <span data-i18n="sources.meta1.v">1</span></span>
         <span><b data-i18n="sources.meta2.b">Last review</b> <span data-i18n="sources.meta2.v">2026-05</span></span>
-        <span><b data-i18n="sources.meta3.b">Open data</b> <span data-i18n="sources.meta3.v">CC-licensed where possible</span></span>
+        <span><b data-i18n="sources.meta3.b">Current bank</b> <span data-i18n="sources.meta3.v">Sverige i fokus</span></span>
       </div>
 
       <div class="doc__body">
         <aside class="doc__nav">
-          <h5 data-i18n="sources.toc">Categories</h5>
+          <h5 data-i18n="sources.toc">Source checks</h5>
           <ol>
-            <li><a href="#src1" data-i18n="sources.s1.t">Government</a></li>
-            <li><a href="#src2" data-i18n="sources.s2.t">Education</a></li>
-            <li><a href="#src3" data-i18n="sources.s3.t">Statistics</a></li>
-            <li><a href="#src4" data-i18n="sources.s4.t">History &amp; culture</a></li>
+            <li><a href="#src1" data-i18n="sources.s1.t">Current question source</a></li>
+            <li><a href="#src2" data-i18n="sources.s2.t">How citations work</a></li>
+            <li><a href="#src3" data-i18n="sources.s3.t">Future source families</a></li>
+            <li><a href="#src4" data-i18n="sources.s4.t">Current-source scope</a></li>
             <li><a href="#src5" data-i18n="sources.s5.t">Editorial method</a></li>
           </ol>
         </aside>
         <div class="doc__main">
-          <h2 id="src1" data-i18n="sources.s1.t">Government &amp; constitutional</h2>
-          <ul>
-            <li data-i18n="sources.s1.li1"><b>Riksdagen</b> — the four basic laws (grundlagarna), parliamentary procedure, voting rules.</li>
-            <li data-i18n="sources.s1.li2"><b>Regeringen.se</b> — government structure, ministerial roles.</li>
-            <li data-i18n="sources.s1.li3"><b>Migrationsverket</b> — citizenship requirements, residence permits, the legal path.</li>
+          <h2 id="src1" data-i18n="sources.s1.t">Current question source</h2>
+          <ul data-source-claims="current-question-bank">
+            <li data-source-title="Sverige i fokus" data-i18n="sources.s1.li1"><b>UHR — Sverige i fokus</b> — public study material for the Swedish citizenship test.</li>
+            <li data-i18n="sources.s1.li2">Every shipped question cites a chapter, section, and page from this material.</li>
+            <li data-i18n="sources.s1.li3">The public source list changes only when the shipped question bank contains questions with that visible provenance.</li>
           </ul>
 
-          <h2 id="src2" data-i18n="sources.s2.t">Education &amp; civic curriculum</h2>
+          <h2 id="src2" data-i18n="sources.s2.t">How citations work</h2>
           <ul>
-            <li data-i18n="sources.s2.li1"><b>Skolverket</b> — civic-knowledge framework and curriculum guidance.</li>
-            <li data-i18n="sources.s2.li2"><b>UHR</b> — the agency administering the official test. Public documentation only.</li>
+            <li data-i18n="sources.s2.li1">Question cards show the source line below the question, separate from the stem.</li>
+            <li data-i18n="sources.s2.li2">The static question bank stores the same source title, chapter, section, and page for every row.</li>
           </ul>
 
-          <h2 id="src3" data-i18n="sources.s3.t">Statistics &amp; facts</h2>
+          <h2 id="src3" data-i18n="sources.s3.t">Future source families</h2>
           <ul>
-            <li data-i18n="sources.s3.li1"><b>SCB (Statistiska centralbyrån)</b> — demographics, population, labour-market figures.</li>
-            <li data-i18n="sources.s3.li2"><b>Folkhälsomyndigheten</b> — public-health and welfare references.</li>
+            <li data-i18n="sources.s3.li1">Other public sources may be added later, but only after matching questions ship with visible citations.</li>
+            <li data-i18n="sources.s3.li2">This page is checked against <code>site/questions.js</code> so source copy cannot outrun the current bank.</li>
           </ul>
 
-          <h2 id="src4" data-i18n="sources.s4.t">History, geography &amp; culture</h2>
+          <h2 id="src4" data-i18n="sources.s4.t">Current-source scope</h2>
           <ul>
-            <li data-i18n="sources.s4.li1"><b>Nationalencyklopedin</b> — historical timelines and biographies.</li>
-            <li data-i18n="sources.s4.li2"><b>Institutet för språk och folkminnen</b> — traditions, dialects, calendar customs.</li>
+            <li data-i18n="sources.s4.li1">The bank is UHR-only today, based on <em>Sverige i fokus</em>.</li>
+            <li data-i18n="sources.s4.li2">The app is independent and is not an official UHR product.</li>
           </ul>
 
           <h2 id="src5" data-i18n="sources.s5.t">Editorial method</h2>
