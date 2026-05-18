@@ -716,9 +716,33 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val.',
       "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
     ],
+    q318: [
+      'Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
+      'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.',
+    ],
+    q319: [
+      'Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
+      'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.',
+    ],
     q326: [
       'Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess.',
       'The principle of public access makes it easier to scrutinize authorities by allowing public documents to be requested unless they are covered by secrecy rules.',
+    ],
+    q346: [
+      'Förenta nationerna bildades efter andra världskriget för att förhindra krig och skydda människors rättigheter.',
+      'The United Nations was created after the Second World War to prevent war and protect human rights.',
+    ],
+    q347: [
+      'Förenta nationerna bildades efter andra världskriget för att bestämma svenska kommunalskatter.',
+      'The United Nations was created after the Second World War to decide Swedish municipal taxes.',
+    ],
+    q350: [
+      'FN:s förklaring om de mänskliga rättigheterna presenterades 1948 och innehåller 30 artiklar.',
+      'The UN Universal Declaration of Human Rights was presented in 1948 and contains 30 articles.',
+    ],
+    q351: [
+      'FN:s förklaring om de mänskliga rättigheterna presenterades 1918 och gäller bara Europa.',
+      'The UN Universal Declaration of Human Rights was presented in 1918 and applies only to Europe.',
     ],
     q374: [
       'Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar.',
@@ -775,7 +799,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)/i,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes)|En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)/i,
   );
   residualQuestions.forEach((question) => {
     assert.doesNotMatch(question.questionEn, /celebrates The/, question.id);

@@ -13932,7 +13932,7 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from 15 years.",
+      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.",
       "sv": "Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
@@ -13971,7 +13971,7 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from 13 years.",
+      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.",
       "sv": "Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
@@ -15140,8 +15140,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "One reason is to prevent war and protect human rights.",
-      "sv": "En anledning är att förhindra krig och skydda människors rättigheter."
+      "en": "The United Nations was created after the Second World War to prevent war and protect human rights.",
+      "sv": "Förenta nationerna bildades efter andra världskriget för att förhindra krig och skydda människors rättigheter."
     },
     "opts": [
       {
@@ -15179,8 +15179,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "One reason is to decide Swedish municipal taxes.",
-      "sv": "En anledning är att bestämma svenska kommunalskatter."
+      "en": "The United Nations was created after the Second World War to decide Swedish municipal taxes.",
+      "sv": "Förenta nationerna bildades efter andra världskriget för att bestämma svenska kommunalskatter."
     },
     "opts": [
       {
@@ -15312,8 +15312,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It was presented in 1948 and contains 30 articles.",
-      "sv": "Den presenterades 1948 och innehåller 30 artiklar."
+      "en": "The UN Universal Declaration of Human Rights was presented in 1948 and contains 30 articles.",
+      "sv": "FN:s förklaring om de mänskliga rättigheterna presenterades 1948 och innehåller 30 artiklar."
     },
     "opts": [
       {
@@ -15351,8 +15351,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It was presented in 1918 and applies only to Europe.",
-      "sv": "Den presenterades 1918 och gäller bara Europa."
+      "en": "The UN Universal Declaration of Human Rights was presented in 1918 and applies only to Europe.",
+      "sv": "FN:s förklaring om de mänskliga rättigheterna presenterades 1918 och gäller bara Europa."
     },
     "opts": [
       {
