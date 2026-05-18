@@ -1,5 +1,32 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route confirmation - 2026-05-18T23:52+02:00
+
+Latest route baseline observed is `f4746f2`. Later handoff-only commits may
+exist, but this does not open new CONTENT source implementation work. q601-q650
+DATA-INTEGRITY cleanup is accepted; q651-q700,
+q701-q720, q151-q200, and q201-q250 VERIFY evidence is landed; q698 is closed
+as part of the q651-q700 route; and the generated single-choice filler bundle
+is queued. Do not duplicate q601, q651, q698, q701, q151-q200, q201-q250, or
+stale VERIFY branches unless VALIDATOR rejects landed evidence with precise
+current-main residuals.
+
+CONTENT remains handoff-only for source implementation. The only CONTENT-shaped
+source candidate is still `CONTENT-AUTHORED-TF-PREFIX-1`, and it remains
+unleased until VALIDATOR grants a bundled authored-data plus generated
+CSV/static mirror plus guard cleanup. Current generated-output ownership stays
+with DATA-INTEGRITY/VALIDATOR: q663/q670/q671 remain the focused q651-q700
+follow-up, then the generated single-choice filler bundle should cover both
+the 133 ordinary `Which answer is correct?`/fallback rows and the 22
+true/false judgement-shell rows with separate zero-count proof for each
+surface.
+
+Do not edit `data/**`, `content/question-bank.csv`, `site/**`, generator
+templates, validator mirrors, or regenerated static mirrors from CONTENT
+without an explicit bundled lease. If VALIDATOR needs more content capacity
+before DATA-INTEGRITY resumes from its usage-limit window, route a fresh
+report-and-queue VERIFY/regression slice from clean current main.
+
 MANAGER-content current-route correction - 2026-05-18T23:25+02:00
 
 Current `origin/main` is `9f585d4`. q601-q650 DATA-INTEGRITY cleanup is
