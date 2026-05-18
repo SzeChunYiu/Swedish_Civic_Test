@@ -611,3 +611,11 @@ Verification: pre-fix `node scripts/export-site-question-bank.js --check` failed
 PR: #264 squash-merged to `main` as `19a420e`.
 Blocked? no - SITE-P0-3 is synced on latest `origin/main`; the existing export/parity guard now catches future static question-bank drift.
 Next suggested validator action: inspect the generated q019/q020 static-bank diff and rerun `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, and `node --check site/questions.js` before accepting SITE-P0-3.
+
+## Iteration 196 - 2026-05-18
+Task completed: SITE-P0-4 - improved the deployed static Ebook reader while preserving the richer `site/` surface: Swedish mode now has real study briefs instead of placeholder translation copy, reader actions link to chapter practice/mock/sources, and the existing highlight/notes helper is wired into chapter renders.
+Artifacts changed: `site/ebook.js`, `site/styles.css`, `docs/parallel-sessions/journals/setup.md`.
+Verification: after isolated latest-`origin/main` worktree rebase, `node --check site/ebook.js` exit 0; `node --check site/ebook-tools.js` exit 0; focused ebook copy/navigation source assertion exit 0 for no stale Swedish placeholders, exposed `window.smtEbookRender`, `smtApplyEbookHighlights`, chapter practice links, notes host, and Swedish study briefs; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `git diff --check HEAD~1..HEAD` exit 0; local static-site Chrome smoke on `#/ebook?c=1` and Swedish `#/ebook?c=11` verified render hook, notes host, no placeholder copy, Swedish source caveat, `11 / 12` progress, `Öva kapitlet` link to `#/practice?c=11`, active Practice route/question render, and browser console/page errors 0.
+PR: #279 squash-merged to `main` as `9def23a`.
+Blocked? no - SITE-P0-4 source behavior and gates are complete on latest `origin/main`; the shared checkout had unrelated dirty queue/verifier/screenshot/UIUX files, so this atom was committed from an isolated SETUP worktree and did not stage them.
+Next suggested validator action: inspect the static Ebook reader diff, rerun the focused copy/navigation assertion and static-site Ebook smoke, then route SITE-P0-5 reviewer audit.
