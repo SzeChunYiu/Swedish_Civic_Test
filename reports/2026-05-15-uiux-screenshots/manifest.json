@@ -6,10 +6,7 @@
   "duplicatePolicy": "Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.",
   "duplicateExplanations": [
     {
-      "names": [
-        "home",
-        "index"
-      ],
+      "names": ["home", "index"],
       "reason": "The root route is a redirect to /home, so it may match the Home screenshot exactly."
     }
   ],
