@@ -2793,3 +2793,27 @@ Verification (commands + result):
 PR (number + merged?): #403 / merged yes via `6d4a5fe`
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker until production serves current `origin/main` and the hash-aware live check passes.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-origin-main` / `task/reviewer/site-live-recheck-1779117605`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after `origin/main` advanced to `de64960`.
+Changed artifacts: `codex-tasks/validator.txt`; `codex-tasks/blockers.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/site.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree on `origin/main` `de64960` because the shared checkout has unrelated dirty lane files.
+- `node --test scripts/check-live-site.test.js` - exit 0 with 7/7 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 715 questions and `staticSiteQuestionBankParityValidated:true`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 715 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0 after linking this temporary worktree to the shared `node_modules` install; the first attempt without local dependencies failed to resolve Expo/React types.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-copy` - exit 0 with 2/2 passing.
+- `node --check site/app.js` and `node --check site/practice.js` - both exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config -- --test-name-pattern 'vercel|Vercel|deployment|live site|GitHub release validation workflow'` - exit 0 with 38/38 passing.
+- `git diff --name-only 6d4a5fe..origin/main -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json .github/workflows vercel.json components app lib types codex-tasks/setup.txt docs/parallel-sessions/journals/content.md docs/parallel-sessions/journals/uiux-components.md docs/parallel-sessions/journals/data-integrity.md docs/parallel-sessions/meeting_sheet.md` - shows `codex-tasks/setup.txt`, `components/auth/AccountHeader.tsx`, `components/auth/AccountSection.tsx`, `components/auth/WelcomeBanner.tsx`, `components/ui/LanguagePicker.tsx`, `components/ui/LanguageToggle.tsx`, `data/additionalQuestions.ts`, `docs/parallel-sessions/journals/content.md`, `docs/parallel-sessions/journals/data-integrity.md`, `docs/parallel-sessions/journals/uiux-components.md`, `docs/parallel-sessions/meeting_sheet.md`, `package.json`, `site/ads.txt`, `site/app.js`, `site/index.html`, `site/practice.js`, `site/questions.js`, `site/styles.css`, and `vercel.json`, so current main changed real site/deploy-related files after the last reviewer merge.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; static question count and Practice/Mock/Ebook asset checks pass, but static question-bank content fails with expected hash prefix `cbb24a108686` and live hash prefix `5d2710bebf7e`.
+- Local `gh` is not GitHub CLI (`gh --version` fails with `No such option: --version`), so this pass did not refresh Actions run metadata.
+- `git diff --check` - exit 0.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker until production serves current `origin/main` and the hash-aware live check passes.
