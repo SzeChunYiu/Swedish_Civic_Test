@@ -2520,3 +2520,20 @@ Verification (commands + result):
 PR (number + merged?): #276 / merged yes via squash commit `3be67cf`
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/content-supported SITE-P0-4 work to replace all Swedish ebook placeholders with natural Swedish prose matching the English chapter coverage, remove v1.1/placeholder copy, and add a static ebook parity guard before SITE-P0-4 acceptance.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-account-aPBrl8` / `task/reviewer/site-account-scope-1779109300`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 no-account MVP scope recheck for deployed static `site/`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout had unrelated dirty task/report files and active lane work.
+- Duplicate scan found the existing app-shell `REVIEWER-ACCOUNT-SCOPE-1`, but no site-specific account-scope evidence; this pass updates that item instead of creating a new top-level defect.
+- `rg -n "signin|Sign in|Sync your progress|Google|Apple|magic link|accounts are rolling out|smt_signed_in|highlight|note" site/index.html site/signin.js site/ebook-tools.js site/app.js -S` - found the global Sign in button/modal, Google/Apple/magic-link copy, and ebook highlight/note account gating.
+- `for f in site/app.js site/signin.js site/ebook-tools.js; do node --check "$f" || exit 1; done` - exit 0.
+- Served `site/` with `python3 -m http.server 8206 --bind 127.0.0.1`.
+- System-Chrome static-site pass on `#/` - exit 2 by design because one Sign in button was reachable and opened a modal with `Sync your progress.`, `Continue with Google`, `Continue with Apple`, `Email`, `Send magic link`, and `Beta: accounts are rolling out gradually`; console/page errors were 0.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: include `site/` in `REVIEWER-ACCOUNT-SCOPE-1`; remove or hide static Sign in/OAuth/magic-link/account-sync UI, make ebook highlights/notes local-only or defer them without account prompts, and add a static-site guard rejecting reachable account/auth copy.
