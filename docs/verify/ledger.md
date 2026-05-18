@@ -721,23 +721,23 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q698 | true-false | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e9b49c | ok | rolling-source-slice |
 | q699 | false-statement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e9b49c | defect | queued-data-integrity-residual |
 | q700 | judgement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e9b49c | defect | queued-data-integrity-unknown-option |
-| q701 | section-practice | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
-| q702 | true-false | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
-| q703 | false-statement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
-| q704 | judgement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | defect | queued-data-integrity-unknown-option |
-| q705 | section-practice | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 332bfc9 | ok | rolling-source-slice |
-| q706 | true-false | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 332bfc9 | defect | queued-data-integrity-residual |
-| q707 | false-statement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 332bfc9 | defect | queued-data-integrity-residual |
-| q708 | judgement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 332bfc9 | defect | queued-data-integrity-unknown-option |
-| q709 | section-practice | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | ok | rolling-source-slice |
-| q710 | true-false | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | ok | rolling-source-slice |
-| q711 | false-statement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | ok | rolling-source-slice |
-| q712 | judgement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | defect | queued-data-integrity-unknown-option |
-| q713 | section-practice | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | defect | queued-data-integrity-unknown-option |
-| q714 | true-false | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | defect | queued-data-integrity-residual |
-| q715 | false-statement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | defect | queued-data-integrity-residual |
-| q716 | judgement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | defect | queued-data-integrity-unknown-option |
-| q717 | section-practice | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | ok | rolling-source-slice |
-| q718 | true-false | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | defect | queued-data-integrity-residual |
-| q719 | false-statement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | defect | queued-data-integrity-residual |
-| q720 | judgement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | defect | queued-data-integrity-unknown-option |
+| q701 | section-practice | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 0b26519 | ok | rolling-source-slice |
+| q702 | true-false | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 0b26519 | ok | rolling-source-slice |
+| q703 | false-statement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 0b26519 | ok | rolling-source-slice |
+| q704 | judgement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 0b26519 | ok | rolling-source-slice |
+| q705 | section-practice | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 0b26519 | ok | rolling-source-slice |
+| q706 | true-false | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 0b26519 | ok | rolling-source-slice |
+| q707 | false-statement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 0b26519 | ok | rolling-source-slice |
+| q708 | judgement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 0b26519 | ok | rolling-source-slice |
+| q709 | section-practice | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 0b26519 | ok | rolling-source-slice |
+| q710 | true-false | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 0b26519 | ok | rolling-source-slice |
+| q711 | false-statement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 0b26519 | ok | rolling-source-slice |
+| q712 | judgement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 0b26519 | ok | rolling-source-slice |
+| q713 | section-practice | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | ok | rolling-source-slice |
+| q714 | true-false | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | defect | queued-data-integrity-post584-tf-meta |
+| q715 | false-statement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | defect | queued-data-integrity-post584-tf-meta |
+| q716 | judgement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | ok | rolling-source-slice |
+| q717 | section-practice | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | ok | rolling-source-slice |
+| q718 | true-false | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | ok | rolling-source-slice |
+| q719 | false-statement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | ok | rolling-source-slice |
+| q720 | judgement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 0b26519 | ok | rolling-source-slice |

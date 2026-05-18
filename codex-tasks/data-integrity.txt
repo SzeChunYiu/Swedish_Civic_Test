@@ -480,3 +480,26 @@ true/false stems, regenerated `content/question-bank.csv` and
 `site/questions.js`, export/static parity, `validate:content`, focused content
 gates, typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a
 current-main recheck of q150 plus the other post-#570 changed true/false rows.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T20:25:00+02:00
+`VERIFY-GENERATED-TF-META-Q701-Q720-POST584-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY follow-up on
+current `origin/main` `0b26519` found that #570/#584 cleared the previous
+q701-q720 unknown-option and fragment defects, but generated true/false rows
+q714 and q715 still publish learner-visible meta wording. Facts, citations,
+answer keys, and ordinary distractors remain supported by UHR `Sverige i
+fokus`, `Landet Sverige` / `Sveriges indelning`, printed page 6, but q714 now
+publishes `Sant eller falskt: Påståendet är sant: Sverige brukar delas in i
+Götaland, Svealand och Norrland.` / `True or false: The statement is true:
+Sweden is usually divided into Götaland, Svealand, and Norrland.`, and q715
+publishes `Sant eller falskt: Det är inte sant att Sverige brukar delas in i
+Götaland, Svealand och Norrland.` / `True or false: It is not true that
+Sweden is usually divided into Götaland, Svealand, and Norrland.` Own this as
+a generated-template, validator mirror, canonical/static export follow-up;
+acceptance requires focused negative guards for `Påståendet är sant:` / `The
+statement is true:` and `Det är inte sant att` / `It is not true that` in
+generated true/false stems, regenerated `content/question-bank.csv` and
+`site/questions.js`, export/static parity, `validate:content`, focused content
+gates, typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a
+current-main recheck of q714/q715 plus the other post-#570 meta true/false
+rows.

@@ -167,3 +167,13 @@ Verification (commands + result): UHR official `Sverige i fokus` text opened for
 PR (number + merged?): #589 merged via squash (`9f4c068`)
 Accepted by worker? yes
 Next suggested validator action: route q150's generated meta-stem defect to DATA-INTEGRITY with the next generated true/false template recheck; then continue the rolling post-#570 recheck with q151-q200.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-q701-q720-post584-pane3`, branch `task/verify/q701-q720-post584-pane3-1779128684`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-#570/#584 rolling recheck for `verify:data/questions.ts q701-q720`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q701-q720-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF opened for printed pages 6 and 47; q701-q720 source support, answer keys, and ordinary distractors are acceptable. Current output on `origin/main` `0b26519` clears the previous q704/q708/q712/q713/q716/q720 unknown-material option defects and q706/q707/q718/q719 fragment defects; q714 and q715 remain current-output `defect` because generated true/false stems still say `Påståendet är sant:` / `The statement is true:` and `Det är inte sant att` / `It is not true that` instead of direct propositions. `VERIFY-GENERATED-TF-META-Q701-Q720-POST584-1` appended to DATA-INTEGRITY. Focused ledger/report/static assertion passed; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route q714/q715 with the existing post-#570 generated true/false meta-stem cleanup, then continue the rolling post-cleanup recheck with q151-q200 or the oldest changed slice.
