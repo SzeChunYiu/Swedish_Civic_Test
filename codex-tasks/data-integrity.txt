@@ -867,3 +867,30 @@ requires generator and validator mirror coverage, regenerated
 `validate:content`, `test:derived-content`, focused content gates, typecheck,
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main
 spot checks for the five named rows.
+
+MANAGER-build acceptance 2026-05-18T21:58+02:00
+`VERIFY-GENERATED-TF-STANDALONE-Q351-Q400-POST642-1` is accepted on current
+`origin/main` via PR #680 / `67846c5`. DATA-INTEGRITY repaired the generated
+q351-q400 true/false standalone-referent, answer-clarity, and
+Swedish-naturalness defects for q358, q359, q371, q374, q375, q398, and q399.
+
+Clean manager recheck on current `origin/main` passed `npm run
+validate:content`, canonical export parity, static-site export parity, and a
+direct CSV/static scan over q358/q359/q371/q374/q375/q398/q399 with zero
+residual offenders. Worker evidence before merge also passed
+`npm run test:derived-content`, focused published/static/content-gate tests
+26/26, `node --check site/questions.js`, `npm run typecheck -- --pretty
+false`, `npm run lint`, `npm run test:ownership`, targeted Prettier,
+`git diff --check`, and serialized `npm run test:content --
+--test-concurrency=1` 311/311.
+
+Do not reopen q358/q359 referent wording, q371 1979 first-country context,
+q374/q375 Swedish lowercase group-name naturalness, or q398/q399 trade-union
+referent wording without fresh current-main regression evidence. The next
+DATA-INTEGRITY route is `VERIFY-GENERATED-TF-STANDALONE-Q401-Q450-POST656-1`
+for q406/q407/q411/q446/q447 from clean current main, with generator and
+validator mirror coverage, regenerated canonical/static output, export/static
+parity, `validate:content`, `test:derived-content`, focused content gates,
+typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and direct
+spot checks proving the five rows name their referents and capitalize `EU`
+correctly.

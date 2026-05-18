@@ -433,3 +433,30 @@ q358/q359/q371/q374/q375/q398/q399 standalone-referent, answer-clarity, and
 Swedish-naturalness defects; start from clean current main and require
 generator/validator/static mirror evidence plus the standard content/type/lint/
 ownership/Prettier/diff gates before acceptance.
+
+Iteration: 2026-05-18T21:58+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`VERIFY-GENERATED-TF-STANDALONE-Q351-Q400-POST642-1` as the queue-level
+DATA-INTEGRITY closure for q358/q359/q371/q374/q375/q398/q399 generated
+true/false standalone-referent, answer-clarity, and Swedish-naturalness
+defects.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #680 is squash-merged on current `origin/main` as `67846c5`.
+Clean manager recheck in `/tmp/sct-manager-accept-q351-MKP1Fo` passed
+`npm run validate:content`, canonical export parity, static-site export parity,
+and a direct CSV/static scan over q358/q359/q371/q374/q375/q398/q399 with zero
+residual offenders. Worker evidence before merge also passed
+`npm run test:derived-content`, focused published/static/content-gate tests
+26/26, `node --check site/questions.js`, `npm run typecheck -- --pretty
+false`, `npm run lint`, `npm run test:ownership`, targeted Prettier,
+`git diff --check`, and serialized `npm run test:content --
+--test-concurrency=1` 311/311.
+Next worker task queued: DATA-INTEGRITY -
+`VERIFY-GENERATED-TF-STANDALONE-Q401-Q450-POST656-1` is next for
+q406/q407/q411/q446/q447. Start from clean current main and require generator
+and validator mirror coverage, regenerated CSV/static output, export/static
+parity, `validate:content`, `test:derived-content`, focused content gates,
+typecheck, lint, ownership, Prettier/diff, PR/merge evidence, and direct spot
+checks proving the five rows name their referents and capitalize `EU`
+correctly.
