@@ -807,3 +807,27 @@ requires generator and validator mirror coverage, regenerated
 `validate:content`, `test:derived-content`, focused content gates, typecheck,
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
 checks for the seven named rows.
+
+MANAGER-build acceptance 2026-05-18T21:44:00+02:00
+`VERIFY-GENERATED-TF-Q301-Q350-POST650-WORDING-1` is accepted on current
+`origin/main` via source commit `120d440`. Clean manager verification in
+`/tmp/sct-manager-build-q301-accept-1779133212` passed `npm run
+validate:content`, `npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 25/25, canonical and static export
+parity, `node --check site/questions.js`, `npm run typecheck -- --pretty
+false`, `npm run lint`, `npm run test:ownership`, targeted Prettier,
+`git diff --check 120d440^..120d440`, direct CSV/static spot checks for
+q318/q319/q346/q347/q350/q351 with zero residual offenders, and serialized
+`npm run test:content -- --test-concurrency=1` 310/310.
+
+Do not reopen q318/q319 age phrasing, q346/q347 UN-purpose stems, or q350/q351
+UN-declaration standalone stems without fresh current-main regression evidence.
+The next DATA-INTEGRITY route remains
+`VERIFY-GENERATED-TF-STANDALONE-Q351-Q400-POST642-1` as corrected on current
+main for q358/q359/q371/q374/q375/q398/q399 standalone-referent,
+answer-clarity, and Swedish-naturalness defects, starting from clean current
+main and with generator, validator, CSV/static mirror, export/static parity,
+content/type/lint/ownership/Prettier/diff gates, PR/merge evidence, and direct
+spot checks.
