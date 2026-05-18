@@ -145,14 +145,14 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionSv),
     [
-      'Sant eller falskt: Det stämmer i sak att Sverige ligger i Norden.',
-      'Sant eller falskt: Det stämmer inte att Sverige ligger i Norden.',
+      'Sant eller falskt: Påståendet är sant: Sverige ligger i Norden.',
+      'Sant eller falskt: Det är inte sant att Sverige ligger i Norden.',
     ],
   );
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionEn),
     [
-      'True or false: It is factually true that Sweden is in the Nordic region.',
+      'True or false: The statement is true: Sweden is in the Nordic region.',
       'True or false: It is not true that Sweden is in the Nordic region.',
     ],
   );
@@ -629,40 +629,36 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   const expectedRows = {
     q206: [
-      'Sant eller falskt: Domstolarna väljer alla riksdagsledamöter.',
-      'True or false: The courts elect all members of the Riksdag.',
+      'Sant eller falskt: Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val.',
+      "True or false: Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
     ],
-    q237: [
-      'Sant eller falskt: Statliga myndigheter genomför beslut och måste följa lagar och regeringens instruktioner.',
-      'True or false: Government agencies implement decisions and must follow laws and government instructions.',
+    q326: [
+      'Sant eller falskt: Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess.',
+      'True or false: The principle of public access makes it easier to scrutinize authorities by allowing public documents to be requested unless they are covered by secrecy rules.',
     ],
-    q270: [
-      'Sant eller falskt: En anledning är att rösterna ska räknas snabbare.',
-      'True or false: One reason is that votes are counted faster.',
+    q374: [
+      'Sant eller falskt: Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar.',
+      "True or false: Sweden's five national minorities are Jews, Roma, Sami, Sweden Finns, and Tornedalians.",
     ],
-    q273: [
-      'Sant eller falskt: Människor i ett politiskt parti har gemensamma idéer om hur samhället ska styras.',
-      'True or false: People in a political party have shared ideas about how society should be governed.',
+    q458: [
+      'Sant eller falskt: Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
+      'True or false: The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.',
     ],
-    q285: [
-      'Sant eller falskt: Listan med regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen innehåller bara Sveriges fyra grundlagar.',
-      "True or false: The list with the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession contains only Sweden's four constitutional laws.",
+    q482: [
+      'Sant eller falskt: Sveriges nordiska samarbete sker främst genom Nordiska rådet och Nordiska ministerrådet.',
+      "True or false: Sweden's Nordic cooperation mainly takes place through the Nordic Council and the Nordic Council of Ministers.",
     ],
-    q289: [
-      'Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från folket.',
-      'True or false: The Instrument of Government says that all public power comes from the people.',
+    q502: [
+      'Sant eller falskt: Sverige och Finland valde att nästan samtidigt ansöka om medlemskap i Nato efter Rysslands attack mot Ukraina 2022.',
+      "True or false: Sweden and Finland chose to apply for NATO membership at almost the same time after Russia's attack on Ukraine in 2022.",
     ],
-    q297: [
-      'Sant eller falskt: Allemansrätten ger alla möjlighet att vara i naturen, men man måste visa ansvar.',
-      'True or false: The right of public access gives everyone the opportunity to be in nature, but people must act responsibly.',
+    q550: [
+      'Sant eller falskt: Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
+      'True or false: Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
     ],
-    q321: [
-      'Sant eller falskt: En viktig uppgift för fria medier i en demokrati är att informera, möjliggöra samhällsdebatt och granska personer med makt.',
-      'True or false: An important role of free media in a democracy is to inform, enable public debate, and scrutinize people with power.',
-    ],
-    q441: [
-      'Sant eller falskt: För tvåhundra år sedan var Sverige ett typiskt jordbruksland där nästan alla bodde på landet.',
-      'True or false: Two hundred years ago, Sweden was a typical agricultural country where almost everyone lived in the countryside.',
+    q654: [
+      'Sant eller falskt: Nouruz och Newroz firas vid vårdagjämningen den 21 mars.',
+      'True or false: Nouruz and Newroz are observed at the spring equinox on 21 March.',
     ],
   };
 
@@ -671,43 +667,18 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
   }
 
-  const residualText = [
-    'q206',
-    'q237',
-    'q238',
-    'q253',
-    'q254',
-    'q265',
-    'q266',
-    'q270',
-    'q273',
-    'q274',
-    'q285',
-    'q286',
-    'q289',
-    'q290',
-    'q297',
-    'q298',
-    'q305',
-    'q306',
-    'q313',
-    'q314',
-    'q321',
-    'q322',
-    'q357',
-    'q358',
-    'q361',
-    'q362',
-    'q381',
-    'q382',
-    'q441',
-    'q442',
-  ]
-    .map((id) => `${byId.get(id)?.questionSv} ${byId.get(id)?.questionEn}`)
+  const residualText = questions
+    .filter(
+      (question) =>
+        question.type === 'true_false' &&
+        Number(question.id.replace(/^q/, '')) >= 201 &&
+        Number(question.id.replace(/^q/, '')) <= 720,
+    )
+    .map((question) => `${question.questionSv} ${question.questionEn}`)
     .join('\n');
 
   assert.doesNotMatch(
     residualText,
-    /describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|One reason is that so|have they|har de|applies to|gäller för/i,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|One reason is that so|have they|har de|applies to|gäller för|True or false:\s*(?:By|Apply|Leave|Live)\b|Sant eller falskt:\s*(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
   );
 });
