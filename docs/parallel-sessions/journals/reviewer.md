@@ -3227,3 +3227,24 @@ Evidence: current canonical/static true-false output violates the no-redundant-p
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route DATA-INTEGRITY to strip true-false prefixes and statement-is-true meta stems from canonical/static generated output, with validator mirror coverage and export/static parity before acceptance.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-tf-prefix-Q4Pgwr/wt` / detached `origin/main` `476afdb`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` after DATA-INTEGRITY landed `data-integrity: remove generated true-false meta stems`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active setup/data-integrity/validator queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `476afdb`; the shared checkout has unrelated dirty queue/report files and is on a gone task branch.
+- Corrected the static-site VM inspection to read `site/questions.js` `q.q.sv` / `q.q.en`, then found `720` total questions, `299` true-false questions, `299` true-false prefix offenders, and `0` question-stem `Påståendet är sant:` / `The statement is true:` meta offenders.
+- Sample remaining prefix offenders: `q002`, `q006`, `q023`, `q028`, `q031`, `q047`, `q049`, `q074`, `q091`, `q094`, `q143`, `q146`, `q147`, `q150`, and `q151`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionGeneratedTrueFalseNaturalnessValidated: 720`, so the current validator still misses the prefix wording-rule failure.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 5/5 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 23/23 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` and `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720-question canonical/static parity.
+Workspace contract: pass - no product source edited; existing finding updated instead of filing a duplicate.
+Findings queued: `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1 update [2026-05-18 20:37 CEST]`.
+Evidence: current main clears the 11 question-stem meta offenders but still publishes redundant true/false prefixes on every true-false stem while validators remain green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep the reviewer defect open and route DATA-INTEGRITY to remove the redundant true-false prefixes from generated and authored canonical/static output, with validator mirror coverage and export/static parity before acceptance.
