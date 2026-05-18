@@ -1,10 +1,24 @@
-/goal DATA-INTEGRITY: fix REVIEWER-GENERATED-TF-NATURALNESS-1. Make generated true/false stems read as natural Swedish and English civic statements instead of grammar splices such as `True or false: It is true that The ...`, `True or false: It is true that In ...`, English `belongs to` with untranslated Swedish section labels, `Sant eller falskt: Det stämmer att Ungefär ...`, or `Sant eller falskt: Det stämmer att Havet ...`.
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T13:39+02:00
 
-MANAGER-build assignment 2026-05-18 13:17 CEST:
-- Read `docs/parallel-sessions.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/validator.md`, and the reviewer defect details in `codex-tasks/validator.txt` before editing.
-- Context: PR #198 / `02193fb` accepted the generated-stem root-cause atom, and PR #212 / `22d0d42` accepted `REVIEWER-GENERATED-SINGLE-CHOICE-TF-STEM-1`; do not replay either prompt-scaffolding fix.
-- Lease: DATA-INTEGRITY/build owns `lib/content/derivedQuestions.ts`, `scripts/validate-content.js`, focused generated-content tests, export parity checks, regenerated `content/question-bank.csv`, and the DATA-INTEGRITY journal handoff.
-- Required behavior evidence: q155/q175/q279-style generated true/false rows become natural SV+EN statements; English generated stems do not splice `The`, `In`, untranslated Swedish section labels, or bad agreement after `It is true that`; Swedish generated stems avoid awkward `Det stämmer att Ungefär ...` and `Det stämmer att Havet ...` patterns.
-- Guard against regressions from PR #198 and PR #212: no old nested true/false meta-stems, no generated judgement scaffolding, and no `Vilket svar stämmer bäst? Sant eller falskt:` / `Which answer best matches? True or false:` prompts return.
-- Required gate evidence: focused negative guard rejects the current grammar-splice patterns before the fix and passes after; `npm run validate:content`; `npm run test:derived-content`; `node --test tests/content-published-question-types.test.js`; `node scripts/export-question-bank.js --check`; `npm run typecheck`; `npm run test:ownership`; and `git diff --check`.
-- Stop after one bounded atom and write the handoff to `docs/parallel-sessions/journals/data-integrity.md`.
+Current status:
+- `REVIEWER-GENERATED-TF-META-STEM-1` and
+  `REVIEWER-GENERATED-JUDGEMENT-PROMPT-1` are accepted via PR #198 /
+  `02193fb`.
+- `REVIEWER-GENERATED-SINGLE-CHOICE-TF-STEM-1` is accepted via PR #212 /
+  `22d0d42`.
+- `REVIEWER-GENERATED-TF-NATURALNESS-1` is accepted via PR #228 /
+  `29e181e`. Clean manager verification passed `npm run validate:content`,
+  `npm run test:derived-content`,
+  `node --test tests/content-published-question-types.test.js`,
+  `node scripts/export-question-bank.js --check`, `npm run typecheck`,
+  `npm run test:ownership`, targeted Prettier, and `git diff --check`.
+
+No active DATA-INTEGRITY generated-prompt atom is queued right now.
+
+Next action:
+- Do not replay #198, #212, or #228. If REVIEWER files a new generated-content
+  defect, route one fresh bounded DATA-INTEGRITY atom with generator,
+  validator mirror, focused tests, regenerated CSV, export parity, typecheck,
+  ownership, diff check, PR/merge evidence, and journal handoff.
+- Broader authored-question naturalness stays with CONTENT unless the defect
+  requires generated-template or validator-mirror changes.
