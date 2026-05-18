@@ -571,56 +571,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q548 | judgement | q101 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | d372521 | defect | queued-data-integrity-unknown-option |
 | q549 | section-practice | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | d372521 | ok | rolling-source-slice |
 | q550 | true-false | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | d372521 | defect | queued-data-integrity-residual |
-| q551 | false-statement | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | - | restate | oldest-unverified |
-| q552 | judgement | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | - | restate | oldest-unverified |
-| q553 | section-practice | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | - | restate | oldest-unverified |
-| q554 | true-false | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | - | restate | oldest-unverified |
-| q555 | false-statement | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | - | restate | oldest-unverified |
-| q556 | judgement | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | - | restate | oldest-unverified |
-| q557 | section-practice | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q558 | true-false | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q559 | false-statement | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q560 | judgement | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q561 | section-practice | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q562 | true-false | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q563 | false-statement | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q564 | judgement | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q565 | section-practice | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q566 | true-false | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q567 | false-statement | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q568 | judgement | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q569 | section-practice | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q570 | true-false | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q571 | false-statement | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q572 | judgement | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q573 | section-practice | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q574 | true-false | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q575 | false-statement | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q576 | judgement | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q577 | section-practice | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | - | restate | oldest-unverified |
-| q578 | true-false | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | - | restate | oldest-unverified |
-| q579 | false-statement | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | - | restate | oldest-unverified |
-| q580 | judgement | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | - | restate | oldest-unverified |
-| q581 | section-practice | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | - | restate | oldest-unverified |
-| q582 | true-false | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | - | restate | oldest-unverified |
-| q583 | false-statement | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | - | restate | oldest-unverified |
-| q584 | judgement | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | - | restate | oldest-unverified |
-| q585 | section-practice | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q586 | true-false | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q587 | false-statement | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q588 | judgement | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q589 | section-practice | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q590 | true-false | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q591 | false-statement | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q592 | judgement | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q593 | section-practice | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | - | restate | oldest-unverified |
-| q594 | true-false | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | - | restate | oldest-unverified |
-| q595 | false-statement | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | - | restate | oldest-unverified |
-| q596 | judgement | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | - | restate | oldest-unverified |
-| q597 | section-practice | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q598 | true-false | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q599 | false-statement | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
-| q600 | judgement | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | - | restate | oldest-unverified |
+| q551 | false-statement | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | 8e15381 | defect | queued-data-integrity-residual |
+| q552 | judgement | q102 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q553 | section-practice | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | 8e15381 | ok | rolling-source-slice |
+| q554 | true-false | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | 8e15381 | defect | queued-data-integrity-residual |
+| q555 | false-statement | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | 8e15381 | defect | queued-data-integrity-residual |
+| q556 | judgement | q103 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Första maj | 46 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q557 | section-practice | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | 8e15381 | ok | rolling-source-slice |
+| q558 | true-false | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | 8e15381 | defect | queued-data-integrity-residual |
+| q559 | false-statement | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | 8e15381 | defect | queued-data-integrity-residual |
+| q560 | judgement | q104 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q561 | section-practice | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | 8e15381 | ok | rolling-source-slice |
+| q562 | true-false | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | 8e15381 | defect | queued-data-integrity-residual |
+| q563 | false-statement | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | 8e15381 | defect | queued-data-integrity-residual |
+| q564 | judgement | q105 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q565 | section-practice | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e15381 | ok | rolling-source-slice |
+| q566 | true-false | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e15381 | defect | queued-data-integrity-residual |
+| q567 | false-statement | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e15381 | defect | queued-data-integrity-residual |
+| q568 | judgement | q106 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q569 | section-practice | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 8e15381 | ok | rolling-source-slice |
+| q570 | true-false | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 8e15381 | defect | queued-data-integrity-residual |
+| q571 | false-statement | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 8e15381 | defect | queued-data-integrity-residual |
+| q572 | judgement | q107 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q573 | section-practice | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | ok | rolling-source-slice |
+| q574 | true-false | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | defect | queued-data-integrity-residual |
+| q575 | false-statement | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | defect | queued-data-integrity-residual |
+| q576 | judgement | q108 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q577 | section-practice | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 8e15381 | ok | rolling-source-slice |
+| q578 | true-false | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 8e15381 | ok | rolling-source-slice |
+| q579 | false-statement | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 8e15381 | ok | rolling-source-slice |
+| q580 | judgement | q109 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q581 | section-practice | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 8e15381 | ok | rolling-source-slice |
+| q582 | true-false | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 8e15381 | ok | rolling-source-slice |
+| q583 | false-statement | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 8e15381 | ok | rolling-source-slice |
+| q584 | judgement | q110 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q585 | section-practice | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 8e15381 | ok | rolling-source-slice |
+| q586 | true-false | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 8e15381 | defect | queued-data-integrity-residual |
+| q587 | false-statement | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 8e15381 | defect | queued-data-integrity-residual |
+| q588 | judgement | q111 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q589 | section-practice | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 8e15381 | ok | rolling-source-slice |
+| q590 | true-false | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 8e15381 | defect | queued-data-integrity-residual |
+| q591 | false-statement | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 8e15381 | defect | queued-data-integrity-residual |
+| q592 | judgement | q112 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q593 | section-practice | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 8e15381 | ok | rolling-source-slice |
+| q594 | true-false | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 8e15381 | defect | queued-data-integrity-residual |
+| q595 | false-statement | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 8e15381 | defect | queued-data-integrity-residual |
+| q596 | judgement | q113 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 8e15381 | defect | queued-data-integrity-unknown-option |
+| q597 | section-practice | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | ok | rolling-source-slice |
+| q598 | true-false | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | defect | queued-data-integrity-residual |
+| q599 | false-statement | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | defect | queued-data-integrity-residual |
+| q600 | judgement | q114 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 8e15381 | defect | queued-data-integrity-unknown-option |
 | q601 | section-practice | q115 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
 | q602 | true-false | q115 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
 | q603 | false-statement | q115 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
