@@ -1,8 +1,8 @@
-import { Link, usePathname } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 /**
  * Suppress on routes where a blocking modal would be hostile to flow:
@@ -44,21 +44,43 @@ const firstRunCopy: Record<AppLanguage, FirstRunCopy> = {
   },
 };
 
-function pathIsSuppressed(pathname: string | null): boolean {
-  if (!pathname) return false;
-  return SUPPRESSED_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+/**
+ * Defaults: uses the settings-store language and first-run flag, suppresses
+ * exam/quiz/auth/about routes, and dismisses after backdrop, skip, hardware
+ * back, or guide-open actions.
+ */
+export interface FirstRunAboutTheTestModalProps {
+  languageOverride?: AppLanguage;
+  suppressedPathPrefixes?: readonly string[];
 }
 
-export function FirstRunAboutTheTestModal() {
+function pathIsSuppressed(
+  pathname: string | null,
+  suppressedPathPrefixes: readonly string[],
+): boolean {
+  if (!pathname) return false;
+  return suppressedPathPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+export function FirstRunAboutTheTestModal({
+  languageOverride,
+  suppressedPathPrefixes = SUPPRESSED_PATH_PREFIXES,
+}: FirstRunAboutTheTestModalProps = {}) {
   const pathname = usePathname();
-  const language = useSettingsStore((state) => state.language);
+  const router = useRouter();
+  const settingsLanguage = useSettingsStore((state) => state.language);
   const hasSeen = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
 
   if (hasSeen) return null;
-  if (pathIsSuppressed(pathname)) return null;
+  if (pathIsSuppressed(pathname, suppressedPathPrefixes)) return null;
 
+  const language = languageOverride ?? settingsLanguage;
   const copy = firstRunCopy[language];
+  const handleOpenGuide = () => {
+    markSeen();
+    router.push('/about-the-test');
+  };
 
   return (
     <Modal
@@ -71,14 +93,16 @@ export function FirstRunAboutTheTestModal() {
       <Pressable
         accessibilityLabel={copy.skipAccessibilityLabel}
         accessibilityRole="button"
+        hitSlop={space[1]}
         onPress={markSeen}
-        style={styles.backdrop}
+        style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
       >
         <Pressable
           accessibilityRole="none"
           accessibilityLabel={copy.title}
+          hitSlop={space[0]}
           onPress={(event) => event.stopPropagation()}
-          style={styles.card}
+          style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
         >
           <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
           <Text accessibilityRole="header" style={styles.title}>
@@ -86,20 +110,27 @@ export function FirstRunAboutTheTestModal() {
           </Text>
           <Text style={styles.body}>{copy.body}</Text>
           <View style={styles.actions}>
-            <Link
+            <Pressable
               accessibilityLabel={copy.openAccessibilityLabel}
               accessibilityRole="link"
-              href="/about-the-test"
-              onPress={markSeen}
-              style={styles.primaryLink}
+              hitSlop={space[1]}
+              onPress={handleOpenGuide}
+              style={({ pressed }) => [
+                styles.primaryButton,
+                pressed ? styles.primaryButtonPressed : null,
+              ]}
             >
-              {copy.open}
-            </Link>
+              <Text style={styles.primaryButtonText}>{copy.open}</Text>
+            </Pressable>
             <Pressable
               accessibilityLabel={copy.skipAccessibilityLabel}
               accessibilityRole="button"
+              hitSlop={space[1]}
               onPress={markSeen}
-              style={styles.secondaryButton}
+              style={({ pressed }) => [
+                styles.secondaryButton,
+                pressed ? styles.secondaryButtonPressed : null,
+              ]}
             >
               <Text style={styles.secondaryButtonText}>{copy.skip}</Text>
             </Pressable>
@@ -118,15 +149,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: space[3],
   },
+  backdropPressed: {
+    backgroundColor: colors.focusSoft,
+  },
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[1.5],
     maxWidth: 480,
     padding: space[3],
     width: '100%',
+  },
+  cardPressed: {
+    transform: [{ scale: motion.pressedScale }],
   },
   eyebrow: {
     color: colors.badgeBlueText,
@@ -151,19 +188,35 @@ const styles = StyleSheet.create({
     gap: space[1.25],
     marginTop: space[1],
   },
-  primaryLink: {
+  primaryButton: {
+    alignItems: 'center',
     backgroundColor: colors.accent,
     borderRadius: radius.micro,
+    justifyContent: 'center',
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+  },
+  primaryButtonPressed: {
+    backgroundColor: colors.accentActive,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  primaryButtonText: {
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
   secondaryButton: {
+    alignItems: 'center',
+    borderRadius: radius.micro,
+    justifyContent: 'center',
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
+  },
+  secondaryButtonPressed: {
+    backgroundColor: colors.surfaceWarm,
+    transform: [{ scale: motion.pressedScale }],
   },
   secondaryButtonText: {
     color: colors.textMuted,
