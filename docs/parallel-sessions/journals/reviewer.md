@@ -2666,3 +2666,23 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` first for SETUP/release infrastructure; rerun or repair the scheduled/manual Production deployment path until a deployment from current `origin/main` exists and `npm run test:site-live` passes against that URL without overrides.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-current-R5crPQ` / `task/reviewer/live-deploy-green-1779113018`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after a new Production deployment appeared and `origin/main` advanced again.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, current `codex-tasks/validator.txt`, current `codex-tasks/setup.txt`, and current reviewer journal context.
+- Used a clean temporary worktree because the shared checkout has unrelated dirty lane files; rebased the reviewer branch onto current `origin/main` `9d6b55f`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0, 5/5 passing.
+- `/home/billy/.local/bin/gh api 'repos/{owner}/{repo}/deployments/4729276163/statuses?per_page=5'` - latest Production deployment state is `success`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`, created `2026-05-18T14:00:23Z`.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 0 with 715 questions, Practice, wide Practice layout, Mock, Ebook, and no placeholder copy.
+- `/home/billy/.local/bin/gh run list --workflow scheduled-deploy.yml --limit 5 --json ...` - newest scheduled run remains `26038147705` for `c7227b6`, conclusion `failure`.
+- `git log 767c87d944a00e4cda4ba5ab937d244b56586a27..HEAD -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json` - shows `76b3bde content: improve q018 prime minister explanation`, so current main has a canonical content delta after the successful production deployment SHA.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questions:715`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 1: `site/questions.js is out of sync; run node scripts/export-site-question-bank.js`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` - exit 1, 1/2 passing; generated current bank differs from checked-in `site/questions.js`.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: route DATA-INTEGRITY/SETUP to regenerate `site/questions.js` from current canonical content after q018, then rerun export-site parity and production live smoke before closing `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`.
