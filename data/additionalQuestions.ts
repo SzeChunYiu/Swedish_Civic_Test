@@ -1346,8 +1346,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Riksdagen avskaffades', 'The Riksdag was abolished'],
     ],
     0,
-    'UHR-avsnittet Sveriges väg till demokrati säger att riksdagen 1809 antog en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad.',
-    'The UHR section Sweden’s path to democracy says the Riksdag adopted a new constitution in 1809 that limited the king’s power. It was an important change, but democracy had not yet been introduced because voting rights were still limited.',
+    'År 1809 antog riksdagen en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad.',
+    'In 1809, the Riksdag adopted a new constitution that limited the king’s power. This was an important change, but democracy had not yet been introduced because voting rights were still limited.',
     ['1809', 'constitution', 'democracy-history'],
   ),
   single(
