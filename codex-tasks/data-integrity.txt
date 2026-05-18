@@ -292,3 +292,19 @@ ownership, Prettier/diff checks, PR/merge evidence, and a current-main residual
 recheck. Keep `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` in the same
 generator/validator/static-mirror ownership area if VALIDATOR chooses to bundle
 it safely; CONTENT must not hand-edit generated rows or `site/**`.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:23:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q451-Q500-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `c03f88f` confirms q451-q500 generated residual defects against
+the official UHR `Sverige i fokus` PDF. Facts, citations, answer keys, and
+distractors remain supported, but canonical CSV and `site/questions.js` still
+publish learner-visible generated true/false fragments in `q458`, `q459`,
+`q462`, `q463`, `q466`, `q467`, `q470`, `q471`, `q474`, `q475`, `q478`,
+`q479`, `q482`, `q483`, `q486`, `q487`, `q490`, `q491`, `q494`, `q495`,
+`q498`, and `q499`. Fold `docs/verify/q451-q500-2026-05-18.md` and the ledger
+row statuses into `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; acceptance still
+requires generator/validator/static-mirror repair, focused negative guards,
+regenerated CSV/static output, export/static parity, `validate:content`,
+typecheck, ownership, Prettier/diff checks, PR/merge evidence, and current-main
+residual row recheck.
