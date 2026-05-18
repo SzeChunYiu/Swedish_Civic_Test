@@ -76,3 +76,40 @@ require('./scripts/validate-content.js');
     /q001 carries source-authority wording in the stem/,
   );
 });
+
+test('question authority boundary rejects UHR source wording in true/false stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Sant eller falskt enligt UHR-materialet: Sveriges nordligaste del ligger norr om polcirkeln.',
+      )
+      .replace(
+        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
+        "True or false according to the UHR material: Sweden's northernmost part lies north of the Arctic Circle.",
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 carries source-authority wording in the stem/,
+  );
+});
