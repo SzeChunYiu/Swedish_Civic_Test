@@ -376,3 +376,15 @@ Escalations: SITE-P0-5 still needs production to serve current `origin/main`
 and pass the hash-aware live smoke; no pane should run Vercel CLI from this
 repo. Usable LUNARC/station capacity or reconciled factory project config is
 needed before adding remote workers.
+
+Cycle update 2026-05-18T22:46:00+02:00
+Current `origin/main` is `7c690c0`. q451-q500 DATA-INTEGRITY cleanup is
+accepted via PR #703 / `c6299ce`, q501-q550 VERIFY is refreshed, and
+REVIEWER-RELEASE-GATES-1 is accepted via PR #707 / `9d40c89`. HOLD/add-none
+remains the staffing decision; host staffing is still gated by
+`reason=lunarc_requires_slurm_station`, and factory audit remains RED for
+`missing:project_config`.
+Priorities: DATA-INTEGRITY next owns q501-q550 for
+q526/q527/q530/q531/q535/q542/q543. q551-q600 stays behind q501-q550 unless
+VALIDATOR reorders. SETUP has no new local source atom unless fresh site or
+release source evidence appears; SITE-P0-5 remains external deploy evidence.

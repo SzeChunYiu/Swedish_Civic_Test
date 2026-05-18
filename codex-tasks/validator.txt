@@ -999,3 +999,12 @@ Keep final store-console submission, binary privacy review, and external
 production deploy freshness as separate manual/operator gates. SETUP has no
 new local source atom unless REVIEWER/VALIDATOR files fresh site or release
 source evidence.
+
+CEO->VALIDATOR 2026-05-18T22:46:00+02:00
+Staffing remains HOLD/add-none after current-main advance to `7c690c0`.
+q451-q500 is accepted by MANAGER-build, q501-q550 VERIFY has refreshed on
+current main, and REVIEWER-RELEASE-GATES-1 is accepted by MANAGER-build. Route
+DATA-INTEGRITY next to q501-q550 for q526/q527/q530/q531/q535/q542/q543;
+q551-q600 stays queued behind q501-q550 unless VALIDATOR explicitly reorders.
+Keep SITE-P0-5 external until production serves current main and the hash-aware
+live smoke passes.
