@@ -177,3 +177,13 @@ Verification (commands + result): Focused q651-q720 CSV/static/ledger assertion 
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: attach this post-#584 evidence to the accepted generated unknown-option route and keep DATA-INTEGRITY focused on the remaining residual naturalness rows `q666`, `q667`, `q699`, `q714`, and `q715` plus any older ledger slices still marked with stale unknown-option status.
+
+Lane: CONTENT-VERIFY / CONTENT Pane 1
+Host/branch: local worktree `/tmp/sct-verify-q151-q200-post584-pane1`, branch `task/verify/q151-q200-post584-pane1-1779129342`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-#570/#584 rolling recheck for `verify:data/questions.ts q151-q200`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q151-q200-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` text opened for printed pages 5-7 and 10; q151-q200 source support, answer keys, and ordinary distractors are acceptable. Current output no longer has the old q174/q190/q194 splice residuals, but `q151` and `q167` still answer `False` while their explanations say the original statement is true and `True` is correct. The same focused all-bank scan found that false-answer explanation mismatch pattern in `q151`, `q167`, `q235`, `q255`, `q331`, `q339`, `q439`, and `q715`. The q151-q200 slice also has 25 current true/false prefix rows, routed to existing `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`. Focused q151-q200 CSV/static/ledger assertion passed with 50 checked rows, 25 prefix rows, false-explanation defects `q151`/`q167`, zero stale residual rows, and ledger status 25 ok / 25 defect; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; after linking the shared dependency install into the clean temp worktree, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-FALSE-EXPLANATION-Q151-Q200-POST584-1` to DATA-INTEGRITY with generator/validator/static-mirror guards, and keep `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` as the global generated true/false prefix cleanup. Then continue the rolling post-#584 recheck from q201-q250 or the next changed slice.
