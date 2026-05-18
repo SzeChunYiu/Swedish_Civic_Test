@@ -97,3 +97,13 @@ A11y props: default `accessibilityRole="none"` so child reading order remains in
 Verification: `./node_modules/.bin/prettier --check components/Screen.tsx` -> pass; token discipline grep on `components/Screen.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review Screen and then queue Divider if accepted.
+
+## Iteration 10 - 2026-05-18
+
+Component: Divider separator atom - `components/Divider.tsx`
+Variants/states implemented: horizontal and vertical orientations; none/sm/md/lg token spacing; default, muted, and accent border tones; caller style and View prop passthrough.
+Tokens used: `colors.border`, `colors.surfaceWarm`, `colors.accent`, `space[0]`, `space[0.5]`, `space[1]`, `space[2]`, and `space.hairline`.
+A11y props: default `accessibilityRole="none"`; decorative dividers default to `accessible=false` and `importantForAccessibility="no"`; providing `accessibilityLabel` makes the divider accessible while preserving caller overrides.
+Verification: `./node_modules/.bin/prettier --check components/Divider.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/Divider.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/Divider.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review Divider and mark the core component set ready for SCREENS dependency review.
