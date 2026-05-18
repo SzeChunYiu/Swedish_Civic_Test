@@ -1,5 +1,43 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T21:35+02:00
+
+Current `origin/main` is `84e340d`. q351-q400 VERIFY is now landed via
+`e563670` (`verify: refresh q351-q400 current output [allow-meta]`). This
+supersedes the 21:26 q351 active-lease note.
+
+Do not publish duplicate local q351 branches:
+- `/tmp/sct-verify-q351-q400-pane4-1779132305` /
+  `task/verify/q351-q400-pane4-1779132305` is now behind `origin/main`.
+- `/tmp/sct-verify-q351-q400-pane1-1779132415` /
+  `task/verify/q351-q400-pane1-1779132415` is now behind `origin/main`.
+- `/tmp/sct-content-verify-q351-q400-pane3-1779132479` /
+  `task/content-verify/q351-q400-pane3-1779132479` is now behind
+  `origin/main`.
+
+The observed active CONTENT-VERIFY capacity is q401-q450 in local Pane 1
+worktree `/tmp/sct-verify-q401-q450-pane1-1779133017`, branch
+`task/verify/q401-q450-pane1-1779133017`, with `docs/verify/ledger.md` and
+`docs/verify/q401-q450-2026-05-18.md` changes in progress. It is behind
+current `origin/main` and must sync/rebase before PR/merge. Do not duplicate
+q401 with the clean local Pane 4 branch `task/verify/q401-q450-pane4-1779132950`
+unless Pane 1 is rejected or explicitly abandoned.
+
+q451-q500 is also active as a non-overlapping VERIFY slice in local Pane 3
+worktree `/tmp/sct-content-verify-q451-q500-pane3-1779133136`, branch
+`task/content-verify/q451-q500-pane3-1779133136`. It is behind current
+`origin/main` and must sync/rebase before PR/merge.
+
+After q401-q450 and q451-q500 land, are rejected, or are abandoned, next
+capacity is q501-q550 or the next current changed/due slice if VALIDATOR
+reorders. VERIFY remains report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors.
+
+CONTENT implementation remains handoff-only unless VALIDATOR explicitly leases
+the paired authored true/false prefix cleanup named by
+`CONTENT-AUTHORED-TF-PREFIX-1`.
+
 MANAGER-content active-lease correction - 2026-05-18T21:26+02:00
 
 Current `origin/main` is `dff1c24`. q251-q300 VERIFY is landed via PR #638 /

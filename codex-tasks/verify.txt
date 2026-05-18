@@ -11,6 +11,33 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T21:35:00+02:00 active-lease correction:
+- `verify:data/questions.ts q351-q400` is now on `origin/main` via `e563670`
+  (`verify: refresh q351-q400 current output [allow-meta]`).
+- Do not publish duplicate local q351 branches:
+  `task/verify/q351-q400-pane4-1779132305`,
+  `task/verify/q351-q400-pane1-1779132415`, or
+  `task/content-verify/q351-q400-pane3-1779132479`.
+- `verify:data/questions.ts q401-q450` is now observed active in local Pane 1
+  worktree `/tmp/sct-verify-q401-q450-pane1-1779133017`, branch
+  `task/verify/q401-q450-pane1-1779133017`, with
+  `docs/verify/ledger.md` and `docs/verify/q401-q450-2026-05-18.md` changes in
+  progress. It is behind current `origin/main` and must sync/rebase before
+  PR/merge.
+- Do not duplicate q401-q450 from the clean local Pane 4 branch
+  `task/verify/q401-q450-pane4-1779132950` unless Pane 1 is rejected or
+  explicitly abandoned.
+- `verify:data/questions.ts q451-q500` is also active as a non-overlapping
+  slice in local Pane 3 worktree
+  `/tmp/sct-content-verify-q451-q500-pane3-1779133136`, branch
+  `task/content-verify/q451-q500-pane3-1779133136`. It is behind current
+  `origin/main` and must sync/rebase before PR/merge.
+- After q401-q450 and q451-q500 land/reject/abandon, continue with q501-q550
+  or the next current changed/due slice if VALIDATOR reorders.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T21:26:00+02:00 active-lease correction:
 - `verify:data/questions.ts q251-q300` is on `origin/main` via PR #638 /
   `3a18e24`; do not duplicate branch
