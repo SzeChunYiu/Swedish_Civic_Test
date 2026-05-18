@@ -1091,6 +1091,30 @@ Acceptance requires generator and validator mirror coverage, regenerated
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
 checks for the four named rows.
 
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T23:06:00+02:00
+`VERIFY-GENERATED-TF-Q651-Q700-CURRENT-1` [product defect][P0
+TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on
+current `origin/main` `d91a489` supersedes the stale q666/q667/q699 residual
+evidence from earlier generated-output passes. The slice has 50 rows, 25
+true/false rows, zero `Sant eller falskt:` / `True or false:` prefixes, zero
+true/false meta-wrapper stems, and zero old `Det går inte att avgöra av
+materialet` / `It cannot be determined from the material` fallback options in
+both `content/question-bank.csv` and `site/questions.js`. Current remaining
+defects are four generated true/false wording issues: `q663` says the service
+is called `Lucia procession` without the English article; `q670`/`q671`
+attach `med en adventskalender hemma` / `with an Advent calendar at home`
+awkwardly after the action; and `q698` lowercases the proper noun in
+`jesu födelse` / `jesus' birth` while the source option and explanation
+correctly use `Jesu födelse` / `Jesus' birth`. Facts, citations, answer keys,
+explanations, and ordinary distractors otherwise remain supported by UHR
+`Sverige i fokus` printed pages 45-47. Own this as a generated true/false
+wording follow-up after q601-q650 unless VALIDATOR reorders. Acceptance
+requires generator and validator mirror coverage, regenerated
+`content/question-bank.csv` and `site/questions.js`, export/static parity,
+`validate:content`, `test:derived-content`, focused content gates, typecheck,
+lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
+checks for the four named rows.
+
 MANAGER-build acceptance/current-route update - 2026-05-18T23:10+02:00
 
 `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1` is accepted on current
