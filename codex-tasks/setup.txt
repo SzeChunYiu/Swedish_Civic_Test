@@ -1,13 +1,58 @@
-MANAGER-build queue - 2026-05-18T13:33+02:00
+MANAGER-build queue - 2026-05-18T13:34+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
 items, SETUP should take only atoms that close validator/reviewer defects with
 source, test, command, and PR/merge evidence. Do not accept local-only or
-docs-only closure.
+docs-only closure. The `site/` deployed static surface is now in the build
+lease because Vercel serves `site/`, not the Expo app bundle.
 
 Active P0 SETUP atoms:
 
-1. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+1. `SITE-P0-1`
+   - Scope: `site/index.html`, `site/practice.js`, `site/styles.css`, and
+     adjacent `site/` shell files only.
+   - Required behavior: the deployed static home page exposes a reachable,
+     styled Practice route/page without regressing the existing ebook route.
+   - Required gates: local static-site smoke for `/` to `/practice`, a route
+     existence/static-link assertion, `node --check` for changed site JS, and
+     `git diff --check`.
+
+2. `SITE-P0-2`
+   - Scope: `site/` static mock-exam page and navigation.
+   - Required behavior: Mock exam is reachable from `site/index.html` and has
+     a timed flow, answer submission, and result/review UX matching the current
+     product contract and `docs/design/drafts/practice-mockexam-2026-05-18`.
+   - Required gates: static-site smoke for `/` to mock exam through completion,
+     no console errors, `node --check` for changed site JS, and
+     `git diff --check`.
+
+3. `SITE-P0-3`
+   - Scope: `site/questions.js` and any focused generator/parity verifier.
+   - Required behavior: the static site question bank is synced from the
+     canonical app data and cannot silently drift from exported questions.
+   - Required gates: a question-bank parity check against canonical content,
+     `npm run validate:content`, `node --check site/questions.js`, and
+     `git diff --check`.
+
+4. `SITE-P0-4`
+   - Scope: `site/ebook.js`, `site/ebook-tools.js`, and related site reading
+     UI only.
+   - Required behavior: preserve the richer ebook surface already on `site/`
+     while improving visible writing quality and navigation; do not replace it
+     with a thin placeholder.
+   - Required gates: static-site ebook smoke, focused copy/navigation check,
+     `node --check` for changed site JS, and `git diff --check`.
+
+5. `SITE-P0-5`
+   - Scope: REVIEWER audit, not SETUP implementation.
+   - Required behavior: after SITE-P0-1 through SITE-P0-4 have source PRs,
+     REVIEWER audits the live deployed static site against the draft mockups
+     and queues concrete parity defects. Do not close this with a report-only
+     audit.
+
+Existing P0 SETUP atoms behind the static-site P0 queue:
+
+6. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -17,7 +62,7 @@ Active P0 SETUP atoms:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-2. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+7. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -27,7 +72,7 @@ Active P0 SETUP atoms:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-3. `REVIEWER-ACCOUNT-SCOPE-1`
+8. `REVIEWER-ACCOUNT-SCOPE-1`
    - Scope: SETUP/build product shell, route manifests, dependencies, and
      scaffold/router-shell tests.
    - Required behavior: the MVP has no reachable account/authentication
@@ -40,7 +85,7 @@ Active P0 SETUP atoms:
    - Keep `REVIEWER-SEARCH-PLACEHOLDER-1` separate; do not expand this atom
      into Search implementation/removal.
 
-4. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+9. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
