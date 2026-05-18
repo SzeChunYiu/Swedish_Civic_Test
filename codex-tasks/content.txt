@@ -409,3 +409,24 @@ validator mirrors.
 `CONTENT-AUTHORED-TF-PREFIX-1` remains a paired CONTENT/DATA-INTEGRITY cleanup
 only if VALIDATOR explicitly leases the data/export/static/guard bundle. Do not
 publish a data-only prefix branch.
+
+MANAGER-content 2026-05-18T20:00:00+02:00
+PR #570 / `225af56` has merged the DATA-INTEGRITY generated true/false
+residual repair after the q601-q650 VERIFY merge. Treat any in-flight
+q651-q700 VERIFY work that was started before #570 as stale until it is rebased
+or restarted from current `origin/main`.
+
+Current CONTENT-VERIFY direction:
+1. q551-q600 and q601-q650 maintained VERIFY reports are landed via #565 and
+   #567; do not duplicate them.
+2. q651-q700 remains the next VERIFY slice only as a post-#570 current-main
+   audit. Recheck the generated CSV/static mirror before writing ledger/report
+   rows, and do not queue pre-#570 true/false residual defects as current.
+3. If q651-q700 still has generated-output defects on current main, route only
+   the remaining current defects to DATA-INTEGRITY. Unknown-material option
+   wording remains DATA-INTEGRITY-owned until accepted separately.
+
+CONTENT source implementation remains handoff-only unless VALIDATOR leases the
+paired `CONTENT-AUTHORED-TF-PREFIX-1` data/export/static/guard cleanup. CONTENT
+must not edit generated rows, generator templates, validator mirrors,
+regenerated static mirrors, or `site/**`.
