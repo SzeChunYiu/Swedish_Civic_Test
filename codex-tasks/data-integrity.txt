@@ -249,3 +249,19 @@ the full verifier row set, regenerates `content/question-bank.csv` and
 ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
 recheck. Keep `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` queued after this
 true/false residual route.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T18:51:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q401-Q450-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `3be70d4` confirms residual generated true/false naturalness
+defects in q401-q450 after the latest generator cleanup. Facts, citations,
+answer keys, and distractors remain supported by UHR `Sverige i fokus`, but
+canonical CSV and `site/questions.js` still publish learner-visible generated
+fragments/meta scaffolding in `q401`, `q402`, `q405`, `q406`, `q410`, `q414`,
+`q425`, `q426`, `q429`, `q430`, `q433`, `q434`, `q437`, `q438`, `q445`, and
+`q446`. Fold `docs/verify/q401-q450-2026-05-18.md` and the ledger row statuses
+into `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards, regenerated
+CSV/static output, export/static parity, `validate:content`, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
+row recheck.
