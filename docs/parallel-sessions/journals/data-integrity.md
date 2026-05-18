@@ -834,3 +834,13 @@ Verification (commands + result): `NODE_OPTIONS='--v8-pool-size=1' node --test s
 PR (number + merged?): #361, yes via squash merge as `701a181`.
 Accepted by worker? yes
 Next suggested validator action: accept this DATA-INTEGRITY live-smoke hash guard after reviewing PR #361; keep `node scripts/check-live-site.js <production-url>` as the deploy closure gate so a stale same-count `site/questions.js` cannot pass on question count alone.
+
+Lane: DATA-INTEGRITY
+Host/branch: local `/tmp/sct-data-integrity-q114-static`, `task/content/q114-source-note-pane1-1779113157`
+Role type and manager: dynamic-worker under MANAGER-build / VALIDATOR
+Task / checklist item: `B-CONTENT-Q114-STATIC-MIRROR-GATE-20260518` companion static-site mirror sync for PR #352.
+Changed artifacts: `site/questions.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification (commands + result): after rebasing PR #352 onto current `origin/main`, pre-sync `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` failed with `site/questions.js is out of sync`; after regenerating the static bank, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 715 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` passed 2/2; `node --check site/questions.js` passed; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 715-question parity; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with 715 published questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1. Direct Prettier was not used for `site/questions.js` because the exporter-owned checked-in static bank is not Prettier-formatted.
+PR (number + merged?): #352, pending push/merge at handoff write time.
+Accepted by worker? yes
+Next suggested validator action: accept this companion DATA-INTEGRITY static mirror update together with the CONTENT q114 explanation diff after PR #352 merges; keep `npm run validate:content`, `node scripts/export-site-question-bank.js --check`, `tests/content-static-site-question-bank-parity.test.js`, `node --check site/questions.js`, and export parity as the nearest q114/static-site drift gates.
