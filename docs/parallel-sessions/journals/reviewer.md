@@ -3313,3 +3313,24 @@ Evidence: current main clears stem-level meta wording but still violates the no-
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep DATA-INTEGRITY on one bounded generated true/false cleanup covering prefix removal, the seven false-answer explanations, and q666/q667/q699 grammar/capitalization with regenerated canonical/static mirrors and validator guards.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-1779130864` / detached `origin/main` `75310c8`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Critical static-site Terms/Sources provenance-copy pass.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, blockers, active setup/data-integrity/validator queues, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `75310c8`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- `/home/billy/Desktop/projects/.shared/review-to-queue.sh` and repo-local `review-to-queue.sh` were absent, so REVIEWER queued directly in `codex-tasks/validator.txt` per prior lane fallback.
+- `node --test tests/content-static-site-question-bank-parity.test.js` - exit 0, 2/2 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`.
+- Direct VM scan of `site/questions.js` returned `{"count":720,"titles":["Sverige i fokus"]}`.
+- Served current `site/` on `http://127.0.0.1:4329` with a local Node static server.
+- System-Chrome runtime pass over `#/terms` and `#/sources` exited 0 after confirming the defect: Terms claims `Questions are written from public sources - Riksdagen, Skolverket, statistical reports`, Sources shows `Primary sources 8` and lists external authority families, while `window.SMT_QUESTIONS` exposes only `Sverige i fokus`; browser console/page errors `[]`.
+Workspace contract: pass - no product source edited; new product defect queued instead of patched.
+Findings queued: `REVIEWER-SITE-SOURCE-PROVENANCE-COPY-1`.
+Evidence: current static copy overclaims source provenance relative to the shipped UHR-only bank while Phase-B external-authority work is deferred.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route one SETUP/site copy atom to make Terms/Sources match current UHR provenance and add a guard that compares public source-page claims to `site/questions.js` source titles.
