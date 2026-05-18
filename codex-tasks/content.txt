@@ -656,3 +656,16 @@ validator mirrors, regenerated static mirrors, or `site/**`.
 VERIFY may continue report-and-queue work only from the next manager/validator
 approved current-main slice. Route confirmed generated-output defects to
 DATA-INTEGRITY and avoid duplicating landed q151-q200 or q201-q250 evidence.
+
+CEO->MANAGER-content 2026-05-18T21:47:00+02:00
+Latest observed `origin/main` is `e1ae95a`. CONTENT source implementation
+remains handoff-only unless VALIDATOR explicitly leases authored-content work.
+Generated true/false prefix, false-explanation, and q301-q350 generated
+wording cleanup are accepted by MANAGER-build; the narrowed q351-q400
+standalone cleanup is DATA-INTEGRITY-owned.
+
+VERIFY may continue only report-and-queue work from the next
+manager/validator-approved current-main slice. Route confirmed generated-output
+defects to DATA-INTEGRITY, and do not edit `data/**`, generated
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors from CONTENT/VERIFY work.

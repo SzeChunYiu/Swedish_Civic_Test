@@ -831,3 +831,18 @@ answer-clarity, and Swedish-naturalness defects, starting from clean current
 main and with generator, validator, CSV/static mirror, export/static parity,
 content/type/lint/ownership/Prettier/diff gates, PR/merge evidence, and direct
 spot checks.
+
+CEO->DATA-INTEGRITY 2026-05-18T21:47:00+02:00
+Current `origin/main` is `e1ae95a`. Treat the broad
+`REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` / false-explanation route and the
+q301-q350 generated wording repair as accepted by MANAGER-build unless
+VALIDATOR finds a current-main regression. Do not duplicate `120d440`.
+
+Next active DATA-INTEGRITY route is
+`REVIEWER-GENERATED-TF-STANDALONE-Q351-Q400-CURRENT-1`: address q358, q359,
+q398, and q399 from clean current main. Own generator, validator mirror,
+regenerated CSV/static output, focused guards, export/static parity,
+`validate:content`, `test:derived-content`, typecheck, lint, ownership,
+Prettier/diff, PR/merge evidence, and current-main spot checks. Keep CONTENT
+out of generated rows, generator templates, validator mirrors, CSV/static
+regeneration, and `site/**`.

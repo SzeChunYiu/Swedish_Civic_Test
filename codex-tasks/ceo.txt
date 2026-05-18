@@ -272,3 +272,43 @@ DATA-INTEGRITY acceptance-needed line is superseded by that manager-build
 acceptance. HOLD/add-none remains the staffing decision because the clean
 staffing gate still holds configured hosts behind SLURM station requirements,
 and SITE-P0 deploy freshness still needs operator/deploy evidence.
+
+Cycle update 2026-05-18T21:47:00+02:00
+Objective: keep the factory on P0 burn-down. Current `origin/main` is
+`e1ae95a`; the latest source-side DATA-INTEGRITY work, including q301-q350
+wording cleanup in `120d440`, is accepted by MANAGER-build evidence. The
+current source-side route is the narrowed q351-q400 standalone follow-up.
+Read: project `docs/parallel-sessions.md`, `AI_FACTORY.md`, `TEAM_PLAN.md`,
+`gm.md`, meeting sheet, `AGENTS.md`, `CLAUDE.md`, current queue files, and
+supervisor fallback copies of `ceo-executive.md`,
+`company-operating-model.md`, `ai-factory.md`, and `ceo-staffing.md`. The
+requested `/home/billy/docs/...` and project-local operating-doc paths remain
+absent; fallback docs were used.
+Teams/staffing: HOLD/add-none. Fresh `/home/billy/bin/csup staff
+--scenario=resume --dry-run` reported queued work for every configured host
+(`work=8`, `blockers=8`), but each host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. `csup
+factory-audit civic-test` remains RED with `missing:project_config` even
+though the repo contains `.codex-supervisor.toml`; treat this as tooling/config
+reconciliation before any factory-run/apply decision. Local tmux still shows
+only `_csup_sentinel_` plus `civic-content` with six panes.
+Evidence: clean current-main temp worktree passed
+`node scripts/export-site-question-bank.js --check` with 720 questions/13
+chapters and `npm run validate:content` with static-site parity true,
+`questionFalseAnswerExplanationsValidated:720`, and
+`questionGeneratedTrueFalseNaturalnessValidated:720`. Production still fails
+the hash-aware live smoke at both known URLs: expected 720/hash
+`69bfcfe3cc12`, found 715/hash `afb9eec56629` at `dist-3u8o5zl6a` and
+715/hash `5d2710bebf7e` at `dist-jgsjooi52`.
+Priorities: DATA-INTEGRITY next owns the narrowed q351-q400 standalone
+follow-up for q358/q359/q398/q399 from current main. SETUP has no new local
+source atom after source-provenance copy and Ebook chapter 13 acceptance; keep
+SITE-P0-5 external until production serves current main. RELEASE/COMPLY is the
+new source-side P0:
+`REVIEWER-RELEASE-GATES-1` still says publishing privacy and data-safety
+docs/tests assert the old disabled-ads contract despite the current ads/IAP
+posture.
+Escalations: operator deployment capacity or operator-verified production
+deploy evidence remains required for SITE-P0-5. Supervisor config/audit
+reconciliation is also required before any non-dry-run staffing. No Vercel CLI
+was run.

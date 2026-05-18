@@ -284,3 +284,24 @@ Production still serves stale 715-question banks while current main expects
 no pane should run Vercel CLI. Manager updates were queued in the manager queue
 files; MANAGER-content also received a direct tmux notice because it is the
 only active local manager lane.
+
+2026-05-18T21:47:00+02:00: CEO cycle decision remains HOLD/add-none. Required
+CEO and operating docs were read from supervisor fallback copies plus project
+parallel-session docs, this board, and current queue files; requested
+`/home/billy/docs` and project-local operating-doc paths remain absent. Latest
+observed `origin/main` is `e1ae95a`. Broad generated true/false prefix,
+false-explanation, and q301-q350 generated wording cleanup are accepted by
+MANAGER-build. `/home/billy/bin/csup
+staff --scenario=resume --dry-run` saw queued work on configured hosts
+(`work=8`, `blockers=8`), but every host held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. `csup
+factory-audit civic-test` remains RED for `missing:project_config`, so do not
+use factory-run/apply as a launch signal until the supervisor config audit is
+reconciled. Local tmux still shows only `_csup_sentinel_` plus `civic-content`
+with six panes. Current-main checks passed static-bank parity and
+`validate:content`; production still serves stale 715-question banks while
+current main expects 720/hash `69bfcfe3cc12`, so SITE-P0-5 remains external
+deploy-capacity work and no pane should run Vercel CLI. Next source-side order:
+DATA-INTEGRITY narrowed q351-q400 standalone follow-up for q358/q359/q398/q399,
+then RELEASE/COMPLY `REVIEWER-RELEASE-GATES-1`; SETUP stays source-hold unless
+fresh P0 site evidence appears.
