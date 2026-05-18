@@ -5525,8 +5525,8 @@
         "sv": "Svenska kyrkan och staten skildes åt"
       },
       {
-        "en": "Midsummer Eve began always being celebrated on a Friday",
-        "sv": "Midsommarafton började alltid firas på en fredag"
+        "en": "Midsummer Eve became Sweden’s National Day",
+        "sv": "Midsommarafton blev Sveriges nationaldag"
       }
     ],
     "answer": 0,
@@ -27756,8 +27756,8 @@
         "sv": "Svenska kyrkan och staten skildes åt"
       },
       {
-        "en": "Midsummer Eve began always being celebrated on a Friday",
-        "sv": "Midsommarafton började alltid firas på en fredag"
+        "en": "Midsummer Eve became Sweden’s National Day",
+        "sv": "Midsommarafton blev Sveriges nationaldag"
       }
     ],
     "answer": 0,
