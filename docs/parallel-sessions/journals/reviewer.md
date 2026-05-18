@@ -2720,6 +2720,6 @@ Verification (commands + result):
 - GitHub deployments API: latest Production success remains deployment `4729276163`, SHA `767c87d`, created `2026-05-18T14:00:23Z`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`.
 - `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; count/assets pass, but static question-bank content fails with expected hash prefix `159954bb98a3` and live hash prefix `5d2710bebf7e`.
 - Workspace contract: pass; no product source files were edited.
-PR (number + merged?): #364 / pending before merge
+PR (number + merged?): #364 / merged yes via `cf00a31`
 Accepted by worker? yes
 Next suggested validator action: keep SITE-P0 live deploy first; restore GitHub Actions billing/spending capacity or provide an operator-verified production deployment, then rerun the hash-aware live check and REVIEWER live parity pass before closing SITE-P0-5.
