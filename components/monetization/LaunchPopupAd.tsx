@@ -4,7 +4,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { getAdUnit, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let launchPopupShownThisRuntime = false;
@@ -37,11 +37,15 @@ const launchPopupAdCopy: Record<AppLanguage, LaunchPopupAdCopy> = {
   },
 };
 
-export function LaunchPopupAd({
-  entitlements = FREE_ENTITLEMENTS,
-}: {
+/**
+ * Defaults: uses free entitlements, reads language from settings, shows once
+ * per runtime launch, and hides itself when ads are disabled or not allowed.
+ */
+export interface LaunchPopupAdProps {
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
-}) {
+}
+
+export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupAdProps) {
   const language = useSettingsStore((state) => state.language);
   const copy = launchPopupAdCopy[language];
   const [visible, setVisible] = useState(false);
@@ -81,8 +85,12 @@ export function LaunchPopupAd({
           <Pressable
             accessibilityLabel={copy.closeAccessibilityLabel}
             accessibilityRole="button"
+            hitSlop={space[1]}
             onPress={() => setVisible(false)}
-            style={styles.closeButton}
+            style={({ pressed }) => [
+              styles.closeButton,
+              pressed ? styles.closeButtonPressed : null,
+            ]}
           >
             <Text style={styles.closeText}>{copy.closeLabel}</Text>
           </Pressable>
@@ -136,6 +144,10 @@ const styles = StyleSheet.create({
     marginTop: space[1],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
+  },
+  closeButtonPressed: {
+    backgroundColor: colors.accentActive,
+    transform: [{ scale: motion.pressedScale }],
   },
   closeText: {
     color: colors.surface,
