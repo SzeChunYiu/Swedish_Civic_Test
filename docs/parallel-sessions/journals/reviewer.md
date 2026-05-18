@@ -2503,3 +2503,22 @@ Verification (commands + result):
 PR (number + merged?): #244 / merged yes via squash commit `9071fef`
 Accepted by worker? yes
 Next suggested validator action: assign SETUP to add the static `/mock` route shell/stage, allow-list `/mock`, make the Practice mock link open the live mock exam flow, preserve/load ebook helper tooling, and add a static smoke guard that fails when present SITE P0 files are not reachable through the deployed page shell.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-parity-qRHXQa` / `task/reviewer/site-question-parity-1779105900`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 SITE reviewer audit for SITE-P0-3 static question-bank parity.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/setup.txt`, and current reviewer queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on `task/data-integrity/1779098835` with unrelated dirty task/report files.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Duplicate scan for `REVIEWER-SITE`, `SITE-P0-3`, `site/questions`, `SMT_QUESTIONS`, and static question parity found the active setup queue plus the separate static-wiring reviewer defect, but no existing SITE question-parity reviewer defect.
+- `for f in site/app.js site/practice.js site/questions.js; do node --check "$f" || exit 1; done` - exit 0.
+- Node evaluation of `site/questions.js` returned `siteQuestions:57`, `missingId:57`, `missingSource:57`, and chapter counts of only 4-6 questions per chapter across chapters 1-12.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 705 canonical questions validated.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 705-question export parity OK.
+- `rg -n "site/questions|SMT_QUESTIONS|question.*parity|static.*question|questions\\.js" scripts tests site package.json .github -S` - found runtime consumers but no generator or parity guard for `site/questions.js`.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: assign SETUP to make `site/questions.js` generated or synced from canonical published questions, preserve ids/source metadata for the static UI, and add a parity guard that fails when the static bank drifts from canonical content before accepting SITE-P0-3.
