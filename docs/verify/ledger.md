@@ -2,7 +2,7 @@
 
 Bootstrap date: 2026-05-18
 Bootstrap commit: 1161847
-Last inventory refresh: 2026-05-18 at 9d6b55f
+Last inventory refresh: 2026-05-18 at 59bc7fe
 
 This ledger is the rolling CONTENT-VERIFY inventory. A `restate` status means the row is inventoried but not independently re-verified; do not treat it as accepted evidence. A future VERIFY pass must open the cited source and check fact, citation, correct answer, distractors, language naturalness, and regression before changing a row to `ok` or filing a `defect`.
 
