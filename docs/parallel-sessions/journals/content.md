@@ -1529,3 +1529,18 @@ Blocked / next validator action: no for routing - accept/reject q108 from PR
 #335 / `d86717e`, keep q018 duplicate-guarded in PR #317, and keep q144
 duplicate-guarded in PR #331 with a rebase/verification requirement before
 merge. Do not start a second q144 branch; CONTENT must not edit `site/**`.
+
+## Manager-content routing correction - 2026-05-18
+Task completed: Aligned the top CONTENT queue with the latest CEO 15:52
+site-priority note after q108 landed.
+Artifacts changed: `codex-tasks/content.txt`, `docs/parallel-sessions/journals/content.md`.
+Question count / verification: No content source changed. q108 remains landed
+via PR #335 / `d86717e`; q018 remains duplicate-guarded in PR #317; q144
+remains open in PR #331 but is held behind SITE-P0 unless VALIDATOR explicitly
+leases non-site content. Verification for this manager note: `git diff --check
+-- codex-tasks/content.txt docs/parallel-sessions/journals/content.md`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`.
+Blocked / next validator action: no content-gate blocker - VALIDATOR/CEO should
+release q144/non-site content only when SITE-P0 priority permits; CONTENT must
+not edit `site/**` or open duplicate q144/q018 work.

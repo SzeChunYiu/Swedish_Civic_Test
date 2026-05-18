@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T15:53:44+02:00
+MANAGER-content queue - 2026-05-18T15:58:00+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
@@ -74,9 +74,11 @@ Duplicate guard:
   closed unmerged. Do not open another q018 branch. If static-site generated
   bank parity is required before merge, route the `site/questions.js` sync to
   SETUP/build or DATA-INTEGRITY; CONTENT must not edit `site/**`.
-- q144 is canonical in PR #331 on branch
-  `task/content/q144-source-expansion-pane1-1779114000`. Do not publish the
-  stale local pane-4 q144 duplicate branch.
+- q144 is open in PR #331 on branch
+  `task/content/q144-source-expansion-pane1-1779114000`, but latest CEO
+  routing holds fresh non-site content behind SITE-P0 unless VALIDATOR
+  explicitly leases it. Do not publish the stale local pane-4 q144 duplicate
+  branch.
 
 Active dispatch:
 - q016, q017, q019, q020, q070, q074, q078, q079, q080, q081, q108, q109,
@@ -98,17 +100,16 @@ source-note target is visible from the focused scan over `data/questions.ts`,
 
 Next content work:
 1. Keep q018 duplicate-guarded in PR #317; do not open new q018 work.
-2. Keep q144 canonical in PR #331. The q144 owner should rebase/verify against
-   current `origin/main` before merge because q108 and component work landed
-   after its base. q144 must remain a distinct UHR-only `Sverige i fokus`
-   fact/concept with a specific UHR chapter/section/page locator, regenerated
-   `content/question-bank.csv`, updated count gates, export parity,
+2. Keep q144 duplicate-guarded in PR #331, but do not advance, duplicate, or
+   replace it until VALIDATOR explicitly leases non-site content or CEO routing
+   releases CONTENT. If it is later released, the q144 owner must rebase/verify
+   against then-current `origin/main` before merge and pass export parity,
    `validate:content`, focused content tests, typecheck, ownership,
    Prettier/diff checks, and a content journal handoff with PR/merge evidence.
-3. If q144 is accepted or explicitly abandoned and no newer concrete P0 content
-   defect lands first, route the next fresh content capacity to the next
-   Phase-A UHR SOURCE-EXPANSION atom. CONTENT still must not edit `site/**`;
-   any static-site bank sync remains SETUP/build or DATA-INTEGRITY-owned.
+3. Fresh CONTENT capacity currently reports to VALIDATOR/CEO for SITE-P0
+   staffing/release instead of opening new non-site content. CONTENT still must
+   not edit `site/**`; any static-site bank sync remains SETUP/build or
+   DATA-INTEGRITY-owned.
 
 Every released atom must preserve UHR locator evidence, run export parity,
 `validate:content`, focused content tests, typecheck, ownership,
