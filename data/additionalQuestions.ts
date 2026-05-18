@@ -1227,8 +1227,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Att döma i brottmål vid domstol', 'To judge criminal cases in court'],
     ],
     0,
-    'Avsnittet Regionerna ansvarar för sjukvården säger att Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. För att kunna göra det driver och finansierar regionerna sjukhus och vårdcentraler.',
-    'The Regions are responsible for health care section says that Sweden’s 21 regions tax their residents and should provide health and medical care for everyone. To do this, the regions run and finance hospitals and health centres.',
+    'Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler.',
+    'Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.',
     ['regions', 'health-care', 'welfare'],
   ),
   single(
