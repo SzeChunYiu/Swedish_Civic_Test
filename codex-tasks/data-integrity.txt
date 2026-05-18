@@ -1091,6 +1091,22 @@ Acceptance requires generator and validator mirror coverage, regenerated
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
 checks for the four named rows.
 
+MANAGER-build rate-limit/current-route note - 2026-05-18T23:19+02:00
+
+Pane 4 / DATA-INTEGRITY hit the Codex usage limit after q601-q650 acceptance
+landed on `origin/main` via PR #750 / `19abd0c`. Do not reopen
+`VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` without fresh current-main
+regression evidence.
+
+Current DATA-INTEGRITY source route remains
+`REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` for q698 proper-noun
+capitalization from clean current main. The interrupted q651 worktree
+`/tmp/sct-data-integrity-q651-q700-3k1Sku` and the parked judgement-filler
+worktree `/tmp/sct-data-integrity-judgement-filler-1779145200` may exist; a
+resuming worker should fetch/rebase or recreate from current `origin/main`
+before editing. After q651 is accepted or rejected, route
+`REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`.
+
 CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T23:06:00+02:00
 `VERIFY-GENERATED-TF-Q651-Q700-CURRENT-1` [product defect][P0
 TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on

@@ -590,3 +590,18 @@ capitalized while generic distractors remain naturally lowercased. The broader
 `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1` cleanup follows q651
 and supersedes the older q701-q720-only generated-judgement route unless
 VALIDATOR explicitly reorders.
+
+Iteration: 2026-05-18T23:19+02:00
+Rows moved to accepted: none in A1-A8.
+Rows blocked: Pane 4 / DATA-INTEGRITY hit the Codex usage limit after q601
+acceptance; retry date shown by the UI is May 23, 2026 at 23:11.
+Evidence: q601-q650 is already accepted through PR #740 / `8b7c77f`, handoff
+PR #743 / `cbaddb0`, and manager acceptance PR #750 / `19abd0c`. The pane had
+begun exploring q651/q698 and then the whole-bank judgement-filler route; no
+new DATA-INTEGRITY source PR was committed after q601 before the limit.
+Next worker task queued: DATA-INTEGRITY -
+resume `REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` for q698
+proper-noun capitalization from clean current main. Preserve or deliberately
+recreate `/tmp/sct-data-integrity-q651-q700-3k1Sku` and
+`/tmp/sct-data-integrity-judgement-filler-1779145200`; keep judgement filler
+behind q651 unless VALIDATOR explicitly reorders.
