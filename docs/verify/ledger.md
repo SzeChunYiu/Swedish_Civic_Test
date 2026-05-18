@@ -170,7 +170,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q147 | false-statement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
 | q148 | judgement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
 | q149 | section-practice | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
-| q150 | true-false | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | defect | queued-data-integrity-post570-tf-meta |
+| q150 | true-false | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 476afdb | defect | queued-data-integrity-tf-prefix-surface |
 | q151 | false-statement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
 | q152 | judgement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 476afdb | ok | rolling-source-slice |
 | q153 | section-practice | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 476afdb | ok | rolling-source-slice |
@@ -255,7 +255,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q232 | judgement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
 | q233 | section-practice | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
 | q234 | true-false | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
-| q235 | false-statement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q235 | false-statement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
 | q236 | judgement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
 | q237 | section-practice | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 2703afc | ok | rolling-source-slice |
 | q238 | true-false | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 2703afc | defect | queued-data-integrity-residual |
@@ -275,7 +275,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q252 | judgement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 0478154 | ok | rolling-source-slice |
 | q253 | section-practice | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | ok | rolling-source-slice |
 | q254 | true-false | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | defect | queued-data-integrity-residual |
-| q255 | false-statement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | defect | queued-data-integrity-residual |
+| q255 | false-statement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
 | q256 | judgement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | ok | rolling-source-slice |
 | q257 | section-practice | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
 | q258 | true-false | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
@@ -286,7 +286,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q263 | false-statement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | defect | queued-data-integrity-residual |
 | q264 | judgement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
 | q265 | section-practice | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | ok | rolling-source-slice |
-| q266 | true-false | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | defect | queued-data-integrity-residual |
+| q266 | true-false | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 476afdb | defect | queued-data-integrity-post600-negative-meta |
 | q267 | false-statement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | defect | queued-data-integrity-residual |
 | q268 | judgement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | ok | rolling-source-slice |
 | q269 | section-practice | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 0478154 | ok | rolling-source-slice |
@@ -351,7 +351,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q328 | judgement | q046 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 170b89d | ok | rolling-source-slice |
 | q329 | section-practice | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 170b89d | ok | rolling-source-slice |
 | q330 | true-false | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 170b89d | defect | queued-data-integrity-residual |
-| q331 | false-statement | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 170b89d | defect | queued-data-integrity-residual |
+| q331 | false-statement | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
 | q332 | judgement | q047 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Fria medier | 20 | 170b89d | ok | rolling-source-slice |
 | q333 | section-practice | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 170b89d | ok | rolling-source-slice |
 | q334 | true-false | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 170b89d | defect | queued-data-integrity-residual |
@@ -359,7 +359,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q336 | judgement | q048 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 170b89d | ok | rolling-source-slice |
 | q337 | section-practice | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 170b89d | ok | rolling-source-slice |
 | q338 | true-false | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 170b89d | defect | queued-data-integrity-residual |
-| q339 | false-statement | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 170b89d | defect | queued-data-integrity-residual |
+| q339 | false-statement | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
 | q340 | judgement | q049 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Public service | 21 | 170b89d | ok | rolling-source-slice |
 | q341 | section-practice | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | 170b89d | ok | rolling-source-slice |
 | q342 | true-false | q050 | lib/content/derivedQuestions.ts -> data/questions.ts | ch06 | Mediernas roll | Källkritik | 21 | 170b89d | ok | rolling-source-slice |
@@ -459,7 +459,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q436 | judgement | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | ok | rolling-source-slice |
 | q437 | section-practice | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | ok | rolling-source-slice |
 | q438 | true-false | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | defect | queued-data-integrity-residual |
-| q439 | false-statement | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | defect | queued-data-integrity-residual |
+| q439 | false-statement | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
 | q440 | judgement | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | ok | rolling-source-slice |
 | q441 | section-practice | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 3be70d4 | ok | rolling-source-slice |
 | q442 | true-false | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 3be70d4 | ok | rolling-source-slice |
@@ -527,7 +527,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q504 | judgement | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | d372521 | defect | queued-data-integrity-unknown-option |
 | q505 | section-practice | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | d372521 | defect | queued-data-integrity-unknown-option |
 | q506 | true-false | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | d372521 | defect | queued-data-integrity-residual |
-| q507 | false-statement | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | d372521 | defect | queued-data-integrity-residual |
+| q507 | false-statement | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | 476afdb | defect | queued-data-integrity-post600-negative-meta |
 | q508 | judgement | q091 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | d372521 | defect | queued-data-integrity-unknown-option |
 | q509 | section-practice | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | ok | rolling-source-slice |
 | q510 | true-false | q092 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | ok | rolling-source-slice |
@@ -539,7 +539,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q516 | judgement | q093 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-unknown-option |
 | q517 | section-practice | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-unknown-option |
 | q518 | true-false | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-residual |
-| q519 | false-statement | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-residual |
+| q519 | false-statement | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 476afdb | defect | queued-data-integrity-post600-negative-meta |
 | q520 | judgement | q094 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | d372521 | defect | queued-data-integrity-unknown-option |
 | q521 | section-practice | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | d372521 | ok | rolling-source-slice |
 | q522 | true-false | q095 | lib/content/derivedQuestions.ts -> data/questions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | d372521 | defect | queued-data-integrity-residual |
@@ -686,8 +686,8 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q663 | false-statement | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e9b49c | ok | rolling-source-slice |
 | q664 | judgement | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 16dbe4d | ok | rolling-source-slice |
 | q665 | section-practice | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 8e9b49c | ok | rolling-source-slice |
-| q666 | true-false | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 16dbe4d | defect | queued-data-integrity-residual |
-| q667 | false-statement | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 16dbe4d | defect | queued-data-integrity-residual |
+| q666 | true-false | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 476afdb | defect | queued-data-integrity-residual |
+| q667 | false-statement | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 476afdb | defect | queued-data-integrity-residual |
 | q668 | judgement | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | 16dbe4d | ok | rolling-source-slice |
 | q669 | section-practice | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | 8e9b49c | ok | rolling-source-slice |
 | q670 | true-false | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | 8e9b49c | ok | rolling-source-slice |
@@ -719,7 +719,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q696 | judgement | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 16dbe4d | ok | rolling-source-slice |
 | q697 | section-practice | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e9b49c | ok | rolling-source-slice |
 | q698 | true-false | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e9b49c | ok | rolling-source-slice |
-| q699 | false-statement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 16dbe4d | defect | queued-data-integrity-residual |
+| q699 | false-statement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 476afdb | defect | queued-data-integrity-residual |
 | q700 | judgement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 16dbe4d | ok | rolling-source-slice |
 | q701 | section-practice | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
 | q702 | true-false | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
@@ -734,8 +734,8 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q711 | false-statement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | ok | rolling-source-slice |
 | q712 | judgement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 16dbe4d | ok | rolling-source-slice |
 | q713 | section-practice | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
-| q714 | true-false | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | defect | queued-data-integrity-residual |
-| q715 | false-statement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | defect | queued-data-integrity-residual |
+| q714 | true-false | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 476afdb | defect | queued-data-integrity-tf-prefix-surface |
+| q715 | false-statement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
 | q716 | judgement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
 | q717 | section-practice | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | ok | rolling-source-slice |
 | q718 | true-false | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
