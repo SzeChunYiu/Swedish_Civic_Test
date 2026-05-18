@@ -2,9 +2,6 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
-import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
-
 // Ebook highlight + optional margin note. See
 // swedish_citizenship_app_project_plan/15_ebook_highlights.md.
 //
@@ -33,12 +30,11 @@ export interface Highlight {
 }
 
 const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';
-const highlightsStorageId = 'ebook-highlights';
 
 let highlightsStorage: MMKV | null = null;
 
 try {
-  highlightsStorage = createMMKV({ id: highlightsStorageId });
+  highlightsStorage = createMMKV({ id: 'ebook-highlights' });
 } catch {
   highlightsStorage = null;
 }
@@ -105,13 +101,8 @@ function read(): PersistedHighlights {
   }
 }
 
-function write(state: PersistedHighlights): RecoverablePersistenceWarning | null {
-  return writeRecoverably(
-    highlightsStorage,
-    highlightsStorageId,
-    HIGHLIGHTS_STATE_KEY,
-    JSON.stringify(state),
-  );
+function write(state: PersistedHighlights): void {
+  highlightsStorage?.set(HIGHLIGHTS_STATE_KEY, JSON.stringify(state));
 }
 
 function genId(): string {
@@ -128,20 +119,17 @@ export interface AddHighlightInput {
 }
 
 interface HighlightsState extends PersistedHighlights {
-  persistenceWarning: RecoverablePersistenceWarning | null;
   addHighlight: (input: AddHighlightInput) => Highlight;
   updateHighlight: (id: string, patch: Partial<Pick<Highlight, 'color' | 'note'>>) => void;
   removeHighlight: (id: string) => void;
   clearChapter: (chapterId: string) => void;
   clearAll: () => void;
-  clearPersistenceWarning: () => void;
 }
 
 const initial = read();
 
 export const useHighlightsStore = create<HighlightsState>((set, get) => ({
   ...initial,
-  persistenceWarning: null,
   addHighlight: (input) => {
     const now = new Date().toISOString();
     const highlight: Highlight = {
@@ -160,8 +148,8 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
       const next = {
         byChapter: { ...state.byChapter, [input.chapterId]: [...existing, highlight] },
       };
-      const persistenceWarning = write(next);
-      return { ...next, persistenceWarning };
+      write(next);
+      return next;
     });
     return highlight;
   },
@@ -183,8 +171,8 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
       }
       if (!touched) return state;
       const next = { byChapter };
-      const persistenceWarning = write(next);
-      return { ...next, persistenceWarning };
+      write(next);
+      return next;
     });
   },
   removeHighlight: (id) => {
@@ -194,22 +182,21 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
         byChapter[chapterId] = list.filter((h) => h.id !== id);
       }
       const next = { byChapter };
-      const persistenceWarning = write(next);
-      return { ...next, persistenceWarning };
+      write(next);
+      return next;
     });
   },
   clearChapter: (chapterId) => {
     set((state) => {
       const next = { byChapter: { ...state.byChapter, [chapterId]: [] } };
-      const persistenceWarning = write(next);
-      return { ...next, persistenceWarning };
+      write(next);
+      return next;
     });
   },
   clearAll: () => {
-    const persistenceWarning = write(EMPTY);
-    set({ ...EMPTY, persistenceWarning });
+    write(EMPTY);
+    set(EMPTY);
   },
-  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 // Pure selector helpers — usable outside React.
