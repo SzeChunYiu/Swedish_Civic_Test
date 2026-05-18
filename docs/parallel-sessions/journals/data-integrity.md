@@ -764,3 +764,13 @@ Verification (commands + result): after rebase onto `origin/main` `af56e53`, `NO
 PR (number + merged?): #228, yes after clean-branch self-review and squash merge.
 Accepted by worker? yes
 Next suggested validator action: accept this DATA-INTEGRITY generated true/false naturalness atom, keep `questionGeneratedTrueFalseNaturalnessValidated`, `tests/content-published-question-types.test.js`, `npm run test:derived-content`, and export parity as the nearest generator-naturalness regression gates, and leave broader authored CONTENT naturalness rows to CONTENT unless they require generated-template changes.
+
+Lane: DATA-INTEGRITY
+Host/branch: local `/tmp/sct-data-integrity-site-p0-3`, `task/data-integrity/site-question-parity-1779106049`
+Role type and manager: dynamic-worker under MANAGER-build / VALIDATOR
+Task / checklist item: `SITE-P0-3` static deployed-site question-bank parity atom, 2026-05-18 14:18 CEST.
+Changed artifacts: `scripts/export-site-question-bank.js`, `site/questions.js`, `tests/content-static-site-question-bank-parity.test.js`, `package.json`.
+Verification (commands + result): after rebase onto `origin/main` `10bfda0`, `npm run validate:content` passed with 705 questions and 705 UHR references; `node scripts/export-site-question-bank.js --check` passed with 705 questions and 13 chapters; `node scripts/export-question-bank.js --check` passed with 705-question parity; `node --check site/questions.js` passed; `node --test tests/content-static-site-question-bank-parity.test.js` passed 2/2; `npm run typecheck -- --pretty false` passed; serialized `npm run test:content -- --test-concurrency=1` passed 287/287 with the static-site parity test included; `npm run test:ownership` passed; targeted Prettier check passed; `git diff --check HEAD~1..HEAD` passed. `npm ci` was run in the temporary worktree only to restore lockfile dependencies before typecheck.
+PR (number + merged?): #260, yes via squash merge as `e12761b`.
+Accepted by worker? yes
+Next suggested validator action: accept `SITE-P0-3` parity evidence and keep `node scripts/export-site-question-bank.js --check`, `tests/content-static-site-question-bank-parity.test.js`, `npm run validate:content`, and `node --check site/questions.js` as the nearest deployed static question-bank drift gates.
