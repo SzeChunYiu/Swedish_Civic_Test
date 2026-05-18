@@ -178,6 +178,14 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bthere are buddhist and Hindu\b/,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
   /^That Sweden's first mosques were built\b/i,
+  /\bskyddar rätten [^.?!]* och skydd mot\b/i,
+  /\bprotects the right [^.?!]* and protection from\b/i,
+  /\bskyddar att staten väljer\b/i,
+  /\bprotects that the state chooses\b/i,
+  /\bMånga svenskar firar id al-fitr och Newroz även om\b/i,
+  /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
+  /\bfick rätt att bo i landet och utöva\b/i,
+  /\bgained the right to live in the country and practice\b/i,
 ];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -3536,6 +3544,46 @@ function englishMentionedExample(answer, category) {
 function swedishPurposeClause(value) {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
 }
+function swedishProtectedReligionStatement(subject, answer) {
+  const trimmed = answer.trim();
+  const rightAndProtection = trimmed.match(/^Rätten att (.+?) och skydd mot (.+)$/i);
+  if (rightAndProtection) {
+    return `${upperFirst(subject)} skyddar rätten att ${lowerLeadingSwedishClauseStart(
+      rightAndProtection[1],
+    )} och ger skydd mot ${lowerFirst(rightAndProtection[2])}`;
+  }
+  const stateChoice = trimmed.match(/^Att staten väljer (.+)$/i);
+  if (stateChoice) return `${upperFirst(subject)} låter staten välja ${lowerFirst(stateChoice[1])}`;
+  return `${upperFirst(subject)} skyddar ${lowerFirst(answer)}`;
+}
+function englishProtectedReligionStatement(subject, answer) {
+  const trimmed = answer.trim();
+  const rightAndProtection = trimmed.match(/^The right to (.+?) and protection from (.+)$/i);
+  if (rightAndProtection) {
+    return `${upperFirst(subject)} protects the right to ${lowerFirst(
+      rightAndProtection[1],
+    )} and protects against ${lowerFirst(rightAndProtection[2])}`;
+  }
+  const stateChoice = trimmed.match(/^That the state chooses (.+)$/i);
+  if (stateChoice)
+    return `${upperFirst(subject)} lets the state choose ${lowerFirst(stateChoice[1])}`;
+  return `${upperFirst(subject)} protects ${lowerFirst(answer)}`;
+}
+function swedishChristianHolidayStatement(subject, condition, answer) {
+  return `${answer} är kristna högtider som ${lowerFirst(subject)} firar även om ${condition}`;
+}
+function englishChristianHolidayStatement(subject, condition, answer) {
+  return `${answer} are Christian holidays that ${lowerFirst(subject)} celebrate even if ${condition}`;
+}
+function swedishGainedRightStatement(subject, answer) {
+  const activity = stripLeadingPurposeSv(answer).replace(/\bi landet\b/i, 'i Sverige');
+  return `${upperFirst(subject)} fick rätt att ${lowerFirst(activity)}`;
+}
+function englishGainedRightStatement(subject, answer) {
+  return `${upperFirst(subject)} gained the right to ${lowerFirst(
+    stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
+  )}`;
+}
 function reasonStatementSv(answer) {
   const stripped = stripLeadingPurposeSv(answer);
   if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
@@ -4080,19 +4128,18 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad skyddar (.+?) när det gäller (.+)$/i);
-  if (match) return `${upperFirst(match[1])} skyddar ${lowerFirst(answer)}`;
+  if (match) return swedishProtectedReligionStatement(match[1], answer);
   match = q.match(/^Vad blev tillåtet för (.+?) år (.+)$/i);
   if (match)
     return `År ${match[2]} blev det tillåtet för ${match[1]} ${swedishPurposeClause(answer)}`;
   match = q.match(/^Vilka kristna högtider firar (.+?) även om (.+)$/i);
-  if (match) return `${upperFirst(match[1])} firar ${lowerFirst(answer)} även om ${match[2]}`;
+  if (match) return swedishChristianHolidayStatement(match[1], match[2], answer);
   match = q.match(/^Vilka religiösa ritualer är fortfarande vanliga i Sverige$/i);
   if (match) return `${answer} är fortfarande vanliga i Sverige`;
   match = q.match(/^Vad var (.+?) under (.+?) innan (.+)$/i);
   if (match) return `${upperFirst(match[1])} var ${lowerFirst(answer)} under ${match[2]}`;
   match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])} fick rätt att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) return swedishGainedRightStatement(match[1], answer);
   match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
   if (match) return `${answer} nämns som exempel i ${match[2]}`;
   match = q.match(/^Vad nämns som exempel på (.+)$/i);
@@ -4375,19 +4422,18 @@ function civicStatementEn(source, option) {
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
-  if (match) return `${upperFirst(match[1])} protects ${lowerFirst(answer)}`;
+  if (match) return englishProtectedReligionStatement(match[1], answer);
   match = q.match(/^What became permitted for (.+?) in (.+)$/i);
   if (match)
     return `In ${match[2]}, ${match[1]} were permitted to ${stripLeadingPurposeEn(answer)}`;
   match = q.match(/^Which Christian holidays do (.+?) celebrate even if (.+)$/i);
-  if (match) return `${upperFirst(match[1])} celebrate ${answer} even if ${match[2]}`;
+  if (match) return englishChristianHolidayStatement(match[1], match[2], answer);
   match = q.match(/^Which religious rituals are still common in Sweden$/i);
   if (match) return `${answer} are still common in Sweden`;
   match = q.match(/^What was (.+?) during (.+?) before (.+)$/i);
   if (match) return `${upperFirst(match[1])} was ${lowerFirst(answer)} during ${match[2]}`;
   match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])} gained the right to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) return englishGainedRightStatement(match[1], answer);
   match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
   if (match) return `${answer} are mentioned as examples in ${match[2]}`;
   match = q.match(/^What is mentioned as an example of (.+)$/i);
