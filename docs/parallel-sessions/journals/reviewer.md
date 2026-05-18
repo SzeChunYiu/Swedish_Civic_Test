@@ -2723,3 +2723,21 @@ Verification (commands + result):
 PR (number + merged?): #364 / merged yes via `cf00a31`
 Accepted by worker? yes
 Next suggested validator action: keep SITE-P0 live deploy first; restore GitHub Actions billing/spending capacity or provide an operator-verified production deployment, then rerun the hash-aware live check and REVIEWER live parity pass before closing SITE-P0-5.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-privacy-5KMvTa` / `task/reviewer/static-privacy-copy-1779115080`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` after SETUP static copy update.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, current `codex-tasks/blockers.txt`, `codex-tasks/validator.txt`, current reviewer journal context, and the SETUP handoff.
+- Used a clean temporary worktree at `origin/main` `c118147` because the shared checkout has unrelated dirty lane files.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-copy` - exit 0 with 2/2 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0 with 7/7 passing.
+- `rg -n "disabled|premium|placeholder|29 SEK|AdSense|AdMob|Google Mobile Ads|Remove Ads|Ta bort annonser|consent|samtycke|säljer|sales|no sales|annons" site/app.js site/index.html -S` - current copy names AdSense, Google Mobile Ads (AdMob), consent signals, local study-answer privacy, and one-time 29 SEK Remove Ads behavior.
+- Served current `site/` at `http://127.0.0.1:4347`; system-Chrome `/privacy` smoke in English and Swedish exited 0 with AdSense, AdMob, consent, and Remove Ads 29 SEK present; stale disabled-ad/no-sales copy absent; console/page errors empty.
+- `git diff --check` - exit 0.
+- Workspace contract: pass; no product source files were edited.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: no further static-copy action; manager acceptance already closed `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live check passes against that production URL.
