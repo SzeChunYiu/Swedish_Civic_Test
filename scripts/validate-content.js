@@ -178,6 +178,9 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:spreadinging|welcominging)\b/i,
   /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
   /\bthere are buddhist and Hindu\b/,
+  /\bcalled Lucia procession\b/i,
+  /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
+  /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
   /^That Sweden's first mosques were built\b/i,
   /\bskyddar rätten [^.?!]* och skydd mot\b/i,
@@ -3525,6 +3528,34 @@ function englishCommonActivity(value) {
     .replace(/\band opening\b/gi, 'and open')
     .replace(/\band children getting\b/gi, 'and for children to get');
 }
+function swedishCalledAnswer(answer) {
+  const normalized = answer.trim();
+  if (/^Luciatåg$/i.test(normalized)) return 'ett luciatåg';
+  if (/^Valborgsbrasa$/i.test(normalized)) return 'en valborgsbrasa';
+  if (/^Midsommarstång$/i.test(normalized)) return 'en midsommarstång';
+  return answer;
+}
+function englishCalledAnswer(answer) {
+  const normalized = answer.trim();
+  if (/^(?:Lucia procession|Walpurgis bonfire|Midsummer pole)$/i.test(normalized)) {
+    return `a ${normalized}`;
+  }
+  return lowerLeadingEnglishArticle(answer);
+}
+function swedishChildrenWithAdventCalendarStatement(answer) {
+  const activity = lowerFirst(stripLeadingPurposeSv(answer));
+  if (/^öppnar\b/i.test(activity)) {
+    return `Barn med en adventskalender hemma ${activity}`;
+  }
+  return `Under advent ${activity.replace(/^(\S+)/, '$1 barn')}`;
+}
+function englishChildrenWithAdventCalendarStatement(answer) {
+  const activity = lowerFirst(stripLeadingPurposeEn(answer));
+  if (/^open\b/i.test(activity)) {
+    return `Children with an Advent calendar at home often ${activity}`;
+  }
+  return `During Advent, children often ${activity}`;
+}
 function englishOccurrencePhrase(value) {
   const phrase = lowerLeadingEnglishArticle(value.trim());
   if (/^on\b/i.test(phrase)) return phrase;
@@ -4243,11 +4274,17 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad brukar personen som är Lucia bära i ett luciatåg$/i);
   if (match) return `Personen som är Lucia brukar bära ${lowerFirst(answer)}`;
   match = q.match(/^Vad kallas gudstjänsten tidigt på morgonen den 25 december$/i);
-  if (match) return `Gudstjänsten tidigt på morgonen den 25 december kallas ${answer}`;
+  if (match)
+    return `Gudstjänsten tidigt på morgonen den 25 december kallas ${swedishCalledAnswer(answer)}`;
   match = q.match(/^Vad är vanligt på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} är det vanligt att ${stripLeadingPurposeSv(answer)}`;
   match = q.match(/^Vad gör barn ofta med (.+?) hemma$/i);
-  if (match) return `Barn ${lowerFirst(answer)} med ${match[1]} hemma`;
+  if (match) {
+    if (/^en adventskalender$/i.test(match[1])) {
+      return swedishChildrenWithAdventCalendarStatement(answer);
+    }
+    return `Barn ${lowerFirst(answer)} med ${match[1]} hemma`;
+  }
   match = q.match(/^Vilket år blev (.+?) (en .+)$/i);
   if (match) return `${upperFirst(match[1])} blev ${match[2]} ${answer}`;
   match = q.match(/^Vad gör många på (.+?) i Sverige$/i);
@@ -4282,7 +4319,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
   if (match) return `${upperFirst(match[1])} stretches ${lowerFirst(answer)} ${match[2]}`;
   match = q.match(/^What is (.+) called$/i);
-  if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
+  if (match) return `${upperFirst(match[1])} is called ${englishCalledAnswer(answer)}`;
   match = q.match(/^What is the name of (.+)$/i);
   if (match) return `${upperFirst(match[1])} is called ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^Which islands are Sweden's two largest$/i);
@@ -4539,12 +4576,19 @@ function civicStatementEn(source, option) {
   match = q.match(/^What does the person who is Lucia usually wear in a Lucia procession$/i);
   if (match) return `The person who is Lucia usually wears ${lowerFirst(answer)}`;
   match = q.match(/^What is the church service early on the morning of 25 December called$/i);
-  if (match) return `The church service early on the morning of 25 December is called ${answer}`;
+  if (match)
+    return `The church service early on the morning of 25 December is called ${englishCalledAnswer(
+      answer,
+    )}`;
   match = q.match(/^What is common on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, it is common to ${englishCommonActivity(answer)}`;
   match = q.match(/^What do children often do with (.+?) at home$/i);
-  if (match)
+  if (match) {
+    if (/^an Advent calendar$/i.test(match[1])) {
+      return englishChildrenWithAdventCalendarStatement(answer);
+    }
     return `Children often ${lowerFirst(stripLeadingPurposeEn(answer))} with ${match[1]} at home`;
+  }
   match = q.match(/^In which year did (.+?) become (a .+)$/i);
   if (match) return `${upperFirst(match[1])} became ${match[2]} in ${answer}`;
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
