@@ -1,12 +1,13 @@
 name: Scheduled Vercel deploy
 
-# The fast factory merges many PRs/hour; per-commit Vercel auto-deploy
-# would blow the Hobby plan's hard 100-deploys/day cap. Instead redeploy
-# the latest main every 15 minutes: 96 deploys/day — safely under 100,
-# site never more than ~15 min stale. (Every 10 min = 144/day would
-# EXCEED the cap; 15 min is the tightest safe cadence.)
-# Activation requires repo secret VERCEL_DEPLOY_HOOK; until it exists,
-# per-commit auto-deploy stays ON in vercel.json so the site isn't frozen.
+# The fast factory merges many PRs/hour. Per-branch/per-commit Vercel git
+# auto-deploy blew the Hobby plan's hard 100-deploys/day cap (hundreds of
+# preview deploys/day -> cap exhausted -> NO production deploy could land
+# -> live site frozen). Git auto-deploy is now disabled in vercel.json
+# ("git": {"deploymentEnabled": false}); this scheduled job is the SOLE
+# deploy path: one production deploy of the static site/ every 15 min via
+# the Vercel CLI + token = 96/day, safely under 100, site <=15 min stale.
+# (10 min = 144/day would exceed the cap; 15 min is the tightest safe cadence.)
 
 on:
   schedule:
@@ -22,23 +23,39 @@ permissions:
 
 jobs:
   deploy:
-    name: Trigger Vercel production deploy
+    name: Deploy static site to Vercel production
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
-      - name: Fire Vercel Deploy Hook
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+
+      - name: Deploy site/ to production (Vercel CLI + token)
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
         run: |
-          if [ -z "$HOOK" ]; then
-            echo "::warning::VERCEL_DEPLOY_HOOK secret not set — skipping."
-            echo "Create one: Vercel Project > Settings > Git > Deploy Hooks"
-            echo "(branch: main), then add the URL as repo secret VERCEL_DEPLOY_HOOK."
-            exit 0
+          set -e
+          if [ -n "$VERCEL_TOKEN" ]; then
+            mkdir -p .vercel
+            printf '%s' '{"projectId":"prj_vcIMvYMI7UhysjdP32HsREXyLoil","orgId":"team_TmhR7bmC3MrdyIbVtzAHTQTx"}' > .vercel/project.json
+            echo "Deploying static site/ to production via Vercel CLI..."
+            npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
+            echo "Production deploy triggered."
+          elif [ -n "$HOOK" ]; then
+            echo "VERCEL_TOKEN not set; falling back to Deploy Hook."
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$HOOK")
+            echo "Deploy hook responded HTTP $code"
+            case "$code" in
+              2*) echo "Deploy triggered." ;;
+              *)  echo "::error::Deploy hook failed (HTTP $code)"; exit 1 ;;
+            esac
+          else
+            echo "::error::Neither VERCEL_TOKEN nor VERCEL_DEPLOY_HOOK set."
+            exit 1
           fi
-          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$HOOK")
-          echo "Deploy hook responded HTTP $code"
-          case "$code" in
-            2*) echo "Deploy triggered." ;;
-            *)  echo "::error::Deploy hook failed (HTTP $code)"; exit 1 ;;
-          esac
