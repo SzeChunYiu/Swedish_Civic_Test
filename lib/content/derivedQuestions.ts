@@ -263,6 +263,46 @@ function englishCommonActivity(value: string): string {
     .replace(/\band children getting\b/gi, 'and for children to get');
 }
 
+function englishOccurrencePhrase(value: string): string {
+  const phrase = lowerLeadingEnglishArticle(value.trim());
+  if (/^on\b/i.test(phrase)) return phrase;
+  if (
+    /^(?:(?:a|an|the)\s+)?(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|four Sundays)\b/i.test(
+      phrase,
+    )
+  ) {
+    return `on ${phrase}`;
+  }
+  return phrase;
+}
+
+function lowerEnglishNounPhrase(value: string): string {
+  const phrase = value.trim();
+  if (/^(?:Buddhist|Hindu|Orthodox|Catholic|Protestant|Jewish|Muslim|Christian)\b/.test(phrase)) {
+    return phrase;
+  }
+  if (/^(?:The|In|A|An|At|On|Almost)\b/.test(phrase)) return lowerLeadingEnglishArticle(phrase);
+  return lowerFirst(phrase);
+}
+
+function swedishMentionedExample(answer: string, category: string): string {
+  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
+  if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
+  return `${answer} nämns som exempel på ${category}`;
+}
+
+function englishMentionedExample(answer: string, category: string): string {
+  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
+  if (built) {
+    return `The building of ${built[1]} ${built[2]} is mentioned as an example of ${category}`;
+  }
+  return `${answer} ${englishSubjectVerb(answer, 'is', 'are')} mentioned as ${englishSubjectVerb(
+    answer,
+    'an example',
+    'examples',
+  )} of ${category}`;
+}
+
 function swedishPurposeClause(value: string): string {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
 }
@@ -1016,7 +1056,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${answer} nämns som exempel i ${match[2]}`;
 
   match = q.match(/^Vad nämns som exempel på (.+)$/i);
-  if (match) return `${answer} nämns som exempel på ${match[1]}`;
+  if (match) return swedishMentionedExample(answer, match[1]);
 
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
@@ -1390,14 +1430,16 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(answer)} are typical of ${stripTrailingComma(match[1])}`;
 
   match = q.match(/^When does (.+?) occur in Sweden$/i);
-  if (match) return `${upperFirst(match[1])} occurs ${lowerFirst(answer)}`;
+  if (match) return `${upperFirst(match[1])} occurs ${englishOccurrencePhrase(answer)}`;
 
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
 
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)
-    return `In different places in Sweden, there are ${lowerFirst(answer)} for ${match[1]}`;
+    return `In different places in Sweden, there are ${lowerEnglishNounPhrase(answer)} for ${
+      match[1]
+    }`;
 
   match = q.match(/^Which holidays are examples of (.+)$/i);
   if (match) return `${answer} are examples of ${match[1]}`;
@@ -1449,7 +1491,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${answer} are mentioned as examples in ${match[2]}`;
 
   match = q.match(/^What is mentioned as an example of (.+)$/i);
-  if (match) return `${answer} is mentioned as an example of ${match[1]}`;
+  if (match) return englishMentionedExample(answer, match[1]);
 
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;
