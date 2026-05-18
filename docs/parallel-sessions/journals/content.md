@@ -1361,3 +1361,20 @@ Artifacts changed: `data/questions.ts`, `docs/parallel-sessions/journals/content
 Question count / verification: 705 published questions total; authored source-question count is 141 and generated published-question count is 564. UHR source checked against the existing accepted evidence for Chapter 3, section `Staten`, printed page 12: Sweden is a parliamentary representative democracy, citizens vote in general elections and elect members of the Riksdag, and the Riksdag decides on laws and the state budget. `NODE_OPTIONS='--v8-pool-size=1' npm run content:export` exported 705 questions; direct q016 source/shape assertion passed; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed; focused source-citation/export/sentence/type/UHR-reference/source-wiring tests passed 25/25 before rebase and 26/26 after rebase with content-production included; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with 705 questions / 141 source questions / 564 generated questions; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` passed; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js` passed 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `./node_modules/.bin/prettier --check data/questions.ts` passed; `git diff --check -- data/questions.ts content/question-bank.csv docs/parallel-sessions/journals/content.md` passed; serialized `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` passed 284/284 before rebase.
 PR: #225 merged via squash as `31d9828` (`content: improve q016 representative democracy explanation`).
 Blocked / next validator action: no for q016 - review the bounded q016 explanation diff against UHR `Sverige i fokus`, Chapter 3, section `Staten`, printed page 12. Next content atom should be q020 unless newer manager evidence supersedes it.
+
+## Manager-content routing note - 2026-05-18
+Task completed: Recorded q016/q017 landing, closed out the stale q016
+rate-limit blocker, and paused non-site content routing behind SITE-P0.
+Artifacts changed: `codex-tasks/content.txt`, `codex-tasks/blockers.txt`,
+`codex-tasks/validator.txt`, `docs/parallel-sessions/TEAM_PLAN.md`, and
+`docs/parallel-sessions/journals/content.md`.
+Question count / verification: No content source changed. Routing evidence:
+q016 landed via PR #225 / `31d9828`; q017 landed via PR #222 / `fc19b58`;
+duplicate q016 draft PR #230 is closed unmerged and its remote branch is
+deleted. Verification for this manager note: `git diff --check -- codex-tasks/content.txt codex-tasks/blockers.txt codex-tasks/validator.txt docs/parallel-sessions/TEAM_PLAN.md docs/parallel-sessions/journals/content.md`
+and `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`.
+Blocked / next validator action: VALIDATOR to decide SITE-P0 lease/staffing or
+explicitly defer SITE before q020/q027/q028/q074/q078 or other non-site content
+is assigned. Local q018, q020, and q074 worktrees were observed after the CEO
+13:32 update and are unaccepted unless VALIDATOR explicitly leases content
+despite SITE-P0.
