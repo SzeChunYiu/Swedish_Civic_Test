@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T16:03:00+02:00
+MANAGER-content queue - 2026-05-18T16:14:22+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
@@ -74,6 +74,12 @@ Duplicate guard:
   unmerged. Do not reopen or republish stale q018 branches or worktrees. The
   follow-up static-site generated bank drift is build/DATA-INTEGRITY-owned;
   CONTENT must not edit `site/**`.
+- q114 is open in PR #352 on branch
+  `task/content/q114-source-note-pane1-1779113157`, but `origin/main` advanced
+  to `1376794` after that branch. Treat PR #352 as the canonical q114
+  CONTENT-VERIFY path; do not duplicate it. The q114 owner must rebase onto
+  current `origin/main`, update the journal PR line to name PR #352 or merge
+  evidence, rerun normal content gates, and keep `site/**` untouched.
 - q144 is open in PR #331 on branch
   `task/content/q144-source-expansion-pane1-1779114000`, but latest CEO
   routing holds fresh non-site content behind SITE-P0 unless VALIDATOR
@@ -94,21 +100,26 @@ Active dispatch:
 Current scan on `origin/main` after q018 found no q018 `The State section
 says...` / `Avsnittet Staten...` source-note explanation in canonical
 `data/questions.ts`, and `content/question-bank.csv` still passes canonical
-export parity. The static `site/questions.js` file is stale after q018 and
-still contains the old q018 source-note explanation; `node
-scripts/export-site-question-bank.js --check` exits 1. Route that static-bank
-sync to SETUP/build or DATA-INTEGRITY; CONTENT must not edit `site/**`.
+export parity. `origin/main` now includes `1376794`, a DATA-INTEGRITY static
+site question-bank gate after q018. Accept/reject that static-bank evidence in
+build/DATA-INTEGRITY, not CONTENT. If q114 later lands, route any resulting
+`site/questions.js` regeneration to SETUP/build or DATA-INTEGRITY; CONTENT
+must not edit `site/**`.
 
 Next content work:
 1. Keep q018 duplicate-guarded as landed; do not open new q018 work. The only
-   q018 follow-up is the build-owned static `site/questions.js` regeneration.
-2. Keep q144 duplicate-guarded in PR #331, but do not advance, duplicate, or
+   q018 follow-up is build/DATA-INTEGRITY-owned static-bank acceptance or
+   regeneration.
+2. Keep q114 duplicate-guarded in PR #352. The next q114 action is rebase,
+   journal correction, and normal content verification by the existing owner;
+   do not open a second q114 branch.
+3. Keep q144 duplicate-guarded in PR #331, but do not advance, duplicate, or
    replace it until VALIDATOR explicitly leases non-site content or CEO routing
    releases CONTENT. If it is later released, the q144 owner must rebase/verify
    against then-current `origin/main` before merge and pass export parity,
    `validate:content`, focused content tests, typecheck, ownership,
    Prettier/diff checks, and a content journal handoff with PR/merge evidence.
-3. Fresh CONTENT capacity currently reports to VALIDATOR/CEO for SITE-P0
+4. Fresh CONTENT capacity currently reports to VALIDATOR/CEO for SITE-P0
    staffing/release instead of opening new non-site content. CONTENT still must
    not edit `site/**`; any static-site bank sync remains SETUP/build or
    DATA-INTEGRITY-owned.
