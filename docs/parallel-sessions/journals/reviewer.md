@@ -3447,6 +3447,6 @@ Verification (commands + result):
 Workspace contract: pass - no product source edited; existing generated true/false evidence narrowed instead of filing a duplicate broad defect.
 Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q351-Q400-CURRENT-1 update [2026-05-18 21:42 CEST]`.
 Evidence: current main closes q301-q350 standalone-stem issues and false-answer explanations, but four q351-q400 standalone-referent stems still pass green validators.
-PR (number + merged?): pending at handoff commit time.
+PR (number + merged?): #671 merged yes, squash `d7f8b3b`.
 Accepted by worker? yes
 Next suggested validator action: accept the q301-q350/false-explanation portions only with DATA-INTEGRITY source evidence, then route q358/q359/q398/q399 as the focused remaining q351-q400 standalone-stem DATA-INTEGRITY atom.
