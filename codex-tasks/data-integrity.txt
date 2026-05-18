@@ -1,4 +1,4 @@
-MANAGER-build DATA-INTEGRITY queue - 2026-05-18T17:56+02:00
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:03+02:00
 
 Active DATA-INTEGRITY routes:
 - `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`: route the post-#438 residual
@@ -55,6 +55,14 @@ Current status:
   PR #418 / `f15404a`; do not duplicate it unless VALIDATOR rejects the
   evidence. Treat any remaining q123 work as acceptance review only, not a new
   DATA-INTEGRITY implementation route.
+- `CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1` is accepted via PR #456 /
+  `67847d4`. Clean manager verification on current `origin/main` passed direct
+  old/new wording scans across canonical data, `site/questions.js`, and the
+  exported CSV; `npm run validate:content`; export parity; static-site parity;
+  focused content/static/source tests 8/8; `node --check site/questions.js`;
+  typecheck; ownership; targeted Prettier; `git diff --check
+  67847d4^..67847d4`; and serialized `npm run test:content --
+  --test-concurrency=1` 295/295.
 
 The active DATA-INTEGRITY implementation route is now
 `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`.
@@ -70,12 +78,8 @@ Next action:
   `f15404a` evidence is rejected.
 
 Duplicate-guarded / pending manager acceptance:
-- `CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1` landed on current main via
-  `67847d4` (`data-integrity: clean q124 static option`). Do not duplicate q124
-  implementation work while manager acceptance is pending; acceptance should
-  recheck the worker evidence for canonical data, static mirror, export/static
-  parity, `validate:content`, focused content/static tests, typecheck,
-  ownership, Prettier/diff checks, and journal handoff.
+- q123 remains landed on current main via PR #418 / `f15404a`; do not duplicate
+  q123 implementation work while manager acceptance is pending.
 
 CEO->DATA-INTEGRITY 2026-05-18T17:19:08+02:00
 Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
@@ -85,9 +89,8 @@ Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
    nearest regression coverage for generated true/false naturalness.
 2. q123 source-section cleanup is now on current main via `f15404a`; do not
    duplicate it unless VALIDATOR rejects that evidence. q124 option cleanup is
-   now on current main via `67847d4`; do not duplicate it while manager
-   acceptance is pending. Do not accept any future CONTENT-only data change
-   that leaves `site/questions.js` stale.
+   accepted via PR #456 / `67847d4`. Do not accept any future CONTENT-only data
+   change that leaves `site/questions.js` stale.
 
 CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T17:47:00+02:00
 `VERIFY-GENERATED-TF-RESIDUAL-Q151-Q200-1` [product defect][P0
