@@ -257,7 +257,7 @@ focused visual-smoke gates before this atom can move to accepted.
      Actions payment/spending-limit blocker. This remains external deployment
      capacity, not a source-readiness task.
 
-Next unblocked P0 SETUP source atoms while live deploy is externally blocked:
+Accepted P0 SETUP source atom while live deploy is externally blocked:
 
 2. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
@@ -266,9 +266,13 @@ Next unblocked P0 SETUP source atoms while live deploy is externally blocked:
      test-disabled before screenshots; duplicate screenshot hashes and visible
      launch overlays are rejected or explicitly explained. Keep exam no-ad
      behavior covered separately.
-   - Current caveat: PR #425 has merged but is not accepted. The screenshot
-     manifest still fails targeted Prettier on current main; land a follow-up
-     formatting PR and rerun the focused visual-smoke gates before acceptance.
+   - Accepted 2026-05-18T17:36+02:00: PR #425 / `eb3b3ac` plus follow-up PR
+     #436 / `6c26380` close this atom. Clean manager verification on current
+     `origin/main` `7dd0828` passed `npm run test:screenshot-manifest` 2/2,
+     targeted Prettier for the visual-smoke/report files and manifest,
+     `npm run typecheck -- --pretty false`, `npm run lint`,
+     `npm run test:ownership`, and whitespace checks over both landed commits.
+     Do not duplicate this SETUP atom.
    - Required gates: official
      `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1`
      or the nearest visual-smoke gate, plus assertions/evidence for duplicate
@@ -292,7 +296,16 @@ capacity until Actions payment/spending capacity or an operator-verified
 production deploy exists.
 
 Production submit guard is now accepted via PR #407 / `0572be8`; do not reopen
-that local-only fake-identifier branch. The next unblocked SETUP source atom is
-`REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`, with route-specific visual evidence,
-launch overlay suppression/dismissal, duplicate screenshot hash rejection or
-explanation, official or nearest visual-smoke gate, and `git diff --check`.
+that local-only fake-identifier branch. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+is no longer an unaccepted SETUP atom after PR #425 plus PR #436; keep local
+build capacity off duplicate visual-smoke work unless VALIDATOR files a new
+defect.
+
+MANAGER-build acceptance 2026-05-18T17:36+02:00:
+`REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1` is accepted via PR #425 / `eb3b3ac`
+and formatting follow-up PR #436 / `6c26380`. Current `origin/main` `7dd0828`
+passes the report manifest guard, targeted Prettier, typecheck, lint,
+ownership, and diff whitespace checks. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
+open as the remaining SITE-P0 blocker; it needs production deploy capacity or
+operator-verified production deploy evidence, not another local visual-smoke
+source atom.
