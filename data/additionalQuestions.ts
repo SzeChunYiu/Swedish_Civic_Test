@@ -2416,10 +2416,7 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Gustav Vasa valdes till svensk kung', 'Gustav Vasa was elected king of Sweden'],
       ['Sverige gick med i EU', 'Sweden joined the EU'],
       ['Svenska kyrkan och staten skildes åt', 'The Church of Sweden and the state separated'],
-      [
-        'Midsommarafton började alltid firas på en fredag',
-        'Midsummer Eve began always being celebrated on a Friday',
-      ],
+      ['Midsommarafton blev Sveriges nationaldag', 'Midsummer Eve became Sweden’s National Day'],
     ],
     0,
     'Den 6 juni 1523 valdes Gustav Vasa till svensk kung, en händelse som kopplas till den svenska statens självständighet. Den 6 juni 1809 antogs också en ny regeringsform som begränsade kungens makt; EU-medlemskap, kyrka-stat-separation och midsommar hör till andra ämnen.',
