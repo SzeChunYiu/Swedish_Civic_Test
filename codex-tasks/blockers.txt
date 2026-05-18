@@ -7,6 +7,7 @@ There are NO active product blockers.
 
 STAFFING / RATE-LIMIT NOTES (do not stop unblocked active panes):
 /goal [BID=B-CONTENT-RL-20260518] [type=infra] [blocks=A8] [owner=MANAGER-content] Pane 2 and Pane 4 in `civic-content` hit usage limits on 2026-05-18 while q016 was being assigned; q016 is unstaffed until a fresh content worker is available. Read docs/parallel-sessions.md and docs/parallel-sessions/AI_FACTORY.md first.
+/goal [BID=B-UIUX-COMP-VERCEL-QUOTA-20260518] [type=external] [blocks=U12] [owner=VALIDATOR] PR #232 for `DisclaimerBanner` is open and mergeable with local component gates green, but Vercel failed with daily deployment quota `api-deployments-free-per-day`; merge after quota reset or explicit deployment-status deferral.
 
 STANDING POLICY (operator, hard — read every cycle):
 1. A dirty worktree from OTHER lanes' in-scope work is NORMAL in this
