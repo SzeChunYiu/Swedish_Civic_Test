@@ -728,6 +728,16 @@ Blocked? no - the content gate now proves the central authority-boundary validat
 Next suggested validator action: review and accept this DATA-INTEGRITY P0 SOURCE-CITATION coverage atom, then keep `tests/content-question-authority-boundary.test.js`, `npm run validate:content`, export parity, and serialized `npm run test:content -- --test-concurrency=1` as the nearest source-authority regression gates.
 
 Lane: DATA-INTEGRITY
+Host/branch: local `/tmp/sct-data-integrity-generated-stems`, `task/data-integrity/generated-stems-1779101533`
+Role type and manager: dynamic-worker under MANAGER-build / VALIDATOR
+Task / checklist item: Generated-stem P0 root-cause atom for `REVIEWER-GENERATED-TF-META-STEM-1` and `REVIEWER-GENERATED-JUDGEMENT-PROMPT-1`.
+Changed artifacts: `lib/content/derivedQuestions.ts`, `scripts/validate-content.js`, `scripts/derived-content.test.js`, `scripts/content-production.test.js`, `tests/content-published-question-types.test.js`, `tests/content-question-authority-boundary.test.js`, `content/question-bank.csv`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification (commands + result): after rebase onto `origin/main` `b7e210e`, `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with 705 published questions, 564 generated prompt templates, 705 `questionNestedMetaStemsValidated`, and 705 `questionJudgementMetaStemsValidated`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` passed 2/2; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js` passed 7/7 including nested true/false and judgement meta-stem rejection; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 705-question parity; serialized `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` passed 283/283; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed; targeted Prettier check passed; `git diff --check HEAD~1..HEAD` passed.
+PR (number + merged?): #198, yes after clean-branch self-review and squash merge.
+Accepted by worker? yes
+Next suggested validator action: accept this consolidated DATA-INTEGRITY generated-stem P0 atom, keeping validator, derived-content, published-question-type guards, export parity, and serialized content tests as the nearest regression gates. Track `REVIEWER-GENERATED-TF-NATURALNESS-1` as a separate follow-up atom because q155-style grammar-splice naturalness remains outside this root-cause fix.
+
+Lane: DATA-INTEGRITY
 Host/branch: local/task/data-integrity/1779099298-generated-tf
 Task/checklist item: P0 generated true/false nested meta-stem parity atom, 2026-05-18 12:30 CEST.
 Artifacts changed: `lib/content/derivedQuestions.ts`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `scripts/derived-content.test.js`, `tests/content-question-authority-boundary.test.js`, `content/question-bank.csv`, `docs/parallel-sessions/journals/data-integrity.md`.
