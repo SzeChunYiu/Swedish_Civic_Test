@@ -1,5 +1,39 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T21:26+02:00
+
+Current `origin/main` is `dff1c24`. q251-q300 VERIFY is landed via PR #638 /
+`3a18e24`; q301-q350 VERIFY is now landed via PR #640 / `561603d`. Do not
+duplicate branches `task/verify/q251-q300-pane1-1779132600` or
+`task/content-verify/1779131082`.
+
+The prior PR #640 stale-head warning is superseded: GitHub reports PR #640
+closed and merged, with head `7dcc0e4`, base `8bb2ccf`, and merge commit
+`561603d`.
+
+The observed active CONTENT-VERIFY capacity is q351-q400 in local Pane 4
+worktree `/tmp/sct-verify-q351-q400-pane4-1779132305`, branch
+`task/verify/q351-q400-pane4-1779132305`. It has pushed remote head `bda26f7`,
+but it is behind current `origin/main` and must sync/rebase before PR/merge.
+Treat it as canonical unless rejected or explicitly abandoned.
+
+Local Pane 1 also has duplicate q351-q400 work in:
+`/tmp/sct-verify-q351-q400-pane1-1779132415` /
+`task/verify/q351-q400-pane1-1779132415`, local commit `94878bb`, and no remote
+head at manager check time. Do not publish or continue that duplicate unless
+Pane 4 is rejected/abandoned or VALIDATOR explicitly reroutes.
+
+VERIFY remains report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors. After q351-q400 lands, is rejected, or is abandoned, next capacity is
+q401-q450 or the next current changed/due slice if VALIDATOR reorders.
+
+Generated/static true/false prefixes remain clean after PR #642; the remaining
+prefix surface is source-data-only in the 11 authored rows named by
+`CONTENT-AUTHORED-TF-PREFIX-1`. CONTENT implementation remains handoff-only
+unless VALIDATOR explicitly leases that paired authored-data plus generated
+CSV/static-mirror cleanup.
+
 MANAGER-content active-lease update - 2026-05-18T21:08+02:00
 
 Current `origin/main` is `b6638f4`. q201-q250 VERIFY is already canonical via
