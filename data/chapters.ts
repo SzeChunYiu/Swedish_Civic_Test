@@ -109,7 +109,7 @@ export const chapters: Chapter[] = [
       'Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället.',
     descriptionEn:
       "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
-    questionCount: 95,
+    questionCount: 105,
   },
   {
     id: 'ch13',
@@ -117,6 +117,6 @@ export const chapters: Chapter[] = [
     nameEn: 'Traditions and holidays',
     descriptionSv: 'Traditionella högtider i Sverige och hur traditioner förändras över tid.',
     descriptionEn: 'Traditional holidays in Sweden and how traditions change over time.',
-    questionCount: 55,
+    questionCount: 70,
   },
 ];
