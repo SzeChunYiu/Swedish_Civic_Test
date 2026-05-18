@@ -123,9 +123,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn nämns inte som de två största där, och Malmö och Göteborg är städer.',
+      'Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn är också svenska öar men är inte de två största, och Malmö och Göteborg är städer.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that Sweden’s two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are not named there as the two largest, and Malmö and Gothenburg are cities.',
+      "Sweden's two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are also Swedish islands but are not the two largest, and Malmö and Gothenburg are cities.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -149,9 +149,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'true',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sverige har ett milt klimat jämfört med många områden på samma breddgrad. Det förklaras med att Golfströmmen och den Nordatlantiska strömmen för varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
+      'Påståendet är sant: Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says Sweden has a mild climate compared with many areas at the same latitude. It explains this with the Gulf Stream and the North Atlantic Current carrying warm water toward Europe, warming the air that winds bring over Sweden.',
+      'The statement is true: Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
