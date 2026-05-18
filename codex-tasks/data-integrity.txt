@@ -846,3 +846,26 @@ regenerated CSV/static output, focused guards, export/static parity,
 Prettier/diff, PR/merge evidence, and current-main spot checks. Keep CONTENT
 out of generated rows, generator templates, validator mirrors, CSV/static
 regeneration, and `site/**`.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T21:39:07+02:00
+`VERIFY-GENERATED-TF-STANDALONE-Q401-Q450-POST642-1` [product defect][P0
+TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on
+current `origin/main` `d32731c` supersedes the older q401-q450 residual
+report. The prior fragment/list/predicate defects are mostly cleared, and the
+slice has zero true/false prefix or meta-wrapper rows in canonical CSV and
+`site/questions.js`. Current remaining generated-output defects are five
+non-standalone or predicate-less true/false stems: `q406` and `q407` say `En
+anledning...` / `One reason...` without naming labour-market laws, `q411` is
+the fragment `En myndighet som dömer i arbetsmiljöbrott.` / `An authority that
+judges work environment crimes.`, and `q446` and `q447` say `En anledning...`
+/ `One reason...` without naming Sweden's 1800s population growth. `q447` also
+publishes the English capitalization defect `eU membership`. Facts, citations,
+answer keys, explanations, and ordinary distractors remain supported by UHR
+`Sverige i fokus` printed pages 28-32. Own this as a generated
+true/false-stem standalone-referent/predicate follow-up, preferably bundled
+with the current q301-q400 standalone-stem route. Acceptance requires generator
+and validator mirror coverage, regenerated `content/question-bank.csv` and
+`site/questions.js`, export/static parity, `validate:content`,
+`test:derived-content`, focused content gates, typecheck, lint, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks for the
+five named rows.
