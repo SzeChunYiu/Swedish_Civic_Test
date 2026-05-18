@@ -510,3 +510,24 @@ typecheck, lint, ownership, Prettier/diff, PR/merge evidence, and direct spot
 checks proving q563 uses "on a Saturday", q574 capitalizes Buddhist/Hindu
 naturally, q598 has subject/verb agreement, and q599 is a standalone
 learner-facing true/false stem.
+
+Iteration: 2026-05-18T23:05+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-EBOOK-SOURCE-COVERAGE-1` as the queue-level SETUP/static-site
+closure for unsupported ebook source-backed and footnoted copy.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #721 is squash-merged on current `origin/main` as `3373a5e`.
+Manager recheck in `/tmp/sct-manager-ebook-source-accept-1779143000` rebased
+the branch and passed route/static-link assertion,
+`node --test tests/content-static-site-ebook-parity.test.js` 4/4,
+`npm run test:static-site-chapter-count-copy` 2/2,
+`npm run test:static-site-source-provenance-copy` 2/2,
+`node scripts/export-site-question-bank.js --check`, `npm run
+validate:content`, `npm run typecheck -- --pretty false`, `npm run lint`,
+`npm run test:ownership`, changed-file JS syntax checks, targeted Prettier,
+and `git diff --check`.
+Next worker task queued: DATA-INTEGRITY -
+`REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1` remains next for
+q563/q574/q598/q599. SETUP has no unblocked local source atom while SITE-P0-5
+is external deploy freshness only; do not run Vercel CLI from this repo.
