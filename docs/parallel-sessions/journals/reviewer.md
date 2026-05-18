@@ -2503,3 +2503,20 @@ Verification (commands + result):
 PR (number + merged?): #244 / merged yes via squash commit `9071fef`
 Accepted by worker? yes
 Next suggested validator action: assign SETUP to add the static `/mock` route shell/stage, allow-list `/mock`, make the Practice mock link open the live mock exam flow, preserve/load ebook helper tooling, and add a static smoke guard that fails when present SITE P0 files are not reachable through the deployed page shell.
+
+Lane: REVIEWER
+Host/branch: `/home/billy/sct-reviewer-post-site-parity-cbjoV7` / `task/reviewer/site-ebook-sv-parity-1779107800`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 SITE reviewer audit for SITE-P0-4 static ebook SV/EN parity.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout had unrelated dirty task/report files and concurrent lane updates.
+- Duplicate scan for SITE-P0-4 / ebook reviewer defects found only the older static-wiring row and manager acceptance notes; no existing Swedish ebook parity defect was queued.
+- `rg -n "Svenska översättningen kommer|friendly stubs|We're writing this chapter now|kommer i v1.1|v1.1" site/ebook.js site/index.html -S` - found the ebook file header saying 12 chapters include friendly stubs, twelve Swedish chapter-body placeholders, and the generic unwritten-chapter fallback.
+- Focused Node scan over `site/ebook.js` - returned `svStubCount:12` while the English ebook has 12 factbox-backed chapter bodies.
+- Served `site/` with `python3 -m http.server 8204 --bind 127.0.0.1`.
+- System-Chrome static-site pass on `#/ebook?c=1` with `localStorage.smt_lang="sv"` - exit 2 by design because the reader body contains `Svenska översättningen kommer i v1.1`; the Swedish heading/lede rendered, ebook nav had 13 links, ebook tools were loaded, and console/page errors were 0.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/content-supported SITE-P0-4 work to replace all Swedish ebook placeholders with natural Swedish prose matching the English chapter coverage, remove v1.1/placeholder copy, and add a static ebook parity guard before SITE-P0-4 acceptance.
