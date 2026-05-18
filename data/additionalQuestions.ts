@@ -1253,8 +1253,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['Domstolar, åklagare, polis och fängelser', 'Courts, prosecutors, police, and prisons'],
     ],
     0,
-    'UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunerna ser till att det finns skolor och utbildning och ansvarar för hjälp till gamla och sjuka. Avsnittet listar barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst som exempel på kommunal välfärd.',
-    'The UHR section Municipalities have a large responsibility says municipalities ensure access to schools and education and are responsible for help for older and sick people. It lists childcare, schools and education, elderly care, and social services as examples of municipal welfare.',
+    'Kommunerna ser till att det finns skolor och utbildning och ansvarar också för hjälp till gamla och sjuka. Därför är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst exempel på kommunal välfärd.',
+    'Municipalities make sure schools and education are available and are also responsible for help for older and sick people. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.',
     ['municipal-welfare', 'schools', 'social-services'],
   ),
   trueFalse(
