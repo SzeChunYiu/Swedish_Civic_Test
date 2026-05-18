@@ -117,3 +117,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q451-Q500-1` into the active DATA-INTEGRITY residual generator/static-mirror repair, then assign the next rolling VERIFY slice starting at `q501`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q501-q550-pane3-1779125635`, branch `task/verify/q501-q550-pane3-1779125635`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q501-q550` generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q501-q550-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL and extracted locally for cited printed pages 40 and 42-47; q501-q550 source support, answer keys, and ordinary distractors are acceptable; generated true/false rows `q502`, `q503`, `q506`, `q507`, `q514`, `q515`, `q518`, `q519`, `q522`, `q523`, `q526`, `q527`, `q530`, `q531`, `q542`, `q543`, `q546`, `q547`, and `q550` fail natural-language quality in canonical CSV and `site/questions.js`; generated single-choice rows `q504`, `q505`, `q508`, `q512`, `q516`, `q517`, `q520`, `q524`, `q528`, `q532`, `q536`, `q540`, `q544`, and `q548` contain the already-routed unknown-material fallback option; `docs/verify/ledger.md` rows q501-q550 updated at `d372521`; focused ledger/report/queue/static assertion passed for 50 checked rows, 19 residual defects, and 14 unknown-option defects; `node scripts/export-question-bank.js --check`, `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, `npm run typecheck -- --pretty false`, `npm run test:ownership`, and `git diff --check` all passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q501-Q550-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q501-Q550-1` into the active DATA-INTEGRITY generated-output repairs, then assign the next rolling VERIFY slice starting at `q551`.
