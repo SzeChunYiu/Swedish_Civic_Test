@@ -118,6 +118,14 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bTrue or false:.*\bdescribes that\b/i,
   /\bTrue or false:.*\bis\s+(?:be|judge)\b/i,
   /\bTrue or false:.*\bis an example of municipal responsibilities\b/i,
+  /\bTrue or false:.*\b(?:has one vote each|may stand for election)\s+is part of\b/i,
+  /\bSant eller falskt:.*\b(?:har en röst var|får ställa upp)\s+ingår i\b/i,
+  /\bTrue or false:.*\bis a way to\b/i,
+  /\bSant eller falskt:.*\bär ett sätt att\b/i,
+  /\bTrue or false:.*\bapplies to\b/i,
+  /\bSant eller falskt:.*\bgäller för\b/i,
+  /\bTrue or false:.*\bare The\b/,
+  /\bTrue or false:\s*That hitting children is prohibited\b/i,
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
@@ -3284,6 +3292,18 @@ function lowerLeadingSwedishCommonStart(value) {
   );
 }
 
+function stripLeadingMustSv(value) {
+  return `${value ?? ''}`.replace(/^man måste\s+/i, 'man ').replace(/^du måste\s+/i, 'du ');
+}
+
+function stripLeadingThatEn(value) {
+  return `${value ?? ''}`.replace(/^that\s+/i, '');
+}
+
+function requirementTargetEn(value) {
+  return lowerFirst(`${value ?? ''}`.trim()).replace(/^voting\b/i, 'vote');
+}
+
 function englishSubjectVerb(value, singular, plural) {
   return /,|\band\b/i.test(`${value ?? ''}`) ? plural : singular;
 }
@@ -3299,6 +3319,12 @@ function stripLeadingPurposeSv(value) {
 
 function stripLeadingPurposeEn(value) {
   return value.replace(/^to\s+/i, '').replace(/^because\s+/i, '');
+}
+
+function embeddedSwedishClause(value) {
+  return lowerFirst(stripLeadingPurposeSv(value))
+    .replace(/^det är alltid\s+/i, 'det alltid är ')
+    .replace(/^domstolarna avgör bara\s+/i, 'domstolarna bara avgör ');
 }
 
 function stripTrueFalsePromptSv(value) {
@@ -3434,10 +3460,10 @@ function civicStatementSv(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
-  if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
+  if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilket är ett sätt att (.+)$/i);
-  if (match) return `${upperFirst(answer)} är ett sätt att ${match[1]}`;
+  if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
@@ -3480,7 +3506,7 @@ function civicStatementSv(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilka krav gäller för (.+)$/i);
-  if (match) return `${upperFirst(answer)} gäller för ${match[1]}`;
+  if (match) return `För ${match[1]} måste ${lowerFirst(stripLeadingMustSv(answer))}`;
 
   match = q.match(/^Varför (.+)$/i);
   if (match) return `En anledning är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
@@ -3489,7 +3515,10 @@ function civicStatementSv(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} har ${lowerFirst(answer)} gemensamt`;
 
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
-  if (match) return `I ${match[1]} händer det att ${lowerFirst(answer)} om ${match[2]}`;
+  if (match) {
+    const outcome = lowerFirst(answer).replace(/^partiet får\s+/i, 'partiet ');
+    return `I ${match[1]} får ${outcome} om ${match[2]}`;
+  }
 
   match = q.match(/^Vilken lista innehåller (.+)$/i);
   if (match) return `${upperFirst(answer)} är listan som innehåller ${match[1]}`;
@@ -3501,18 +3530,13 @@ function civicStatementSv(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} reglerar ${lowerFirst(answer)}`;
 
   match = q.match(/^Vad innebär (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])} innebär att ${lowerFirst(
-      stripLeadingPurposeSv(answer)
-        .replace(/^den\s+/i, '')
-        .replace(/^det\s+/i, ''),
-    )}`;
+  if (match) return `${upperFirst(match[1])} innebär att ${embeddedSwedishClause(answer)}`;
 
   match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
   if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
 
   match = q.match(/^Vad gäller för (.+)$/i);
-  if (match) return `${upperFirst(answer)} gäller för ${match[1]}`;
+  if (match) return `För ${match[1]} gäller att ${embeddedSwedishClause(answer)}`;
 
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
@@ -3529,6 +3553,10 @@ function civicStatementSv(sourceQuestion, option) {
 
   match = q.match(/^Vilket svar beskriver (.+)$/i);
   if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
+
+  match = q.match(/^Vad beslutade (.+?) som (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} beslutade att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(
     /^Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen$/i,
@@ -3567,7 +3595,7 @@ function civicStatementEn(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} are ${answer}`;
 
   match = q.match(/^Which are (.+)$/i);
-  if (match) return `${upperFirst(match[1])} are ${answer}`;
+  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
 
   match = q.match(/^Approximately how many (.+)$/i);
   if (match) return `${upperFirst(answer)} ${match[1]}`;
@@ -3579,10 +3607,10 @@ function civicStatementEn(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} means ${lowerFirst(answer)}`;
 
   match = q.match(/^Which of the following is part of (.+)$/i);
-  if (match) return `${upperFirst(answer)} is part of ${match[1]}`;
+  if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
 
   match = q.match(/^Which is a way to (.+)$/i);
-  if (match) return `${upperFirst(answer)} is a way to ${match[1]}`;
+  if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
@@ -3638,7 +3666,7 @@ function civicStatementEn(sourceQuestion, option) {
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
 
   match = q.match(/^Which requirements apply to (.+)$/i);
-  if (match) return `${upperFirst(answer)} applies to ${match[1]}`;
+  if (match) return `To ${requirementTargetEn(match[1])}, ${lowerFirst(answer)}`;
 
   match = q.match(/^Why (.+)$/i);
   if (match) return `One reason is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -3665,7 +3693,7 @@ function civicStatementEn(sourceQuestion, option) {
   if (match) return `${upperFirst(answer)} are part of ${match[1]}`;
 
   match = q.match(/^What applies to (.+)$/i);
-  if (match) return `${upperFirst(answer)} applies to ${match[1]}`;
+  if (match) return `For ${match[1]}, ${lowerFirst(answer)}`;
 
   match = q.match(/^From what age is (.+)$/i);
   if (match) return `From ${lowerFirst(answer)}, ${match[1]}`;
@@ -3681,6 +3709,10 @@ function civicStatementEn(sourceQuestion, option) {
 
   match = q.match(/^Which answer describes (.+)$/i);
   if (match) return `${upperFirst(answer)} describes ${match[1]}`;
+
+  match = q.match(/^What did (.+?) decide as (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} decided that ${lowerFirst(stripLeadingThatEn(answer))}`;
 
   match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
   if (match) return `A party must receive ${lowerFirst(answer)} to enter the Riksdag`;

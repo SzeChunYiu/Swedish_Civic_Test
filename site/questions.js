@@ -7725,7 +7725,7 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: Sweden's three largest lakes are The Baltic Sea, Kattegat, and Skagerrak.",
+      "en": "True or false: Sweden's three largest lakes are the Baltic Sea, Kattegat, and Skagerrak.",
       "sv": "Sant eller falskt: Sveriges tre största sjöar är Östersjön, Kattegatt och Skagerrak."
     },
     "opts": [
@@ -8382,8 +8382,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: Everyone who has the right to vote has one vote each is part of free elections in a democracy.",
-      "sv": "Sant eller falskt: Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati."
+      "en": "True or false: A feature of free elections in a democracy is that everyone who has the right to vote has one vote each.",
+      "sv": "Sant eller falskt: Ett inslag i fria val i en demokrati är att alla som har rätt att rösta har en röst var."
     },
     "opts": [
       {
@@ -8421,8 +8421,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: Only one party may stand for election is part of free elections in a democracy.",
-      "sv": "Sant eller falskt: Bara ett parti får ställa upp ingår i fria val i en demokrati."
+      "en": "True or false: A feature of free elections in a democracy is that only one party may stand for election.",
+      "sv": "Sant eller falskt: Ett inslag i fria val i en demokrati är att bara ett parti får ställa upp."
     },
     "opts": [
       {
@@ -8554,8 +8554,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: Contact politicians, demonstrate, or sign a petition is a way to influence and participate in society.",
-      "sv": "Sant eller falskt: Kontakta politiker, demonstrera eller skriva på en namninsamling är ett sätt att påverka och delta i samhället."
+      "en": "True or false: One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.",
+      "sv": "Sant eller falskt: Ett sätt att påverka och delta i samhället är att kontakta politiker, demonstrera eller skriva på en namninsamling."
     },
     "opts": [
       {
@@ -8593,8 +8593,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "True or false: Ban others from voting in political elections is a way to influence and participate in society.",
-      "sv": "Sant eller falskt: Förbjuda andra från att rösta i politiska val är ett sätt att påverka och delta i samhället."
+      "en": "True or false: One way to influence and participate in society is to ban others from voting in political elections.",
+      "sv": "Sant eller falskt: Ett sätt att påverka och delta i samhället är att förbjuda andra från att rösta i politiska val."
     },
     "opts": [
       {
@@ -11478,8 +11478,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.",
-      "sv": "Sant eller falskt: Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval."
+      "en": "True or false: To vote in Sweden’s Riksdag election, you must be a Swedish citizen and at least 18 years old.",
+      "sv": "Sant eller falskt: För att rösta i Sveriges riksdagsval måste man vara svensk medborgare och ha fyllt 18 år."
     },
     "opts": [
       {
@@ -11517,8 +11517,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: You must own a home in Sweden applies to voting in Sweden’s Riksdag election.",
-      "sv": "Sant eller falskt: Man måste äga en bostad i Sverige gäller för att rösta i Sveriges riksdagsval."
+      "en": "True or false: To vote in Sweden’s Riksdag election, you must own a home in Sweden.",
+      "sv": "Sant eller falskt: För att rösta i Sveriges riksdagsval måste man äga en bostad i Sverige."
     },
     "opts": [
       {
@@ -12167,7 +12167,7 @@
     "type": "true_false",
     "q": {
       "en": "True or false: In a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.",
-      "sv": "Sant eller falskt: I ett proportionellt val händer det att partiet får 20 procent av platserna om ett parti får 20 procent av rösterna."
+      "sv": "Sant eller falskt: I ett proportionellt val får partiet 20 procent av platserna om ett parti får 20 procent av rösterna."
     },
     "opts": [
       {
@@ -12206,7 +12206,7 @@
     "type": "true_false",
     "q": {
       "en": "True or false: In a proportional election, the party receives all seats if a party receives 20 percent of the votes.",
-      "sv": "Sant eller falskt: I ett proportionellt val händer det att partiet får alla platser om ett parti får 20 procent av rösterna."
+      "sv": "Sant eller falskt: I ett proportionellt val får partiet alla platser om ett parti får 20 procent av rösterna."
     },
     "opts": [
       {
@@ -13027,7 +13027,7 @@
     "type": "true_false",
     "q": {
       "en": "True or false: The right of public access means it gives everyone the opportunity to be in nature, but people must act responsibly.",
-      "sv": "Sant eller falskt: Allemansrätten innebär att ger alla möjlighet att vara i naturen, men man måste visa ansvar."
+      "sv": "Sant eller falskt: Allemansrätten innebär att den ger alla möjlighet att vara i naturen, men man måste visa ansvar."
     },
     "opts": [
       {
@@ -13066,7 +13066,7 @@
     "type": "true_false",
     "q": {
       "en": "True or false: The right of public access means it gives a right to walk on fields and into private gardens.",
-      "sv": "Sant eller falskt: Allemansrätten innebär att ger rätt att gå på åkrar och in i privata trädgårdar."
+      "sv": "Sant eller falskt: Allemansrätten innebär att den ger rätt att gå på åkrar och in i privata trädgårdar."
     },
     "opts": [
       {
@@ -13542,8 +13542,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: A suspected person should be considered innocent until the person has been convicted applies to a person suspected of a crime in Sweden.",
-      "sv": "Sant eller falskt: En misstänkt person ska betraktas som oskyldig tills personen har dömts gäller för en person som är misstänkt för brott i Sverige."
+      "en": "True or false: For a person suspected of a crime in Sweden, a suspected person should be considered innocent until the person has been convicted.",
+      "sv": "Sant eller falskt: För en person som är misstänkt för brott i Sverige gäller att en misstänkt person ska betraktas som oskyldig tills personen har dömts."
     },
     "opts": [
       {
@@ -13581,8 +13581,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: Courts decide only disputes between parents applies to a person suspected of a crime in Sweden.",
-      "sv": "Sant eller falskt: Domstolarna avgör bara frågor mellan föräldrar gäller för en person som är misstänkt för brott i Sverige."
+      "en": "True or false: For a person suspected of a crime in Sweden, courts decide only disputes between parents.",
+      "sv": "Sant eller falskt: För en person som är misstänkt för brott i Sverige gäller att domstolarna bara avgör frågor mellan föräldrar."
     },
     "opts": [
       {
@@ -15611,8 +15611,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: They are crimes under Swedish law applies to violence in close relationships and honour-related violence and oppression in Sweden.",
-      "sv": "Sant eller falskt: Det är brottsligt enligt svensk lag gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige."
+      "en": "True or false: For violence in close relationships and honour-related violence and oppression in Sweden, they are crimes under Swedish law.",
+      "sv": "Sant eller falskt: För våld i nära relationer och hedersrelaterat våld och förtryck i Sverige gäller att det är brottsligt enligt svensk lag."
     },
     "opts": [
       {
@@ -15651,8 +15651,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: They are always private family matters and not crimes applies to violence in close relationships and honour-related violence and oppression in Sweden.",
-      "sv": "Sant eller falskt: Det är alltid en privat familjefråga och inte ett brott gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige."
+      "en": "True or false: For violence in close relationships and honour-related violence and oppression in Sweden, they are always private family matters and not crimes.",
+      "sv": "Sant eller falskt: För våld i nära relationer och hedersrelaterat våld och förtryck i Sverige gäller att det alltid är en privat familjefråga och inte ett brott."
     },
     "opts": [
       {
@@ -15786,8 +15786,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is illegal to buy sex, but the person who sells it is not punished applies to buying sex in Sweden.",
-      "sv": "Sant eller falskt: Det är olagligt att köpa sex, men personen som säljer straffas inte gäller för att köpa sex i Sverige."
+      "en": "True or false: For buying sex in Sweden, it is illegal to buy sex, but the person who sells it is not punished.",
+      "sv": "Sant eller falskt: För att köpa sex i Sverige gäller att det är olagligt att köpa sex, men personen som säljer straffas inte."
     },
     "opts": [
       {
@@ -15825,8 +15825,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is always legal to buy sex applies to buying sex in Sweden.",
-      "sv": "Sant eller falskt: Det är alltid lagligt att köpa sex gäller för att köpa sex i Sverige."
+      "en": "True or false: For buying sex in Sweden, it is always legal to buy sex.",
+      "sv": "Sant eller falskt: För att köpa sex i Sverige gäller att det alltid är lagligt att köpa sex."
     },
     "opts": [
       {
@@ -16130,8 +16130,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: That hitting children is prohibited.",
-      "sv": "Sant eller falskt: Det är förbjudet att slå barn."
+      "en": "True or false: Sweden decided that hitting children is prohibited.",
+      "sv": "Sant eller falskt: Sverige beslutade att det är förbjudet att slå barn."
     },
     "opts": [
       {
@@ -16169,8 +16169,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: That the Convention on the Rights of the Child became Swedish law.",
-      "sv": "Sant eller falskt: Barnkonventionen blev svensk lag."
+      "en": "True or false: Sweden decided that the Convention on the Rights of the Child became Swedish law.",
+      "sv": "Sant eller falskt: Sverige beslutade att barnkonventionen blev svensk lag."
     },
     "opts": [
       {
@@ -16646,8 +16646,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is permitted to marry a person of the same sex applies to marriage between people of the same sex in Sweden.",
-      "sv": "Sant eller falskt: Det är tillåtet att gifta sig med en person av samma kön gäller för äktenskap mellan personer av samma kön i Sverige."
+      "en": "True or false: For marriage between people of the same sex in Sweden, it is permitted to marry a person of the same sex.",
+      "sv": "Sant eller falskt: För äktenskap mellan personer av samma kön i Sverige gäller att det är tillåtet att gifta sig med en person av samma kön."
     },
     "opts": [
       {
@@ -16685,8 +16685,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is prohibited to marry a person of the same sex applies to marriage between people of the same sex in Sweden.",
-      "sv": "Sant eller falskt: Det är förbjudet att gifta sig med en person av samma kön gäller för äktenskap mellan personer av samma kön i Sverige."
+      "en": "True or false: For marriage between people of the same sex in Sweden, it is prohibited to marry a person of the same sex.",
+      "sv": "Sant eller falskt: För äktenskap mellan personer av samma kön i Sverige gäller att det är förbjudet att gifta sig med en person av samma kön."
     },
     "opts": [
       {

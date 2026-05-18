@@ -367,6 +367,179 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       reviewStatus: 'reviewed',
       tags: ['municipality'],
     },
+    {
+      id: 'q008',
+      chapterId: 'ch01',
+      type: 'single_choice',
+      questionSv: 'Vilka är Sveriges tre största sjöar?',
+      questionEn: "Which are Sweden's three largest lakes?",
+      options: [
+        { id: 'a', textSv: 'Vänern, Vättern och Mälaren', textEn: 'Vänern, Vättern, and Mälaren' },
+        {
+          id: 'b',
+          textSv: 'Östersjön, Kattegatt och Skagerrak',
+          textEn: 'The Baltic Sea, Kattegat, and Skagerrak',
+        },
+        { id: 'c', textSv: 'Gotland, Öland och Orust', textEn: 'Gotland, Öland, and Orust' },
+        {
+          id: 'd',
+          textSv: 'Stockholm, Göteborg och Malmö',
+          textEn: 'Stockholm, Gothenburg, and Malmö',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'De största sjöarna är Vänern, Vättern och Mälaren.',
+      explanationEn: 'The largest lakes are Vänern, Vättern, and Mälaren.',
+      uhrReference: {
+        chapter: 'Landet Sverige',
+        section: 'Skogar, sjöar och öar',
+        pageApprox: 6,
+      },
+      difficulty: 'easy',
+      reviewStatus: 'reviewed',
+      tags: ['lakes'],
+    },
+    {
+      id: 'q012',
+      chapterId: 'ch02',
+      type: 'single_choice',
+      questionSv: 'Vilket av följande ingår i fria val i en demokrati?',
+      questionEn: 'Which of the following is part of free elections in a democracy?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Alla som har rätt att rösta har en röst var',
+          textEn: 'Everyone who has the right to vote has one vote each',
+        },
+        {
+          id: 'b',
+          textSv: 'Bara ett parti får ställa upp',
+          textEn: 'Only one party may stand for election',
+        },
+        { id: 'c', textSv: 'Väljare röstar öppet', textEn: 'Voters vote publicly' },
+        {
+          id: 'd',
+          textSv: 'Regeringen delar ut rösterna',
+          textEn: 'The government assigns the votes',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Fria val ger varje röstberättigad en röst.',
+      explanationEn: 'Free elections give each eligible voter one vote.',
+      uhrReference: {
+        chapter: 'Sveriges demokratiska system',
+        section: 'Demokrati betyder folkstyre',
+        pageApprox: 10,
+      },
+      difficulty: 'easy',
+      reviewStatus: 'reviewed',
+      tags: ['elections'],
+    },
+    {
+      id: 'q013',
+      chapterId: 'ch02',
+      type: 'single_choice',
+      questionSv: 'Vilket är ett sätt att påverka och delta i samhället?',
+      questionEn: 'Which is a way to influence and participate in society?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
+          textEn: 'Contact politicians, demonstrate, or sign a petition',
+        },
+        {
+          id: 'b',
+          textSv: 'Förbjuda andra från att rösta i politiska val',
+          textEn: 'Ban others from voting in political elections',
+        },
+        { id: 'c', textSv: 'Stoppa nyheter', textEn: 'Stop news' },
+        { id: 'd', textSv: 'Tysta föreningar', textEn: 'Silence associations' },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Det finns flera demokratiska sätt att delta.',
+      explanationEn: 'There are several democratic ways to participate.',
+      uhrReference: {
+        chapter: 'Sveriges demokratiska system',
+        section: 'En stark demokrati',
+        pageApprox: 10,
+      },
+      difficulty: 'easy',
+      reviewStatus: 'reviewed',
+      tags: ['participation'],
+    },
+    {
+      id: 'q030',
+      chapterId: 'ch04',
+      type: 'single_choice',
+      questionSv: 'Vilka krav gäller för att rösta i Sveriges riksdagsval?',
+      questionEn: 'Which requirements apply to voting in Sweden’s Riksdag election?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Man måste vara svensk medborgare och ha fyllt 18 år',
+          textEn: 'You must be a Swedish citizen and at least 18 years old',
+        },
+        { id: 'b', textSv: 'Man måste äga en bostad', textEn: 'You must own a home' },
+        {
+          id: 'c',
+          textSv: 'Man måste vara medlem i ett parti',
+          textEn: 'You must be a party member',
+        },
+        {
+          id: 'd',
+          textSv: 'Man måste ha fyllt 16 år',
+          textEn: 'You must be at least 16 years old',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Riksdagsval kräver medborgarskap och 18 år.',
+      explanationEn: 'Riksdag elections require citizenship and age 18.',
+      uhrReference: {
+        chapter: 'Politiska val och partier',
+        section: 'Val och röstning',
+        pageApprox: 14,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['voting'],
+    },
+    {
+      id: 'q042',
+      chapterId: 'ch05',
+      type: 'single_choice',
+      questionSv: 'Vad gäller för en person som är misstänkt för brott i Sverige?',
+      questionEn: 'What applies to a person suspected of a crime in Sweden?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'En misstänkt person ska betraktas som oskyldig tills personen har dömts',
+          textEn:
+            'A suspected person should be considered innocent until the person has been convicted',
+        },
+        {
+          id: 'b',
+          textSv: 'Domstolarna avgör bara familjefrågor',
+          textEn: 'Courts decide only family disputes',
+        },
+        {
+          id: 'c',
+          textSv: 'En dom kan aldrig överklagas',
+          textEn: 'A judgment can never be appealed',
+        },
+        {
+          id: 'd',
+          textSv: 'Högsta domstolen prövar alla mål direkt',
+          textEn: 'The Supreme Court tries all cases directly',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'En misstänkt person är oskyldig tills dom.',
+      explanationEn: 'A suspect is innocent until judgment.',
+      uhrReference: { chapter: 'Lag och rätt', section: 'Domstolar', pageApprox: 18 },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['courts'],
+    },
   ];
 
   const derived = derivePublishedQuestions(sources, 301);
@@ -377,8 +550,9 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities/i,
+    /Det att|describes that|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för/i,
   );
+  assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
       'Sant eller falskt: Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
@@ -397,6 +571,31 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   assert.ok(
     text.includes(
       'True or false: Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      "True or false: Sweden's three largest lakes are the Baltic Sea, Kattegat, and Skagerrak.",
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'True or false: A feature of free elections in a democracy is that everyone who has the right to vote has one vote each.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'True or false: One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'True or false: To vote in Sweden’s Riksdag election, you must be a Swedish citizen and at least 18 years old.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'True or false: For a person suspected of a crime in Sweden, a suspected person should be considered innocent until the person has been convicted.',
     ),
   );
 });
