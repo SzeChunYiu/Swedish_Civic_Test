@@ -1,0 +1,125 @@
+import type { ComponentProps } from 'react';
+import { StyleSheet, Text as NativeText, View } from 'react-native';
+import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
+
+import type { AppLanguage } from '../../lib/storage/settingsStore';
+import { colors, radius, space, typography } from '../../lib/theme';
+import type { UHRReference } from '../../types/content';
+
+type SourceCitationCopy = {
+  label: string;
+  pagePrefix: string;
+  unavailable: string;
+};
+
+const sourceCitationCopy: Record<AppLanguage, SourceCitationCopy> = {
+  sv: {
+    label: 'Källhänvisning',
+    pagePrefix: 's.',
+    unavailable: 'Källhänvisning saknas',
+  },
+  en: {
+    label: 'Source citation',
+    pagePrefix: 'p.',
+    unavailable: 'Source citation unavailable',
+  },
+};
+
+/**
+ * Defaults: `language="sv"`, source title `"Sverige i fokus"`,
+ * `accessibilityRole="text"`, and localized citation labels. Pass a
+ * `reference` to render the source line separately from disclaimer copy.
+ */
+export interface SourceCitationProps extends Omit<
+  ComponentProps<typeof View>,
+  'children' | 'style'
+> {
+  bodyStyle?: StyleProp<TextStyle>;
+  label?: string;
+  labelStyle?: StyleProp<TextStyle>;
+  language?: AppLanguage;
+  metaStyle?: StyleProp<TextStyle>;
+  reference?: UHRReference;
+  sourceTitle?: string;
+  style?: StyleProp<ViewStyle>;
+  unavailableLabel?: string;
+}
+
+function getCitationText({
+  copy,
+  reference,
+  sourceTitle,
+  unavailableLabel,
+}: {
+  copy: SourceCitationCopy;
+  reference?: UHRReference;
+  sourceTitle: string;
+  unavailableLabel?: string;
+}) {
+  if (!reference) return unavailableLabel ?? copy.unavailable;
+  return `${sourceTitle}, ${reference.chapter}, ${reference.section}`;
+}
+
+function getPageText(copy: SourceCitationCopy, reference?: UHRReference) {
+  return reference?.pageApprox ? `${copy.pagePrefix} ${reference.pageApprox}` : undefined;
+}
+
+export function SourceCitation({
+  accessibilityLabel,
+  accessibilityRole = 'text',
+  bodyStyle,
+  label,
+  labelStyle,
+  language = 'sv',
+  metaStyle,
+  reference,
+  sourceTitle = 'Sverige i fokus',
+  style,
+  unavailableLabel,
+  ...viewProps
+}: SourceCitationProps) {
+  const copy = sourceCitationCopy[language];
+  const resolvedLabel = label ?? copy.label;
+  const citationText = getCitationText({ copy, reference, sourceTitle, unavailableLabel });
+  const pageText = getPageText(copy, reference);
+  const resolvedAccessibilityLabel =
+    accessibilityLabel ?? [resolvedLabel, citationText, pageText].filter(Boolean).join('. ');
+
+  return (
+    <View
+      accessibilityLabel={resolvedAccessibilityLabel}
+      accessibilityRole={accessibilityRole}
+      style={[styles.container, style]}
+      {...viewProps}
+    >
+      <NativeText style={[styles.label, labelStyle]}>{resolvedLabel}</NativeText>
+      <NativeText style={[styles.body, bodyStyle]}>{citationText}</NativeText>
+      {pageText ? <NativeText style={[styles.meta, metaStyle]}>{pageText}</NativeText> : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
+    gap: space[0.5],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  label: {
+    ...typography.badge,
+    color: colors.textDisclaimer,
+    textTransform: 'uppercase',
+  },
+  body: {
+    ...typography.captionLight,
+    color: colors.textSecondary,
+  },
+  meta: {
+    ...typography.micro,
+    color: colors.textMuted,
+  },
+});
