@@ -4201,6 +4201,7 @@ let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let uhrMapSourceExactSchemaKeysValidated = false;
 let uhrMapChapterExactSchemaKeysValidated = 0;
+let uhrMapChapterMetadataParityValidated = 0;
 let uhrMapTextFieldsNormalizedValidated = 0;
 let uhrMapPageRangesValidated = 0;
 let uhrSourceMetadataValidated = false;
@@ -10870,6 +10871,7 @@ function buildUhrReferenceChapters() {
     const nextStartPage = nextChapter?.startPage;
     let valid = true;
     let pageRangeIsValid = true;
+    let chapterMetadataMatches = false;
 
     function reject(message) {
       valid = false;
@@ -10909,13 +10911,19 @@ function buildUhrReferenceChapters() {
     if (hasText(chapter.chapter)) seenChapterTitles.add(chapter.chapter);
 
     const chapterMetadata = Array.isArray(chapters) ? chapters[index] : undefined;
-    if (chapterMetadata) {
+    if (!chapterMetadata) {
+      reject(`${label} is missing data chapter metadata`);
+    } else {
+      let metadataIsValid = true;
       if (chapter.id !== chapterMetadata.id) {
+        metadataIsValid = false;
         reject(`${label} id does not match data chapter id ${chapterMetadata.id}`);
       }
       if (chapter.chapter !== chapterMetadata.nameSv) {
+        metadataIsValid = false;
         reject(`${label} title does not match data chapter name "${chapterMetadata.nameSv}"`);
       }
+      if (metadataIsValid) chapterMetadataMatches = true;
     }
 
     if (!Number.isInteger(chapter.startPage) || chapter.startPage < 1) {
@@ -10966,6 +10974,7 @@ function buildUhrReferenceChapters() {
       if (uhrSectionMapChapterExactSchemaKeyFailures(chapter, label).length === 0) {
         uhrMapChapterExactSchemaKeysValidated += 1;
       }
+      if (chapterMetadataMatches) uhrMapChapterMetadataParityValidated += 1;
       uhrMapSectionsValidated += chapter.sections.length;
     }
 
@@ -11644,6 +11653,7 @@ console.log(
       uhrMapSectionsValidated,
       uhrMapSourceExactSchemaKeysValidated,
       uhrMapChapterExactSchemaKeysValidated,
+      uhrMapChapterMetadataParityValidated,
       uhrMapTextFieldsNormalizedValidated,
       uhrMapPageRangesValidated,
       uhrSourceMaterialLinkParityValidated,

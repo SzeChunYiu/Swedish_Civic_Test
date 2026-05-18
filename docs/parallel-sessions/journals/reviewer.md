@@ -2213,3 +2213,482 @@ Workspace contract: pass with caveats - no product source edited; only reviewer 
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q028-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
 Evidence: `/quiz/q028` rendered `True or false: The opposition should scrutinize the government’s work and propose alternative policies.`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, independent-study disclaimer, correct feedback for `True`, and the user-visible explanation beginning `The UHR section The state says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
 Next manager action: assign a CONTENT-owned q028 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q030` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `codex-tasks/P0.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020 and q022-q028 English-naturalness findings already exist, and no q030 duplicate was queued.
+- During the first q029 attempt, the current checkout moved: q029 now renders natural learner-facing explanation text, so REVIEWER did not queue stale q029 evidence and shifted to q030.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '218,248p'` shows q030 `explanationEn` as `The UHR section Elections and voting says a person must have turned 18 to have voting rights. To vote in the Riksdag election, a person must also be a Swedish citizen.`
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0 earlier in the same reviewer cycle after the q029 source movement; `dist-web` contains current q030 source-note explanation.
+- System-Chrome exported-web pass on `/quiz/q030` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q030-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q030` rendered `Which requirements apply to voting in Sweden’s Riksdag election?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Politiska val och partier, Val och röstning, p. 14`, independent-study disclaimer, correct feedback for `You must be a Swedish citizen and at least 18 years old`, and the user-visible explanation beginning `The UHR section Elections and voting says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q030 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q031` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020, q022-q028, and q030 English-naturalness findings already exist, and no q031 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '235,275p'` shows q031 `explanationEn` begins with `The UHR section Referendums says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q031` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q031-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q031` rendered `True or false: Politicians in Sweden must follow the result of a referendum.`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Politiska val och partier, Folkomröstningar, p. 14`, independent-study disclaimer, correct feedback for `False`, and the user-visible explanation beginning `The UHR section Referendums says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q031 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q032` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020, q022-q028, q030, and q031 English-naturalness findings already exist, and no q032 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; neither documented helper path is executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '246,290p'` shows q032 `explanationEn` begins with `The UHR section How voting works says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q032` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q032-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q032` rendered `Why do voters vote behind a screen at the polling station?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Politiska val och partier, Så här går det till att rösta, p. 14`, independent-study disclaimer, correct feedback for `Because the vote is secret and no one else should see their choice`, and the user-visible explanation beginning `The UHR section How voting works says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q032 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q033` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020, q022-q028, and q030-q032 English-naturalness findings already exist, and no q033 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; neither documented helper path is executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '260,340p'` shows q033 `explanationEn` begins with `The Political parties section describes...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q033` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal/blocker notes were changed, and broad non-REVIEWER dirty source/test scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q033-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q033` rendered `What do people in a political party have in common?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Politiska val och partier, Politiska partier, p. 15`, independent-study disclaimer, correct feedback for `Shared ideas about how society should be governed`, and the user-visible explanation beginning `The Political parties section describes...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q033 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q034` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020, q022-q028, and q030-q033 English-naturalness findings already exist, and no q034 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; neither documented helper path is executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '290,335p'` shows q034 `explanationEn` begins with `The Proportional elections section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q034` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal notes were changed, and broad non-REVIEWER dirty source/test scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q034-EN-NATURALNESS-1`.
+Evidence: `/quiz/q034` rendered `What happens in a proportional election if a party receives 20 percent of the votes?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Politiska val och partier, Proportionella val, p. 15`, the independent-study disclaimer, correct feedback for `The party receives 20 percent of the seats`, and the user-visible explanation beginning `The Proportional elections section says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q034 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q035` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020, q022-q028, and q030-q034 English-naturalness findings already exist, and no q035 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '310,365p'` shows q035 `explanationEn` begins with `The Proportional elections section states...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q035` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q035-EN-NATURALNESS-1`.
+Evidence: `/quiz/q035` rendered `What minimum share of votes must a party receive to enter the Riksdag?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Politiska val och partier, Proportionella val, p. 15`, the independent-study disclaimer, correct feedback for `At least 4 percent of the votes`, and the user-visible explanation beginning `The Proportional elections section states...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q035 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q036` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q012-q020, q022-q028, and q030-q035 English-naturalness findings already exist, and no q036 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '340,405p'` shows q036 `explanationEn` begins with `The Constitutional Laws section states...`.
+- Reused the same unchanged-product-source gates from the q035 cycle: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, focused source-citation/export/sentence-ending tests - exit 0, 6/6, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q036` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveats - no product source edited; only reviewer queue/journal notes were changed, and broad non-REVIEWER dirty source/test/report scope remains.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q036-EN-NATURALNESS-1`.
+Evidence: `/quiz/q036` rendered `Which list contains only Sweden's four constitutional laws?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Lag och rätt, Grundlagarna, p. 16`, the independent-study disclaimer, correct feedback for `The Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession`, and the user-visible explanation beginning `The Constitutional Laws section states...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q036 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q037` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, and current reviewer queues.
+- Checked existing queue first; did not duplicate q026-q036 naturalness findings.
+- `nl -ba data/additionalQuestions.ts | sed -n '350,430p'` - q037 source still has English explanation beginning `The section on the Instrument of Government says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- Inline Playwright pass against `dist-web` using `/usr/bin/google-chrome` on port 4197 - exit 2 by design after confirming the q037 English route renders the awkward explanation with no console/page errors.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path exists, so reviewer fallback queue file was used.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q037-EN-NATURALNESS-1`.
+Evidence: `/quiz/q037` in English support mode showed the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Regeringsformen, p. 16`, independent-study disclaimer, correct feedback for `All public power comes from the people`, and the exact explanation `The section on the Instrument of Government says that all public power comes from the people. It also describes that the Riksdag makes laws, the government governs the country, and the constitution guarantees basic rights and freedoms.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q037 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q038` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, and current reviewer queues.
+- Checked existing queue first; did not duplicate q030-q037 naturalness findings, and no q038 reviewer item existed yet.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path exists, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '388,438p'` - q038 source has English explanation beginning `The UHR section The Act of Succession describes...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q038` in English support mode - exit 2 by design after confirming the q038 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q038-EN-NATURALNESS-1`.
+Evidence: `/quiz/q038` in English support mode showed the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Successionsordningen, p. 16`, independent-study disclaimer, correct feedback for `Who will become king or queen after the current monarch`, and the exact explanation `The UHR section The Act of Succession describes it as the constitutional law that decides who will become king or queen after the current monarch. The question is therefore about succession to the throne, not rules for the labour market, schools, or tax.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q038 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q039` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Checked existing queue first; did not duplicate q030-q038 naturalness findings, and no q039 reviewer item existed yet.
+- `nl -ba data/additionalQuestions.ts | sed -n '412,462p'` - q039 source has English explanation beginning `The UHR Right of public access section says...`.
+- Reused unchanged-product-source gates from the q038 cycle: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, focused source-citation/export/sentence-ending tests - exit 0, 6/6, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q039` in English support mode - exit 2 by design after confirming the q039 English route renders the awkward explanation with no console/page errors.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path exists, so reviewer fallback queue file was used.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q039-EN-NATURALNESS-1`.
+Evidence: `/quiz/q039` in English support mode showed the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Allemansrätten, p. 17`, independent-study disclaimer, correct feedback for `It gives everyone the opportunity to be in nature, but people must act responsibly`, and the exact explanation `The UHR Right of public access section says this right is protected in the Instrument of Government and gives everyone the opportunity to be in nature regardless of who owns the land. At the same time, people must act responsibly: they may not damage nature, disturb landowners, walk on fields, enter private gardens, or throw litter.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q039 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q040` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Checked existing queue first; did not duplicate q030-q039 naturalness findings, and no q040 naturalness item existed yet.
+- `nl -ba data/additionalQuestions.ts | sed -n '438,492p'` - q040 source has English explanation beginning `The UHR section The justice system says...`.
+- Reused unchanged-product-source gates from the q038 cycle: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, focused source-citation/export/sentence-ending tests - exit 0, 6/6, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q040` in English support mode - exit 2 by design after confirming the q040 English route renders the awkward explanation with no console/page errors.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path exists, so reviewer fallback queue file was used.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q040-EN-NATURALNESS-1`.
+Evidence: `/quiz/q040` in English support mode showed the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Rättsväsendet, p. 17`, independent-study disclaimer, correct feedback for `The Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service`, and the exact explanation `The UHR section The justice system says Sweden's justice system consists of different authorities that work to ensure laws are followed and state power is exercised according to law. The section lists the Police, Swedish Prosecution Authority, courts, Crime Victim Authority, and Prison and Probation Service.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q040 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q041` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Checked existing queue first; did not duplicate q030-q040 naturalness findings, and no q041 naturalness item existed yet.
+- `nl -ba data/additionalQuestions.ts | sed -n '460,522p'` - q041 source has English explanation beginning `The UHR section Legal certainty describes...`.
+- Reused unchanged-product-source gates from the q038 cycle: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, focused source-citation/export/sentence-ending tests - exit 0, 6/6, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q041` in English support mode - exit 2 by design after confirming the q041 English route renders the awkward explanation with no console/page errors.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path exists, so reviewer fallback queue file was used.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q041-EN-NATURALNESS-1`.
+Evidence: `/quiz/q041` in English support mode showed the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Rättssäkerhet, p. 17`, independent-study disclaimer, correct feedback for `Courts are independent, and everyone has the right to defend themselves and appeal a judgment`, and the exact explanation `The UHR section Legal certainty describes legal certainty as equal treatment before the law, a fair trial, and careful review of evidence and facts. It also emphasizes that courts are independent and that everyone has the right to defend themselves with a lawyer and can appeal a judgment.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q041 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q042` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, and current reviewer queues.
+- Checked existing queue first; did not duplicate q030-q041 naturalness findings, and no q042 naturalness item existed yet.
+- `nl -ba data/additionalQuestions.ts | sed -n '492,555p'` - q042 source has English explanation beginning `The UHR Courts section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q042` in English support mode - exit 2 by design after confirming the q042 English route renders the awkward explanation with no console/page errors.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path exists, so reviewer fallback queue file was used.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 9.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q042-EN-NATURALNESS-1`.
+Evidence: `/quiz/q042` in English support mode showed `Session q042`, the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Domstolar, p. 18`, independent-study disclaimer, correct feedback for `A suspected person should be considered innocent until the person has been convicted`, and the exact explanation `The UHR Courts section says that courts decide whether someone is guilty of a crime and what penalty the person should receive if so. A suspected person should be considered innocent until convicted, and a judgment can be appealed to a higher court.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q042 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q043` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current reviewer queues.
+- Checked existing queue first; did not duplicate q030-q042 naturalness findings, and no q043 naturalness item existed yet.
+- `nl -ba data/additionalQuestions.ts | sed -n '520,590p'` - q043 source has English explanation beginning `The Police section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q043` in English support mode - exit 2 by design after confirming the q043 English route renders the awkward explanation with no console/page errors.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path exists, so reviewer fallback queue file was used.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 9.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q043-EN-NATURALNESS-1`.
+Evidence: `/quiz/q043` in English support mode showed `Session q043`, the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Polisen, p. 18`, independent-study disclaimer, correct feedback for `To maintain law and order and prevent and investigate crimes`, and the exact explanation `The Police section says the police role is to maintain law and order and to prevent and investigate crimes. It also describes police cooperation with other actors for safety and help for people exposed to crime or needing protection.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q043 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q044` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current reviewer queues.
+- Checked existing queue first; did not duplicate q030-q043 naturalness findings, and no q044 naturalness item existed yet.
+- `nl -ba data/additionalQuestions.ts | sed -n '540,625p'` - q044 source has English explanation beginning `The Criminal responsibility and criminal record section states...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q044` in English support mode - exit 2 by design after confirming the q044 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 9.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q044-EN-NATURALNESS-1`.
+Evidence: `/quiz/q044` in English support mode showed `Session q044`, the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Lag och rätt, Straffmyndighet och belastningsregister, p. 19`, independent-study disclaimer, correct feedback for `15 years`, score `1/1`, and the exact explanation `The Criminal responsibility and criminal record section states that a person in Sweden is criminally responsible and can be prosecuted for a crime from age 15. It also mentions a 2026 government proposal about age 13 for serious crimes, which does not change the section's primary rule.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q044 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q045` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current reviewer queues.
+- Checked existing queue first; q045 had an old traceability-only reviewer pass but no current TRANSLATE-COMPLETE naturalness defect, so this did not duplicate an existing queue item.
+- `nl -ba data/additionalQuestions.ts | sed -n '540,579p'` - q045 source has English explanation beginning `The UHR Free media section describes...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q045` in English support mode - exit 2 by design after confirming the q045 English route renders the awkward explanation with no console/page errors. Initial settings click was blocked by the launch ad overlay until the pass used the existing close-launch-ad flow; that was not treated as a product defect.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 9.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q045-EN-NATURALNESS-1`.
+Evidence: `/quiz/q045` in English support mode showed the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Mediernas roll, Fria medier, p. 20`, independent-study disclaimer, correct feedback for `To inform, enable public debate, and scrutinize people with power`, and the exact explanation `The UHR Free media section describes media in a democracy as free and says the state cannot decide what is said in them. It also says media inform people about news, provide space for public discussion, and that journalists should be able to scrutinize politicians and other people with power.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q045 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q046` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current reviewer queues.
+- Checked existing queue first; did not duplicate q030-q045 naturalness findings, and no q046 naturalness item existed yet.
+- `nl -ba data/additionalQuestions.ts | sed -n '560,650p'` - q046 source has English explanation beginning `The UHR Free media section connects...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q046` in English support mode - exit 2 by design after confirming the q046 English route renders the awkward explanation with no console/page errors.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q046-EN-NATURALNESS-1`.
+Evidence: `/quiz/q046` in English support mode showed `Session q046`, the English question, Swedish secondary question, localized source citation `Source: Sverige i fokus, Mediernas roll, Fria medier, p. 20`, independent-study disclaimer, correct feedback for `By allowing public documents to be requested unless they are covered by secrecy rules`, and the exact explanation `The UHR Free media section connects the principle of public access to the ability to scrutinize people with power and authority decisions. The principle means public documents held by authorities are public and can be requested unless they are covered by secrecy rules.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q046 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q047` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked existing queue first; no `REVIEWER-Q047-EN-NATURALNESS-1` item was present.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q047` in English support mode loaded `Session q047`, English question, Swedish secondary question, localized source citation, independent-study disclaimer, correct True feedback, score `1/1`, direct learner-facing explanation, and console/page errors 0.
+- Rechecked `data/additionalQuestions.ts` after the browser pass; q047 now has direct Swedish/English explanations at lines 605-606, so the earlier source-section phrasing was stale by handoff time.
+Workspace contract: blocked after one pass - no product source edited, no q047 defect queued, and the shared checkout changed under REVIEWER while remaining `main...origin/main [behind 11]` with broad non-REVIEWER product/test/report dirty scope.
+Findings queued: none for q047; blocker refreshed in `codex-tasks/blockers.txt`.
+Evidence: `/quiz/q047` in English support mode showed `True or false: A person who gives information to newspapers, radio, and TV has the right to be anonymous.`, `Source: Sverige i fokus, Mediernas roll, Fria medier, p. 20`, the Swedish original, correct True feedback, `Score: 1/1`, and the direct explanation `The statement is true: a person may provide information to newspapers, radio, and TV without being punished for it. A person who provides information to media also has the right to remain anonymous.` Console/page errors were empty.
+Next manager action: bound or accept/reject the active CONTENT q047/source changes and current DATA-INTEGRITY/SETUP dirty scope before handing REVIEWER q048 or a broader acceptance-grade functional pass.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q050` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, and current queue state.
+- Checked existing queue first; no `REVIEWER-Q050-EN-NATURALNESS-1` item was present. q048 and q049 read as direct learner-facing explanations in current `data/additionalQuestions.ts`, so q050 was the next non-duplicative target.
+- `rg -n "q050|REVIEWER-Q050|Source criticism|Källkritik" codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md data/additionalQuestions.ts content/question-bank.csv` - no existing q050 reviewer defect before this pass.
+- `nl -ba data/additionalQuestions.ts | sed -n '644,664p'` - q050 source has English explanation beginning `The UHR section Source criticism says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q050` in English support mode - exit 2 by design after confirming the q050 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q050-EN-NATURALNESS-1`.
+Evidence: `/quiz/q050` in English support mode showed `Session q050`, the English question `What does it mean to be source-critical?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mediernas roll, Källkritik, p. 21`, independent-study disclaimer, correct feedback for `Questioning and checking whether information is correct`, score `1/1`, and the exact explanation `The UHR section Source criticism says information can come from many different sources and that not everything published is always correct. Being source-critical therefore means questioning and checking whether what you read, see, or hear is correct.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q050 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q051` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked existing queue first; no `REVIEWER-Q051-EN-NATURALNESS-1` item was present, and earlier q051 records covered traceability/source-stem acceptance rather than current explanation naturalness.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '660,690p'` - q051 source has English explanation beginning `The UHR section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q051` in English support mode - exit 2 by design after confirming the q051 English route renders the awkward explanation with no console/page errors.
+- Follow-up system-Chrome excerpt check - exit 0 confirming the independent-study disclaimer text is visible; the first route script used a case-sensitive disclaimer substring and underreported that field.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q051-EN-NATURALNESS-1`.
+Evidence: `/quiz/q051` in English support mode showed `Session q051`, the English question `Why was the United Nations created after the Second World War?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, Mänskliga rättigheter gäller alla, p. 22`, independent-study disclaimer, correct feedback for `To prevent war and protect human rights`, score `1/1`, and the exact explanation `The UHR section says that after the Second World War in 1945, 51 countries decided to create the UN to prevent future wars and protect every person’s rights. It also describes one of the UN’s first tasks as agreeing on rights that all people have.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q051 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q052` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, and current queue/blocker state.
+- Checked existing queue first; no `REVIEWER-Q052-EN-NATURALNESS-1` item was present, and older q052 records covered traceability/prompt acceptance rather than current explanation naturalness.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '690,740p'` - q052 source has English explanation beginning `The section on the UN Universal Declaration of Human Rights says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q052` in English support mode confirmed the q052 English route renders the awkward explanation with no console/page errors. A follow-up text dump confirmed the independent-study disclaimer and selected-answer `Correct` feedback after the first script used overly strict text matching for those two fields.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q052-EN-NATURALNESS-1`.
+Evidence: `/quiz/q052` in English support mode showed `Session q052`, the English question `Which statement is correct about the UN Universal Declaration of Human Rights?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, FN:s förklaring om de mänskliga rättigheterna, p. 22`, independent-study disclaimer, correct feedback for `It was presented in 1948 and contains 30 articles`, score `1/1`, and the exact explanation `The section on the UN Universal Declaration of Human Rights says the UN presented the declaration in 1948 and that it contains 30 articles. It also says that all people are born free and equal in value and rights and have the right to a life free from violence.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q052 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q056` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked existing queue first; no `REVIEWER-Q056-EN-NATURALNESS-1` item was present. q053 and q054 are already accepted as CNT70/CNT71, and q055 currently has direct learner-facing explanation text, so q056 was the next non-duplicative source-section-framed target.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '800,820p'` - q056 source has English explanation beginning `The UHR Children’s rights section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q056` in English support mode confirmed the q056 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q056-EN-NATURALNESS-1`.
+Evidence: `/quiz/q056` in English support mode showed `Session q056`, the English question `Since what year has the Convention on the Rights of the Child been law in Sweden?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, Barns rättigheter, p. 24`, independent-study disclaimer, correct feedback for `2020`, score `1/1`, and the exact explanation `The UHR Children’s rights section says that the Convention on the Rights of the Child should protect every child’s human rights. It also states that the convention has been law in Sweden since 2020.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q056 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q057` English-support explanation under TRANSLATE-COMPLETE.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, and current queue/blocker state.
+- Checked existing queue first; no `REVIEWER-Q057-EN-NATURALNESS-1` item was present. q055 and current q056 have direct learner-facing explanation text, so q057 was the next non-duplicative source-section-framed target.
+- `nl -ba data/additionalQuestions.ts | sed -n '760,900p'` - q057 source has English explanation beginning `The UHR Children's rights section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q057` in English support mode confirmed the q057 English route renders the awkward explanation with no console/page errors. An initial browser attempt used the wrong Swedish settings label and a second attempt used an overly narrow disclaimer matcher; the final pass used the actual `Engelskt stöd` control and confirmed the disclaimer.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q057-EN-NATURALNESS-1`.
+Evidence: `/quiz/q057` in English support mode showed `Session q057`, the English question `What did Sweden decide as the first country in the world in 1979?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, Barns rättigheter, p. 25`, independent-study disclaimer, correct feedback for `That hitting children is prohibited`, score `1/1`, and the exact explanation `The UHR Children's rights section says that all violence against children is prohibited under both the Convention on the Rights of the Child and Swedish law. It also states that in 1979 Sweden was the first country in the world to decide that hitting children is prohibited, and that the prohibition applies everywhere.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q057 naturalness atom and keep TRANSLATE-COMPLETE open because the validators remain green despite the learner-facing language defect. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+Lane: REVIEWER
+Artifact reviewed: workspace contract state on resume after the latest q057 TRANSLATE-COMPLETE pass.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, and current queues.
+- `git status --short --branch` and `git diff --name-status` - non-REVIEWER product/test/report dirt remains active and the branch is behind origin by 11 commits.
+Workspace contract: blocked - no new functional pass run because dirty-worktree ownership is ambiguous.
+Findings queued: `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-18 06:05 CEST]`.
+Evidence: current status includes `app/+html.tsx`, `data/additionalQuestions.ts`, scaffold/router manifests, package/test/validator files, screenshot report artifacts, verifier log, TEAM_PLAN, queues, and worker journals; this lane did not edit product source or tests.
+Next manager action: provide a clean or explicitly bounded artifact, then resume the next focused REVIEWER functional pass; do not accept queue/journal-only work as product completion.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q058` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content negative gate.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q058-EN-NATURALNESS-1` item was present. q056/q057 were the latest queued naturalness defects, and q058 is the next non-duplicative source-section-framed target.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `sed -n '830,875p' data/additionalQuestions.ts` - q058 source has English explanation beginning `The section on national minorities and Indigenous people says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated` and 500 `questionSentenceEndingsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 1; 5/6 subtests passed, but `published question sentence endings reject incomplete learner-facing text` failed because the injected incomplete learner-facing text was not rejected.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q058` in English support mode - exit 2 by design after confirming the q058 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` items `REVIEWER-Q058-EN-NATURALNESS-1` and `REVIEWER-SENTENCE-ENDINGS-GATE-1`.
+Evidence: `/quiz/q058` in English support mode showed `Session q058`, the English question `Which are Sweden's five national minorities?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, Nationella minoriteter och urfolk, p. 25`, independent-study disclaimer, correct feedback for `Jews, Roma, Sami, Sweden Finns, and Tornedalians`, score `1/1`, and the exact explanation `The section on national minorities and Indigenous people says that in 2000 Sweden recognized Jews, Roma, Sami, Sweden Finns, and Tornedalians as national minorities. The section also describes special protection for national minorities and the right to use minority languages in some public-service contacts.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q058 naturalness atom and a DATA-INTEGRITY-owned sentence-ending gate repair; keep TRANSLATE-COMPLETE open because the validator remains green despite the learner-facing language defect and the focused negative gate failure. REVIEWER should stop here until GM/VALIDATOR or source-owner panes bound the mixed checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q059` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `docs/parallel-sessions/TEAM_PLAN.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q059-EN-NATURALNESS-1` item was present. q058 and the sentence-ending verifier finding were the latest queued reviewer defects.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `sed -n '830,925p' data/additionalQuestions.ts` - q059 source has English explanation beginning `The National minorities and Indigenous people section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated` and 500 `questionSentenceEndingsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6. This recheck shows the earlier sentence-ending negative-gate defect is repaired in the current mixed checkout, pending owner acceptance.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q059` in English support mode - exit 2 by design after confirming the q059 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q059-EN-NATURALNESS-1`; `REVIEWER-SENTENCE-ENDINGS-GATE-1` updated as passing in current checkout but not accepted from REVIEWER.
+Evidence: `/quiz/q059` in English support mode showed `Session q059`, the English question `What is one task of the Sami Parliament?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, Nationella minoriteter och urfolk, p. 25`, independent-study disclaimer, correct feedback for `To represent the Sami population on questions of language, culture, and identity`, score `1/1`, and the exact explanation `The National minorities and Indigenous people section says the Sami are a recognized Indigenous people with their own elected parliament, the Sami Parliament. The Sami Parliament represents the Sami population on questions of language, culture, and identity and is an advisory body with some public-authority tasks.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q059 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect. Also close the sentence-ending reviewer defect only through DATA-INTEGRITY/VALIDATOR accepted product/test ownership, not this queue update.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q060` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q060-EN-NATURALNESS-1` item was present. q059 was the latest queued reviewer naturalness defect.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '900,940p'` - q060 source has English explanation beginning `The LGBTQI people section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated` and 500 `questionSentenceEndingsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q060` in English support mode - exit 0 after confirming the q060 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q060-EN-NATURALNESS-1`.
+Evidence: `/quiz/q060` in English support mode showed `Session q060`, the English question `What applies to marriage between people of the same sex in Sweden?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, Hbtqi-personer, p. 26`, independent-study disclaimer, correct feedback for `It is permitted to marry a person of the same sex`, score `1/1`, and the exact explanation `The LGBTQI people section says that the right to live with whomever one wants is protected by law and that it is permitted to marry a person of the same sex. It also describes discrimination based on sexual orientation, gender identity, and gender expression as prohibited under the Discrimination Act.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q060 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q061` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q061-EN-NATURALNESS-1` item was present. q060 was the latest queued reviewer naturalness defect.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '920,970p'` - q061 source has English explanation beginning `The Work against discrimination section describes...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated` and 500 `questionSentenceEndingsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q061` in English support mode - exit 2 by design after confirming the q061 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q061-EN-NATURALNESS-1`.
+Evidence: `/quiz/q061` in English support mode showed `Session q061`, the English question `What is one role of the Equality Ombudsman (DO)?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Mänskliga rättigheter, Arbetet mot diskriminering, p. 26`, independent-study disclaimer, correct feedback for `To work for equal rights for everyone and make sure the Discrimination Act is followed`, score `1/1`, and the exact explanation `The Work against discrimination section describes the Equality Ombudsman (DO) as a government agency that works for equal rights and opportunities for everyone. It also explains that DO makes sure the Discrimination Act is followed and that the law forbids worse treatment on discrimination grounds.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q061 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q062` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q062-SV-EN-NATURALNESS-1` item was present. q061 was the latest queued reviewer naturalness defect, and q062 is an accepted content atom with no reviewer naturalness pass.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '940,990p'` - q062 source has Swedish explanation beginning `UHR-avsnittet Så fungerar arbetsmarknaden säger...` and English explanation beginning `The UHR section Så fungerar arbetsmarknaden says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q062` in English support mode - exit 2 by design after confirming the q062 English route renders the awkward explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q062-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q062` in English support mode showed `Session q062`, the English question `What is meant by the public sector in Sweden?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, Så fungerar arbetsmarknaden, p. 27`, independent-study disclaimer, correct feedback for `Activities for which the state, regions, and municipalities are responsible`, score `1/1`, and the exact explanation `The UHR section Så fungerar arbetsmarknaden says that the labour market can be divided into public and private sectors. The public sector consists of activities for which the state, regions, and municipalities are responsible and that are financed by taxes, such as health care, schools, police, and rescue services.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q062 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q063` English-support explanation under TRANSLATE-COMPLETE, plus the nearest content/source/export sentence-ending gates.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, current reviewer journal, and current queues.
+- Checked existing queue first; no `REVIEWER-Q063-SV-EN-NATURALNESS-1` item was present. q062 was the latest queued reviewer naturalness defect, and q063 is the next non-duplicative target in the current content sequence.
+- Checked `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and `/home/billy/Desktop/projects/.shared/review-to-queue.sh`; neither path is executable, so reviewer fallback queue file was used.
+- `nl -ba data/additionalQuestions.ts | sed -n '960,1035p'` - q063 source has Swedish explanation beginning `Avsnittet Så fungerar arbetsmarknaden säger...` and English explanation beginning `The How the labour market works section says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 500 `questionBilingualTextPairsValidated`, 500 `questionSentenceEndingsValidated`, and 500 `questionAuthorityBoundaryTextValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- First System-Chrome attempt reached `/settings` but the launch sponsor overlay intercepted the English-support click; reran after dismissing the overlay.
+- System-Chrome exported-web pass against `dist-web` on `/quiz/q063` in English support mode - exit 2 by design after confirming the q063 English route renders the section-framed explanation with no console/page errors.
+Workspace contract: pass with caveats - no product source edited; current checkout still has non-REVIEWER product/test/report dirty scope and `main` is behind `origin/main` by 11.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q063-SV-EN-NATURALNESS-1`.
+Evidence: `/quiz/q063` in English support mode showed `Session q063`, the English question `What share of the workforce works in Sweden's private sector?`, the Swedish secondary question, localized source citation `Source: Sverige i fokus, Arbetsmarknad och privatekonomi, Så fungerar arbetsmarknaden, p. 27`, independent-study disclaimer, correct feedback for `About 70 percent`, score `1/1`, and the exact explanation `The How the labour market works section says that the labour market can be divided into public and private sectors. It describes the private sector as all privately owned companies and states that about 70 percent of the workforce works there, while about 30 percent works in the public sector.` Console/page errors were empty.
+Next manager action: assign a CONTENT-owned q063 naturalness atom and keep TRANSLATE-COMPLETE open because validators remain green despite the learner-facing language defect.

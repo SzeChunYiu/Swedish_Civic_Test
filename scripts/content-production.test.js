@@ -244,6 +244,7 @@ test('full content production validates 500 published UHR-referenced questions',
   assert.equal(summary.uhrMapSectionsValidated, 110);
   assert.equal(summary.uhrMapSourceExactSchemaKeysValidated, true);
   assert.equal(summary.uhrMapChapterExactSchemaKeysValidated, 13);
+  assert.equal(summary.uhrMapChapterMetadataParityValidated, 13);
   assert.equal(summary.uhrMapTextFieldsNormalizedValidated, 140);
   assert.equal(summary.uhrMapPageRangesValidated, 13);
   assert.equal(summary.uhrSourceMaterialLinkParityValidated, true);

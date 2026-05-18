@@ -14,6 +14,8 @@ export const architectureScaffoldDirectories = [
   'types',
 ] as const satisfies readonly ArchitectureScaffoldArea[];
 
+export const architectureProductCoverageRoots = ['app', 'components', 'lib'] as const;
+
 export const architectureTabRouteFiles = [
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
@@ -32,9 +34,71 @@ export const architectureSupplementalRouteFiles = [
   'app/terms.tsx',
 ] as const;
 
+export const architectureRouterShellRuntimeFiles = [
+  'app/index.tsx',
+  'app/_layout.tsx',
+  'app/+not-found.tsx',
+  'app/+html.tsx',
+  'app/+native-intent.ts',
+  'lib/scaffold/routerShellManifest.ts',
+] as const;
+
+export const architectureScaffoldToolingFiles = [
+  'lib/scaffold/architectureManifest.ts',
+  'scripts/architecture-scaffold.test.js',
+  'tests/architecture-public-exports.test.js',
+] as const;
+
+export const architectureAppConfigRuntimeFiles = [
+  'app.json',
+  'package.json',
+  'assets/icon.png',
+  'assets/adaptive-icon.png',
+  'assets/splash-icon.png',
+  'scripts/app-assets.test.js',
+  'tests/content-app-config-schema.test.js',
+] as const;
+
 export const architectureComplianceSupportFiles = [
   'components/compliance/ComplianceLinks.tsx',
   'components/compliance/LegalPage.tsx',
+] as const;
+
+export const architectureLegalRouteRuntimeFiles = [
+  'components/compliance/ComplianceLinks.tsx',
+  'components/compliance/LegalPage.tsx',
+  'lib/storage/settingsStore.ts',
+  'lib/theme/index.ts',
+  'app/disclaimer.tsx',
+  'app/privacy.tsx',
+  'app/sources.tsx',
+  'app/support.tsx',
+  'app/terms.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/onboarding.tsx',
+  'app/settings.tsx',
+] as const;
+
+export const architectureRouteCopyRuntimeFiles = [
+  'lib/localization/language.ts',
+  'lib/storage/settingsStore.ts',
+  'components/ui/ScreenShell.tsx',
+  'components/compliance/LegalPage.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/chapter/[chapterId].tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/settings.tsx',
+  'app/onboarding.tsx',
+  'app/disclaimer.tsx',
+  'app/privacy.tsx',
+  'app/sources.tsx',
+  'app/support.tsx',
+  'app/terms.tsx',
 ] as const;
 
 export const architectureDesignSystemSupportFiles = [
@@ -42,6 +106,17 @@ export const architectureDesignSystemSupportFiles = [
   'components/ui/Badge.tsx',
   'components/ui/MetricCard.tsx',
   'components/ui/ScreenShell.tsx',
+] as const;
+
+export const architectureSharedUiRuntimeFiles = [
+  'components/Surface.tsx',
+  'components/ui/Badge.tsx',
+  'components/ui/Button.tsx',
+  'components/ui/Card.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ProgressBar.tsx',
+  'components/ui/ScreenShell.tsx',
+  'lib/theme/index.ts',
 ] as const;
 
 export const architectureThemeRuntimeFiles = [
@@ -76,6 +151,83 @@ export const architectureQuestionLanguageRuntimeFiles = [
   'app/(tabs)/exam.tsx',
 ] as const;
 
+export const architectureSourceCitationRuntimeFiles = [
+  'lib/quiz/questionText.ts',
+  'lib/audio/speak.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+] as const;
+
+export const architectureSettingsRuntimeFiles = [
+  'lib/localization/language.ts',
+  'lib/localization/strings.ts',
+  'lib/storage/settingsStore.ts',
+  'components/ui/Button.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ScreenShell.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/onboarding.tsx',
+  'app/settings.tsx',
+] as const;
+
+export const architectureTabNavigationRuntimeFiles = [
+  'app/(tabs)/_layout.tsx',
+  'lib/storage/settingsStore.ts',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/(tabs)/profile.tsx',
+] as const;
+
+export const architectureSpeechRuntimeFiles = [
+  'lib/audio/speak.ts',
+  'lib/quiz/questionText.ts',
+  'lib/storage/settingsStore.ts',
+  'components/learning/AudioButton.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+] as const;
+
+export const architecturePracticeFlowRuntimeFiles = [
+  'lib/quiz/practiceFlow.ts',
+  'lib/quiz/practiceSessionStore.ts',
+  'app/(tabs)/practice.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/chapter/[chapterId].tsx',
+  'app/quiz/[sessionId].tsx',
+] as const;
+
+export const architectureMockExamRuntimeFiles = [
+  'data/mockExamConfig.ts',
+  'data/questions.ts',
+  'data/chapters.ts',
+  'lib/quiz/examGenerator.ts',
+  'lib/quiz/questionText.ts',
+  'lib/monetization/rewardedAd.native.ts',
+  'lib/monetization/rewardedAd.ts',
+  'lib/monetization/rewardedExam.ts',
+  'lib/monetization/useMockExamAccess.ts',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/ui/ProgressBar.tsx',
+  'app/(tabs)/exam.tsx',
+] as const;
+
+export const architectureContentDerivationRuntimeFiles = [
+  'data/questions.ts',
+  'data/additionalQuestions.ts',
+  'lib/content/derivedQuestions.ts',
+  'scripts/derived-content.test.js',
+] as const;
+
 export const architectureQuizFeedbackRuntimeFiles = [
   'components/quiz/AnswerOption.tsx',
   'components/quiz/ExplanationPanel.tsx',
@@ -108,6 +260,7 @@ export const architectureMonetizationRuntimeFiles = [
   'lib/monetization/mobileAdsConsent.ts',
   'lib/monetization/premium.ts',
   'lib/monetization/purchases.ts',
+  'lib/monetization/releasePolicy.ts',
   'lib/monetization/rewardedAd.native.ts',
   'lib/monetization/rewardedAd.ts',
   'lib/monetization/rewardedExam.ts',
@@ -372,18 +525,40 @@ export const architectureScaffoldFiles = [
 ] as const satisfies readonly ArchitectureScaffoldFile[];
 
 export type ArchitectureScaffoldDirectory = (typeof architectureScaffoldDirectories)[number];
+export type ArchitectureProductCoverageRoot = (typeof architectureProductCoverageRoots)[number];
 export type ArchitectureScaffoldFilePath = (typeof architectureScaffoldFiles)[number]['file'];
 export type ArchitectureSupplementalRouteFilePath =
   (typeof architectureSupplementalRouteFiles)[number];
+export type ArchitectureRouterShellRuntimeFilePath =
+  (typeof architectureRouterShellRuntimeFiles)[number];
+export type ArchitectureScaffoldToolingFilePath = (typeof architectureScaffoldToolingFiles)[number];
+export type ArchitectureAppConfigRuntimeFilePath =
+  (typeof architectureAppConfigRuntimeFiles)[number];
 export type ArchitectureComplianceSupportFilePath =
   (typeof architectureComplianceSupportFiles)[number];
+export type ArchitectureLegalRouteRuntimeFilePath =
+  (typeof architectureLegalRouteRuntimeFiles)[number];
+export type ArchitectureRouteCopyRuntimeFilePath =
+  (typeof architectureRouteCopyRuntimeFiles)[number];
 export type ArchitectureDesignSystemSupportFilePath =
   (typeof architectureDesignSystemSupportFiles)[number];
+export type ArchitectureSharedUiRuntimeFilePath = (typeof architectureSharedUiRuntimeFiles)[number];
 export type ArchitectureThemeRuntimeFilePath = (typeof architectureThemeRuntimeFiles)[number];
 export type ArchitectureAnswerShuffleRuntimeFilePath =
   (typeof architectureAnswerShuffleRuntimeFiles)[number];
 export type ArchitectureQuestionLanguageRuntimeFilePath =
   (typeof architectureQuestionLanguageRuntimeFiles)[number];
+export type ArchitectureSourceCitationRuntimeFilePath =
+  (typeof architectureSourceCitationRuntimeFiles)[number];
+export type ArchitectureSettingsRuntimeFilePath = (typeof architectureSettingsRuntimeFiles)[number];
+export type ArchitectureTabNavigationRuntimeFilePath =
+  (typeof architectureTabNavigationRuntimeFiles)[number];
+export type ArchitectureSpeechRuntimeFilePath = (typeof architectureSpeechRuntimeFiles)[number];
+export type ArchitecturePracticeFlowRuntimeFilePath =
+  (typeof architecturePracticeFlowRuntimeFiles)[number];
+export type ArchitectureMockExamRuntimeFilePath = (typeof architectureMockExamRuntimeFiles)[number];
+export type ArchitectureContentDerivationRuntimeFilePath =
+  (typeof architectureContentDerivationRuntimeFiles)[number];
 export type ArchitectureQuizFeedbackRuntimeFilePath =
   (typeof architectureQuizFeedbackRuntimeFiles)[number];
 export type ArchitectureMistakeReviewRuntimeFilePath =

@@ -21,9 +21,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sverige ligger i Norden i norra Europa. Det beskriver också Norden som en del av norra Europa, vilket gör alternativen om södra Europa, västra Asien och Nordamerika fel.',
+      'Sverige ligger i Norden i norra Europa. Alternativen om södra Europa, västra Asien och Nordamerika är fel eftersom de placerar Sverige i andra delar av världen.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that Sweden is in the Nordic region in northern Europe. It also describes the Nordic region as part of northern Europe, which makes the alternatives about southern Europe, western Asia, and North America incorrect.',
+      'Sweden is in the Nordic region in northern Europe. That makes the options about southern Europe, western Asia, and North America incorrect.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -45,9 +45,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'true',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur beskriver att den nordligaste delen av landet ligger norr om polcirkeln, i det arktiska området. Därför är påståendet sant; alternativet Falskt motsäger källan.',
+      'Påståendet är sant. Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området, så alternativet Falskt placerar området för långt söderut.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says the northernmost part of the country lies north of the Arctic Circle, in the Arctic area. Therefore the statement is true; the False option contradicts the source.',
+      "The statement is true. Sweden's northernmost part is north of the Arctic Circle, in the Arctic area, so the False option places it too far south.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -71,9 +71,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från den nordligaste punkten, Treriksröset, till den sydligaste punkten, Smygehuk. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt.',
+      'Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från den nordligaste punkten, Treriksröset, till den sydligaste punkten, Smygehuk. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that Sweden is an elongated country stretching about 1,600 kilometres from the northernmost point, Treriksröset, to the southernmost point, Smygehuk. Therefore 1,600 kilometres is correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.',
+      'Sweden is an elongated country that stretches about 1,600 kilometres from the northernmost point, Treriksröset, to the southernmost point, Smygehuk. Therefore 1,600 kilometres is correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -97,9 +97,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att havet vid Sveriges östra kust heter Östersjön. Samma avsnitt säger att Skagerrak och Kattegatt ligger vid västkusten, vilket gör de andra alternativen fel.',
+      'Havet vid Sveriges östra kust heter Östersjön. Skagerrak och Kattegatt ligger vid Sveriges västra kust, medan Nordsjön, Medelhavet och Atlanten inte är rätt svar här.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that the sea along Sweden’s eastern coast is the Baltic Sea. The same section says Skagerrak and Kattegat are on the west coast, which makes the other options incorrect.',
+      "The sea along Sweden's eastern coast is the Baltic Sea. Skagerrak and Kattegat are on Sweden's west coast, while the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not correct here.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -123,9 +123,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn nämns inte som de två största där, och Malmö och Göteborg är städer.',
+      'Sveriges två största öar är Gotland och Öland, som ligger i Östersjön vid den östra kusten. Hisingen, Orust, Värmdö och Tjörn är andra öar, medan Malmö och Göteborg är städer.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that Sweden’s two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are not named there as the two largest, and Malmö and Gothenburg are cities.',
+      "Sweden's two largest islands are Gotland and Öland, which lie in the Baltic Sea along the eastern coast. Hisingen, Orust, Värmdö, and Tjörn are other islands, while Malmö and Gothenburg are cities.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -149,9 +149,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'true',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sverige har ett milt klimat jämfört med många områden på samma breddgrad. Det förklaras med att Golfströmmen och den Nordatlantiska strömmen för varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
+      'Påståendet är sant. Sverige har ett milt klimat jämfört med många områden på samma breddgrad eftersom Golfströmmen och den Nordatlantiska strömmen för varmt vatten mot Europa och värmer luften som förs in över Sverige.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says Sweden has a mild climate compared with many areas at the same latitude. It explains this with the Gulf Stream and the North Atlantic Current carrying warm water toward Europe, warming the air that winds bring over Sweden.',
+      'The statement is true. Sweden has a mild climate compared with many areas at the same latitude because the Gulf Stream and the North Atlantic Current carry warm water toward Europe and warm the air that winds bring over Sweden.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -175,9 +175,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'UHR-avsnittet Fjäll säger att bergskedjan Skanderna ligger längs gränsen mot Norge och kallas fjällen. Där finns Sveriges högsta berg Kebnekaise, som är cirka 2 000 meter högt.',
+      'Kebnekaise är Sveriges högsta berg och ligger i fjällen, där bergskedjan Skanderna går längs gränsen mot Norge. Smygehuk, Treriksröset och Mälaren är därför inte rätt svar här.',
     explanationEn:
-      "The UHR section Mountains says the Scandinavian Mountains lie along the border with Norway and are called fjällen. Sweden's highest mountain, Kebnekaise, is there and is about 2,000 metres high.",
+      "Kebnekaise is Sweden's highest mountain and lies in fjällen, where the Scandinavian Mountains run along the border with Norway. Smygehuk, Treriksröset, and Mälaren are therefore not correct here.",
     uhrReference: { chapter: 'Landet Sverige', section: 'Fjäll', pageApprox: 6 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',

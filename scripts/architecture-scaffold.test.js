@@ -20,6 +20,8 @@ const architectureTabRouteNames = architectureTabRouteFiles.map((routeFile) =>
   path.basename(routeFile, '.tsx'),
 );
 
+const architectureProductCoverageRoots = ['app', 'components', 'lib'];
+
 const architectureTargetFiles = [
   'app/_layout.tsx',
   'app/index.tsx',
@@ -79,6 +81,10 @@ function valuesForFieldInSource(source, fieldName) {
   );
 }
 
+function fileLikeValuesInSource(source) {
+  return [...source.matchAll(/['"]([^'"]+\.(?:tsx?|js|json|png))['"]/g)].map((match) => match[1]);
+}
+
 const architectureRouteFiles = architectureTargetFiles.filter(
   (relativePath) => relativePath.startsWith('app/') && relativePath.endsWith('.tsx'),
 );
@@ -92,9 +98,71 @@ const releaseComplianceRouteFiles = [
   'app/terms.tsx',
 ];
 
+const routerShellRuntimeFiles = [
+  'app/index.tsx',
+  'app/_layout.tsx',
+  'app/+not-found.tsx',
+  'app/+html.tsx',
+  'app/+native-intent.ts',
+  'lib/scaffold/routerShellManifest.ts',
+];
+
+const scaffoldToolingFiles = [
+  'lib/scaffold/architectureManifest.ts',
+  'scripts/architecture-scaffold.test.js',
+  'tests/architecture-public-exports.test.js',
+];
+
+const appConfigRuntimeFiles = [
+  'app.json',
+  'package.json',
+  'assets/icon.png',
+  'assets/adaptive-icon.png',
+  'assets/splash-icon.png',
+  'scripts/app-assets.test.js',
+  'tests/content-app-config-schema.test.js',
+];
+
 const complianceSupportComponentFiles = [
   'components/compliance/ComplianceLinks.tsx',
   'components/compliance/LegalPage.tsx',
+];
+
+const legalRouteRuntimeFiles = [
+  'components/compliance/ComplianceLinks.tsx',
+  'components/compliance/LegalPage.tsx',
+  'lib/storage/settingsStore.ts',
+  'lib/theme/index.ts',
+  'app/disclaimer.tsx',
+  'app/privacy.tsx',
+  'app/sources.tsx',
+  'app/support.tsx',
+  'app/terms.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/onboarding.tsx',
+  'app/settings.tsx',
+];
+
+const routeCopyRuntimeFiles = [
+  'lib/localization/language.ts',
+  'lib/storage/settingsStore.ts',
+  'components/ui/ScreenShell.tsx',
+  'components/compliance/LegalPage.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/chapter/[chapterId].tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/settings.tsx',
+  'app/onboarding.tsx',
+  'app/disclaimer.tsx',
+  'app/privacy.tsx',
+  'app/sources.tsx',
+  'app/support.tsx',
+  'app/terms.tsx',
 ];
 
 const designSystemSupportComponentFiles = [
@@ -102,6 +170,17 @@ const designSystemSupportComponentFiles = [
   'components/ui/Badge.tsx',
   'components/ui/MetricCard.tsx',
   'components/ui/ScreenShell.tsx',
+];
+
+const sharedUiRuntimeFiles = [
+  'components/Surface.tsx',
+  'components/ui/Badge.tsx',
+  'components/ui/Button.tsx',
+  'components/ui/Card.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ProgressBar.tsx',
+  'components/ui/ScreenShell.tsx',
+  'lib/theme/index.ts',
 ];
 
 const themeRuntimeFiles = [
@@ -136,6 +215,83 @@ const questionLanguageRuntimeFiles = [
   'app/(tabs)/exam.tsx',
 ];
 
+const sourceCitationRuntimeFiles = [
+  'lib/quiz/questionText.ts',
+  'lib/audio/speak.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+];
+
+const settingsRuntimeFiles = [
+  'lib/localization/language.ts',
+  'lib/localization/strings.ts',
+  'lib/storage/settingsStore.ts',
+  'components/ui/Button.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ScreenShell.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/(tabs)/profile.tsx',
+  'app/onboarding.tsx',
+  'app/settings.tsx',
+];
+
+const tabNavigationRuntimeFiles = [
+  'app/(tabs)/_layout.tsx',
+  'lib/storage/settingsStore.ts',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/(tabs)/exam.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/(tabs)/profile.tsx',
+];
+
+const speechRuntimeFiles = [
+  'lib/audio/speak.ts',
+  'lib/quiz/questionText.ts',
+  'lib/storage/settingsStore.ts',
+  'components/learning/AudioButton.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+];
+
+const practiceFlowRuntimeFiles = [
+  'lib/quiz/practiceFlow.ts',
+  'lib/quiz/practiceSessionStore.ts',
+  'app/(tabs)/practice.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/chapter/[chapterId].tsx',
+  'app/quiz/[sessionId].tsx',
+];
+
+const mockExamRuntimeFiles = [
+  'data/mockExamConfig.ts',
+  'data/questions.ts',
+  'data/chapters.ts',
+  'lib/quiz/examGenerator.ts',
+  'lib/quiz/questionText.ts',
+  'lib/monetization/rewardedAd.native.ts',
+  'lib/monetization/rewardedAd.ts',
+  'lib/monetization/rewardedExam.ts',
+  'lib/monetization/useMockExamAccess.ts',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/ui/ProgressBar.tsx',
+  'app/(tabs)/exam.tsx',
+];
+
+const contentDerivationRuntimeFiles = [
+  'data/questions.ts',
+  'data/additionalQuestions.ts',
+  'lib/content/derivedQuestions.ts',
+  'scripts/derived-content.test.js',
+];
+
 const quizFeedbackRuntimeFiles = [
   'components/quiz/AnswerOption.tsx',
   'components/quiz/ExplanationPanel.tsx',
@@ -168,6 +324,7 @@ const monetizationRuntimeFiles = [
   'lib/monetization/mobileAdsConsent.ts',
   'lib/monetization/premium.ts',
   'lib/monetization/purchases.ts',
+  'lib/monetization/releasePolicy.ts',
   'lib/monetization/rewardedAd.native.ts',
   'lib/monetization/rewardedAd.ts',
   'lib/monetization/rewardedExam.ts',
@@ -250,18 +407,46 @@ test('product architecture manifest matches the target scaffold files', () => {
   const manifest = readText('lib/scaffold/architectureManifest.ts');
   const manifestFiles = valuesForFieldInSource(manifest, 'file');
   const manifestDirectories = valuesInConstArray(manifest, 'architectureScaffoldDirectories');
+  const manifestProductCoverageRoots = valuesInConstArray(
+    manifest,
+    'architectureProductCoverageRoots',
+  );
   const manifestTabRoutes = valuesInConstArray(manifest, 'architectureTabRouteFiles');
   const manifestSupplementalRoutes = valuesInConstArray(
     manifest,
     'architectureSupplementalRouteFiles',
   );
+  const manifestRouterShellRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureRouterShellRuntimeFiles',
+  );
+  const manifestScaffoldToolingFiles = valuesInConstArray(
+    manifest,
+    'architectureScaffoldToolingFiles',
+  );
+  const manifestAppConfigRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureAppConfigRuntimeFiles',
+  );
   const manifestComplianceSupportFiles = valuesInConstArray(
     manifest,
     'architectureComplianceSupportFiles',
   );
+  const manifestLegalRouteRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureLegalRouteRuntimeFiles',
+  );
+  const manifestRouteCopyRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureRouteCopyRuntimeFiles',
+  );
   const manifestDesignSystemSupportFiles = valuesInConstArray(
     manifest,
     'architectureDesignSystemSupportFiles',
+  );
+  const manifestSharedUiRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureSharedUiRuntimeFiles',
   );
   const manifestThemeRuntimeFiles = valuesInConstArray(manifest, 'architectureThemeRuntimeFiles');
   const manifestAnswerShuffleRuntimeFiles = valuesInConstArray(
@@ -271,6 +456,31 @@ test('product architecture manifest matches the target scaffold files', () => {
   const manifestQuestionLanguageRuntimeFiles = valuesInConstArray(
     manifest,
     'architectureQuestionLanguageRuntimeFiles',
+  );
+  const manifestSourceCitationRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureSourceCitationRuntimeFiles',
+  );
+  const manifestSettingsRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureSettingsRuntimeFiles',
+  );
+  const manifestTabNavigationRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureTabNavigationRuntimeFiles',
+  );
+  const manifestSpeechRuntimeFiles = valuesInConstArray(manifest, 'architectureSpeechRuntimeFiles');
+  const manifestPracticeFlowRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architecturePracticeFlowRuntimeFiles',
+  );
+  const manifestMockExamRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureMockExamRuntimeFiles',
+  );
+  const manifestContentDerivationRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureContentDerivationRuntimeFiles',
   );
   const manifestQuizFeedbackRuntimeFiles = valuesInConstArray(
     manifest,
@@ -291,17 +501,45 @@ test('product architecture manifest matches the target scaffold files', () => {
 
   assert.deepEqual(manifestFiles, architectureTargetFiles);
   assert.deepEqual(manifestDirectories, ['app', 'components', 'data', 'lib', 'types']);
+  assert.deepEqual(manifestProductCoverageRoots, architectureProductCoverageRoots);
   assert.deepEqual(manifestTabRoutes, architectureTabRouteFiles);
   assert.deepEqual(manifestSupplementalRoutes, releaseComplianceRouteFiles);
+  assert.deepEqual(manifestRouterShellRuntimeFiles, routerShellRuntimeFiles);
+  assert.deepEqual(manifestScaffoldToolingFiles, scaffoldToolingFiles);
+  assert.deepEqual(manifestAppConfigRuntimeFiles, appConfigRuntimeFiles);
   assert.deepEqual(manifestComplianceSupportFiles, complianceSupportComponentFiles);
+  assert.deepEqual(manifestLegalRouteRuntimeFiles, legalRouteRuntimeFiles);
+  assert.deepEqual(manifestRouteCopyRuntimeFiles, routeCopyRuntimeFiles);
   assert.deepEqual(manifestDesignSystemSupportFiles, designSystemSupportComponentFiles);
+  assert.deepEqual(manifestSharedUiRuntimeFiles, sharedUiRuntimeFiles);
   assert.deepEqual(manifestThemeRuntimeFiles, themeRuntimeFiles);
   assert.deepEqual(manifestAnswerShuffleRuntimeFiles, answerShuffleRuntimeFiles);
   assert.deepEqual(manifestQuestionLanguageRuntimeFiles, questionLanguageRuntimeFiles);
+  assert.deepEqual(manifestSourceCitationRuntimeFiles, sourceCitationRuntimeFiles);
+  assert.deepEqual(manifestSettingsRuntimeFiles, settingsRuntimeFiles);
+  assert.deepEqual(manifestTabNavigationRuntimeFiles, tabNavigationRuntimeFiles);
+  assert.deepEqual(manifestSpeechRuntimeFiles, speechRuntimeFiles);
+  assert.deepEqual(manifestPracticeFlowRuntimeFiles, practiceFlowRuntimeFiles);
+  assert.deepEqual(manifestMockExamRuntimeFiles, mockExamRuntimeFiles);
+  assert.deepEqual(manifestContentDerivationRuntimeFiles, contentDerivationRuntimeFiles);
   assert.deepEqual(manifestQuizFeedbackRuntimeFiles, quizFeedbackRuntimeFiles);
   assert.deepEqual(manifestMistakeReviewRuntimeFiles, mistakeReviewRuntimeFiles);
   assert.deepEqual(manifestMonetizationRuntimeFiles, monetizationRuntimeFiles);
   assert.deepEqual(manifestLearningProgressRuntimeFiles, learningProgressRuntimeFiles);
+});
+
+test('current SETUP-owned product runtime files are assigned to architecture manifest coverage', () => {
+  const manifest = readText('lib/scaffold/architectureManifest.ts');
+  const manifestCoveredFiles = new Set(fileLikeValuesInSource(manifest));
+  const currentProductFiles = architectureProductCoverageRoots
+    .flatMap((coverageRoot) => listFiles(coverageRoot))
+    .filter((relativePath) => /\.(?:tsx?|ts)$/.test(relativePath))
+    .sort();
+
+  assert.deepEqual(
+    currentProductFiles.filter((relativePath) => !manifestCoveredFiles.has(relativePath)),
+    [],
+  );
 });
 
 test('architecture design system support files exist', () => {
@@ -311,9 +549,51 @@ test('architecture design system support files exist', () => {
   );
 });
 
+test('architecture shared UI runtime files exist', () => {
+  assert.deepEqual(
+    sharedUiRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
 test('architecture compliance support files exist', () => {
   assert.deepEqual(
     complianceSupportComponentFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture legal route runtime files exist', () => {
+  assert.deepEqual(
+    legalRouteRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture route copy runtime files exist', () => {
+  assert.deepEqual(
+    routeCopyRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture router shell runtime files exist', () => {
+  assert.deepEqual(
+    routerShellRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture scaffold tooling files exist', () => {
+  assert.deepEqual(
+    scaffoldToolingFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture app config runtime files exist', () => {
+  assert.deepEqual(
+    appConfigRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
 });
@@ -335,6 +615,55 @@ test('architecture answer shuffle runtime files exist', () => {
 test('architecture question language runtime files exist', () => {
   assert.deepEqual(
     questionLanguageRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture source citation runtime files exist', () => {
+  assert.deepEqual(
+    sourceCitationRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture settings runtime files exist', () => {
+  assert.deepEqual(
+    settingsRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture tab navigation runtime files exist', () => {
+  assert.deepEqual(
+    tabNavigationRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture speech runtime files exist', () => {
+  assert.deepEqual(
+    speechRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture practice flow runtime files exist', () => {
+  assert.deepEqual(
+    practiceFlowRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture mock exam runtime files exist', () => {
+  assert.deepEqual(
+    mockExamRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture content derivation runtime files exist', () => {
+  assert.deepEqual(
+    contentDerivationRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
 });
