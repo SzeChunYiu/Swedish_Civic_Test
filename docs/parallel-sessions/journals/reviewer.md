@@ -3270,3 +3270,25 @@ Evidence: local current main is deploy-ready by static parity, live-smoke unit c
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep SITE-P0-5 blocked on production deploy freshness until a deployment from `beb6dfa` or newer passes the hash-aware live smoke.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-mock-disclaimer-a7xLKG/wt` / detached `origin/main` `1659ccf`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main resolution recheck for `REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active setup/data-integrity/validator queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `1659ccf`; the shared checkout has unrelated dirty queue files and was not reset.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` - exit 0, 3/3 passing, including active Mock question citation/disclaimer coverage.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-source-citation-parity.test.js` - exit 0, 3/3 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions, `questionDisclaimerCopyValidated:true`, and static-site parity true.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- Served current `site/` with `python3 -m http.server 8293 --bind 127.0.0.1 --directory site`.
+- First browser smoke used a too-specific q001 question assertion and exited 1 despite finding source and disclaimer; rerun with active-Mock state assertions exited 0.
+- System-Chrome smoke at `#/mock?run=1` found active Mock stage visible, question/options present, source citation `Source: Sverige i fokus, Sverige och omvärlden, Nordiskt samarbete, p. 39`, disclaimer `Independent study practice, not a real exam or an official UHR question.`, and console/page errors `[]`.
+Workspace contract: pass - no product source edited; queued only reviewer resolution evidence.
+Findings queued: `REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1 resolution recheck [2026-05-18 20:48 CEST]`.
+Evidence: current main closes the active Mock question-screen disclaimer residual; this does not close production deploy freshness or generated true/false prefix wording.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: close the active-Mock disclaimer residual after inspecting SETUP source/PR evidence plus this reviewer recheck.
