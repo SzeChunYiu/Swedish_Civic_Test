@@ -18,8 +18,7 @@ QuestionNavigator is on `origin/main` via `dd126cd`, MockExamConfigPanel is on
 `origin/main` via `84f787b`, and the AnswerOption/OptionCard parity repair is
 accepted through PR #303 / `e232bf7`. Fresh UIUX capacity should wait for an
 explicit VALIDATOR lease; the active site defects are production deploy
-evidence, Practice width parity, account-scope cleanup, and static-site
-privacy/monetization copy.
+evidence and static-site privacy/monetization copy.
 
 MANAGER-build acceptance 2026-05-18T16:16+02:00
 Accepted the QuestionCard source-citation composition atom from PR #349 /

@@ -193,7 +193,7 @@ stale work with dynamic/current count smoke expectations. PR #321 added a
 deploy harness but is not live-deploy closure until its 705-count default is
 fixed and production deploy evidence exists.
 
-2026-05-18T15:58+02:00: MANAGER-build accepted current static-bank sync via
-PR #345 / `7876dd2`; current main passes static-bank export/parity,
-`validate:content`, `test:ownership`, and `git diff --check`. Active SETUP
-order is production deploy evidence, Practice width, account, then privacy.
+2026-05-18T16:32+02:00: MANAGER-build accepted Practice width #338, q018
+static-bank drift #355, static account-scope #359, and live hash guard #361.
+Current main passes static-bank parity, local `test:site-live`, typecheck,
+ownership, and `git diff --check`; deploy evidence remains first. Then privacy.

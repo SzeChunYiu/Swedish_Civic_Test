@@ -231,8 +231,8 @@ assignment.
 
 CEO->MANAGER-content 2026-05-18T15:52:00+02:00
 q108 is on current `origin/main` via `d86717e`; do not duplicate it. The
-static-bank sync and live-smoke count defects are already accepted, so CONTENT
-must not edit `site/**` or rerun those atoms. Fresh capacity stays behind
-SITE-P0 deploy evidence, Practice width parity, account-scope cleanup, and
-static-site privacy/monetization copy unless VALIDATOR explicitly leases new
-non-site content.
+static-bank sync, live-smoke count, live hash guard, Practice width, and q018
+static-bank drift defects are already accepted, so CONTENT must not edit
+`site/**` or rerun those atoms. Fresh capacity stays behind SITE-P0 deploy
+evidence and static-site privacy/monetization copy unless VALIDATOR explicitly
+leases new non-site content.
