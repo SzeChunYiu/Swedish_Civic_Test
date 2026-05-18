@@ -1,0 +1,28 @@
+# LANE: fsrs-review
+# Blueprint: swedish_citizenship_app_project_plan/14_fsrs_review.md
+# Owner: MANAGER-build
+# Status: queued (operator session is implementing the algorithm core in lib/learning/spacedRepetition.ts in parallel)
+
+## Iteration 1 — review store (build on the algorithm operator ships)
+- [ ] Wait for operator's commit landing FSRS-lite in `lib/learning/spacedRepetition.ts`. Verify via `grep "interface ReviewCard" lib/learning/spacedRepetition.ts`.
+- [ ] Create `lib/storage/reviewStore.ts` with AsyncStorage backend, key `learning.reviews.cards.v1`, schema-versioned.
+- [ ] Expose: `getCard(qid)`, `upsertCard(card)`, `gradeCard(qid, grade)`, `getDueCards(now, limit?)`, `getDailyDueCount(now)`.
+- [ ] Daily cap: Free = 3, Pro = unlimited (read from entitlements).
+- [ ] Unit tests with frozen-clock fixtures.
+Commit: "fsrs: review store with AsyncStorage backend [fsrs:i1]".
+
+## Iteration 2 — /review route + rating UI
+- [ ] Add `app/review.tsx` (NOT a tab — accessible from home banner).
+- [ ] Card-by-card view: question, four rating buttons (Again / Hard / Good / Easy) with keyboard + a11y.
+- [ ] Gate: Free users limited to 3/day; show <ProPaywall /> when cap hit.
+- [ ] Empty state: "No cards due — come back tomorrow."
+
+## Iteration 3 — surfaces
+- [ ] Home banner: "N reviews due today" → /review. Hidden when 0.
+- [ ] End-of-practice nudge.
+- [ ] Profile stats (cards mastered, review streak).
+
+## Definition of done
+- All 7 acceptance commands in 14_fsrs_review.md pass.
+- Reviewer cram-night + absent-user personas pass.
+- change_log entry.

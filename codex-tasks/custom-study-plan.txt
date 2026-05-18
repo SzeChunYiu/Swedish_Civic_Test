@@ -1,0 +1,28 @@
+# LANE: custom-study-plan
+# Blueprint: swedish_citizenship_app_project_plan/18_custom_study_plan.md
+# Owner: MANAGER-build
+# Status: queued (depends on pro-tier IAP landing)
+
+## Iteration 1 — planner core
+- [ ] Extend lib/learning/examDate.ts with StudyPlan interface + generateStudyPlan(now, examDate, masteryState, intensity).
+- [ ] Unit tests with frozen clock for: 27-days-out, 3-days-out, missed-5-days, no-plan-Free-user.
+- [ ] Pure function — no side effects, no storage writes.
+
+## Iteration 2 — onboarding date picker
+- [ ] Add optional "When is your test?" step to app/onboarding.tsx.
+- [ ] "I haven't booked it yet" skip path.
+- [ ] Persist examDate in settingsStore.
+
+## Iteration 3 — home hero + countdown card
+- [ ] Free: countdown card with soft Pro upsell.
+- [ ] Pro: full plan hero (today's questions/mocks, ring progress).
+- [ ] Tap → opens plan detail screen with weekly breakdown.
+
+## Iteration 4 — settings
+- [ ] Edit/clear test date in app/settings.tsx.
+- [ ] "Regenerate plan" button.
+
+## Definition of done
+- All blueprint acceptance commands pass.
+- Reviewer panicking-2-weeks-out persona sees humane target.
+- change_log entry.

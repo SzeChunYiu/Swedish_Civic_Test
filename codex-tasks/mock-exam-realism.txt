@@ -1,0 +1,29 @@
+# LANE: mock-exam-realism
+# Blueprint: swedish_citizenship_app_project_plan/20_mock_exam_realism.md
+# Owner: MANAGER-build + MANAGER-uiux
+# Status: queued (Free feature — no Pro dep; can start as soon as v1.0 ships)
+# Coordinate with: existing competitive-teardown.md P0/P1 mock-exam recs (#2, #3, #13) — those may be in flight in another lane
+
+## Iteration 1 — 20a focus pause + result schema
+- [ ] Extend types/progress.ts: focusBreaks: number, perQuestionMs: number[], flaggedQuestionIds: string[].
+- [ ] AppState listener in app/(tabs)/exam.tsx; pause timer on background.
+- [ ] Modal on resume with i18n copy.
+- [ ] Realistic-mode setting (no pause, count switches).
+
+## Iteration 2 — 20b color-shift timer
+- [ ] components/MockExamStatusBar.tsx color logic; reduced-motion compliant.
+- [ ] A11y label updates with time-bracket changes.
+
+## Iteration 3 — 20c flag for review
+- [ ] Flag toggle on each question with 📌 icon.
+- [ ] Pre-submit drawer listing flagged questions.
+
+## Iteration 4 — 20d time-per-question heatmap
+- [ ] Capture per-question elapsed ms.
+- [ ] Heatmap strip in components/ResultSummary.tsx with tap-to-jump.
+
+## Definition of done
+- All blueprint acceptance commands pass.
+- Reviewer realistic-test-day + cheater-attempter personas pass.
+- GOAL.md invariant preserved: NO ads on exam screen.
+- change_log entry.

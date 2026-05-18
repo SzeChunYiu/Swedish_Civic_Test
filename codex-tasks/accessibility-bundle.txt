@@ -1,0 +1,30 @@
+# LANE: accessibility-bundle
+# Blueprint: swedish_citizenship_app_project_plan/21_accessibility_bundle.md
+# Owner: MANAGER-uiux + MANAGER-build
+# Status: queued (Free for everyone — never Pro-gated; can start as soon as v1.0 ships)
+
+## Iteration 1 — 21a easy-read font (Atkinson Hyperlegible)
+- [ ] Add font asset via expo-font. License file in publishing/.
+- [ ] easyReadFont boolean in settingsStore.
+- [ ] Theme resolver swaps family at app shell.
+- [ ] Settings toggle with Sv ("Lättläst typsnitt") + En ("Easy-read font").
+- [ ] Reviewer dyslexic-L2 persona signs off on contrast + reflow.
+
+## Iteration 2 — 21b text-size stepper
+- [ ] fontSizeStep: 0..3 in settingsStore.
+- [ ] App-level accessibilityFontScale token.
+- [ ] Test largest-size CTAs don't truncate.
+
+## Iteration 3 — 21c slow-down audio
+- [ ] audioPlaybackRate setting (0.5 / 0.75 / 1.0 / 1.25).
+- [ ] lib/audio/speak.ts passes rate to expo-speech.
+- [ ] Per-question quick toggle via long-press on speaker icon.
+- [ ] Engine-rate clamp on Android.
+
+## Iteration 4 — guardrail tests
+- [ ] tests/a11y/no-pro-gate-on-accessibility.test.js asserts NO entitlement gate on any 21a/21b/21c feature.
+
+## Definition of done
+- All blueprint acceptance commands pass (including the NO-Pro-gate invariant).
+- Reviewer dyslexic + presbyopic + hard-of-hearing personas sign off.
+- change_log entry.
