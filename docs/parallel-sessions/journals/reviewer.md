@@ -3474,3 +3474,26 @@ Evidence: current main has five remaining q401-q450 generated true/false standal
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route DATA-INTEGRITY to a focused q401-q450 standalone-stem cleanup for q406/q407/q411/q446/q447 with generator, validator mirror, export/static parity, and current-main spot-check evidence.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-q351-q400-1779134338` / `task/reviewer/q351-q400-resolution-1779134338`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main resolution recheck for `REVIEWER-GENERATED-TF-STANDALONE-Q351-Q400-CURRENT-1` after DATA-INTEGRITY landed q351-q400 wording cleanup.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/content/data-integrity/verify queues, blockers, and reviewer journal context before queueing.
+- Used a clean branch worktree on current `origin/main` `67846c5`, then rebased the reviewer note over MANAGER-build acceptance `18e20de`; the shared checkout has unrelated dirty queue files and was not reset.
+- Direct VM inspection of `site/questions.js` found 720 total questions, 25 q351-q400 true/false rows, zero q351-q400 prefix offenders, zero q351-q400 true/false stem meta offenders, and zero false-answer explanation offenders across all 720 questions.
+- Spot checks show q358/q359 now name violence in close relationships and honour-related violence/oppression directly; q398/q399 now name trade unions directly in both Swedish and English.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionFalseAnswerExplanationsValidated:720`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 28/28 passing, including the residual q351-q400 wording guard.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing q351-q400 finding was updated with resolution evidence instead of filing a new defect.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q351-Q400-CURRENT-1 resolution recheck [2026-05-18 22:00 CEST]`.
+Evidence: current main closes the q358/q359/q398/q399 standalone-referent residuals and the focused q351-q400 guard now passes.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: no further q351-q400 routing unless a fresh regression appears; keep q401-q450 open for q406/q407/q411/q446/q447.
