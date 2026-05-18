@@ -377,3 +377,32 @@ Keep `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` behind that route unless
 VALIDATOR deliberately bundles it into the same safe generator/static-mirror
 lease. Do not accept or merge unknown-material-only work while the true/false
 residual route remains open.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:46:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q551-Q600-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `8e15381` confirms q551-q600 generated residual defects against
+the official UHR `Sverige i fokus` PDF. The underlying source questions and
+cited sections are supported, but canonical CSV and `site/questions.js` still
+publish learner-visible generated true/false fragments in `q551`, `q554`,
+`q555`, `q558`, `q559`, `q562`, `q563`, `q566`, `q567`, `q570`, `q571`,
+`q574`, `q575`, `q586`, `q587`, `q590`, `q591`, `q594`, `q595`, `q598`, and
+`q599`. Fold `docs/verify/q551-q600-2026-05-18.md` and the ledger row statuses
+into `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards, regenerated
+CSV/static output, export/static parity, `validate:content`, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
+row recheck.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:46:00+02:00
+`VERIFY-GENERATED-UNKNOWN-OPTION-Q551-Q600-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: the same q551-q600 VERIFY pass
+also confirms generated single-choice variants `q552`, `q556`, `q560`, `q564`,
+`q568`, `q572`, `q576`, `q580`, `q584`, `q588`, `q592`, `q596`, and `q600`
+include `Det går inte att avgöra av materialet` / `It cannot be determined from
+the material` in `content/question-bank.csv` and `site/questions.js`. Fold this
+evidence into `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`; acceptance still
+requires generator/validator/static-mirror repair, focused negative guards for
+`materialet` / `from the material`, regenerated CSV/static output,
+export/static parity, `validate:content`, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks.
