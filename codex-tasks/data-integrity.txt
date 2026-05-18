@@ -607,3 +607,25 @@ and `site/questions.js` if outputs change, export/static parity,
 Prettier/diff checks, PR/merge evidence, and current-main recheck of the eight
 named rows. This can be bundled with `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`
 if VALIDATOR keeps a single generated true/false cleanup atom.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T20:42:00+02:00
+`VERIFY-GENERATED-TF-POST600-CURRENT-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY recheck on
+current `origin/main` `476afdb` confirms PR #600 cleared the positive
+generated true/false meta-stem question defects for `q150`, `q166`, and
+`q714`, but those rows still carry the already routed redundant
+`Sant eller falskt:` / `True or false:` prefix surface. The same recheck
+confirms current CSV/static output still has false-statement answer/explanation
+or negative-meta defects in `q151`, `q167`, `q235`, `q255`, `q266`, `q331`,
+`q339`, `q439`, `q507`, `q519`, and `q715`, plus residual naturalness defects
+in `q666`, `q667`, and `q699`. Facts, citations, answer keys, and ordinary
+distractors remain supported by UHR `Sverige i fokus`; defects are generated
+presentation quality. Fold `docs/verify/generated-tf-post600-2026-05-18.md`
+and the ledger statuses into the active generated true/false
+generator/validator/static-mirror follow-up. Acceptance still requires
+regenerated `content/question-bank.csv` and `site/questions.js`, validator
+mirror coverage, focused negative tests for the SV/EN prefix, false-explanation
+/ negative-meta, and q666/q667/q699 grammar cases, export/static parity,
+`validate:content`, `test:derived-content`, typecheck, lint, ownership,
+Prettier/diff checks, PR/merge evidence, and direct current-main scans for the
+rows listed above.
