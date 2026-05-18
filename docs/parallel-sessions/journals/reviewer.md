@@ -3336,6 +3336,30 @@ Accepted by worker? yes
 Next suggested validator action: route one SETUP/site copy atom to make Terms/Sources match current UHR provenance and add a guard that compares public source-page claims to `site/questions.js` source titles.
 
 Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-pane1` / `task/reviewer/pane1-1779136119`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated true/false standalone/naturalness recheck for q601-q650.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/data-integrity/verify queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `9d40c89`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Duplicate/current-state scan found older q601-q650 VERIFY residual evidence from `f38907d`, but current `origin/main` has changed after generated true/false and unknown-option repairs, so this pass narrowed current evidence instead of re-filing stale rows.
+- Direct VM inspection of `site/questions.js` found 50 q601-q650 rows, 25 true/false rows, zero true/false prefix offenders, zero true/false stem meta offenders, zero generated unknown-material fallback options, and current naturalness/standalone offenders `q606`, `q607`, `q622`, `q626`, `q627`, `q638`, and `q639`.
+- `q606` has ungrammatical parallel structure in both languages; `q607` uses unnatural `protects that` / `skyddar att` wording; `q622` uses context-dependent `the country` / `landet`; `q626`/`q627` omit the "traditions/directions" referent; `q638`/`q639` use context-dependent `The event from 1523` / `Händelsen från 1523`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with validators green despite the seven rows.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 30/30 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q601-Q650-CURRENT-1`.
+Evidence: current main has seven remaining q601-q650 generated true/false standalone/naturalness defects while the existing validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep q601-q650 behind q451-q500, q501-q550, and q551-q600 source routing unless VALIDATOR reorders, then route DATA-INTEGRITY to q606/q607/q622/q626/q627/q638/q639 cleanup with generator, validator mirror, export/static parity, and current-main spot-check evidence.
+
+Lane: REVIEWER
 Host/branch: `/tmp/sct-reviewer-main-zJmY6p/wt` / `task/reviewer/static-ebook-ch13-1779131390`
 Role type and manager: fixed-quality / MANAGER
 Task / checklist item: Current-main static Ebook chapter-13 coverage pass.
