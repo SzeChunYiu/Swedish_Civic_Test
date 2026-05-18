@@ -285,6 +285,16 @@ function lowerEnglishNounPhrase(value: string): string {
   return lowerFirst(phrase);
 }
 
+function swedishTraditionalCelebrationAnswer(answer: string): string {
+  if (/^Jesu födelse\b/.test(answer)) return answer;
+  return lowerFirst(answer);
+}
+
+function englishTraditionalCelebrationAnswer(answer: string): string {
+  if (/^Jesus' birth\b/.test(answer)) return answer;
+  return lowerFirst(answer);
+}
+
 function swedishMentionedExample(answer: string, category: string): string {
   const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
   if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
@@ -1150,7 +1160,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vad firar (.+?) traditionellt inom (.+)$/i);
   if (match)
-    return `${upperFirst(match[1])} firar traditionellt ${lowerFirst(answer)} inom ${match[2]}`;
+    return `${upperFirst(match[1])} firar traditionellt ${swedishTraditionalCelebrationAnswer(
+      answer,
+    )} inom ${match[2]}`;
 
   match = q.match(/^Vad brukar man bjuda på (.+?) i samband med (.+)$/i);
   if (match) return `${upperFirst(match[1])} brukar man bjuda på ${lowerFirst(answer)}`;
@@ -1583,7 +1595,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What does (.+?) traditionally celebrate in (.+)$/i);
   if (match)
-    return `${upperFirst(match[1])} traditionally celebrates ${lowerFirst(answer)} in ${match[2]}`;
+    return `${upperFirst(match[1])} traditionally celebrates ${englishTraditionalCelebrationAnswer(
+      answer,
+    )} in ${match[2]}`;
 
   match = q.match(/^What is commonly served on (.+?) in connection with (.+)$/i);
   if (match) return `On ${match[1]}, people commonly serve ${lowerFirst(answer)}`;

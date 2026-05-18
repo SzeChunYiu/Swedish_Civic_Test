@@ -30489,8 +30489,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Christmas traditionally celebrates jesus' birth in Christianity.",
-      "sv": "Julen firar traditionellt jesu födelse inom kristendomen."
+      "en": "Christmas traditionally celebrates Jesus' birth in Christianity.",
+      "sv": "Julen firar traditionellt Jesu födelse inom kristendomen."
     },
     "opts": [
       {

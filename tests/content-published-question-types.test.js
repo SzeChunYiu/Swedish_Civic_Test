@@ -1003,6 +1003,49 @@ require('./scripts/validate-content.js');
   }
 });
 
+test('published question schema rejects residual q651-q700 proper-noun lowercasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "const q651Residuals = {",
+        "  q698: { questionSv: 'Julen firar traditionellt jesu födelse inom kristendomen.', questionEn: \\"Christmas traditionally celebrates jesus' birth in Christianity.\\" },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  q651Residuals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...q651Residuals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q698 contains a generated true\/false grammar-splice stem/);
+});
+
 test('published question schema rejects source-material generated option fallbacks', () => {
   const result = spawnSync(
     process.execPath,
