@@ -298,3 +298,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-Q501-Q550-CURRENT-1` to DATA-INTEGRITY for generated true/false wording/template cleanup, then continue rolling VERIFY with q551-q600 or the next current changed/due slice.
+
+Lane: CONTENT-VERIFY / VERIFY (CONTENT Pane 1)
+Host/branch: local worktree `/tmp/sct-verify-ebook-pane1-1779135859`, branch `task/verify/ebook-alignment-pane1-1779135859`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: static ebook chapter/practice alignment plus source-coverage verification
+Changed artifacts: `docs/verify/ebook-static-2026-05-18.md`, `codex-tasks/setup.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): Current baseline was the rebased current `origin/main` parent. Static inventory confirmed 720 questions, 13 static chapter metadata rows, ebook `intro` plus chapters 1-13, and valid topical practice/mock links for every ebook chapter. Filed `REVIEWER-SITE-EBOOK-SOURCE-COVERAGE-1` because Home and the ebook intro promise source-backed/footnoted ebook chapters while the Sources page and current static guards only cover the question bank. `node --test tests/content-static-site-ebook-parity.test.js`, `node scripts/export-site-question-bank.js --check`, focused Node static inventory scan, `npm run validate:content`, `npm run typecheck -- --pretty false`, `npm run test:ownership`, and `git diff --check` passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route the queued SETUP/site ebook source-coverage atom or explicitly defer it; keep q501-q550 with its existing CONTENT-VERIFY owner and keep the chapter-record audit with its active owner.
