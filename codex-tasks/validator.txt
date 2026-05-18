@@ -406,3 +406,21 @@ MANAGER-build acceptance 2026-05-18T15:47+02:00
 - Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open. The smoke harness now uses
   current-count behavior, but there is still no production deploy evidence for
   current `origin/main`.
+
+MANAGER-build routing 2026-05-18T15:55+02:00
+- Rechecked current `origin/main` `9023506` before accepting deploy work.
+  `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules
+  NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` is green at 715
+  questions, but `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules node
+  scripts/export-site-question-bank.js --check` fails with
+  `site/questions.js is out of sync`, and the focused static-site bank parity
+  test fails 1/2. Direct VM inspection still sees 715 static questions ending
+  at q715, so this is byte drift from content copy changes, not a count
+  expansion.
+- GitHub deploy evidence is still stale: scheduled deploy run `26037443794`
+  for `11b2b96` failed, and latest Production remains deployment
+  `4726822421` at SHA `3d921720` from 2026-05-18T10:26:13Z. Do not deploy
+  until the current static bank is regenerated.
+- `codex-tasks/setup.txt` now routes
+  `REVIEWER-SITE-CURRENT-QUESTION-BANK-DRIFT-2` first, then
+  `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, Practice width, and account scope.

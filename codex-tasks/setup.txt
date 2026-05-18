@@ -1,4 +1,4 @@
-MANAGER-build queue - 2026-05-18T15:47+02:00
+MANAGER-build queue - 2026-05-18T15:55+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
 items, SETUP should take only atoms that close validator/reviewer defects with
@@ -93,7 +93,28 @@ PR #328 / `11b2b96` closed the live-smoke count default. The active order is
 now: production deploy evidence first, Practice width parity second,
 account-scope third.
 
-1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
+MANAGER-build routing 2026-05-18T15:55+02:00:
+Current `origin/main` `9023506` is red again for static-site bank parity after
+content copy changes: `validate:content` is green at 715 questions, but
+`node scripts/export-site-question-bank.js --check` and
+`tests/content-static-site-question-bank-parity.test.js` fail because
+`site/questions.js` is byte-stale. Do not deploy this static site. The active
+order is now: current static-bank drift first, production deploy evidence
+second, Practice width parity third, account-scope fourth.
+
+1. `REVIEWER-SITE-CURRENT-QUESTION-BANK-DRIFT-2`
+   - Scope: `site/questions.js` and the existing static-bank export/parity
+     verifier.
+   - Required behavior: regenerate `site/questions.js` from current canonical
+     content on latest `origin/main`; keep count expectations derived from the
+     generated bank, not hard-coded. This drift is content-copy byte drift at
+     the current 715-question count, not a new count expansion.
+   - Required gates: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules
+     node scripts/export-site-question-bank.js --check`, focused static-site
+     question-bank parity test, `npm run validate:content`, `node --check
+     site/questions.js`, `npm run test:ownership`, and `git diff --check`.
+
+2. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
    - Required behavior: production must serve current `origin/main` `site/`,
@@ -108,7 +129,7 @@ account-scope third.
      is not accepted as live-deploy closure because there is no production
      deploy evidence for current `origin/main` yet.
 
-2. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
+3. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
    - Scope: `site/index.html`, `site/styles.css`, and focused site layout
      assertion.
    - Required behavior: port the draft wide Practice hub shell so desktop
@@ -119,7 +140,7 @@ account-scope third.
      `#/practice` and `#/mock`, `npm run test:ownership`, and
      `git diff --check`.
 
-3. `REVIEWER-ACCOUNT-SCOPE-1`
+4. `REVIEWER-ACCOUNT-SCOPE-1`
    - Scope: SETUP/build product shell, route manifests, dependencies, static
      `site/` account prompts, and scaffold/router-shell tests.
    - Required behavior: the MVP has no reachable account/authentication
@@ -135,7 +156,7 @@ account-scope third.
 
 Existing P0 SETUP atoms behind the live-site P0 queue:
 
-4. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+5. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -145,7 +166,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-5. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+6. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -155,7 +176,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-6. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+7. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or

@@ -8,7 +8,7 @@ below are active and outrank new non-site content routing.
 
 STAFFING / RATE-LIMIT NOTES (do not stop unblocked active panes):
 /goal [BID=B-CONTENT-RL-20260518] [type=infra][resolved] [owner=MANAGER-content] Superseded 2026-05-18T13:39:36+02:00: q016 landed via PR #225 / `31d9828`, q017 landed via PR #222 / `fc19b58`, and duplicate q016 draft PR #230 was closed unmerged. Do not treat q016 as unstaffed. Fresh capacity should go to VALIDATOR for SITE-P0 lease/staffing before new non-site content.
-/goal [BID=B-SETUP-RL-20260518T1525] [type=infra][active] [owner=SETUP] PANE 2 hit the Codex usage cap before editing or handing off `REVIEWER-ACCOUNT-SCOPE-1`; `/tmp/sct-setup-account-scope` had no source diff when MANAGER-build redirected it. Do not treat account-scope as in progress or accepted. The next build-capable SETUP respawn must fetch current `origin/main` and take `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` first, then `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, then `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`, with account-scope fourth unless VALIDATOR changes the queue. The static-bank repair must regenerate from the current canonical count at execution time.
+/goal [BID=B-SETUP-RL-20260518T1525] [type=infra][active] [owner=SETUP] PANE 2 hit the Codex usage cap before editing or handing off `REVIEWER-ACCOUNT-SCOPE-1`; `/tmp/sct-setup-account-scope` had no source diff when MANAGER-build redirected it. Do not treat account-scope as in progress or accepted. The next build-capable SETUP respawn must fetch current `origin/main` and take `REVIEWER-SITE-CURRENT-QUESTION-BANK-DRIFT-2` first, then `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, then `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`, with account-scope fourth unless VALIDATOR changes the queue. The static-bank repair must regenerate from current canonical content at execution time.
 
 RESOLVED 2026-05-18T15:15+02:00:
 The `ANSWER-OPTION-OPTIONCARD-PARITY-1` stop-line gate is green on current
@@ -52,5 +52,6 @@ STANDING POLICY (operator, hard — read every cycle):
 # PR #279 / 9def23a plus handoff PR #280 / 41a6bcb. SITE-P0-5 reviewer audit
 # is complete via PR #296 / 82291b1 and queued the concrete defects below.
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1: production deploy is stale; PR #321 added the harness and PR #328 fixed current-count smoke behavior, but closure still needs production deploy evidence from current `origin/main`
+REVIEWER-SITE-CURRENT-QUESTION-BANK-DRIFT-2: current `origin/main` `9023506` has `site/questions.js` out of sync with canonical content despite both being at 715 questions; regenerate the static bank before any deploy attempt
 REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1: port the wide Practice hub layout from the draft and guard the desktop width
 REVIEWER-ACCOUNT-SCOPE-1: static `site/` still needs no-account MVP cleanup for Sign in/OAuth/magic-link and local Ebook notes/highlights

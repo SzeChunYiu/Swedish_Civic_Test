@@ -192,3 +192,8 @@ the static bank from current canonical content first, then resume live-deploy
 stale work with dynamic/current count smoke expectations. PR #321 added a
 deploy harness but is not live-deploy closure until its 705-count default is
 fixed and production deploy evidence exists.
+
+2026-05-18T15:55+02:00: MANAGER-build rerouted SITE P0 after `origin/main`
+`9023506` audit: `validate:content` is green at 715 questions, but static-bank
+export/parity fails because `site/questions.js` is byte-stale. Regenerate the
+static bank before deploy; then resume production evidence, width, account.
