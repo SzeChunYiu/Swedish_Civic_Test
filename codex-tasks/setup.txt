@@ -218,6 +218,13 @@ Next unblocked P0 SETUP source atoms while live deploy is externally blocked:
      `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/build-config.test.js --test-name-pattern 'EAS build and submit profiles are configured|production submit guard blocks placeholder Apple identifiers'`,
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
+   - Manager QA note, 2026-05-18T17:10+02:00: local SETUP branch
+     `task/setup/submit-guard-1779116704` is not accepted yet because no PR is
+     open and the uncommitted diff includes an unlisted `eas.json` change with
+     fake submit identifiers. Acceptance requires a PR/merge and either removing
+     `eas.json` from this atom or explicitly listing and justifying the
+     release-config change with the focused build-config gates, full
+     `test:build-config`, typecheck, ownership, Prettier, and whitespace checks.
 
 3. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
