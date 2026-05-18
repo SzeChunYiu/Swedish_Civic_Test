@@ -2770,6 +2770,6 @@ Verification (commands + result):
 - `git diff --name-only 11e60ac..ae25584` - only `docs/parallel-sessions/journals/setup.md`, so that rebase did not add new site/content/live-check changes.
 - `git diff --name-only ae25584..origin/main` - only queue/journal files, so the latest rebase also did not add new site/content/live-check changes.
 - `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; count and route assets pass, but static question-bank content fails with expected hash prefix `3c425f0ad2c7` and live hash prefix `5d2710bebf7e`.
-PR (number + merged?): pending at handoff commit time
+PR (number + merged?): #393 / merged yes via `a98331f`
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker until production serves current `origin/main` and the hash-aware live check passes.
