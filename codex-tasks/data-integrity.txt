@@ -461,3 +461,22 @@ generator/validator/static-mirror repair, focused negative guards for
 `materialet` / `from the material`, regenerated CSV/static output,
 export/static parity, `validate:content`, typecheck, ownership,
 Prettier/diff checks, PR/merge evidence, and current-main spot checks.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T20:15:00+02:00
+`VERIFY-GENERATED-TF-META-Q101-Q150-POST570-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY follow-up on
+current `origin/main` `16dbe4d` found that the post-#570 generated true/false
+cleanup changed q150 but still leaves learner-visible meta wording. Facts,
+citations, answer keys, and ordinary distractors remain supported by UHR
+`Sverige i fokus`, `Landet Sverige` / `Geografi, klimat och natur`, printed
+page 5, but q150 now publishes `Sant eller falskt: Påståendet är sant:
+Sveriges nordligaste del ligger norr om polcirkeln.` / `True or false: The
+statement is true: Sweden's northernmost part lies north of the Arctic Circle.`
+This should be a direct proposition (`Sveriges nordligaste del...`) rather than
+a statement-about-a-statement. Own this as a generated-template, validator
+mirror, canonical/static export follow-up; acceptance requires focused negative
+guards for `Påståendet är sant:` / `The statement is true:` in generated
+true/false stems, regenerated `content/question-bank.csv` and
+`site/questions.js`, export/static parity, `validate:content`, focused content
+gates, typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a
+current-main recheck of q150 plus the other post-#570 changed true/false rows.
