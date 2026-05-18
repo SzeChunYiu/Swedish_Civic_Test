@@ -11,6 +11,29 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-19T01:15:00+02:00 current-route correction:
+- Current `origin/main` is `5861846` after the scheduled-deploy route note,
+  v1.1 blueprint queue/docs expansion, and DATA-INTEGRITY current-route audit.
+  These later commits do not change content source, generated static banks, or
+  VERIFY reports. DATA-INTEGRITY's current-route audit confirms no fresh
+  generated-output source route is visible after the q270/q271 and generated
+  true/false explanation cleanups.
+- `verify:data/questions.ts q351-q400` remains the next CONTENT-VERIFY
+  report-only slice if capacity is assigned, but it must start from clean
+  current main `5861846` or later. Do not publish q351-q400 evidence based on
+  `84f8ab3`, `8782487`, `e33d142`, or pre-#823 branches unless it has been
+  rebased/refreshed on current main.
+- No local CONTENT-VERIFY worktree is active at this checkout. Stale remote
+  q351/content-verify branches are branch leftovers, not live current evidence;
+  do not revive old q251/q301 generated residual lists.
+- Keep q351-q400 report-and-queue only: verify UHR citations, facts, answer
+  keys, distractors, naturalness, explanations, and current canonical/static
+  output; update VERIFY reports/ledger/queues/journals only; rerun export
+  parity, `validate:content`, `test:derived-content`, typecheck, ownership, and
+  `git diff --check` before PR/merge. Keep VERIFY out of `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, and validator
+  mirrors.
+
 MANAGER-content 2026-05-19T01:08:00+02:00 current-route correction:
 - Current `origin/main` is `e33d142` after PR #823 merged the pre-amend 01:04
   route text. This correction supersedes that stale base note: q351-q400
