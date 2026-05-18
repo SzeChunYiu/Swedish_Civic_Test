@@ -221,6 +221,16 @@ reports/2026-05-15-uiux-screenshots/manifest.json` fails on
 the report manifest is formatted in the PR branch and the focused visual-smoke
 gates are rerun.
 
+MANAGER-build QA 2026-05-18T17:29+02:00:
+PR #425 was squash-merged as `eb3b3ac`, but this is still not accepted. Clean
+current-main verification on `124643b` passes `npm run
+test:screenshot-manifest` 2/2, `npm run typecheck -- --pretty false`, `npm run
+lint`, `npm run test:ownership`, and `git diff --check HEAD~4..HEAD`, but the
+same targeted Prettier command still fails on
+`reports/2026-05-15-uiux-screenshots/manifest.json`. SETUP must land a
+follow-up PR that formats the committed visual-smoke manifest and reruns the
+focused visual-smoke gates before this atom can move to accepted.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
@@ -256,9 +266,9 @@ Next unblocked P0 SETUP source atoms while live deploy is externally blocked:
      test-disabled before screenshots; duplicate screenshot hashes and visible
      launch overlays are rejected or explicitly explained. Keep exam no-ad
      behavior covered separately.
-   - Current caveat: PR #425 is not acceptable until the screenshot manifest
-     passes the targeted Prettier check recorded in the 2026-05-18T17:26+02:00
-     manager QA note.
+   - Current caveat: PR #425 has merged but is not accepted. The screenshot
+     manifest still fails targeted Prettier on current main; land a follow-up
+     formatting PR and rerun the focused visual-smoke gates before acceptance.
    - Required gates: official
      `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1`
      or the nearest visual-smoke gate, plus assertions/evidence for duplicate
