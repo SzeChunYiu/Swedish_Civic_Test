@@ -798,6 +798,27 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
 
+test('home remove-ads pricing copy uses the canonical purchase price label', () => {
+  const { REMOVE_ADS_PRICE_LABEL } = loadTs('lib/monetization/purchases.ts');
+  const pricingWedgeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
+    'utf8',
+  );
+  const paywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+    'utf8',
+  );
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+
+  assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
+  assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
+  assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
+  assert.doesNotMatch(pricingWedgeSource, /29 kr/);
+  assert.doesNotMatch(paywallSource, /29 kr/);
+});
+
 test('ad placements hydrate persisted remove-ads entitlements by default', () => {
   const webBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
