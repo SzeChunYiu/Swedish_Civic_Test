@@ -1,5 +1,31 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T21:57+02:00
+
+Current `origin/main` is `f249e7bf`. q401-q450 VERIFY is landed via PR #677 /
+`3582841`, DATA-INTEGRITY q351-q400 cleanup is landed via `67846c5` and
+accepted by MANAGER-build via `18e20dea`, and duplicate PR #678 / branch
+`task/verify/q401-q450-pane1-recover-1779133742` is closed unmerged. Do not
+republish q401-q450 branches unless VALIDATOR rejects the landed #677
+evidence.
+
+q451-q500 remains reserved to Pane 3 but needs recovery or explicit reroute.
+The previously referenced worktree
+`/home/billy/sct-content-verify-q451-q500-pane3-1779135000` is absent at
+current manager check. Local branch
+`task/content-verify/q451-q500-pane3-1779135000` remains at `1831089`, has no
+remote head, and the q451 patch is preserved in the local stash entry named
+`pane3-q451-rebase-q401`. Treat Pane 3 q451-q500 recovery as canonical unless
+rejected or explicitly abandoned; Pane 3 must recover/rebase onto current main,
+rerun VERIFY/content/type/ownership/diff gates, and only then publish/merge.
+
+Do not route q501-q550 or a duplicate q451 branch while Pane 3 q451 recovery is
+unresolved, unless VALIDATOR explicitly reroutes after rejection or abandonment.
+VERIFY remains report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors. CONTENT source implementation remains handoff-only unless VALIDATOR
+explicitly leases authored-content work.
+
 MANAGER-content active-lease correction - 2026-05-18T21:52+02:00
 
 Current `origin/main` is `af6a75c`. The CEO 21:47 staffing-cycle note is now

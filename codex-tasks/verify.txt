@@ -11,6 +11,27 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T21:57:00+02:00 active-lease correction:
+- Current `origin/main` is `f249e7bf`. `verify:data/questions.ts q401-q450` is
+  landed via PR #677 / `3582841`, DATA-INTEGRITY q351-q400 cleanup is landed
+  via `67846c5` and accepted by MANAGER-build via `18e20dea`, and duplicate PR
+  #678 / branch
+  `task/verify/q401-q450-pane1-recover-1779133742` is closed unmerged. Do not
+  republish q401-q450 work unless VALIDATOR rejects #677.
+- `verify:data/questions.ts q451-q500` remains reserved to Pane 3 but needs
+  recovery or explicit reroute. The previously referenced worktree
+  `/home/billy/sct-content-verify-q451-q500-pane3-1779135000` is absent at
+  current manager check. Local branch
+  `task/content-verify/q451-q500-pane3-1779135000` remains at `1831089`, has no
+  remote head, and the q451 patch is preserved in the local stash entry named
+  `pane3-q451-rebase-q401`. Pane 3 must recover/rebase onto current main and
+  rerun gates before PR/merge.
+- Do not start q501-q550 or a duplicate q451 branch until q451-q500 lands, is
+  rejected, or is explicitly abandoned unless VALIDATOR reroutes.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T21:52:00+02:00 active-lease correction:
 - Current `origin/main` is `af6a75c`. `verify:data/questions.ts q401-q450`
   remains canonical in local Pane 1 recovery worktree
