@@ -2773,3 +2773,23 @@ Verification (commands + result):
 PR (number + merged?): #393 / merged yes via `a98331f`
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker until production serves current `origin/main` and the hash-aware live check passes.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-kypQEe` / `task/reviewer/site-live-recheck-1779116880`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after `origin/main` advanced to `6d6398f`.
+Changed artifacts: `codex-tasks/validator.txt`; `codex-tasks/blockers.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `codex-tasks/P0.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree on `origin/main` `6d6398f` because the shared checkout has unrelated dirty lane files.
+- `node --test scripts/check-live-site.test.js` - exit 0 with 7/7 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 715 questions and `staticSiteQuestionBankParityValidated:true`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 715 questions and 13 chapters.
+- `git diff --name-only 998185a..HEAD -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json .github/workflows vercel.json` - no output, so no current-main site/content/live-check source change supersedes the existing live-deploy blocker.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; static question count and Practice/Mock/Ebook asset checks pass, but static question-bank content fails with expected hash prefix `3c425f0ad2c7` and live hash prefix `5d2710bebf7e`.
+- `npm run typecheck -- --pretty false` - exit 0 after linking this temporary worktree to the shared `node_modules` install; the first attempt without local dependencies failed to resolve Expo/React types.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
+- `git diff --check` - exit 0.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker until production serves current `origin/main` and the hash-aware live check passes.
