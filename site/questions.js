@@ -24469,7 +24469,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Advent occurs the four Sundays before Christmas Day, 25 December.",
+      "en": "Advent occurs on the four Sundays before Christmas Day, 25 December.",
       "sv": "Advent infaller de fyra söndagarna före juldagen den 25 december."
     },
     "opts": [
@@ -24509,7 +24509,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Advent occurs a Saturday at the end of October or beginning of November.",
+      "en": "Advent occurs on a Saturday at the end of October or beginning of November.",
       "sv": "Advent infaller en lördag i slutet av oktober eller början av november."
     },
     "opts": [
@@ -24997,7 +24997,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "In different places in Sweden, there are buddhist and Hindu congregations and temples for Buddhists and Hindus.",
+      "en": "In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.",
       "sv": "På olika platser i Sverige finns buddhistiska och hinduiska församlingar och tempel för buddhister och hinduer."
     },
     "opts": [
@@ -26054,7 +26054,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Travel to Asia and increased interest in meditation and yoga is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      "en": "Travel to Asia and increased interest in meditation and yoga are mentioned as examples of contacts with Hindus and Buddhists in Sweden during the 20th century.",
       "sv": "Resor till Asien och ökat intresse för meditation och yoga nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
     },
     "opts": [
@@ -26095,8 +26095,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "That Sweden's first mosques were built during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
-      "sv": "Att Sveriges första moskéer byggdes under 1970-talet nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
+      "en": "The building of Sweden's first mosques during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      "sv": "Byggandet av Sveriges första moskéer under 1970-talet nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
     },
     "opts": [
       {
