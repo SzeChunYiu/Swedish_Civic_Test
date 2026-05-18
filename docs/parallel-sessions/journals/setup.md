@@ -763,3 +763,11 @@ Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-practice
 PR: pending from `task/setup/practice-result-i18n-1779125575` at handoff commit time.
 Blocked? no - this closes the static Practice result label i18n defect without touching content-owned data or question-bank generation.
 Next suggested validator action: inspect the completed Practice result rows and rerun `npm run test:static-site-practice-result-i18n`, then accept `REVIEWER-SITE-PRACTICE-RESULT-I18N-1` if Swedish shows `7 Rätt`, `3 Fel`, `70% Poäng` and English shows `7 Correct`, `3 Wrong`, `70% Score`.
+
+## Iteration 215 - 2026-05-18
+Task completed: REVIEWER-SITE-FLAG-PALETTE-DRIFT-1 - fixed static Swedish-flag surfaces so brand, hero, and ebook flag renderings keep official blue/gold colors while user palettes continue to recolor normal UI accents.
+Artifacts changed: `site/styles.css`, `scripts/static-site-flag-palette.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-flag-palette` exit 0 with 1/1 passing across five palettes and light/dark themes; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` exit 0 with 4/4 passing; `node --check scripts/static-site-flag-palette.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier for the JS verifier/package metadata exit 0; `git diff --check` exit 0.
+PR: pending from `task/setup/site-flag-palette-drift-1779126274` at handoff commit time.
+Blocked? no - this closes the unblocked static-site flag palette drift atom without touching content-owned data or the static question bank.
+Next suggested validator action: inspect the fixed `--flag-blue`/`--flag-gold` CSS usage and rerun `npm run test:static-site-flag-palette` before accepting `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`.
