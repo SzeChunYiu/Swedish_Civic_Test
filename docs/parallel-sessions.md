@@ -109,11 +109,16 @@ queue. Expensive judgement where context is rich; cheap pickup where it isn't.
     SELECT (step 2) of the well-reasoned task you just queued.
 ```
 
-**Definition of done — ATOMIC PERFECTION (the bar for every unit):** a unit is
-done only when it is *flawless for its own scope* — correct, tested,
-optimized, accessible, natural-language, no rough edge, no gap. The scope may
-be small; the execution may not be sloppy. **No KNOWN defect, gap, or
-unoptimized path may ship.** This is not gold-plating and not a licence to
+**Definition of done — ATOMIC PERFECTION + BEAT COMPETITORS (the bar for every
+unit):** a unit is done only when, for its own scope, it is (a) *flawless* —
+correct, tested, optimized, accessible, natural-language, no rough edge, no
+gap — AND (b) *measurably as good as or better than the best comparable
+competitor* for that aspect. Every aspect of the product must be complete,
+perfect, and beat the competition at the atomic level. The scope may be small;
+the execution may not be sloppy and may not be merely "good enough." **No
+KNOWN defect, gap, unoptimized path, OR aspect where a competitor is better
+may ship** — if a competitor does an aspect better and you are not fixing it
+now, it MUST become a concrete queued task. This is not gold-plating and not a licence to
 stall: if you see an imperfection you are not fixing in this unit, it MUST
 become a concrete queued task (step 11 / scrutinizer file) so it is never
 silently dropped. Perfection is reached *per atom and iteratively* — relentless
