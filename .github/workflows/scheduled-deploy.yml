@@ -1,0 +1,42 @@
+name: Scheduled Vercel deploy
+
+# Per-commit Vercel auto-deploy is disabled in vercel.json
+# (git.deploymentEnabled.main=false). The fast factory merges many PRs/hour;
+# deploying each one would blow Vercel's deploy quota. Instead, redeploy the
+# latest main on a fixed cadence so the live site is never more than ~30 min
+# stale while deploy count stays bounded (~48/day).
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: scheduled-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Trigger Vercel production deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fire Vercel Deploy Hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::warning::VERCEL_DEPLOY_HOOK secret not set — skipping."
+            echo "Create one: Vercel Project > Settings > Git > Deploy Hooks"
+            echo "(branch: main), then add the URL as repo secret VERCEL_DEPLOY_HOOK."
+            exit 0
+          fi
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$HOOK")
+          echo "Deploy hook responded HTTP $code"
+          case "$code" in
+            2*) echo "Deploy triggered." ;;
+            *)  echo "::error::Deploy hook failed (HTTP $code)"; exit 1 ;;
+          esac

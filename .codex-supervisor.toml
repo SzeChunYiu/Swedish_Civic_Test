@@ -162,8 +162,8 @@ sync_policy = "git-only"
 [hosts."lunarc-civic-release"]
 disabled = false
 ssh = "lunarc"
-session = "civic-team-release-local"
-prompts = "codex-prompts-civic-team-release.txt"
+session = "civic-team-language-local"
+prompts = "codex-prompts-civic-language.txt"
 tasks_dir = "codex-tasks"
 role = "team"
 project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
