@@ -5,7 +5,6 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const chapterIds = ['intro', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const staleEbookCopyPatterns = [
   /Svenska [oö]vers[aä]ttningen kommer/i,
   /p[aå] engelska tills vidare/i,
@@ -20,7 +19,32 @@ function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function readStaticChapterMeta() {
+  const context = { console, window: {} };
+  context.globalThis = context;
+  vm.runInNewContext(readSiteFile('site/questions.js'), context, {
+    filename: 'site/questions.js',
+  });
+
+  const meta = context.window.SMT_CHAPTERS_META || context.SMT_CHAPTERS_META;
+  assert.ok(Array.isArray(meta), 'site/questions.js should expose SMT_CHAPTERS_META');
+
+  return meta.map((chapter) => ({ id: String(chapter.id) }));
+}
+
+function getExpectedChapterIds() {
+  return ['intro', ...readStaticChapterMeta().map((chapter) => chapter.id)];
+}
+
+function getEbookNavChapterIds() {
+  return Array.from(
+    readSiteFile('site/index.html').matchAll(/<a\s+[^>]*data-eb="([^"]+)"/g),
+    (match) => match[1],
+  );
+}
+
 function createEbookHarness() {
+  const chapterIds = getExpectedChapterIds();
   const reader = { innerHTML: '', scrollTop: 0 };
   const navAnchors = chapterIds.map((id) => ({
     dataset: { eb: id },
@@ -89,10 +113,17 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoStaleEbookCopy(source);
 });
 
+test('static ebook navigation covers every shipped static chapter', () => {
+  const expectedChapterIds = getExpectedChapterIds();
+
+  assert.equal(expectedChapterIds.at(-1), '13');
+  assert.deepEqual(getEbookNavChapterIds(), expectedChapterIds);
+});
+
 test('static ebook renders every chapter with Swedish and English body parity', () => {
   const harness = createEbookHarness();
 
-  for (const chapterId of chapterIds) {
+  for (const chapterId of getExpectedChapterIds()) {
     const englishHtml = renderChapter(harness, 'en', chapterId);
     const swedishHtml = renderChapter(harness, 'sv', chapterId);
 
@@ -110,10 +141,25 @@ test('static ebook renders every chapter with Swedish and English body parity', 
       assert.match(englishHtml, /What this book is/);
       assert.match(swedishHtml, /Vad den h[aä]r boken [aä]r/);
     } else {
+      assert.doesNotMatch(englishHtml, /<div class="ebook__crumb">How to read this book<\/div>/);
+      assert.doesNotMatch(
+        swedishHtml,
+        /<div class="ebook__crumb">Hur man l[aä]ser den h[aä]r boken<\/div>/,
+      );
       assert.match(englishHtml, /Facts you'll see on the test/);
       assert.match(swedishHtml, /Det viktigaste/);
       assert.match(swedishHtml, /Plugga smart/);
       assert.match(swedishHtml, /Fakta att kunna/);
+    }
+
+    if (chapterId === '13') {
+      assert.match(englishHtml, /Traditions,.+holidays, and change/s);
+      assert.match(englishHtml, /National Day and civic ceremonies/);
+      assert.match(swedishHtml, /Traditioner,.+h[oö]gtider och f[oö]r[aä]ndring/s);
+      assert.match(englishHtml, /href="#\/practice\?c=13"/);
+      assert.match(swedishHtml, /href="#\/practice\?c=13"/);
+      assert.match(englishHtml, />13 \/ 13</);
+      assert.match(swedishHtml, />13 \/ 13</);
     }
 
     assert.doesNotMatch(swedishHtml, /Facts you'll see on the test/);
