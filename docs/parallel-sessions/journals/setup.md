@@ -1066,3 +1066,12 @@ Verification: clean worktree from source-relevant `origin/main` `8090442`; later
 PR: pending from `task/setup/1779140658` at handoff commit time.
 Blocked? yes - SITE-P0-5 remains external deploy capacity/operator production evidence; no SETUP-owned source drift or unblocked local SETUP source atom was found, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held until fresh current-main P0 site or release source evidence appears; keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes.
+
+## Iteration 237 - 2026-05-18
+
+Task completed: SITE-AUDIT static asset reference guard - added a focused static-site test that fails if `site/index.html` references a missing local asset such as the stale deployed `signin.js` reference called out by the site audit.
+Artifacts changed: `scripts/static-site-asset-references.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `94e82b9`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-asset-references` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-account-scope` exit 0 with 2/2 passing; `node --check scripts/static-site-asset-references.test.js` exit 0; dependency install was linked from the shared checkout, then `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check package.json scripts/static-site-asset-references.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `git diff --check` exit 0 before this journal append.
+PR: pending from `task/setup/static-asset-reference-guard-1779149000` at handoff commit time.
+Blocked? no for this static guard atom - SITE-P0-5 remains external deploy freshness/operator evidence, and no Vercel CLI was run.
+Next suggested validator action: inspect the new static asset-reference guard and rerun `npm run test:static-site-asset-references`; keep broader site-audit routing separate and keep production freshness external until production serves current main.
