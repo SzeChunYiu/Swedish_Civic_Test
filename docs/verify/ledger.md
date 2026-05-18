@@ -721,26 +721,26 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q698 | true-false | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 8e9b49c | ok | rolling-source-slice |
 | q699 | false-statement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 476afdb | defect | queued-data-integrity-residual |
 | q700 | judgement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 16dbe4d | ok | rolling-source-slice |
-| q701 | section-practice | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
-| q702 | true-false | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
-| q703 | false-statement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
-| q704 | judgement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 16dbe4d | ok | rolling-source-slice |
-| q705 | section-practice | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 332bfc9 | ok | rolling-source-slice |
-| q706 | true-false | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 16dbe4d | ok | rolling-source-slice |
-| q707 | false-statement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 16dbe4d | ok | rolling-source-slice |
-| q708 | judgement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 16dbe4d | ok | rolling-source-slice |
-| q709 | section-practice | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | ok | rolling-source-slice |
-| q710 | true-false | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | ok | rolling-source-slice |
-| q711 | false-statement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 332bfc9 | ok | rolling-source-slice |
-| q712 | judgement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 16dbe4d | ok | rolling-source-slice |
-| q713 | section-practice | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
-| q714 | true-false | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 476afdb | defect | queued-data-integrity-tf-prefix-surface |
-| q715 | false-statement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
-| q716 | judgement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
-| q717 | section-practice | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | ok | rolling-source-slice |
-| q718 | true-false | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
-| q719 | false-statement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
-| q720 | judgement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
+| q701 | section-practice | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | d1753ae | ok | rolling-source-slice |
+| q702 | true-false | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | d1753ae | ok | rolling-source-slice |
+| q703 | false-statement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | d1753ae | ok | rolling-source-slice |
+| q704 | judgement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | d1753ae | ok | rolling-source-slice |
+| q705 | section-practice | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d1753ae | ok | rolling-source-slice |
+| q706 | true-false | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d1753ae | ok | rolling-source-slice |
+| q707 | false-statement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d1753ae | ok | rolling-source-slice |
+| q708 | judgement | q141 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | d1753ae | ok | rolling-source-slice |
+| q709 | section-practice | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d1753ae | ok | rolling-source-slice |
+| q710 | true-false | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d1753ae | ok | rolling-source-slice |
+| q711 | false-statement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d1753ae | ok | rolling-source-slice |
+| q712 | judgement | q142 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d1753ae | ok | rolling-source-slice |
+| q713 | section-practice | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | defect | queued-data-integrity-q701-q720-current |
+| q714 | true-false | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | ok | rolling-source-slice |
+| q715 | false-statement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | ok | rolling-source-slice |
+| q716 | judgement | q143 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | defect | queued-data-integrity-q701-q720-current |
+| q717 | section-practice | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | ok | rolling-source-slice |
+| q718 | true-false | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | ok | rolling-source-slice |
+| q719 | false-statement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | ok | rolling-source-slice |
+| q720 | judgement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d1753ae | ok | rolling-source-slice |
 
 ## Non-Question Content
 

@@ -328,3 +328,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` to DATA-INTEGRITY after q551-q600 unless VALIDATOR reorders, then continue rolling VERIFY with q651-q700 or the next current changed/due slice.
+
+Lane: CONTENT-VERIFY / CONTENT Pane 4
+Host/branch: local worktree `/tmp/sct-verify-q701-q720-pane4-final`, branch `task/verify/q701-q720-pane4-1779137112`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-q501/q551 rolling current-output refresh for `verify:data/questions.ts q701-q720`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q701-q720-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL, inspected with `pdfinfo`, and extracted with `pdftotext` for printed pages 6 and 47; q701-q720 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current output at `origin/main` `d1753ae` clears the older q714/q715 meta-stem and false-answer explanation defects. Current remaining defects are generated single-choice judgement-template rows `q713` and `q716`, already queued as `REVIEWER-GENERATED-JUDGEMENT-Q701-Q720-CURRENT-1`. Focused CSV/static/ledger assertion passed with 20 checked rows, 10 true/false rows, zero stale true/false prefix/meta hits, zero old unknown-option hits, no missing static rows, no static text mismatches, exactly two judgement-template defects (`q713`/`q716`), q713/q716 ledger rows marked `defect`, and the other q701-q720 ledger rows marked `ok` at `d1753ae`.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: accept the q701-q720 ledger refresh if gates pass; keep q713/q716 behind the existing REVIEWER-generated judgement queue unless VALIDATOR reorders. Continue rolling VERIFY with the next current changed/due slice after active q551/q601/q651 routing is resolved.
