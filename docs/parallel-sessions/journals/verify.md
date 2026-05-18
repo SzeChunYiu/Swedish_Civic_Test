@@ -368,3 +368,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: accept the q201-q250 current-output refresh if gates pass, then keep DATA-INTEGRITY on q651/q698 first and fold q201-q250 filler/judgement evidence into the broader generated single-choice filler and true/false-judgement cleanup routes.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-pane3-regress-1779140712`, branch `task/content-verify/pane3-regress-1779140712`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `regress:re-check the 10 most recently changed data/ items for re-broken facts`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/recent-data-regression-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched from the current UHR URL, `pdfinfo` reported 48 pages with 2026-05-07 modification metadata, and `pdftotext -layout` was inspected for printed pages 6, 12, 30, 42, 43, 46, and 47. The ten most recently changed question-level `data/` records from `git log -- data` were `q144`, `q124`, `q123`, `q114`, `q018`, `q108`, `q109`, `q143`, `q142`, and `q070`; each remains UHR-supported with correct answer keys, plausible-wrong distractors, natural Swedish/English source-row wording, and matching canonical/static output. Focused assertion passed with 10/10 expected source chapter/section/page/answer rows and zero learner-visible true/false prefix hits in those rows.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: accept the recent-data regression ledger refresh if PR gates pass; keep generated q663/q670/q671 and generated single-choice filler/judgement cleanup with DATA-INTEGRITY, and keep `CONTENT-AUTHORED-TF-PREFIX-1` behind an explicit bundled lease.
