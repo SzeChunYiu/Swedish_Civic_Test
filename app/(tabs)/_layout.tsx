@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 
+import { TopBarActions } from '../../components/ui/TopBarActions';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 
 type TabRouteName = 'home' | 'learn' | 'practice' | 'exam' | 'mistakes' | 'profile';
@@ -39,7 +40,12 @@ export default function TabsLayout() {
   const copy = tabTitleCopy[language];
 
   return (
-    <Tabs screenOptions={{ headerShown: true }}>
+    <Tabs
+      screenOptions={{
+        headerShown: true,
+        headerRight: () => <TopBarActions />,
+      }}
+    >
       <Tabs.Screen name="home" options={getTabOptions(copy.home)} />
       <Tabs.Screen name="learn" options={getTabOptions(copy.learn)} />
       <Tabs.Screen name="practice" options={getTabOptions(copy.practice)} />
