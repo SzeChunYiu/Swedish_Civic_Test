@@ -227,3 +227,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold q301-q350 current evidence into the active DATA-INTEGRITY generated true/false cleanup for false-explanation guards and the q318/q319/q346/q347/q350 standalone-stem follow-up, then route the next non-overlapping rolling VERIFY slice.
+
+Lane: CONTENT-VERIFY / CONTENT Pane 4
+Host/branch: local worktree `/tmp/sct-verify-q351-q400-pane4-1779132305`, branch `task/verify/q351-q400-pane4-1779132305`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-prefix-strip rolling current-output refresh for `verify:data/questions.ts q351-q400`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q351-q400-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` text was opened from the current local UHR PDF extraction for printed pages 22-28; q351-q400 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current output at `origin/main` `dff1c24` clears the older q351-q400 fragment/list/predicate defects and has zero true/false prefix or meta-wrapper hits in canonical CSV and `site/questions.js`; current remaining defects are standalone-referent generated true/false stems `q351`, `q358`, `q359`, `q398`, and `q399`. Focused CSV/static assertion passed with 50 checked rows, 25 true/false rows, 5 current defects, zero stale prefix/meta hits, no missing static rows, and no static text mismatches. `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`, `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check`, `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content`, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and `git diff --check` passed.
+PR (number + merged?): #656, merge pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: fold q351-q400 current evidence into the active DATA-INTEGRITY generated true/false standalone-stem route with q301-q350, then route q401-q450 or the next non-overlapping rolling VERIFY slice from current main.

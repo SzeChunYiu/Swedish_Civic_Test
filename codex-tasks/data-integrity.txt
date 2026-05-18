@@ -782,3 +782,24 @@ spot checks. Do not reopen `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`
 without fresh current-main regression evidence. Authored source stems remain
 CONTENT-owned unless VALIDATOR leases the paired `CONTENT-AUTHORED-TF-PREFIX-1`
 cleanup.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T21:26:23+02:00
+`VERIFY-GENERATED-TF-STANDALONE-Q351-Q400-POST642-1` [product defect][P0
+TRANSLATE-COMPLETE][wording-rule][content-sync]: independent VERIFY refresh on
+current `origin/main` `dff1c24` supersedes the older q351-q400 residual report.
+The prior fragment/list/predicate defects are no longer current, and the slice
+has zero true/false prefix or meta-wrapper rows in canonical CSV and
+`site/questions.js`. Current remaining generated-output defects are five
+non-standalone true/false stems: `q351` uses `Den` / `It` without naming the UN
+declaration; `q358` and `q359` have Swedish `Det...` stems that do not name
+violence in close relationships and honour-related violence/oppression; `q398`
+and `q399` use `De` / `They` without naming trade unions. Facts, citations,
+answer keys, explanations, and ordinary distractors remain supported by UHR
+`Sverige i fokus` printed pages 22-28. Own this as a generated
+true/false-stem standalone-referent follow-up, preferably bundled with the
+current q301-q350 standalone-stem route. Acceptance requires generator and
+validator mirror coverage, regenerated `content/question-bank.csv` and
+`site/questions.js`, export/static parity, `validate:content`,
+`test:derived-content`, focused content gates, typecheck, lint, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks for the
+five named rows.
