@@ -1,0 +1,33 @@
+# LANGUAGE lane queue — native-quality localization atoms.
+# Format: <lang>:<bounded scope>. One atom per worker iteration.
+# Manager assigns one unclaimed atom per pane; never two panes same lang+scope.
+# Quality bar: docs/parallel-sessions/language.md (native, two-pass, glossary).
+# Priority languages: ar, fa, so, ti, ckb, en, pl, uk.
+
+ar:bootstrap locales/ar/ + glossary.md (seed civic term renderings)
+ar:ui-strings (all app/site visible UI labels, native)
+ar:questions q001-q020 (stems+options+explanations, UHR meaning preserved)
+ar:ebook ch1 (native, faithful to Swedish civic facts)
+fa:bootstrap locales/fa/ + glossary.md
+fa:ui-strings
+fa:questions q001-q020
+fa:ebook ch1
+so:bootstrap locales/so/ + glossary.md
+so:ui-strings
+so:questions q001-q020
+so:ebook ch1
+ti:bootstrap locales/ti/ + glossary.md
+ti:ui-strings
+ti:questions q001-q020
+ti:ebook ch1
+ckb:bootstrap locales/ckb/ + glossary.md
+ckb:ui-strings
+en:bootstrap locales/en/ + glossary.md
+en:ui-strings
+en:questions q001-q020
+pl:bootstrap locales/pl/ + glossary.md
+pl:ui-strings
+uk:bootstrap locales/uk/ + glossary.md
+uk:ui-strings
+# Ramp: after q001-q020 per lang verified, queue q021+ in 20-question slices,
+# ebook ch2+, store metadata, privacy/legal copy per language.

@@ -4,6 +4,11 @@
   "outputDirectory": "site",
   "framework": null,
   "cleanUrls": true,
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",

@@ -1,0 +1,89 @@
+# Lane: LANGUAGE — native-quality multilingual localization
+
+## Purpose
+
+Translate **all** user-facing civic-test material — questions, answer
+options, explanations, UHR source notes, the ebook chapters, UI strings,
+the landing/marketing site, store metadata, privacy/legal copy — into the
+target languages at **native, publication quality**.
+
+## Non-negotiable quality contract
+
+1. **Native fluency, not mechanical translation.** Every string must read
+   as if written by an educated native speaker of that language for that
+   audience. Literal/word-for-word or machine-style output is a defect and
+   must be rejected by the manager. Localize idioms, register, and civic
+   terminology — do not transliterate.
+2. **One language = one owner pane.** A pane owns a single target language
+   for its iteration. Do not edit another language's files.
+3. **Meaning + legal accuracy preserved.** The Swedish citizenship facts,
+   UHR citations, dates, institution names, and the correct answer must
+   remain exactly correct after translation. When an official term has a
+   recognized rendering in the target language, use it; otherwise keep the
+   Swedish term with a native gloss in parentheses on first use.
+4. **Two-pass rule.** No translation atom is "done" until a second
+   independent native-read pass (a different pane or the manager if native)
+   confirms it reads naturally and is meaning-faithful. Single-pass output
+   is not acceptable for shipping.
+5. **Terminology consistency.** Maintain `locales/<lang>/glossary.md` — a
+   shared term list (e.g. *medborgarskap*, *riksdag*, *grundlag*) with the
+   agreed native rendering. Reuse it; never re-coin a term that's in the
+   glossary.
+6. **No fabrication.** If a source string is ambiguous, translate
+   conservatively and note the ambiguity in the handoff — never invent
+   civic facts to make a sentence flow.
+
+## Target languages (priority order)
+
+Largest Sweden citizenship-prep audiences first. Manager assigns one
+unclaimed language per worker pane per iteration:
+
+1. Arabic (`ar`)
+2. Persian — Farsi/Dari (`fa`)
+3. Somali (`so`)
+4. Tigrinya (`ti`)
+5. Kurdish — Sorani (`ckb`)
+6. English (`en`)
+7. Polish (`pl`)
+8. Ukrainian (`uk`)
+
+(Ramp adds more as panes/sessions scale. The 8-language UI picker shipped
+in #141 is the minimum coverage target.)
+
+## Writable scope
+
+- `locales/<lang>/**` (translation JSON/MD per language)
+- `docs/ebook/<lang>/**` (translated ebook chapters)
+- `locales/<lang>/glossary.md`
+- `docs/parallel-sessions/journals/language.md` (handoffs)
+
+Never edit `data/` (source questions — owned by content), `app/`,
+`components/`, `site/` source, or another language's `locales/` dir.
+
+## One iteration
+
+1. Sync per the shared protocol (`docs/parallel-sessions.md`).
+2. Read `codex-tasks/language.txt`; claim ONE unclaimed `<lang>:<scope>`
+   atom (e.g. `ar:questions q001-q020`, `fa:ebook ch3`, `so:ui-strings`).
+3. Translate that bounded slice to native quality using the glossary.
+4. Self-review as a native reader; then run the verification below.
+5. Commit, push, PR, squash-merge per the protocol (`<lang>: <scope>`),
+   e.g. `git commit -m "ar: native questions q001-q020"`.
+6. Append a handoff to `journals/language.md` including: language, scope,
+   glossary terms added, the second-pass reviewer, residual ambiguities.
+
+## Verification (must pass before commit)
+
+- `npm run typecheck` (locale files must parse / keys must match source).
+- Key-parity check: every source key has a target key, no missing/extra.
+- No untranslated source-language leakage in the target file (spot-grep
+  for Swedish stop-words in non-`sv` locale; flag, don't auto-strip).
+- Glossary terms used consistently (grep the agreed rendering).
+- `git diff --check`.
+
+## Stop conditions
+
+- Rate limited → stop, journal progress.
+- Source string ambiguous and no safe conservative rendering → stop,
+  raise in `codex-tasks/blockers.txt` (do not guess civic facts).
+- Target language not owned by you / file outside scope → stop.
