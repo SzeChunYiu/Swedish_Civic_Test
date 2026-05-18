@@ -45,9 +45,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'true',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur beskriver att den nordligaste delen av landet ligger norr om polcirkeln, i det arktiska området. Därför är påståendet sant; alternativet Falskt motsäger källan.',
+      'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says the northernmost part of the country lies north of the Arctic Circle, in the Arctic area. Therefore the statement is true; the False option contradicts the source.',
+      "The statement is true: Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. That makes True correct, while False contradicts the fact.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -71,9 +71,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från den nordligaste punkten, Treriksröset, till den sydligaste punkten, Smygehuk. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt.',
+      'Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that Sweden is an elongated country stretching about 1,600 kilometres from the northernmost point, Treriksröset, to the southernmost point, Smygehuk. Therefore 1,600 kilometres is correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.',
+      'Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -97,9 +97,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'UHR-avsnittet Geografi, klimat och natur säger att havet vid Sveriges östra kust heter Östersjön. Samma avsnitt säger att Skagerrak och Kattegatt ligger vid västkusten, vilket gör de andra alternativen fel.',
+      'Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust.',
     explanationEn:
-      'The UHR section Geography, climate, and nature says that the sea along Sweden’s eastern coast is the Baltic Sea. The same section says Skagerrak and Kattegat are on the west coast, which makes the other options incorrect.',
+      "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',

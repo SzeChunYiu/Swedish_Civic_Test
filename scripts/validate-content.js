@@ -23,7 +23,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 137;
+const EXPECTED_SOURCE_QUESTIONS = 141;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -2325,6 +2325,14 @@ const EXPECTED_THEME_COLOR_TOKENS = [
   'purple',
   'pink',
   'brown',
+  'brandGoogleBlue',
+  'brandGoogleGreen',
+  'brandGoogleRed',
+  'brandGoogleYellow',
+  'brandFacebook',
+  'brandWhite',
+  'swedishBlue',
+  'swedishGold',
 ];
 const EXPECTED_THEME_SPACE_VALUES = {
   hairline: 2,
