@@ -985,3 +985,12 @@ Verification: clean worktree from current `origin/main` `8e3aa16`; source delta 
 PR: #699 opened from `task/setup/live-deploy-recheck-1779135526`; merge pending at handoff commit time.
 Blocked? yes - remaining SITE-P0-5 work is external deploy capacity/operator production evidence; no SETUP-owned source drift or unblocked local SETUP source atom was found, and no Vercel CLI was run.
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes; route any fresh source defect only if REVIEWER/VALIDATOR files new SETUP evidence.
+
+## Iteration 228 - 2026-05-18
+
+Task completed: REVIEWER-RELEASE-GATES-1 SETUP/COMPLY - updated the Apple privacy-label draft, Google Play Data safety draft, and publishing guard for the current ad-supported release posture with Google Mobile Ads, Remove Ads non-consumable IAP, ATT, and Google UMP consent.
+Artifacts changed: `publishing/privacy-labels.md`, `publishing/google-play-data-safety.md`, `scripts/publishing.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:publishing` exit 0 with 7/7 passing; `node --check scripts/publishing.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check publishing/privacy-labels.md publishing/google-play-data-safety.md scripts/publishing.test.js` exit 0; stale-release-copy scan for `Data Not Collected`, `No user data collected`, `No user data shared`, `real ads disabled`, `REAL_ADS_ENABLED_FOR_V1`, `test app IDs`, and `Current MVP` across the two publishing docs plus `scripts/publishing.test.js` exit 1 with no matches; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:release-preflight` exit 0 with 44/44 passing; `git diff --check` exit 0 before the journal append.
+PR: pending from `task/setup/release-gates-1779140200` at handoff commit time.
+Blocked? no for the source guard atom - external store-console and binary privacy review remain release gates; no Vercel CLI was run.
+Next suggested validator action: inspect the privacy/data-safety drafts against the reviewed binary configuration, rerun `npm run test:publishing` plus `npm run test:release-preflight`, and keep any final App Store Connect/Play Console submissions as operator-owned manual release work.
