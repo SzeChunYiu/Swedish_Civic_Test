@@ -26409,8 +26409,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "The Instrument of Government protects the right to practice one’s religion and protection from discrimination because of belief.",
-      "sv": "Regeringsformen skyddar rätten att utöva sin religion och skydd mot diskriminering på grund av tro."
+      "en": "The Instrument of Government protects the right to practice one’s religion and protects against discrimination because of belief.",
+      "sv": "Regeringsformen skyddar rätten att utöva sin religion och ger skydd mot diskriminering på grund av tro."
     },
     "opts": [
       {
@@ -26449,8 +26449,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "The Instrument of Government protects that the state chooses a religion for each resident.",
-      "sv": "Regeringsformen skyddar att staten väljer religion åt varje invånare."
+      "en": "The Instrument of Government lets the state choose a religion for each resident.",
+      "sv": "Regeringsformen låter staten välja religion åt varje invånare."
     },
     "opts": [
       {
@@ -26586,8 +26586,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Many Swedes celebrate Christmas and Easter even if they do not see themselves as religious.",
-      "sv": "Många svenskar firar jul och påsk även om de inte ser sig som religiösa."
+      "en": "Christmas and Easter are Christian holidays that many Swedes celebrate even if they do not see themselves as religious.",
+      "sv": "Jul och påsk är kristna högtider som många svenskar firar även om de inte ser sig som religiösa."
     },
     "opts": [
       {
@@ -26627,8 +26627,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Many Swedes celebrate Eid al-Fitr and Newroz even if they do not see themselves as religious.",
-      "sv": "Många svenskar firar id al-fitr och Newroz även om de inte ser sig som religiösa."
+      "en": "Eid al-Fitr and Newroz are Christian holidays that many Swedes celebrate even if they do not see themselves as religious.",
+      "sv": "Id al-fitr och Newroz är kristna högtider som många svenskar firar även om de inte ser sig som religiösa."
     },
     "opts": [
       {
@@ -27125,8 +27125,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Jews gained the right to live in the country and practice their religion.",
-      "sv": "Judar fick rätt att bo i landet och utöva sin religion."
+      "en": "Jews gained the right to live in Sweden and practice their religion.",
+      "sv": "Judar fick rätt att bo i Sverige och utöva sin religion."
     },
     "opts": [
       {
