@@ -29,6 +29,38 @@ Post-#600/#604 routing state:
   for q666, q667, and q699 residual grammar/naturalness unless the same
   generator/static-mirror PR safely closes it with focused evidence.
 
+MANAGER-content current-route update - 2026-05-18T20:45+02:00
+
+Post-#609 routing state:
+- PR #609 / `47f3983` refreshed q151-q200 against current output and supersedes
+  stale q151-q200 splice-residual evidence. Do not re-fix q174/q190/q194 as
+  current residuals unless a fresh scan reintroduces them.
+- `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` remains the broadest current
+  generated/static true-false route: all 299 `true_false` rows still start with
+  the UI-afforded `Sant eller falskt:` / `True or false:` prefix in canonical
+  CSV and static output. Generated/static cleanup belongs here; the 11 authored
+  source stems remain CONTENT-owned only if VALIDATOR leases the paired
+  authored-data plus mirror/guard bundle.
+- `VERIFY-GENERATED-TF-FALSE-EXPLANATION-Q151-Q200-POST584-1` is current:
+  q151, q167, q235, q255, q331, q339, q439, q507, q519, and q715 have false
+  generated answers whose explanations still tell the learner the underlying
+  positive statement is true. Bundle with the prefix-surface cleanup if
+  VALIDATOR keeps one generated true/false atom.
+- The negative/not-true stem surface remains current for q151, q167, q235,
+  q255, q266, q331, q339, q439, q507, q519, and q715; q266 is not an
+  explanation mismatch but still needs direct proposition wording if the
+  generator strips statement-about-statement phrasing.
+- `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q720-POST584-1` remains current for q666,
+  q667, and q699 English grammar/naturalness.
+
+Required gates for any bundled generated true/false cleanup remain generator +
+validator mirror updates, regenerated `content/question-bank.csv` and
+`site/questions.js`, focused negative guards for prefixes, false-answer
+explanations, negative/not-true stems, and q666/q667/q699 grammar, export/static
+parity, `validate:content`, `test:derived-content`, focused content gates,
+typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and
+current-main scans of the named rows.
+
 MANAGER-content current-route update - 2026-05-18T20:36+02:00
 
 Post-#600 routing state:
@@ -76,7 +108,8 @@ Post-#584/#590 routing state:
 Active DATA-INTEGRITY routes:
 - `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`: first, current 299/299
   true/false prefix offenders plus q151/q167/q235/q255/q266/q331/q339/q439/
-  q507/q519/q715 negative meta wording.
+  q507/q519/q715 negative meta wording and q151/q167/q235/q255/q331/q339/q439/
+  q507/q519/q715 false-answer explanation mismatches.
 - `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q720-POST584-1`: next, current q666,
   q667, and q699 residual grammar/naturalness unless closed safely with the
   prefix-surface atom.
@@ -137,7 +170,9 @@ Current status:
   lint, ownership, targeted Prettier, and `git diff --check`.
 
 The active DATA-INTEGRITY implementation route is now
-`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`.
+`REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`, with the post-#609 false-explanation
+and negative/not-true stem evidence folded into that generated true/false
+cleanup unless VALIDATOR deliberately splits it.
 
 MANAGER-build directive 2026-05-18T18:55+02:00
 Superseded 2026-05-18T20:04+02:00: PR #570 accepted

@@ -11,6 +11,18 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T20:45:00+02:00 update:
+- `verify:data/questions.ts q151-q200` post-#570/#584 refresh is landed via
+  PR #609 / `47f3983`; do not duplicate that branch or its stale pre-rebase
+  q151/q174/q190/q194 residual claims.
+- Current q151-q200 evidence routes `q151` and `q167` answer/explanation
+  mismatches to DATA-INTEGRITY and marks the slice's true/false prefix rows
+  under the global `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` route.
+- Next VERIFY capacity should continue report-and-queue work from q201-q250 or
+  the next changed/due slice after the latest generated-output fixes. Keep
+  VERIFY out of `data/**`, generated CSV/static mirrors, generator templates,
+  validator mirrors, and `site/**`.
+
 MANAGER-content 2026-05-18T20:36:00+02:00 update:
 - DATA-INTEGRITY #600 / `476afdb` changed generated true/false output after
   the q101-q150 and q651-q720 refreshes. It clears positive meta stems such as
