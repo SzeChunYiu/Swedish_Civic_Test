@@ -11,6 +11,30 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T21:52:00+02:00 active-lease correction:
+- Current `origin/main` is `af6a75c`. `verify:data/questions.ts q401-q450`
+  remains canonical in local Pane 1 recovery worktree
+  `/tmp/sct-verify-q401-q450-pane1-recover-1779133742`, branch
+  `task/verify/q401-q450-pane1-recover-1779133742`, with local commit
+  `8a2d037`, local VERIFY edits, and ahead 1 / behind 1 state relative to
+  `origin/main`. It must sync/rebase to current main, rerun the standard
+  VERIFY/content/type/ownership/diff gates, and only then PR/merge.
+- Do not publish the duplicate q401-q450 worktree
+  `/tmp/sct-content-pane4-recover-1779132950` on
+  `task/verify/q401-q450-pane4-1779132950`; it is at current main but has an
+  unresolved `codex-tasks/data-integrity.txt` conflict and remains duplicate
+  unless Pane 1 is rejected or explicitly abandoned.
+- `verify:data/questions.ts q451-q500` is reserved to local Pane 3 worktree
+  `/home/billy/sct-content-verify-q451-q500-pane3-1779135000`, branch
+  `task/content-verify/q451-q500-pane3-1779135000`, created clean from current
+  `origin/main` `af6a75c`. Treat it as canonical unless rejected or explicitly
+  abandoned; do not revive older q451 branches from before the CEO 21:47 merge.
+- After q401-q450 and q451-q500 land/reject/abandon, continue with q501-q550
+  or the next current changed/due slice if VALIDATOR reorders.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T21:43:00+02:00 active-lease correction:
 - `verify:data/questions.ts q351-q400` has newer landed evidence on
   `origin/main` via `2607e11`; this supersedes the earlier `e563670` q351

@@ -1,5 +1,36 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T21:52+02:00
+
+Current `origin/main` is `af6a75c`. The CEO 21:47 staffing-cycle note is now
+merged, q301-q350 generated wording is accepted, and CONTENT remains
+verify/handoff-only unless VALIDATOR explicitly leases authored source work.
+
+q401-q450 remains the active CONTENT-VERIFY slice, now recovered in local Pane
+1 worktree `/tmp/sct-verify-q401-q450-pane1-recover-1779133742`, branch
+`task/verify/q401-q450-pane1-recover-1779133742`. It has local commit
+`8a2d037`, local VERIFY edits, and is ahead 1 / behind 1 relative to
+`origin/main`. Treat this Pane 1 recovery branch as canonical unless rejected
+or explicitly abandoned. It must sync/rebase onto current `origin/main`, rerun
+the VERIFY/content/type/ownership/diff gates, and only then publish/merge.
+
+Do not publish the duplicate q401-q450 worktree
+`/tmp/sct-content-pane4-recover-1779132950` /
+`task/verify/q401-q450-pane4-1779132950`; it is at current main but has an
+unresolved `codex-tasks/data-integrity.txt` conflict and is duplicate unless
+Pane 1 is rejected or explicitly abandoned.
+
+q451-q500 is reserved to local Pane 3 worktree
+`/home/billy/sct-content-verify-q451-q500-pane3-1779135000`, branch
+`task/content-verify/q451-q500-pane3-1779135000`, created clean from current
+`origin/main` `af6a75c`. Treat it as canonical unless rejected or explicitly
+abandoned. Do not revive older q451 branches from before the CEO 21:47 merge.
+
+After q401-q450 and q451-q500 land, are rejected, or are explicitly abandoned,
+route q501-q550 or the next current changed/due slice. VERIFY remains
+report-and-queue only: no edits to `data/**`, `content/question-bank.csv`,
+`site/**`, generator templates, or validator mirrors.
+
 MANAGER-content active-lease correction - 2026-05-18T21:43+02:00
 
 Current `origin/main` is `caa4fd9`. q351-q400 VERIFY has a newer landed
