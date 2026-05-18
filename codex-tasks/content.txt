@@ -1,5 +1,42 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T22:48+02:00
+
+Current `origin/main` is `d28723d`. q501-q550 VERIFY is on main via `e0f379a`,
+q501-q550 DATA-INTEGRITY cleanup is on main via `b441aed`, MANAGER-build
+accepted q501 wording via `d28723d`, and q551-q600 current-output VERIFY is
+now on main via `58cb0f6`. Do not publish stale q501 or q551
+worktrees/branches unless VALIDATOR rejects the landed evidence and explicitly
+reroutes.
+
+CONTENT-VERIFY Pane 1 has active q601-q650 work in
+`/tmp/sct-verify-q601-q650-pane1-1779136927`, branch
+`task/verify/q601-q650-pane1-1779136927`. It currently has uncommitted
+report-and-queue edits in `docs/parallel-sessions/journals/verify.md`,
+`docs/verify/ledger.md`, and `docs/verify/q601-q650-2026-05-18.md`. At the
+latest manager check it had rebased/synced to `d28723d` but still had an
+unresolved `codex-tasks/data-integrity.txt` conflict from that sync. Pane 1
+must resolve the conflict before PR/merge and rerun the standard
+VERIFY/content/type/ownership/diff gates.
+
+CONTENT-VERIFY Pane 4 has active q701-q720 work in
+`/tmp/sct-verify-q701-q720-pane4-1779137112`, branch
+`task/verify/q701-q720-pane4-1779137112`. It currently has uncommitted
+report-and-queue edits in `docs/parallel-sessions/journals/verify.md`,
+`docs/verify/ledger.md`, and `docs/verify/q701-q720-2026-05-18.md`. At the
+latest manager check it was on current `origin/main` `d28723d` with those
+uncommitted edits. Pane 4 must rerun the standard
+VERIFY/content/type/ownership/diff gates before PR/merge.
+
+q651-q700 has reviewer current evidence queued in `2111dc3`, but no maintained
+CONTENT-VERIFY q651 refresh is observed active. Route q651-q700 only after the
+active q601 and q701 work lands, is rejected, or is explicitly abandoned,
+unless VALIDATOR grants a non-conflicting concurrent lease. VERIFY remains
+report-and-queue only: no edits to `data/**`, `content/question-bank.csv`,
+`site/**`, generator templates, or validator mirrors. CONTENT source
+implementation remains handoff-only unless VALIDATOR explicitly leases
+authored-content work.
+
 MANAGER-content active-lease correction - 2026-05-18T22:16+02:00
 
 Current `origin/main` is `8e3aa16`. q451-q500 VERIFY remains landed and now

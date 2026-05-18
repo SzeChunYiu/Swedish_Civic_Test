@@ -11,6 +11,32 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T22:48:00+02:00 active-lease correction:
+- Current `origin/main` is `d28723d`. `verify:data/questions.ts q501-q550` is
+  landed via `e0f379a`, q501-q550 DATA-INTEGRITY cleanup is landed via
+  `b441aed`, MANAGER-build accepted q501 wording via `d28723d`, and
+  `verify:data/questions.ts q551-q600` is landed via `58cb0f6`. Do not
+  duplicate stale q501 or q551 worktrees/branches unless VALIDATOR rejects the
+  landed evidence and explicitly reroutes.
+- `verify:data/questions.ts q601-q650` is active in CONTENT-VERIFY Pane 1:
+  `/tmp/sct-verify-q601-q650-pane1-1779136927`, branch
+  `task/verify/q601-q650-pane1-1779136927`. It has uncommitted
+  report-and-queue edits and, at the latest manager check, an unresolved
+  `codex-tasks/data-integrity.txt` conflict after syncing to `d28723d`; it must
+  resolve the conflict and rerun standard VERIFY gates before PR/merge.
+- `verify:data/questions.ts q701-q720` is active in CONTENT-VERIFY Pane 4:
+  `/tmp/sct-verify-q701-q720-pane4-1779137112`, branch
+  `task/verify/q701-q720-pane4-1779137112`. It is on current `origin/main`
+  `d28723d` with uncommitted report-and-queue edits and must rerun standard
+  VERIFY gates before PR/merge.
+- `verify:data/questions.ts q651-q700` has reviewer current evidence queued in
+  `2111dc3`, but no maintained CONTENT-VERIFY q651 refresh is observed active.
+  Route q651-q700 after q601/q701 land, are rejected, or are explicitly
+  abandoned unless VALIDATOR leases a non-conflicting concurrent branch.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors from VERIFY work.
+
 MANAGER-content 2026-05-18T22:16:00+02:00 active-lease correction:
 - Current `origin/main` is `8e3aa16`. `verify:data/questions.ts q451-q500` is
   landed, including the q479 correction from `8e3aa16`; do not duplicate stale
