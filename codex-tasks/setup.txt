@@ -588,3 +588,25 @@ coverage, or soften/remove the source-backed / every-claim-footnoted copy until
 a real ebook citation model exists. Add an executable static guard for that
 contract. Keep this separate from SITE-P0-5, which remains external deploy
 freshness only. Do not run Vercel CLI from this repo.
+
+MANAGER-build acceptance 2026-05-18T23:05+02:00
+`REVIEWER-SITE-EBOOK-SOURCE-COVERAGE-1` is accepted on current `origin/main`
+via PR #721 / `3373a5e`. SETUP softened the unsupported Home/Ebook
+source-backed and every-claim-footnoted copy, and added static ebook guard
+coverage so those claims cannot return without ebook citation metadata or
+Sources-page ebook coverage.
+
+Manager recheck in `/tmp/sct-manager-ebook-source-accept-1779143000` rebased
+the worker branch to current main and passed route/static-link assertion,
+`node --test tests/content-static-site-ebook-parity.test.js` 4/4,
+`npm run test:static-site-chapter-count-copy` 2/2,
+`npm run test:static-site-source-provenance-copy` 2/2,
+`node scripts/export-site-question-bank.js --check`, `npm run
+validate:content`, `npm run typecheck -- --pretty false`, `npm run lint`,
+`npm run test:ownership`, changed-file JS syntax checks, targeted Prettier,
+and `git diff --check`.
+
+Do not reopen ebook source-coverage copy unless a fresh current-main source
+provenance defect appears. SETUP has no unblocked local source atom after this;
+`REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains external deploy capacity/operator
+evidence only. Do not run Vercel CLI from this repo.
