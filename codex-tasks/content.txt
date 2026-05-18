@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T16:51:00+02:00
+MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
@@ -45,6 +45,8 @@ Landed:
 - q018 is on `origin/main` as `76b3bde` via PR #317.
 - q114 is on `origin/main` as `f5454ba` via PR #352, with the required static
   mirror update included in the same landed source state.
+- q123 source-section audit is on `origin/main` as `2010bc8` via PR #386; it
+  is an audit/routing artifact only, not the q123 data/static-mirror cleanup.
 
 Duplicate guard:
 - PR #178 and branch `task/content/q009-naturalness-pane1-1779100218` were
@@ -84,6 +86,12 @@ Duplicate guard:
   routing holds fresh non-site content behind SITE-P0 unless VALIDATOR
   explicitly leases it. Do not publish the stale local pane-4 q144 duplicate
   branch.
+- q123 is now audit-guarded via PR #386 / `2010bc8`. Do not open a
+  CONTENT-only q123 data branch: the learner-visible source-section wording is
+  present in both `data/additionalQuestions.ts` and generated
+  `site/questions.js`, so closure needs an explicitly leased bundled
+  DATA-INTEGRITY/static-mirror atom or another VALIDATOR-approved cross-lane
+  path.
 
 Active dispatch:
 - q016, q017, q018, q019, q020, q070, q074, q078, q079, q080, q081, q108,
@@ -107,6 +115,11 @@ Active dispatch:
   for this; the fix belongs to DATA-INTEGRITY because it must change
   `lib/content/derivedQuestions.ts`, the validator mirror, generated exports,
   and any required static mirror in one gated atom.
+- Manager-content audit on current `origin/main` `2010bc8` routes
+  `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` to DATA-INTEGRITY/VALIDATOR:
+  q123 still says `avsnittet` / `this section` in authored explanations and in
+  the static-site mirror. CONTENT must not hand-edit `site/**` or open a
+  data-only q123 branch that would immediately stale the mirror.
 
 Current `origin/main` now includes the q018 and q114 source-note cleanups plus
 the q114 static mirror update. Treat q114 as landed/duplicate-guarded unless
@@ -120,17 +133,30 @@ Next content work:
 2. Keep `REVIEWER-GENERATED-TF-NATURALNESS-2` routed to DATA-INTEGRITY;
    CONTENT must not hand-edit generated CSV rows, generated templates, or the
    validator mirror.
-3. Keep q144 duplicate-guarded in PR #331, but do not advance, duplicate, or
+3. Keep `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1` routed to VALIDATOR /
+   DATA-INTEGRITY for an explicitly leased bundled data + static mirror fix.
+   CONTENT may audit the defect, but must not publish a data-only q123 branch
+   or touch `site/**`.
+4. Keep q144 duplicate-guarded in PR #331, but do not advance, duplicate, or
    replace it until VALIDATOR explicitly leases non-site content or CEO routing
    releases CONTENT. If it is later released, the q144 owner must rebase/verify
    against then-current `origin/main` before merge and pass export parity,
    `validate:content`, focused content tests, typecheck, ownership,
    Prettier/diff checks, and a content journal handoff with PR/merge evidence.
-4. Fresh CONTENT capacity currently reports to MANAGER/VALIDATOR/CEO for
+5. Fresh CONTENT capacity currently reports to MANAGER/VALIDATOR/CEO for
    SITE-P0 staffing/release or bounded UHR-only audit findings instead of
    opening new non-site content. CONTENT still must not edit `site/**`; any
    static-site bank sync or generated true/false template repair remains
    SETUP/build or DATA-INTEGRITY-owned.
+
+MANAGER-content 2026-05-18T16:56:00+02:00
+`origin/main` includes q123 audit evidence via PR #386 / `2010bc8`. Route
+change: q123 source-section wording is now a concrete bundled data/static-mirror
+cleanup candidate, not a CONTENT-only data atom. `CONTENT-Q123-SOURCE-SECTION-
+STATIC-MIRROR-1` is filed to VALIDATOR/DATA-INTEGRITY; CONTENT must not edit
+`site/**` or publish a data-only q123 branch. Keep q144 held unless VALIDATOR
+explicitly leases non-site content, and keep generated true/false naturalness
+DATA-INTEGRITY-owned.
 
 MANAGER-content 2026-05-18T16:51:00+02:00
 `origin/main` now includes the q144 hold audit and q114 landed source/static

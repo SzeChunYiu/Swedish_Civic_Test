@@ -1,6 +1,15 @@
-MANAGER-build DATA-INTEGRITY queue - 2026-05-18T16:49+02:00
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T16:56+02:00
 
-No active DATA-INTEGRITY stop-the-line atom is queued right now.
+Active DATA-INTEGRITY route:
+- `CONTENT-Q123-SOURCE-SECTION-STATIC-MIRROR-1`: Manager-content audit PR
+  #386 / `2010bc8` found q123 still has learner-visible source-section wording
+  in both `data/additionalQuestions.ts` and generated `site/questions.js`:
+  Swedish `avsnittet` and English `this section`. This is P0
+  TRANSLATE-COMPLETE / SOURCE-CITATION naturalness work, but it must be handled
+  as one explicitly leased data + static mirror atom so the canonical content,
+  generated CSV, static mirror, validators, focused tests, typecheck,
+  ownership, Prettier, diff checks, and PR/merge evidence all move together.
+  CONTENT must not hand-edit `site/**` or publish a data-only q123 branch.
 
 Current status:
 - `REVIEWER-GENERATED-TF-META-STEM-1` and
@@ -25,7 +34,9 @@ Current status:
   `node --check site/questions.js`, typecheck, ownership, and `git diff
   --check`.
 
-No active DATA-INTEGRITY generated-prompt atom is queued right now.
+No active DATA-INTEGRITY generated-prompt atom is queued right now. The q123
+route above is authored-content naturalness plus static mirror sync, not a
+generated-template repair.
 
 Next action:
 - Do not replay #198, #212, #228, or #352. If REVIEWER files a new
@@ -34,3 +45,8 @@ Next action:
   ownership, diff check, PR/merge evidence, and journal handoff.
 - Broader authored-question naturalness stays with CONTENT unless the defect
   requires generated-template or validator-mirror changes.
+- For q123, do not split authored data cleanup from `site/questions.js`
+  regeneration. The acceptance bar is one green current-main source state with
+  q123 learner-facing explanations cleaned in data and static mirror, export
+  parity, static-site parity, `validate:content`, focused content/source
+  tests, typecheck, ownership, Prettier, diff checks, and journal evidence.
