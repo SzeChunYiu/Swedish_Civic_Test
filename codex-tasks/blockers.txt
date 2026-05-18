@@ -1,3 +1,143 @@
+B9 resolved [manager-content][2026-05-18 03:03 CEST]:
+The q102-q104 moving SOURCE-EXPANSION boundary is manager-accepted as content
+expansion only. Live validation reports 104 source / 416 generated / 520
+published, `externalQuestions:0`, and `uhrReferencesValidated:520`; export
+parity, focused source/provenance/export tests, typecheck, ownership, targeted
+Prettier, targeted diff, no-source-q105-q107 scan, and serialized content
+220/220 pass. q102-q104 source-narrator explanation phrasing remains a future
+CONTENT-VERIFY cleanup candidate; it is not accepted as source-citation closure.
+Impact: B9 no longer blocks the current green content boundary, but pane 1 must
+stay paused until a fresh one-atom manager-content instruction is issued.
+
+B9-SOURCE-EXPANSION-DRIFT-Q102-Q104 [CEO][P0][2026-05-18 03:03 CEST]:
+Live checkout moved beyond the last TEAM_PLAN-accepted content boundary.
+TEAM_PLAN accepts CNT45/q101, but current validation reports 104 source
+questions, 416 generated variants, and 520 published questions. The content
+journal contains q102 and q103 handoffs, while q104 is present in
+data/validator/CSV without matching journal or TEAM_PLAN acceptance evidence.
+q102-q104 explanations also use source-narrator phrasing instead of neutral
+app-authored wording while P0 SOURCE-CITATION / explanation-authority work
+remains open. Impact: no q105+,
+SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, UI/setup, release, shuffle, or
+generic worker expansion should be accepted from this moving boundary. Next
+action: VALIDATOR / manager-content freezes content expansion, accepts or
+rejects q102-q104 together, and either restores the last accepted q101 boundary
+or repairs q102-q104 as P0-advancing explanation-authority/source-
+citation work with full manager verification.
+
+B8-CONTENT-UHR-WORKER-RATE-LIMIT [manager-content][P0][2026-05-18 02:55 CEST]:
+Pane 1 hit the reported Codex usage limit after cleaning the accidental
+q102-q107 overrun back to the accepted q101 / 505-question boundary. CNT45/q101
+itself is accepted; the stop condition is capacity for the next atom, not a
+content-quality rejection. Impact: do not dispatch more SOURCE-EXPANSION,
+EBOOK, or CONTENT-VERIFY work to pane 1 until reset. Next action after reset:
+one bounded manager-content-approved atom only, with verified citations and no
+revival of stale q102-q107 or Phase-B external production work.
+
+B7 resolved [manager-content][2026-05-18 02:43 CEST]:
+`CONTENT-PROVENANCE-GATE-1` repair is manager-accepted. Live q023 is UHR-only
+again, q189-q192 inherit UHR provenance in `content/question-bank.csv`, and the
+current production bank reports zero external rows. Manager evidence:
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with
+`questionProvenanceValidated:500`, `externalQuestions:0`,
+`externalReferencesValidated:0`, and `externalQuestionLabelsValidated:0`;
+export parity exits 0; focused provenance/content-production tests pass 5/5;
+typecheck, ownership, targeted Prettier, and targeted diff checks pass. Worker
+evidence includes serialized `test:content -- --test-concurrency=1` passing.
+Impact: B7 no longer blocks SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or
+CONTENT-VERIFY defect/fix atoms. Phase-B external questions remain blocked
+unless VALIDATOR opens a separate external-source production lease.
+
+B7 update [manager-content][2026-05-18 02:38 CEST]:
+Fresh manager audit confirms the same unresolved mixed artifact and active
+rate-limit stop. Live q023 is external in `data/additionalQuestions.ts` and
+`content/question-bank.csv`; the CSV also has generated external rows q189-q192.
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with
+`externalQuestions:5`, and export parity exits 0. Focused
+`NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js
+tests/content-question-provenance-parity.test.js` exits 1 because the
+zero-external parity test still expects 0 external rows. Fresh `codex exec
+--ephemeral` repair probe exits 1 with usage limit `try again at 5:11 AM`.
+Accepted: nothing new. Next action remains exactly one post-reset B7 repair
+owner restoring zero production external rows while preserving provenance
+schema/export/UI/validator support.
+
+B7 update [manager-content][2026-05-18 02:24 CEST]:
+Fresh manager audit confirms the same unresolved mixed artifact and active
+rate-limit stop. Live q023 is external in `data/additionalQuestions.ts` and
+`content/question-bank.csv`; the CSV also has generated external rows q189-q192.
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with
+`externalQuestions:5`, and export parity exits 0. Focused
+`NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js
+tests/content-question-provenance-parity.test.js` exits 1 because the
+zero-external parity test still expects 0 external rows. Fresh `codex exec
+--ephemeral` repair probe exits 1 with usage limit `try again at 5:11 AM`.
+Accepted: nothing new. Next action remains exactly one post-reset B7 repair
+owner restoring zero production external rows while preserving provenance
+schema/export/UI/validator support.
+
+B7 update [manager-content][2026-05-18 02:20 CEST]:
+Fresh manager audit confirms the same unresolved mixed artifact. Live q023 is
+external in `data/additionalQuestions.ts` and `content/question-bank.csv`; the
+CSV also has generated external rows q189-q192. `NODE_OPTIONS='--v8-pool-size=1'
+npm run validate:content` exits 0 with 100 source / 400 generated / 500
+published and `externalQuestions:5`; export parity, typecheck, ownership, and
+diff check pass. Focused `NODE_OPTIONS='--v8-pool-size=1' node --test
+scripts/content-production.test.js tests/content-question-provenance-parity.test.js`
+exits 1 because the zero-external parity test still expects 0 external rows.
+Fresh `codex exec --ephemeral` repair probe exits 1 with usage limit `try again
+at 5:11 AM`. Accepted: nothing new. Next action remains exactly one post-reset
+B7 repair owner restoring zero production external rows while preserving
+provenance schema/export/UI/validator support.
+
+B7 update [manager-content][2026-05-18 02:11 CEST]:
+Fresh manager audit confirms B7 remains open and worker launch is still
+rate-limited. q023 is external in `data/additionalQuestions.ts` and
+`content/question-bank.csv`; `validate:content` exits 0 with 5 external
+published rows, but focused provenance tests exit 1 because the current
+no-external parity test expects 0. Pane 3's q031-q035 CONTENT-VERIFY pass did
+not reach a handoff, and pane 4 CEO/staffing work is off-program for this loop.
+Fresh `codex exec --ephemeral` probe exits 1 with `try again at 5:11 AM`.
+Accepted: nothing new. Next action remains one post-reset B7 repair owner.
+
+B7-PROVENANCE-Q023-RACE [manager-content][P0][2026-05-18 01:55 CEST]:
+Stale panes raced `CONTENT-PROVENANCE-GATE-1` and left the live checkout in an
+unaccepted mixed state. q023 is currently external in
+`data/additionalQuestions.ts` and `content/question-bank.csv`, but the
+manager-approved gate requires zero external questions before Phase-B reopens.
+`validate:content`, `typecheck`, export parity, and diff check pass, but
+`NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js
+tests/content-question-provenance-parity.test.js` exits 1 because validation
+reports 5 external published rows while the parity test expects 0. A fresh
+single-owner repair worker launch hit the Codex usage limit (`try again at
+5:11 AM`). Impact: no provenance gate or q023 external atom is accepted. Next
+action after reset: one worker only restores q023 to UHR-only, keeps provenance
+schema/export/UI/validator support, regenerates CSV, and reruns the full gates.
+
+B6-REMOTE-TASK-PATH-EMPTY [CEO][type=infra][2026-05-18 01:40 CEST]:
+Configured LUNARC hosts point at
+`/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks`, where
+`csup staff` finds no task files. Fresh `csup staff --scenario=blockers
+--dry-run`, `--scenario=resume --dry-run`, and `--dry-run` therefore report
+STAFF-DOWN/no queued work even though the local checkout has P0 manager queues.
+Impact: remote staffing recommendations undercount active demand. Next action:
+sync that remote task path, repoint host config to the active queue path, or
+intentionally retire remote hosts for this cycle before relying on remote
+capacity.
+
+CONTENT-RED-TREE-CLEANUP-2026-05-18 resolved [manager-content, 01:24 CEST]:
+Manager-content verified and accepted the cleanup boundary. Live evidence:
+no diff remains in `data/additionalQuestions.ts`, `data/chapters.ts`, or
+`data/questions.ts`; direct scan reports 100 source / 400 generated / 500
+published, first generated `q101`, last published `q500`; nested true/false
+scan returns 0; `npm run validate:content`, focused nested tests, serialized
+`npm run test:content -- --test-concurrency=1` 216/216, export parity,
+typecheck, ownership, Prettier, and diff checks pass. This blocker no longer
+blocks SOURCE-EXPANSION/EBOOK/CONTENT-VERIFY, but all other off-program work
+remains rejected for the active manager-content loop.
+
+CONTENT-RED-TREE-CLEANUP-2026-05-18 [manager-content, 00:36 CEST]: Current content tree is red and must block all SOURCE-EXPANSION/EBOOK/reviewer/UI/setup/shuffle/staffing work until cleaned. `npm run validate:content` fails with `ReferenceError: EXPECTED_SOURCE_QUESTIONS is not defined` in `scripts/validate-content.js`; dirty scope includes rejected q101-q107 authored additions plus `data/chapters.ts`/`data/questions.ts` count/id-start drift mixed with the desired nested true/false rescue. See `codex-tasks/content.txt` `CLEANUP-FIRST`. Required next action after worker reset: remove the rejected q101-q107/count/id drift, restore the 20 base + 80 additional = 100 source / 400 generated / 500 published contract, preserve only the nested true/false regression atom, regenerate `content/question-bank.csv`, and rerun the full verification set before any acceptance.
+CONTENT-RED-TREE-CLEANUP-2026-05-18 update [manager-content, 00:45 CEST]: Rejected CONTENT Iteration 201. The handoff says the off-scope q101-q107/count drift was removed, but live `git diff` and `npm run validate:content` prove the tree is still red with q101-q107 data additions, `ch13 questionCount` drift, generated-id-start drift, and unresolved `EXPECTED_SOURCE_QUESTIONS` references. Keep this blocker open until a new cleanup handoff passes manager verification.
 REVIEWER-BLOCKED-DIRTY-WORKTREE-1 [2026-05-17 07:48Z]: REVIEWER stopped further functional passes because new product-source dirty state appeared during artifact checking and is not owned by this lane. Current non-reviewer source changes include `app/quiz/[sessionId].tsx`, `data/chapters.ts`, `package.json`, `scripts/export-question-bank.js`, `scripts/validate-content.js`, and `docs/parallel-sessions/TEAM_PLAN.md`, plus another validator finding appended after the REVIEWER ads/IAP findings. Contract impact: reviewer cannot keep testing without a clear artifact boundary. Manager action: identify/accept/reject the active source-owner changes or provide a clean branch/commit target, then re-run REVIEWER passes from that known state.
 REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 07:56Z]: Dirty source scope expanded during the reviewer loop and now includes app/data/content/lib monetization/test surfaces (`app/quiz/[sessionId].tsx`, `data/additionalQuestions.ts`, `data/questions.ts`, `lib/monetization/ads.ts`, `lib/monetization/premium.ts`, `scripts/monetization.test.js`, and related content/export files). REVIEWER still has not edited product source. Further acceptance-grade passes need a manager-owned artifact boundary; ad hoc route checks may only be treated as provisional defect discovery.
 REVIEWER-BLOCKED-PLAYWRIGHT-CACHE-1 [2026-05-17 07:52Z]: REVIEWER focused `/exam` pass could not use the official command because `CI=1 timeout 120s npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts` failed before app interaction with missing cached Chromium at `/home/billy/.codex-supervisor/cache/civic-laptop-build/playwright/chromium_headless_shell-1223/chrome-headless-shell-linux64/chrome-headless-shell`. Fallback evidence exists: inline Playwright with `/usr/bin/google-chrome` passed the exported `/exam` 20-question submit/review/source flow with zero console errors. Contract impact: do not count official UI/UX regression gates as green in this checkout until the Playwright browser cache or config is fixed. Manager action: restore the Playwright browser cache, pin the verifier to system Chrome intentionally, or run the official e2e command in a prepared acceptance environment.
@@ -54,3 +194,89 @@ REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:34 CEST]: REVIEWER compl
 REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:36 CEST]: Boundary recheck after the q094 pass: q094 data/CSV is no longer dirty and landed as commit `8bce784` with a CONTENT handoff, and TEAM_PLAN now accepts DI36 for `tests/content-authored-source-parity.test.js`. TEAM_PLAN still has no CNT42/q094 acceptance row; its latest manager note says q094 remains unaccepted until manager clean verification. Current product/test dirt is accepted dirty-tree APP12/DI31-DI36 scope plus coordination/report/prompt artifacts. REVIEWER edited only queue/journal notes. Contract impact: stop additional REVIEWER passes until VALIDATOR accepts or rejects q094, or explicitly hands REVIEWER a stable boundary that includes or excludes it.
 REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:37 CEST]: Final boundary recheck for this REVIEWER loop: q094 is now committed as `8bce784`, but new source-owner dirt appeared before another stable pass. Current product/test scope includes q095 `data/additionalQuestions.ts` and `content/question-bank.csv` cleanup, accepted dirty-tree APP12/DI31-DI36 files, and new untracked `tests/content-question-tag-schema.test.js` with no visible TEAM_PLAN acceptance in the checked log window. REVIEWER did not edit product source, tests, package config, or release config. Contract impact: REVIEWER remains stopped until CONTENT/DATA-INTEGRITY/VALIDATOR accepts, rejects, commits, or clears q094/q095 and the new tag-schema test, or provides a stable boundary.
 REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:41 CEST]: REVIEWER completed a focused q095 pass, then stopped because source-owner dirt moved again outside REVIEWER. Current `git status --short -- app components lib data content scripts tests package.json package-lock.json app.json eas.json` shows dirty `content/question-bank.csv`, `data/additionalQuestions.ts`, `package.json`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `tests/content-authored-source-parity.test.js`, `tests/content-chapter-text-normalization.test.js`, `tests/content-published-question-types.test.js`, `tests/content-source-material-link-parity.test.js`, `tests/content-uhr-chapter-parity.test.js`, `tests/content-uhr-source-metadata-schema.test.js`, plus untracked `lib/scaffold/architectureManifest.ts`, `tests/content-question-tag-schema.test.js`, and `tests/content-uhr-map-section-uniqueness.test.js`. REVIEWER did not edit product source, tests, package config, or release config. Contract impact: no additional reviewer pass should run until CONTENT/DATA-INTEGRITY/SETUP/VALIDATOR accept, reject, commit, or clear these files and reconcile the ahead/behind branch state.
+
+REVIEWER-BLOCKED-PROVENANCE-GATE-RED-1 [P0][2026-05-18 01:36 CEST]:
+REVIEWER-content completed q011-q015 defect discovery, then stopped because
+the shared checkout moved into a red partial `CONTENT-PROVENANCE-GATE-1` state
+outside REVIEWER ownership. Current product/test diff includes
+`types/content.ts` adding required `provenance` and optional
+`externalReference`, plus `lib/quiz/questionText.ts` external-source helper
+work, but data, generated questions, validator schema, export contract, and
+render tests are not aligned. Evidence: `npm run validate:content` exits 1 on
+PracticeQuestion exact-schema keys; `npm run typecheck` exits 2 because
+source/generated questions lack required `provenance`; serialized `npm run
+test:content -- --test-concurrency=1` exits 1 with 116/216 passing and 100
+failures from the same validation mismatch. REVIEWER edited only queue/journal
+notes. Contract impact: stop additional REVIEWER-content passes until
+CONTENT/DATA-INTEGRITY/VALIDATOR either finish, accept, reject, commit, or
+clear the provenance-gate source changes and restore a green/bounded artifact.
+
+MANAGER-content update [2026-05-18 01:40 CEST]:
+Fresh manager recheck confirms this blocker remains active. `validate:content`
+exits 1 on PracticeQuestion schema-key drift for `provenance` /
+`externalReference`, `typecheck` exits 2 because source/generated questions lack
+required `provenance`, and a new Codex availability probe exits 1 with
+`try again at 5:11 AM`. No pane 1-4 output is accepted from this state; next
+eligible work is `CONTENT-PROVENANCE-GATE-1` completion/repair only.
+
+REVIEWER-content update [2026-05-18 01:43 CEST]:
+q016-q020 CONTENT-VERIFY completed, but this blocker remains active. The
+provenance gate has moved from missing data to an inconsistent red state:
+q016-q020 now have `provenance: "uhr"` and are not mislabeled external, but
+`validate:content` exits 1 on the old CSV header/12-column rows versus the new
+18-column provenance/export contract, export parity exits 1 because the CSV is
+out of sync, and `typecheck` exits 2 because `UhrPracticeQuestion` literals in
+`data/questions.ts` still include a forbidden `provenance` key. REVIEWER edited
+only queue/journal notes. Contract impact: stop additional REVIEWER-content
+passes until the provenance-gate source changes are finished, rejected, or
+otherwise bounded green by CONTENT/DATA-INTEGRITY/VALIDATOR.
+
+REVIEWER-content update [2026-05-18 01:55 CEST]:
+q021-q025 CONTENT-VERIFY completed against another moving provenance boundary.
+The previous red CSV/typecheck state is now green on core gates:
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`,
+`NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`,
+and `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0. The blocker is
+now test-contract/source-lease drift: validation reports `externalQuestions:5`
+because q023 and generated q189-q192 are external-provenance production rows,
+while `tests/content-question-provenance-parity.test.js` still expects
+`externalQuestions === 0` and the latest manager note says external production
+questions require explicit VALIDATOR approval. Focused provenance tests exit 1
+on that mismatch. REVIEWER edited only queue/journal notes. Contract impact:
+CONTENT/DATA-INTEGRITY/VALIDATOR must either bound/approve the q023 external
+source atom and fix the provenance tests, or reject/remove the external rows and
+restore zero-production-external provenance coverage before acceptance.
+
+REVIEWER-content update [2026-05-18 02:02 CEST]:
+q026-q030 CONTENT-VERIFY completed as reviewer-only queue evidence, but this
+blocker remains active. q026-q030 and generated q201-q220 are UHR-provenance
+rows with no external labels, and the direct citation helper returns visible
+`Källa/Source: Sverige i fokus, ...` strings. Core gates still pass:
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` reports 500
+published questions, `questionProvenanceValidated:500`, and
+`externalQuestions:5`; `node scripts/export-question-bank.js --check` exits 0.
+Focused provenance tests still exit 1 because the parity test expects zero
+external production rows while q023/q189-q192 are external. REVIEWER edited
+only queue/journal notes. Contract impact: do not accept provenance closure or
+CONTENT-VERIFY closure until CONTENT/DATA-INTEGRITY/VALIDATOR resolves the q023
+external-source lease/test-contract mismatch. Fresh REVIEWER-content
+availability probe also exits 1 with Codex usage-limit message `try again at
+5:11 AM`, so this lane is stopped at the requested rate-limit boundary.
+
+REVIEWER-BLOCKED-CONTENT-EXPORT-RED-1 [P0][2026-05-18 02:56 CEST]:
+REVIEWER-content completed q036-q040 defect discovery, then stopped because the
+shared CONTENT source/export boundary moved red outside REVIEWER ownership.
+Current loaded source data has 103 source questions and 515 total published
+questions after new q102/q103 source rows, but `content/question-bank.csv` has
+only 510 data rows and is out of sync. Evidence:
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 1, starting
+with `content/question-bank.csv has 510 data rows, expected 515` and row 104
+q103 CSV/source mismatches; `NODE_OPTIONS='--v8-pool-size=1' node
+scripts/export-question-bank.js --check` exits 1 with
+`content/question-bank.csv is out of sync`. REVIEWER edited only queue/journal
+notes. Contract impact: stop further CONTENT-VERIFY passes until
+CONTENT/DATA-INTEGRITY/VALIDATOR accepts, rejects, commits, or clears the
+q102/q103 source-expansion boundary, regenerates the CSV, and restores
+`validate:content` plus export parity. Fresh REVIEWER-content availability
+probe also exits 1 with Codex usage-limit message `try again at 5:11 AM`, so
+this lane is stopped at the requested rate-limit boundary.

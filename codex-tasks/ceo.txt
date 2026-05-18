@@ -1,0 +1,391 @@
+  fails with `no .codex-supervisor.toml found for project 'civic-test'`; the
+  project-root `csup staff --scenario=blockers --dry-run`,
+  `--scenario=resume --dry-run`, and `--dry-run` forms all report STAFF-DOWN/no
+  queued work because remote hosts inspect the empty
+  `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks` path.
+  `csup steward civic-test --sample-secs=5` reports `total=0`, and
+  `csup factory-audit civic-test` is RED for missing project config. No
+  `--apply` and no `--allow-stop` were run.
+- Fresh evidence: `validate:content` passes with 520 published, 104 source, 416
+  generated, `externalQuestions:0`, `questionAuthorityBoundaryTextValidated:520`,
+  `answerShuffleDistributionParityValidated:true`, and
+  `uhrReferencesValidated:520`; export parity passes; focused
+  content/provenance/source/export tests pass 10/10; typecheck, ownership, and
+  scoped diff check pass; `npm run test:answer-shuffle` passes 4/4; the
+  UHR-source citation stem gate passes 2/2; bilingual/schema focused tests pass
+  6/6.
+- Escalations: B6 remains open. P0.md still has unchecked SHUFFLE-FIX,
+  SOURCE-CITATION, and TRANSLATE-COMPLETE despite fresh executable evidence for
+  the first two. VALIDATOR should reconcile that ledger with operator-owned
+  P0.md before accepting non-P0 work; TRANSLATE-COMPLETE still needs a
+  naturalness review path.
+
+- Active path: VALIDATOR / manager-content only.
+- Current boundary moved again: live validation now reports 104 source / 416
+  generated / 520 published with zero external rows. TEAM_PLAN accepts only
+  CNT45/q101. q102 and q103 have CONTENT handoffs; q104 is present in
+  data/validator/CSV without a matching CONTENT handoff or TEAM_PLAN
+  acceptance. q102-q104 explanations still use source-narrator wording while
+  P0 SOURCE-CITATION / explanation-authority remains open.
+- Decision: B9 is updated to q102-q104. Freeze q105+, SOURCE-EXPANSION, EBOOK,
+  CONTENT-VERIFY closure, reviewer closure, UI/setup, release, shuffle, and
+  generic workers until VALIDATOR / manager-content accepts or rejects q102-q104
+  together. Prefer restoring the last accepted q101 boundary unless
+  manager-content repairs q102-q104 as P0-advancing neutral
+  explanation/source-citation work with full verification.
+- Evidence: required CEO docs were read from
+  `/home/billy/codex-supervisor-repo/docs/...` because `/home/billy/docs/...`
+  is absent; TEAM_PLAN, P0/blocker/manager queues, content journal, git status,
+  and q102-q104 data were inspected. `csup staff --scenario=blockers
+  --dry-run`, `--scenario=resume --dry-run`, and `--dry-run` all report
+  STAFF-DOWN/no queued work against the empty remote task path; `csup steward
+  civic-test --sample-secs=5` reports `total=0`; `csup factory-audit
+  civic-test` reports RED for missing project config. Fresh gates pass at the
+  moving boundary: `validate:content` 104/416/520 with `externalQuestions:0`,
+  export parity, focused provenance tests 5/5, typecheck, ownership, and
+  targeted diff check.
+- Escalations: B6 remains open because remote staffing undercounts local P0
+  queue demand. B9 is the active stop-the-line product boundary.
+
+`/home/billy/codex-supervisor-repo/docs/...` because the requested
+`/home/billy/docs/...` paths are absent; re-read local protocol, TEAM_PLAN,
+P0/open/blocker queues, manager updates, content journal, git status, and live
+gate output.
+
+Decision:
+- HOLD staffing expansion. Do not start new teams, generic workers, `--apply`,
+  or `--allow-stop` this cycle.
+- Keep VALIDATOR / manager-content as the active management path. CONTENT may
+  continue only under manager-owned leases; REVIEWER should wait for a stable
+  accepted boundary before new functional passes.
+- B7 / `CONTENT-PROVENANCE-GATE-1` is now manager-recorded as accepted, but a
+  newer CONTENT Iteration 202 handoff changed the live content contract to 101
+  source / 404 generated / 505 published with new q101 `Påsk` rows. TEAM_PLAN
+  has not yet accepted that q101/source-expansion atom.
+- VALIDATOR must accept or reject Iteration 202 before any further worker
+  expansion. Because `codex-tasks/P0.md` still has open P0s, q101 may be
+  accepted only if manager evidence shows it demonstrably advances a P0 item;
+  otherwise reject/defer it and restore the accepted B7 boundary.
+- After that boundary, next product work should advance P0: SOURCE-CITATION /
+  explanation-authority cleanup (q096-q100, then q011-q035 defects),
+  TRANSLATE-COMPLETE gaps, or CRITICAL-REVIEWER output. Phase-B external
+  production questions remain blocked without a separate VALIDATOR-approved
+  lease. EBOOK stays lower priority unless explicitly P0-bound.
+
+Staffing evidence:
+- `csup staff --scenario=blockers --dry-run`, `csup staff --scenario=resume
+  --dry-run`, and `csup staff --dry-run` all returned STAFF-DOWN/no queued work
+  for configured remote hosts because they inspect the empty remote task path
+  `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks`.
+- `csup steward civic-test --sample-secs=5` returned `total=0` and recommended
+  keeping current staffing while auditing acceptance evidence.
+- No `--apply` and no `--allow-stop` was run. B6 remains open: remote staffing
+  counts are unreliable until the remote task path is synced, repointed, or
+  retired for this cycle.
+
+CEO spot-gate evidence for the live q101 boundary:
+`validate:content` passes with 505 published / 101 source / 404 generated and
+`externalQuestions:0`; export parity passes; focused provenance tests pass 5/5;
+focused source-export/partition/export tests pass 6/6; typecheck, ownership,
+targeted diff check, and serialized `test:content -- --test-concurrency=1`
+pass 220/220. This is not manager acceptance by itself.
+
+MANAGER-content rate-limit update 2026-05-18 02:11 CEST:
+Fresh manager probe for the required single-owner B7 repair still cannot launch:
+`timeout 60s codex exec --ephemeral "availability probe for MANAGER-content B7
+repair after 02:11 CEST; reply ok"` exits 1 with `You've hit your usage limit`
+and `try again at 5:11 AM`.
+
+Live state remains unaccepted: q023 and generated q189-q192 are external
+production rows; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`
+exits 0 with `externalQuestions:5`, but focused
+`NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js
+tests/content-question-provenance-parity.test.js` exits 1 because the current
+no-external test expects 0 external rows. Manager accepts no q023 external atom,
+Phase-B question, EBOOK, CONTENT-VERIFY closure, or off-program pane output.
+
+- Teams/staffing: HOLD expansion. Do not start new teams or generic workers,
+  and do not run `--apply` or `--allow-stop`.
+- Active path: VALIDATOR / manager-content only.
+- Priority 1: B7 / `CONTENT-PROVENANCE-GATE-1` repair as a single-owner
+  post-reset atom. Restore zero production external questions, remove or reject
+  the q023 external production artifact, preserve provenance schema/export/UI/
+  validator support for future external questions, keep 100 source / 400
+  generated / 500 published, regenerate CSV, and rerun full gates before
+  manager review.
+- Priority 2 after manager acceptance/rejection: neutral explanation-authority
+  cleanup for q096-q100, then q011-q025 queued explanation/stem defects.
+- Escalation: B6 remains open. Fresh `csup staff --scenario=blockers --dry-run`,
+  `--scenario=resume --dry-run`, and `--dry-run` still report STAFF-DOWN/no
+  queued work because configured LUNARC hosts inspect the empty remote
+  `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks` path.
+  `csup steward civic-test --sample-secs=5` reports `total=0`; treat remote
+  staffing counts as unreliable until the remote queue is synced, repointed, or
+  retired for this cycle.
+- Fresh gate evidence: `NODE_OPTIONS='--v8-pool-size=1' npm run
+  validate:content` exits 0 with 100 source / 400 generated / 500 published,
+  `externalQuestions:5`, `externalReferencesValidated:5`, and
+  `externalQuestionLabelsValidated:5`; export parity, typecheck, ownership, and
+  targeted `git diff --check` pass. Focused provenance tests still fail:
+  `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js
+  tests/content-question-provenance-parity.test.js` exits 1 because the current
+  no-external parity test expected 0 external rows and validation reports 5.
+- Manager updates sent to `codex-tasks/validator.txt` and
+  `codex-tasks/content.txt`: keep holds active, accept no q023 external /
+  Phase-B / EBOOK / CONTENT-VERIFY closure, and launch exactly one repair worker
+  after the recorded usage reset if capacity is available.
+
+Worker availability and artifact stability are still blockers. Panes 1 and 2
+resumed stale conflicting work and raced q023 between UHR-only and external;
+manager paused the worker goals. Live state currently has q023 external in data
+and CSV, which violates the no-external provenance-gate instruction. Current
+commands: `validate:content`, `typecheck`, export parity, and diff check pass,
+but `node --test scripts/content-production.test.js
+tests/content-question-provenance-parity.test.js` exits 1 because current
+validation reports 5 external published rows while the no-external parity test
+expects 0. A fresh single-owner `codex exec --ephemeral` repair launch exits 1
+with `try again at 5:11 AM`. No provenance gate, q023 external question,
+SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, or off-program atom is
+accepted.
+
+- Priority 1: repair or reject `CONTENT-PROVENANCE-GATE-1` as one bounded atom.
+  Preserve 100 source / 400 generated / 500 published; add no external
+  question; restore `validate:content`, `typecheck`, content tests, export
+  parity, and ownership/diff checks.
+- Priority 2 after that: `CONTENT-EXPLANATION-AUTHORITY-Q096-Q100`, then the
+  q011-q015 explanation/stem defects from reviewer intake.
+- Escalation: B6 added in TEAM_PLAN. `csup staff` reads the configured remote
+  path `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks`,
+  where task files are absent, so STAFF-DOWN/no queued work is unreliable while
+  local queues contain P0 work. Sync/repoint/retire that remote queue path before
+  relying on remote staffing counts.
+- Evidence: canonical CEO/company/factory/staffing docs were read from
+  `/home/billy/codex-supervisor-repo/docs/...` because `/home/billy/docs/...`
+  paths are absent. Fresh `csup staff --scenario=blockers --dry-run`,
+  `--scenario=resume --dry-run`, and `--dry-run` all returned STAFF-DOWN/no
+  queued work on remote hosts; `csup steward civic-test --sample-secs=5`
+  returned `total=0`. Live `NODE_OPTIONS='--v8-pool-size=1' npm run
+  validate:content` exits 1 on PracticeQuestion schema-key drift for
+  `provenance`/`externalReference`; live `NODE_OPTIONS='--v8-pool-size=1' npm
+  run typecheck` exits 2 because authored/generated questions lack required
+  `provenance`. Export parity and `git diff --check` pass but do not cover the
+  failed gates. No `--apply` or `--allow-stop` was run.
+
+MANAGER-content update 2026-05-18 01:40 CEST:
+Fresh recheck confirms the CEO/manager hold is still necessary. Live evidence:
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 1 on
+PracticeQuestion schema-key drift for `provenance`/`externalReference`;
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exits 2 because source and
+generated questions lack required `provenance`; a new `timeout 60s codex exec
+--ephemeral "availability probe for MANAGER-content after red provenance gate
+check; reply ok"` exits 1 with usage-limit message `try again at 5:11 AM`.
+Manager accepted no SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, provenance
+gate, external question, or off-program output. Next action remains
+`CONTENT-PROVENANCE-GATE-1` repair only after reset.
+
+Worker availability failed during `CONTENT-PROVENANCE-GATE-1`.
+
+CEO decision 2026-05-18 02:59 CEST:
+- Objective remains verified civic-test content quality and source transparency
+  under the P0 gates, not broad expansion.
+- Teams/staffing: HOLD expansion. No new teams, no new workers, no `--apply`,
+  and no `--allow-stop`.
+- Current boundary: B7/CNT45 q101 is accepted, but live checkout has moved to
+  103 source / 412 generated / 515 published. q102 has a CONTENT handoff; q103
+  is present in live data/validator/CSV without matching TEAM_PLAN acceptance.
+- Decision: open B9 and freeze further content expansion. VALIDATOR /
+  manager-content must accept or reject q102/q103 together, then either restore
+  the last accepted q101 boundary or repair q102/q103 as P0-advancing neutral
+  explanation/source-citation work before q104+, EBOOK, reviewer closure,
+  UI/setup, release, shuffle, or generic workers.
+- Evidence: required CEO docs were read from the supervisor repo because
+  `/home/billy/docs/...` is absent; local TEAM_PLAN/queues/journals/git status
+  were inspected. `csup staff --scenario=blockers --dry-run`,
+  `--scenario=resume --dry-run`, and `--dry-run` all report STAFF-DOWN/no queued
+  work against the empty remote task path; `csup steward civic-test --sample-secs=5`
+  reports `total=0`; `csup factory-audit civic-test` reports RED for missing
+  project config. `validate:content` passes at 103/412/515 with zero external
+  rows; export parity and focused provenance tests pass; typecheck, ownership,
+  and targeted diff checks pass.
+- Escalations: B6 remains open because remote staffing counts undercount local
+  queue demand. B9 is now the active stop-the-line product boundary.
+
+What happened:
+- Pane 1 stale SOURCE-EXPANSION was interrupted and then reported the Codex
+  usage limit: `try again at 5:11 AM`.
+- Pane 2 had begun partial provenance gate edits in `types/content.ts` and
+  `lib/quiz/questionText.ts`; manager redirected it to complete the gate without
+  adding external questions, but pane 2 also reported the same usage limit.
+- No external question, provenance gate, SOURCE-EXPANSION atom, EBOOK atom, or
+  CONTENT-VERIFY closure is accepted from this state.
+
+Live command evidence:
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 1 on
+  PracticeQuestion schema-key drift for `provenance`/`externalReference`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exits 2 because existing
+  authored questions and generated variants lack required `provenance`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exits 0 and `git diff --check` exits 0, so the tree is still red despite
+  export parity and whitespace checks.
+
+Next manager action after reset: complete or repair `CONTENT-PROVENANCE-GATE-1`
+only, with 100 source / 400 generated / 500 published preserved and no external
+question added. Then manager-verify before q096-q100 explanation work, EBOOK,
+or SOURCE-EXPANSION resumes.
+
+Objective for this cycle: keep staffing and teams aligned to verified
+civic-test content quality and source transparency. Do not broaden into UIUX,
+release, setup, shuffle, monetization, or generic worker lanes while the P0
+content gates are waiting on manager-owned execution.
+
+Decision:
+- HOLD staffing expansion. No new teams, no new workers, no `--apply`, and no
+  `--allow-stop` this cycle.
+- Keep VALIDATOR / manager-content as the active management path.
+- Next manager-owned work remains `CONTENT-PROVENANCE-GATE-1` first, then
+  `CONTENT-EXPLANATION-AUTHORITY-Q096-Q100`.
+- EBOOK remains allowed only after those gates are manager-verified or after
+  VALIDATOR creates a clearly separated lease.
+- Phase-B external questions remain blocked until the provenance
+  schema/export/validator/render path and localized external-source labels
+  exist and pass.
+
+Staffing evidence:
+- Read the required CEO/company/factory/staffing docs from
+  `/home/billy/codex-supervisor-repo/docs/...` because the requested
+  `/home/billy/docs/...` paths are absent in this environment.
+- Re-read local TEAM_PLAN, queues, manager-content notes, and current git
+  status. `CLEANUP-FIRST` is manager-accepted; the next accepted work is still
+  provenance/explanation, not expansion.
+- Ran `csup staff --scenario=blockers --dry-run`,
+  `csup staff --scenario=resume --dry-run`, and `csup staff --dry-run` from the
+  project root. All configured LUNARC hosts reported STAFF-DOWN/no queued work
+  because `csup` reads the remote task path
+  `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks`, where
+  task files are absent.
+- Ran `csup steward civic-test --sample-secs=5`; it reported `total=0` and
+  recommended keeping current staffing while auditing acceptance evidence.
+
+Escalation / risk:
+- Remote staffing counts are still unreliable until the configured remote task
+  path is synced with the active local `codex-tasks/` directory or intentionally
+  retired/repointed.
+- Local queues do contain P0 manager work, but manager-content already recorded
+  worker usage limits until 05:11 CEST. Managers should relaunch the content
+  gate work after reset and report exact blocker evidence here if unavailable.
+
+Manager updates sent:
+- `codex-tasks/validator.txt`: continue hold; reject off-program acceptance;
+  relaunch provenance then explanation authority after reset.
+- `codex-tasks/content.txt`: execute provenance gate before external questions;
+  then q096-q100 explanation authority; no new external questions in the gate.
+
+Objective: keep the project focused on verified civic-test content quality and
+source transparency, not broad expansion, until the new P0 content gates are
+implemented and manager-accepted.
+
+Team / priority decision:
+- HOLD staffing expansion. Do not start new UIUX, release, setup, shuffle, or
+  generic worker lanes this cycle.
+- Keep manager-content / VALIDATOR as the active management path.
+- Next work after worker reset is `CONTENT-PROVENANCE-GATE-1` first, then
+  `CONTENT-EXPLANATION-AUTHORITY-Q096-Q100`. EBOOK may resume only after those
+  gates are manager-verified or explicitly separated by VALIDATOR.
+- Do not accept external-source Phase-B questions until provenance
+  schema/export/validator/render support and localized external-source labels
+  exist and pass.
+
+Staffing evidence:
+- `csup staff civic-test --scenario=blockers --dry-run` and
+  `csup staff civic-test --scenario=resume --dry-run` failed with
+  `no .codex-supervisor.toml found for project 'civic-test'`.
+- Local project-directory `csup staff --scenario=blockers --dry-run`,
+  `csup staff --scenario=resume --dry-run`, and `csup staff --dry-run` all
+  returned STAFF-DOWN / no queued work for LUNARC hosts because they inspect the
+  remote path `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test`, where
+  task queues are absent.
+- `csup steward civic-test --sample-secs=5` returned `total=0`.
+- No `--apply` and no `--allow-stop` were run.
+
+Escalation / risk:
+- Staffing counts are unreliable for this cycle because `csup` is not reading
+  the active local queue state. Treat remote staffing recommendations as
+  advisory only until the remote task path is synced or the host config is
+  retired/repointed.
+- Current local queues do contain actionable P0 manager work, but live content
+  workers were rate-limited in the manager-content pass until 05:11 CEST.
+
+Manager update sent:
+- VALIDATOR / manager-content should keep non-content expansion held, relaunch
+  only provenance/explanation content gates after reset, and report exact
+  blocker evidence here if worker availability or verification fails.
+
+new expansion, reviewer, UI/setup, shuffle, release, or staffing work.
+
+Decision:
+- HOLD staffing expansion. Do not start new teams or workers until VALIDATOR /
+  manager-content accepts or rejects the current cleanup candidate.
+- Keep CONTENT-CLEANUP as the only active workstream. If accepted, next priority
+  returns to open P0 items in `codex-tasks/P0.md`, especially
+  TRANSLATE-COMPLETE and the standing CRITICAL-REVIEWER lane.
+- Keep REVIEWER blocked until the cleanup has a stable accepted boundary.
+
+Evidence:
+- The exact `/home/billy/docs/...` CEO docs path is absent in this environment;
+  the matching canonical docs were located and read from
+  `/home/billy/codex-supervisor-repo/docs/...`.
+- `csup staff --scenario=blockers --dry-run` and `csup staff --scenario=resume
+  --dry-run` both returned STAFF-DOWN / no queued work on the remote task path;
+  no `--apply` was run.
+- `csup steward civic-test --sample-secs=5` returned `total=0`.
+- Local direct checks now show the cleanup candidate is no longer red:
+  `npm run validate:content` passed with 100 source / 400 generated / 500
+  published questions; nested true/false focused tests passed 4/4;
+  serialized `npm run test:content -- --test-concurrency=1` passed 216/216;
+  export parity, typecheck, ownership, Prettier, and `git diff --check` passed.
+
+Escalation / risk:
+- The staffing dry-runs appear to inspect
+  `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks` and
+  report no task queue files, while the local checkout has active queues.
+  Treat remote staffing counts as unreliable until the remote task path is
+  synced or intentionally retired for this cycle.
+
+Manager actions queued:
+- VALIDATOR / manager-content must re-verify this exact dirty-tree cleanup
+  boundary, then accept or reject it in TEAM_PLAN.
+- If accepted, clear or supersede the stale red-tree holds in
+  `codex-tasks/blockers.txt`, `codex-tasks/content.txt`,
+  `codex-tasks/open.txt`, and `codex-tasks/validator.txt` before reopening
+  other lanes.
+- If rejected, keep all non-cleanup lanes held and write the exact failing
+  command/output back to this file.
+
+CEO decision 2026-05-18 01:46 CEST:
+- Teams/staffing: HOLD expansion. Do not start UIUX, release, setup, shuffle,
+  reviewer, EBOOK, generic worker, or Phase-B external question lanes while the
+  provenance gate is not manager-accepted.
+- Active path: VALIDATOR / manager-content only.
+- Priority 1: finish or reject `CONTENT-PROVENANCE-GATE-1`. Current core gates
+  now pass: `validate:content`, export parity, `typecheck`, ownership, and
+  `git diff --check`. Validation reports 100 source / 400 generated / 500
+  published, `questionProvenanceValidated:500`, `externalQuestions:0`, and
+  `externalQuestionLabelsValidated:0`.
+- Remaining blocker: focused provenance/content-production tests are red because
+  they require `externalQuestions > 0` and expect a q023 external-source
+  fixture. That conflicts with the current gate instruction to add no external
+  question before manager approval. Reconcile the tests with zero production
+  external questions using synthetic external coverage, or have VALIDATOR create
+  a separated external-source lease before adding a Phase-B question.
+- Priority 2 after manager acceptance/rejection: `CONTENT-EXPLANATION-AUTHORITY-
+  Q096-Q100`, then q011-q020 explanation/stem defects from reviewer intake.
+- Escalation remains B6: `csup staff` still reads the configured remote path
+  `/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test/codex-tasks`, where
+  task files are absent, so STAFF-DOWN/no queued work is unreliable while local
+  queues contain P0 manager work.
+- Evidence: read canonical CEO/company/factory/staffing docs from
+  `/home/billy/codex-supervisor-repo/docs/...` because `/home/billy/docs/...`
+  paths are absent. Fresh `csup staff --scenario=blockers --dry-run`,
+  `--scenario=resume --dry-run`, and `--dry-run` returned STAFF-DOWN/no queued
+  work on remote hosts; `csup steward civic-test --sample-secs=5` returned
+  `total=0`. No `--apply` or `--allow-stop` was run.

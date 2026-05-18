@@ -1,6 +1,8 @@
 import type { Difficulty, PracticeQuestion, UHRReference } from '../types/content';
 
 type OptionText = [textSv: string, textEn: string];
+type QuestionSourceMetadata = Pick<PracticeQuestion, 'provenance' | 'externalReference'>;
+const uhrSourceMetadata: QuestionSourceMetadata = { provenance: 'uhr' };
 
 function single(
   id: string,
@@ -14,6 +16,7 @@ function single(
   explanationEn: string,
   tags: string[],
   difficulty: Difficulty = 'medium',
+  sourceMetadata: QuestionSourceMetadata = uhrSourceMetadata,
 ): PracticeQuestion {
   const optionIds = ['a', 'b', 'c', 'd'] as const;
   return {
@@ -27,6 +30,7 @@ function single(
     explanationSv,
     explanationEn,
     uhrReference: ref,
+    ...sourceMetadata,
     difficulty,
     reviewStatus: 'reviewed',
     tags,
@@ -44,6 +48,7 @@ function trueFalse(
   explanationEn: string,
   tags: string[],
   difficulty: Difficulty = 'easy',
+  sourceMetadata: QuestionSourceMetadata = uhrSourceMetadata,
 ): PracticeQuestion {
   return {
     id,
@@ -59,6 +64,7 @@ function trueFalse(
     explanationSv,
     explanationEn,
     uhrReference: ref,
+    ...sourceMetadata,
     difficulty,
     reviewStatus: 'reviewed',
     tags,
@@ -1717,6 +1723,120 @@ export const additionalQuestions: PracticeQuestion[] = [
     'UHR-avsnittet Lucia säger att helgonet Lucia firades den 13 december under katolsk tid. Avsnittet beskriver också att luciafirandet fick sin nuvarande form under 1800-talet och handlar mycket om att sprida ljus när det är som mörkast på året.',
     'The UHR section Lucia says Saint Lucia was celebrated on 13 December during the Catholic period. It also describes how the Lucia celebration took its current form during the 19th century and is largely about spreading light at the darkest time of year.',
     ['lucia', 'december-13', 'light', 'traditions'],
+    'easy',
+  ),
+  single(
+    'q101',
+    'ch13',
+    { chapter: 'Traditioner och högtider', section: 'Påsk', pageApprox: 45 },
+    'Vilket påstående beskriver påskfirandet i Sverige?',
+    'Which statement describes Easter celebrations in Sweden?',
+    [
+      [
+        'Påsken firas i mars eller april, och på påskafton är det vanligt med ägg, lamm, lax, sill och godis i påskägg',
+        'Easter is celebrated in March or April, and on Easter Eve it is common to have eggs, lamb, salmon, herring, and sweets in Easter eggs',
+      ],
+      [
+        'Påsken firas alltid den 31 december med fyrverkerier vid midnatt',
+        'Easter is always celebrated on 31 December with fireworks at midnight',
+      ],
+      [
+        'Påsken firas den 30 april med stora brasor och vårsånger',
+        'Easter is celebrated on 30 April with large bonfires and spring songs',
+      ],
+      [
+        'Påsken är arbetarnas dag och uppmärksammas med demonstrationer',
+        'Easter is workers’ day and is marked with demonstrations',
+      ],
+    ],
+    0,
+    'Påsken är en kristen högtid som firas någon gång i mars eller april. På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg.',
+    'Easter is a Christian holiday celebrated sometime in March or April. On Easter Eve, it is common to eat eggs, lamb, salmon, and herring, and children often receive sweets in Easter eggs.',
+    ['easter', 'easter-eve', 'traditions', 'christian-holiday'],
+    'easy',
+  ),
+  single(
+    'q102',
+    'ch13',
+    { chapter: 'Traditioner och högtider', section: 'Valborgsmässoafton', pageApprox: 46 },
+    'Vad är vanligt vid valborgsmässoafton den 30 april i Sverige?',
+    'What is common on Walpurgis Eve, 30 April, in Sweden?',
+    [
+      [
+        'Stora brasor tänds på kvällen och man sjunger ofta vårsånger vid brasan',
+        'Large bonfires are lit in the evening, and people often sing spring songs by the bonfire',
+      ],
+      [
+        'Familjer samlas på julafton och ger varandra julklappar',
+        'Families gather on Christmas Eve and give each other Christmas presents',
+      ],
+      [
+        'Det nya året firas på natten med fyrverkerier',
+        'The new year is celebrated at night with fireworks',
+      ],
+      [
+        'Många kommuner välkomnar nya medborgare på nationaldagen',
+        'Many municipalities welcome new citizens on National Day',
+      ],
+    ],
+    0,
+    'Valborgsmässoafton firas den 30 april för att välkomna våren. Enligt avsnittet tänds stora brasor på kvällen, och vid brasan sjunger man ofta traditionella vårsånger.',
+    'Walpurgis Eve is celebrated on 30 April to welcome spring. The section says large bonfires are lit in the evening, and people often sing traditional spring songs by the bonfire.',
+    ['valborg', 'walpurgis-eve', 'spring', 'traditions'],
+    'easy',
+  ),
+  single(
+    'q103',
+    'ch13',
+    { chapter: 'Traditioner och högtider', section: 'Första maj', pageApprox: 46 },
+    'Vad uppmärksammas på första maj i Sverige?',
+    'What is marked on 1 May in Sweden?',
+    [
+      [
+        'Arbetarnas dag, med demonstrationer som arrangeras av arbetarrörelsen',
+        'Workers’ Day, with demonstrations arranged by the labour movement',
+      ],
+      [
+        'Vårens ankomst med stora brasor och traditionella vårsånger',
+        'The arrival of spring with large bonfires and traditional spring songs',
+      ],
+      [
+        'Sveriges nationaldag med ceremonier för nya medborgare',
+        'Sweden’s National Day with ceremonies for new citizens',
+      ],
+      [
+        'Julafton, när familjer samlas och ger varandra julklappar',
+        'Christmas Eve, when families gather and give each other Christmas presents',
+      ],
+    ],
+    0,
+    'Första maj är arbetarnas dag internationellt och är också en helgdag i Sverige. Avsnittet säger att arbetarrörelsen uppmärksammar dagen med demonstrationer runt om i landet, där personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor.',
+    '1 May is International Workers’ Day and is also a public holiday in Sweden. The section says the labour movement marks the day with demonstrations around the country, where people from trade unions, political parties, and other groups give speeches about social and political issues.',
+    ['first-may', 'workers-day', 'labour-movement', 'demonstrations'],
+    'easy',
+  ),
+  single(
+    'q104',
+    'ch13',
+    { chapter: 'Traditioner och högtider', section: 'Alla helgons dag', pageApprox: 46 },
+    'Vad är vanligt att göra på Alla helgons dag i Sverige?',
+    'What is common to do on All Saints’ Day in Sweden?',
+    [
+      [
+        'Gå till kyrkogården och tända ljus på gravar för att minnas dem som har dött',
+        'Go to the cemetery and light candles on graves to remember people who have died',
+      ],
+      ['Tända stora brasor för att välkomna våren', 'Light large bonfires to welcome spring'],
+      ['Ordna demonstrationer på arbetarnas dag', 'Arrange demonstrations on Workers’ Day'],
+      [
+        'Fira det nya året med fyrverkerier vid midnatt',
+        'Celebrate the new year with fireworks at midnight',
+      ],
+    ],
+    0,
+    'Alla helgons dag är en kristen helgdag. Avsnittet säger att många går till kyrkogården för att tända ljus på släktingars och vänners gravar, för att minnas och hedra dem som har dött.',
+    'All Saints’ Day is a Christian holiday. The section says many people go to the cemetery to light candles on relatives’ and friends’ graves, to remember and honour those who have died.',
+    ['all-saints-day', 'cemetery', 'candles', 'traditions'],
     'easy',
   ),
 ];

@@ -3,6 +3,7 @@ import type { PracticeQuestion } from '../../types/content';
 import { Card } from '../ui/Card';
 import {
   getQuestionDisplayText,
+  getQuestionProvenanceLabel,
   getQuestionSourceCitation,
   getQuestionTranslationText,
 } from '../../lib/quiz/questionText';
@@ -12,11 +13,13 @@ export function QuestionCard({ question }: { question?: PracticeQuestion }) {
   const difficulty = question?.difficulty ?? 'practice';
   const questionText = getQuestionDisplayText(question, 'sv');
   const questionTranslation = getQuestionTranslationText(question);
+  const provenanceLabel = getQuestionProvenanceLabel(question);
   const sourceCitation = getQuestionSourceCitation(question);
   const questionAccessibilityLabel = [
     `Difficulty: ${difficulty}`,
     `Question: ${questionText}`,
     questionTranslation ? `English translation: ${questionTranslation}` : null,
+    provenanceLabel ? `Source type: ${provenanceLabel}` : null,
     `Source citation: ${sourceCitation}`,
   ]
     .filter(Boolean)
@@ -28,6 +31,7 @@ export function QuestionCard({ question }: { question?: PracticeQuestion }) {
       <Text accessibilityRole="header" style={styles.question}>
         {questionText}
       </Text>
+      {provenanceLabel ? <Text style={styles.provenanceLabel}>{provenanceLabel}</Text> : null}
       <Text style={styles.sourceCitation}>{sourceCitation}</Text>
       {questionTranslation ? <Text style={styles.translation}>{questionTranslation}</Text> : null}
     </Card>
@@ -53,6 +57,13 @@ const styles = StyleSheet.create({
     fontSize: typography.disclaimer.fontSize,
     lineHeight: typography.disclaimer.lineHeight,
     marginTop: space[0.75],
+  },
+  provenanceLabel: {
+    color: colors.badgeBlueText,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.75],
+    textTransform: 'uppercase',
   },
   translation: {
     color: colors.textMuted,

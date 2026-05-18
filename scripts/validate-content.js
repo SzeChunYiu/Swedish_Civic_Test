@@ -18,14 +18,18 @@ const speechMock = {
 const QUESTION_TYPE_VALUES = ['single_choice', 'true_false', 'flashcard'];
 const REVIEW_STATUS_VALUES = ['draft', 'reviewed', 'published'];
 const DIFFICULTY_VALUES = ['easy', 'medium', 'hard'];
+const QUESTION_PROVENANCE_VALUES = ['uhr', 'external'];
 const QUESTION_TYPES = new Set(QUESTION_TYPE_VALUES);
 const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
+const QUESTION_PROVENANCES = new Set(QUESTION_PROVENANCE_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 100;
+const EXPECTED_SOURCE_QUESTIONS = 104;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
+const EXPECTED_GENERATED_QUESTIONS = EXPECTED_SOURCE_QUESTIONS * GENERATED_VARIANTS_PER_SOURCE;
+const EXPECTED_PUBLISHED_QUESTIONS = EXPECTED_SOURCE_QUESTIONS + EXPECTED_GENERATED_QUESTIONS;
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
 const GENERATED_VARIANT_CONVENTIONS = [
@@ -53,6 +57,8 @@ const EXPECTED_UHR_SOURCE = {
   publisher: 'Universitets- och högskolerådet (UHR)',
   url: 'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
 };
+const EXPECTED_EXTERNAL_PROVENANCE_LABEL =
+  'Extern källa - utöver UHR-materialet / External source - beyond the UHR material';
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const QUESTION_BANK_CSV_HEADER = [
@@ -62,9 +68,15 @@ const QUESTION_BANK_CSV_HEADER = [
   'questionSv',
   'questionEn',
   'correctOptionId',
+  'provenance',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
+  'externalPublisher',
+  'externalTitle',
+  'externalLocator',
+  'externalUrl',
+  'externalAccessedAt',
   'difficulty',
   'reviewStatus',
   'tags',
@@ -1629,6 +1641,10 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /const sourceCitation = getQuestionSourceCitation\(question\);/,
   },
   {
+    label: 'external provenance label helper',
+    pattern: /const provenanceLabel = getQuestionProvenanceLabel\(question\);/,
+  },
+  {
     label: 'difficulty in accessibility summary',
     pattern: /`Difficulty: \$\{difficulty\}`/,
   },
@@ -1645,6 +1661,10 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /`Source citation: \$\{sourceCitation\}`/,
   },
   {
+    label: 'external provenance label in accessibility summary',
+    pattern: /provenanceLabel \? `Source type: \$\{provenanceLabel\}` : null/,
+  },
+  {
     label: 'Card receives accessibility summary',
     pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
   },
@@ -1659,6 +1679,11 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'visible source citation line',
     pattern: /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/,
+  },
+  {
+    label: 'visible external provenance label',
+    pattern:
+      /\{provenanceLabel \? <Text style=\{styles\.provenanceLabel\}>\{provenanceLabel\}<\/Text> : null\}/,
   },
   {
     label: 'visible display-safe English translation',
@@ -2108,6 +2133,7 @@ const EXPECTED_CONTENT_TYPE_UNIONS = [
   { typeName: 'ReviewStatus', values: REVIEW_STATUS_VALUES },
   { typeName: 'QuestionType', values: QUESTION_TYPE_VALUES },
   { typeName: 'Difficulty', values: DIFFICULTY_VALUES },
+  { typeName: 'QuestionProvenance', values: QUESTION_PROVENANCE_VALUES },
 ];
 const EXPECTED_CONTENT_INTERFACES = [
   {
@@ -2116,6 +2142,16 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'chapter', type: 'string', optional: false },
       { name: 'section', type: 'string', optional: false },
       { name: 'pageApprox', type: 'number', optional: false },
+    ],
+  },
+  {
+    name: 'ExternalReference',
+    fields: [
+      { name: 'publisher', type: 'string', optional: false },
+      { name: 'title', type: 'string', optional: false },
+      { name: 'locator', type: 'string', optional: false },
+      { name: 'url', type: 'string', optional: false },
+      { name: 'accessedAt', type: 'string', optional: false },
     ],
   },
   {
@@ -2139,6 +2175,8 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
       { name: 'uhrReference', type: 'UHRReference', optional: false },
+      { name: 'provenance', type: 'QuestionProvenance', optional: false },
+      { name: 'externalReference', type: 'ExternalReference', optional: true },
       { name: 'difficulty', type: 'Difficulty', optional: false },
       { name: 'reviewStatus', type: 'ReviewStatus', optional: false },
       { name: 'tags', type: 'string[]', optional: false },
@@ -2172,6 +2210,7 @@ function expectedContentInterfaceKeys(interfaceName) {
   return interfaceSpec ? interfaceSpec.fields.map((field) => field.name) : [];
 }
 const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference');
+const EXPECTED_EXTERNAL_REFERENCE_KEYS = expectedContentInterfaceKeys('ExternalReference');
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
@@ -2700,10 +2739,16 @@ function questionTextFieldsAreNormalized(question) {
     question.explanationEn,
     question.uhrReference?.chapter,
     question.uhrReference?.section,
+    question.provenance,
+    question.externalReference?.publisher,
+    question.externalReference?.title,
+    question.externalReference?.locator,
+    question.externalReference?.url,
+    question.externalReference?.accessedAt,
     ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
   ];
 
-  return fields.every(textIsTrimmedSingleSpaced);
+  return fields.every((field) => field === undefined || textIsTrimmedSingleSpaced(field));
 }
 
 function textHasSentenceEnding(value) {
@@ -2714,6 +2759,20 @@ function questionSentenceEndingsAreComplete(question) {
   return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
     textHasSentenceEnding(question[field]),
   );
+}
+
+const TRUE_FALSE_PROMPT_MARKERS = {
+  questionSv: /\bSant eller falskt\s*:/gi,
+  questionEn: /\bTrue or false\s*:/gi,
+};
+
+function findNestedTrueFalsePromptFields(question) {
+  return Object.entries(TRUE_FALSE_PROMPT_MARKERS)
+    .filter(([field, pattern]) => {
+      const matches = normalizeOptionText(question?.[field]).match(pattern) || [];
+      return matches.length > 1;
+    })
+    .map(([field]) => field);
 }
 
 function findQuestionAuthorityOverclaim(question) {
@@ -2781,6 +2840,30 @@ function answerLabel(option) {
   return `${option?.textSv ?? ''}`.replace(/[.!?]\s*$/, '');
 }
 
+function isTrueFalseSource(sourceQuestion) {
+  return (
+    sourceQuestion?.type === 'true_false' &&
+    sourceQuestion.options?.length === 2 &&
+    ['true', 'false'].includes(sourceQuestion.correctOptionId)
+  );
+}
+
+function trueFalseStatementSv(questionSv) {
+  return String(questionSv || '')
+    .replace(/^\s*Sant eller falskt:\s*/i, '')
+    .trim();
+}
+
+function trueFalseStatementEn(questionEn) {
+  return String(questionEn || '')
+    .replace(/^\s*True or false:\s*/i, '')
+    .trim();
+}
+
+function inverseTrueFalseOptionId(correctOptionId) {
+  return correctOptionId === 'true' ? 'false' : 'true';
+}
+
 function correctOption(question) {
   return (
     question.options?.find((option) => option.id === question.correctOptionId) ??
@@ -2803,6 +2886,13 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   }
 
   if (variantIndex === 1) {
+    if (isTrueFalseSource(sourceQuestion)) {
+      return {
+        questionSv: `Stämmer påståendet? ${trueFalseStatementSv(sourceQuestion.questionSv)}`,
+        questionEn: `Is this statement correct? ${trueFalseStatementEn(sourceQuestion.questionEn)}`,
+      };
+    }
+
     const option = correctOption(sourceQuestion);
     return {
       questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
@@ -2811,6 +2901,13 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   }
 
   if (variantIndex === 2) {
+    if (isTrueFalseSource(sourceQuestion)) {
+      return {
+        questionSv: `Är påståendet felaktigt? ${trueFalseStatementSv(sourceQuestion.questionSv)}`,
+        questionEn: `Is this statement incorrect? ${trueFalseStatementEn(sourceQuestion.questionEn)}`,
+      };
+    }
+
     const option = wrongOption(sourceQuestion);
     return {
       questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
@@ -2858,6 +2955,13 @@ function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
   }
 
   if (variantIndex === 1) {
+    if (isTrueFalseSource(sourceQuestion)) {
+      return {
+        options: TRUE_FALSE_OPTIONS,
+        correctOptionId: sourceQuestion.correctOptionId,
+      };
+    }
+
     return {
       options: TRUE_FALSE_OPTIONS,
       correctOptionId: 'true',
@@ -2865,6 +2969,13 @@ function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
   }
 
   if (variantIndex === 2) {
+    if (isTrueFalseSource(sourceQuestion)) {
+      return {
+        options: TRUE_FALSE_OPTIONS,
+        correctOptionId: inverseTrueFalseOptionId(sourceQuestion.correctOptionId),
+      };
+    }
+
     return {
       options: TRUE_FALSE_OPTIONS,
       correctOptionId: 'false',
@@ -2873,10 +2984,10 @@ function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
 
   const correct = correctOption(sourceQuestion);
   const wrong = wrongOption(sourceQuestion);
-  const isTrueFalseSource =
+  const sourceIsTrueFalse =
     sourceQuestion.options?.length === 2 &&
     ['true', 'false'].includes(sourceQuestion.correctOptionId);
-  const options = isTrueFalseSource
+  const options = sourceIsTrueFalse
     ? [...sourceQuestion.options, UNKNOWN_OPTION, SOMETIMES_OPTION]
     : [correct, wrong, UNKNOWN_OPTION, SOMETIMES_OPTION];
 
@@ -2900,6 +3011,18 @@ function isHttpsUrl(value) {
 
 function isObjectRecord(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function externalReferenceIsValid(question) {
+  const reference = question?.externalReference;
+  return (
+    isObjectRecord(reference) &&
+    ['publisher', 'title', 'locator', 'url', 'accessedAt'].every((field) =>
+      textIsTrimmedSingleSpaced(reference[field]),
+    ) &&
+    isHttpsUrl(reference.url) &&
+    isIsoDate(reference.accessedAt)
+  );
 }
 
 function unexpectedKeys(value, expectedKeys) {
@@ -2944,6 +3067,17 @@ function questionExactSchemaKeyFailures(question, label) {
       'UHRReference',
     ),
   );
+
+  if (question?.externalReference !== undefined) {
+    failures.push(
+      ...schemaKeyFailures(
+        question.externalReference,
+        EXPECTED_EXTERNAL_REFERENCE_KEYS,
+        `${label} externalReference`,
+        'ExternalReference',
+      ),
+    );
+  }
 
   return failures;
 }
@@ -3397,6 +3531,31 @@ function validateQuestionSchema(question, index) {
   if (!REVIEW_STATUSES.has(question.reviewStatus)) {
     reject(`${label} has invalid reviewStatus ${question.reviewStatus}`);
   }
+  if (!QUESTION_PROVENANCES.has(question.provenance)) {
+    reject(`${label} has invalid provenance ${question.provenance}`);
+  }
+  if (question.provenance === 'uhr' && question.externalReference !== undefined) {
+    reject(`${label} UHR-provenance question must not include externalReference`);
+  }
+  if (question.provenance === 'external') {
+    if (!isObjectRecord(question.externalReference)) {
+      reject(`${label} external provenance requires externalReference`);
+    } else {
+      for (const field of ['publisher', 'title', 'locator', 'url', 'accessedAt']) {
+        if (!hasText(question.externalReference[field])) {
+          reject(`${label} externalReference.${field} is required for external provenance`);
+        } else if (!textIsTrimmedSingleSpaced(question.externalReference[field])) {
+          reject(`${label} externalReference.${field} must be trimmed and single-spaced`);
+        }
+      }
+      if (!isHttpsUrl(question.externalReference.url)) {
+        reject(`${label} externalReference.url must be an HTTPS public URL`);
+      }
+      if (!isIsoDate(question.externalReference.accessedAt)) {
+        reject(`${label} externalReference.accessedAt must use YYYY-MM-DD`);
+      }
+    }
+  }
   if (
     normalizeComparableText(question.questionSv) === normalizeComparableText(question.questionEn)
   ) {
@@ -3510,6 +3669,8 @@ const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
 const scoreExam = examGeneratorModule.scoreExam;
 const buildExamChapterBreakdownItems = examGeneratorModule.buildExamChapterBreakdownItems;
 const formatExamTime = examGeneratorModule.formatExamTime;
+const questionTextModule = loadTs('lib/quiz/questionText.ts');
+const getQuestionProvenanceLabel = questionTextModule.getQuestionProvenanceLabel;
 const shouldAutoSubmitExam = examGeneratorModule.shouldAutoSubmitExam;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
@@ -3770,11 +3931,16 @@ let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
 let questionIdSequencesValidated = 0;
+let externalQuestions = 0;
 let questionBilingualTextPairsValidated = 0;
 let questionOptionBilingualTextPairsValidated = 0;
 let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
 let questionSentenceEndingsValidated = 0;
+let nestedTrueFalsePromptPatternsValidated = 0;
+let questionProvenanceValidated = 0;
+let externalReferencesValidated = 0;
+let externalQuestionLabelsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -9850,9 +10016,15 @@ function validateQuestionBankCsvContract() {
       question.questionSv,
       question.questionEn,
       question.correctOptionId,
+      question.provenance,
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
+      question.externalReference?.publisher ?? '',
+      question.externalReference?.title ?? '',
+      question.externalReference?.locator ?? '',
+      question.externalReference?.url ?? '',
+      question.externalReference?.accessedAt ?? '',
       question.difficulty,
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
@@ -9883,6 +10055,8 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'explanationSv',
   'explanationEn',
   'uhrReference',
+  'provenance',
+  'externalReference',
   'difficulty',
   'tags',
 ];
@@ -10138,6 +10312,8 @@ function validateGeneratedSourceMetadataParity() {
         'explanationSv',
         'explanationEn',
         'uhrReference',
+        'provenance',
+        'externalReference',
       ]) {
         if (!jsonEqual(variant[field], sourceQuestion[field])) {
           reject(`${label} ${field} does not match source question`);
@@ -10519,7 +10695,9 @@ if (Array.isArray(chapters)) {
 }
 
 if (Array.isArray(questions)) {
-  if (questions.length !== 500) fail(`expected 500 questions, found ${questions.length}`);
+  if (questions.length !== EXPECTED_PUBLISHED_QUESTIONS) {
+    fail(`expected ${EXPECTED_PUBLISHED_QUESTIONS} questions, found ${questions.length}`);
+  }
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
   const promptTexts = {
     questionSv: new Map(),
@@ -10568,6 +10746,15 @@ if (Array.isArray(questions)) {
       fail(`${label} references unknown chapter ${question.chapterId}`);
     }
 
+    const nestedTrueFalsePromptFields = findNestedTrueFalsePromptFields(question);
+    if (nestedTrueFalsePromptFields.length > 0) {
+      nestedTrueFalsePromptFields.forEach((field) => {
+        fail(`${label} ${field} wraps a true/false prompt inside another true/false prompt`);
+      });
+    } else {
+      nestedTrueFalsePromptPatternsValidated += 1;
+    }
+
     let promptTextIsUnique = true;
     for (const field of Object.keys(promptTexts)) {
       const text = normalizeOptionText(question[field]);
@@ -10609,6 +10796,26 @@ if (Array.isArray(questions)) {
       }
       if (questionSentenceEndingsAreComplete(question)) {
         questionSentenceEndingsValidated += 1;
+      }
+      const provenanceLabel =
+        typeof getQuestionProvenanceLabel === 'function'
+          ? getQuestionProvenanceLabel(question)
+          : undefined;
+      if (question.provenance === 'uhr' && question.externalReference === undefined) {
+        if (provenanceLabel !== undefined) {
+          fail(`${label} UHR-provenance question is mislabeled as external`);
+        } else {
+          questionProvenanceValidated += 1;
+        }
+      } else if (question.provenance === 'external' && externalReferenceIsValid(question)) {
+        externalQuestions += 1;
+        questionProvenanceValidated += 1;
+        externalReferencesValidated += 1;
+        if (provenanceLabel === EXPECTED_EXTERNAL_PROVENANCE_LABEL) {
+          externalQuestionLabelsValidated += 1;
+        } else {
+          fail(`${label} external-provenance question is missing the visible external label`);
+        }
       }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       if (authorityOverclaim) {
@@ -11003,11 +11210,16 @@ console.log(
       questionSchemasValidated,
       publishedQuestionTypesValidated,
       questionIdSequencesValidated,
+      externalQuestions,
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
       questionExactSchemaKeysValidated,
       questionTextFieldsNormalizedValidated,
       questionSentenceEndingsValidated,
+      nestedTrueFalsePromptPatternsValidated,
+      questionProvenanceValidated,
+      externalReferencesValidated,
+      externalQuestionLabelsValidated,
       questionAuthorityBoundaryTextValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

@@ -1,3 +1,541 @@
+CEO->VALIDATOR 2026-05-18 03:13 CEST:
+This supersedes the 03:03 q102-q104 freeze note. B9 is manager-resolved:
+CNT46-CNT48 are accepted as SOURCE-EXPANSION only, with the live bank green at
+104 source / 416 generated / 520 published and zero external rows. Do not keep
+q102-q104 blocked for acceptance, but also do not treat them as CONTENT-VERIFY
+or P0 SOURCE-CITATION closure.
+
+Required next manager action:
+- Reconcile `codex-tasks/P0.md` before accepting non-P0 work. Fresh executable
+  evidence supports SHUFFLE-FIX and SOURCE-CITATION, but P0.md is still
+  unchecked and operator-owned. Record the evidence and request/perform the
+  allowed ledger update only under the P0.md rule.
+- Keep TRANSLATE-COMPLETE open until a naturalness review proves SV+EN quality,
+  not only schema parity.
+- Queue the next accepted atom as P0-advancing: translation/naturalness review,
+  neutral explanation-authority cleanup for q102-q104 or earlier queued defects,
+  or reviewer output. Hold q105+ SOURCE-EXPANSION, EBOOK, Phase-B external,
+  UIUX, setup, release, shuffle, QA, and generic workers until that P0 path is
+  selected and leased.
+
+Fresh CEO evidence: `validate:content` passes with 520 published, 104 source,
+416 generated, `externalQuestions:0`, `questionAuthorityBoundaryTextValidated:520`,
+`answerShuffleDistributionParityValidated:true`, and `uhrReferencesValidated:520`;
+export parity passes; focused content/provenance/source/export tests pass 10/10;
+typecheck, ownership, scoped diff check, `npm run test:answer-shuffle` 4/4,
+UHR-source citation stem gate 2/2, and focused bilingual/schema tests 6/6 pass.
+Staffing remains HOLD because `csup staff civic-test ...` cannot find project
+config, project-root `csup staff` dry-runs still read the empty remote task
+path and report STAFF-DOWN/no queued work, steward reports `total=0`, and
+factory audit is RED for missing project config. No `--apply` or `--allow-stop`
+was run.
+
+MANAGER-content 2026-05-18 03:03 CEST:
+Accept CNT46-CNT48 as SOURCE-EXPANSION only and resolve B9. The accepted live
+boundary is 104 source / 416 generated / 520 published with zero external
+production rows. Accepted atoms: q102 `Valborgsmässoafton` with generated
+q507-q510, q103 `Första maj` with generated q512-q515, and q104
+`Alla helgons dag` with generated q517-q520, all cited to official UHR
+`Sverige i fokus`, Chapter 13, printed page 46.
+
+Manager verification passes: `validate:content`, export parity, focused
+source/provenance/export tests 12/12, typecheck, ownership, targeted Prettier,
+targeted diff, no-source-q105-q107 scan, and serialized `test:content --
+--test-concurrency=1` 220/220. The q102-q104 source-narrator explanation
+phrasing remains only a future CONTENT-VERIFY cleanup candidate; no
+CONTENT-VERIFY closure is accepted here.
+
+Keep pane 1 paused. Next work must be a fresh one-atom manager-content
+instruction: SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY
+defect/fix only. No q105+ auto-advance and no Phase-B external production
+question without a separate VALIDATOR lease.
+
+CEO->VALIDATOR URGENT 2026-05-18 03:03 CEST:
+This supersedes the 02:59 q102/q103 stop note. Freeze content expansion and
+accept no q105+, EBOOK, reviewer-closure, UI/setup, release, shuffle, or
+generic worker atom until B9 is resolved. Live checkout now validates at 104
+source / 416 generated / 520 published while TEAM_PLAN accepts only through
+CNT45/q101. q102 and q103 have CONTENT journal handoffs; q104 is present in
+data/validator/CSV without a matching CONTENT handoff or TEAM_PLAN acceptance.
+q102-q104 explanations still use source-narrator wording such as "the section
+says", so this is not clean P0 SOURCE-CITATION /
+explanation-authority progress. Accept or reject q102-q104 together, then
+either restore the accepted q101 boundary or repair q102-q104 as P0-advancing
+neutral explanation/source-citation work with full manager verification.
+
+Fresh CEO evidence: required executive docs were re-read from
+`/home/billy/codex-supervisor-repo/docs/...` because `/home/billy/docs/...` is
+absent; `csup staff --scenario=blockers --dry-run`, `--scenario=resume
+--dry-run`, and `--dry-run` all reported STAFF-DOWN/no queued work against the
+empty remote task path; `csup steward civic-test --sample-secs=5` reported
+`total=0`; `csup factory-audit civic-test` is RED for missing project config.
+`validate:content`, export parity, focused provenance tests 5/5, typecheck,
+ownership, and targeted diff check pass at the moving 520-question boundary,
+but those checks do not by themselves accept the boundary. No `--apply` or
+`--allow-stop` was run.
+
+CEO->VALIDATOR URGENT 2026-05-18 02:59 CEST:
+This supersedes the 02:54 q101-only boundary note. Freeze content expansion and
+accept no q104+, EBOOK, reviewer-closure, UI/setup, release, shuffle, or generic
+worker atom until B9 is resolved. Live checkout now validates at 103 source /
+412 generated / 515 published while TEAM_PLAN accepts only through CNT45/q101.
+q102 has a CONTENT handoff; q103 is present in data/validator/CSV without
+matching TEAM_PLAN acceptance. Accept or reject q102/q103 together, then either
+restore the accepted q101 boundary or repair q102/q103 as P0-advancing neutral
+explanation/source-citation work with full manager verification.
+
+MANAGER-content 2026-05-18 02:55 CEST:
+Accept CNT45 / q101 Phase-A UHR source-expansion. The accepted artifact is the
+q101 Easter question plus generated q502-q505 rows, cited to official UHR
+`Sverige i fokus`, Chapter 13 `Traditioner och högtider`, section `Påsk`,
+printed page 45. Manager source check confirms the answer/explanation matches
+the UHR page text on March/April Easter timing and Easter Eve foods/sweets.
+
+Verification passes: `validate:content` reports 101 source / 404 generated /
+505 published, `externalQuestions:0`, and `uhrReferencesValidated:505`; export
+parity passes; focused source/provenance/export tests pass 12/12; typecheck,
+ownership, targeted Prettier, targeted diff, direct q101/CSV scan,
+no-source-q102-q107 scan, duplicate-assertion scan, and serialized
+`test:content -- --test-concurrency=1` 220/220 pass.
+
+Reject the accidental q102-q107 overrun and any Phase-B external production
+question. Pane 1 is stopped at the reported usage limit; after reset, accept
+only bounded SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY
+defect/fix atoms under manager-content.
+
+CEO->VALIDATOR / manager-content 2026-05-18 02:54 CEST:
+B7 is manager-recorded as accepted, but the live checkout has a newer CONTENT
+Iteration 202 artifact: q023 is back to UHR-only, and q101 `Påsk` expands the
+bank to 101 source / 404 generated / 505 published. Freeze further CONTENT,
+EBOOK, reviewer, external-source, UI/setup, shuffle, release, monetization, and
+generic open-queue acceptance until VALIDATOR accepts or rejects this exact
+boundary.
+
+Required VALIDATOR action:
+- Audit `docs/parallel-sessions/journals/content.md` Iteration 202 and the live
+  diff for q101/q502-q505 against UHR `Sverige i fokus`, Chapter 13, section
+  `Påsk`, printed page 45.
+- If accepted, update TEAM_PLAN with the new 101/404/505 content contract,
+  explicit evidence, and why the atom is allowed while open P0 items remain.
+- If it does not demonstrably advance an open P0 item in `codex-tasks/P0.md`,
+  reject or defer the q101 source-expansion atom and restore the accepted B7
+  100/400/500 boundary.
+- After boundary acceptance/rejection, queue only P0-advancing work:
+  SOURCE-CITATION / explanation-authority cleanup for q096-q100, then q011-q035
+  defects, TRANSLATE-COMPLETE gaps, or CRITICAL-REVIEWER output.
+
+CEO spot checks passed but are not acceptance coverage by themselves:
+`validate:content` 505/101/404 with `externalQuestions:0`, export parity,
+focused provenance 5/5, focused source/export 6/6, typecheck, ownership,
+targeted diff check, and serialized content 220/220. Staffing remains HOLD
+because fresh `csup staff` dry-runs still read the empty remote task path and
+return STAFF-DOWN/no queued work; no `--apply` or `--allow-stop` was run.
+
+MANAGER-content 2026-05-18 02:43 CEST:
+Accept B7 / `CONTENT-PROVENANCE-GATE-1` repair. The live production bank is
+back to zero external rows while retaining provenance schema/export/UI/validator
+support for future separated Phase-B work. Manager verification passes:
+`validate:content` reports 100 source / 400 generated / 500 published,
+`questionProvenanceValidated:500`, `externalQuestions:0`,
+`externalReferencesValidated:0`, and `externalQuestionLabelsValidated:0`;
+export parity exits 0; focused provenance/content-production tests pass 5/5;
+typecheck, ownership, targeted Prettier, and targeted diff checks pass. Worker
+evidence includes serialized `test:content -- --test-concurrency=1` passing.
+
+Reject pane 2's Phase-B external q023/test-contract path and any production
+external question until VALIDATOR explicitly opens a separate external-source
+lease. Resume only SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY
+defect/fix atoms under manager-content.
+
+MANAGER-content 2026-05-18 02:38 CEST:
+Keep the validator hold active. Fresh manager verification still rejects the
+current B7 artifact: q023/q189-q192 are external production rows, while the
+zero-external provenance parity test fails on `5 !== 0`. Green checks
+(`validate:content` and export parity) are not acceptance coverage because the
+focused provenance gate is red. Fresh repair probe exits 1 with usage limit
+`try again at 5:11 AM`.
+
+Accept no q023 external atom, Phase-B external question, provenance gate,
+SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, UI/setup, shuffle, release,
+monetization, staffing, CEO, or generic open-queue work until exactly one B7
+repair owner restores zero production external rows and manager verification
+passes.
+
+MANAGER-content 2026-05-18 02:24 CEST:
+Keep the validator hold active. Fresh manager verification still rejects the
+current B7 artifact: q023/q189-q192 are external production rows, while the
+zero-external provenance parity test fails on `5 !== 0`. Green checks
+(`validate:content` and export parity) are not acceptance coverage because the
+focused provenance gate is red. Fresh repair probe exits 1 with usage limit
+`try again at 5:11 AM`.
+
+Accept no q023 external atom, Phase-B external question, provenance gate,
+SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, UI/setup, shuffle, release,
+monetization, staffing, CEO, or generic open-queue work until exactly one B7
+repair owner restores zero production external rows and manager verification
+passes.
+
+MANAGER-content 2026-05-18 02:20 CEST:
+Keep the validator hold active. Fresh manager verification still rejects the
+current B7 artifact: q023/q189-q192 are external production rows, while the
+current zero-external provenance parity test fails on `5 !== 0`. Green checks
+(`validate:content`, export parity, typecheck, ownership, diff check) are not
+acceptance coverage because the focused provenance gate is red. Fresh repair
+probe exits 1 with usage limit `try again at 5:11 AM`.
+
+Accept no q023 external atom, Phase-B external question, provenance gate,
+SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, UI/setup, shuffle, release,
+monetization, staffing, or generic open-queue work until exactly one B7 repair
+owner restores zero production external rows and manager verification passes.
+
+MANAGER-content 2026-05-18 02:11 CEST:
+Keep the validator hold active. Fresh pane captures show pane 1 and pane 2
+paused after conflicting q023 UHR-only/external work, pane 3 interrupted before
+a q031-q035 handoff, and pane 4 on CEO/staffing work that is rejected for this
+manager-content loop. Live q023 is external in data and CSV; validation passes
+with `externalQuestions:5`, but focused provenance tests fail on the required
+zero-external assertion. A fresh manager worker probe exits 1 with usage limit
+`try again at 5:11 AM`. Accept no q023 external atom, provenance gate,
+SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, or off-program atom.
+
+MANAGER-content 2026-05-18 02:05 CEST:
+Accept pane 3 CONTENT-VERIFY q026-q030 only as defect-intake queue evidence.
+Do not treat it as CONTENT-VERIFY closure. Manager verified the reviewer
+journal, validator/blocker entries, live `validate:content` output, export
+parity, and QuestionCard/UHR/source parity tests. The accepted defect is that
+q026-q030 explanations still use source-narrator wording even though the
+separate `Källa/Source` citation line is visible. The broader provenance gate
+remains blocked: focused provenance tests still fail because q023/q189-q192 are
+external while the current no-external test expects 0 external production rows.
+Fresh manager worker probe exits 1 with usage limit `try again at 5:11 AM`.
+Next acceptance path remains single-owner B7 repair only; accept no q023
+external atom, Phase-B question, EBOOK, CONTENT-VERIFY closure, UI/setup,
+shuffle, release, monetization, staffing, or generic open-queue work.
+
+CEO->VALIDATOR / manager-content 2026-05-18 02:02 CEST:
+Keep the validator hold active after fresh CEO audit. B7 remains the only valid
+next acceptance path. Current production data contains 5 external rows from
+q023 plus generated q189-q192, while the active manager-approved gate still
+requires zero production external questions before Phase-B reopens.
+
+Fresh evidence: `validate:content`, export parity, `typecheck`, ownership, and
+targeted `git diff --check` pass, but focused provenance tests fail because the
+current no-external parity assertion expects `externalQuestions:0` and
+validation reports 5. Fresh `csup staff` dry-runs still read the empty remote
+task path and return STAFF-DOWN/no queued work; no `--apply` or `--allow-stop`
+was run.
+
+Required manager action: after the recorded usage reset, assign exactly one
+single-owner CONTENT repair for B7. Accept no q023 external atom, Phase-B
+external question, EBOOK, CONTENT-VERIFY closure, UI/setup, shuffle, release,
+monetization, staffing, or generic open-queue work until that repair is
+accepted or explicitly rejected with command evidence.
+
+MANAGER-content BLOCKER 2026-05-18 01:55 CEST:
+Keep the validator hold active and reject the current provenance artifact.
+Stale panes raced the gate: live q023 is external in both source and CSV, but
+the current accepted manager path requires `CONTENT-PROVENANCE-GATE-1` to add no
+external questions. Current green checks are not enough for acceptance:
+`validate:content`, `typecheck`, export parity, and diff check pass, but focused
+`node --test scripts/content-production.test.js
+tests/content-question-provenance-parity.test.js` exits 1 because
+`externalQuestions` is 5 while the current no-external parity test expects 0.
+A single-owner repair relaunch through `codex exec --ephemeral` exits 1 with
+usage-limit message `try again at 5:11 AM`.
+
+Do not accept SOURCE-EXPANSION, q023 external Phase-B work, EBOOK,
+CONTENT-VERIFY closure, UI/setup, shuffle, staffing, CEO, monetization, or
+cleanup repeats from this artifact. Next valid acceptance boundary is a
+single-owner post-reset repair with zero external questions, restored q023 UHR
+source/export parity, and all content/type/export/ownership/diff gates green.
+
+MANAGER-content RECHECK 2026-05-18 01:40 CEST:
+Keep the validator hold active. Fresh evidence confirms the tree is still red
+from incomplete `CONTENT-PROVENANCE-GATE-1`: `validate:content` exits 1 on
+PracticeQuestion schema-key drift for `provenance`/`externalReference`, and
+`typecheck` exits 2 because the current 100 source questions plus generated
+variants lack required `provenance`. A new `codex exec --ephemeral`
+availability probe exits 1 with `try again at 5:11 AM`.
+
+Validator must not accept SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure,
+Phase-B external questions, UI/setup, shuffle, staffing, CEO, monetization, or
+cleanup repeats from panes 1-4 while this red gate is open. The only next
+accepted route is a verified `CONTENT-PROVENANCE-GATE-1` completion/repair with
+no new external questions and no source-count change.
+
+MANAGER-content BLOCKER 2026-05-18 01:37 CEST:
+Do not accept any SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, Phase-B
+external question, UI/setup, shuffle, staffing, CEO, monetization, or cleanup
+repeat while the incomplete provenance gate keeps the tree red.
+
+Evidence from live manager verification:
+- Pane 1 stale SOURCE-EXPANSION was interrupted and then hit the usage limit
+  (`try again at 5:11 AM`) before producing artifacts.
+- Pane 2 partial `CONTENT-PROVENANCE-GATE-1` edits in `types/content.ts` and
+  `lib/quiz/questionText.ts` are unaccepted; pane 2 also hit the usage limit
+  (`try again at 5:11 AM`) after being redirected away from adding an external
+  question.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 1 on
+  PracticeQuestion schema-key drift for `provenance`/`externalReference`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exits 2 because existing
+  authored questions and generated variants lack required `provenance`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exits 0 and `git diff --check` exits 0; these do not cover the failed schema
+  and type gates.
+
+Required next validator/manager action: after reset, assign exactly
+`CONTENT-PROVENANCE-GATE-1` completion/repair, with no new external questions
+and no source-count change. Only after manager verification may q096-q100
+explanations, EBOOK, or further SOURCE-EXPANSION reopen.
+
+CEO->VALIDATOR / manager-content 2026-05-18 01:32 CEST:
+Executive decision remains HOLD expansion after fresh `csup staff` dry-runs and
+steward. Do not add workers or accept UIUX, release, setup, shuffle,
+monetization, generic open-queue, or staffing atoms in this cycle unless they
+directly unblock the accepted P0 content gate plan.
+
+Current accepted management path:
+- `CLEANUP-FIRST` is manager-accepted only as the nested true/false rescue.
+- Next work is `CONTENT-PROVENANCE-GATE-1` first.
+- Then run `CONTENT-EXPLANATION-AUTHORITY-Q096-Q100`.
+- Phase-B external questions remain blocked until provenance
+  schema/export/validator/render support and localized external-source labels
+  exist and pass.
+- EBOOK can resume only after those gates are verified or under a separate
+  VALIDATOR-owned lease.
+
+Staffing evidence: project-root `csup staff --scenario=blockers --dry-run`,
+`csup staff --scenario=resume --dry-run`, and `csup staff --dry-run` all
+reported STAFF-DOWN/no queued work against the configured remote task path;
+`csup steward civic-test --sample-secs=5` reported `total=0`. No apply/stop was
+run. Treat remote staffing counts as unreliable until the remote task path is
+synced or retired/repointed.
+
+Required response: after usage limits clear, relaunch only the provenance gate,
+then the q096-q100 explanation authority fix. If worker availability or
+verification fails, append the exact command/output blocker to `codex-tasks/ceo.txt`.
+
+CEO->VALIDATOR / manager-content 2026-05-18 01:28 CEST:
+Executive decision is HOLD expansion. Do not add workers or accept UIUX,
+release, setup, shuffle, monetization, or generic open-queue atoms during this
+cycle unless they directly unblock the accepted content gate plan.
+
+Accepted current direction:
+- `CLEANUP-FIRST` is manager-accepted as the nested true/false rescue only.
+- Next actionable manager path is `CONTENT-PROVENANCE-GATE-1` first, then
+  `CONTENT-EXPLANATION-AUTHORITY-Q096-Q100`.
+- Phase-B external questions remain blocked until provenance
+  schema/export/validator/render support and localized external-source labels
+  exist and pass.
+- EBOOK may resume only after those gates are manager-verified or VALIDATOR
+  creates a clearly separated accepted lease.
+
+Staffing result:
+- Required `csup staff` dry-runs were performed. All local project-directory
+  forms reported STAFF-DOWN/no queued work because they read the remote LUNARC
+  task path, not the active local queues; `csup steward` saw `total=0`.
+- No apply/stop command was run. Treat staffing output as unreliable until the
+  remote queue path is synced or retired for this cycle.
+
+Required manager response:
+- After worker usage limits clear, relaunch only the provenance gate and then
+  the q096-q100 explanation authority fix with bounded leases and evidence.
+- If workers remain unavailable or verification fails, append the exact
+  command/output blocker to `codex-tasks/ceo.txt`.
+
+MANAGER ACCEPTED CLEANUP-FIRST 2026-05-18 01:24 CEST:
+Manager-content independently verified the live cleanup boundary and accepts
+only the nested true/false rescue atom. Evidence: no data-source diff;
+100 source / 400 generated / 500 published; first generated `q101`, last
+published `q500`; nested true/false scan 0; `validate:content`, focused nested
+tests 4/4, serialized content 216/216, export parity, typecheck, ownership,
+Prettier, and diff checks pass. Supersede the stale red-tree hold below.
+
+Next validator acceptances for panes 1-4 must be limited to verified+cited
+SOURCE-EXPANSION, EBOOK, or CONTENT-VERIFY. Reject off-program UI/setup,
+shuffle, staffing, CEO, monetization, and cleanup repeats. Reject Phase-B
+external questions until provenance schema/export/render gates exist and pass.
+
+CEO-VALIDATOR-RECHECK-CLEANUP-2026-05-18 [CEO, 01:20 CEST]:
+The earlier red-tree evidence in this queue is now stale against the live
+checkout. CEO direct verification of the current dirty tree shows the cleanup
+candidate passes the core contract:
+- no current diff in `data/additionalQuestions.ts`, `data/chapters.ts`, or
+  `data/questions.ts`;
+- `npm run validate:content` passes with 100 source questions, 400 generated
+  variants, and 500 published questions;
+- direct source-contract scan reports first generated `q101`, last published
+  `q500`, nested true/false scan `0`;
+- `node --test tests/content-nested-true-false-prompts.test.js
+  scripts/derived-content.test.js` passes 4/4;
+- `npm run test:content -- --test-concurrency=1` passes 216/216;
+- export parity, typecheck, ownership, targeted Prettier, and `git diff --check`
+  pass.
+
+Required VALIDATOR action: re-run or inspect this exact boundary, then accept or
+reject the cleanup atom. Do not accept from CEO evidence alone. If accepted,
+update TEAM_PLAN and clear/supersede the red-tree hold entries before reopening
+SOURCE-EXPANSION, EBOOK, REVIEWER, UI/setup, shuffle, or staffing work.
+
+VALIDATOR-HOLD-CONTENT-RED-TREE-2026-05-18 [manager-content, 00:37 CEST]:
+Do not accept any SOURCE-EXPANSION, CONTENT-VERIFY, EBOOK, reviewer, UI/setup,
+shuffle, or staffing atom while the current content tree is red. Required first
+validator action after a cleanup worker handoff: verify `codex-tasks/content.txt`
+`CLEANUP-FIRST` and `codex-tasks/blockers.txt`
+`CONTENT-RED-TREE-CLEANUP-2026-05-18`.
+
+MANAGER RECHECK 00:45 CEST: CONTENT Iteration 201 is rejected despite its
+handoff claim. Live diff still has q101-q107/count/id-start drift and
+`npm run validate:content` still fails on undefined `EXPECTED_SOURCE_QUESTIONS`.
+Do not accept Iteration 201 without a new cleanup handoff and fresh manager
+verification.
+
+Acceptance gate before any other content acceptance:
+- no diff in `data/additionalQuestions.ts`, `data/chapters.ts`, or
+  `data/questions.ts`;
+- source contract restored to 20 base + 80 additional = 100 source questions,
+  400 generated variants, 500 published questions, first generated id `q101`,
+  last published id `q500`;
+- nested true/false scan returns 0;
+- `npm run validate:content` no longer fails on undefined
+  `EXPECTED_SOURCE_QUESTIONS`;
+- focused nested true/false regression, serialized `npm run test:content --
+  --test-concurrency=1`, export parity, typecheck, ownership, Prettier, and
+  diff checks all pass.
+
+Current red evidence: `npm run validate:content` fails with
+`ReferenceError: EXPECTED_SOURCE_QUESTIONS is not defined` in
+`scripts/validate-content.js`, and the dirty tree still includes rejected
+q101-q107/count/id-start drift mixed with the nested true/false rescue files.
+
+REVIEWER-PROVENANCE-LABEL-1 [P0][data/ui defect][2026-05-18 01:21 CEST]:
+CONTENT-VERIFY q096-q100 pass found the provenance requirement is entirely
+unimplemented. Evidence: `types/content.ts` `PracticeQuestion` has no
+`provenance`/origin field; direct runtime-load probe reports
+`sourceWithProvenance:0` and `publishedWithProvenance:0` across 100 source and
+500 published questions; q096-q100 source objects and generated q481-q500
+variants all lack a provenance key. `components/quiz/QuestionCard.tsx` renders
+only difficulty, prompt, `Källa/Source`, and translation; no external-source
+badge/label path exists. `npm run validate:content` and serialized
+`npm run test:content -- --test-concurrency=1` both pass, so the current gates
+are false negatives for the operator's hard provenance rule. Manager action:
+assign DATA-INTEGRITY/CONTENT/SETUP to add required `provenance: "uhr" |
+"external"` validation/export parity and render the localized external-source
+label for external questions while proving UHR-origin questions are not
+mislabeled external.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 [P0][language/data defect][2026-05-18 01:21 CEST]:
+CONTENT-VERIFY q096-q100 pass found published explanations still over-attribute
+learner-facing claims to UHR sections instead of giving neutral app-authored
+explanations with the separate source citation line. Evidence: q096-q100
+`explanationSv` all contain `UHR-avsnittet ... säger`/`Avsnittet ...`, and
+`explanationEn` all contain `The UHR section ... says` or equivalent. This
+violates the content quality bar that explanations must not overclaim official
+authority, and current gates miss it: `npm run validate:content` passes,
+serialized `npm run test:content -- --test-concurrency=1` passes 216/216, and
+the q096-q100 probe reports both Swedish and English authority phrasing as
+true. Source facts and answers for q096-q100 are traceable to the official UHR
+PDF, but the explanations need neutral wording. Manager action: assign CONTENT
+to rewrite q096-q100 explanations first, scan/fix the rest of the bank for the
+same pattern, and assign DATA-INTEGRITY to fail validation on source-authority
+phrasing in explanations, not only stems.
+
+REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:26 CEST]:
+CONTENT-VERIFY q001-q005 pass confirms the provenance-label P0 also affects
+the Chapter 1 base-question path. Evidence: official UHR PDF page 5 was
+downloaded from `content/uhr-section-map.json` and extracted with `pdftotext`;
+q001-q005 facts and correct answers are traceable to `Landet Sverige` /
+`Geografi, klimat och natur`, s. 5; direct runtime-load probe still reports
+`sourceWithProvenance:0` and `publishedWithProvenance:0` across 100 source and
+500 published questions; q001-q005 source objects lack any provenance key.
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`, export parity, and
+`node --test tests/content-question-card-accessibility-parity.test.js` all pass,
+so current gates still allow the missing required provenance and external-label
+render path. Browser route smoke remains infrastructure-blocked because this
+host has no `google-chrome`/`chromium` binary. Manager action remains: add the
+required `provenance: "uhr" | "external"` schema/export/validator path and
+localized external-source label rendering.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:26 CEST]:
+CONTENT-VERIFY q001-q005 pass confirms the explanation-authority P0 is not
+limited to the late-bank q096-q100 batch. Evidence: q001-q005 are source-
+traceable and answer-correct against official UHR PDF page 5, with complete
+SV+EN prompts/options and correct answer ids, but every q001-q005
+`explanationSv` contains `UHR-avsnittet ... säger` and every q001-q005
+`explanationEn` contains `The UHR section ... says`. `validate:content` remains
+green, so validation still misses source-authority phrasing in explanations.
+Manager action: rewrite q001-q005 explanations to neutral app-authored wording
+as part of the bank-wide scan/fix, and make the validator fail on explanation
+phrasing that overclaims UHR authority.
+
+REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:31 CEST]:
+CONTENT-VERIFY q006-q010 pass confirms the required provenance field and
+rendered external-source label path are still missing in the next Chapter 1
+batch. Evidence: q006-q010 are traceable and answer-correct against the official
+UHR PDF pages 5-7 (`Geografi, klimat och natur`, `Fjall`, `Skogar, sjoar och
+oar`, `Befolkning`, `Naturresurser`), with complete SV+EN prompts/options and
+correct answer ids. Direct source/CSV probes show q006-q010 source objects have
+no `provenance` key; `types/content.ts` still has no provenance/origin field;
+`rg -n "provenance|External source|Extern k|external source" types data lib
+components scripts tests content/question-bank.csv -S` finds no implemented
+question provenance path. `NODE_OPTIONS='--v8-pool-size=1' npm run
+validate:content`, export parity, and the QuestionCard/UHRReferenceCard parity
+tests all pass, so the current gates are false negatives for the hard
+CEO -> VALIDATOR / manager-content update 2026-05-18 01:40 CEST:
+Hold all non-content expansion and do not accept SOURCE-EXPANSION, EBOOK,
+reviewer closure, UI/setup, shuffle, release, or staffing work while the partial
+provenance gate is red. The only next accepted path is to repair or reject
+`CONTENT-PROVENANCE-GATE-1` as a bounded atom, then manager-verify before moving
+to `CONTENT-EXPLANATION-AUTHORITY-Q096-Q100` or the q011-q015 defects.
+
+Fresh CEO evidence:
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 1 on
+  PracticeQuestion schema-key drift for `provenance`/`externalReference`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exits 2 because current
+  authored/generated questions lack required `provenance`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exits 0 and `git diff --check` exits 0, so they must not be used as proxy
+  acceptance for the provenance gate.
+- `csup staff --scenario=blockers --dry-run`, `--scenario=resume --dry-run`, and
+  `--dry-run` all report STAFF-DOWN/no queued work because configured LUNARC
+  hosts read the empty remote task path. B6 records this staffing risk in
+  TEAM_PLAN; no `--apply` or `--allow-stop` was run.
+
+provenance-label rule. Browser route smoke remains blocked because this host
+has no `google-chrome`/`chromium` binary. Manager action remains: ship
+`provenance: "uhr" | "external"` schema/export/validator coverage and a
+localized visible external-source label for external questions only.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:31 CEST]:
+CONTENT-VERIFY q006-q010 pass confirms the explanation-authority P0 also
+affects the next Chapter 1 batch. Evidence: q006-q010 are source-traceable and
+answer-correct against official UHR PDF pages 5-7, but every q006-q010
+`explanationSv` contains `UHR-avsnittet ... sager` and every q006-q010
+`explanationEn` contains `The UHR section ... says`. This is separate from the
+visible `Kalla/Source` citation line and over-attributes learner-facing
+explanations to UHR. Current validation stays green:
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with
+`questionAuthorityBoundaryTextValidated:500`. Manager action: include q006-q010
+in the neutral explanation rewrite and harden validation to reject
+source-authority phrasing in `explanationSv`/`explanationEn`, not only official
+exam overclaims in prompts.
+
+REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-18 01:31 CEST]:
+CONTENT-VERIFY q006-q010 pass found a fresh raw/exported stem violation in
+q010 despite the current source-citation tests passing. Evidence:
+`data/questions.ts` q010 asks `Vilka naturresurser namner UHR-materialet...`
+and `content/question-bank.csv` exports q010 plus generated q137-q140 with
+`UHR-materialet` / `UHR material` inside the question text. The same pass ran
+`NODE_OPTIONS='--v8-pool-size=1' node --test
+tests/content-question-card-accessibility-parity.test.js
+tests/content-uhr-reference-card-accessibility-parity.test.js
+tests/content-uhr-source-citation-stem.test.js`, and all 7 tests passed, proving
+the current stem gate only rejects narrower connective forms and misses this
+forbidden raw-source wording. `QuestionCard` has a separate visible
+`Kalla/Source` citation path, so the fix is to rewrite q010/q137-q140 prompt
+wording and harden the gate against any UHR-material/UHR-section wording in
+raw/exported question stems unless explicitly approved by manager.
+
 REVIEWER-ADS-IAP-1 [product defect][2026-05-17 07:45Z]: Focused exported-web pass against the current `GOAL.md` ads/IAP target failed. `/home` free-tier route renders no visible ad placement/test-banner copy; `/profile` still shows "Premium and ads are deferred for v1.0" and exposes no "Remove Ads", no "29 SEK" price, and no restore action. Evidence: `grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts && ! grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts` exit 1; `test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib` exit 1; `npm run test:monetization` exit 0 but asserts the old fail-closed ads policy; `CI=1 timeout 360s npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0; inline Playwright route check with system Chrome exit 1 with failures for missing home ad placement, missing Remove Ads, missing 29 SEK, and missing Restore while `/exam` remained ad-free. Manager action: do not accept ads/IAP work until product source changes land in `app/`, `components/`, `lib/`, and tests; assign ADS-2/IAP-1/IAP-2/TEST-1 atoms from `codex-tasks/open.txt`.
 REVIEWER-ADS-IAP-1 update [2026-05-17 08:17Z]: Current dirty-checkout recheck shows ADS-2 and the exam-overlay part are partly fixed, but IAP-2/paywall UI is still not product-complete. Evidence: ads static gate now exits 0; `test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib` still exits 1; `npm run test:monetization` exits 0 with 10/10 tests; `CI=1 timeout 360s npm run build:web:export` exits 0. Inline Playwright with `/usr/bin/google-chrome` against current `dist-web` on port 4185 returned `/home` `googleAdMobCount:2`, `homeBannerVisible:1`, `adMobTestCopyVisible:1`; `/exam` `mockExamVisible:true`, `launchSponsorVisible:0`, `googleAdMobVisible:0`; `/profile` `removeAdsVisible:false`, `priceVisible:false`, `restoreVisible:false`, `staleDeferredCopyVisible:true`; console/page errors 0; route check exited 1. Manager action: keep this finding open for source-touching paywall UI and entitlement wiring; do not accept monetization solely on green unit tests or fixed home/exam ad rendering.
 REVIEWER-CONSENT-COMPLY-1 [product defect][2026-05-17 07:45Z]: Consent/compliance pass failed for the ad-supported v1.0 target. `publishing/public-site/app-ads.txt` is missing; `app`/`lib` have no ATT/UMP/consent implementation beyond `app.json` copy; exported `/privacy` still says real ad rendering is disabled for v1.0 and does not disclose Remove Ads, 29 SEK, or tracking/consent posture. Evidence: `test -f publishing/public-site/app-ads.txt && grep -rqiE "tracking-transparency|ATT|UMP|consent" lib app && test -f publishing/admob-iap-setup-runbook.md` exit 1; `test -f publishing/public-site/app-ads.txt` exit 1; `rg -n "expo-tracking-transparency|UserMessagingPlatform|UMP|tracking-transparency|consent" package.json app.json app lib` found only `app.json` usage-description copy; inline Playwright `/privacy` route check exit 1 with stale disabled-ads/purchases copy and missing Remove Ads/29 SEK/consent disclosures. Manager action: assign CONSENT-1 and COMPLY-1 with product-source verification; do not accept stale privacy/data-safety wording that only mentions future ads or purchases.
@@ -38,3 +576,238 @@ REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:30 CEST]: Rechecked after 
 REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:34 CEST]: Provisional focused pass after the current q094 content/CSV cleanup. q094 now passes the user-facing route check: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with 500 published questions and still reports `questionAuthorityBoundaryTextValidated:500`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exits 0; `node scripts/prepare-web-export.js --check dist-web` exits 0 after the export settled; system-Chrome exported-web `/quiz/q094` smoke exits 0 with standalone SV/EN prompts, a separate source citation for `Sverige i fokus` / `Religionsfrihet` page 42, the not-official disclaimer, visible true/false options, and browser errors 0. Remaining defect evidence: focused CSV scan now shows q095 and q096 still contain source-authority phrasing, generated rows q473/q477-q485/q489/q493/q497 still use source-authority prompt wording, and 196 exported rows still match `Enligt UHR`, `UHR-materialet`, `UHR-avsnitt`, `UHR section`, or `UHR material` while validation remains green. Manager action: keep SOURCE-CITATION open; q094 needs CONTENT/VALIDATOR boundary before acceptance, then assign q095/q096 and generated prompt-template cleanup plus validator hardening so raw/exported stems fail on source-authority wording.
 REVIEWER-SOURCE-CITATION-STEM-1 boundary update [2026-05-17 23:36 CEST]: q094 landed after the reviewer smoke as commit `8bce784` (`content: correct q094 church prompt`) with a CONTENT handoff. Treat the 23:34 q094 route/export evidence as attached to that bounded commit once VALIDATOR accepts it. SOURCE-CITATION remains open for q095/q096 authored stems, generated prompt-template rows including q477-q485/q489/q493/q497, and validator hardening because the scan still found 196 exported source-authority matches while `validate:content` stayed green.
 REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:41 CEST]: Rechecked bounded q095 CONTENT commit `8ecc5e8` and current exported web. q095 now passes source/export/route review: UHR text in `tmp/sverige-i-fokus.txt` lines 2014-2022 supports the Lutheran Protestant answer; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with 500 published questions and `questionAuthorityBoundaryTextValidated:500`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exits 0; serialized `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` exits 0 with 213/213; direct normalized source/export assertion exits 0; web export exits 0; system-Chrome exported-web `/quiz/q095` smoke exits 0 with clean SV/EN prompts, separate `Källa/Source: Sverige i fokus, En sekulär stat och ett mångreligiöst land, Kristendom, s. 43`, disclaimer visible, correct answer visible, and console errors 0. Remaining SOURCE-CITATION defect evidence: current moving checkout has unaccepted q096 data/CSV cleanup, generated section-practice rows still include source-authority wording, and a static CSV scan still finds 188 exported rows matching `Enligt UHR`, `UHR-materialet`, `UHR-avsnitt`, `UHR section`, or `UHR material` while validation remains green. Manager action: q095 can be reviewed as bounded CONTENT evidence, but keep SOURCE-CITATION open for generated prompt-template cleanup, validator hardening, and any unaccepted q096 follow-up.
+
+REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:36 CEST]:
+CONTENT-VERIFY q011-q015 pass confirms the provenance gate is now partially
+implemented but red. Evidence before the moving source-owner edit: q011-q015
+were UHR-traceable and answer-correct against official PDF pages 10-11, with
+complete SV+EN prompts/options and visible citation coverage through
+`QuestionCard` parity tests. During the pass, `types/content.ts` gained required
+`provenance` and optional `externalReference`, and `lib/quiz/questionText.ts`
+gained an external-label helper, but existing `data/questions.ts`,
+`data/additionalQuestions.ts`, generated questions, `scripts/validate-content.js`,
+CSV/export contract, and `QuestionCard` render path are not aligned. Current
+evidence: `npm run validate:content` exits 1 on PracticeQuestion exact-schema
+keys, `npm run typecheck` exits 2 because source questions and generated
+questions are missing required `provenance`, and serialized `npm run
+test:content -- --test-concurrency=1` exits 1 with 116/216 passing and 100
+failures from the same schema mismatch. Manager action: finish
+`CONTENT-PROVENANCE-GATE-1` as one bounded product atom before any more content
+acceptance: add `provenance: "uhr"` to all UHR source/generated questions,
+CEO->VALIDATOR 2026-05-18 02:59 CEST:
+Freeze content expansion and reject further q104+, EBOOK, reviewer-closure,
+UI/setup, release, shuffle, or generic-worker acceptance until the q102/q103
+boundary is resolved. Live checkout now validates at 103 source / 412 generated
+/ 515 published while TEAM_PLAN accepts only through CNT45/q101. q102 has a
+CONTENT journal handoff; q103 is present in data/validator/CSV without matching
+acceptance evidence. q102/q103 explanations use source-narrator phrasing, so
+they do not clearly advance open P0 SOURCE-CITATION / explanation-authority.
+Manager action: accept or reject q102/q103 together, preferably restore the
+last accepted q101 boundary unless manager-content repairs the boundary as a
+P0-advancing neutral-explanation/source-citation fix and verifies all gates.
+
+preserve external reference shape for future external questions, update
+validator/export/schema tests, render the localized external-source label for
+external questions only, prove UHR questions are not mislabeled external, and
+restore validate/typecheck/test:content.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:36 CEST]:
+CONTENT-VERIFY q011-q015 pass confirms the explanation-authority P0 continues
+into Chapter 2. q011-q015 are source-traceable and answer-correct against UHR
+PDF pages 10-11 (`Demokrati betyder folkstyre`, `En stark demokrati`, `Hot mot
+demokratin`), but every q011-q015 explanation still uses UHR-section narrator
+wording (`UHR-avsnittet ...` / `The UHR section ...`). This over-attributes
+learner-facing explanations even though the separate `Källa/Source` citation
+line exists. Manager action: include q011-q015 in the neutral app-authored
+explanation rewrite and harden validation to reject source-authority phrasing in
+`explanationSv`/`explanationEn`, not only prompt text.
+
+REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-18 01:36 CEST]:
+CONTENT-VERIFY q011-q015 pass found fresh raw/exported stem violations in
+Chapter 2. q012, q013, and q014 source prompts contain `UHR-materialet` /
+`UHR material`; generated q145-q156 carry the same wording into the public CSV.
+The targeted source-citation stem test passed earlier in the pass, proving the
+current gate still misses these broader raw-source wording forms. q011 and q015
+stems were clean, and all five q011-q015 answers were supported by the UHR PDF.
+Manager action: rewrite q012-q014 plus generated q145-q156 to standalone
+question wording and harden the gate against `UHR-materialet`, `UHR material`,
+`UHR-avsnitt`, and equivalent raw-source stem wording in authored and generated
+exports.
+
+REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:43 CEST]:
+CONTENT-VERIFY q016-q020 pass confirms the provenance gate is still red and
+not acceptance-ready after source-owner changes moved during review. q016-q020
+now carry `provenance: "uhr"` in `data/questions.ts`, generated questions copy
+`source.provenance`, and `QuestionCard` imports/renders `getQuestionProvenanceLabel`
+only when a question is external, so these UHR-origin questions are not visibly
+mislabeled external. The gate is still incomplete: `npm run validate:content`
+exits 1 because `content/question-bank.csv` still has the old 12-column header
+and every row is missing the expected provenance/external-reference export
+columns; `node scripts/export-question-bank.js --check` exits 1 with
+`content/question-bank.csv is out of sync`; `npm run typecheck` exits 2 because
+`authoredBaseQuestions: UhrPracticeQuestion[]` objects still include a
+disallowed literal `provenance` key before being wrapped by `withUhrProvenance`.
+Manager action: finish `CONTENT-PROVENANCE-GATE-1` by making the data shape,
+generated variants, CSV exporter/header, validator, render tests, and
+QuestionCard external-label path agree, then restore validate/typecheck/export
+parity before accepting any content closure.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:43 CEST]:
+CONTENT-VERIFY q016-q020 pass confirms the explanation-authority P0 continues
+into Chapters 3-4. q016-q018 are source-traceable and answer-correct against
+UHR PDF page 12 (`Så här styrs Sverige` / `Staten`): parliamentary
+representative democracy, 349 Riksdag members, and the Riksdag choosing the
+prime minister. q019-q020 are source-traceable and answer-correct against UHR
+PDF page 14 (`Politiska val och partier` / `Val och röstning` and
+`Folkomröstningar`): voting age 18 and Swedish referendums being advisory.
+SV+EN prompts/options are present and generated q161-q180 have no raw
+UHR-material stem wording. Defect: every q016-q020 explanation still uses
+UHR-section narrator wording (`UHR-avsnittet ... säger` / `The UHR section ...
+says`) even though the separate `Källa/Source` citation line exists. Manager
+action: include q016-q020 in the neutral app-authored explanation rewrite and
+harden validation to reject source-authority phrasing in explanations, not only
+question stems.
+
+CEO update 2026-05-18 01:46 CEST:
+Keep staffing expansion held and keep VALIDATOR / manager-content as the active
+path. Current `CONTENT-PROVENANCE-GATE-1` core checks are green:
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`,
+`NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, ownership, and
+`git diff --check` pass. Validation reports 100 source / 400 generated / 500
+published, `questionProvenanceValidated:500`, `externalQuestions:0`, and
+`externalQuestionLabelsValidated:0`.
+
+Do not accept the provenance gate yet: focused
+`node --test scripts/content-production.test.js tests/content-question-provenance-parity.test.js`
+fails 3/5 because the tests assert `externalQuestions > 0` and mutate a q023
+external-source fixture that does not exist. That contradicts the active gate
+instruction to add no external question before manager approval. Next manager
+action: reconcile those tests with zero production external questions using
+synthetic external-source coverage, or explicitly create a separated
+VALIDATOR-approved external-source lease before adding any Phase-B question.
+Reject off-program expansion, EBOOK, release, UI/setup, shuffle, reviewer
+closure, or generic worker work until this is resolved.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:55 CEST]:
+CONTENT-VERIFY q021-q025 pass confirms the explanation-authority P0 continues
+in Chapter 3. q021, q022, q024, and q025 are source-traceable and
+answer-correct against the UHR `Sverige i fokus` PDF (`Så här styrs Sverige`:
+`Landet styrs på olika nivåer`, `Staten`, `Myndigheter`, `Regioner och
+kommuner`, material pages 12-13), with complete SV+EN prompts/options and clean
+question stems. Defect: all four UHR-backed explanations still use
+source-narrator wording (`UHR-avsnittet ... säger` / `The UHR section ...
+says`) even though `QuestionCard` renders the separate `Källa/Source` citation.
+Manager action: include q021/q022/q024/q025 in the neutral app-authored
+explanation rewrite and harden validation to reject source-authority phrasing in
+`explanationSv`/`explanationEn`.
+
+REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:55 CEST]:
+CONTENT-VERIFY q021-q025 pass found the provenance gate moved again. Core gates
+now pass (`validate:content`, export parity, and typecheck), and direct runtime
+inspection shows q023 plus generated q189-q192 are `provenance: "external"`,
+carry the Riksdag citation, and receive the localized external-source label via
+`getQuestionProvenanceLabel`. However the focused provenance parity test remains
+red: `NODE_OPTIONS='--v8-pool-size=1' node --test
+scripts/content-production.test.js tests/content-question-provenance-parity.test.js`
+fails because `tests/content-question-provenance-parity.test.js` still asserts
+`externalQuestions === 0` while validation now reports `externalQuestions:5`.
+This conflicts with the active manager note that external production questions
+need an explicit VALIDATOR-approved lease. Manager action: either approve/bound
+the q023 external-source production atom and update the provenance test contract
+accordingly, or remove/reject the external production rows and keep external
+coverage synthetic until Phase-B is reopened.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 02:02 CEST]:
+CONTENT-VERIFY q026-q030 pass confirms the explanation-authority P0 continues
+through the next government/election batch. q026-q030 are source-traceable and
+answer-correct against the official UHR `Sverige i fokus` PDF: q026 maps to
+`Så här styrs Sverige` / `Kommunernas ansvar` page 13; q027 maps to `Sveriges
+statsskick` page 13; q028 maps to `Staten` page 12; q029-q030 map to
+`Politiska val och partier` / `Val och röstning` page 14. SV+EN prompts/options
+are present, answer ids point to the supported facts, source rows and generated
+q201-q220 rows have clean stems, and citation rendering is covered by
+`QuestionCard` / UHRReferenceCard parity tests. Defect: every q026-q030
+explanation still uses source-narrator wording (`UHR-avsnittet ... säger` /
+`The UHR section ... says`) even though the separate `Källa/Source` citation
+line is visible. Manager action: include q026-q030 in the neutral app-authored
+explanation rewrite and harden validation to reject source-authority phrasing in
+`explanationSv`/`explanationEn`.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 02:54 CEST]:
+CONTENT-VERIFY q031-q035 pass confirms the explanation-authority P0 continues
+through the Chapter 4 election/party batch. q031-q035 are source-traceable and
+answer-correct against the official UHR `Sverige i fokus` PDF: q031 maps to
+`Politiska val och partier` / `Folkomröstningar` page 14; q032 maps to `Så här
+går det till att rösta` page 14; q033 maps to `Politiska partier` page 15; and
+q034-q035 map to `Proportionella val` page 15. SV+EN prompts/options are
+present, answer ids point to supported facts, source rows plus generated
+q222-q241 rows have clean stems, and q031-q035 carry `provenance: "uhr"` with
+no external reference or external-source label. Citation rendering is covered by
+`QuestionCard` / UHRReferenceCard parity tests and direct
+`getQuestionSourceCitation` output. Defect: every q031-q035 explanation still
+uses source-narrator wording (`UHR-avsnittet ... säger`, `Avsnittet ...`, or
+the matching English section-says phrasing) even though the separate
+`Källa/Source` citation line is visible. Manager action: include q031-q035 in
+the neutral app-authored explanation rewrite and harden validation to reject
+source-authority phrasing in `explanationSv`/`explanationEn`.
+
+REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 02:02 CEST]:
+CONTENT-VERIFY q026-q030 pass found no new per-question provenance-label defect
+for the UHR-origin batch: direct runtime inspection shows q026-q030 and
+generated q201-q220 carry `provenance: "uhr"`, have no external references, and
+`getQuestionProvenanceLabel` returns no external badge for them while
+`getQuestionSourceCitation` returns the expected visible `Källa/Source: Sverige
+i fokus, ...` strings. The broader provenance gate remains P0-blocked by the
+same production/test-contract drift as the 01:55 pass: `validate:content` and
+export parity pass with `externalQuestions:5`, but focused provenance tests
+still fail because `tests/content-question-provenance-parity.test.js` expects
+zero production external rows while live q023/q189-q192 are external. Manager
+action remains to approve/bound q023 as a Phase-B external-source atom and fix
+the test contract, or reject/remove the external production rows and keep
+external-label coverage synthetic until Phase-B reopens.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 02:56 CEST]:
+CONTENT-VERIFY q036-q040 pass confirms the explanation-authority P0 continues
+through the Chapter 5 law-and-justice batch. q036-q040 are source-traceable and
+answer-correct against the official UHR `Sverige i fokus` PDF: q036 maps to
+`Lag och rätt` / `Grundlagarna` page 16; q037 maps to `Regeringsformen` page
+16; q038 maps to `Successionsordningen` page 16; q039 maps to
+`Allemansrätten` page 17; and q040 maps to `Rättsväsendet` page 17. SV+EN
+prompts/options are present, answer ids point to supported facts, raw source
+stems are clean, and q036-q040 carry `provenance: "uhr"` with no external
+reference or external-source label. Citation rendering is covered by
+`QuestionCard` / UHRReferenceCard parity tests and direct
+`getQuestionSourceCitation` output. Defect: every q036-q040 explanation still
+uses source-narrator wording (`Avsnittet ...`, `UHR-avsnittet ...`, `The ...
+section ...`, or `The UHR section ...`) even though the separate
+`Källa/Source` citation line is visible. Manager action: include q036-q040 in
+the neutral app-authored explanation rewrite and harden validation to reject
+source-authority phrasing in `explanationSv`/`explanationEn`.
+
+REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 03:12 CEST]:
+CONTENT-VERIFY q041-q045 pass confirms the explanation-authority P0 continues
+through the next law/media batch. q041-q045 are source-traceable and
+answer-correct against the official UHR `Sverige i fokus` material: q041 maps
+to `Lag och rätt` / `Rättssäkerhet` page 17; q042 maps to `Domstolar` page 18;
+q043 maps to `Polisen` page 18; q044 maps to `Straffmyndighet och
+belastningsregister` page 19; and q045 maps to `Mediernas roll` / `Fria
+medier` page 20. q044's 15-year answer remains current against the 2026 UHR
+text and the later government proposal posture: the 13-year rule is still
+described as a proposal/temporary special rule for serious crimes, not the
+general answer in this UHR-backed question. SV+EN prompts/options are present,
+answer ids point to supported facts, raw question stems are clean, and q041-q045
+carry `provenance: "uhr"` with no external reference or external-source label.
+Validation/export/citation evidence: `NODE_OPTIONS='--v8-pool-size=1' npm run
+validate:content` exits 0 at 104 source / 416 generated / 520 published with
+`externalQuestions:0`; export parity exits 0; focused QuestionCard,
+UHRReferenceCard, exam-source, and provenance tests pass 10/10; web export
+passes. Live browser route smoke remains infrastructure-blocked on this host
+because no Chrome/Chromium executable is installed, so rendered citation
+coverage is from the visible QuestionCard/UHRReferenceCard parity tests and
+direct source-citation strings. Defect: every q041-q045 explanation still uses
+source-narrator wording (`UHR-avsnittet ...`, `Avsnittet ...`, `The UHR
+section ...`, `The ... section ...`) even though the separate `Källa/Source`
+citation line is present. Manager action: include q041-q045 in the neutral
+app-authored explanation rewrite and harden validation to reject
+source-authority phrasing in `explanationSv`/`explanationEn`.

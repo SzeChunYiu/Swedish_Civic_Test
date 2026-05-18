@@ -1,4 +1,352 @@
 
+>>> MANAGER-content 2026-05-18 04:10 CEST: Recheck hold.
+>>> Required manager inputs were re-read, current queue/journal state was
+>>> checked, panes 1-4 were captured, and a fresh availability probe was run.
+>>> Current time is still before the 05:11 CEST reset. Panes 1-4 are held on
+>>> `sleep`; visible scrollback is stale CONTENT-UHR q105+ setup,
+>>> Phase-B external work, REVIEWER-content context, and CEO/staffing context,
+>>> not a new acceptable handoff. Accepted no SOURCE-EXPANSION, EBOOK,
+>>> CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup, release,
+>>> shuffle, QA, cleanup, `/review`, codebase-explanation, or generic worker
+>>> atom. No product gate was rerun; the accepted evidence boundary remains the
+>>> prior green 104 source / 416 generated / 520 published state with zero
+>>> external rows. Fresh `codex exec --ephemeral` manager availability probe
+>>> exits 1 with usage limit `try again at 5:11 AM`. Stop remains rate-limit;
+>>> next post-reset work is exactly one fresh SOURCE-EXPANSION Phase A/UHR,
+>>> EBOOK SV+EN, or CONTENT-VERIFY defect/fix atom, preferably P0-advancing
+>>> neutral explanation-authority cleanup or translation naturalness review
+>>> before q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 04:08 CEST: Recheck hold.
+>>> Required manager inputs were re-read, queue/journal state was checked, and
+>>> current pane/process evidence was refreshed. Current time is still before
+>>> the 05:11 CEST reset. Panes 1-4 are held on `sleep`; their scrollback is
+>>> stale CONTENT-UHR q105+, Phase-B external, REVIEWER-content, and CEO
+>>> context, not a new acceptable handoff. No product gate was rerun; the
+>>> accepted boundary remains the prior green 104 source / 416 generated / 520
+>>> published state with zero external rows. A fresh manager
+>>> `codex exec --ephemeral` availability probe exits 1 with usage limit
+>>> `try again at 5:11 AM`. Accept no SOURCE-EXPANSION, EBOOK,
+>>> CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup, release,
+>>> shuffle, QA, cleanup, `/review`, codebase-explanation, or generic worker
+>>> atom before reset. Next post-reset work remains exactly one fresh
+>>> SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY defect/fix
+>>> atom, preferably P0-advancing neutral explanation-authority cleanup or
+>>> translation naturalness review before q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 04:05 CEST: Recheck hold.
+>>> Required manager inputs were re-read, queue/journal state was checked, and
+>>> current pane/process evidence was refreshed. Current time is still before
+>>> the 05:11 CEST reset. Panes 1-4 are held on `sleep`; their scrollback is
+>>> stale SOURCE-EXPANSION, Phase-B external, REVIEWER-content, and CEO context,
+>>> not a new acceptable handoff. No product gate was rerun; the accepted
+>>> boundary remains the prior green 104 source / 416 generated / 520 published
+>>> state with zero external rows. A fresh manager `codex exec --ephemeral`
+>>> availability probe exits 1 with usage limit `try again at 5:11 AM`. Accept
+>>> no SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, Phase-B external,
+>>> CEO/staffing, UI/setup, release, shuffle, QA, cleanup, `/review`,
+>>> codebase-explanation, or generic worker atom before reset. Next post-reset
+>>> work remains exactly one fresh SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN,
+>>> or CONTENT-VERIFY defect/fix atom, preferably P0-advancing neutral
+>>> explanation-authority cleanup or translation naturalness review before q105+
+>>> expansion.
+
+>>> MANAGER-content 2026-05-18 04:03 CEST: Recheck hold.
+>>> Required manager inputs were re-read and live panes were checked. Current
+>>> time is still before the 05:11 CEST reset. Panes 1, 2, and 4 were already
+>>> on `sleep`; stale active pane 3 REVIEWER-content work was off-program for
+>>> the current manager-content hold and was respawned to `sleep`. Pane 0
+>>> remains the active manager session. No new pane output is accepted, and no
+>>> product gate was rerun; the accepted boundary remains the 03:57 green 104
+>>> source / 416 generated / 520 published state with zero external rows. A
+>>> fresh manager `codex exec --ephemeral` availability probe exits 1 with
+>>> usage limit `try again at 5:11 AM`. Accept no SOURCE-EXPANSION, EBOOK,
+>>> CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup, release,
+>>> shuffle, QA, cleanup, `/review`, codebase-explanation, or generic worker
+>>> atom before reset. Next post-reset work remains exactly one fresh
+>>> SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY defect/fix
+>>> atom, preferably P0-advancing neutral explanation-authority cleanup or
+>>> translation naturalness review before q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 04:00 CEST: Recheck hold.
+>>> Required manager inputs were re-read, queue/journal state was checked, and
+>>> panes 1-4 remain held on `sleep`. Current time is still before the 05:11
+>>> CEST reset. No new pane output is accepted, and no product gate was rerun in
+>>> this two-minute recheck; the accepted boundary remains the 03:57 green 104
+>>> source / 416 generated / 520 published state with zero external rows. A
+>>> fresh manager `codex exec --ephemeral` availability probe exits 1 with
+>>> usage limit `try again at 5:11 AM`. Accept no SOURCE-EXPANSION, EBOOK,
+>>> CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup, release,
+>>> shuffle, QA, cleanup, `/review`, or generic worker atom before reset. Next
+>>> post-reset work remains exactly one fresh SOURCE-EXPANSION Phase A/UHR,
+>>> EBOOK SV+EN, or CONTENT-VERIFY defect/fix atom, preferably P0-advancing
+>>> neutral explanation-authority cleanup or translation naturalness review
+>>> before q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 03:57 CEST: Recheck hold.
+>>> Required manager inputs were re-read, panes 1-4 remain held on `sleep`,
+>>> and no new pane output is accepted. Fresh gates still match the accepted
+>>> 104 source / 416 generated / 520 published boundary with zero external
+>>> rows: `validate:content`, export parity, q100-q104/no-q105+ source scan,
+>>> CSV tail ending at q520, typecheck, ownership, answer-shuffle,
+>>> source-citation/authority tests, and full `git diff --check` all pass.
+>>> A fresh manager `codex exec --ephemeral` availability probe exits 1 with
+>>> usage limit `try again at 5:11 AM`. Accept no SOURCE-EXPANSION, EBOOK,
+>>> CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup,
+>>> release, shuffle, QA, cleanup, `/review`, or generic worker atom before
+>>> reset. Next post-reset work remains exactly one fresh SOURCE-EXPANSION
+>>> Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY defect/fix atom, preferably
+>>> P0-advancing neutral explanation-authority cleanup or translation
+>>> naturalness review before q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 03:53 CEST: Recheck hold.
+>>> Required manager inputs were re-read, pane/journal state was checked, and no
+>>> new pane output is accepted. Panes 1-4 remain held on `sleep`; current
+>>> scrollback is stale/interrupted context, not a handoff. CONTENT journal has
+>>> q102/q103 handoffs; q104 remains TEAM_PLAN-accepted from transcript evidence
+>>> plus manager verification, with no new worker handoff since the prior note.
+>>> Fresh gates still match the accepted 104 source / 416 generated / 520
+>>> published boundary with `externalQuestions:0`: `validate:content`, export
+>>> parity, direct source scan showing q100-q104 only and no source q105-q109,
+>>> CSV tail ending at q520, typecheck, ownership, and full `git diff --check`
+>>> all pass. A fresh manager `codex exec --ephemeral` availability probe exits
+>>> 1 with usage limit `try again at 5:11 AM`. Accept no SOURCE-EXPANSION,
+>>> EBOOK, CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup,
+>>> release, shuffle, QA, cleanup, `/review`, or generic worker atom before
+>>> reset. Next post-reset work remains exactly one fresh SOURCE-EXPANSION
+>>> Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY defect/fix atom, preferably
+>>> P0-advancing neutral explanation-authority cleanup or translation
+>>> naturalness review before q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 03:49 CEST: Recheck hold.
+>>> Required manager inputs were re-read, panes 1-4 were checked, and no new
+>>> pane output is accepted. Pane 1 had relaunched stale q105+ CONTENT-UHR
+>>> source-expansion work and was interrupted, then respawned to `sleep`;
+>>> panes 1-4 are now held on `sleep`. Fresh gates still match the accepted
+>>> 104 source / 416 generated / 520 published boundary with
+>>> `externalQuestions:0`: `validate:content`, export parity, direct
+>>> q100-q104/no-source-q105-q109 scan, 520-row CSV tail ending at q520, and
+>>> scoped coordination diff check all pass. A direct Node TypeScript import
+>>> probe failed on repo ESM/loader setup and is not acceptance evidence. A
+>>> fresh manager `codex exec --ephemeral` availability probe exits 1 with
+>>> usage limit `try again at 5:11 AM`. Accept no SOURCE-EXPANSION, EBOOK,
+>>> CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup, release,
+>>> shuffle, QA, cleanup, `/review`, or generic worker atom before reset. Next
+>>> post-reset work is exactly one fresh SOURCE-EXPANSION Phase A/UHR, EBOOK
+>>> SV+EN, or CONTENT-VERIFY defect/fix atom, preferably P0-advancing neutral
+>>> explanation-authority cleanup or translation naturalness review before
+>>> q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 03:43 CEST: Recheck hold.
+>>> Required manager inputs were re-read, panes 1-4 were checked, and no new
+>>> pane output is accepted. Panes 1-4 are live-held on `sleep`; old scrollback
+>>> is not a current handoff. Fresh gates still match the accepted 104 source /
+>>> 416 generated / 520 published boundary with `externalQuestions:0`:
+>>> `validate:content`, export parity, direct q100-q104/no-q105-q109 source
+>>> scan, 520-row CSV tail ending at q520, and scoped coordination diff check
+>>> all pass. A fresh manager `codex exec --ephemeral` availability probe exits
+>>> 1 with usage limit `try again at 5:11 AM`. Accept no SOURCE-EXPANSION,
+>>> EBOOK, CONTENT-VERIFY closure, Phase-B external, CEO/staffing, UI/setup,
+>>> release, shuffle, QA, cleanup, or generic worker atom before reset. Next
+>>> post-reset work is exactly one fresh SOURCE-EXPANSION Phase A/UHR, EBOOK
+>>> SV+EN, or CONTENT-VERIFY defect/fix atom, preferably P0-advancing neutral
+>>> explanation-authority cleanup or translation naturalness review before
+>>> q105+ expansion.
+
+>>> MANAGER-content 2026-05-18 03:14 CEST: Accepted pane 3
+>>> CONTENT-VERIFY q041-q045 defect intake only as queue evidence, not as
+>>> CONTENT-VERIFY closure or a product content atom. q041-q045 are
+>>> UHR-traceable with complete SV+EN fields, clean stems, UHR provenance,
+>>> empty external-reference fields, visible citation parity, and supported
+>>> answer choices. Manager gates pass at 104 source / 416 generated / 520
+>>> published with `externalQuestions:0`: validation, export parity, focused
+>>> provenance/QuestionCard/UHRReferenceCard/exam-source tests 10/10,
+>>> ownership, direct q041-q045 section/page scan, and scoped diff check.
+>>> Browser route smoke remains blocked because no Chrome/Chromium binary is
+>>> installed, so rendered citation evidence is parity/code-path only.
+>>> Accepted defect: q041-q045 explanations still use source-narrator wording
+>>> while the separate `Källa/Source` citation line is present. Next accepted
+>>> work should be a neutral explanation-authority cleanup/validator-hardening
+>>> atom, TRANSLATE-COMPLETE review, or another manager-approved
+>>> CONTENT-VERIFY pass. Accepted no q105+ SOURCE-EXPANSION, no EBOOK atom,
+>>> no Phase-B external question, no pane 2 external work, and no pane 4
+>>> CEO/staffing/bug-fix output. Fresh manager/reviewer probes hit Codex
+>>> usage limit `try again at 5:11 AM`; manager-content is stopped at rate
+>>> limit.
+
+>>> MANAGER-content 2026-05-18 03:03 CEST: CNT46-CNT48
+>>> are accepted as SOURCE-EXPANSION only. Live content is now 104 source /
+>>> 416 generated / 520 published with `externalQuestions:0`. q102
+>>> `Valborgsmässoafton`, q103 `Första maj`, and q104 `Alla helgons dag`
+>>> all cite official UHR `Sverige i fokus`, Chapter 13, printed page 46,
+>>> and export generated rows through q520. Manager gates pass:
+>>> validation, export parity, focused source/provenance/export tests 12/12,
+>>> typecheck, ownership, targeted Prettier, targeted diff, no q105-q107
+>>> source overrun, and serialized content 220/220. B9 is resolved by
+>>> acceptance of this boundary. Do not treat q102-q104 as CONTENT-VERIFY
+>>> closure; neutral explanation cleanup remains a future one-atom fix.
+>>> Pane 1 is paused; no q105+ auto-advance, EBOOK, or Phase-B external
+>>> production work without a fresh manager-content instruction.
+
+>>> MANAGER-content 2026-05-18 02:55 CEST: CNT45 / q101
+>>> Phase-A UHR source-expansion is accepted. q101 is the Easter atom
+>>> cited to official UHR `Sverige i fokus`, Chapter 13, section `Påsk`,
+>>> printed page 45, and exports generated q502-q505 rows. Manager gates
+>>> pass: `validate:content` 101 source / 404 generated / 505 published
+>>> with `externalQuestions:0`, export parity, focused source/provenance/
+>>> export tests 12/12, typecheck, ownership, targeted Prettier, targeted
+>>> diff, no source q102-q107, duplicate-assertion scan clean, and serialized
+>>> `test:content -- --test-concurrency=1` 220/220. Pane 1 then hit the
+>>> reported usage limit. Next post-reset work may only be a bounded
+>>> SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY defect/fix
+>>> atom. Do not resume the stale q102-q107 overrun or Phase-B external
+>>> production questions without a separate VALIDATOR-approved lease.
+
+>>> MANAGER-content 2026-05-18 02:43 CEST: B7 /
+>>> `CONTENT-PROVENANCE-GATE-1` is accepted. Live validation now reports
+>>> 100 source / 400 generated / 500 published, `questionProvenanceValidated:500`,
+>>> and `externalQuestions:0`; export parity, focused provenance tests,
+>>> typecheck, ownership, targeted Prettier, targeted diff checks, and worker
+>>> serialized `test:content -- --test-concurrency=1` pass. Pane 2's Phase-B
+>>> external q023/test-contract path is rejected. Next panes may take only
+>>> SOURCE-EXPANSION Phase A/UHR, EBOOK SV+EN, or CONTENT-VERIFY defect/fix
+>>> atoms with verified citations. Phase-B external production questions still
+>>> require a separate VALIDATOR-approved lease.
+
+>>> MANAGER-content 2026-05-18 02:38 CEST: B7 remains the
+>>> only valid next action and worker launch is still rate-limited.
+>>> Pane captures show no acceptable handoff: pane 1 paused after a
+>>> zero-external repair race, pane 2 paused on conflicting external q023,
+>>> pane 3 reviewer evidence has no accepted handoff, and pane 4 is
+>>> CEO/off-program for this loop. Live q023 plus generated q189-q192 are
+>>> external production rows; `validate:content` and export parity pass, but
+>>> focused provenance tests fail on `5 !== 0` because the active B7 boundary
+>>> expects zero production external rows. Fresh repair probe exits 1 with
+>>> usage limit `try again at 5:11 AM`. Accept no pane 1-4 content atom, no
+>>> q023 external atom, no provenance gate, no SOURCE-EXPANSION, no EBOOK, no
+>>> CONTENT-VERIFY closure, and no off-program output. Next action remains
+>>> exactly one post-reset B7 repair owner restoring zero production external
+>>> rows while preserving provenance schema/export/UI/validator support.
+
+>>> MANAGER-content 2026-05-18 02:29 CEST: B7 remains the
+>>> only valid next action and worker launch is still rate-limited.
+>>> Live q023 plus generated q189-q192 are external production rows;
+>>> `validate:content` and export parity pass, but focused
+>>> `node --test scripts/content-production.test.js
+>>> tests/content-question-provenance-parity.test.js` fails on `5 !== 0`
+>>> because the active B7 boundary expects zero production external rows.
+>>> Fresh repair probe exits 1 with usage limit `try again at 5:11 AM`.
+>>> Accept no pane 1-4 content atom, no q023 external atom, no provenance
+>>> gate, no EBOOK, no CONTENT-VERIFY closure, and no off-program output.
+>>> Next action remains exactly one post-reset B7 repair owner restoring
+>>> zero production external rows while preserving provenance
+>>> schema/export/UI/validator support.
+
+>>> MANAGER-content 2026-05-18 02:27 CEST: B7 still blocks
+>>> SOURCE-EXPANSION, EBOOK, and CONTENT-VERIFY closure. Fresh manager
+>>> verification: live q023 plus generated q189-q192 are external production
+>>> rows; `validate:content` and export parity pass, typecheck/ownership/diff
+>>> checks pass, but focused provenance tests fail on `5 !== 0` because the
+>>> active B7 boundary expects zero production external rows. Fresh repair
+>>> probe exits 1 with usage limit `try again at 5:11 AM`. Accept no pane 1-4
+>>> content atom, no q023 external atom, no provenance gate, no EBOOK, no
+>>> CONTENT-VERIFY closure, and no off-program output. Next action remains
+>>> exactly one post-reset B7 repair owner restoring zero production external
+>>> rows while preserving provenance schema/export/UI/validator support.
+
+>>> MANAGER-content 2026-05-18 02:24 CEST: B7 still blocks
+>>> SOURCE-EXPANSION, EBOOK, and CONTENT-VERIFY closure. Required inputs were
+>>> re-read and panes 1-4 were captured: pane 1 attempted zero-external B7
+>>> repair then paused, pane 2 reintroduced q023 as an external Phase-B atom,
+>>> pane 3's q031-q035 reviewer pass has no accepted handoff, and pane 4 is
+>>> CEO/staffing off-program for this loop. Live q023 plus q189-q192 are
+>>> external; `validate:content` and export parity pass, but focused
+>>> provenance tests fail on `5 !== 0` because the accepted B7 boundary still
+>>> expects zero production external rows. Fresh worker probe exits 1 with
+>>> usage limit `try again at 5:11 AM`. Accept no pane 1-4 content atom, no
+>>> q023 external atom, no provenance gate, no EBOOK, no CONTENT-VERIFY
+>>> closure, and no off-program output. Next action remains exactly one
+>>> post-reset B7 repair owner restoring zero production external rows while
+>>> preserving provenance schema/export/UI/validator support.
+
+>>> MANAGER-content 2026-05-18 02:05 CEST: Accepted pane 3
+>>> CONTENT-VERIFY q026-q030 defect intake only as queue evidence, not as
+>>> product/content closure. Manager verification: reviewer journal and validator
+>>> entries exist; q026-q030 are UHR-traceable with complete SV+EN fields and
+>>> clean source/generated stems; `NODE_OPTIONS='--v8-pool-size=1' npm run
+>>> validate:content` exits 0 with 100 source / 400 generated / 500 published,
+>>> `externalQuestions:5`; export parity exits 0; QuestionCard/UHR/source
+>>> parity tests pass 9/9. Focused provenance tests still exit 1 because the
+>>> no-external parity test expects `externalQuestions:0` while q023/q189-q192
+>>> are external. Fresh manager availability probe exits 1 with Codex usage
+>>> limit `try again at 5:11 AM`. Accepted no q023 external atom, provenance
+>>> gate, SOURCE-EXPANSION, EBOOK, CONTENT-VERIFY closure, or off-program atom.
+>>> Next action remains one post-reset B7 repair owner restoring zero production
+>>> external rows while preserving provenance support.
+
+>>> MANAGER-content 2026-05-18 02:02 CEST: Fresh continuation audit confirms
+>>> B7 is still open and worker launch is still rate-limited before the
+>>> recorded 05:11 reset. Required inputs were re-read. Live q023 remains
+>>> `provenance:"external"` in source/CSV; `validate:content` exits 0 but
+>>> reports `externalQuestions:5`, `externalReferencesValidated:5`, and
+>>> `externalQuestionLabelsValidated:5`. Focused
+>>> `NODE_OPTIONS='--v8-pool-size=1' node --test
+>>> scripts/content-production.test.js tests/content-question-provenance-parity.test.js`
+>>> exits 1 because the current production-bank parity test expects
+>>> `externalQuestions:0`. A fresh `codex exec --ephemeral` availability probe
+>>> exits 1 with usage-limit message `try again at 5:11 AM`. Accepted no
+>>> provenance gate, q023 external question, SOURCE-EXPANSION, EBOOK,
+>>> CONTENT-VERIFY closure, or off-program atom. Next action remains exactly
+>>> one post-reset repair owner for CONTENT-PROVENANCE-GATE-1: restore zero
+>>> external production rows or explicitly obtain a separated VALIDATOR-approved
+>>> Phase-B lease before changing the production-bank test contract.
+
+>>> MANAGER-content 2026-05-18 01:55 CEST: CONTENT-PROVENANCE-GATE-1 remains
+>>> unaccepted after a stale-pane race. Panes 1 and 2 alternated q023 between
+>>> UHR-only and external; panes are now paused/dead. Live state has q023 as
+>>> `provenance:"external"` in data and CSV, violating the current no-external
+>>> gate. `validate:content`, `typecheck`, export parity, and `git diff --check`
+>>> pass, but focused `node --test scripts/content-production.test.js
+>>> tests/content-question-provenance-parity.test.js` exits 1 because the parity
+>>> test expects `externalQuestions:0` and current validation reports 5 external
+>>> published rows. A fresh single-owner `codex exec --ephemeral` repair launch
+>>> exits 1 with usage-limit message `try again at 5:11 AM`. Accept no
+>>> provenance gate, q023 external question, SOURCE-EXPANSION, EBOOK, or
+>>> CONTENT-VERIFY closure. Next post-reset action: single-owner repair only,
+>>> restore zero external questions, then rerun full gates.
+
+>>> MANAGER-content 2026-05-18 01:40 CEST: Fresh recheck confirms the 01:37
+>>> red-tree hold. `validate:content` exits 1 on PracticeQuestion
+>>> `provenance`/`externalReference` schema-key drift, `typecheck` exits 2
+>>> because current source/generated questions lack required `provenance`, and a
+>>> new `codex exec --ephemeral` availability probe exits 1 with usage-limit
+>>> message `try again at 5:11 AM`. No pane 1-4 output is accepted. Next allowed
+>>> action remains CONTENT-PROVENANCE-GATE-1 completion/repair only; no external
+>>> questions, no EBOOK atom, and no CONTENT-VERIFY closure until manager
+>>> verification restores a green bounded artifact.
+
+>>> MANAGER-content 2026-05-18 01:37 CEST: RED TREE after incomplete
+>>> CONTENT-PROVENANCE-GATE-1 attempt. Pane 2 edited `types/content.ts` and
+>>> `lib/quiz/questionText.ts` but hit the Codex usage limit before wiring
+>>> data/export/validator/UI/tests. `validate:content` now exits 1 on
+>>> PracticeQuestion schema-key drift and `typecheck` exits 2 because current
+>>> questions/generated variants lack required `provenance`. No provenance atom,
+>>> external question, SOURCE-EXPANSION atom, EBOOK atom, or CONTENT-VERIFY
+>>> closure is accepted from this red state. Next allowed worker action after
+>>> reset: complete or repair CONTENT-PROVENANCE-GATE-1 only, with no new
+>>> external questions and no source-count change.
+
+>>> MANAGER-content 2026-05-18 01:24 CEST: CLEANUP-FIRST is accepted and the
+>>> stale red-tree warning is superseded. Panes 1-4 may proceed only on
+>>> SOURCE-EXPANSION, EBOOK, or CONTENT-VERIFY with verified+cited artifacts.
+>>> Reject UI/setup, shuffle, staffing, CEO, monetization, and cleanup repeats
+>>> in this manager-content loop. Phase-B external questions require working
+>>> provenance schema/export/render gates and visible localized external labels
+>>> before any external-source question can be accepted.
+>>> For panes 1-4 under manager-content, this content-only scope overrides the
+>>> generic P0 list below; do not take ADS, WEB, DESIGN, UIUX, or SHUFFLE tasks
+>>> from this file in the current loop.
+
 >>> READ codex-tasks/P0.md FIRST. While P0.md has open items, only P0-advancing
 >>> iterations are accepted; trivial product-path commits are reverted. <<<
 ADS-1 lib/monetization/premium.ts + ads.ts: decouple adsDisabled from isPremiumUser; shouldShowAd false when adsDisabled; unit tests (npm test -- monetization).

@@ -1307,3 +1307,571 @@ Workspace contract: pass for bounded q095 evidence, then blocked for more passes
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-17 23:41 CEST]`; `codex-tasks/blockers.txt` item `REVIEWER-BLOCKED-DIRTY-WORKTREE-1 update [2026-05-17 23:41 CEST]`.
 Evidence: q095 is source-aligned, exported, and user-facing clean on `/quiz/q095`; SOURCE-CITATION remains open for generated prompt-template wording and unaccepted q096/source-owner follow-up.
 Next manager action: VALIDATOR can review q095 as bounded CONTENT evidence, but should keep REVIEWER stopped until the current CONTENT/DATA-INTEGRITY/SETUP dirty files are accepted, rejected, committed, or cleared.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, `main` behind `origin/main` by 3 during pass.
+Artifact reviewed: q096-q100 CONTENT-VERIFY batch plus current source/citation/provenance render path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`, `GOAL.md`, `docs/parallel-sessions.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`, `codex-tasks/content.txt`, `codex-tasks/blockers.txt`, `codex-tasks/validator.txt`, and recent CONTENT/REVIEWER journals.
+- Boundary recheck: `npm run validate:content` exit 0; product/test diff is bounded to the nested true/false rescue files from CONTENT Iteration 201, with no diff in `data/additionalQuestions.ts`, `data/chapters.ts`, or `data/questions.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0.
+- Browser-render smoke could not run: no `google-chrome`/`chromium` executable exists on this host; `npx playwright install chromium` fails because this Playwright build does not support `ubuntu26.04-x64`, and `npx playwright install chrome` fails at sudo authentication.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` exit 0 with 216/216 passing.
+- Downloaded the official UHR PDF URL from `content/uhr-section-map.json` to `/tmp`, extracted text with `pdftotext`, and traced q096-q100 facts to the Islam/Nyår/Sveriges nationaldag/Midsommar/Lucia sections.
+- Direct q096-q100 runtime-load probe verified SV+EN prompts/options, correct answer ids/options, UHR references, generated q481-q500 variants, and provenance/explanation flags.
+Workspace contract: pass for reviewer-only queue/journal work; no product source edits. Runtime browser evidence is blocked by missing browser infrastructure, so citation rendering is verified by the `QuestionCard` code path and green content parity tests rather than a live browser smoke.
+Findings queued:
+- `REVIEWER-PROVENANCE-LABEL-1` in `codex-tasks/validator.txt` as P0.
+- `REVIEWER-EXPLANATION-AUTHORITY-1` in `codex-tasks/validator.txt` as P0.
+Evidence: q096-q100 are factually traceable and answer-correct against the UHR PDF; citations are represented by `getQuestionSourceCitation`/`QuestionCard` as `Källa/Source: Sverige i fokus, ...`; SV+EN prompts/options are present. Defects: 0/100 source questions and 0/500 published questions carry a provenance field, no external-source label render path exists, and q096-q100 explanations still use UHR-section narrator wording in both Swedish and English while current validators stay green.
+Next manager action: treat provenance schema/render and explanation authority phrasing as P0 content/data-integrity work before accepting further content-quality closure; restore browser infrastructure for acceptance-grade rendered checks.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, `main` behind `origin/main` by 3 during pass.
+Artifact reviewed: q001-q005 CONTENT-VERIFY batch plus current source/citation/provenance render path.
+Checks run:
+- Re-read `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`, `codex-tasks/P0.md`, `codex-tasks/content.txt`, `codex-tasks/validator.txt`, `GOAL.md`, and recent reviewer/content journals.
+- Confirmed `/home/billy/Desktop/projects/.shared/review-to-queue.sh` is absent, so direct queue fallback was used.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 01:26 CEST.
+- `git status --short --branch` - shared checkout remains dirty only in pre-existing queue/docs/content-generator/test rescue files outside REVIEWER ownership.
+- Downloaded the official UHR PDF URL from `content/uhr-section-map.json`, extracted page 5 with `pdftotext`, and traced q001-q005 to `Landet Sverige` / `Geografi, klimat och natur`, s. 5.
+- Direct q001-q005 runtime-load probe verified SV+EN prompts/options, correct answer ids/options, UHR references, generated q101-q120 variants, missing provenance flags, and explanation authority flags.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 100 source questions, 400 generated variants, 500 published questions, and `uhrReferencesValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 500-question export parity OK.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 0.
+- Browser-render smoke attempted with Playwright, but no `google-chrome`/`chromium` executable exists on this host. Citation rendering was verified through `QuestionCard` source and `node --test tests/content-question-card-accessibility-parity.test.js` exit 0, including the visible source-citation regression test.
+- `timeout 60s codex exec --ephemeral "availability probe for REVIEWER-content loop; reply ok"` - exit 1 with usage-limit stop: `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only queue/journal work; no product source edits. Runtime browser evidence remains blocked by missing browser infrastructure, so citation rendering is verified by code/test evidence rather than a live browser smoke.
+Findings queued:
+- `REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:26 CEST]` in `codex-tasks/validator.txt` as P0.
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:26 CEST]` in `codex-tasks/validator.txt` as P0.
+Evidence: q001-q005 are factually traceable and answer-correct against UHR PDF page 5; citations are represented by `getQuestionSourceCitation`/`QuestionCard` as `Källa/Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5`; SV+EN prompts/options are present. Defects: q001-q005 carry no provenance field because 0/100 source and 0/500 published questions have provenance, no external-source label render path exists, and q001-q005 explanations still use UHR-section narrator wording in both Swedish and English while current validators stay green.
+Next manager action: keep provenance schema/render and explanation authority phrasing as P0 content/data-integrity work; route q001-q005 into the same bank-wide fix, and restore browser infrastructure for acceptance-grade rendered checks.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared dirty checkout with
+pre-existing nested true/false rescue and queue/journal edits outside REVIEWER
+ownership.
+Artifact reviewed: q006-q010 CONTENT-VERIFY batch plus current source,
+citation, explanation, and provenance render paths.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`,
+  `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`,
+  `docs/parallel-sessions/TEAM_PLAN.md`, `GOAL.md`, `codex-tasks/P0.md`,
+  `codex-tasks/validator.txt`, `codex-tasks/content.txt`, and recent reviewer
+  journal entries.
+- Confirmed `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and
+  `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so
+  direct queue fallback was used.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 01:31 CEST.
+- `git status --short` - shared checkout already dirty in queue/docs plus
+  nested true/false generator/test files; no product source edited by this
+  reviewer pass.
+- Downloaded the official UHR PDF URL from `content/uhr-section-map.json` to
+  `/tmp/sverige-i-fokus.pdf`, extracted pages 5-7 with `pdftotext`, and traced
+  q006-q010 facts to the Chapter 1 sections `Geografi, klimat och natur`,
+  `Fjall`, `Skogar, sjoar och oar`, `Befolkning`, and `Naturresurser`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0;
+  100 source, 400 generated, 500 published, 500 UHR references, and
+  `questionAuthorityBoundaryTextValidated:500`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  - exit 0; 500-question export parity OK.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-card-accessibility-parity.test.js
+  tests/content-uhr-reference-card-accessibility-parity.test.js
+  tests/content-uhr-source-citation-stem.test.js` - exit 0; 7/7 passing.
+- Browser-render smoke remains infrastructure-blocked: `which google-chrome ||
+  which chromium || which chromium-browser || true` returned no executable.
+- `timeout 60s codex exec --ephemeral "availability probe for REVIEWER-content
+  after q006-q010 pass; reply ok"` - exit 1 with usage-limit stop:
+  `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only queue/journal work; no product source
+edits. Citation rendering is verified by the `QuestionCard` visible source-line
+code path and parity tests, not by live browser evidence.
+Findings queued:
+- `REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:31 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:31 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-18 01:31 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+Evidence: q006-q010 are UHR-traceable and answer-correct against the official
+PDF; SV+EN prompts/options exist and answer ids point to the supported facts.
+Defects: q006-q010 have no provenance key; no external-source label render path
+exists; q006-q010 explanations use UHR-section narrator wording; q010 and
+generated q137-q140 still carry `UHR-materialet` / `UHR material` in raw/exported
+stems while the current source-citation gate stays green.
+Next manager action: assign P0 content/data-integrity fixes for provenance
+schema/render, q006-q010 neutral explanations, q010/q137-q140 raw-stem cleanup,
+and validator hardening; restore browser infrastructure for acceptance-grade
+rendered checks.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared checkout on `main` behind
+`origin/main` by 3, with source-owner changes moving during the pass.
+Artifact reviewed: q011-q015 CONTENT-VERIFY batch plus current source,
+citation, explanation, provenance, and validator boundary.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`,
+  `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`,
+  `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`,
+  `codex-tasks/content.txt`, `codex-tasks/validator.txt`,
+  `codex-tasks/blockers.txt`, and recent reviewer/content journals.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 01:36 CEST.
+- Extracted official UHR PDF pages 10-11 with `pdftotext` and traced q011-q015
+  to `Sveriges demokratiska system` sections `Demokrati betyder folkstyre`,
+  `En stark demokrati`, and `Hot mot demokratin`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` initially exited
+  0 before the source-owner provenance edit landed, then exited 1 after the
+  edit with PracticeQuestion schema mismatch.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exited 0 before the provenance edit.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-card-accessibility-parity.test.js
+  tests/content-uhr-reference-card-accessibility-parity.test.js
+  tests/content-uhr-source-citation-stem.test.js` exited 0 with 7/7 before the
+  provenance edit.
+- Direct q011-q015 probe verified SV+EN prompts/options, correct answer ids,
+  UHR references, generated q141-q160 rows, missing provenance in the reviewed
+  source batch, explanation-authority flags, and raw-source stem flags.
+- `which google-chrome || which chromium || which chromium-browser || true`
+  returned no browser executable, so live browser citation rendering remains
+  infrastructure-blocked; citation rendering was checked by `QuestionCard`
+  source and parity tests.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:content --
+  --test-concurrency=1` exited 1 after the provenance edit, with 116/216
+  passing and 100 failures caused by the PracticeQuestion schema mismatch.
+- `npm run typecheck` exited 2 after the provenance edit because source and
+  generated question objects lack required `provenance`.
+- `timeout 60s codex exec --ephemeral "availability probe for
+  REVIEWER-content after q011-q015 pass; reply ok"` exited 1 with usage-limit
+  stop: `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only work, then blocked by moving
+source-owner product changes. REVIEWER edited only queues/journal notes, not
+product source.
+Findings queued:
+- `REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:36 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:36 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-SOURCE-CITATION-STEM-1 update [2026-05-18 01:36 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-BLOCKED-PROVENANCE-GATE-RED-1` in `codex-tasks/blockers.txt` as P0.
+Evidence: q011-q015 are UHR-traceable and answer-correct against official PDF
+pages 10-11, with complete SV+EN prompts/options. Defects: q011-q015
+explanations over-attribute to UHR sections; q012-q014 and generated q145-q156
+carry raw UHR-material/source wording in stems; the provenance implementation is
+partial and currently breaks validate/typecheck/test:content while still lacking
+aligned data/export/validator/render coverage.
+Next manager action: finish or reject the partial provenance-gate diff, restore
+green validation, then route q011-q015 into the same explanation and raw-stem
+cleanup program; browser infrastructure still needs restoration for
+acceptance-grade rendered checks.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared checkout on `main` behind
+`origin/main` by 3, with source-owner provenance changes moving during review.
+Artifact reviewed: q016-q020 CONTENT-VERIFY batch plus current source,
+citation, explanation, provenance/export, and rendered-label boundary.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`,
+  `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`,
+  `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`,
+  `codex-tasks/content.txt`, `codex-tasks/validator.txt`,
+  `codex-tasks/blockers.txt`, and recent reviewer/content journals.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 01:43 CEST.
+- Checked the official UHR `Sverige i fokus` PDF: q016-q018 trace to page 12,
+  section `Staten`; q019-q020 trace to page 14, sections `Val och röstning`
+  and `Folkomröstningar`.
+- Extracted the UHR PDF with `curl` + `pdftotext -f 12 -l 14` and confirmed
+  the relevant source lines: parliamentary representative democracy, 349
+  Riksdag members, Riksdag choosing the prime minister, voting age 18, and
+  advisory referendums.
+- Direct q016-q020 probe verified SV+EN prompts/options, correct answer ids,
+  UHR references, `provenance: "uhr"` in current source data, no external
+  reference on UHR questions, explanation-authority flags, and clean raw stems.
+- Direct CSV probe found q016-q020 source rows and generated q161-q180 rows;
+  generated q161-q180 had 0 raw UHR/source wording matches.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exited 1 because
+  `content/question-bank.csv` still has the old 12-column header/rows while the
+  validator now expects the 18-column provenance/external-reference contract.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exited 2 because
+  `authoredBaseQuestions: UhrPracticeQuestion[]` entries in `data/questions.ts`
+  still include literal `provenance` keys even though the wrapper type omits
+  that field.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exited 1 with `content/question-bank.csv is out of sync`.
+- `which google-chrome || which chromium || which chromium-browser || true`
+  returned no browser executable, so live browser citation rendering remains
+  infrastructure-blocked. Render coverage was inspected in code:
+  `QuestionCard` renders `getQuestionSourceCitation(question)` visibly and now
+  renders `getQuestionProvenanceLabel(question)` only when present.
+Workspace contract: pass for reviewer-only work, then blocked by the red moving
+provenance-gate artifact. REVIEWER edited only queues/journal notes, not product
+source.
+Findings queued:
+- `REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:43 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:43 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-BLOCKED-PROVENANCE-GATE-RED-1` update in `codex-tasks/blockers.txt`
+  as P0/blocker context.
+Evidence: q016-q020 are UHR-traceable and answer-correct with complete SV+EN
+fields, clean stems, and UHR provenance in current source data. Defects:
+provenance/export/type gates are red and q016-q020 explanations over-attribute
+to UHR sections instead of using neutral app-authored explanation wording with
+the separate citation line.
+Next manager action: finish or reject the provenance-gate diff, regenerate and
+validate the new CSV/export contract, restore typecheck, then route q016-q020
+into the explanation-authority cleanup program.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared checkout on `main` behind
+`origin/main` by 3, with source-owner provenance changes moving during review.
+Artifact reviewed: q021-q025 CONTENT-VERIFY batch plus current source,
+citation, explanation, provenance/export, and rendered-label boundary.
+Checks run:
+- Re-read `docs/parallel-sessions/TEAM_PLAN.md`,
+  `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`,
+  `codex-tasks/open.txt`, `codex-tasks/P0.md`, `codex-tasks/content.txt`,
+  `codex-tasks/validator.txt`, `codex-tasks/blockers.txt`, `GOAL.md`, and recent
+  reviewer/content notes.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 01:55 CEST.
+- Checked official UHR PDF `Sverige i fokus`: q021-q022 trace to material page
+  12 (`Landet styrs på olika nivåer`, `Staten`); q024-q025 trace to material
+  page 13 (`Myndigheter`, `Regioner och kommuner`).
+- Checked official Riksdag page `Talmannens uppdrag`, section `När en ny
+  statsminister utses`: q023 is supported by the rule that a proposed prime
+  minister is rejected only if more than half of Riksdag members vote no.
+- Direct q021-q025 runtime-load probe verified SV+EN prompts/options, correct
+  answer ids/options, UHR/external references, generated q181-q200 rows,
+  provenance labels, clean stems, and explanation-authority flags.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exited 0 with 100
+  source / 400 generated / 500 published, `questionProvenanceValidated:500`,
+  `externalQuestions:5`, and `externalQuestionLabelsValidated:5`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exited 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exited 0.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  scripts/content-production.test.js tests/content-question-provenance-parity.test.js`
+  exited 1: the focused provenance parity test still asserts
+  `externalQuestions === 0` while validation now reports 5 external rows.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-card-accessibility-parity.test.js
+  tests/content-uhr-reference-card-accessibility-parity.test.js
+  tests/content-uhr-source-citation-stem.test.js
+  tests/content-question-provenance-parity.test.js` exited 1 for the same
+  external-count assertion; the QuestionCard/UHR/source-citation checks passed.
+- `which google-chrome || which chromium || which chromium-browser || true`
+  returned no browser executable, so live browser citation rendering remains
+  infrastructure-blocked. Render coverage was checked by `QuestionCard` source
+  and parity tests: source citation is visible, and the external label renders
+  when `getQuestionProvenanceLabel(question)` returns text.
+- `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and
+  `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so the
+  direct queue fallback was used.
+- `timeout 60s codex exec --ephemeral "availability probe for REVIEWER-content
+  after q021-q025 pass; reply ok"` exited 1 with usage-limit stop:
+  `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only work, then blocked by moving
+source-owner provenance/test-contract drift. REVIEWER edited only
+`codex-tasks/validator.txt`, `codex-tasks/blockers.txt`, and this journal.
+Findings queued:
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 01:55 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 01:55 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-BLOCKED-PROVENANCE-GATE-RED-1` update in `codex-tasks/blockers.txt`
+  as P0/blocker context.
+Evidence: q021/q022/q024/q025 are UHR-traceable and answer-correct with complete
+SV+EN fields, clean stems, UHR provenance, and no external label. q023 is
+answer-correct against the Riksdag source, carries external provenance, and the
+helper returns the localized external-source label. Defects: q021/q022/q024/q025
+explanations over-attribute to UHR sections, and the production bank/test
+contract now disagrees about whether external production rows are allowed.
+Next manager action: decide whether q023 is an approved Phase-B external-source
+atom or an unaccepted provenance-gate leak; then fix the provenance tests and
+route q021/q022/q024/q025 into the explanation-authority cleanup program.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared checkout on `main` behind
+`origin/main` by 3, with source-owner provenance/test-contract changes dirty
+outside this lane.
+Artifact reviewed: q026-q030 CONTENT-VERIFY batch plus current source,
+citation, explanation, provenance/export, and rendered-label boundary.
+Checks run:
+- Re-read `docs/parallel-sessions/TEAM_PLAN.md`,
+  `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`,
+  `codex-tasks/open.txt`, `codex-tasks/P0.md`, `codex-tasks/content.txt`,
+  `codex-tasks/validator.txt`, `codex-tasks/blockers.txt`, `GOAL.md`,
+  `docs/architecture.md`, and recent reviewer/content notes.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 02:02 CEST.
+- Checked official UHR PDF `Sverige i fokus`: q026 traces to material page 13
+  `Kommunernas ansvar`; q027 traces to page 13 `Sveriges statsskick`; q028
+  traces to page 12 `Staten`; q029-q030 trace to page 14 `Val och röstning`.
+- Extracted pages 12-14 with `pdftotext` and verified support for municipal
+  responsibilities, constitutional monarchy/no political power, opposition
+  scrutiny, four-year Riksdag/region/municipal elections, and Riksdag voting
+  requirements of Swedish citizenship plus age 18.
+- Direct q026-q030 runtime-load probe verified SV+EN prompts/options, correct
+  answer ids/options, UHR references, `provenance: "uhr"`, no external
+  references, no external provenance labels, visible citation helper output,
+  clean raw stems, and generated q201-q220 source metadata/citations.
+- Direct CSV scan over q201-q220 found 0 UHR/source-authority stem matches.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exited 0 with 100
+  source / 400 generated / 500 published, `questionProvenanceValidated:500`,
+  `externalQuestions:5`, and `externalQuestionLabelsValidated:5`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exited 0.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  scripts/content-production.test.js tests/content-question-provenance-parity.test.js`
+  exited 1 because `tests/content-question-provenance-parity.test.js` still
+  asserts `externalQuestions === 0` while validation reports 5 external rows.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-card-accessibility-parity.test.js
+  tests/content-uhr-reference-card-accessibility-parity.test.js
+  tests/content-question-source-export-wiring.test.js
+  tests/content-uhr-source-citation-stem.test.js` exited 0 with 9/9 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-authority-boundary.test.js` exited 0, confirming the
+  current authority-boundary validator still misses UHR-section narrator
+  wording in explanations.
+- `which google-chrome || which chromium || which chromium-browser || true`
+  returned no browser executable, so live browser citation rendering remains
+  infrastructure-blocked. Render coverage was checked through
+  `QuestionCard`/UHRReferenceCard parity tests and direct
+  `getQuestionSourceCitation` output.
+- `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and
+  `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so the
+  direct queue fallback was used.
+- `timeout 60s codex exec --ephemeral "availability probe for REVIEWER-content
+  after q026-q030 pass; reply ok"` exited 1 with usage-limit stop:
+  `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only queue/journal work, then blocked by
+existing source-owner provenance/test-contract drift. REVIEWER did not edit
+product source.
+Findings queued:
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 02:02 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-PROVENANCE-LABEL-1 update [2026-05-18 02:02 CEST]` in
+  `codex-tasks/validator.txt` as P0 context for the still-red provenance gate.
+- `REVIEWER-BLOCKED-PROVENANCE-GATE-RED-1` update in `codex-tasks/blockers.txt`
+  as P0/blocker context.
+Evidence: q026-q030 are UHR-traceable and answer-correct with complete SV+EN
+fields, clean source/generated stems, UHR provenance, no external label, and
+visible citation helper output. Defects: every q026-q030 explanation still
+over-attributes to UHR sections, and provenance closure remains blocked by the
+q023 external-source production/test-contract mismatch.
+Next manager action: route q026-q030 into the explanation-authority cleanup
+program; separately decide whether q023 is an approved external-source atom or
+remove it, then reconcile provenance tests before any CONTENT-VERIFY closure.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared checkout on `main` behind
+`origin/main` by 3, with CONTENT Iteration 202 source changes present in the
+shared dirty tree.
+Artifact reviewed: q031-q035 CONTENT-VERIFY batch plus current source,
+citation, explanation, provenance/export, and rendered-citation boundary.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`,
+  `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`,
+  `GOAL.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`,
+  `codex-tasks/content.txt`, `codex-tasks/validator.txt`, recent
+  reviewer/content journals, and the UHR section map.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 02:54 CEST.
+- Checked official UHR PDF text already extracted from the `Sverige i fokus`
+  source URL: q031 traces to `Folkomröstningar` page 14; q032 traces to
+  `Så här går det till att rösta` page 14; q033 traces to `Politiska partier`
+  page 15; q034-q035 trace to `Proportionella val` page 15.
+- Direct q031-q035 runtime-load probe verified SV+EN prompts/options,
+  correct answer ids/options, UHR references, `provenance: "uhr"`, no external
+  references, no external provenance labels, visible citation helper output,
+  clean raw stems, and generated q222-q241 source metadata/citations.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exited 0 with
+  `sourceQuestions:101`, `generatedPublishedQuestions:404`,
+  `publishedQuestions:505`, `questionProvenanceValidated:505`,
+  `externalQuestions:0`, and `uhrReferencesValidated:505`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exited 0 with 505-question export parity.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-card-accessibility-parity.test.js
+  tests/content-uhr-reference-card-accessibility-parity.test.js
+  tests/content-question-source-export-wiring.test.js
+  tests/content-uhr-source-citation-stem.test.js
+  tests/content-question-provenance-parity.test.js` exited 0 with 13/13.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-disclaimer-parity.test.js
+  tests/content-uhr-reference-section-page-parity.test.js
+  tests/content-authored-source-parity.test.js
+  tests/content-bilingual-text-parity.test.js` exited 0 with 10/10.
+- `which google-chrome || which chromium || which chromium-browser || true`
+  returned no browser executable, so live browser rendering remains
+  infrastructure-blocked. Render coverage was checked through
+  QuestionCard/UHRReferenceCard parity tests and direct
+  `getQuestionSourceCitation` output.
+- `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and
+  `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so the
+  direct queue fallback was used.
+- `timeout 60s codex exec --ephemeral "availability probe for REVIEWER-content
+  after q031-q035 pass at 2026-05-18 02:54 CEST; reply ok"` exited 1 with
+  usage-limit stop: `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only queue/journal work. REVIEWER did not
+edit product source; current product dirt is from the shared CONTENT/UHR atom
+and still needs manager/validator boundary handling before CONTENT-VERIFY
+closure.
+Findings queued:
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 02:54 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+Evidence: q031-q035 are UHR-traceable and answer-correct with complete SV+EN
+fields, clean source/generated stems, UHR provenance, no external label, and
+visible citation helper output. Defect: every q031-q035 explanation still uses
+source-narrator wording even though the separate `Källa/Source` citation line
+is visible. The live checkout now validates 101 source / 404 generated / 505
+published because CONTENT Iteration 202 added q101; this pass reviewed
+q031-q035 only and does not close or accept the q101 source-expansion boundary.
+Next manager action: route q031-q035 into the neutral explanation-authority
+cleanup program, keep validation hardening for explanation source-authority
+phrasing on the P0 path, and review/accept/reject the separate q101 Phase-A
+source-expansion atom before treating the current 505-question bank as a stable
+accepted boundary.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared checkout on `main` behind
+`origin/main` by 3, with CONTENT source-expansion changes present in the shared
+dirty tree.
+Artifact reviewed: q036-q040 CONTENT-VERIFY batch plus current source,
+citation, explanation, provenance/export, and rendered-citation boundary.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`,
+  `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`,
+  `GOAL.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`,
+  `codex-tasks/content.txt`, `codex-tasks/validator.txt`,
+  `codex-tasks/blockers.txt`, recent reviewer/content journals, and the UHR
+  section map.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 02:56 CEST.
+- Downloaded the official UHR `Sverige i fokus` PDF from the section-map source
+  URL to `/tmp/sverige-i-fokus.pdf` and extracted pages 16-18 with
+  `pdftotext`. The extracted text supports q036-q040: four constitutional
+  laws, public power from the people, Act of Succession, right of public access,
+  and the justice-system authority list.
+- Direct q036-q040 runtime-load probe verified SV+EN prompts/options, correct
+  answer ids/options, UHR references, `provenance: "uhr"`, no external
+  references, no external provenance labels, visible citation helper output,
+  clean raw stems, and generated q244-q263 source metadata/citations in the
+  current 103-source / 515-question live data set.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exited 1:
+  `content/question-bank.csv has 510 data rows, expected 515`, followed by q103
+  row/source mismatches from the moving q102/q103 source-expansion boundary.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`
+  exited 1 with `content/question-bank.csv is out of sync`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-card-accessibility-parity.test.js
+  tests/content-uhr-reference-card-accessibility-parity.test.js
+  tests/content-question-source-export-wiring.test.js
+  tests/content-uhr-source-citation-stem.test.js
+  tests/content-question-provenance-parity.test.js` exited 0 with 13/13.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-disclaimer-parity.test.js
+  tests/content-uhr-reference-section-page-parity.test.js
+  tests/content-authored-source-parity.test.js
+  tests/content-bilingual-text-parity.test.js` exited 0 with 10/10.
+- `which google-chrome || which chromium || which chromium-browser || true`
+  returned no browser executable, so live browser rendering remains
+  infrastructure-blocked. Render coverage was checked through
+  QuestionCard/UHRReferenceCard parity tests and direct
+  `getQuestionSourceCitation` output.
+- `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and
+  `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so the
+  direct queue fallback was used.
+- `timeout 60s codex exec --ephemeral "availability probe for REVIEWER-content
+  after q036-q040 pass at 2026-05-18 02:56 CEST; reply ok"` exited 1 with
+  usage-limit stop: `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only queue/journal work, then blocked by
+the red moving CONTENT source/export boundary. REVIEWER did not edit product
+source.
+Findings queued:
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 02:56 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+- `REVIEWER-BLOCKED-CONTENT-EXPORT-RED-1 [P0][2026-05-18 02:56 CEST]` in
+  `codex-tasks/blockers.txt`.
+Evidence: q036-q040 are UHR-traceable and answer-correct with complete SV+EN
+fields, clean source/generated stems, UHR provenance, no external label, and
+visible citation helper output. Defect: every q036-q040 explanation still uses
+source-narrator wording even though the separate `Källa/Source` citation line
+is visible. Broader blocker: live source data has moved to 103 source / 515
+questions while the CSV has 510 data rows, so `validate:content` and export
+parity are red.
+Next manager action: route q036-q040 into the neutral explanation-authority
+cleanup program after the red q102/q103 source-expansion/export boundary is
+accepted, rejected, or regenerated; do not treat CONTENT-VERIFY as closable
+until `validate:content` and export parity are green again.
+
+Lane: REVIEWER-content
+Host/branch: `/home/billy/Swedish_Civic_Test`, shared checkout on `main` behind
+`origin/main` by 3, with the manager-accepted 104-source / 520-question
+q102-q104 boundary present in the shared dirty tree.
+Artifact reviewed: q041-q045 CONTENT-VERIFY batch plus current source,
+citation, explanation, provenance/export, and rendered-citation boundary.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`,
+  `docs/parallel-sessions/reviewer.md`, `codex-tasks/open.txt`,
+  `GOAL.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/P0.md`,
+  `codex-tasks/content.txt`, `codex-tasks/validator.txt`,
+  `codex-tasks/blockers.txt`, recent reviewer/content journals, and the UHR
+  section map.
+- `date '+%Y-%m-%d %H:%M %Z'` - 2026-05-18 03:12 CEST.
+- Checked local official UHR PDF extraction in `/tmp/sct-sverige-i-fokus.txt`
+  and `/tmp/sverige-i-fokus.txt`: q041 maps to `Rättssäkerhet` page 17; q042
+  maps to `Domstolar` page 18; q043 maps to `Polisen` page 18; q044 maps to
+  `Straffmyndighet och belastningsregister` page 19; q045 maps to `Fria
+  medier` page 20.
+- Cross-checked q044 against current official public sources because the
+  criminal-responsibility age is time-sensitive: Regeringen's April 2026
+  material still describes the 13-year rule as a proposal/special serious-crime
+  posture, while the general UHR-backed answer remains 15 years.
+- Direct q041-q045 runtime-load probe verified SV+EN prompts/options, correct
+  answer ids/options, UHR references, `provenance: "uhr"`, no external
+  references, no external provenance labels, visible citation helper output,
+  clean raw stems, and generated q265-q284 source metadata/citations in the
+  current 104-source / 520-question live data set.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exited 0 with
+  104 source / 416 generated / 520 published, `externalQuestions:0`, and
+  `uhrReferencesValidated:520`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js
+  --check` exited 0 with 520-question export parity.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test
+  tests/content-question-provenance-parity.test.js
+  tests/content-question-card-accessibility-parity.test.js
+  tests/content-uhr-reference-card-accessibility-parity.test.js
+  tests/content-exam-review-source-parity.test.js` exited 0 with 10/10.
+- Direct q041-q045 CSV probe confirmed provenance `uhr`, empty external
+  reference columns, expected UHR section/page fields, and published status.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run
+  build:web:export -- --max-workers 2` exited 0 and prepared `dist-web`.
+- Inline Playwright route smoke could not launch because `/usr/bin/google-chrome`
+  does not exist. `which google-chrome`, `which chromium`, and
+  `which chromium-browser` returned no browser executable, so live browser
+  rendering remains infrastructure-blocked. Render coverage was checked through
+  QuestionCard/UHRReferenceCard parity tests and direct
+  `getQuestionSourceCitation` output.
+- `/Users/billy/Desktop/projects/.shared/review-to-queue.sh` and
+  `/home/billy/Desktop/projects/.shared/review-to-queue.sh` are absent, so the
+  direct queue fallback was used.
+- `timeout 60s codex exec --ephemeral "availability probe for REVIEWER-content
+  after q041-q045 pass at 2026-05-18 03:12 CEST; reply ok"` exited 1 with
+  usage-limit stop: `try again at 5:11 AM`.
+Workspace contract: pass for reviewer-only queue/journal work from the
+manager-accepted 520-question boundary; REVIEWER did not edit product source.
+Findings queued:
+- `REVIEWER-EXPLANATION-AUTHORITY-1 update [2026-05-18 03:12 CEST]` in
+  `codex-tasks/validator.txt` as P0.
+Evidence: q041-q045 are UHR-traceable and answer-correct with complete SV+EN
+fields, clean source/generated stems, UHR provenance, no external label, and
+visible citation helper output. Defect: every q041-q045 explanation still uses
+source-narrator wording even though the separate `Källa/Source` citation line
+is present.
+Next manager action: route q041-q045 into the neutral explanation-authority
+cleanup program and harden validation for source-authority wording in
+`explanationSv`/`explanationEn`. REVIEWER-content is stopped at the requested
+rate-limit boundary until the 05:11 reset.

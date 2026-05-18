@@ -29,6 +29,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Geografi, klimat och natur',
       pageApprox: 5,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['geography', 'norden', 'location'],
@@ -37,10 +38,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q002',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-    questionEn:
-      "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
+    questionSv: 'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
+    questionEn: "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -55,6 +54,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Geografi, klimat och natur',
       pageApprox: 5,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['geography', 'arctic-circle', 'true-false'],
@@ -63,10 +63,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q003',
     chapterId: 'ch01',
     type: 'single_choice',
-    questionSv:
-      'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
-    questionEn:
-      'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    questionSv: 'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+    questionEn: 'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
     options: [
       { id: 'a', textSv: 'Cirka 160 kilometer', textEn: 'About 160 kilometres' },
       { id: 'b', textSv: 'Cirka 1 600 kilometer', textEn: 'About 1,600 kilometres' },
@@ -83,6 +81,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Geografi, klimat och natur',
       pageApprox: 5,
     },
+    provenance: 'uhr',
     difficulty: 'medium',
     reviewStatus: 'reviewed',
     tags: ['geography', 'distance', 'treriksroset', 'smygehuk'],
@@ -92,8 +91,7 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'single_choice',
     questionSv: 'Vad heter havet vid Sveriges östra kust?',
-    questionEn:
-      "What is the sea along Sweden's eastern coast called?",
+    questionEn: "What is the sea along Sweden's eastern coast called?",
     options: [
       { id: 'a', textSv: 'Nordsjön', textEn: 'The North Sea' },
       { id: 'b', textSv: 'Medelhavet', textEn: 'The Mediterranean Sea' },
@@ -110,6 +108,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Geografi, klimat och natur',
       pageApprox: 5,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['geography', 'coast', 'baltic-sea'],
@@ -136,6 +135,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Geografi, klimat och natur',
       pageApprox: 5,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['geography', 'islands', 'gotland', 'oland'],
@@ -162,6 +162,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Geografi, klimat och natur',
       pageApprox: 5,
     },
+    provenance: 'uhr',
     difficulty: 'medium',
     reviewStatus: 'reviewed',
     tags: ['climate', 'gulf-stream', 'true-false'],
@@ -184,6 +185,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationEn:
       "The UHR section Mountains says the Scandinavian Mountains lie along the border with Norway and are called fjällen. Sweden's highest mountain, Kebnekaise, is there and is about 2,000 metres high.",
     uhrReference: { chapter: 'Landet Sverige', section: 'Fjäll', pageApprox: 6 },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['geography', 'mountains', 'kebnekaise'],
@@ -214,6 +216,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationEn:
       'The UHR section Forests, lakes, and islands says Sweden has many lakes spread throughout the country and that the three largest are Vänern, Vättern, and Mälaren. The alternatives with seas, islands, or cities confuse other geographical concepts with lakes.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Skogar, sjöar och öar', pageApprox: 6 },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['geography', 'lakes', 'vanern', 'vattern', 'malaren'],
@@ -236,6 +239,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationEn:
       'The UHR section Population says almost 11 million people live in Sweden. It also describes the population as unevenly distributed, with most people living in southern Sweden and along the coasts.',
     uhrReference: { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['population', 'demography', 'sweden'],
@@ -278,6 +282,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Naturresurser',
       pageApprox: 7,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['natural-resources', 'minerals', 'forest', 'water'],
@@ -304,6 +309,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Demokrati betyder folkstyre',
       pageApprox: 10,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['democracy', 'definition', 'folkstyre'],
@@ -346,6 +352,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Demokrati betyder folkstyre',
       pageApprox: 10,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['democracy', 'elections', 'voting'],
@@ -389,6 +396,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'En stark demokrati',
       pageApprox: 10,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['participation', 'democracy', 'influence'],
@@ -433,6 +441,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Demokrati betyder folkstyre',
       pageApprox: 10,
     },
+    provenance: 'uhr',
     difficulty: 'medium',
     reviewStatus: 'reviewed',
     tags: ['legal-certainty', 'democracy', 'fair-trial'],
@@ -441,10 +450,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q015',
     chapterId: 'ch02',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Ett lågt valdeltagande kan påverka demokratin.',
-    questionEn:
-      'True or false: A low voter turnout can affect democracy.',
+    questionSv: 'Sant eller falskt: Ett lågt valdeltagande kan påverka demokratin.',
+    questionEn: 'True or false: A low voter turnout can affect democracy.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
@@ -459,6 +466,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Hot mot demokratin',
       pageApprox: 11,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['democracy', 'voter-turnout', 'threats-to-democracy', 'true-false'],
@@ -467,10 +475,8 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q016',
     chapterId: 'ch03',
     type: 'single_choice',
-    questionSv:
-      'Vad innebär det att Sverige är en parlamentarisk representativ demokrati?',
-    questionEn:
-      'What does it mean that Sweden is a parliamentary representative democracy?',
+    questionSv: 'Vad innebär det att Sverige är en parlamentarisk representativ demokrati?',
+    questionEn: 'What does it mean that Sweden is a parliamentary representative democracy?',
     options: [
       {
         id: 'a',
@@ -499,6 +505,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationEn:
       'The UHR section The state says Sweden is a parliamentary representative democracy. This means citizens vote in general elections and elect members of the Riksdag, which then makes decisions on laws and the state budget.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
+    provenance: 'uhr',
     difficulty: 'medium',
     reviewStatus: 'reviewed',
     tags: ['riksdag', 'representative-democracy', 'parliament'],
@@ -521,6 +528,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationEn:
       'The UHR section The state says the Riksdag has 349 members who are elected every four years. The numbers 21 and 290 are connected in the material to regions and municipalities, not to members of the Riksdag.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['riksdag', 'parliament', 'members'],
@@ -543,6 +551,7 @@ export const baseQuestions: PracticeQuestion[] = [
     explanationEn:
       'The UHR section The state says the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
+    provenance: 'uhr',
     difficulty: 'medium',
     reviewStatus: 'reviewed',
     tags: ['government', 'prime-minister', 'riksdag'],
@@ -552,8 +561,7 @@ export const baseQuestions: PracticeQuestion[] = [
     chapterId: 'ch04',
     type: 'single_choice',
     questionSv: 'Hur gammal måste man ha fyllt för att ha rösträtt?',
-    questionEn:
-      'How old must a person be to have the right to vote?',
+    questionEn: 'How old must a person be to have the right to vote?',
     options: [
       { id: 'a', textSv: '16 år', textEn: '16 years old' },
       { id: 'b', textSv: '18 år', textEn: '18 years old' },
@@ -570,6 +578,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Val och röstning',
       pageApprox: 14,
     },
+    provenance: 'uhr',
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['voting-age', 'elections', 'riksdag'],
@@ -578,8 +587,7 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q020',
     chapterId: 'ch04',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Folkomröstningar i Sverige är rådgivande.',
+    questionSv: 'Sant eller falskt: Folkomröstningar i Sverige är rådgivande.',
     questionEn: 'True or false: Referendums in Sweden are advisory.',
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
@@ -595,6 +603,7 @@ export const baseQuestions: PracticeQuestion[] = [
       section: 'Folkomröstningar',
       pageApprox: 14,
     },
+    provenance: 'uhr',
     difficulty: 'medium',
     reviewStatus: 'reviewed',
     tags: ['referendum', 'elections', 'true-false'],
@@ -608,7 +617,7 @@ export const sourceQuestions: PracticeQuestion[] = publishQuestions([
 
 export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
-  101,
+  sourceQuestions.length + 1,
 );
 
 export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];

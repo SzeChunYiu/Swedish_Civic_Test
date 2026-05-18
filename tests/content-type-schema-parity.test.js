@@ -16,16 +16,20 @@ test('content TypeScript schema stays in parity with runtime validator expectati
   const summary = JSON.parse(match[0]);
   const contentTypes = fs.readFileSync(path.join(repoRoot, 'types/content.ts'), 'utf8');
 
-  assert.equal(summary.contentTypeUnionsValidated, 3);
-  assert.equal(summary.contentTypeInterfacesValidated, 5);
+  assert.equal(summary.contentTypeUnionsValidated, 4);
+  assert.equal(summary.contentTypeInterfacesValidated, 6);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
   assert.match(contentTypes, /export type ReviewStatus = 'draft' \| 'reviewed' \| 'published';/);
   assert.match(
     contentTypes,
     /export type QuestionType = 'single_choice' \| 'true_false' \| 'flashcard';/,
   );
+  assert.match(contentTypes, /export type QuestionProvenance = 'uhr' \| 'external';/);
+  assert.match(contentTypes, /export interface ExternalReference/);
   assert.match(contentTypes, /export interface PracticeQuestion/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
+  assert.match(contentTypes, /provenance: QuestionProvenance;/);
+  assert.match(contentTypes, /externalReference\?: ExternalReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
   assert.match(contentTypes, /export interface GlossaryTerm/);
   assert.match(contentTypes, /chapterId\?: string;/);

@@ -10,6 +10,5 @@ test('published question prompts and explanations keep distinct Swedish and Engl
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionBilingualTextPairsValidated, 500);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
 });

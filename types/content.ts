@@ -4,10 +4,20 @@ export type QuestionType = 'single_choice' | 'true_false' | 'flashcard';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+export type QuestionProvenance = 'uhr' | 'external';
+
 export interface UHRReference {
   chapter: string;
   section: string;
   pageApprox: number;
+}
+
+export interface ExternalReference {
+  publisher: string;
+  title: string;
+  locator: string;
+  url: string;
+  accessedAt: string;
 }
 
 export interface QuestionOption {
@@ -27,6 +37,8 @@ export interface PracticeQuestion {
   explanationSv: string;
   explanationEn: string;
   uhrReference: UHRReference;
+  provenance: QuestionProvenance;
+  externalReference?: ExternalReference;
   difficulty: Difficulty;
   reviewStatus: ReviewStatus;
   tags: string[];

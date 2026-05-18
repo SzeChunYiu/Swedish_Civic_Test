@@ -1,6 +1,8 @@
-import type { UHRReference } from '../../types/content';
+import type { ExternalReference, QuestionProvenance, UHRReference } from '../../types/content';
 
 type QuestionTextSource = {
+  externalReference?: ExternalReference;
+  provenance?: QuestionProvenance;
   questionEn?: string;
   questionSv?: string;
   uhrReference?: UHRReference;
@@ -56,10 +58,21 @@ export function getQuestionTranslationText(question?: QuestionTextSource): strin
 }
 
 export function getQuestionSourceCitation(question?: QuestionTextSource): string {
+  if (question?.provenance === 'external' && question.externalReference) {
+    const { accessedAt, locator, publisher, title, url } = question.externalReference;
+    return `Källa/Source: ${publisher}, ${title}, ${locator}, ${url}, accessed ${accessedAt}`;
+  }
+
   if (!question?.uhrReference) return 'Source citation unavailable';
 
   const { chapter, pageApprox, section } = question.uhrReference;
   return `Källa/Source: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
+}
+
+export function getQuestionProvenanceLabel(question?: QuestionTextSource): string | undefined {
+  return question?.provenance === 'external'
+    ? 'Extern källa - utöver UHR-materialet / External source - beyond the UHR material'
+    : undefined;
 }
 
 function capitalizeSentenceStart(text: string): string {

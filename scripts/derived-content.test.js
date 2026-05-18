@@ -85,4 +85,31 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     );
   });
   assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
+
+  const trueFalseVariants = derived.filter((question) => question.type === 'true_false');
+  assert.deepEqual(
+    trueFalseVariants.map((question) => question.questionSv),
+    [
+      'Stämmer påståendet? Sverige ligger i Norden.',
+      'Är påståendet felaktigt? Sverige ligger i Norden.',
+    ],
+  );
+  assert.deepEqual(
+    trueFalseVariants.map((question) => question.questionEn),
+    [
+      'Is this statement correct? Sweden is in the Nordic region.',
+      'Is this statement incorrect? Sweden is in the Nordic region.',
+    ],
+  );
+  assert.deepEqual(
+    trueFalseVariants.map((question) => question.correctOptionId),
+    ['true', 'false'],
+  );
+  assert.ok(
+    trueFalseVariants.every(
+      (question) =>
+        (question.questionSv.match(/\bSant eller falskt\s*:/gi) || []).length <= 1 &&
+        (question.questionEn.match(/\bTrue or false\s*:/gi) || []).length <= 1,
+    ),
+  );
 });

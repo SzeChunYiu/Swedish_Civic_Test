@@ -6,5 +6,5 @@ test('question bank export stays in parity with generated questions', () => {
   const output = execFileSync(process.execPath, ['scripts/export-question-bank.js', '--check'], {
     encoding: 'utf8',
   });
-  assert.match(output, /Question bank export parity OK \(500 questions\)/);
+  assert.match(output, /Question bank export parity OK \(520 questions\)/);
 });

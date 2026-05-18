@@ -82,6 +82,8 @@ function withSharedFields(
     explanationSv: source.explanationSv,
     explanationEn: source.explanationEn,
     uhrReference: source.uhrReference,
+    provenance: source.provenance,
+    ...(source.externalReference ? { externalReference: source.externalReference } : {}),
     difficulty: source.difficulty,
     reviewStatus: 'published',
     tags: uniqueTags([...source.tags, ...extraTags]),
@@ -105,6 +107,26 @@ function answerLabel(option: QuestionOption): string {
   return `${option.textSv}`.replace(/[.!?]\s*$/, '');
 }
 
+function isTrueFalseSource(source: PracticeQuestion): boolean {
+  return (
+    source.type === 'true_false' &&
+    source.options.length === 2 &&
+    ['true', 'false'].includes(source.correctOptionId)
+  );
+}
+
+function trueFalseStatementSv(questionSv: string): string {
+  return questionSv.replace(/^\s*Sant eller falskt:\s*/i, '').trim();
+}
+
+function trueFalseStatementEn(questionEn: string): string {
+  return questionEn.replace(/^\s*True or false:\s*/i, '').trim();
+}
+
+function inverseTrueFalseOptionId(correctOptionId: string): string {
+  return correctOptionId === 'true' ? 'false' : 'true';
+}
+
 function buildSingleChoiceVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   return withSharedFields(
     source,
@@ -119,6 +141,19 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
 }
 
 function buildTrueStatementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
+  if (isTrueFalseSource(source)) {
+    return withSharedFields(
+      source,
+      id,
+      'true_false',
+      `Stämmer påståendet? ${trueFalseStatementSv(source.questionSv)}`,
+      `Is this statement correct? ${trueFalseStatementEn(source.questionEn)}`,
+      trueFalseOptions(),
+      source.correctOptionId,
+      ['published-variant', 'true-false'],
+    );
+  }
+
   const option = correctOption(source);
   return withSharedFields(
     source,
@@ -133,6 +168,19 @@ function buildTrueStatementVariant(source: PracticeQuestion, id: string): Practi
 }
 
 function buildFalseStatementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
+  if (isTrueFalseSource(source)) {
+    return withSharedFields(
+      source,
+      id,
+      'true_false',
+      `Är påståendet felaktigt? ${trueFalseStatementSv(source.questionSv)}`,
+      `Is this statement incorrect? ${trueFalseStatementEn(source.questionEn)}`,
+      trueFalseOptions(),
+      inverseTrueFalseOptionId(source.correctOptionId),
+      ['published-variant', 'false-statement'],
+    );
+  }
+
   const option = wrongOption(source);
   return withSharedFields(
     source,
@@ -149,9 +197,9 @@ function buildFalseStatementVariant(source: PracticeQuestion, id: string): Pract
 function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const correct = correctOption(source);
   const wrong = wrongOption(source);
-  const isTrueFalseSource =
+  const sourceIsTrueFalse =
     source.options.length === 2 && ['true', 'false'].includes(source.correctOptionId);
-  const options = isTrueFalseSource
+  const options = sourceIsTrueFalse
     ? [...source.options, UNKNOWN_OPTION, SOMETIMES_OPTION]
     : [correct, wrong, UNKNOWN_OPTION, SOMETIMES_OPTION];
 
