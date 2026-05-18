@@ -92,6 +92,10 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
 ];
+const GENERATED_TRUE_FALSE_META_STEM_PATTERNS = [
+  /\bEtt korrekt svar på frågan\s+["“]Sant eller falskt:/i,
+  /\bA correct answer to\s+["“]True or false:/i,
+];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -3139,6 +3143,12 @@ function findQuestionStemSourceAuthorityReference(question) {
   return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findGeneratedTrueFalseMetaStem(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return GENERATED_TRUE_FALSE_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -3192,6 +3202,30 @@ function answerLabel(option) {
   return `${option?.textSv ?? ''}`.replace(/[.!?]\s*$/, '');
 }
 
+function isTrueFalseSourceQuestion(question) {
+  return question?.type === 'true_false' && ['true', 'false'].includes(question.correctOptionId);
+}
+
+function trueFalseStatementBody(questionText, language) {
+  const prefix = language === 'sv' ? /^\s*Sant eller falskt:\s*/i : /^\s*True or false:\s*/i;
+  return String(questionText ?? '')
+    .replace(prefix, '')
+    .replace(/[.!?]\s*$/, '')
+    .trim();
+}
+
+function expectedTrueFalsePromptForSource(sourceQuestion, expectedTruth) {
+  const sourceStatementIsTrue = sourceQuestion.correctOptionId === 'true';
+  const svStatement = trueFalseStatementBody(sourceQuestion.questionSv, 'sv');
+  const enStatement = trueFalseStatementBody(sourceQuestion.questionEn, 'en');
+  const assertion = sourceStatementIsTrue === expectedTruth;
+
+  return {
+    questionSv: `Sant eller falskt: Påståendet "${svStatement}" är ${assertion ? 'sant' : 'falskt'}.`,
+    questionEn: `True or false: The statement "${enStatement}" is ${assertion ? 'true' : 'false'}.`,
+  };
+}
+
 function correctOption(question) {
   return (
     question.options?.find((option) => option.id === question.correctOptionId) ??
@@ -3215,6 +3249,9 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
 
   if (variantIndex === 1) {
     const option = correctOption(sourceQuestion);
+    if (isTrueFalseSourceQuestion(sourceQuestion)) {
+      return expectedTrueFalsePromptForSource(sourceQuestion, true);
+    }
     return {
       questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
       questionEn: `True or false: A correct answer to "${sourceQuestion.questionEn}" is "${option?.textEn}".`,
@@ -3223,6 +3260,9 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
 
   if (variantIndex === 2) {
     const option = wrongOption(sourceQuestion);
+    if (isTrueFalseSourceQuestion(sourceQuestion)) {
+      return expectedTrueFalsePromptForSource(sourceQuestion, false);
+    }
     return {
       questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${sourceQuestion.questionSv}" är "${answerLabel(option)}".`,
       questionEn: `True or false: A correct answer to "${sourceQuestion.questionEn}" is "${option?.textEn}".`,
@@ -4198,6 +4238,7 @@ let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
 let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
+let questionGeneratedTrueFalseMetaStemValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
@@ -11232,12 +11273,18 @@ if (Array.isArray(questions)) {
       }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
+      const generatedTrueFalseMetaStem = findGeneratedTrueFalseMetaStem(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
       } else if (stemSourceAuthorityReference) {
         fail(`${label} carries source-authority wording in the stem`);
       } else {
         questionAuthorityBoundaryTextValidated += 1;
+      }
+      if (generatedTrueFalseMetaStem) {
+        fail(`${label} nests a generated true/false meta-stem`);
+      } else {
+        questionGeneratedTrueFalseMetaStemValidated += 1;
       }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
@@ -11642,6 +11689,7 @@ console.log(
       questionTextFieldsNormalizedValidated,
       questionSentenceEndingsValidated,
       questionAuthorityBoundaryTextValidated,
+      questionGeneratedTrueFalseMetaStemValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,

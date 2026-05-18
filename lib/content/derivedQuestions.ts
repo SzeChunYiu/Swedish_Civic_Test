@@ -105,6 +105,33 @@ function answerLabel(option: QuestionOption): string {
   return `${option.textSv}`.replace(/[.!?]\s*$/, '');
 }
 
+function isTrueFalseSource(question: PracticeQuestion): boolean {
+  return question.type === 'true_false' && ['true', 'false'].includes(question.correctOptionId);
+}
+
+function trueFalseStatementBody(questionText: string, language: 'sv' | 'en'): string {
+  const prefix = language === 'sv' ? /^\s*Sant eller falskt:\s*/i : /^\s*True or false:\s*/i;
+  return questionText
+    .replace(prefix, '')
+    .replace(/[.!?]\s*$/, '')
+    .trim();
+}
+
+function trueFalsePromptForSource(
+  source: PracticeQuestion,
+  expectedTruth: boolean,
+): { questionSv: string; questionEn: string } {
+  const sourceStatementIsTrue = source.correctOptionId === 'true';
+  const svStatement = trueFalseStatementBody(source.questionSv, 'sv');
+  const enStatement = trueFalseStatementBody(source.questionEn, 'en');
+  const assertion = sourceStatementIsTrue === expectedTruth;
+
+  return {
+    questionSv: `Sant eller falskt: Påståendet "${svStatement}" är ${assertion ? 'sant' : 'falskt'}.`,
+    questionEn: `True or false: The statement "${enStatement}" is ${assertion ? 'true' : 'false'}.`,
+  };
+}
+
 function buildSingleChoiceVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   return withSharedFields(
     source,
@@ -120,12 +147,19 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
 
 function buildTrueStatementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const option = correctOption(source);
+  const prompt = isTrueFalseSource(source)
+    ? trueFalsePromptForSource(source, true)
+    : {
+        questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${source.questionSv}" är "${answerLabel(option)}".`,
+        questionEn: `True or false: A correct answer to "${source.questionEn}" is "${option.textEn}".`,
+      };
+
   return withSharedFields(
     source,
     id,
     'true_false',
-    `Sant eller falskt: Ett korrekt svar på frågan "${source.questionSv}" är "${answerLabel(option)}".`,
-    `True or false: A correct answer to "${source.questionEn}" is "${option.textEn}".`,
+    prompt.questionSv,
+    prompt.questionEn,
     trueFalseOptions(),
     'true',
     ['published-variant', 'true-false'],
@@ -134,12 +168,19 @@ function buildTrueStatementVariant(source: PracticeQuestion, id: string): Practi
 
 function buildFalseStatementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const option = wrongOption(source);
+  const prompt = isTrueFalseSource(source)
+    ? trueFalsePromptForSource(source, false)
+    : {
+        questionSv: `Sant eller falskt: Ett korrekt svar på frågan "${source.questionSv}" är "${answerLabel(option)}".`,
+        questionEn: `True or false: A correct answer to "${source.questionEn}" is "${option.textEn}".`,
+      };
+
   return withSharedFields(
     source,
     id,
     'true_false',
-    `Sant eller falskt: Ett korrekt svar på frågan "${source.questionSv}" är "${answerLabel(option)}".`,
-    `True or false: A correct answer to "${source.questionEn}" is "${option.textEn}".`,
+    prompt.questionSv,
+    prompt.questionEn,
     trueFalseOptions(),
     'false',
     ['published-variant', 'false-statement'],
@@ -149,9 +190,7 @@ function buildFalseStatementVariant(source: PracticeQuestion, id: string): Pract
 function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const correct = correctOption(source);
   const wrong = wrongOption(source);
-  const isTrueFalseSource =
-    source.options.length === 2 && ['true', 'false'].includes(source.correctOptionId);
-  const options = isTrueFalseSource
+  const options = isTrueFalseSource(source)
     ? [...source.options, UNKNOWN_OPTION, SOMETIMES_OPTION]
     : [correct, wrong, UNKNOWN_OPTION, SOMETIMES_OPTION];
 
