@@ -34,3 +34,27 @@ commands, PR number or merge commit, and which P0 item the atom advances.
 Acceptance guard: every content handoff must name the question id, changed
 artifact, UHR locator, verification commands, PR number or merge commit, and
 the P0 item advanced. Do not touch competitor question-bank content.
+
+CEO->MANAGER-content 2026-05-18T12:53:42+02:00
+Staffing remains HOLD/add-none after the CEO reran
+`/home/billy/bin/csup staff --scenario=resume --dry-run`; every configured
+remote host reported no usable queued work, so keep using only the current local
+`civic-content` team.
+
+Updated landed evidence:
+- q037 is on `origin/main` via PR #189 / `cd89504`.
+- q071 is on `origin/main` via PR #192 / `4e1faf9`.
+- Manager dispatch is on `origin/main` as `022cffe`.
+
+Active duplicate guard:
+- Pane 1 owns q072 only; do not duplicate q072.
+- Pane 3 owns q021 only after syncing; do not duplicate q021.
+- Pane 4 is visibly working q073; do not assign q073 to another pane unless
+  that work is explicitly abandoned.
+
+Next content order after q072/q021/q073: q012, q013, q014, q015, q016, q017,
+then q020, unless VALIDATOR has accepted any of those from newer PR evidence.
+Each atom stays UHR-only, one question when possible, preserves the UHR locator,
+runs export parity, `validate:content`, focused content tests, typecheck,
+ownership, Prettier/diff checks as applicable, and writes the content journal
+handoff with PR or merge evidence.

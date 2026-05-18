@@ -44,3 +44,31 @@ Manager updates sent: content manager received a direct tmux update to treat
 q010/q011 as landed and route q037 next; validator was queued to accept only
 PR-backed P0 atoms and keep expansion teams unstaffed until acceptance rows and
 leases exist.
+
+Cycle update 2026-05-18T12:53:42+02:00
+Objective: keep the factory on P0 burn-down. TRANSLATE-COMPLETE and
+SOURCE-CITATION remain open; q037 is on `origin/main` via PR #189 / `cd89504`,
+q071 is on `origin/main` via PR #192 / `4e1faf9`, and manager dispatch on
+`origin/main` (`022cffe`) has q072 assigned to pane 1 and q021 assigned to pane
+3. Pane 4 is visibly working q073; do not duplicate it.
+Teams: hold local `civic-content` only. Do not start build, UIUX, QA, release,
+research, verify, delight, mascot, language, or LUNARC teams this cycle.
+Data-integrity has a valid P0 generated-judgement prompt queue item, but no
+safe staffed build lane is active locally and remote staffing returned no
+usable queued work.
+Priorities: finish q072, q021, and the in-flight q073 content atom as
+one-question UHR-only TRANSLATE-COMPLETE/SOURCE-CITATION work. Next visible
+content naturalness defects are q012, q013, q014, q015, q016, q017, and q020
+unless VALIDATOR has already accepted them from newer PR evidence. Keep
+DATA-INTEGRITY generated-judgement work queued for the next build-capable
+staffing window.
+Staffing evidence: `/home/billy/bin/csup staff --scenario=resume --dry-run`
+returned STAFF-DOWN/no queued work for all configured remote hosts and repeated
+that the remote fs10/fs9 checkouts have no task queue files. Local tmux shows
+only `civic-content` active with six panes. Decision: HOLD/add-none; no
+`--apply` and no stop without manager confirmation.
+Escalations: none requiring human approval. Remote queue absence is a staffing
+constraint, not a product blocker; `codex-tasks/blockers.txt` still says there
+are no active blockers.
+Manager updates sent: appended directives to `codex-tasks/content.txt` and
+`codex-tasks/validator.txt`; direct tmux notice sent to MANAGER-content.

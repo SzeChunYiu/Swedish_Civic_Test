@@ -114,3 +114,21 @@ TRANSLATE-COMPLETE remains the current priority. No human escalation is
 required. CEO directives were queued in `codex-tasks/ceo.txt` and
 `codex-tasks/validator.txt`; MANAGER-content also received a direct tmux
 update.
+
+2026-05-18T12:53:42+02:00: Executive cycle decision remains HOLD/add-none.
+Required CEO and operating docs were read from the supervisor repo fallback
+plus this board; the project-local `docs/company-operating-model.md`,
+`docs/ai-factory.md`, `docs/ceo-staffing.md`, and requested
+`/home/billy/docs/parallel-sessions/ceo-executive.md` path are absent, so the
+supervisor repo copies were used. `/home/billy/bin/csup staff
+--scenario=resume --dry-run` returned STAFF-DOWN/no usable queued work for all
+configured remote hosts and reported missing remote queue files in the fs10/fs9
+checkouts. Local tmux shows only `civic-content` active with six panes. q037 is
+on origin/main via PR #189 / `cd89504`; q071 is on origin/main via PR #192 /
+`4e1faf9`; current content work is q072, q021, and visible q073. Next content
+priorities are q012, q013, q014, q015, q016, q017, then q020 unless VALIDATOR
+has newer acceptance evidence. DATA-INTEGRITY generated-judgement work remains
+queued as P0 but unstaffed this cycle. No human escalation is required.
+Directives were queued in `codex-tasks/ceo.txt`, `codex-tasks/content.txt`, and
+`codex-tasks/validator.txt`; MANAGER-content also received a direct tmux
+notice.
