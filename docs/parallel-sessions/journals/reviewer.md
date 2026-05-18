@@ -3450,3 +3450,27 @@ Evidence: current main closes q301-q350 standalone-stem issues and false-answer 
 PR (number + merged?): #671 merged yes, squash `d7f8b3b`.
 Accepted by worker? yes
 Next suggested validator action: accept the q301-q350/false-explanation portions only with DATA-INTEGRITY source evidence, then route q358/q359/q398/q399 as the focused remaining q351-q400 standalone-stem DATA-INTEGRITY atom.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-pane1-1779133847` / `task/reviewer/pane1-current-1779133847`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated true/false standalone-stem recheck for q401-q450.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active validator/setup/data-integrity/content queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `e1ae95a`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- Duplicate/current-state scan found the old q401-q450 verify report from `3be70d4` plus later generated true/false acceptances; this pass narrowed current evidence rather than re-filing stale rows.
+- Direct VM inspection of `site/questions.js` found 720 total questions, 25 q401-q450 true/false rows, and current standalone/naturalness offenders `q406`, `q407`, `q411`, `q446`, and `q447`.
+- `q406`/`q407` and `q446`/`q447` still start with context-dependent `One reason...` / `En anledning...` stems; `q411` remains a fragment; `q447` also renders `eU membership`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with validators green despite the five rows.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 27/27 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - first exit 2 because the temporary worktree had no local `node_modules`; after linking the existing dependency install into the worktree, rerun exited 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q401-Q450-CURRENT-1`.
+Evidence: current main has five remaining q401-q450 generated true/false standalone/naturalness defects while the existing validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route DATA-INTEGRITY to a focused q401-q450 standalone-stem cleanup for q406/q407/q411/q446/q447 with generator, validator mirror, export/static parity, and current-main spot-check evidence.
