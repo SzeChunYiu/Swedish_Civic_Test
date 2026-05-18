@@ -47,3 +47,22 @@ Rows moved to accepted: none in A1-A8; accepted `CONTENT-Q123-SOURCE-SECTION-STA
 Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external production deploy capacity/operator evidence.
 Evidence: PR #418 is merged as `f15404a` on current `origin/main`. Clean manager verification in `/tmp/sct-manager-build-q123-1779120511` passed direct old-wording scan for `avsnittet` / `this section` across canonical data, `site/questions.js`, and exported CSV; q123 source spot-checks preserving UHR section `Hinduism och buddhism` and page 43; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check`; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`; focused content/source/static tests 23/23; `node --check site/questions.js`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`; targeted Prettier; `git diff --check f15404a^..f15404a`; and serialized `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` 298/298.
 Next worker task queued: no q123 implementation work remains. Keep DATA-INTEGRITY on `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`.
+
+Iteration: 2026-05-18T18:20+02:00
+Rows moved to accepted: none; PR #470 / `204e522` is merged but not accepted
+for `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: clean manager current-main spot-check in
+`/tmp/sct-manager-build-accept-tfsplice-1779121093` confirmed PR #470 was a
+partial generated true/false splice repair only. `q174`, `q189`, `q190`,
+`q193`, `q194`, `q261`, and `q262` are fixed, but `q206`, `q237`, `q238`,
+`q253`, `q254`, `q265`, `q266`, `q270`, `q273`, `q274`, `q285`, `q286`, `q289`,
+`q290`, `q297`, and `q298` still publish generated-language residuals in both
+`content/question-bank.csv` and `site/questions.js`.
+Next worker task queued: DATA-INTEGRITY follow-up for
+`REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`, covering generator templates,
+validator mirror coverage, focused negative guards, regenerated CSV/static
+mirror, export/static parity, `validate:content`, `test:derived-content`,
+typecheck, ownership, Prettier/diff checks, PR/merge evidence, and a fresh
+current-main residual-row recheck before acceptance.
