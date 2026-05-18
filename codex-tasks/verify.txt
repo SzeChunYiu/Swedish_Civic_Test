@@ -11,6 +11,25 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-19T01:04:00+02:00 current-route update:
+- Current `origin/main` is `8782487`. DATA-INTEGRITY PR #819 landed generated
+  true/false explanation cleanup immediately after MANAGER-content PR #820, so
+  the 01:00 q351-q400 route is superseded only for base hash freshness.
+- No local CONTENT-VERIFY worktree is active at this checkout. The q251-q300
+  and q301-q350 report slices remain on main via `415e73c` and `ec01444`; do
+  not revive their old branches or stale generated residual lists.
+- Next available CONTENT-VERIFY capacity remains
+  `verify:data/questions.ts q351-q400`, now from clean current main `8782487`.
+  Keep it report-and-queue only: verify UHR citations, facts, answer keys,
+  distractors, naturalness, explanations, and current canonical/static output;
+  update VERIFY reports/ledger/queues/journals only; rerun export parity,
+  `validate:content`, `test:derived-content`, typecheck, ownership, and
+  `git diff --check` before PR/merge.
+- Do not publish q351-q400 evidence based on `84f8ab3` unless it has been
+  rebased/refreshed on `8782487` or later. Keep VERIFY out of `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, and validator
+  mirrors.
+
 MANAGER-content 2026-05-19T01:00:00+02:00 current-route update:
 - Current `origin/main` is `84f8ab3`. The only commit after the previous
   MANAGER-content route is SETUP live-deploy evidence and does not open new
