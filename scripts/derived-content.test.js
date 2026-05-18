@@ -772,6 +772,26 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Fackförbund bestämmer vilka som får rösta i riksdagsval.',
       'Trade unions decide who may vote in Riksdag elections.',
     ],
+    q406: [
+      'Lagar på arbetsmarknaden i Sverige finns för att skydda anställdas rättigheter och bidra till en trygg arbetsmiljö.',
+      'Sweden has labour-market laws to protect employees’ rights and help create a safe work environment.',
+    ],
+    q407: [
+      'Lagar på arbetsmarknaden i Sverige finns för att bestämma vem som blir statschef.',
+      'Sweden has labour-market laws to decide who becomes head of state.',
+    ],
+    q411: [
+      'A-kassan är en myndighet som dömer i arbetsmiljöbrott.',
+      'A-kassan is an authority that judges work environment crimes.',
+    ],
+    q446: [
+      'Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg.',
+      'Sweden’s population grew during the 19th century because of better farming methods and medical advances.',
+    ],
+    q447: [
+      'Sveriges befolkning ökade under 1800-talet på grund av EU-medlemskapet.',
+      'Sweden’s population grew during the 19th century because of EU membership.',
+    ],
     q458: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
       'The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.',
@@ -823,7 +843,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes)|En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
   );
   residualQuestions.forEach((question) => {
     assert.doesNotMatch(question.questionSv, /är (?:Judar|Danskar),/, question.id);

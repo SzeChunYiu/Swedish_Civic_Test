@@ -17724,8 +17724,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "One reason is to protect employees’ rights and help create a safe work environment.",
-      "sv": "En anledning är att skydda anställdas rättigheter och bidra till en trygg arbetsmiljö."
+      "en": "Sweden has labour-market laws to protect employees’ rights and help create a safe work environment.",
+      "sv": "Lagar på arbetsmarknaden i Sverige finns för att skydda anställdas rättigheter och bidra till en trygg arbetsmiljö."
     },
     "opts": [
       {
@@ -17763,8 +17763,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "One reason is to decide who becomes head of state.",
-      "sv": "En anledning är att bestämma vem som blir statschef."
+      "en": "Sweden has labour-market laws to decide who becomes head of state.",
+      "sv": "Lagar på arbetsmarknaden i Sverige finns för att bestämma vem som blir statschef."
     },
     "opts": [
       {
@@ -17935,8 +17935,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "An authority that judges work environment crimes.",
-      "sv": "En myndighet som dömer i arbetsmiljöbrott."
+      "en": "A-kassan is an authority that judges work environment crimes.",
+      "sv": "A-kassan är en myndighet som dömer i arbetsmiljöbrott."
     },
     "opts": [
       {
@@ -19453,8 +19453,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "One reason is better farming methods and medical advances.",
-      "sv": "En anledning är bättre jordbruksmetoder och medicinska framsteg."
+      "en": "Sweden’s population grew during the 19th century because of better farming methods and medical advances.",
+      "sv": "Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg."
     },
     "opts": [
       {
@@ -19493,8 +19493,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "One reason is eU membership.",
-      "sv": "En anledning är EU-medlemskapet."
+      "en": "Sweden’s population grew during the 19th century because of EU membership.",
+      "sv": "Sveriges befolkning ökade under 1800-talet på grund av EU-medlemskapet."
     },
     "opts": [
       {

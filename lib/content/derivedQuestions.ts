@@ -140,6 +140,7 @@ function ensureSentence(value: string): string {
 }
 
 function lowerFirst(value: string): string {
+  if (/^EU\b/.test(value)) return value;
   return value ? `${value[0].toLowerCase()}${value.slice(1)}` : value;
 }
 
@@ -369,6 +370,18 @@ function decisionStatementEn(subject: string, context: string, answer: string): 
     return `In ${yearContext[2]}, ${upperFirst(subject)} was ${yearContext[1]} to decide that ${normalizedAnswer}`;
   }
   return `${upperFirst(subject)} decided as ${context} that ${normalizedAnswer}`;
+}
+
+function supportStatementSv(subject: string, answer: string): string {
+  if (/^En\s+/i.test(answer)) return `${upperFirst(subject)} är ${lowerFirst(answer)}`;
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+
+function supportStatementEn(subject: string, answer: string): string {
+  if (/^(?:A|An)\s+/i.test(answer)) {
+    return `${upperFirst(subject)} is ${lowerLeadingEnglishArticle(answer)}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
 }
 
 function stripTrueFalsePromptSv(value: string): string {
@@ -734,6 +747,15 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
       stripLeadingPurposeSv(answer),
     )}`;
 
+  match = q.match(/^Varför finns lagar på arbetsmarknaden i Sverige$/i);
+  if (match)
+    return `Lagar på arbetsmarknaden i Sverige finns för att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
+
+  match = q.match(/^Varför ökade Sveriges befolkning under 1800-talet$/i);
+  if (match) return `Sveriges befolkning ökade under 1800-talet på grund av ${lowerFirst(answer)}`;
+
   match = q.match(/^Varför (.+)$/i);
   if (match) return reasonStatementSv(answer);
 
@@ -774,7 +796,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} i Sverige bestäms ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilket stöd kan (.+?) ge (.+)$/i);
-  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+  if (match) return supportStatementSv(match[1], answer);
 
   match = q.match(/^Hur hjälper (.+?) till med (.+)$/i);
   if (match) {
@@ -1124,6 +1146,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
       stripLeadingPurposeEn(answer),
     )}`;
 
+  match = q.match(/^Why does Sweden have labour-market laws$/i);
+  if (match) return `Sweden has labour-market laws to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^Why did Sweden’s population grow during the 19th century$/i);
+  if (match)
+    return `Sweden’s population grew during the 19th century because of ${lowerFirst(answer)}`;
+
   match = q.match(/^Why (.+)$/i);
   if (match) return reasonStatementEn(answer);
 
@@ -1164,7 +1193,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} in Sweden are set ${lowerFirst(answer)}`;
 
   match = q.match(/^What support can (.+?) provide to (.+)$/i);
-  if (match) return replaceLeadingEnglishSubject(match[1], answer);
+  if (match) return supportStatementEn(match[1], answer);
 
   match = q.match(/^How does (.+?) help with (.+)$/i);
   if (match) {
