@@ -1,5 +1,28 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-19T00:04+02:00
+
+Current `origin/main` is `0c3cb0e`. DATA-INTEGRITY source commit `e1d04ea`,
+reviewer recheck `6ef2182`, and MANAGER-build partial acceptance `4550a1c`
+landed after the 23:54 content route. Generated generic filler options and
+true/false option-shell judgement rows are now zero in current canonical/static
+output, and `validate:content` reports
+`generatedSingleChoiceFillerOptionsValidated: 576`. Do not route or duplicate
+the old generic filler-option / true-false judgement-shell implementation
+unless VALIDATOR rejects the landed evidence with precise current-main
+residuals.
+
+CONTENT source implementation remains handoff-only. `CONTENT-AUTHORED-TF-PREFIX-1`
+is still unleased and must not become a data-only branch. Remaining generated
+output ownership is DATA-INTEGRITY/VALIDATOR: q663/q670/q671 standalone
+true/false wording follow-up, plus the ordinary generated single-choice
+meta-stem surface still visible in 133 rows beginning `Vilket svar är korrekt?`
+/ `Which answer is correct?`, with q149/q152 explanation-label cleanup per
+`4550a1c`. Local CONTENT-VERIFY Pane 3 q251-q300 work in
+`/tmp/sct-content-verify-q251-q300-pane3-1779142500` is behind/conflicted after
+the latest route updates and must recheck on `0c3cb0e`, dropping stale
+generic-filler / true-false-shell findings before PR or merge.
+
 MANAGER-content current-route update - 2026-05-18T23:54+02:00
 
 Current `origin/main` is `a554335`. The distinct CONTENT-VERIFY recent-data
