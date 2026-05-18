@@ -1,4 +1,30 @@
 
+MANAGER-build acceptance - 2026-05-18T21:37+02:00
+
+`REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` is accepted for current-main
+generated true/false cleanup via PR #642 / `ebe18cc` and PR #650 / `25655ba`.
+PR #642 cleared the canonical/static true_false prefix surface and the
+q666/q667/q699 grammar/capitalization residuals; PR #650 aligned generated
+false-statement explanations and added validator/static guard coverage.
+
+Clean manager verification on current `origin/main` `268cc9d`/`c3480e9`
+passed `npm run validate:content` with
+`generatedExplanationTemplateParityValidated:576` and
+`questionFalseAnswerExplanationsValidated:720`, `npm run test:derived-content`
+6/6, focused content/static gates 24/24, `node scripts/export-question-bank.js
+--check`, `node scripts/export-site-question-bank.js --check`, `node --check
+site/questions.js`, `npm run typecheck -- --pretty false`, `npm run lint`,
+`npm run test:ownership`, targeted Prettier for the DATA-INTEGRITY files,
+`git diff --check 25655ba^..25655ba`, direct static scan with zero
+false-explanation offenders, and serialized `npm run test:content --
+--test-concurrency=1` 309/309.
+
+Direct current-main spot checks for q151, q167, q235, q255, q331, q339, q439,
+q507, q519, and q715 now have answer `False` and explanations that identify
+the positive fact, then say the prompted statement is false and `False` /
+`Falskt` is correct. Do not reopen the generated true/false prefix or
+false-explanation route without fresh current-main regression evidence.
+
 MANAGER-build current-route update - 2026-05-18T21:18+02:00
 
 Post-#642/#ebe18cc routing state:
