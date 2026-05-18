@@ -2924,3 +2924,18 @@ Verification (commands + result):
 PR (number + merged?): #487 / merged yes via squash commit `5318047`.
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/site to localize and space the Practice result percentage label for Swedish and English completion results, then add a static browser/i18n guard covering the completed Practice result screen.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-main-lWKrEL/wt` / clean temp worktree from `origin/main` commit `711b20f`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 current-origin static mobile nav check.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `codex-tasks/P0.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, and current reviewer/validator entries before queueing.
+- Created a detached temporary worktree from `origin/main` after `git fetch origin`: `/tmp/sct-review-main-lWKrEL/wt`, commit `711b20f`, because the shared checkout had stale local `site/` files and unrelated dirty lane work.
+- Verified the earlier static privacy disabled-ad concern was stale on `origin/main`: source `site/app.js` and `site/index.html` already mention Remove Ads, 29 SEK, AdSense, AdMob, and consent; no privacy defect was queued.
+- Ran focused static mobile nav smoke from clean `origin/main`: `python3 -m http.server 8217 --bind 127.0.0.1 --directory /tmp/sct-review-main-lWKrEL/wt/site`, then system-Chrome Playwright at 390x844.
+- Focused check exited 2 by design: `documentScrollWidth:448`, `bodyScrollWidth:448`, `innerWidth:390`, visible nav only `Home` and `Practice`, hidden nav `Mock exam`, `Ebook`, and `Support`, `menuButtonCount:0`, browser console/page errors empty. Screenshot: `/tmp/sct-origin-main-mobile-nav-390.png`.
+PR (number + merged?): #497 / pending merge at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site to add responsive accessible mobile navigation plus a <=390px static guard covering Practice, Mock exam, Ebook, and Support reachability.
