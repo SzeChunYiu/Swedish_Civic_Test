@@ -2,14 +2,43 @@ import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { AccessibilityRole, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../lib/theme';
 
 export type QuestionNavigatorItemState = 'current' | 'answered' | 'unanswered';
 
+type QuestionNavigatorCopy = {
+  navigationLabel: string;
+  questionLabel: string;
+  stateLabels: Record<QuestionNavigatorItemState, string>;
+};
+
+const questionNavigatorCopy: Record<AppLanguage, QuestionNavigatorCopy> = {
+  sv: {
+    navigationLabel: 'Frågenavigering',
+    questionLabel: 'Fråga',
+    stateLabels: {
+      current: 'Aktuell fråga',
+      answered: 'Besvarad',
+      unanswered: 'Obesvarad',
+    },
+  },
+  en: {
+    navigationLabel: 'Question navigation',
+    questionLabel: 'Question',
+    stateLabels: {
+      current: 'Current question',
+      answered: 'Answered',
+      unanswered: 'Unanswered',
+    },
+  },
+};
+
 /**
  * Defaults: `currentIndex=0`, `answeredIndexes=[]`, `disabled=false`,
- * `accessibilityRole="tablist"`, English spoken state labels, and token-sized
- * press targets. Pass localized label props from the screen.
+ * `accessibilityRole="tablist"`, localized spoken labels from settings, and
+ * token-sized press targets. Pass localized label props from the screen for
+ * screen-specific copy.
  */
 export interface QuestionNavigatorProps extends Omit<
   ComponentProps<typeof View>,
@@ -21,17 +50,12 @@ export interface QuestionNavigatorProps extends Omit<
   itemAccessibilityLabel?: (questionNumber: number, state: QuestionNavigatorItemState) => string;
   itemStyle?: StyleProp<ViewStyle>;
   itemTextStyle?: StyleProp<TextStyle>;
+  languageOverride?: AppLanguage;
   onSelect?: (index: number) => void;
   stateLabels?: Partial<Record<QuestionNavigatorItemState, string>>;
   style?: StyleProp<ViewStyle>;
   totalCount: number;
 }
-
-const defaultStateLabels = {
-  current: 'Current question',
-  answered: 'Answered',
-  unanswered: 'Unanswered',
-} as const satisfies Record<QuestionNavigatorItemState, string>;
 
 function getSafeTotalCount(totalCount: number) {
   if (!Number.isFinite(totalCount) || totalCount <= 0) return 0;
@@ -57,19 +81,21 @@ function getItemState({
 }
 
 function getDefaultItemAccessibilityLabel({
+  questionLabel,
   questionNumber,
   state,
   stateLabels,
 }: {
+  questionLabel: string;
   questionNumber: number;
   state: QuestionNavigatorItemState;
   stateLabels: Record<QuestionNavigatorItemState, string>;
 }) {
-  return `Question ${questionNumber}. ${stateLabels[state]}.`;
+  return `${questionLabel} ${questionNumber}. ${stateLabels[state]}.`;
 }
 
 export function QuestionNavigator({
-  accessibilityLabel = 'Question navigation',
+  accessibilityLabel,
   accessibilityRole = 'tablist',
   answeredIndexes = [],
   currentIndex = 0,
@@ -77,12 +103,16 @@ export function QuestionNavigator({
   itemAccessibilityLabel,
   itemStyle,
   itemTextStyle,
+  languageOverride,
   onSelect,
   stateLabels,
   style,
   totalCount,
   ...viewProps
 }: QuestionNavigatorProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = questionNavigatorCopy[language];
   const safeTotalCount = getSafeTotalCount(totalCount);
   const safeCurrentIndex = getSafeIndex(currentIndex, safeTotalCount);
   const answeredSet = new Set(
@@ -90,13 +120,14 @@ export function QuestionNavigator({
       .filter((index) => Number.isFinite(index))
       .map((index) => Math.max(0, Math.min(Math.round(index), safeTotalCount - 1))),
   );
-  const resolvedStateLabels = { ...defaultStateLabels, ...stateLabels };
+  const resolvedStateLabels = { ...copy.stateLabels, ...stateLabels };
+  const resolvedAccessibilityLabel = accessibilityLabel ?? copy.navigationLabel;
   const isDisabled = disabled === true || !onSelect;
   const resolvedAccessibilityRole = accessibilityRole as AccessibilityRole;
 
   return (
     <View
-      accessibilityLabel={accessibilityLabel}
+      accessibilityLabel={resolvedAccessibilityLabel}
       accessibilityRole={resolvedAccessibilityRole}
       style={[styles.grid, style]}
       {...viewProps}
@@ -111,6 +142,7 @@ export function QuestionNavigator({
             accessibilityLabel={
               itemAccessibilityLabel?.(questionNumber, state) ??
               getDefaultItemAccessibilityLabel({
+                questionLabel: copy.questionLabel,
                 questionNumber,
                 state,
                 stateLabels: resolvedStateLabels,
