@@ -2,22 +2,47 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, space, typography } from '../../lib/theme';
 
+type SocialProofLanguage = 'sv' | 'en';
+
 const copy = {
   sv: {
     rating: 'Utmärkt',
+    ratingAccessibilityLabel: 'Utmärkt betyg, 5 av 5 stjärnor',
     body: 'Tusentals studenter förbereder sig redan med appen',
+    summaryAccessibilityLabel:
+      'Utmärkt betyg, 5 av 5 stjärnor. Tusentals studenter förbereder sig redan med appen',
   },
   en: {
     rating: 'Excellent',
+    ratingAccessibilityLabel: 'Excellent rating, 5 of 5 stars',
     body: 'Thousands of learners are already preparing with the app',
+    summaryAccessibilityLabel:
+      'Excellent rating, 5 of 5 stars. Thousands of learners are already preparing with the app',
   },
 } as const;
 
-export function SocialProofRow({ language }: { language: 'sv' | 'en' }) {
+/**
+ * Defaults: localized social-proof body and rating speech for the supplied app
+ * language, with a summary accessibility label for the full row.
+ */
+export interface SocialProofRowProps {
+  accessibilityLabel?: string;
+  language: SocialProofLanguage;
+}
+
+export function SocialProofRow({ accessibilityLabel, language }: SocialProofRowProps) {
   const t = copy[language];
+  const rowAccessibilityLabel = accessibilityLabel ?? t.summaryAccessibilityLabel;
+
   return (
-    <View accessibilityRole="summary" style={styles.row}>
-      <Text style={styles.stars} accessibilityLabel={`${t.rating} rating, 5 of 5 stars`}>
+    <View
+      aria-label={rowAccessibilityLabel}
+      accessible
+      accessibilityLabel={rowAccessibilityLabel}
+      accessibilityRole="summary"
+      style={styles.row}
+    >
+      <Text style={styles.stars} accessibilityLabel={t.ratingAccessibilityLabel}>
         ★★★★★
       </Text>
       <Text style={styles.rating}>{t.rating}</Text>
