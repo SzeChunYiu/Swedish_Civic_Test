@@ -333,9 +333,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Demokrati betyder folkstyre säger att fria val innebär att alla som har rätt att rösta har en röst var. Det säger också att väljare ska kunna uttrycka åsikter utan hot eller tvång, att det ska finnas flera partier och att valet ska vara hemligt.',
+      'Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt.',
     explanationEn:
-      'The Democracy means rule by the people section says free elections mean everyone who has the right to vote has one vote each. It also says voters should be able to express opinions without threats or coercion, that there should be several parties, and that the vote should be secret.',
+      'Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
