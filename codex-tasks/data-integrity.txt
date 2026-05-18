@@ -1,17 +1,33 @@
 MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:20+02:00
 
+MANAGER-content current-route update - 2026-05-18T20:24+02:00
+
+Post-#584/#590 routing state:
+- `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` is closed for current-main
+  routing by PR #584 / `16dbe4d` and VERIFY refresh PR #590 / `4d3b91d`.
+  Current verification finds zero `Det går inte att avgöra av materialet` /
+  `It cannot be determined from the material` copies in `site/questions.js` or
+  `content/question-bank.csv`, and `validate:content` reports
+  `generatedOptionSourceMaterialWordingValidated: 576`. Do not replay
+  unknown-material branches or capacity handoffs based on the old 155-copy
+  evidence.
+- Remaining generated true/false follow-ups now include q150 from PR #589 /
+  `9f4c068` and q666/q667/q699/q714/q715 from PR #590 / `4d3b91d`. These are
+  generator/validator/static-mirror owned unless VALIDATOR defines a narrower
+  route. Acceptance needs focused current-output guards or rechecks, export and
+  static parity, `validate:content`, focused content gates, typecheck, lint,
+  ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
+  checks.
+- `CONTENT-AUTHORED-TF-PREFIX-1` remains a separate paired CONTENT /
+  DATA-INTEGRITY/static-mirror atom only if VALIDATOR explicitly leases it. Do
+  not accept a data-only cleanup that leaves generated CSV/static mirrors stale.
+
 Active DATA-INTEGRITY routes:
-- `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`: now the active
-  DATA-INTEGRITY route after PR #570 / `225af56` accepted the generated
-  true/false residual cleanup. Replace generated single-choice fallback option
-  wording that says `Det går inte att avgöra av materialet` / `It cannot be
-  determined from the material` with natural non-provenance distractor copy,
-  mirror the generator in `scripts/validate-content.js`, add focused negative
-  guards for `materialet` / `from the material` in generated options, regenerate
-  `content/question-bank.csv` and `site/questions.js`, and verify
-  export/static parity, `validate:content`, `test:derived-content`, focused
-  content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge
-  evidence, and a current-main spot check.
+- `VERIFY-GENERATED-TF-META-Q101-Q150-POST570-1`: current q150 generated
+  true/false meta-stem follow-up.
+- `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q720-POST584-1`: current post-#584
+  generated true/false residual follow-up for `q666`, `q667`, `q699`, `q714`,
+  and `q715`.
 
 Current status:
 - `REVIEWER-GENERATED-TF-META-STEM-1` and

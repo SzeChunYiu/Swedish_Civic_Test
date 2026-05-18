@@ -39,3 +39,19 @@ MANAGER-content 2026-05-18T20:00:00+02:00 update:
   and append-only DATA-INTEGRITY queue entries. Do not edit `data/**`,
   generated CSV/static mirrors, generator templates, validator mirrors, or
   `site/**`.
+
+MANAGER-content 2026-05-18T20:24:00+02:00 update:
+- `verify:data/questions.ts q101-q150` is landed via PR #589 / `9f4c068` with
+  PR evidence recorded by #592 / `396a8ab`; do not duplicate that branch.
+- `verify:data/questions.ts q651-q720` post-#584 refresh is landed via PR #590 /
+  `4d3b91d`; PR #583 was closed as a stale q651 duplicate. Do not duplicate
+  q651-q720 evidence that lists unknown-material fallback options as current
+  defects.
+- PR #584 / `16dbe4d` removed the generated unknown-material fallback option
+  from current output. Any VERIFY report that still lists
+  `Det går inte att avgöra av materialet` / `It cannot be determined from the
+  material` as a current defect must rebase or restart from current
+  `origin/main`.
+- Next VERIFY capacity should continue with the oldest due/current changed
+  slice after the landed q101-q150 and q651-q720 refreshes, while staying
+  report-and-queue only.
