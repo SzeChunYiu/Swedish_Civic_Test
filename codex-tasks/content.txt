@@ -271,3 +271,14 @@ static-bank drift defects are already accepted, so CONTENT must not edit
 `site/**` or rerun those atoms. Fresh capacity stays behind SITE-P0 deploy
 evidence and static-site privacy/monetization copy unless VALIDATOR explicitly
 leases new non-site content.
+
+MANAGER-content 2026-05-18T17:07:33+02:00
+q124 option-naturalness audit is landed via PR #398 / `ec0f0b3`. Route
+`CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1` as a P0 TRANSLATE-COMPLETE
+data/static-mirror cleanup with the same split ownership pattern as q123:
+CONTENT owns only the authored q124 option wording in
+`data/additionalQuestions.ts`, preserving the UHR `Traditioner och högtider` /
+`Sveriges nationaldag`, printed page 46 locator; DATA-INTEGRITY owns the
+generated `site/questions.js` mirror and parity evidence. Do not open a
+CONTENT-only q124 branch that leaves static-site parity red, and do not
+duplicate q123/q124 from other panes.

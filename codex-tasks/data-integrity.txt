@@ -50,3 +50,18 @@ Next action:
   q123 learner-facing explanations cleaned in data and static mirror, export
   parity, static-site parity, `validate:content`, focused content/source
   tests, typecheck, ownership, Prettier, diff checks, and journal evidence.
+
+Additional active route:
+- `CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1`: CONTENT Pane 1 audit PR
+  #398 / `ec0f0b3` found q124 wrong-option text is learner-visible and stilted
+  in both canonical authored content and the static mirror:
+  `Midsommarafton började alltid firas på en fredag` / `Midsummer Eve began
+  always being celebrated on a Friday`. Preserve the UHR locator
+  `Sverige i fokus`, `Traditioner och högtider` / `Sveriges nationaldag`,
+  printed page 46. CONTENT owns the authored option wording only;
+  DATA-INTEGRITY owns regenerated `site/questions.js`, static-site parity,
+  validator/export evidence, and journal handoff. Acceptance requires a green
+  current-main state with canonical data and static mirror aligned, export
+  parity, `node scripts/export-site-question-bank.js --check`,
+  `npm run validate:content`, focused content tests, typecheck, ownership,
+  Prettier, diff checks, and PR/merge evidence.
