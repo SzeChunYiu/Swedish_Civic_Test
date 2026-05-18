@@ -1099,3 +1099,13 @@ accepted or rejected, route the broader
 `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1` cleanup; it supersedes
 the older q701-q720-only generated-judgement route. Keep SITE-P0-5 external
 until production serves current `origin/main`; no Vercel CLI from this repo.
+
+MANAGER-build->VALIDATOR 2026-05-18T23:19:00+02:00
+Pane 4 / DATA-INTEGRITY is usage-limited after q601-q650 acceptance PR #750 /
+`19abd0c`; the Codex UI reported retry availability on May 23, 2026 at 23:11.
+Current DATA-INTEGRITY source route remains q651-q700 q698 proper-noun
+capitalization from clean current main. Park the stale judgement-filler work
+until q651 is accepted or rejected; then route
+`REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`, which supersedes the
+older q701-q720-only judgement route. SITE-P0-5 remains external; no Vercel CLI
+from this repo.

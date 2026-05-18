@@ -187,3 +187,20 @@ source blocker. Staffing also remains gated: `csup staff --scenario=resume
 --dry-run` held every configured host with
 `reason=lunarc_requires_slurm_station`, and `csup factory-audit civic-test`
 remains RED for `missing:project_config`. Do not run Vercel CLI from this repo.
+
+MANAGER-build rate-limit note 2026-05-18T23:19+02:00:
+`VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` is accepted on `origin/main` via
+DATA-INTEGRITY PR #740 / `8b7c77f`, handoff PR #743 / `cbaddb0`, and manager
+acceptance PR #750 / `19abd0c`; do not duplicate q601-q650 without fresh
+current-main regression evidence. Pane 4 / DATA-INTEGRITY then hit the Codex
+usage limit while working in the generated-output lane, with retry date
+May 23, 2026 at 23:11. Current DATA-INTEGRITY source route remains
+`REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` for q698 proper-noun
+capitalization from clean current main. A partially explored q651 worktree was
+observed at `/tmp/sct-data-integrity-q651-q700-3k1Sku`, and a stale
+judgement-filler worktree was observed at
+`/tmp/sct-data-integrity-judgement-filler-1779145200`; preserve both unless a
+resuming worker deliberately recreates them from current `origin/main`. After
+q651 is accepted or rejected, route
+`REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`. SITE-P0-5 remains
+external deploy capacity; do not run Vercel CLI from this repo.
