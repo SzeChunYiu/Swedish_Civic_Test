@@ -11,6 +11,24 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T21:08:00+02:00 active leases:
+- `verify:data/questions.ts q201-q250` is already on `origin/main` via PR
+  #627 / `cf89455`; do not duplicate it.
+- CONTENT-VERIFY Pane 1 owns `verify:data/questions.ts q251-q300` on branch
+  `task/verify/q251-q300-pane1-1779132600` in worktree
+  `/tmp/sct-verify-q251-q300-pane1-1779132600`. It must sync/rebase to current
+  `origin/main` before PR/merge.
+- CONTENT-VERIFY Pane 3 owns `verify:data/questions.ts q301-q350` on branch
+  `task/content-verify/1779131082` in worktree
+  `/tmp/sct-content-verify-1779131082`. It must sync/rebase to current
+  `origin/main` before PR/merge.
+- Do not assign q251-q300 or q301-q350 to any other pane unless the active
+  branch is explicitly abandoned or rejected. Next unassigned slice after both
+  land/reject/abandon is q351-q400 or the next current changed/due slice.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T21:05:00+02:00 correction:
 - Supersede the 21:00 q201-q250 ownership line. `verify:data/questions.ts
   q201-q250` is already on `origin/main` via PR #627 / `cf89455`; treat that
