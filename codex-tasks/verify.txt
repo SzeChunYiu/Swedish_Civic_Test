@@ -11,6 +11,30 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-19T01:20:00+02:00 current-route correction:
+- Current `origin/main` is `cf1034b`, after SETUP live-deploy evidence
+  `69b94c4` and MANAGER-build generated true/false closure acceptance
+  `cf1034b`. These commits do not open CONTENT source work, but they supersede
+  the q351 route base and the old q351-q400 defect state.
+- A direct current static scan on `cf1034b` shows the old q351-q400 defect rows
+  `q358`, `q359`, `q371`, `q374`, `q375`, `q398`, and `q399` now publish
+  standalone, learner-visible stems. The existing
+  `docs/verify/q351-q400-2026-05-18.md` report and `docs/verify/ledger.md`
+  rows are still pinned to `120d440` and mark those rows as defects.
+- No local CONTENT-VERIFY worktree is active at this checkout. The next
+  available CONTENT-VERIFY task remains `verify:data/questions.ts q351-q400`,
+  now as a refresh/ledger cleanup from clean current main `cf1034b` or later.
+- Keep q351-q400 report-and-queue only: verify UHR citations, facts, answer
+  keys, distractors, naturalness, explanations, and current canonical/static
+  output; update VERIFY-owned reports/ledger/queues/journals only; rerun export
+  parity, `validate:content`, `test:derived-content`, typecheck, ownership, and
+  `git diff --check` before PR/merge. Keep VERIFY out of `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, and validator
+  mirrors.
+- Do not publish q351-q400 evidence based on `120d440`, `84f8ab3`, `8782487`,
+  `e33d142`, or pre-`cf1034b` branches unless it has been rebased/refreshed on
+  `cf1034b` or later.
+
 MANAGER-content 2026-05-19T01:08:00+02:00 current-route correction:
 - Current `origin/main` is `e33d142` after PR #823 merged the pre-amend 01:04
   route text. This correction supersedes that stale base note: q351-q400
