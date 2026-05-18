@@ -3762,3 +3762,25 @@ Evidence: current main closes q698 but still leaves q663/q670/q671 naturalness d
 PR (number + merged?): #771 merged yes, squash `39aba02`.
 Accepted by worker? yes
 Next suggested validator action: keep q651-q700 open only for q663/q670/q671, require generator/validator/static-mirror coverage, and keep q698 closed unless a fresh regression appears.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-rTxhCm/wt` / `task/reviewer/device-qa-template-1779150576`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: GOAL.md ad/IAP manual device-QA template check for COMPLY-1.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active queues, blockers, and reviewer history before queueing.
+- Used a clean temporary worktree on current `origin/main` `32105c0`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- `test -f reports/release-ads-iap-device-qa.md` - exit 1.
+- `rg -n "release-ads-iap-device|device-QA|device QA|EAS preview|manual device" reports publishing codex-tasks/validator.txt codex-tasks/open.txt` - found COMPLY-1 and older generic device/audio release evidence, but no required `reports/release-ads-iap-device-qa.md`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:publishing` - exit 0, 7/7 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:release-preflight` - exit 0, 44/44 passing.
+- GOAL step-4/step-7 focused compliance grep - exit 0, so the existing green compliance checks do not cover the missing device-QA template.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0 after linking the shared dependency install into the clean temp worktree.
+- `git diff --check` - exit 0.
+Workspace contract: pass - no product source edited; new RELEASE/COMPLY defect queued.
+Findings queued: `REVIEWER-DEVICE-QA-TEMPLATE-1`.
+Evidence: the ad-supported v1.0 goal requires a physical-device QA sign-off template at `reports/release-ads-iap-device-qa.md`, but current main has only blocked generic audio-smoke placeholders and green release tests that miss the missing template.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route RELEASE/COMPLY to add the template plus a guard before store submission; keep actual iOS/Android device QA blocked until real EAS preview evidence fills it.
