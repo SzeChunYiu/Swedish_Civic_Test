@@ -722,6 +722,48 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects residual q351-q400 true/false wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q398'",
+        "    ? {",
+        "        ...question,",
+        "        questionEn: 'They represent employees, negotiate wages, and can help members.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q398 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
 test('published question schema rejects source-material generated option fallbacks', () => {
   const result = spawnSync(
     process.execPath,

@@ -744,9 +744,33 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'FN:s förklaring om de mänskliga rättigheterna presenterades 1918 och gäller bara Europa.',
       'The UN Universal Declaration of Human Rights was presented in 1918 and applies only to Europe.',
     ],
+    q358: [
+      'Våld i nära relationer och hedersrelaterat våld och förtryck i Sverige är brottsligt enligt svensk lag.',
+      'Violence in close relationships and honour-related violence and oppression in Sweden are crimes under Swedish law.',
+    ],
+    q359: [
+      'Våld i nära relationer och hedersrelaterat våld och förtryck i Sverige är alltid en privat familjefråga och inte ett brott.',
+      'Violence in close relationships and honour-related violence and oppression in Sweden are always private family matters and not crimes.',
+    ],
+    q371: [
+      'År 1979 beslutade Sverige som första land i världen att barnkonventionen blev svensk lag.',
+      'In 1979, Sweden was the first country in the world to decide that the Convention on the Rights of the Child became Swedish law.',
+    ],
     q374: [
-      'Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar.',
+      'Sveriges fem nationella minoriteter är judar, romer, samer, sverigefinnar och tornedalingar.',
       "Sweden's five national minorities are Jews, Roma, Sami, Sweden Finns, and Tornedalians.",
+    ],
+    q375: [
+      'Sveriges fem nationella minoriteter är danskar, norrmän, islänningar, tyskar och fransmän.',
+      "Sweden's five national minorities are Danes, Norwegians, Icelanders, Germans, and French.",
+    ],
+    q398: [
+      'Fackförbund företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar.',
+      'Trade unions represent employees, negotiate wages, and can help members.',
+    ],
+    q399: [
+      'Fackförbund bestämmer vilka som får rösta i riksdagsval.',
+      'Trade unions decide who may vote in Riksdag elections.',
     ],
     q458: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
@@ -799,9 +823,10 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes)|En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)/i,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes)|En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)/im,
   );
   residualQuestions.forEach((question) => {
+    assert.doesNotMatch(question.questionSv, /är (?:Judar|Danskar),/, question.id);
     assert.doesNotMatch(question.questionEn, /celebrates The/, question.id);
     assert.doesNotMatch(question.questionSv, /firar traditionellt [A-ZÅÄÖ]/, question.id);
     assert.doesNotMatch(question.questionEn, /^(?:By|Apply|Leave|Live)\b/i, question.id);

@@ -15658,7 +15658,7 @@
     "type": "true_false",
     "q": {
       "en": "Violence in close relationships and honour-related violence and oppression in Sweden are crimes under Swedish law.",
-      "sv": "Det är brottsligt enligt svensk lag."
+      "sv": "Våld i nära relationer och hedersrelaterat våld och förtryck i Sverige är brottsligt enligt svensk lag."
     },
     "opts": [
       {
@@ -15698,7 +15698,7 @@
     "type": "true_false",
     "q": {
       "en": "Violence in close relationships and honour-related violence and oppression in Sweden are always private family matters and not crimes.",
-      "sv": "Det är alltid en privat familjefråga och inte ett brott."
+      "sv": "Våld i nära relationer och hedersrelaterat våld och förtryck i Sverige är alltid en privat familjefråga och inte ett brott."
     },
     "opts": [
       {
@@ -15833,7 +15833,7 @@
     "type": "true_false",
     "q": {
       "en": "It is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "Det är olagligt att köpa sex, men personen som säljer straffas inte."
+      "sv": "Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte."
     },
     "opts": [
       {
@@ -15872,7 +15872,7 @@
     "type": "true_false",
     "q": {
       "en": "It is always legal to buy sex.",
-      "sv": "Det är alltid lagligt att köpa sex."
+      "sv": "Att köpa sex i Sverige är alltid lagligt att köpa sex."
     },
     "opts": [
       {
@@ -16176,8 +16176,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "Sweden decided that hitting children is prohibited.",
-      "sv": "Sverige beslutade att det är förbjudet att slå barn."
+      "en": "In 1979, Sweden was the first country in the world to decide that hitting children is prohibited.",
+      "sv": "År 1979 beslutade Sverige som första land i världen att det är förbjudet att slå barn."
     },
     "opts": [
       {
@@ -16215,8 +16215,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "Sweden decided that the Convention on the Rights of the Child became Swedish law.",
-      "sv": "Sverige beslutade att barnkonventionen blev svensk lag."
+      "en": "In 1979, Sweden was the first country in the world to decide that the Convention on the Rights of the Child became Swedish law.",
+      "sv": "År 1979 beslutade Sverige som första land i världen att barnkonventionen blev svensk lag."
     },
     "opts": [
       {
@@ -16349,7 +16349,7 @@
     "type": "true_false",
     "q": {
       "en": "Sweden's five national minorities are Jews, Roma, Sami, Sweden Finns, and Tornedalians.",
-      "sv": "Sveriges fem nationella minoriteter är Judar, romer, samer, sverigefinnar och tornedalingar."
+      "sv": "Sveriges fem nationella minoriteter är judar, romer, samer, sverigefinnar och tornedalingar."
     },
     "opts": [
       {
@@ -16388,7 +16388,7 @@
     "type": "true_false",
     "q": {
       "en": "Sweden's five national minorities are Danes, Norwegians, Icelanders, Germans, and French.",
-      "sv": "Sveriges fem nationella minoriteter är Danskar, norrmän, islänningar, tyskar och fransmän."
+      "sv": "Sveriges fem nationella minoriteter är danskar, norrmän, islänningar, tyskar och fransmän."
     },
     "opts": [
       {
@@ -16693,7 +16693,7 @@
     "type": "true_false",
     "q": {
       "en": "It is permitted to marry a person of the same sex.",
-      "sv": "Det är tillåtet att gifta sig med en person av samma kön."
+      "sv": "Äktenskap mellan personer av samma kön i Sverige är tillåtet att gifta sig med en person av samma kön."
     },
     "opts": [
       {
@@ -16732,7 +16732,7 @@
     "type": "true_false",
     "q": {
       "en": "It is prohibited to marry a person of the same sex.",
-      "sv": "Det är förbjudet att gifta sig med en person av samma kön."
+      "sv": "Äktenskap mellan personer av samma kön i Sverige är förbjudet att gifta sig med en person av samma kön."
     },
     "opts": [
       {
@@ -17380,8 +17380,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "They represent employees, negotiate wages, and can help members.",
-      "sv": "De företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar."
+      "en": "Trade unions represent employees, negotiate wages, and can help members.",
+      "sv": "Fackförbund företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar."
     },
     "opts": [
       {
@@ -17419,8 +17419,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "They decide who may vote in Riksdag elections.",
-      "sv": "De bestämmer vilka som får rösta i riksdagsval."
+      "en": "Trade unions decide who may vote in Riksdag elections.",
+      "sv": "Fackförbund bestämmer vilka som får rösta i riksdagsval."
     },
     "opts": [
       {
