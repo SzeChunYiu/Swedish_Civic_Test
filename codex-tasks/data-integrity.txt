@@ -1361,3 +1361,29 @@ true/false judgement-shell rows. Acceptance must separately prove zero ordinary
 meta-stem rows, zero generic fallback-option rows, and zero true/false
 judgement-shell rows in both `content/question-bank.csv` and
 `site/questions.js`.
+
+MANAGER-build current-route update - 2026-05-18T23:59+02:00
+
+PR #788 / `e1d04ea` is accepted only as partial generated single-choice filler
+progress on current `origin/main` `b9116df`: it removes the true/false
+judgement option shells and generic `None of the options is correct` / `Only
+sometimes` fallback options from canonical/static output, with validator/static
+guards. It does not close the broader single-choice wording route.
+
+Manager recheck in `/tmp/sct-manager-accept-filler-1779141471` passed
+`npm run validate:content`, canonical export parity, static-site export parity,
+focused derived/content/static/test-gate tests 41/41, and `git diff --check`.
+Direct static inspection still finds 133 ordinary generated single-choice
+meta-stem rows beginning with `Which answer is correct?` / `Vilket svar är
+korrekt?`, plus `q149` and `q152` single-choice explanations that still refer
+to True/False even though those are no longer option labels.
+
+Keep the next DATA-INTEGRITY source route as q651-q700 q663/q670/q671, because
+that route was already ahead of the filler bundle and remains open on current
+output. After q663/q670/q671 is accepted or rejected, route the remaining
+generated single-choice cleanup for the 133 ordinary meta-stem rows and the
+q149/q152 explanation mismatch. Acceptance must prove zero ordinary
+`Which answer is correct?` / `Vilket svar är korrekt?` meta-stems, zero generic
+fallback-option rows, zero true/false judgement-shell option rows, and no
+single-choice explanations that refer to True/False labels absent from the
+options, in both `content/question-bank.csv` and `site/questions.js`.
