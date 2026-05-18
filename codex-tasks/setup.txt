@@ -45,6 +45,12 @@ Accepted P0 SETUP atoms:
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
+MANAGER-build note 2026-05-18T15:25+02:00:
+PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
+hit the Codex usage cap. Do not resume that stale account-scope attempt as the
+current task. The active order remains: live deploy stale first, Practice width
+parity second, account-scope third.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
