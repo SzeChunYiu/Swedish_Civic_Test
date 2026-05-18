@@ -1225,7 +1225,7 @@ test('production build and submit guards rerun validation inside release preflig
   );
 });
 
-test('production submit guard blocks placeholder Apple identifiers before EAS submit', () => {
+test('production submit guard blocks placeholder Apple identifiers before release preflight', () => {
   const result = spawnSync(
     process.execPath,
     ['scripts/submit-production-guard.js', '--check-only'],
@@ -1240,6 +1240,7 @@ test('production submit guard blocks placeholder Apple identifiers before EAS su
   assert.match(result.stdout, /ascAppId/i);
   assert.match(result.stdout, /appleTeamId/i);
   assert.match(result.stdout, /TBD/i);
+  assert.doesNotMatch(result.stdout, /release preflight/i);
 });
 
 test('production submit guard blocks while release preflight is not ready', () => {

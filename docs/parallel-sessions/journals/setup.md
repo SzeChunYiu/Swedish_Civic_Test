@@ -675,3 +675,11 @@ Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern '
 PR: #388 squash-merged to `main` as `11e60ac`.
 Blocked? no for the PR-trigger source atom. The PR-triggered remote Release validation run fired, but GitHub Actions still fails before exposing steps/logs under the existing runner/spending-cap blocker; production deploy evidence remains separate.
 Next suggested validator action: inspect `.github/workflows/release-validation.yml`, rerun the focused build-config release-validation test, then keep `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1` as the next release-config atom and `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` blocked on external deploy capacity.
+
+## Iteration 204 - 2026-05-18
+Task completed: REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1 - tightened the production submit guard verifier so placeholder Apple submit identifiers must be reported before release-preflight blockers can mask them.
+Artifacts changed: `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'EAS build and submit profiles are configured|production submit guard blocks placeholder Apple identifiers' scripts/build-config.test.js` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 38/38 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `npx --no-install prettier --check scripts/build-config.test.js` exit 0; `git diff --check` exit 0.
+PR: opened from `task/setup/submit-guard-1779116704`; merge pending at handoff commit time.
+Blocked? no for the submit-guard verifier atom. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external production deployment capacity, not source readiness.
+Next suggested validator action: inspect the submit-guard test assertion, rerun the focused build-config pattern plus `npm run test:build-config`, then keep production deploy evidence as the remaining site-live closure item.
