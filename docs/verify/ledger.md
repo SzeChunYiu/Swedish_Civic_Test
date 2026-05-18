@@ -38,7 +38,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q015 | authored-source | q015 | data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 97f3096 | ok | rolling-source-slice |
 | q016 | authored-source | q016 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
 | q017 | authored-source | q017 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
-| q018 | authored-source | q018 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 97f3096 | ok | rolling-source-slice |
+| q018 | authored-source | q018 | data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | d468f31 | ok | recent-data-regression |
 | q019 | authored-source | q019 | data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 97f3096 | ok | rolling-source-slice |
 | q020 | authored-source | q020 | data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 97f3096 | ok | rolling-source-slice |
 | q021 | authored-source | q021 | data/additionalQuestions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 97f3096 | ok | rolling-source-slice |
@@ -90,7 +90,7 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q067 | authored-source | q067 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | ca00008 | ok | rolling-source-slice |
 | q068 | authored-source | q068 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | ca00008 | ok | rolling-source-slice |
 | q069 | authored-source | q069 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | ca00008 | ok | rolling-source-slice |
-| q070 | authored-source | q070 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | ca00008 | ok | rolling-source-slice |
+| q070 | authored-source | q070 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | d468f31 | ok | recent-data-regression |
 | q071 | authored-source | q071 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | ca00008 | ok | rolling-source-slice |
 | q072 | authored-source | q072 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | ca00008 | ok | rolling-source-slice |
 | q073 | authored-source | q073 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | ca00008 | ok | rolling-source-slice |
@@ -128,13 +128,13 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q105 | authored-source | q105 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Advent | 47 | 998185a | ok | rolling-source-slice |
 | q106 | authored-source | q106 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
 | q107 | authored-source | q107 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 998185a | ok | rolling-source-slice |
-| q108 | authored-source | q108 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 998185a | ok | rolling-source-slice |
-| q109 | authored-source | q109 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 998185a | ok | rolling-source-slice |
+| q108 | authored-source | q108 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | d468f31 | ok | recent-data-regression |
+| q109 | authored-source | q109 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | d468f31 | ok | recent-data-regression |
 | q110 | authored-source | q110 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 998185a | ok | rolling-source-slice |
 | q111 | authored-source | q111 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 998185a | ok | rolling-source-slice |
 | q112 | authored-source | q112 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 998185a | ok | rolling-source-slice |
 | q113 | authored-source | q113 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | 998185a | ok | rolling-source-slice |
-| q114 | authored-source | q114 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 998185a | ok | rolling-source-slice |
+| q114 | authored-source | q114 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | d468f31 | ok | recent-data-regression |
 | q115 | authored-source | q115 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 998185a | ok | rolling-source-slice |
 | q116 | authored-source | q116 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | 998185a | ok | rolling-source-slice |
 | q117 | authored-source | q117 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionens roll | 42 | 998185a | ok | rolling-source-slice |
@@ -143,8 +143,8 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q120 | authored-source | q120 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Judendom | 43 | 998185a | ok | rolling-source-slice |
 | q121 | authored-source | q121 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 998185a | ok | rolling-source-slice |
 | q122 | authored-source | q122 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | 998185a | ok | rolling-source-slice |
-| q123 | authored-source | q123 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | 998185a | ok | rolling-source-slice |
-| q124 | authored-source | q124 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | 998185a | ok | rolling-source-slice |
+| q123 | authored-source | q123 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Hinduism och buddhism | 43 | d468f31 | ok | recent-data-regression |
+| q124 | authored-source | q124 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | d468f31 | ok | recent-data-regression |
 | q125 | authored-source | q125 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | 998185a | ok | rolling-source-slice |
 | q126 | authored-source | q126 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Några traditionella högtider under året | 45 | 998185a | ok | rolling-source-slice |
 | q127 | authored-source | q127 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | 998185a | ok | rolling-source-slice |
@@ -162,9 +162,9 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q139 | authored-source | q139 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
 | q140 | authored-source | q140 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Jul | 47 | 998185a | ok | rolling-source-slice |
 | q141 | authored-source | q141 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 998185a | ok | rolling-source-slice |
-| q142 | authored-source | q142 | data/additionalQuestions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 998185a | ok | rolling-source-slice |
-| q143 | authored-source | q143 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 998185a | ok | rolling-source-slice |
-| q144 | authored-source | q144 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
+| q142 | authored-source | q142 | data/additionalQuestions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | d468f31 | ok | recent-data-regression |
+| q143 | authored-source | q143 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d468f31 | ok | recent-data-regression |
+| q144 | authored-source | q144 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | d468f31 | ok | recent-data-regression |
 | q145 | section-practice | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d96376d | ok | rolling-source-slice |
 | q146 | true-false | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d96376d | ok | rolling-source-slice |
 | q147 | false-statement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d96376d | ok | rolling-source-slice |
