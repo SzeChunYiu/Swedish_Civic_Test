@@ -47,3 +47,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF opened from
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: review the q101-q150 VERIFY report and then assign the next rolling slice starting at `q151`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q151-q200-pane3-1779119174`, branch `task/verify/q151-q200-pane3-1779119174`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q151-q200` generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q151-q200-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF opened for every cited chapter/section/page group in the slice; facts, citations, answer keys, and distractors are supported, but residual generated naturalness defects were found in `q174`, `q189`, `q190`, `q193`, and `q194`. Ledger rows `q151`-`q200` were updated at `d4a2146`, with supported rows marked `ok` and defect rows marked `defect`; `VERIFY-GENERATED-TF-RESIDUAL-Q151-Q200-1` was appended to `codex-tasks/data-integrity.txt`. Direct ledger/report/queue assertion passed for 50 rows; `node scripts/export-question-bank.js --check` passed at 715 questions; `npm run validate:content` passed; `npm run typecheck -- --pretty false` passed; `npm run test:ownership` passed; `git diff --check` passed.
+PR (number + merged?): #453 opened; merge pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: review the q151-q200 VERIFY report, keep DATA-INTEGRITY on the queued residual generator/static-mirror naturalness atom, and assign the next rolling VERIFY slice starting at `q201`.

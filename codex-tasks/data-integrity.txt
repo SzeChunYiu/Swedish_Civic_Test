@@ -84,3 +84,23 @@ Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
    content/static-mirror atom is
    `CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1`. Do not accept a
    CONTENT-only data change that leaves `site/questions.js` stale.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T17:47:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q151-Q200-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `d4a2146` found the earlier generated true/false cleanup still
+leaves residual generated naturalness defects in the q151-q200 slice. Facts,
+citations, correct answers, and distractors remain supported by UHR `Sverige i
+fokus`, but learner-visible generated text is not natural in both canonical CSV
+and `site/questions.js`: `q174` English says `are The Baltic Sea...`; `q189`
+and `q190` splice answer fragments into `...har en röst var ingår...` /
+`...may stand for election is part...`; `q193` and `q194` use imperative or
+infinitive fragments as subjects (`Kontakta... är...` / `Contact... is...`,
+`Förbjuda... är...` / `Ban... is...`). Own a fresh bounded generator/static
+mirror repair or extend the current generated-template atom with residual
+guards for option-fragment nominalization and mid-sentence English article
+normalization. Acceptance requires regenerated `content/question-bank.csv` and
+`site/questions.js`, validator mirror coverage, focused negative tests,
+export/static parity, `validate:content`, typecheck, ownership, Prettier/diff
+checks, PR/merge evidence, and a recheck of VERIFY ledger rows `q174`, `q189`,
+`q190`, `q193`, and `q194`.
