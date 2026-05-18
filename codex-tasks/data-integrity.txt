@@ -1091,6 +1091,40 @@ Acceptance requires generator and validator mirror coverage, regenerated
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
 checks for the four named rows.
 
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T23:33:00+02:00
+`VERIFY-GENERATED-SINGLE-CHOICE-FILLER-Q201-Q250-CURRENT-1` [product
+defect][P0 TRANSLATE-COMPLETE][answer-quality][content-sync]: independent
+VERIFY refresh on current `origin/main` `719cb3b` supersedes the stale
+q201-q250 true/false prefix and q235 false-explanation evidence from
+`75310c8`. The slice has 50 rows and 25 true/false rows; current CSV/static
+output has zero redundant `Sant eller falskt:` / `True or false:` prefixes,
+zero true/false stem meta wrappers, zero false-answer explanation mismatches,
+and no CSV/static text mismatches. Current remaining answer-quality defects are
+generated single-choice filler rows `q204`, `q208`, `q212`, `q216`, `q220`,
+`q224`, `q228`, `q232`, `q240`, `q244`, and `q248`, each using generic
+`Inget av alternativen stämmer` / `None of the options is correct` and
+`Endast ibland` / `Only sometimes` options instead of stem-specific
+distractors. Fold this evidence into the broader generated single-choice
+filler cleanup route when DATA-INTEGRITY reaches it. Acceptance should prove
+these q201-q250 rows no longer expose generic filler options in
+`content/question-bank.csv` or `site/questions.js`, with generator/validator
+mirror coverage, regenerated canonical/static output, export/static parity,
+`validate:content`, `test:derived-content`, typecheck, lint, ownership, and
+`git diff --check`.
+
+`VERIFY-GENERATED-JUDGEMENT-Q201-Q250-CURRENT-1` [product defect][P0
+TRANSLATE-COMPLETE][wording-rule][content-sync]: the same q201-q250 refresh
+found `q233` and `q236` recreating a true/false judgement prompt inside a
+single-choice shell. Both ask the learner to choose or match an option for the
+statement `Riksdagen väljer statsminister` / `The Riksdag chooses the prime
+minister`, while the options are `Sant`, `Falskt`,
+`Inget av alternativen stämmer`, and `Endast ibland` / `True`, `False`,
+`None of the options is correct`, and `Only sometimes`. Facts and answer keys
+are UHR-supported, but the learner-facing shell violates the wording-rule bar
+against generated answer-judgement templates. Fold these rows into
+`REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`, which already covers the
+whole-bank judgement/filler pattern.
+
 MANAGER-build rate-limit/current-route note - 2026-05-18T23:19+02:00
 
 Pane 4 / DATA-INTEGRITY hit the Codex usage limit after q601-q650 acceptance
