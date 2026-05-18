@@ -45,24 +45,40 @@ Accepted P0 SETUP atoms:
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
-MANAGER-build note 2026-05-18T15:25+02:00:
+MANAGER-build note 2026-05-18T15:25+02:00, superseded by CEO 2026-05-18T15:30:40+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
 hit the Codex usage cap. Do not resume that stale account-scope attempt as the
-current task. The active order remains: live deploy stale first, Practice width
-parity second, account-scope third.
+current task. CEO verified current `origin/main` content has 710 questions while
+`site/questions.js` still has 705 and `node scripts/export-site-question-bank.js
+--check` exits 1. The active order is now: static question-bank drift first,
+live deploy stale second, Practice width parity third, account-scope fourth.
 
-1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
+1. `SITE-P0-QUESTION-BANK-DRIFT-Q142-1`
+   - Scope: `site/questions.js`, static question-bank export/parity tests, and
+     any live-smoke expected-count constants that must follow the canonical
+     content count.
+   - Required behavior: regenerate the static site question bank from current
+     canonical content so `site/questions.js` serves 710 questions, preserve
+     source/generated parity, and keep Practice/Mock consuming the exported
+     bank.
+   - Required gates: `node scripts/export-site-question-bank.js --check`, `node
+     --test tests/content-static-site-question-bank-parity.test.js`, `node
+     scripts/export-question-bank.js --check`, `node --check site/questions.js`,
+     `npm run validate:content`, `npm run test:ownership`, and
+     `git diff --check`.
+
+2. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
    - Required behavior: production must serve current `origin/main` `site/`,
-     not an older Vercel deployment. The live production URL must show 705
+     not an older Vercel deployment. The live production URL must show 710
      static questions, the Practice hub, `#/mock` with `#mock-stage`, and
      Swedish Ebook chapters without v1.1 placeholder copy.
    - Required gates: deploy run or Vercel evidence for current main, live smoke
      assertions for the checks above, relevant syntax/build checks for changed
      files, `npm run test:ownership`, and `git diff --check`.
 
-2. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
+3. `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`
    - Scope: `site/index.html`, `site/styles.css`, and focused site layout
      assertion.
    - Required behavior: port the draft wide Practice hub shell so desktop
@@ -73,7 +89,7 @@ parity second, account-scope third.
      `#/practice` and `#/mock`, `npm run test:ownership`, and
      `git diff --check`.
 
-3. `REVIEWER-ACCOUNT-SCOPE-1`
+4. `REVIEWER-ACCOUNT-SCOPE-1`
    - Scope: SETUP/build product shell, route manifests, dependencies, static
      `site/` account prompts, and scaffold/router-shell tests.
    - Required behavior: the MVP has no reachable account/authentication
@@ -87,9 +103,21 @@ parity second, account-scope third.
    - Keep `REVIEWER-SEARCH-PLACEHOLDER-1` separate; do not expand this atom
      into Search implementation/removal.
 
+5. `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`
+   - Scope: static `site/app.js` privacy and FAQ translations plus a focused
+     stale-copy guard.
+   - Required behavior: EN/SV static privacy and FAQ copy must state current
+     AdSense web ads, AdMob/Google Mobile Ads app ads with consent, and the
+     one-time 29 SEK Remove Ads purchase; it must not claim ads are disabled,
+     no sale exists, or premium might be added later.
+   - Required gates: static or browser assertion rejecting stale strings such
+     as `real ad rendering is disabled`, `avstängd för v1.0`, `If we ever add
+     premium`, and `Om vi någonsin lägger till premium`, plus relevant
+     `node --check`, `npm run test:ownership`, and `git diff --check`.
+
 Existing P0 SETUP atoms behind the live-site P0 queue:
 
-4. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+6. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -99,7 +127,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-5. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+7. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -109,7 +137,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-6. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+8. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or

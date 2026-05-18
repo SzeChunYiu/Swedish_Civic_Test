@@ -184,3 +184,17 @@ from PR #303 / `e232bf7`; current `origin/main` `ff117b1` is green for
 `validate:content`, focused AnswerOption parity, typecheck, ownership, and
 `git diff --check`. Resume site-first P0 routing: live deploy staleness, then
 Practice width parity, then static account-scope before lower-priority work.
+
+2026-05-18T15:30:40+02:00: Executive cycle decision remains HOLD/add-none.
+Required docs were read from supervisor fallback copies plus this board.
+`csup staff --scenario=resume --dry-run` reported STAFF-UP demand but held
+every configured LUNARC/remote host with `reason=lunarc_requires_slurm_station`;
+no `--apply` was run. `csup steward --sample-secs=5` recommended keeping
+current staffing; local tmux shows only `_csup_sentinel_` and `civic-content`.
+Latest `origin/main` is `dd126cd`; clean current-main validation/typecheck are
+green at 710 questions, but `node scripts/export-site-question-bank.js --check`
+exits 1 and `site/questions.js` serves 705. Route
+`SITE-P0-QUESTION-BANK-DRIFT-Q142-1` first, then live deploy staleness with
+710-question smoke, then Practice width parity, account-scope, and static
+privacy monetization copy unless VALIDATOR changes the order. q070/q142 and
+`QuestionNavigator` are duplicate-guarded; CONTENT must not edit `site/**`.
