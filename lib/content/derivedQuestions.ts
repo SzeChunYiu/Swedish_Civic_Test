@@ -210,6 +210,24 @@ function judgementPromptEn(source: PracticeQuestion): string {
   return `Which answer is correct? ${source.questionEn}`;
 }
 
+function singleChoicePromptSv(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source)) {
+    return `Välj rätt alternativ för påståendet: ${ensureSentence(
+      stripTrueFalsePromptSv(source.questionSv),
+    )}`;
+  }
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+}
+
+function singleChoicePromptEn(source: PracticeQuestion): string {
+  if (isTrueFalseSource(source)) {
+    return `Choose the correct option for the statement: ${ensureSentence(
+      stripTrueFalsePromptEn(source.questionEn),
+    )}`;
+  }
+  return `Which answer best matches? ${source.questionEn}`;
+}
+
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -462,8 +480,8 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
     source,
     id,
     'single_choice',
-    `Vilket svar stämmer bäst? ${source.questionSv}`,
-    `Which answer best matches? ${source.questionEn}`,
+    singleChoicePromptSv(source),
+    singleChoicePromptEn(source),
     singleChoiceOptions(source),
     source.correctOptionId,
     ['published-variant', 'section-practice'],

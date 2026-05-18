@@ -97,6 +97,8 @@ const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
   /\bEtt korrekt svar på frågan\s+"Sant eller falskt:/i,
   /\bA correct answer to\s+"True or false:/i,
+  /\bVilket svar stämmer bäst\?\s*Sant eller falskt:/i,
+  /\bWhich answer best matches\?\s*True or false:/i,
 ];
 const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
@@ -3321,6 +3323,24 @@ function judgementPromptEn(sourceQuestion) {
   return `Which answer is correct? ${sourceQuestion.questionEn}`;
 }
 
+function singleChoicePromptSv(sourceQuestion) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return `Välj rätt alternativ för påståendet: ${ensureSentence(
+      stripTrueFalsePromptSv(sourceQuestion.questionSv),
+    )}`;
+  }
+  return `Vilket svar stämmer bäst? ${sourceQuestion.questionSv}`;
+}
+
+function singleChoicePromptEn(sourceQuestion) {
+  if (isTrueFalseSource(sourceQuestion)) {
+    return `Choose the correct option for the statement: ${ensureSentence(
+      stripTrueFalsePromptEn(sourceQuestion.questionEn),
+    )}`;
+  }
+  return `Which answer best matches? ${sourceQuestion.questionEn}`;
+}
+
 function civicStatementSv(sourceQuestion, option) {
   if (isTrueFalseSource(sourceQuestion)) {
     return trueFalseSourceStatementSv(
@@ -3590,8 +3610,8 @@ function wrongOption(question) {
 function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   if (variantIndex === 0) {
     return {
-      questionSv: `Vilket svar stämmer bäst? ${sourceQuestion.questionSv}`,
-      questionEn: `Which answer best matches? ${sourceQuestion.questionEn}`,
+      questionSv: singleChoicePromptSv(sourceQuestion),
+      questionEn: singleChoicePromptEn(sourceQuestion),
     };
   }
 

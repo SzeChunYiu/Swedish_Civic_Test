@@ -107,6 +107,22 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     );
   });
   assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
+  assert.equal(
+    derived[0].questionSv,
+    'Välj rätt alternativ för påståendet: Sverige ligger i Norden.',
+  );
+  assert.equal(
+    derived[0].questionEn,
+    'Choose the correct option for the statement: Sweden is in the Nordic region.',
+  );
+  assert.ok(
+    singleChoiceVariants.every(
+      (question) =>
+        !/Vilket svar stämmer bäst\?\s*Sant eller falskt:|Which answer best matches\?\s*True or false:/.test(
+          `${question.questionSv} ${question.questionEn}`,
+        ),
+    ),
+  );
 
   const trueFalseVariants = derived.filter((question) => question.type === 'true_false');
   assert.deepEqual(
