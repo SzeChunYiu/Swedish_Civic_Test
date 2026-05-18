@@ -3,6 +3,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/launchPopupSession';
 
 /**
  * Suppress on routes where a blocking modal would be hostile to flow:
@@ -46,11 +47,13 @@ const firstRunCopy: Record<AppLanguage, FirstRunCopy> = {
 
 /**
  * Defaults: uses the settings-store language and first-run flag, suppresses
- * exam/quiz/auth/about routes, and dismisses after backdrop, skip, hardware
- * back, or guide-open actions.
+ * exam/quiz/auth/about routes, defers for the same app launch after a launch
+ * sponsor modal appears, and dismisses after backdrop, skip, hardware back,
+ * or guide-open actions.
  */
 export interface FirstRunAboutTheTestModalProps {
   languageOverride?: AppLanguage;
+  deferWhenLaunchPopupAdShown?: boolean;
   suppressedPathPrefixes?: readonly string[];
 }
 
@@ -63,6 +66,7 @@ function pathIsSuppressed(
 }
 
 export function FirstRunAboutTheTestModal({
+  deferWhenLaunchPopupAdShown = true,
   languageOverride,
   suppressedPathPrefixes = SUPPRESSED_PATH_PREFIXES,
 }: FirstRunAboutTheTestModalProps = {}) {
@@ -74,6 +78,7 @@ export function FirstRunAboutTheTestModal({
 
   if (hasSeen) return null;
   if (pathIsSuppressed(pathname, suppressedPathPrefixes)) return null;
+  if (deferWhenLaunchPopupAdShown && shouldDeferFirstRunAboutModalForLaunchSession()) return null;
 
   const language = languageOverride ?? settingsLanguage;
   const copy = firstRunCopy[language];
