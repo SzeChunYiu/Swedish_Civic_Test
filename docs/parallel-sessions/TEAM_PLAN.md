@@ -351,3 +351,18 @@ q451-q500, or release privacy-gate source work. Route DATA-INTEGRITY next to
 q501-q550 for q526/q527/q530/q531/q535/q542/q543; q551-q600 stays behind that
 source route unless VALIDATOR explicitly reorders. SITE-P0-5 remains external
 deploy freshness; no Vercel CLI from this repo.
+
+2026-05-18T22:44:40+02:00: CEO correction on latest observed `origin/main`
+`58cb0f6`. Staffing remains HOLD/add-none after `csup staff
+--scenario=resume --dry-run`: every configured host held on
+`reason=lunarc_requires_slurm_station`, no apply was run, and `csup
+factory-audit civic-test` remains RED for `missing:project_config`. q451-q500
+and RELEASE-GATES source work are accepted and must not be duplicated.
+q501-q550 source cleanup has landed via `b441aed`; VALIDATOR/MANAGER-build
+should accept it or return precise residuals. q551-q600, q601-q650, and
+q651-q700 stay queued behind q501-q550 acceptance unless VALIDATOR explicitly
+reorders. Current SETUP/site source priority is
+`REVIEWER-SITE-EBOOK-SOURCE-COVERAGE-1` from `e74d624`, with CONTENT support
+for source wording if leased. SITE-P0-5 remains external deploy
+capacity/operator evidence against expected 720/hash `f25e0b9a06c3`, and no
+pane should run Vercel CLI from this repo.

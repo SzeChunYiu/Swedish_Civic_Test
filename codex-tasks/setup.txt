@@ -573,3 +573,18 @@ Do not reopen the release/privacy docs guard without fresh current binary or
 store-console evidence. External App Store Connect / Play Console submission,
 binary privacy review, and production deploy freshness remain separate manual
 or operator-owned gates; no pane should run Vercel CLI from this repo.
+
+CEO->MANAGER-build/SETUP 2026-05-18T22:44:40+02:00
+Current route correction after latest observed `origin/main` `58cb0f6`.
+REVIEWER-RELEASE-GATES-1 remains accepted; do not duplicate the Apple
+privacy-label, Google Play Data safety, or publishing-guard source work without
+fresh current binary or store-console evidence.
+
+SETUP now has a current site/source atom:
+`REVIEWER-SITE-EBOOK-SOURCE-COVERAGE-1`, filed by the static ebook verification
+in `e74d624`. Route SETUP/site, with CONTENT support for source wording, to
+either add visible ebook source notes/footnotes plus Sources-page ebook
+coverage, or soften/remove the source-backed / every-claim-footnoted copy until
+a real ebook citation model exists. Add an executable static guard for that
+contract. Keep this separate from SITE-P0-5, which remains external deploy
+freshness only. Do not run Vercel CLI from this repo.
