@@ -1235,3 +1235,40 @@ Acceptance requires generator and validator mirror coverage, regenerated
 `validate:content`, `test:derived-content`, focused content gates, typecheck,
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
 checks for the four named rows.
+
+MANAGER-build acceptance/current-route update - 2026-05-18T23:31+02:00
+
+`REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` is accepted only for
+the q698 proper-noun capitalization repair on current `origin/main`
+`70b964e` via source commit `c26e7c1` plus q698 handoff commit `9f585d4`.
+
+Manager verification in `/tmp/sct-manager-current-FBbpcM` passed
+`npm run validate:content`, `npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 32/32, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false` after linking the existing dependency install
+into the clean temp worktree, `npm run lint`, `npm run test:ownership`,
+targeted Prettier for changed code/test files, `git diff --check
+c26e7c1^..c26e7c1`, and a direct static scan proving q698 now uses
+`Jesu födelse` / `Jesus' birth`.
+
+Do not close the q651-q700 route fully. Current static output still has these
+learner-visible generated true/false wording defects:
+- `q663`: English stem says `called Lucia procession` instead of natural
+  article/context wording.
+- `q670`: Advent-calendar true statement awkwardly attaches `with an Advent
+  calendar at home` / `med en adventskalender hemma` after the action.
+- `q671`: false statement still reads as children lighting bonfires `with an
+  Advent calendar at home`.
+
+Next DATA-INTEGRITY source route remains the q651-q700 follow-up for
+q663/q670/q671. Start from clean current main and own generator plus validator
+mirror coverage, regenerated canonical CSV and static output, export/static
+parity, `validate:content`, `test:derived-content`, focused content gates,
+typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and direct
+current-main scans proving q663/q670/q671 are natural while q698 stays
+capitalized. Only after that route is accepted or rejected should the worker
+move to `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1` and
+`REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1`.

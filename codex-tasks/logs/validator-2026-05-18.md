@@ -605,3 +605,30 @@ proper-noun capitalization from clean current main. Preserve or deliberately
 recreate `/tmp/sct-data-integrity-q651-q700-3k1Sku` and
 `/tmp/sct-data-integrity-judgement-filler-1779145200`; keep judgement filler
 behind q651 unless VALIDATOR explicitly reorders.
+
+Iteration: 2026-05-18T23:31+02:00
+Rows moved to accepted: none in A1-A8; accepted q698 as partial queue-level
+DATA-INTEGRITY closure for `REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1`.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: current `origin/main` `70b964e` includes source commit `c26e7c1`
+plus q698 handoff commit `9f585d4`. The source repair fixes q698
+`Jesu födelse` / `Jesus' birth` capitalization and adds validator/static
+guards. Manager verification in `/tmp/sct-manager-current-FBbpcM`
+passed `npm run validate:content`, `npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 32/32, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false` after linking the existing dependency install into
+the temp worktree, `npm run lint`, `npm run test:ownership`, targeted
+Prettier for changed code/test files, `git diff --check c26e7c1^..c26e7c1`,
+and direct static scans. The same scan still finds q663 `called Lucia
+procession` plus q670/q671 awkward Advent-calendar attachment defects, so the
+q651-q700 route is not fully closed.
+Next worker task queued: DATA-INTEGRITY - repair q663/q670/q671 from clean
+current main with generator and validator mirror coverage, regenerated
+canonical/static output, export/static parity, content/type/lint/ownership
+gates, PR/merge evidence, and direct scans proving q663/q670/q671 are natural
+while q698 remains capitalized. Keep whole-bank judgement/filler cleanup behind
+this q651-q700 follow-up unless VALIDATOR explicitly reorders.
