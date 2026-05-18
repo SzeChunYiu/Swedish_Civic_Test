@@ -566,8 +566,16 @@ p.deck {
   font-family: var(--display); font-weight: 700;
   font-size: clamp(22px, 2.8vw, 30px); line-height: 1.2;
   letter-spacing: -.02em;
-  margin: 10px 0 28px;
+  margin: 10px 0 12px;
   text-wrap: balance;
+}
+.quiz__source {
+  margin: 0 0 24px;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .04em;
+  line-height: 1.5;
 }
 .quiz__opts { display: flex; flex-direction: column; gap: 10px; }
 .quiz__opt {
@@ -1113,6 +1121,14 @@ p.deck {
 .mock-review__why {
   margin: 0;
   color: var(--ink-soft);
+}
+.mock-review__source {
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+  line-height: 1.5;
 }
 
 /* ------------------------------------------------------------------ NATIVE AD ROW IN LIST */
