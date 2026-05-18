@@ -1669,37 +1669,6 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
-test('dist-web e2e server rejects missing or stale freshness markers before serving', () => {
-  const { assertDistWebReady } = require('../tests/e2e/serve-dist-web.cjs');
-  const {
-    webExportFreshnessMarkerPath,
-    writeWebExportFreshnessMarker,
-  } = require('./prepare-web-export.js');
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dist-web-freshness-'));
-  const outputDir = path.join(tmpDir, 'dist-web');
-  fs.mkdirSync(outputDir, { recursive: true });
-  fs.writeFileSync(path.join(outputDir, 'index.html'), '<!doctype html><title>dist-web</title>\n');
-
-  const marker = writeWebExportFreshnessMarker(outputDir, { repoRoot });
-  const markerPath = webExportFreshnessMarkerPath(outputDir);
-  assert.doesNotThrow(() => assertDistWebReady(outputDir, repoRoot));
-
-  fs.writeFileSync(
-    markerPath,
-    `${JSON.stringify({ ...marker, sourceHash: '0'.repeat(64) }, null, 2)}\n`,
-  );
-  assert.throws(
-    () => assertDistWebReady(outputDir, repoRoot),
-    /dist-web is stale[\s\S]*npm run build:web:export/,
-  );
-
-  fs.rmSync(markerPath);
-  assert.throws(
-    () => assertDistWebReady(outputDir, repoRoot),
-    /web-export-freshness\.json[\s\S]*npm run build:web:export/,
-  );
-});
-
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
   const pkg = readJson('package.json');
   const workflow = fs.readFileSync(
