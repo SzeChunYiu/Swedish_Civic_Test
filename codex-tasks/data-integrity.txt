@@ -1,3 +1,47 @@
+MANAGER-build acceptance/current-route update - 2026-05-19T00:18+02:00
+
+`REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` follow-up is accepted
+on current `origin/main` via DATA-INTEGRITY PR #798 / `e90f82a`. Manager
+verification in
+`/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-0/sct-manager-q651-accept-mKtRj8`
+passed `npm run validate:content`, `npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 35/35, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false` after linking the shared dependency tree, `npm
+run lint`, `npm run test:ownership`, targeted Prettier, `git diff --check
+e90f82a^..e90f82a`, serialized `npm run test:content --
+--test-concurrency=1` 321/321, and a direct CSV/static scan over
+q663/q670/q671/q698 with zero stale q663/q670/q671/q698 offenders.
+
+Do not reopen q663/q670/q671 or q698 without fresh current-main regression
+evidence.
+
+Next DATA-INTEGRITY source route: keep
+`REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1` open only for the remaining
+generated ordinary single-choice meta-stem/explanation surface. Current
+evidence after the accepted filler-option and judgement-shell subclosure still
+shows 133 ordinary generated single-choice rows beginning with
+`Vilket svar är korrekt?` / `Which answer is correct?` in both
+`content/question-bank.csv` and `site/questions.js`, plus judgement-style
+explanations such as q149/q152 still saying `The statement is true` and
+`True`/`False` inside single-choice review copy. Current VERIFY also added
+q270/q271 generated true/false standalone defects (`One reason is...` without
+naming the reason target); bundle them if the same generator pass can close
+them cleanly, otherwise route q270/q271 as the next smaller true/false follow-up
+before the broad single-choice cleanup. Acceptance requires generator and
+validator mirror updates, regenerated canonical CSV and static output, zero
+ordinary generated single-choice meta-prefix rows, continued zero ordinary
+fallback-option rows and zero true/false judgement-shell rows, aligned
+single-choice explanations, q270/q271 reason-target wording if bundled,
+export/static parity, `validate:content`, `test:derived-content`, focused
+content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge
+evidence, and direct current-main scans for q270/q271 plus early single-choice
+rows such as q148/q149/q152/q156 and late rows q672/q676/q680/q684/q688/q692/
+q696/q700/q704/q708/q712/q720. Keep SITE-P0-5 external; do not run Vercel CLI
+from this repo.
+
 MANAGER-build acceptance/current-route update - 2026-05-18T23:02+02:00
 
 `VERIFY-GENERATED-TF-Q501-Q550-CURRENT-1` is accepted on current

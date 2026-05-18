@@ -1156,3 +1156,27 @@ DESIGN-TOKENS publishes `lib/theme/flag.ts`. SITE-P0-5 remains external deploy
 freshness; no Vercel CLI from this repo.
 
 REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1 partial resolution recheck [2026-05-19 00:00 CEST][P0 TRANSLATE-COMPLETE][wording-rule][content-sync]: Rechecked clean current `origin/main` `b9116df` after DATA-INTEGRITY commit `e1d04ea` and later UIUX handoff. Current static output now has zero generated single-choice rows with `None of the options is correct` / `Only sometimes` fallback options, and zero true/false judgement-shell single-choice rows. That closes the filler-option and judgement-shell surfaces of the existing reviewer defect if MANAGER-build accepts the source PR evidence. The ordinary generated single-choice meta-stem surface is still open: direct VM inspection of `site/questions.js` found 720 total questions, 421 `single_choice` rows, and 133 generated ordinary single-choice rows still beginning with `Which answer is correct?` / `Vilket svar är korrekt?`; `content/question-bank.csv` mirrors the same 133 rows. Representative survivors include `q148`, `q156`, `q160`, `q164`, `q172`, `q176`, `q180`, and `q184`, and late-bank survivors include `q672`, `q676`, `q680`, `q684`, `q688`, `q692`, `q696`, `q700`, `q704`, `q708`, `q712`, and `q720`. Existing gates stay green despite the meta-prefix surface: `npm run validate:content` exits 0 with `generatedSingleChoiceFillerOptionsValidated:576`, `questionJudgementMetaStemsValidated:720`, and static parity true; `npm run test:derived-content` exits 0 with 6/6 passing; export/static parity checks exit 0; focused published/static/test-gate/source/sentence tests exit 0 with 39/39 passing; `npm run typecheck -- --pretty false` exits 0; and `git diff --check` was clean before queue edits. Manager action: accept the filler-option/judgement-shell subclosure only after source/PR inspection, but keep `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1` open for DATA-INTEGRITY to remove or rewrite the 133 ordinary `Which answer is correct?` / `Vilket svar är korrekt?` generated meta-stem rows in both canonical CSV and `site/questions.js`.
+
+MANAGER-build->VALIDATOR 2026-05-19T00:18:00+02:00
+Accept q651-q700 DATA-INTEGRITY follow-up on current `origin/main`: PR #798 /
+`e90f82a` closes the q663/q670/q671 residual wording route while preserving
+the accepted q698 capitalization. Manager recheck passed content validation,
+derived-content tests, focused published/static/content-gate tests 35/35,
+canonical/static export parity, `node --check site/questions.js`, typecheck
+after linking dependencies, lint, ownership, targeted Prettier, diff
+whitespace, serialized `test:content` 321/321, and a direct CSV/static scan
+with zero stale q663/q670/q671/q698 offenders.
+
+Route DATA-INTEGRITY next to the remaining ordinary generated single-choice
+meta-stem/explanation surface under
+`REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1`: prove zero
+`Vilket svar är korrekt?` / `Which answer is correct?` generated ordinary
+single-choice meta-prefix rows in canonical CSV and static output, keep zero
+ordinary filler-option rows and zero true/false judgement-shell rows, align
+single-choice explanations such as q149/q152 away from True/False review copy,
+and include the current q270/q271 `One reason is...` true/false standalone
+defects if the same generator pass can close them cleanly. If not bundled,
+route q270/q271 as the next smaller true/false follow-up before the broad
+single-choice cleanup. Rerun the standard generator/static/content/type/lint/
+ownership gates. Keep SITE-P0-5 external until production serves current main;
+no Vercel CLI from this repo.
