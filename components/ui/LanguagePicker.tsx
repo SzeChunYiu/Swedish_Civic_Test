@@ -59,20 +59,17 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const copy = languagePickerCopy[language];
 
   const handleSelect = (option: LocaleOption) => {
-    if (!option.available) return;
-
-    setLanguage(option.fallback);
+    if (option.available) {
+      setLanguage(option.fallback);
+    }
     setOpen(false);
   };
 
   return (
     <>
       <Pressable
-        aria-expanded={open}
-        aria-haspopup="menu"
         accessibilityRole="button"
         accessibilityLabel={copy.triggerLabel(currentLabel)}
-        accessibilityState={{ expanded: open }}
         hitSlop={space[1]}
         onPress={() => setOpen(true)}
         style={({ pressed }) => [styles.trigger, pressed ? styles.triggerPressed : null]}
@@ -83,9 +80,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
 
       <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
         <Pressable
-          accessible={false}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
+          accessibilityLabel={copy.closeLabel}
+          accessibilityRole="button"
+          hitSlop={space[1]}
           onPress={() => setOpen(false)}
           style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
         >
@@ -96,27 +93,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
             onPress={(e) => e.stopPropagation()}
             style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
           >
-            <View style={styles.headerRow}>
-              <Text style={styles.title}>{copy.title}</Text>
-              <Pressable
-                accessibilityLabel={copy.closeLabel}
-                accessibilityRole="button"
-                hitSlop={space[1]}
-                onPress={() => setOpen(false)}
-                style={({ pressed }) => [
-                  styles.closeButton,
-                  pressed ? styles.closeButtonPressed : null,
-                ]}
-              >
-                <Text
-                  accessibilityElementsHidden
-                  importantForAccessibility="no"
-                  style={styles.closeButtonText}
-                >
-                  ×
-                </Text>
-              </Pressable>
-            </View>
+            <Text style={styles.title}>{copy.title}</Text>
             <Text style={styles.subtitle}>{copy.subtitle}</Text>
             <ScrollView style={styles.list}>
               {locales.map((opt) => {
@@ -127,7 +104,6 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                     accessibilityRole="button"
                     accessibilityLabel={`${opt.label}${opt.available ? '' : copy.unavailableSuffix}`}
                     accessibilityState={{ selected, disabled: !opt.available }}
-                    disabled={!opt.available}
                     hitSlop={space[1]}
                     onPress={() => handleSelect(opt)}
                     style={({ pressed }) => [
@@ -173,9 +149,6 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
     gap: space[0.5],
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
     paddingHorizontal: space[1.25],
     paddingVertical: space[0.5],
   },
@@ -214,36 +187,11 @@ const styles = StyleSheet.create({
   cardPressed: {
     transform: [{ scale: motion.pressedScale }],
   },
-  headerRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[1.5],
-    justifyContent: 'space-between',
-  },
   title: {
     color: colors.text,
-    flex: 1,
     fontFamily: typography.subHeading.fontFamily,
     fontSize: typography.subHeading.fontSize,
     fontWeight: typography.subHeading.fontWeight,
-  },
-  closeButton: {
-    alignItems: 'center',
-    borderRadius: radius.pill,
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-  },
-  closeButtonPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  closeButtonText: {
-    color: colors.textMuted,
-    fontFamily: typography.bodyBold.fontFamily,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyBold.lineHeight,
   },
   subtitle: {
     color: colors.textMuted,

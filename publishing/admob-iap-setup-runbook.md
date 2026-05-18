@@ -5,10 +5,9 @@ generate real ad unit IDs, or create store products. Do these, paste the IDs
 into the marked config, and the factory builds/tests the rest.
 
 App identity (from publishing/release-readiness.md):
-
-- iOS bundle id: `com.billyyiu.almostswedish`
-- Android package: `com.billyyiu.almostswedish`
-- App name: Almost Swedish
+- iOS bundle id: `com.billyyiu.swedishcivictest`
+- Android package: `com.billyyiu.swedishcivictest`
+- App name: Sweden Citizenship Test Prep
 
 ## Part A — Google AdMob (real ads)
 
@@ -16,14 +15,14 @@ App identity (from publishing/release-readiness.md):
    (do this twice: one iOS app, one Android app, both not-yet-on-store = "No").
 2. Note each **AdMob App ID** (`ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY`).
 3. For EACH platform create these **ad units** (Ad units → Add ad unit):
-   | Placement (code key) | Format |
+   | Placement (code key)            | Format        |
    |---------------------------------|---------------|
-   | `home_banner` | Banner |
-   | `chapter_list_banner` | Banner |
-   | `quiz_completed_interstitial` | Interstitial |
-   | `results_native` | Native |
-   | `app_open_launch` | App open |
-   | `rewarded_extra_exam` | Rewarded |
+   | `home_banner`                   | Banner        |
+   | `chapter_list_banner`           | Banner        |
+   | `quiz_completed_interstitial`   | Interstitial  |
+   | `results_native`                | Native        |
+   | `app_open_launch`               | App open      |
+   | `rewarded_extra_exam`           | Rewarded      |
    Record each unit id (`ca-app-pub-XXXX/ZZZZZZZZZZ`), 6 × 2 = 12 total.
 4. AdMob → app-ads.txt: copy the publisher line AdMob gives you. The factory
    will host it at `publishing/public-site/app-ads.txt` (served from the public
@@ -40,7 +39,6 @@ App identity (from publishing/release-readiness.md):
 Product model: **non-consumable**, one-time unlock, sets `adsDisabled=true`.
 
 ### Apple — App Store Connect
-
 1. App Store Connect → your app → **In-App Purchases** → Create →
    **Non-Consumable**.
 2. Reference Name: `Remove Ads`; Product ID: `com.billyyiu.swedishcivictest.removeads`.
@@ -50,7 +48,6 @@ Product model: **non-consumable**, one-time unlock, sets `adsDisabled=true`.
 5. Create a **Sandbox tester** (Users & Access → Sandbox) for QA.
 
 ### Google — Play Console
-
 1. Play Console → your app → Monetize → Products → **In-app products** → Create.
 2. Product ID: `removeads` (must match the iOS suffix logic the factory wires).
 3. Price: **29 SEK**. Activate the product.
