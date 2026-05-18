@@ -1,12 +1,11 @@
 'use strict';
-// GATE: question stems must NOT carry the connective UHR-source phrase.
+// GATE: question stems must NOT carry UHR source-authority phrasing.
 // The UHR material stays cited ONLY in the Källa/Source line below the
 // question (uhrChapter/uhrSection/uhrPage columns), never woven into the
 // stem text. Scans the exported bank (covers base + derived variants).
 // Owner: SOURCE-CITATION P0 (codex-tasks/open.txt). Do not weaken; if a
-// stem legitimately needs the word "UHR" as a sentence subject, phrase it
-// without the "Enligt UHR-materialet" / "According to the UHR material" /
-// "stämmer bäst enligt UHR-avsnittet" connective.
+// stem legitimately needs source context, keep that context in the source line
+// rather than "UHR-materialet", "UHR-avsnittet", or "UHR material" wording.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -16,10 +15,13 @@ const path = require('node:path');
 const CSV = path.resolve(__dirname, '..', 'content', 'question-bank.csv');
 
 const BANNED = [
-  /enligt\s+(?:det\s+)?UHR[\s-]?(?:materialet|avsnittet)/i,
-  /according to\s+(?:the\s+)?UHR\s+(?:material|section)/i,
+  /enligt\s+UHR\b/i,
+  /UHR[\s-]?(?:materialet|avsnittet)/i,
+  /UHR:s\s+material/i,
+  /according to\s+(?:the\s+)?UHR\b/i,
+  /(?:the\s+)?UHR\s+(?:material|section)/i,
   /st(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR/i,
-  /best matches the UHR section/i,
+  /best matches (?:the\s+)?UHR section/i,
 ];
 
 function parseCsv(text) {
@@ -78,25 +80,25 @@ function collectStemAuthorityConnectiveOffenders(text) {
   return offenders;
 }
 
-test('question stems carry no connective UHR-source phrase', () => {
+test('question stems carry no UHR source-authority phrase', () => {
   const text = fs.readFileSync(CSV, 'utf8');
   const offenders = collectStemAuthorityConnectiveOffenders(text);
 
   assert.equal(
     offenders.length,
     0,
-    `Found ${offenders.length} stem(s) with the UHR-source connective phrase ` +
+    `Found ${offenders.length} stem(s) with UHR source-authority phrasing ` +
       `(must live only in the Källa/Source line):\n` +
       offenders.slice(0, 20).join('\n'),
   );
 });
 
-test('source-citation stem gate rejects connective phrase drift in exported CSV', () => {
+test('source-citation stem gate rejects source-authority phrase drift in exported CSV', () => {
   const dirtyExport = fs
     .readFileSync(CSV, 'utf8')
     .replace(
       '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
-      '"q001","ch01","single_choice","Enligt UHR-materialet, var ligger Sverige?","According to the UHR material, where is Sweden located?",',
+      '"q001","ch01","single_choice","Vilken plats beskriver UHR-materialet?","Which place does the UHR material describe?",',
     );
 
   const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);

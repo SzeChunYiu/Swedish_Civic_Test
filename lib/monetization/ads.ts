@@ -8,6 +8,8 @@ type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
+  '/practice',
+  '/quiz',
   '/disclaimer',
   '/privacy',
   '/sources',

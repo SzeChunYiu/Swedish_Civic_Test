@@ -77,3 +77,33 @@ test('UHR reference parity rejects pages outside the referenced chapter range', 
     /q072 UHR page 99 is outside "Välfärdssamhället" page range 30-31/,
   );
 });
+
+test('UHR reference parity rejects non-integer page references', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30.5 }")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q072 UHR page 30\.5 is outside "Välfärdssamhället" page range 30-31/,
+  );
+});
+
+test('UHR reference parity rejects missing page references', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården' }")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /q072 has incomplete UHR reference/);
+});
+
+test('UHR reference parity rejects blank section references', () => {
+  const result = runValidationWithAdditionalQuestionsPatch(
+    `replace("{ chapter: 'Välfärdssamhället', section: 'Regionerna ansvarar för sjukvården', pageApprox: 30 }", "{ chapter: 'Välfärdssamhället', section: '', pageApprox: 30 }")`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /q072 has incomplete UHR reference/);
+});

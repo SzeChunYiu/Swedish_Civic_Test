@@ -24,6 +24,14 @@ test('exam route title and section headings stay exposed as accessibility header
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
   assert.match(source, /accessibilityRole="header" style=\{styles\.title\}/);
   assert.match(source, /accessibilityRole="header" style=\{styles\.sectionTitle\}/);
+  assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
+  assert.match(source, /\{copy\.mockExamTitle\}/);
+  assert.match(source, /\{copy\.examResultTitle\}/);
+  assert.match(source, /\{copy\.accessTitle\}/);
+  assert.match(source, /\{copy\.nextExamTitle\}/);
+  assert.match(source, /\{copy\.chapterBreakdownTitle\}/);
+  assert.match(source, /\{copy\.questionReviewTitle\}/);
+  assert.match(source, /\{copy\.progressTitle\}/);
 });
 
 test('exam route header parity rejects dropped section header roles', () => {
@@ -40,8 +48,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '<Text accessibilityRole="header" style={styles.sectionTitle}>\\n          Question review\\n        </Text>',
-        '<Text style={styles.sectionTitle}>Question review</Text>'
+        '<Text accessibilityRole="header" style={styles.sectionTitle}>\\n          {copy.questionReviewTitle}\\n        </Text>',
+        '<Text style={styles.sectionTitle}>{copy.questionReviewTitle}</Text>'
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

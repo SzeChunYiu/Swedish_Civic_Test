@@ -22,7 +22,7 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     'utf8',
   );
 
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 19);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 23);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/);
   assert.match(source, /language = 'sv'/);
@@ -31,14 +31,25 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
   assert.match(source, /Content queued/);
   assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} besvarade/);
   assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} practiced/);
+  assert.match(source, /language === 'en'\s*\?\s*chapter\.nameEn\s*:\s*chapter\.nameSv/);
+  assert.match(
+    source,
+    /const secondaryName = chapter \? \(language === 'en' \? chapter\.nameSv : chapter\.nameEn\) : null;/,
+  );
+  assert.match(
+    source,
+    /language === 'en'\s*\?\s*chapter\.descriptionEn\s*:\s*chapter\.descriptionSv/,
+  );
   assert.match(source, /const chapterAccessibilityLabel =/);
   assert.match(source, /copy\.accessibilityLabel\.chapter\(title\)/);
-  assert.match(source, /copy\.accessibilityLabel\.englishName\(chapter\.nameEn\)/);
+  assert.match(source, /copy\.accessibilityLabel\.secondaryName\(secondaryName\)/);
   assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
-  assert.match(source, /copy\.accessibilityLabel\.description\(chapter\.descriptionSv\)/);
+  assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
   assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
   assert.match(source, /<Text style=\{styles\.title\}>\{title\}<\/Text>/);
-  assert.match(source, /<ProgressBar progress=\{progress\} \/>/);
+  assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
+  assert.match(source, /<ProgressBar language=\{language\} progress=\{progress\} \/>/);
 });
 
 test('ChapterCard accessibility parity rejects settings-language bypass', () => {

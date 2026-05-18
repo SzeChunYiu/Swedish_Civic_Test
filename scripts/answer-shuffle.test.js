@@ -8,6 +8,10 @@ const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
 const displayOptionIds = ['a', 'b', 'c', 'd'];
 
+function read(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
   const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
@@ -52,6 +56,10 @@ function singleChoiceQuestions() {
 
 function optionTexts(question) {
   return question.options.map((option) => `${option.textSv} / ${option.textEn}`);
+}
+
+function sortedOptionLabels(question) {
+  return optionTexts(question).sort();
 }
 
 test('seeded answer shuffle spreads correct display positions across the published bank', () => {
@@ -121,6 +129,61 @@ test('seeded answer shuffle audit stays balanced across routed session seeds', (
   }
 });
 
+test('seeded answer shuffle moves every single-choice correct answer across sessions', () => {
+  const { shuffleQuestionOptionsForSession } = loadTs('lib/quiz/answerOptionShuffle.ts');
+  const questions = singleChoiceQuestions();
+  const sessionSeeds = Array.from({ length: 8 }, (_unused, index) => `movement-session-${index}`);
+
+  assert.ok(questions.length > 100, 'published bank should contain enough single-choice questions');
+
+  const fixedQuestions = questions
+    .map((question) => ({
+      id: question.id,
+      positions: new Set(
+        sessionSeeds.map(
+          (sessionId) => shuffleQuestionOptionsForSession(question, sessionId).correctOptionId,
+        ),
+      ),
+    }))
+    .filter((result) => result.positions.size < 2)
+    .map((result) => result.id);
+
+  assert.deepEqual(
+    fixedQuestions,
+    [],
+    `every single-choice question should move the correct answer across seeded sessions; fixed questions: ${fixedQuestions.join(
+      ', ',
+    )}`,
+  );
+});
+
+test('seeded answer shuffle preserves every answer label exactly once', () => {
+  const { shuffleQuestionOptionsForSession } = loadTs('lib/quiz/answerOptionShuffle.ts');
+  const questions = singleChoiceQuestions();
+  const sessionSeeds = ['label-preservation-a', 'label-preservation-b'];
+
+  assert.ok(questions.length > 100, 'published bank should contain enough single-choice questions');
+
+  for (const question of questions) {
+    const originalLabels = sortedOptionLabels(question);
+
+    for (const sessionId of sessionSeeds) {
+      const shuffledQuestion = shuffleQuestionOptionsForSession(question, sessionId);
+
+      assert.deepEqual(
+        shuffledQuestion.options.map((option) => option.id),
+        displayOptionIds,
+        `${question.id} should expose canonical display option ids after shuffling`,
+      );
+      assert.deepEqual(
+        sortedOptionLabels(shuffledQuestion),
+        originalLabels,
+        `${question.id} should preserve all answer labels for ${sessionId}`,
+      );
+    }
+  }
+});
+
 test('seeded answer shuffle is stable per question and session without mutating source options', () => {
   const { shuffleQuestionOptionsForSession } = loadTs('lib/quiz/answerOptionShuffle.ts');
   const [question] = singleChoiceQuestions();
@@ -154,5 +217,37 @@ test('seeded answer shuffle leaves true false option order fixed', () => {
   assert.equal(
     shuffleQuestionOptionsForSession(trueFalseQuestion, 'any-session').correctOptionId,
     trueFalseQuestion.correctOptionId,
+  );
+});
+
+test('question delivery surfaces keep answer options behind the session shuffle', () => {
+  const practiceRoute = read('app/(tabs)/practice.tsx');
+  const routedQuiz = read('app/quiz/[sessionId].tsx');
+  const examGenerator = read('lib/quiz/examGenerator.ts');
+
+  assert.match(
+    practiceRoute,
+    /const shuffleSessionId = usePracticeSessionStore\(\(state\) => state\.shuffleSessionId\);/,
+    'Practice should read the current practice shuffle seed from session state',
+  );
+  assert.match(
+    practiceRoute,
+    /shuffleQuestionOptionsForSession\(\s*rawQuestion,\s*shuffleSessionId\s*\)/,
+    'Practice should shuffle the selected question with the active practice session seed',
+  );
+  assert.doesNotMatch(
+    practiceRoute,
+    /['"]practice-session['"]/,
+    'Practice route must not use a static shuffle seed',
+  );
+  assert.match(
+    routedQuiz,
+    /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*normalizedSessionId\s*\)/,
+    'Routed quiz sessions should key option order to the route session id',
+  );
+  assert.match(
+    examGenerator,
+    /selected\.map\(\(question\)\s*=>\s*shuffleQuestionOptionsForSession\(question,\s*sessionId\)\)/,
+    'Mock exams should shuffle generated questions with the exam session id',
   );
 });

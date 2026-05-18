@@ -17,18 +17,22 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   }
 
   await expect(
-    page.getByLabel(/Google AdMob: home banner\..*Hidden after Remove Ads is active\./),
+    page.getByLabel(
+      /Google AdMob: (home banner|Annons på startsidan)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
+    ),
   ).toBeVisible();
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
   await expect(
-    page.getByLabel(/Google AdMob: chapter list banner\..*Hidden after Remove Ads is active\./),
+    page.getByLabel(
+      /Google AdMob: (chapter list banner|Annons i kapitellistan)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
+    ),
   ).toBeVisible();
 
   await page.goto('/mistakes', { waitUntil: 'networkidle' });
   await expect(
     page.getByLabel(
-      /Test native ad: Sponsored study placement\..*Hidden after Remove Ads is active\./,
+      /(Test native ad: Sponsored study placement|Inbyggd testannons: Sponsrad studieplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
     ),
   ).toBeVisible();
 

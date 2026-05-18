@@ -6,6 +6,29 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function runValidationWithSettingsRoutePatch(search, replacement) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return String(contents).replace(${JSON.stringify(search)}, ${JSON.stringify(replacement)});
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 test('audio setting stays in parity between storage and settings switch', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -39,6 +62,16 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsRoute, /Slå på ljud/);
   assert.match(settingsRoute, /Audio enabled/);
   assert.match(settingsRoute, /Audio disabled/);
+});
+
+test('audio setting parity rejects missing route labels', () => {
+  const result = runValidationWithSettingsRoutePatch('Audio disabled', 'Audio enabled');
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/settings\.tsx is missing audio label "Audio disabled"/,
+  );
 });
 
 test('settings store schema stays in parity with persisted settings state', () => {

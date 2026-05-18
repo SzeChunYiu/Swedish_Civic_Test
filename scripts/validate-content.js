@@ -81,6 +81,15 @@ const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bkvalitets(?:granskad|granskade|granskat)\s+av\s+(?:uhr|myndighet|regeringen)\b/i,
   /\bgaranter(?:ar|ad|at)?\s+(?:godk[aä]nt|att\s+klara)\b/i,
 ];
+const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
+  /\benligt\s+UHR\b/i,
+  /\bUHR[\s-]?(?:materialet|avsnittet)\b/i,
+  /\bUHR:s\s+material\b/i,
+  /\baccording to\s+(?:the\s+)?UHR\b/i,
+  /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
+  /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
+  /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
+];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -172,16 +181,17 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.tryAgain}', 'try-again action must render localized copy'],
 ];
+const QUESTION_DISCLAIMER_USAGE_PATTERN = /<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/;
 const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
   sv: [
     'innehåll planerat',
     '${completedCount} av ${questionCount} frågor besvarade',
-    'Öppna kapitel ${nameSv}. Engelskt namn: ${nameEn}. Framsteg: ${progressLabel}.',
+    'Öppna kapitel ${primaryName}. Engelskt namn: ${secondaryName}. Framsteg: ${progressLabel}.',
   ],
   en: [
     'content queued',
     '${completedCount} of ${questionCount} questions practiced',
-    'Open chapter ${nameSv}. English name: ${nameEn}. Progress: ${progressLabel}.',
+    'Open chapter ${primaryName}. Swedish name: ${secondaryName}. Progress: ${progressLabel}.',
   ],
 };
 const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
@@ -204,7 +214,15 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
     'learn route must choose localized progress or queued copy',
   ],
   [
-    'return copy.accessibilityLabel({ nameSv, nameEn, progressLabel });',
+    "const primaryName = language === 'en' ? nameEn : nameSv;",
+    'learn route must choose the selected-language chapter name first',
+  ],
+  [
+    "const secondaryName = language === 'en' ? nameSv : nameEn;",
+    'learn route must keep the opposite-language chapter name as secondary context',
+  ],
+  [
+    'return copy.accessibilityLabel({ primaryName, secondaryName, progressLabel });',
     'learn route must build chapter link accessibility labels from localized copy',
   ],
   [
@@ -427,12 +445,14 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Sparat',
     'Sparad för fokuserad repetition',
     'Bokmärkta frågor',
+    'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
     'Svara fel på en övningsfråga så visas den här.',
     'Inga misstag ännu',
     'Fellogg',
     'Fel svar att repetera',
+    'Ditt senaste felaktiga svar',
     'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
     'Misstag',
     'Fel svar: ${count}',
@@ -442,12 +462,14 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Saved list',
     'Saved for focused review',
     'Bookmarked questions',
+    'Correct answer',
     'Practice weak questions',
     'Start practice',
     'Answer a practice question incorrectly and it will appear here.',
     'No mistakes yet',
     'Mistake log',
     'Wrong answers to revisit',
+    'Your latest wrong answer',
     'Review wrong answers with the question, explanation, source reference, and repetition count in one place.',
     'Mistakes',
     'Wrong answers: ${count}',
@@ -485,6 +507,13 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   [
     '{copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}',
     'wrong-count metadata must render localized copy',
+  ],
+  ['useMistakeReviewStore', 'mistakes route must read stored wrong-answer review text'],
+  ['{copy.selectedWrongAnswerLabel}', 'selected wrong-answer label must render localized copy'],
+  ['{copy.correctAnswerLabel}', 'correct-answer label must render localized copy'],
+  [
+    'accessibilityLabel={copy.answerReviewAccessibilityLabel(',
+    'answer review must expose localized accessibility summary',
   ],
   ['{copy.emptyTitle}', 'empty title must render localized copy'],
   [
@@ -526,6 +555,8 @@ const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
   '/exam',
+  '/practice',
+  '/quiz',
   '/disclaimer',
   '/privacy',
   '/sources',
@@ -534,12 +565,70 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
 ];
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/exam': 'app/(tabs)/exam.tsx',
+  '/practice': 'app/(tabs)/practice.tsx',
+  '/quiz': 'app/quiz/[sessionId].tsx',
   '/disclaimer': 'app/disclaimer.tsx',
   '/privacy': 'app/privacy.tsx',
   '/sources': 'app/sources.tsx',
   '/support': 'app/support.tsx',
   '/terms': 'app/terms.tsx',
 };
+const EXPECTED_TAB_NAVIGATION_ROUTES = [
+  { routeName: 'home', sv: 'Hem', en: 'Home' },
+  { routeName: 'learn', sv: 'Lär dig', en: 'Learn' },
+  { routeName: 'practice', sv: 'Öva', en: 'Practice' },
+  { routeName: 'exam', sv: 'Prov', en: 'Exam' },
+  { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes' },
+  { routeName: 'profile', sv: 'Profil', en: 'Profile' },
+];
+const EXPECTED_TAB_NAVIGATION_RULES = [
+  {
+    label: 'settings language import',
+    pattern:
+      /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
+  },
+  {
+    label: 'tab route-name union',
+    pattern:
+      /type TabRouteName = 'home' \| 'learn' \| 'practice' \| 'exam' \| 'mistakes' \| 'profile';/,
+  },
+  {
+    label: 'tab title copy contract',
+    pattern: /type TabTitleCopy = Record<TabRouteName, string>;/,
+  },
+  {
+    label: 'localized tab copy map',
+    pattern: /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/,
+  },
+  {
+    label: 'hidden icon helper',
+    pattern: /const hiddenTabIcon = \(\) => null;/,
+  },
+  {
+    label: 'tab options helper',
+    pattern: /function getTabOptions\(title: string\)/,
+  },
+  {
+    label: 'plain tab title',
+    pattern: /title,/,
+  },
+  {
+    label: 'plain tab accessible name',
+    pattern: /tabBarAccessibilityLabel: title/,
+  },
+  {
+    label: 'placeholder glyph suppression',
+    pattern: /tabBarIcon: hiddenTabIcon/,
+  },
+  {
+    label: 'settings language read',
+    pattern: /useSettingsStore\(\(state\) => state\.language\)/,
+  },
+  {
+    label: 'selected tab copy',
+    pattern: /const copy = tabTitleCopy\[language\];/,
+  },
+];
 const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
   'adSupportedByDefault',
   'adMobAppRecordRequired',
@@ -593,13 +682,155 @@ const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
-  { text: 'Mock exam', styleName: 'title', occurrences: 2 },
-  { text: 'Exam result', styleName: 'title', occurrences: 1 },
-  { text: 'Exam access', styleName: 'sectionTitle', occurrences: 1 },
-  { text: 'Next exam', styleName: 'sectionTitle', occurrences: 1 },
-  { text: 'Chapter breakdown', styleName: 'sectionTitle', occurrences: 1 },
-  { text: 'Question review', styleName: 'sectionTitle', occurrences: 1 },
-  { text: 'Progress', styleName: 'sectionTitle', occurrences: 1 },
+  {
+    label: 'mock exam title',
+    pattern: /\{copy\.mockExamTitle\}/,
+    styleName: 'title',
+    occurrences: 2,
+  },
+  {
+    label: 'exam result title',
+    pattern: /\{copy\.examResultTitle\}/,
+    styleName: 'title',
+    occurrences: 1,
+  },
+  {
+    label: 'exam access title',
+    pattern: /\{copy\.accessTitle\}/,
+    styleName: 'sectionTitle',
+    occurrences: 1,
+  },
+  {
+    label: 'next exam title',
+    pattern: /\{copy\.nextExamTitle\}/,
+    styleName: 'sectionTitle',
+    occurrences: 1,
+  },
+  {
+    label: 'chapter breakdown title',
+    pattern: /\{copy\.chapterBreakdownTitle\}/,
+    styleName: 'sectionTitle',
+    occurrences: 1,
+  },
+  {
+    label: 'question review title',
+    pattern: /\{copy\.questionReviewTitle\}/,
+    styleName: 'sectionTitle',
+    occurrences: 1,
+  },
+  {
+    label: 'progress title',
+    pattern: /\{copy\.progressTitle\}/,
+    styleName: 'sectionTitle',
+    occurrences: 1,
+  },
+];
+const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
+  sv: [
+    'Övningsprov',
+    'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet',
+    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
+    'Provåtkomst',
+    'Kontrollerar provåtkomst.',
+    'Dagens kostnadsfria övningsprov är tillgängligt.',
+    'Starta övningsprov',
+    'Lås upp extra prov',
+    'Starta upplåst extra prov',
+    'Framsteg',
+    '${answeredCount}/${questionCount} besvarade',
+    'Välj svaret ${optionText} för fråga ${questionNumber}',
+    'Skicka övningsprov',
+    'Skicka prov',
+    'Provresultat',
+    'Övningsresultat',
+    'Kapitelöversikt',
+    'Frågegenomgång',
+    'Fråga ${questionNumber}',
+    'Valt svar',
+    'Rätt svar',
+    'Granska',
+    'Rätt',
+    'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
+    'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    'Nästa prov',
+    'Sparat',
+    'Sparar',
+  ],
+  en: [
+    'Mock exam',
+    'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam',
+    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
+    'Exam access',
+    'Checking mock exam access.',
+    'Daily free mock exam available.',
+    'Start mock exam',
+    'Unlock extra exam',
+    'Start unlocked extra exam',
+    'Progress',
+    '${answeredCount}/${questionCount} answered',
+    'Select answer ${optionText} for question ${questionNumber}',
+    'Submit mock exam',
+    'Submit exam',
+    'Exam result',
+    'Mock exam result',
+    'Chapter breakdown',
+    'Question review',
+    'Question ${questionNumber}',
+    'Selected answer',
+    'Correct answer',
+    'Review',
+    'Correct',
+    'Submitted results are final. Start another mock exam for a fresh attempt.',
+    'Explanations and review are shown only after the exam is submitted.',
+    'Next exam',
+    'Saved',
+    'Saving',
+  ],
+};
+const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'exam route must import AppLanguage from settings'],
+  ['type ExamRouteCopy = {', 'exam route must define a typed copy contract'],
+  [
+    'const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {',
+    'exam route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'exam route must read language from settings store',
+  ],
+  ['const copy = examRouteCopy[language];', 'exam route must select copy from settings language'],
+  ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
+  [
+    '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
+    'exam route hero subtitle must render localized copy',
+  ],
+  [
+    '{copy.activeHeroSubtitle(formatExamTime(remainingSeconds), examQuestions.length)}',
+    'active exam hero subtitle must render localized copy',
+  ],
+  [
+    '{copy.answeredCount(answeredCount, examQuestions.length)}',
+    'exam progress count must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}',
+    'exam answers must expose localized accessibility labels',
+  ],
+  [
+    'accessibilityLabel={copy.submitAccessibilityLabel}',
+    'exam submit control must expose localized accessibility labels',
+  ],
+  ['{copy.submitLabel}', 'exam submit control must render localized copy'],
+  [
+    "language === 'en' ? chapter.chapterNameEn : chapter.chapterNameSv",
+    'exam chapter breakdown must use selected-language chapter names',
+  ],
+  ['{copy.questionReviewTitle}', 'exam review title must render localized copy'],
+  ['{copy.selectedAnswerLabel}', 'exam selected-answer label must render localized copy'],
+  ['{copy.correctAnswerLabel}', 'exam correct-answer label must render localized copy'],
+  ['ExplanationPanel', 'exam review must render the localized explanation panel'],
+  ['language={language}', 'exam review components must receive settings language'],
+  ['<UHRReferenceCard language={language}', 'exam UHR references must receive settings language'],
 ];
 const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
@@ -612,6 +843,71 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.sessionTitle\(normalizedSessionId\)\}\s*<\/Text>/,
   },
+];
+const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
+  sv: [
+    'Tillbaka till övning',
+    'Quizpass',
+    'Det finns inga quizfrågor ännu.',
+    'Poäng',
+    'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
+    'Quizpass ${currentSessionId}',
+    'Försök igen',
+    'Försök igen med den här quizfrågan',
+  ],
+  en: [
+    'Back to Practice',
+    'Quiz session',
+    'No quiz questions are available yet.',
+    'Score',
+    'Answer the routed question, then review the source-backed feedback.',
+    'Session ${currentSessionId}',
+    'Try again',
+    'Try this quiz question again',
+  ],
+};
+const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'quiz route must import AppLanguage from settings'],
+  ['type QuizSessionCopy = {', 'quiz route must define a typed copy contract'],
+  [
+    'const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {',
+    'quiz route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'quiz route must read language from settings store',
+  ],
+  ['const copy = quizSessionCopy[language];', 'quiz route must select copy from settings language'],
+  [
+    '<QuestionDisclaimer language={language} />',
+    'routed quiz disclaimer must receive settings language',
+  ],
+  [
+    '<QuestionCard question={question} language={language} />',
+    'quiz question card must receive settings language',
+  ],
+  [
+    '<AudioButton\n        enabled={audioEnabled}\n        language={language}',
+    'quiz audio button must receive settings language',
+  ],
+  ['<AnswerOption', 'quiz route must render shared answer options'],
+  ['language={language}', 'quiz answer components must receive settings language'],
+  [
+    '{copy.scoreLabel}: {score.correct}/{score.total}',
+    'quiz score label must render localized copy',
+  ],
+  ['<ExplanationPanel', 'quiz route must render the localized explanation panel'],
+  ['<UHRReferenceCard language={language}', 'quiz UHR references must receive settings language'],
+  [
+    'accessibilityLabel={copy.tryAgainAccessibilityLabel}',
+    'quiz try-again action must expose localized accessibility copy',
+  ],
+  ['{copy.tryAgain}', 'quiz try-again action must render localized copy'],
+  [
+    'accessibilityLabel={copy.backToPracticeAccessibilityLabel}',
+    'quiz back-to-practice link must expose localized accessibility copy',
+  ],
+  ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
 ];
 const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
@@ -1296,6 +1592,20 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
 ];
 const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
+    label: 'settings language type import',
+    pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
+  },
+  {
+    label: 'typed localized copy contract',
+    pattern:
+      /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
+  },
+  {
+    label: 'localized progress copy',
+    pattern:
+      /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
+  },
+  {
     label: 'clamped progress source',
     pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
   },
@@ -1304,8 +1614,12 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
     pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
   },
   {
-    label: 'readable progress label',
-    pattern: /const progressAccessibilityLabel = `\$\{progressPercent\} percent complete`;/,
+    label: 'language copy selection',
+    pattern: /const copy = progressBarCopy\[language\];/,
+  },
+  {
+    label: 'readable localized progress label',
+    pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   },
   {
     label: 'web aria label',
@@ -1324,6 +1638,10 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
     pattern: /aria-valuenow=\{progressPercent\}/,
   },
   {
+    label: 'web aria localized value text',
+    pattern: /aria-valuetext=\{progressAccessibilityLabel\}/,
+  },
+  {
     label: 'native accessibility label',
     pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
   },
@@ -1333,7 +1651,8 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   },
   {
     label: 'native clamped accessibility value',
-    pattern: /accessibilityValue=\{\{ min: 0, max: 100, now: progressPercent \}\}/,
+    pattern:
+      /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
   },
   {
     label: 'animated fill uses clamped source',
@@ -1465,20 +1784,29 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
       /const status =[\s\S]*questionCount > 0 \? copy\.practicedStatus\(completedCount, questionCount\) : copy\.contentQueued;/,
   },
   {
-    label: 'chapter title fallback',
-    pattern: /const title = chapter\?\.nameSv \?\? copy\.chapterUnavailable;/,
+    label: 'selected-language chapter title',
+    pattern: /language === 'en'\s*\?\s*chapter\.nameEn\s*:\s*chapter\.nameSv/,
+  },
+  {
+    label: 'opposite-language secondary name',
+    pattern:
+      /const secondaryName = chapter \? \(language === 'en' \? chapter\.nameSv : chapter\.nameEn\) : null;/,
+  },
+  {
+    label: 'selected-language description',
+    pattern: /language === 'en'\s*\?\s*chapter\.descriptionEn\s*:\s*chapter\.descriptionSv/,
   },
   {
     label: 'chapter accessibility summary variable',
     pattern: /const chapterAccessibilityLabel =/,
   },
   {
-    label: 'Swedish title in accessibility summary',
+    label: 'selected title in accessibility summary',
     pattern: /copy\.accessibilityLabel\.chapter\(title\)/,
   },
   {
-    label: 'English title in accessibility summary',
-    pattern: /chapter\?\.nameEn \? copy\.accessibilityLabel\.englishName\(chapter\.nameEn\) : null/,
+    label: 'secondary title in accessibility summary',
+    pattern: /secondaryName \? copy\.accessibilityLabel\.secondaryName\(secondaryName\) : null/,
   },
   {
     label: 'progress status in accessibility summary',
@@ -1486,8 +1814,7 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'description in accessibility summary',
-    pattern:
-      /chapter\?\.descriptionSv \? copy\.accessibilityLabel\.description\(chapter\.descriptionSv\) : null/,
+    pattern: /description \? copy\.accessibilityLabel\.description\(description\) : null/,
   },
   {
     label: 'Card receives chapter accessibility summary',
@@ -1499,22 +1826,45 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /<Text style=\{styles\.title\}>\{title\}<\/Text>/,
   },
   {
+    label: 'visible secondary chapter name',
+    pattern: /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/,
+  },
+  {
+    label: 'visible selected-language description',
+    pattern: /<Text style=\{styles\.description\}>\{description\}<\/Text>/,
+  },
+  {
     label: 'visible progress bar',
-    pattern: /<ProgressBar progress=\{progress\} \/>/,
+    pattern: /<ProgressBar language=\{language\} progress=\{progress\} \/>/,
   },
 ];
 const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   {
-    label: 'optional front/back prop contract',
-    pattern: /front\?: string; back\?: string/,
+    label: 'optional front/back/language prop contract',
+    pattern:
+      /type FlashcardProps = \{ front\?: string; back\?: string; language\?: AppLanguage \};/,
   },
   {
-    label: 'release-safe prompt fallback',
-    pattern: /const fallbackPrompt = 'Study prompt unavailable';/,
+    label: 'settings language import',
+    pattern: /useSettingsStore, type AppLanguage/,
   },
   {
-    label: 'release-safe answer fallback',
-    pattern: /const fallbackAnswer = 'Answer unavailable';/,
+    label: 'localized copy map',
+    pattern: /const flashcardCopy: Record<AppLanguage, FlashcardCopy> = \{/,
+  },
+  {
+    label: 'selected settings language fallback',
+    pattern:
+      /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);[\s\S]*const copy = flashcardCopy\[language \?\? settingsLanguage\];/,
+  },
+  {
+    label: 'release-safe Swedish fallbacks',
+    pattern: /fallbackPrompt: 'Studiefråga saknas'[\s\S]*fallbackAnswer: 'Svar saknas'/,
+  },
+  {
+    label: 'release-safe English fallbacks',
+    pattern:
+      /fallbackPrompt: 'Study prompt unavailable'[\s\S]*fallbackAnswer: 'Answer unavailable'/,
   },
   {
     label: 'trimmed text helper',
@@ -1522,30 +1872,33 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'prompt derived through fallback helper',
-    pattern: /const prompt = cleanText\(front, fallbackPrompt\);/,
+    pattern: /const prompt = cleanText\(front, copy\.fallbackPrompt\);/,
   },
   {
     label: 'answer derived through fallback helper',
-    pattern: /const answer = cleanText\(back, fallbackAnswer\);/,
+    pattern: /const answer = cleanText\(back, copy\.fallbackAnswer\);/,
+  },
+  {
+    label: 'localized accessibility summary helper',
+    pattern: /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer\);/,
   },
   {
     label: 'prompt and answer accessibility summary',
-    pattern:
-      /<Card\s+accessibilityLabel=\{`Study flashcard\. Prompt: \$\{prompt\}\. Answer: \$\{answer\}\.`\}/,
+    pattern: /<Card accessibilityLabel=\{flashcardAccessibilityLabel\} style=\{styles\.card\}>/,
   },
   {
-    label: 'visible flashcard badge',
-    pattern: /<Badge tone="warm">Flashcard<\/Badge>/,
+    label: 'visible localized flashcard badge',
+    pattern: /<Badge tone="warm">\{copy\.badgeLabel\}<\/Badge>/,
   },
   {
-    label: 'prompt header text',
+    label: 'localized prompt header text',
     pattern:
-      /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*Prompt[\s\S]*<\/Text>/,
+      /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*\{copy\.promptHeader\}[\s\S]*<\/Text>/,
   },
   {
-    label: 'answer header text',
+    label: 'localized answer header text',
     pattern:
-      /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*Answer[\s\S]*<\/Text>/,
+      /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*\{copy\.answerHeader\}[\s\S]*<\/Text>/,
   },
   {
     label: 'visible prompt and answer text',
@@ -1563,8 +1916,9 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /import \{ speakSwedish, stopSpeech \} from '\.\.\/\.\.\/lib\/audio\/speak';/,
   },
   {
-    label: 'optional text and enabled prop contract',
-    pattern: /text = '', enabled = true[\s\S]*text\?: string; enabled\?: boolean/,
+    label: 'optional text, enabled, and language prop contract',
+    pattern:
+      /enabled = true,[\s\S]*language = 'sv'[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*text\?: string/,
   },
   {
     label: 'trimmed speech text source',
@@ -1579,19 +1933,18 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /const canPlayAudio = enabled && hasSpeechText;/,
   },
   {
-    label: 'state-specific visible label',
+    label: 'localized state-specific visible labels',
     pattern:
-      /const label = !enabled \? 'Audio disabled' : hasSpeechText \? 'Listen' : 'Audio unavailable';/,
+      /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = \{[\s\S]*disabledLabel: 'Ljud är avstängt'[\s\S]*enabledLabel: 'Lyssna på den svenska frågan och svaren'[\s\S]*unavailableLabel: 'Ljud saknas för den här frågan'[\s\S]*disabledLabel: 'Audio is disabled'[\s\S]*enabledLabel: 'Listen to the Swedish question and answers'[\s\S]*unavailableLabel: 'Audio is unavailable for this question'/,
   },
   {
-    label: 'state-specific accessibility label',
-    pattern:
-      /const accessibilityLabel = !enabled[\s\S]*\? 'Audio is disabled'[\s\S]*\? 'Listen to the Swedish question and answers'[\s\S]*: 'Audio is unavailable for this question';/,
+    label: 'accessibility label follows localized visible label',
+    pattern: /const accessibilityLabel = label;/,
   },
   {
-    label: 'state-specific accessibility hint',
+    label: 'localized state-specific accessibility hint',
     pattern:
-      /const accessibilityHint = !enabled[\s\S]*Enable audio in Settings[\s\S]*Plays the Swedish question and answer options aloud[\s\S]*Audio needs Swedish question text/,
+      /disabledHint: 'Aktivera ljud i Inställningar för att höra svensk text\.'[\s\S]*enabledHint: 'Spelar upp den svenska frågan och svarsalternativen\.'[\s\S]*unavailableHint: 'Ljud behöver svensk frågetext före uppspelning\.'[\s\S]*disabledHint: 'Enable audio in Settings to hear Swedish text\.'[\s\S]*enabledHint: 'Plays the Swedish question and answer options aloud\.'[\s\S]*unavailableHint: 'Audio needs Swedish question text before playback\.'/,
   },
   {
     label: 'native button accessibility wiring',
@@ -1614,35 +1967,46 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'PracticeQuestion prop contract',
-    pattern: /question\?: PracticeQuestion/,
+    pattern: /language\?: AppLanguage;[\s\S]*question\?: PracticeQuestion;/,
   },
   {
     label: 'difficulty fallback',
     pattern: /const difficulty = question\?\.difficulty \?\? 'practice';/,
   },
   {
-    label: 'display-safe question text fallback',
-    pattern: /const questionText = getQuestionDisplayText\(question, 'sv'\);/,
+    label: 'localized difficulty value copy',
+    pattern:
+      /difficultyValueLabels: Record<PracticeQuestion\['difficulty'\] \| 'practice', string>[\s\S]*easy: 'Lätt'[\s\S]*medium: 'Medel'[\s\S]*hard: 'Svår'[\s\S]*practice: 'Övning'[\s\S]*easy: 'Easy'[\s\S]*medium: 'Medium'[\s\S]*hard: 'Hard'[\s\S]*practice: 'Practice'/,
+  },
+  {
+    label: 'localized difficulty value selection',
+    pattern: /const difficultyLabel = copy\.difficultyValueLabels\[difficulty\];/,
+  },
+  {
+    label: 'display-safe language-aware question text fallback',
+    pattern: /const questionText = getQuestionDisplayText\(question, language\);/,
   },
   {
     label: 'source citation helper',
-    pattern: /const sourceCitation = getQuestionSourceCitation\(question\);/,
+    pattern: /const sourceCitation = getQuestionSourceCitation\(question, language\);/,
   },
   {
-    label: 'difficulty in accessibility summary',
-    pattern: /`Difficulty: \$\{difficulty\}`/,
+    label: 'localized accessibility prefix copy and difficulty summary',
+    pattern:
+      /difficultyLabel: 'Svårighetsgrad'[\s\S]*questionLabel: 'Fråga'[\s\S]*secondaryLabel: 'Engelsk översättning'[\s\S]*sourceCitationLabel: 'Källhänvisning'[\s\S]*difficultyLabel: 'Difficulty'[\s\S]*questionLabel: 'Question'[\s\S]*secondaryLabel: 'Swedish original'[\s\S]*sourceCitationLabel: 'Source citation'[\s\S]*\$\{copy\.difficultyLabel\}: \$\{difficultyLabel\}/,
   },
   {
-    label: 'Swedish question in accessibility summary',
-    pattern: /`Question: \$\{questionText\}`/,
+    label: 'selected language question in accessibility summary',
+    pattern: /\$\{copy\.questionLabel\}: \$\{questionText\}/,
   },
   {
-    label: 'display-safe English translation in accessibility summary',
-    pattern: /questionTranslation \? `English translation: \$\{questionTranslation\}` : null/,
+    label: 'display-safe secondary language text in accessibility summary',
+    pattern:
+      /questionTranslation \? `\$\{copy\.secondaryLabel\}: \$\{questionTranslation\}` : null/,
   },
   {
     label: 'source citation in accessibility summary',
-    pattern: /`Source citation: \$\{sourceCitation\}`/,
+    pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
     label: 'Card receives accessibility summary',
@@ -1650,7 +2014,7 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'visible difficulty label',
-    pattern: /<Text style=\{styles\.label\}>\{difficulty\}<\/Text>/,
+    pattern: /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/,
   },
   {
     label: 'question header text',
@@ -1664,6 +2028,23 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     label: 'visible display-safe English translation',
     pattern:
       /\{questionTranslation \? <Text style=\{styles\.translation\}>\{questionTranslation\}<\/Text> : null\}/,
+  },
+];
+const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
+  {
+    label: 'localized question display fallback',
+    pattern:
+      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
+  },
+  {
+    label: 'language-aware source citation signature',
+    pattern:
+      /export function getQuestionSourceCitation\(\s*question\?: QuestionTextSource,\s*language: QuestionTextLanguage = 'sv',\s*\): string \{/,
+  },
+  {
+    label: 'localized source citation prefixes and page labels',
+    pattern:
+      /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -1684,13 +2065,25 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /resultLabel\?: string;/,
   },
   {
+    label: 'language-specific copy map',
+    pattern: /const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy>/,
+  },
+  {
+    label: 'Swedish select-answer accessibility copy',
+    pattern: /selectAccessibilityLabel: \(label\) => `Välj svaret \$\{label\}`/,
+  },
+  {
+    label: 'English select-answer accessibility copy',
+    pattern: /selectAccessibilityLabel: \(label\) => `Select answer \$\{label\}`/,
+  },
+  {
     label: 'language-specific option label',
-    pattern: /const label = option \? getOptionLabel\(option, language\) : 'Answer option';/,
+    pattern: /const label = option \? getOptionLabel\(option, language\) : copy\.fallbackLabel;/,
   },
   {
     label: 'feedback-aware accessibility label',
     pattern:
-      /const accessibilityLabel = resultLabel \? `\$\{label\}, \$\{resultLabel\}` : `Select answer \$\{label\}`;/,
+      /const accessibilityLabel = resultLabel\s*\?\s*`\$\{label\}, \$\{resultLabel\}`\s*:\s*copy\.selectAccessibilityLabel\(label\);/,
   },
   {
     label: 'explicit button role',
@@ -2088,6 +2481,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
 const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'activeQuestionId', type: 'string | null', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
+  { name: 'shuffleSessionId', type: 'string', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
@@ -2176,6 +2570,7 @@ const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOpti
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
 const EXPECTED_GLOSSARY_TERM_KEYS = expectedContentInterfaceKeys('GlossaryTerm');
+const EXPECTED_UHR_SECTION_MAP_KEYS = ['source', 'chapters'];
 const EXPECTED_UHR_SECTION_MAP_SOURCE_KEYS = ['title', 'publisher', 'url', 'retrievedDate'];
 const EXPECTED_UHR_SECTION_MAP_CHAPTER_KEYS = ['id', 'chapter', 'startPage', 'endPage', 'sections'];
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
@@ -2728,6 +3123,12 @@ function findQuestionAuthorityOverclaim(question) {
   return QUESTION_AUTHORITY_OVERCLAIM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionStemSourceAuthorityReference(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -2958,6 +3359,10 @@ function glossaryTermExactSchemaKeyFailures(term, label) {
 
 function mockExamConfigExactSchemaKeyFailures(config, label) {
   return schemaKeyFailures(config, EXPECTED_MOCK_EXAM_CONFIG_KEYS, label, 'MockExamConfig');
+}
+
+function uhrSectionMapExactSchemaKeyFailures(map, label) {
+  return schemaKeyFailures(map, EXPECTED_UHR_SECTION_MAP_KEYS, label, 'UHRSectionMap');
 }
 
 function uhrSectionMapSourceExactSchemaKeyFailures(source, label) {
@@ -3585,6 +3990,9 @@ let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
+let tabNavigationRulesValidated = 0;
+let tabNavigationRoutesValidated = 0;
+let tabNavigationParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
 let adPlacementRoutesValidated = 0;
@@ -3606,8 +4014,12 @@ let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
+let examRouteCopyLabelsValidated = 0;
+let examRouteCopyParityValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
+let quizRouteCopyLabelsValidated = 0;
+let quizRouteCopyParityValidated = false;
 let practiceRouteHeadersValidated = 0;
 let practiceRouteHeaderParityValidated = false;
 let chapterRouteHeadersValidated = 0;
@@ -3784,6 +4196,7 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
 let uhrMapSourceExactSchemaKeysValidated = false;
@@ -4063,7 +4476,7 @@ function validateLaunchAdRouteSuppressionParity() {
   }
 
   if (typeof shouldSuppressLaunchPopupAdForPath === 'function') {
-    for (const studyRoute of ['/', '/home', '/learn', '/practice', '/profile']) {
+    for (const studyRoute of ['/', '/home', '/learn', '/mistakes', '/profile']) {
       if (shouldSuppressLaunchPopupAdForPath(studyRoute)) {
         reject(`${studyRoute} must remain eligible for the launch popup ad`);
       }
@@ -4092,6 +4505,62 @@ function validateLaunchAdRouteSuppressionParity() {
     launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
   ) {
     launchAdRouteSuppressionParityValidated = true;
+  }
+}
+
+function validateTabNavigationParity() {
+  let valid = true;
+  let tabLayout = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    tabLayout = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/_layout.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/_layout.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  for (const rule of EXPECTED_TAB_NAVIGATION_RULES) {
+    if (!rule.pattern.test(tabLayout)) {
+      reject(`tab layout must satisfy ${rule.label}`);
+    } else {
+      tabNavigationRulesValidated += 1;
+    }
+  }
+
+  if (tabLayout.includes('⏷')) {
+    reject('tab layout must not include visible placeholder tab glyphs');
+  }
+
+  for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
+    const routePattern = new RegExp(
+      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
+    );
+    const svPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.sv)}'`);
+    const enPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.en)}'`);
+
+    if (!routePattern.test(tabLayout)) {
+      reject(`${route.routeName} tab must use getTabOptions(copy.${route.routeName})`);
+      continue;
+    }
+    if (!svPattern.test(tabLayout) || !enPattern.test(tabLayout)) {
+      reject(`${route.routeName} tab must define Swedish and English titles`);
+      continue;
+    }
+
+    tabNavigationRoutesValidated += 1;
+  }
+
+  if (
+    valid &&
+    tabNavigationRulesValidated === EXPECTED_TAB_NAVIGATION_RULES.length &&
+    tabNavigationRoutesValidated === EXPECTED_TAB_NAVIGATION_ROUTES.length
+  ) {
+    tabNavigationParityValidated = true;
   }
 }
 
@@ -4526,7 +4995,7 @@ function validateQuestionDisclaimerParity() {
       routeIsValid = false;
       fail(`${file} must import QuestionDisclaimer for ${route}`);
     }
-    if (!source.includes('<QuestionDisclaimer />')) {
+    if (!QUESTION_DISCLAIMER_USAGE_PATTERN.test(source)) {
       routeIsValid = false;
       fail(`${file} is missing QuestionDisclaimer for ${route}`);
     }
@@ -4837,11 +5306,9 @@ function validateExamSubmissionFinalityParity() {
   if (valid) examSubmissionFinalityParityValidated = true;
 }
 
-function countExamRouteHeaderOccurrences(source, { styleName, text }) {
+function countExamRouteHeaderOccurrences(source, { styleName, pattern }) {
   const headerPattern = new RegExp(
-    `<Text\\s+accessibilityRole="header"\\s+style=\\{styles\\.${styleName}\\}>\\s*${escapeRegExp(
-      text,
-    )}\\s*</Text>`,
+    `<Text\\s+accessibilityRole="header"\\s+style=\\{styles\\.${styleName}\\}>\\s*${pattern.source}\\s*</Text>`,
     'g',
   );
   return (source.match(headerPattern) || []).length;
@@ -4873,7 +5340,7 @@ function validateExamRouteHeaderParity() {
     const actualOccurrences = countExamRouteHeaderOccurrences(examRoute, expectedHeader);
     if (actualOccurrences !== expectedHeader.occurrences) {
       reject(
-        `exam route header "${expectedHeader.text}" appears ${actualOccurrences} times as a ${expectedHeader.styleName} header, expected ${expectedHeader.occurrences}`,
+        `exam route header ${expectedHeader.label} appears ${actualOccurrences} times as a ${expectedHeader.styleName} header, expected ${expectedHeader.occurrences}`,
       );
       return;
     }
@@ -4886,6 +5353,58 @@ function validateExamRouteHeaderParity() {
   );
   if (valid && examRouteHeadersValidated === expectedHeaderCount) {
     examRouteHeaderParityValidated = true;
+  }
+}
+
+function validateExamRouteCopyParity() {
+  let valid = true;
+  let examRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  } catch (error) {
+    reject(`exam route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_EXAM_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!examRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_EXAM_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`exam route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!examRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`exam route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`exam route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) examRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_EXAM_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && examRouteCopyLabelsValidated === expectedLabelCount) {
+    examRouteCopyParityValidated = true;
   }
 }
 
@@ -4920,6 +5439,58 @@ function validateQuizRouteHeaderParity() {
 
   if (valid && quizRouteHeadersValidated === EXPECTED_QUIZ_ROUTE_HEADERS.length) {
     quizRouteHeaderParityValidated = true;
+  }
+}
+
+function validateQuizRouteCopyParity() {
+  let valid = true;
+  let quizRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    quizRoute = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+  } catch (error) {
+    reject(`quiz route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!quizRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`quiz route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!quizRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`quiz route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`quiz route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) quizRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_QUIZ_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && quizRouteCopyLabelsValidated === expectedLabelCount) {
+    quizRouteCopyParityValidated = true;
   }
 }
 
@@ -6176,6 +6747,7 @@ function validateAudioButtonAccessibilityParity() {
 function validateQuestionCardAccessibilityParity() {
   let valid = true;
   let questionCardSource = '';
+  let questionTextSource = '';
 
   function reject(message) {
     valid = false;
@@ -6187,6 +6759,7 @@ function validateQuestionCardAccessibilityParity() {
       path.join(repoRoot, 'components/quiz/QuestionCard.tsx'),
       'utf8',
     );
+    questionTextSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
   } catch (error) {
     reject(
       `components/quiz/QuestionCard.tsx could not be read for accessibility parity: ${error.message}`,
@@ -6202,9 +6775,26 @@ function validateQuestionCardAccessibilityParity() {
     questionCardAccessibilityRulesValidated += 1;
   });
 
+  EXPECTED_QUESTION_SOURCE_CITATION_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(questionTextSource)) {
+      reject(`QuestionCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    questionCardAccessibilityRulesValidated += 1;
+  });
+
+  if (/Källa\/Source/.test(questionTextSource)) {
+    reject('QuestionCard source citation helper still exposes mixed Källa/Source prefix');
+  } else {
+    questionCardAccessibilityRulesValidated += 1;
+  }
+
   if (
     valid &&
-    questionCardAccessibilityRulesValidated === EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length
+    questionCardAccessibilityRulesValidated ===
+      EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length +
+        EXPECTED_QUESTION_SOURCE_CITATION_RULES.length +
+        1
   ) {
     questionCardAccessibilityParityValidated = true;
   }
@@ -8854,12 +9444,16 @@ function validatePracticeSessionStoreParity() {
     usePracticeSessionStore.setState({
       activeQuestionId: null,
       selectedOptionId: null,
+      shuffleSessionId: 'practice-session-0',
     });
 
     usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
     let state = usePracticeSessionStore.getState();
     if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
       rejectRuntime('practice session selectOption must lock question id and selected option id');
+    }
+    if (state.shuffleSessionId !== 'practice-session-0') {
+      rejectRuntime('practice session selectOption must keep the current shuffle session seed');
     }
 
     usePracticeSessionStore.getState().resetSelection();
@@ -8869,6 +9463,9 @@ function validatePracticeSessionStoreParity() {
         'practice session resetSelection must keep active question while clearing answer',
       );
     }
+    if (state.shuffleSessionId !== 'practice-session-0') {
+      rejectRuntime('practice session resetSelection must keep the current shuffle session seed');
+    }
 
     usePracticeSessionStore.getState().advanceQuestion();
     state = usePracticeSessionStore.getState();
@@ -8877,10 +9474,14 @@ function validatePracticeSessionStoreParity() {
         'practice session advanceQuestion must clear active question and selected answer',
       );
     }
+    if (state.shuffleSessionId !== 'practice-session-1') {
+      rejectRuntime('practice session advanceQuestion must advance the shuffle session seed');
+    }
 
     usePracticeSessionStore.setState({
       activeQuestionId: null,
       selectedOptionId: null,
+      shuffleSessionId: 'practice-session-0',
     });
   }
 
@@ -10433,6 +11034,12 @@ function validateUhrSourceMetadata() {
   }
 }
 
+function validateUhrSectionMapExactSchemaKeys() {
+  const failures = uhrSectionMapExactSchemaKeyFailures(uhrSectionMap, 'UHR section map');
+  failures.forEach(fail);
+  if (failures.length === 0) uhrMapExactSchemaKeysValidated = true;
+}
+
 function validateUhrSourceMaterialLinkParity() {
   let valid = true;
   let sourcesRoute = '';
@@ -10498,6 +11105,7 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
 if (Array.isArray(chapters)) {
@@ -10611,8 +11219,11 @@ if (Array.isArray(questions)) {
         questionSentenceEndingsValidated += 1;
       }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
+      const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
+      } else if (stemSourceAuthorityReference) {
+        fail(`${label} carries source-authority wording in the stem`);
       } else {
         questionAuthorityBoundaryTextValidated += 1;
       }
@@ -10691,6 +11302,7 @@ validateMockExamConfig(
 );
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateTabNavigationParity();
 validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
 validateRemoveAdsEntitlementHookParity();
@@ -10701,7 +11313,9 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
+validateExamRouteCopyParity();
 validateQuizRouteHeaderParity();
+validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateChapterRouteHeaderParity();
@@ -10797,6 +11411,9 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      tabNavigationRulesValidated,
+      tabNavigationRoutesValidated,
+      tabNavigationParityValidated,
       adPlacementRoutesValidated,
       noAdRoutesValidated,
       adPlacementRouteParityValidated,
@@ -10818,8 +11435,12 @@ console.log(
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,
+      examRouteCopyLabelsValidated,
+      examRouteCopyParityValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
+      quizRouteCopyLabelsValidated,
+      quizRouteCopyParityValidated,
       practiceRouteHeadersValidated,
       practiceRouteHeaderParityValidated,
       practiceRouteCopyLabelsValidated,
@@ -11018,6 +11639,7 @@ console.log(
       questionTagsValidated,
       questionBankCsvRowsValidated,
       uhrSourceMetadataValidated,
+      uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,
       uhrMapSectionsValidated,
       uhrMapSourceExactSchemaKeysValidated,

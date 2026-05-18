@@ -15,63 +15,33 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
-test('study routes keep their expected ad placements and exam stays ad-free', () => {
+test('exam route shell and review copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
-  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-  const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
-  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const nativeAdCardSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
-    'utf8',
-  );
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.equal(summary.adPlacementRoutesValidated, 4);
-  assert.equal(summary.noAdRoutesValidated, 1);
-  assert.equal(summary.adPlacementRouteParityValidated, true);
+  assert.equal(summary.examRouteCopyLabelsValidated, 56);
+  assert.equal(summary.examRouteCopyParityValidated, true);
+  assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(source, /const copy = examRouteCopy\[language\];/);
+  assert.match(source, /answerAccessibilityLabel: \(optionText, questionNumber\) =>/);
+  assert.match(source, /Välj svaret \$\{optionText\} för fråga \$\{questionNumber\}/);
+  assert.match(source, /Select answer \$\{optionText\} for question \$\{questionNumber\}/);
+  assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
+  assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
+  assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
+  assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
+  assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
-    homeSource,
-    /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+    source,
+    /import \{ getQuestionDisplayText, getQuestionSourceCitation \} from '..\/..\/lib\/quiz\/questionText';/,
   );
-  assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
-  assert.match(mistakesSource, /<NativeAdCard \/>/);
-  assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
-  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+  assert.match(source, /getQuestionSourceCitation\(item, language\)/);
+  assert.match(source, /getQuestionSourceCitation\(question, language\)/);
+  assert.match(source, /<UHRReferenceCard language=\{language\}/);
 });
 
-test('ad placement route parity rejects a drifted study route placement', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('placement="home_banner"', 'placement="chapter_list_banner"');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /app\/\(tabs\)\/home\.tsx must render AdBanner placement home_banner/,
-  );
-});
-
-test('ad placement route parity rejects ads on the exam route', () => {
+test('exam route copy parity rejects bypassing the settings language', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -84,7 +54,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("import { Badge }", "import { AdBanner } from '../../components/monetization/AdBanner';\\nimport { Badge }");
+      .replace('const copy = examRouteCopy[language];', 'const copy = examRouteCopy.en;');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -97,11 +67,11 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /app\/\(tabs\)\/exam\.tsx must not import or render ad components/,
+    /exam route must select copy from settings language/,
   );
 });
 
-test('ad placement route parity rejects native ad entitlement bypass drift', () => {
+test('exam route copy parity rejects missing Swedish review labels', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -111,13 +81,37 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.tsx')) {
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        "!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)",
-        "!entitlementsReady",
-      );
+      .replace("selectedAnswerLabel: 'Valt svar'", "selectedAnswerLabel: 'Selected answer'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /exam route is missing sv copy/);
+});
+
+test('exam route copy parity rejects missing localized UHR source cards', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('<UHRReferenceCard language={language}', '<UHRReferenceCard language={undefined}');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -130,6 +124,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard must gate results_native through shouldShowAd/,
+    /exam UHR references must receive settings language/,
   );
 });

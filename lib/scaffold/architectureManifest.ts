@@ -23,6 +23,126 @@ export const architectureTabRouteFiles = [
   'app/(tabs)/profile.tsx',
 ] as const;
 
+export const architectureSupplementalRouteFiles = [
+  'app/+not-found.tsx',
+  'app/disclaimer.tsx',
+  'app/privacy.tsx',
+  'app/sources.tsx',
+  'app/support.tsx',
+  'app/terms.tsx',
+] as const;
+
+export const architectureComplianceSupportFiles = [
+  'components/compliance/ComplianceLinks.tsx',
+  'components/compliance/LegalPage.tsx',
+] as const;
+
+export const architectureDesignSystemSupportFiles = [
+  'components/Surface.tsx',
+  'components/ui/Badge.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ScreenShell.tsx',
+] as const;
+
+export const architectureThemeRuntimeFiles = [
+  'lib/theme/index.ts',
+  'lib/theme/colors.ts',
+  'lib/theme/motion.ts',
+  'lib/theme/radius.ts',
+  'lib/theme/shadows.ts',
+  'lib/theme/spacing.ts',
+  'lib/theme/typography.ts',
+] as const;
+
+export const architectureAnswerShuffleRuntimeFiles = [
+  'lib/quiz/answerOptionShuffle.ts',
+  'lib/quiz/practiceSessionStore.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'lib/quiz/examGenerator.ts',
+] as const;
+
+export const architectureQuestionLanguageRuntimeFiles = [
+  'lib/localization/language.ts',
+  'lib/storage/settingsStore.ts',
+  'lib/quiz/questionText.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/AnswerOption.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/learning/AudioButton.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+] as const;
+
+export const architectureQuizFeedbackRuntimeFiles = [
+  'components/quiz/AnswerOption.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'components/quiz/CelebrationBurst.tsx',
+  'lib/quiz/answerValidation.ts',
+  'lib/quiz/scoring.ts',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/exam.tsx',
+] as const;
+
+export const architectureMistakeReviewRuntimeFiles = [
+  'lib/storage/mistakeReviewStore.ts',
+  'lib/storage/progressStore.ts',
+  'components/quiz/QuestionCard.tsx',
+  'components/quiz/ExplanationPanel.tsx',
+  'components/quiz/UHRReferenceCard.tsx',
+  'components/quiz/QuestionDisclaimer.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
+  'app/(tabs)/mistakes.tsx',
+] as const;
+
+export const architectureMonetizationRuntimeFiles = [
+  'lib/monetization/adCopy.ts',
+  'lib/monetization/ads.ts',
+  'lib/monetization/consent.ts',
+  'lib/monetization/mobileAdsConsent.ts',
+  'lib/monetization/premium.ts',
+  'lib/monetization/purchases.ts',
+  'lib/monetization/rewardedAd.native.ts',
+  'lib/monetization/rewardedAd.ts',
+  'lib/monetization/rewardedExam.ts',
+  'lib/monetization/useMobileAdsConsent.ts',
+  'lib/monetization/useMockExamAccess.ts',
+  'lib/monetization/useRemoveAdsEntitlements.ts',
+  'components/monetization/AdBanner.native.tsx',
+  'components/monetization/AdBanner.tsx',
+  'components/monetization/LaunchPopupAd.native.tsx',
+  'components/monetization/LaunchPopupAd.tsx',
+  'components/monetization/NativeAdCard.tsx',
+  'components/monetization/PremiumBanner.tsx',
+  'app/_layout.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/(tabs)/mistakes.tsx',
+  'app/(tabs)/exam.tsx',
+] as const;
+
+export const architectureLearningProgressRuntimeFiles = [
+  'lib/learning/badges.ts',
+  'lib/learning/mastery.ts',
+  'lib/learning/spacedRepetition.ts',
+  'lib/learning/streaks.ts',
+  'lib/learning/xp.ts',
+  'lib/storage/progressStore.ts',
+  'components/learning/ChapterCard.tsx',
+  'components/learning/Flashcard.tsx',
+  'components/learning/AudioButton.tsx',
+  'components/ui/ProgressBar.tsx',
+  'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
+  'app/chapter/[chapterId].tsx',
+] as const;
+
 export const architectureScaffoldFiles = [
   {
     file: 'app/_layout.tsx',
@@ -253,3 +373,22 @@ export const architectureScaffoldFiles = [
 
 export type ArchitectureScaffoldDirectory = (typeof architectureScaffoldDirectories)[number];
 export type ArchitectureScaffoldFilePath = (typeof architectureScaffoldFiles)[number]['file'];
+export type ArchitectureSupplementalRouteFilePath =
+  (typeof architectureSupplementalRouteFiles)[number];
+export type ArchitectureComplianceSupportFilePath =
+  (typeof architectureComplianceSupportFiles)[number];
+export type ArchitectureDesignSystemSupportFilePath =
+  (typeof architectureDesignSystemSupportFiles)[number];
+export type ArchitectureThemeRuntimeFilePath = (typeof architectureThemeRuntimeFiles)[number];
+export type ArchitectureAnswerShuffleRuntimeFilePath =
+  (typeof architectureAnswerShuffleRuntimeFiles)[number];
+export type ArchitectureQuestionLanguageRuntimeFilePath =
+  (typeof architectureQuestionLanguageRuntimeFiles)[number];
+export type ArchitectureQuizFeedbackRuntimeFilePath =
+  (typeof architectureQuizFeedbackRuntimeFiles)[number];
+export type ArchitectureMistakeReviewRuntimeFilePath =
+  (typeof architectureMistakeReviewRuntimeFiles)[number];
+export type ArchitectureMonetizationRuntimeFilePath =
+  (typeof architectureMonetizationRuntimeFiles)[number];
+export type ArchitectureLearningProgressRuntimeFilePath =
+  (typeof architectureLearningProgressRuntimeFiles)[number];

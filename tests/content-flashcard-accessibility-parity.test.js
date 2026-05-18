@@ -19,18 +19,34 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/learning/Flashcard.tsx'), 'utf8');
 
-  assert.equal(summary.flashcardAccessibilityRulesValidated, 11);
+  assert.equal(summary.flashcardAccessibilityRulesValidated, 15);
   assert.equal(summary.flashcardAccessibilityParityValidated, true);
-  assert.match(source, /const fallbackPrompt = 'Study prompt unavailable';/);
-  assert.match(source, /const fallbackAnswer = 'Answer unavailable';/);
-  assert.match(source, /const prompt = cleanText\(front, fallbackPrompt\);/);
-  assert.match(source, /const answer = cleanText\(back, fallbackAnswer\);/);
+  assert.match(source, /useSettingsStore, type AppLanguage/);
   assert.match(
     source,
-    /accessibilityLabel=\{`Study flashcard\. Prompt: \$\{prompt\}\. Answer: \$\{answer\}\.`\}/,
+    /type FlashcardProps = \{ front\?: string; back\?: string; language\?: AppLanguage \};/,
   );
-  assert.match(source, /<Badge tone="warm">Flashcard<\/Badge>/);
+  assert.match(source, /const flashcardCopy: Record<AppLanguage, FlashcardCopy> = \{/);
+  assert.match(source, /fallbackPrompt: 'Studiefråga saknas'/);
+  assert.match(source, /fallbackAnswer: 'Svar saknas'/);
+  assert.match(source, /fallbackPrompt: 'Study prompt unavailable'/);
+  assert.match(source, /fallbackAnswer: 'Answer unavailable'/);
+  assert.match(
+    source,
+    /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);/,
+  );
+  assert.match(source, /const copy = flashcardCopy\[language \?\? settingsLanguage\];/);
+  assert.match(source, /const prompt = cleanText\(front, copy\.fallbackPrompt\);/);
+  assert.match(source, /const answer = cleanText\(back, copy\.fallbackAnswer\);/);
+  assert.match(
+    source,
+    /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer\);/,
+  );
+  assert.match(source, /accessibilityLabel=\{flashcardAccessibilityLabel\}/);
+  assert.match(source, /<Badge tone="warm">\{copy\.badgeLabel\}<\/Badge>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.label\}>/);
+  assert.match(source, /\{copy\.promptHeader\}/);
+  assert.match(source, /\{copy\.answerHeader\}/);
   assert.match(source, /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.answer\}>\{answer\}<\/Text>/);
 });
@@ -48,7 +64,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/learning/Flashcard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Prompt: \${prompt}. Answer: \${answer}.', 'Prompt hidden.');
+      .replace('const flashcardAccessibilityLabel = copy.accessibilityLabel(prompt, answer);', 'const flashcardAccessibilityLabel = prompt;');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -61,6 +77,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /Flashcard missing prompt and answer accessibility summary for accessibility parity/,
+    /Flashcard missing localized accessibility summary helper for accessibility parity/,
   );
 });

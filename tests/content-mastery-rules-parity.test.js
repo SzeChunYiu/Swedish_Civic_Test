@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -51,4 +51,33 @@ test('mastery runtime parity validates scoring and weak-chapter rules', () => {
   assert.equal(calculateChapterMastery('ch01', questions, progress), 0.67);
   assert.equal(calculateChapterMastery('ch99', questions, progress), 0);
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.7), ['ch01']);
+});
+
+test('mastery runtime parity rejects recency-weight drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/mastery.ts')) {
+    return String(contents).replace('0.2 * recencyScore', '0 * recencyScore');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /mastery rule weighted accuracy coverage and recency returned 0\.55, expected 0\.75/,
+  );
 });

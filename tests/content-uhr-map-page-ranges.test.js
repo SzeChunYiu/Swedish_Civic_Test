@@ -48,3 +48,115 @@ require('./scripts/validate-content.js');
     /ch01 endPage must be before next chapter startPage/,
   );
 });
+
+test('UHR section-map page ranges reject invalid chapter start pages', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    const map = JSON.parse(String(contents));
+    map.chapters[0].startPage = '5';
+    return JSON.stringify(map);
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /ch01 has invalid startPage/);
+});
+
+test('UHR section-map page ranges reject end pages before chapter start pages', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    const map = JSON.parse(String(contents));
+    map.chapters[0].endPage = map.chapters[0].startPage - 1;
+    return JSON.stringify(map);
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /ch01 has invalid endPage/);
+});
+
+test('UHR section-map page ranges reject non-integer chapter end pages', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    const map = JSON.parse(String(contents));
+    map.chapters[0].endPage = String(map.chapters[0].endPage);
+    return JSON.stringify(map);
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /ch01 has invalid endPage/);
+});
+
+test('UHR section-map page ranges require a bounded final chapter', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    const map = JSON.parse(String(contents));
+    delete map.chapters[map.chapters.length - 1].endPage;
+    return JSON.stringify(map);
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /ch13 final chapter must define endPage/);
+});

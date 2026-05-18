@@ -8,21 +8,29 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
+import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { PracticeQuestion } from '../../types/content';
 
 type MistakesCopy = {
+  answerReviewAccessibilityLabel: (
+    correctAnswer: string,
+    selectedWrongAnswer: string | undefined,
+  ) => string;
   badge: string;
   bookmarkedBadge: string;
   bookmarkedMeta: string;
   bookmarkedTitle: string;
+  correctAnswerLabel: string;
   emptyPracticeAccessibilityLabel: string;
   emptyPracticeLink: string;
   emptyText: string;
   emptyTitle: string;
   mistakeBadge: string;
   mistakeTitle: string;
+  selectedWrongAnswerLabel: string;
   subtitle: string;
   title: string;
   wrongAnswers: (count: number) => string;
@@ -30,32 +38,44 @@ type MistakesCopy = {
 
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
+    answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
+      selectedWrongAnswer
+        ? `Svar att repetera. Ditt senaste felaktiga svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
+        : `Svar att repetera. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
     bookmarkedMeta: 'Sparad för fokuserad repetition',
     bookmarkedTitle: 'Bokmärkta frågor',
+    correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
     emptyText: 'Svara fel på en övningsfråga så visas den här.',
     emptyTitle: 'Inga misstag ännu',
     mistakeBadge: 'Fellogg',
     mistakeTitle: 'Fel svar att repetera',
+    selectedWrongAnswerLabel: 'Ditt senaste felaktiga svar',
     subtitle:
       'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
     title: 'Misstag',
     wrongAnswers: (count) => `Fel svar: ${count}`,
   },
   en: {
+    answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
+      selectedWrongAnswer
+        ? `Answers to review. Your latest wrong answer: ${selectedWrongAnswer}. Correct answer: ${correctAnswer}.`
+        : `Answers to review. Correct answer: ${correctAnswer}.`,
     badge: 'Smart review',
     bookmarkedBadge: 'Saved list',
     bookmarkedMeta: 'Saved for focused review',
     bookmarkedTitle: 'Bookmarked questions',
+    correctAnswerLabel: 'Correct answer',
     emptyPracticeAccessibilityLabel: 'Practice weak questions',
     emptyPracticeLink: 'Start practice',
     emptyText: 'Answer a practice question incorrectly and it will appear here.',
     emptyTitle: 'No mistakes yet',
     mistakeBadge: 'Mistake log',
     mistakeTitle: 'Wrong answers to revisit',
+    selectedWrongAnswerLabel: 'Your latest wrong answer',
     subtitle:
       'Review wrong answers with the question, explanation, source reference, and repetition count in one place.',
     title: 'Mistakes',
@@ -63,10 +83,19 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   },
 };
 
+function getOptionLabel(question: PracticeQuestion, optionId: string, language: AppLanguage) {
+  const option = question.options.find((candidate) => candidate.id === optionId);
+
+  if (!option) return null;
+
+  return language === 'en' ? option.textEn : option.textSv;
+}
+
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
   const mistakenQuestions = questions.filter(
     (question) => questionProgress[question.id]?.wrongCount > 0,
   );
@@ -97,7 +126,7 @@ export default function Screen() {
           </View>
           {bookmarkedQuestions.map((question) => (
             <View key={question.id} style={styles.questionBlock}>
-              <QuestionCard question={question} />
+              <QuestionCard question={question} language={language} />
               <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
               <ExplanationPanel
                 explanationEn={question.explanationEn}
@@ -118,20 +147,53 @@ export default function Screen() {
               {copy.mistakeTitle}
             </Text>
           </View>
-          {mistakenQuestions.map((question) => (
-            <View key={question.id} style={styles.questionBlock}>
-              <QuestionCard question={question} />
-              <Text style={styles.meta}>
-                {copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}
-              </Text>
-              <ExplanationPanel
-                explanationEn={question.explanationEn}
-                explanationSv={question.explanationSv}
-                language={language}
-              />
-              <UHRReferenceCard language={language} reference={question.uhrReference} />
-            </View>
-          ))}
+          {mistakenQuestions.map((question) => {
+            const wrongAnswerReview = wrongAnswerReviews[question.id];
+            const selectedWrongAnswer = wrongAnswerReview
+              ? language === 'en'
+                ? wrongAnswerReview.selectedOptionTextEn
+                : wrongAnswerReview.selectedOptionTextSv
+              : undefined;
+            const correctAnswer = getOptionLabel(question, question.correctOptionId, language);
+
+            return (
+              <View key={question.id} style={styles.questionBlock}>
+                <QuestionCard question={question} language={language} />
+                <Text style={styles.meta}>
+                  {copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}
+                </Text>
+                {correctAnswer ? (
+                  <View
+                    accessible
+                    accessibilityLabel={copy.answerReviewAccessibilityLabel(
+                      correctAnswer,
+                      selectedWrongAnswer,
+                    )}
+                    style={styles.answerReview}
+                  >
+                    {selectedWrongAnswer ? (
+                      <View style={styles.answerReviewRow}>
+                        <Text style={styles.answerReviewLabel}>
+                          {copy.selectedWrongAnswerLabel}
+                        </Text>
+                        <Text style={styles.answerReviewValue}>{selectedWrongAnswer}</Text>
+                      </View>
+                    ) : null}
+                    <View style={styles.answerReviewRow}>
+                      <Text style={styles.answerReviewLabel}>{copy.correctAnswerLabel}</Text>
+                      <Text style={styles.correctAnswerValue}>{correctAnswer}</Text>
+                    </View>
+                  </View>
+                ) : null}
+                <ExplanationPanel
+                  explanationEn={question.explanationEn}
+                  explanationSv={question.explanationSv}
+                  language={language}
+                />
+                <UHRReferenceCard language={language} reference={question.uhrReference} />
+              </View>
+            );
+          })}
         </View>
       ) : bookmarkedQuestions.length === 0 ? (
         <View style={styles.emptyCard}>
@@ -207,6 +269,32 @@ const styles = StyleSheet.create({
     color: colors.warning,
     fontSize: typography.caption.fontSize,
     fontWeight: typography.navButton.fontWeight,
+  },
+  answerReview: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1],
+    padding: space[1.5],
+  },
+  answerReviewRow: {
+    gap: space[0.5],
+  },
+  answerReviewLabel: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+  },
+  answerReviewValue: {
+    color: colors.warning,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
+  },
+  correctAnswerValue: {
+    color: colors.success,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
   },
   emptyCard: {
     backgroundColor: colors.surfaceWarm,

@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -44,4 +44,62 @@ test('language settings stay in parity with supported localization languages', (
   assert.equal(summary.localizationStrings, Object.keys(strings).length);
   assert.equal(summary.localizationStringsValidated, Object.keys(strings).length);
   assert.equal(summary.languageSettingsParityValidated, true);
+});
+
+test('language settings parity rejects supported-language drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/localization/language.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("['sv', 'en'] as const", "['sv', 'en', 'de'] as const");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /supportedLanguages is \["sv","en","de"\], expected \["sv","en"\]/,
+  );
+});
+
+test('language settings parity rejects unsupported localization string languages', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/localization/strings.ts')) {
+    return 'export const strings = { "home-title": { sv: "Hem", en: "Home", de: "Start" } };';
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /strings\.home-title has unsupported languages de/,
+  );
 });

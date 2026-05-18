@@ -110,7 +110,7 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
     );
     assert.match(
       source,
-      /<AudioButton\s+text=\{buildQuestionSpeechText\(question\)\}\s+enabled=\{audioEnabled\}\s+\/>/,
+      /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
     );
   }
 });

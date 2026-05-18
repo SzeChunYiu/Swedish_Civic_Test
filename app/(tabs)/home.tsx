@@ -165,7 +165,7 @@ export default function Screen() {
           <Text style={styles.goalMetric}>
             {completedToday}/{dailyGoalAnswers}
           </Text>
-          <ProgressBar progress={progress} />
+          <ProgressBar language={language} progress={progress} />
           <Text style={styles.goalHint}>{nextAction}</Text>
         </View>
       }

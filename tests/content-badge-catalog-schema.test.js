@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -40,4 +40,42 @@ test('learning badge catalog schema validates the milestone badges', () => {
     }).map((badge) => badge.id),
     expectedBadgeIds,
   );
+});
+
+test('learning badge catalog schema rejects duplicate badge copy and milestone drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/badges.ts')) {
+    return String(contents)
+      .replace("title: 'Three-day streak'", "title: 'First practice'")
+      .replace(
+        "description: 'Practiced on three days in a row.'",
+        "description: 'Answered your first practice question.'",
+      )
+      .replace(
+        'if (currentStreak >= 3) badges.push(badgeCatalog.streak_3);',
+        'if (currentStreak >= 3) badges.push(badgeCatalog.first_practice);',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /streak_3 duplicates badge title/);
+  assert.match(output, /streak_3 duplicates badge description/);
+  assert.match(output, /deriveBadges milestone ids are/);
 });

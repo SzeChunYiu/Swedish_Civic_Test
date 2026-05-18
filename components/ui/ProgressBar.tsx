@@ -1,11 +1,32 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
+import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space } from '../../lib/theme';
 
-export function ProgressBar({ progress = 0 }: { progress?: number }) {
+type ProgressBarCopy = {
+  progressLabel: (progressPercent: number) => string;
+};
+
+const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = {
+  sv: {
+    progressLabel: (progressPercent) => `${progressPercent} procent klart`,
+  },
+  en: {
+    progressLabel: (progressPercent) => `${progressPercent} percent complete`,
+  },
+};
+
+export function ProgressBar({
+  progress = 0,
+  language = 'sv',
+}: {
+  progress?: number;
+  language?: AppLanguage;
+}) {
   const clampedProgress = Math.max(0, Math.min(1, progress));
   const progressPercent = Math.round(clampedProgress * 100);
-  const progressAccessibilityLabel = `${progressPercent} percent complete`;
+  const copy = progressBarCopy[language];
+  const progressAccessibilityLabel = copy.progressLabel(progressPercent);
   const animatedProgress = useRef(new Animated.Value(clampedProgress)).current;
 
   useEffect(() => {
@@ -28,9 +49,15 @@ export function ProgressBar({ progress = 0 }: { progress?: number }) {
       aria-valuemax={100}
       aria-valuemin={0}
       aria-valuenow={progressPercent}
+      aria-valuetext={progressAccessibilityLabel}
       accessibilityLabel={progressAccessibilityLabel}
       accessibilityRole="progressbar"
-      accessibilityValue={{ min: 0, max: 100, now: progressPercent }}
+      accessibilityValue={{
+        min: 0,
+        max: 100,
+        now: progressPercent,
+        text: progressAccessibilityLabel,
+      }}
       style={styles.track}
     >
       <Animated.View style={[styles.fill, { width: fillWidth }]} />

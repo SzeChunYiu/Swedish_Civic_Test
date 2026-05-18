@@ -18,22 +18,111 @@ function parseValidationSummary() {
 test('quiz QuestionCard keeps question text and accessibility summary in parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionCard.tsx'), 'utf8');
+  const helperSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
 
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 13);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 19);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.match(source, /const questionAccessibilityLabel =/);
-  assert.match(source, /getQuestionDisplayText\(question, 'sv'\)/);
-  assert.match(source, /getQuestionTranslationText\(question\)/);
-  assert.match(source, /getQuestionSourceCitation\(question\)/);
-  assert.match(source, /`Difficulty: \$\{difficulty\}`/);
-  assert.match(source, /`Question: \$\{questionText\}`/);
-  assert.match(source, /English translation: \$\{questionTranslation\}/);
-  assert.match(source, /`Source citation: \$\{sourceCitation\}`/);
+  assert.match(source, /language\?: AppLanguage/);
+  assert.match(source, /const copy = questionCardCopy\[language\];/);
+  assert.match(
+    source,
+    /difficultyValueLabels: Record<PracticeQuestion\['difficulty'\] \| 'practice', string>/,
+  );
+  assert.match(source, /easy: 'Lätt'/);
+  assert.match(source, /medium: 'Medel'/);
+  assert.match(source, /hard: 'Svår'/);
+  assert.match(source, /practice: 'Övning'/);
+  assert.match(source, /easy: 'Easy'/);
+  assert.match(source, /medium: 'Medium'/);
+  assert.match(source, /hard: 'Hard'/);
+  assert.match(source, /practice: 'Practice'/);
+  assert.match(source, /const difficultyLabel = copy\.difficultyValueLabels\[difficulty\];/);
+  assert.match(source, /getQuestionDisplayText\(question, language\)/);
+  assert.match(source, /getQuestionTranslationText\(question, language\)/);
+  assert.match(source, /getQuestionSourceCitation\(question, language\)/);
+  assert.match(source, /difficultyLabel: 'Svårighetsgrad'/);
+  assert.match(source, /questionLabel: 'Fråga'/);
+  assert.match(source, /secondaryLabel: 'Engelsk översättning'/);
+  assert.match(source, /sourceCitationLabel: 'Källhänvisning'/);
+  assert.match(source, /difficultyLabel: 'Difficulty'/);
+  assert.match(source, /\$\{copy\.difficultyLabel\}: \$\{difficultyLabel\}/);
+  assert.match(source, /\$\{copy\.questionLabel\}: \$\{questionText\}/);
+  assert.match(
+    source,
+    /questionTranslation \? `\$\{copy\.secondaryLabel\}: \$\{questionTranslation\}` : null/,
+  );
+  assert.match(source, /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/);
+  assert.match(source, /Swedish original/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.match(source, /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /\{questionText\}/);
   assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
   assert.match(source, /\{questionTranslation\}/);
+  assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
+  assert.match(helperSource, /sv: 'Fråga saknas'/);
+  assert.match(helperSource, /en: 'Question unavailable'/);
+  assert.match(helperSource, /fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/);
+});
+
+test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/quiz/questionText.ts')) {
+    return String(originalReadFileSync.call(this, filePath, ...args))
+      .replace("sv: 'Fråga saknas'", "sv: 'Question unavailable'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionCard missing localized question display fallback/,
+  );
+});
+
+test('QuestionCard accessibility parity rejects mixed-language source citation prefixes', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/quiz/questionText.ts')) {
+    return String(originalReadFileSync.call(this, filePath, ...args))
+      .replace(/Källa: Sverige i fokus/g, 'Källa/Source: Sverige i fokus')
+      .replace(/Source: Sverige i fokus/g, 'Källa/Source: Sverige i fokus');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionCard source citation helper still exposes mixed Källa\/Source prefix/,
+  );
 });
 
 test('QuestionCard accessibility parity rejects dropped question header', () => {
@@ -93,5 +182,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionCard missing visible source citation line for accessibility parity/,
+  );
+});
+
+test('QuestionCard accessibility parity rejects raw difficulty enum display', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/QuestionCard.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<Text style={styles.label}>{difficultyLabel}</Text>',
+        '<Text style={styles.label}>{difficulty}</Text>',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionCard missing visible difficulty label for accessibility parity/,
   );
 });

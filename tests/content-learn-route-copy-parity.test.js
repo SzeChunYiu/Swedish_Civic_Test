@@ -28,6 +28,10 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /content queued/);
   assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
   assert.match(source, /\$\{completedCount\} of \$\{questionCount\} questions practiced/);
+  assert.match(source, /Open chapter \$\{primaryName\}/);
+  assert.match(source, /Swedish name: \$\{secondaryName\}/);
+  assert.match(source, /const primaryName = language === 'en' \? nameEn : nameSv;/);
+  assert.match(source, /const secondaryName = language === 'en' \? nameSv : nameEn;/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel\(\{/);
   assert.match(source, /language=\{language\}/);
 });

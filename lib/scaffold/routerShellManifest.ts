@@ -19,7 +19,7 @@ export const expoRouterShellFiles = [
   {
     file: 'app/+not-found.tsx',
     role: 'not-found-route',
-    purpose: 'Safe recovery route for unknown links with Home and Practice actions',
+    purpose: 'Safe Home redirect for unknown links with a file-export fallback',
   },
   {
     file: 'app/+html.tsx',
@@ -33,17 +33,33 @@ export const expoRouterShellFiles = [
   },
 ] as const satisfies readonly ExpoRouterShellFile[];
 
-export const expoRouterShellRecoveryHrefs = ['/home', '/practice'] as const;
+export const expoRouterShellRecoveryHrefs = ['/home'] as const;
+
+export const expoRouterStandaloneHeaderHiddenRoutes = [
+  'disclaimer',
+  'onboarding',
+  'privacy',
+  'settings',
+  'sources',
+  'support',
+  'terms',
+] as const;
 
 export const expoRouterShellContract = {
   notFoundRouteName: '+not-found',
-  notFoundTitle: 'Page not found',
+  notFoundHeaderMode: 'hidden',
+  rootStackHeaderMode: 'hidden',
+  notFoundRedirectHref: '/home',
+  notFoundFileProtocolFallback: 'HomeScreen',
   webLanguage: 'sv',
   webAppShellMarker: 'expo-router',
   themeColorToken: 'colors.canvas',
+  statusBarStyle: 'auto',
   nativeFallbackHref: '/home',
   appScheme: 'swedish-civic-test',
 } as const;
 
 export type ExpoRouterShellFilePath = (typeof expoRouterShellFiles)[number]['file'];
 export type ExpoRouterShellRecoveryHref = (typeof expoRouterShellRecoveryHrefs)[number];
+export type ExpoRouterStandaloneHeaderHiddenRoute =
+  (typeof expoRouterStandaloneHeaderHiddenRoutes)[number];

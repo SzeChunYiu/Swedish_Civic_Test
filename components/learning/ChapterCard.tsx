@@ -10,7 +10,7 @@ type ChapterCardCopy = {
   accessibilityLabel: {
     chapter: (title: string) => string;
     description: (description: string) => string;
-    englishName: (name: string) => string;
+    secondaryName: (name: string) => string;
     status: (status: string) => string;
   };
   chapterUnavailable: string;
@@ -23,7 +23,7 @@ const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = {
     accessibilityLabel: {
       chapter: (title) => `Kapitel: ${title}`,
       description: (description) => `Beskrivning: ${description}`,
-      englishName: (name) => `Engelskt namn: ${name}`,
+      secondaryName: (name) => `Engelskt namn: ${name}`,
       status: (status) => `Status: ${status}`,
     },
     chapterUnavailable: 'Kapitel saknas',
@@ -35,7 +35,7 @@ const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = {
     accessibilityLabel: {
       chapter: (title) => `Chapter: ${title}`,
       description: (description) => `Description: ${description}`,
-      englishName: (name) => `English name: ${name}`,
+      secondaryName: (name) => `Swedish name: ${name}`,
       status: (status) => `Status: ${status}`,
     },
     chapterUnavailable: 'Chapter unavailable',
@@ -60,12 +60,22 @@ export function ChapterCard({
   const progress = questionCount > 0 ? completedCount / questionCount : 0;
   const status =
     questionCount > 0 ? copy.practicedStatus(completedCount, questionCount) : copy.contentQueued;
-  const title = chapter?.nameSv ?? copy.chapterUnavailable;
+  const title = chapter
+    ? language === 'en'
+      ? chapter.nameEn
+      : chapter.nameSv
+    : copy.chapterUnavailable;
+  const secondaryName = chapter ? (language === 'en' ? chapter.nameSv : chapter.nameEn) : null;
+  const description = chapter
+    ? language === 'en'
+      ? chapter.descriptionEn
+      : chapter.descriptionSv
+    : null;
   const chapterAccessibilityLabel = [
     copy.accessibilityLabel.chapter(title),
-    chapter?.nameEn ? copy.accessibilityLabel.englishName(chapter.nameEn) : null,
+    secondaryName ? copy.accessibilityLabel.secondaryName(secondaryName) : null,
     copy.accessibilityLabel.status(status),
-    chapter?.descriptionSv ? copy.accessibilityLabel.description(chapter.descriptionSv) : null,
+    description ? copy.accessibilityLabel.description(description) : null,
   ]
     .filter(Boolean)
     .join('. ');
@@ -76,11 +86,9 @@ export function ChapterCard({
         <Badge tone={questionCount > 0 ? 'blue' : 'warm'}>{status}</Badge>
       </View>
       <Text style={styles.title}>{title}</Text>
-      {chapter?.nameEn ? <Text style={styles.subtitle}>{chapter.nameEn}</Text> : null}
-      {chapter?.descriptionSv ? (
-        <Text style={styles.description}>{chapter.descriptionSv}</Text>
-      ) : null}
-      <ProgressBar progress={progress} />
+      {secondaryName ? <Text style={styles.subtitle}>{secondaryName}</Text> : null}
+      {description ? <Text style={styles.description}>{description}</Text> : null}
+      <ProgressBar language={language} progress={progress} />
     </Card>
   );
 }

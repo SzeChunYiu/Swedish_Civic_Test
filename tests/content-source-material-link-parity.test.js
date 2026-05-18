@@ -30,6 +30,29 @@ require('./scripts/validate-content.js');
   );
 }
 
+function runValidationWithSourcesRoutePatch(patchExpression) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/sources.tsx')) {
+    return String(contents).${patchExpression};
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 test('sources route stays in parity with UHR source material metadata', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -70,5 +93,20 @@ test('sources parity rejects UHR map source URLs outside the education material 
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /UHR section map source URL must be under the UHR education material path/,
+  );
+});
+
+test('sources parity rejects route education material URL drift', () => {
+  const result = runValidationWithSourcesRoutePatch(
+    `replace(
+      "const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';",
+      "const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/annat/';",
+    )`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/sources\.tsx UHR_EDUCATION_MATERIAL_URL must be https:\/\/www\.uhr\.se\/medborgarskapsprovet\/utbildningsmaterial\//,
   );
 });

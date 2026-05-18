@@ -24,10 +24,19 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
 
   assert.equal(summary.audioButtonAccessibilityRulesValidated, 13);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
+  assert.match(source, /import type \{ AppLanguage \}/);
+  assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
+  assert.match(source, /language = 'sv'/);
   assert.match(source, /const speechText = text\.trim\(\);/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
-  assert.match(source, /Audio unavailable/);
+  assert.match(source, /Lyssna på den svenska frågan och svaren/);
+  assert.match(source, /unavailableLabel: 'Audio is unavailable for this question'/);
+  assert.match(
+    source,
+    /const label = !enabled[\s\S]*\? copy\.disabledLabel[\s\S]*\? copy\.enabledLabel[\s\S]*: copy\.unavailableLabel;/,
+  );
+  assert.match(source, /const accessibilityLabel = label;/);
   assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(source, /accessibilityRole="button"/);

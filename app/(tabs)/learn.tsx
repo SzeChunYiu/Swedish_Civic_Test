@@ -14,12 +14,12 @@ type ChapterLinkCopy = {
   contentQueued: string;
   progressLabel: (completedCount: number, questionCount: number) => string;
   accessibilityLabel: ({
-    nameSv,
-    nameEn,
+    primaryName,
+    secondaryName,
     progressLabel,
   }: {
-    nameSv: string;
-    nameEn: string;
+    primaryName: string;
+    secondaryName: string;
     progressLabel: string;
   }) => string;
 };
@@ -55,15 +55,15 @@ const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
     contentQueued: 'innehåll planerat',
     progressLabel: (completedCount, questionCount) =>
       `${completedCount} av ${questionCount} frågor besvarade`,
-    accessibilityLabel: ({ nameSv, nameEn, progressLabel }) =>
-      `Öppna kapitel ${nameSv}. Engelskt namn: ${nameEn}. Framsteg: ${progressLabel}.`,
+    accessibilityLabel: ({ primaryName, secondaryName, progressLabel }) =>
+      `Öppna kapitel ${primaryName}. Engelskt namn: ${secondaryName}. Framsteg: ${progressLabel}.`,
   },
   en: {
     contentQueued: 'content queued',
     progressLabel: (completedCount, questionCount) =>
       `${completedCount} of ${questionCount} questions practiced`,
-    accessibilityLabel: ({ nameSv, nameEn, progressLabel }) =>
-      `Open chapter ${nameSv}. English name: ${nameEn}. Progress: ${progressLabel}.`,
+    accessibilityLabel: ({ primaryName, secondaryName, progressLabel }) =>
+      `Open chapter ${primaryName}. Swedish name: ${secondaryName}. Progress: ${progressLabel}.`,
   },
 };
 
@@ -81,20 +81,24 @@ function completedCountForChapter(chapterId: string, completedQuestionIds: strin
 function getChapterLinkAccessibilityLabel({
   nameSv,
   nameEn,
+  language,
   completedCount,
   questionCount,
   copy,
 }: {
   nameSv: string;
   nameEn: string;
+  language: AppLanguage;
   completedCount: number;
   questionCount: number;
   copy: ChapterLinkCopy;
 }) {
   const progressLabel =
     questionCount > 0 ? copy.progressLabel(completedCount, questionCount) : copy.contentQueued;
+  const primaryName = language === 'en' ? nameEn : nameSv;
+  const secondaryName = language === 'en' ? nameSv : nameEn;
 
-  return copy.accessibilityLabel({ nameSv, nameEn, progressLabel });
+  return copy.accessibilityLabel({ primaryName, secondaryName, progressLabel });
 }
 
 export default function Screen() {
@@ -116,6 +120,7 @@ export default function Screen() {
               accessibilityLabel={getChapterLinkAccessibilityLabel({
                 nameSv: chapter.nameSv,
                 nameEn: chapter.nameEn,
+                language,
                 completedCount,
                 questionCount,
                 copy,

@@ -143,6 +143,54 @@ test('generateExam preserves scoring and review after session answer shuffle', (
   assert.equal(review.selectedOptionTextEn, 'Original correct answer');
 });
 
+test('generateExam review keeps selected wrong answer text after session answer shuffle', () => {
+  const { buildExamReviewItems, generateExam, scoreExam } = loadTs('lib/quiz/examGenerator.ts');
+  const sourceQuestion = {
+    ...baseQuestion,
+    id: 'q-shuffle-wrong-review',
+    options: [
+      { id: 'a', textSv: 'Rätt ursprungssvar', textEn: 'Original correct answer' },
+      { id: 'b', textSv: 'Distraktor B', textEn: 'Distractor B' },
+      { id: 'c', textSv: 'Distraktor C', textEn: 'Distractor C' },
+      { id: 'd', textSv: 'Distraktor D', textEn: 'Distractor D' },
+    ],
+    correctOptionId: 'a',
+  };
+
+  const shuffledExam = Array.from({ length: 12 }, (_unused, index) =>
+    generateExam([sourceQuestion], {
+      questionCount: 1,
+      sessionId: `mock-exam-wrong-review-${index}`,
+    }),
+  ).find(([question]) => question.correctOptionId !== sourceQuestion.correctOptionId);
+
+  assert.ok(shuffledExam, 'at least one deterministic exam session should move the correct answer');
+  const [question] = shuffledExam;
+  const selectedWrongOption = question.options.find(
+    (option) => option.id !== question.correctOptionId,
+  );
+  const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+
+  assert.ok(selectedWrongOption, 'shuffled question should expose a selectable wrong answer');
+  assert.ok(correctOption, 'shuffled question should expose the remapped correct answer');
+  assert.deepEqual(scoreExam([question], { [question.id]: selectedWrongOption.id }), {
+    correctCount: 0,
+    totalCount: 1,
+    percent: 0,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 0, totalCount: 1 }],
+  });
+
+  const [review] = buildExamReviewItems([question], { [question.id]: selectedWrongOption.id });
+
+  assert.equal(review.isCorrect, false);
+  assert.equal(review.selectedOptionTextSv, selectedWrongOption.textSv);
+  assert.equal(review.selectedOptionTextEn, selectedWrongOption.textEn);
+  assert.equal(review.correctOptionTextSv, correctOption.textSv);
+  assert.equal(review.correctOptionTextEn, correctOption.textEn);
+  assert.equal(review.correctOptionTextSv, 'Rätt ursprungssvar');
+  assert.equal(review.correctOptionTextEn, 'Original correct answer');
+});
+
 test('scoreExam returns score and per-chapter breakdown', () => {
   const { scoreExam } = loadTs('lib/quiz/examGenerator.ts');
   const questions = [
@@ -220,6 +268,25 @@ test('buildExamReviewItems returns selected answer, correct answer, source, and 
   assert.equal(review.explanationSv, 'Förklaring');
   assert.equal(review.explanationEn, 'Explanation');
   assert.deepEqual(review.uhrReference, baseQuestion.uhrReference);
+});
+
+test('buildExamReviewItems localizes unanswered and missing-correct fallbacks', () => {
+  const { buildExamReviewItems } = loadTs('lib/quiz/examGenerator.ts');
+  const questions = [
+    {
+      ...baseQuestion,
+      id: 'q-unanswered',
+      correctOptionId: 'missing',
+      options: [{ id: 'a', textSv: 'Svar', textEn: 'Answer' }],
+    },
+  ];
+
+  const [review] = buildExamReviewItems(questions, {});
+
+  assert.equal(review.selectedOptionTextSv, 'Inte besvarad');
+  assert.equal(review.selectedOptionTextEn, 'Not answered');
+  assert.equal(review.correctOptionTextSv, 'Rätt svar saknas');
+  assert.equal(review.correctOptionTextEn, 'Correct answer missing');
 });
 
 test('formatExamTime renders remaining seconds as mm:ss', () => {

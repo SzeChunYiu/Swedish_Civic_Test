@@ -5,41 +5,33 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const expectedSuppressedRoutes = [
-  '/exam',
-  '/practice',
-  '/quiz',
-  '/disclaimer',
-  '/privacy',
-  '/sources',
-  '/support',
-  '/terms',
-];
 
-test('launch popup ad route suppression stays aligned with release-safe routes', () => {
+function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
 
-  const summary = JSON.parse(match[0]);
-  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
-  const rootLayout = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
+test('tab navigation uses localized labels and suppresses placeholder glyph output', () => {
+  const summary = parseValidationSummary();
+  const tabLayout = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/_layout.tsx'), 'utf8');
 
-  assert.equal(summary.launchAdSuppressedRoutesValidated, expectedSuppressedRoutes.length);
-  assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
-
-  for (const route of expectedSuppressedRoutes) {
-    assert.ok(adsSource.includes(`'${route}'`), `${route} should be in the suppression list`);
-  }
-
-  assert.match(rootLayout, /usePathname\(\)/);
-  assert.match(rootLayout, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
-  assert.match(rootLayout, /!suppressLaunchPopupAd && entitlementsReady/);
+  assert.equal(summary.tabNavigationRulesValidated, 11);
+  assert.equal(summary.tabNavigationRoutesValidated, 6);
+  assert.equal(summary.tabNavigationParityValidated, true);
+  assert.match(tabLayout, /tabBarAccessibilityLabel: title/);
+  assert.match(tabLayout, /tabBarIcon: hiddenTabIcon/);
+  assert.match(
+    tabLayout,
+    /<Tabs\.Screen name="practice" options=\{getTabOptions\(copy\.practice\)\}/,
+  );
+  assert.doesNotMatch(tabLayout, /⏷/);
 });
 
-test('launch popup ad route suppression rejects missing compliance routes', () => {
+test('tab navigation parity rejects placeholder icon drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -49,10 +41,10 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/ads.ts')) {
+  if (normalizedPath.endsWith('/app/(tabs)/_layout.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'\/privacy',", "'\/privacy-disabled',");
+      .replace('tabBarIcon: hiddenTabIcon', 'tabBarIcon: undefined');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -63,10 +55,10 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /launch popup suppressed routes/);
+  assert.match(`${result.stdout}\n${result.stderr}`, /placeholder glyph suppression/);
 });
 
-test('launch popup ad route suppression rejects root-layout bypass drift', () => {
+test('tab navigation parity rejects route options that bypass accessible tab options', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -76,10 +68,13 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/_layout.tsx')) {
+  if (normalizedPath.endsWith('/app/(tabs)/_layout.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('shouldSuppressLaunchPopupAdForPath(pathname)', 'false');
+      .replace(
+        '<Tabs.Screen name="practice" options={getTabOptions(copy.practice)} />',
+        '<Tabs.Screen name="practice" options={{ title: copy.practice }} />',
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -92,6 +87,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /root layout must derive launch ad suppression from current pathname/,
+    /practice tab must use getTabOptions\(copy\.practice\)/,
   );
 });

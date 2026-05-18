@@ -1,31 +1,30 @@
 import { StyleSheet, Text } from 'react-native';
 
+import { nativeAdCardCopy } from '../../lib/monetization/adCopy';
 import { shouldShowAd } from '../../lib/monetization/ads';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import { useSettingsStore } from '../../lib/storage/settingsStore';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 import { colors, space, typography } from '../../lib/theme';
-
-const REMOVE_ADS_ACCESSIBILITY_HINT = 'Hidden after Remove Ads is active.';
 
 export function NativeAdCard({
   entitlements,
 }: {
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
+  const language = useSettingsStore((state) => state.language);
+  const copy = nativeAdCardCopy[language];
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
 
   if (!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)) return null;
 
   return (
-    <Card
-      accessibilityHint={`Sponsored ad preview. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
-      accessibilityLabel={`Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. ${REMOVE_ADS_ACCESSIBILITY_HINT}`}
-    >
-      <Text style={styles.eyebrow}>Test native ad</Text>
-      <Text style={styles.title}>Sponsored study placement</Text>
-      <Text style={styles.meta}>AdMob test placement preview. Keep out of timed exams.</Text>
+    <Card accessibilityHint={copy.hint} accessibilityLabel={copy.accessibilityLabel}>
+      <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
+      <Text style={styles.title}>{copy.title}</Text>
+      <Text style={styles.meta}>{copy.meta}</Text>
     </Card>
   );
 }

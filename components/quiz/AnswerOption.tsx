@@ -3,6 +3,21 @@ import { Button } from '../ui/Button';
 
 type AnswerTone = 'idle' | 'correct' | 'incorrect';
 type AnswerLanguage = 'sv' | 'en';
+type AnswerOptionCopy = {
+  fallbackLabel: string;
+  selectAccessibilityLabel: (label: string) => string;
+};
+
+const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy> = {
+  sv: {
+    fallbackLabel: 'Svarsalternativ',
+    selectAccessibilityLabel: (label) => `Välj svaret ${label}`,
+  },
+  en: {
+    fallbackLabel: 'Answer option',
+    selectAccessibilityLabel: (label) => `Select answer ${label}`,
+  },
+};
 
 export function AnswerOption({
   disabled = false,
@@ -21,9 +36,12 @@ export function AnswerOption({
   selected?: boolean;
   tone?: AnswerTone;
 }) {
-  const label = option ? getOptionLabel(option, language) : 'Answer option';
+  const copy = answerOptionCopy[language];
+  const label = option ? getOptionLabel(option, language) : copy.fallbackLabel;
   const variant = tone === 'correct' ? 'success' : tone === 'incorrect' ? 'danger' : 'option';
-  const accessibilityLabel = resultLabel ? `${label}, ${resultLabel}` : `Select answer ${label}`;
+  const accessibilityLabel = resultLabel
+    ? `${label}, ${resultLabel}`
+    : copy.selectAccessibilityLabel(label);
 
   return (
     <Button

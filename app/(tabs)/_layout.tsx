@@ -5,6 +5,16 @@ import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsSt
 type TabRouteName = 'home' | 'learn' | 'practice' | 'exam' | 'mistakes' | 'profile';
 type TabTitleCopy = Record<TabRouteName, string>;
 
+const hiddenTabIcon = () => null;
+
+function getTabOptions(title: string) {
+  return {
+    title,
+    tabBarAccessibilityLabel: title,
+    tabBarIcon: hiddenTabIcon,
+  };
+}
+
 const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = {
   sv: {
     home: 'Hem',
@@ -30,12 +40,12 @@ export default function TabsLayout() {
 
   return (
     <Tabs screenOptions={{ headerShown: true }}>
-      <Tabs.Screen name="home" options={{ title: copy.home }} />
-      <Tabs.Screen name="learn" options={{ title: copy.learn }} />
-      <Tabs.Screen name="practice" options={{ title: copy.practice }} />
-      <Tabs.Screen name="exam" options={{ title: copy.exam }} />
-      <Tabs.Screen name="mistakes" options={{ title: copy.mistakes }} />
-      <Tabs.Screen name="profile" options={{ title: copy.profile }} />
+      <Tabs.Screen name="home" options={getTabOptions(copy.home)} />
+      <Tabs.Screen name="learn" options={getTabOptions(copy.learn)} />
+      <Tabs.Screen name="practice" options={getTabOptions(copy.practice)} />
+      <Tabs.Screen name="exam" options={getTabOptions(copy.exam)} />
+      <Tabs.Screen name="mistakes" options={getTabOptions(copy.mistakes)} />
+      <Tabs.Screen name="profile" options={getTabOptions(copy.profile)} />
     </Tabs>
   );
 }

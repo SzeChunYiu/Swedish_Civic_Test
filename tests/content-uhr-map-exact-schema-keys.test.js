@@ -18,6 +18,7 @@ function readValidationSummary() {
 test('UHR section map records keep exact runtime schema keys', () => {
   const summary = readValidationSummary();
 
+  assert.equal(summary.uhrMapExactSchemaKeysValidated, true);
   assert.equal(summary.uhrMapSourceExactSchemaKeysValidated, true);
   assert.equal(summary.uhrMapChapterExactSchemaKeysValidated, 13);
   assert.equal(summary.uhrMapChapterExactSchemaKeysValidated, summary.uhrMapChaptersValidated);
@@ -36,6 +37,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
     const map = JSON.parse(String(contents));
+    map.internalReview = true;
     map.source.editorNote = 'internal source note';
     map.chapters[0].sourceLine = 'internal chapter note';
     return JSON.stringify(map);
@@ -50,6 +52,7 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /UHR section map\.internalReview is not part of UHRSectionMap schema/);
   assert.match(
     output,
     /UHR section map source\.editorNote is not part of UHRSectionMapSource schema/,

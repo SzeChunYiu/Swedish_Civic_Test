@@ -8,6 +8,11 @@ type QuestionTextSource = {
 
 type QuestionTextLanguage = 'sv' | 'en';
 
+const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = {
+  sv: 'Fråga saknas',
+  en: 'Question unavailable',
+};
+
 const SOURCE_AUTHORITY_REPLACEMENTS = [
   {
     pattern: /\bSant eller falskt\s+enligt UHR-materialet\s*:/gi,
@@ -44,22 +49,34 @@ export function stripSourceAuthorityPhrasing(text?: string): string {
 export function getQuestionDisplayText(
   question: QuestionTextSource | undefined,
   language: QuestionTextLanguage,
-  fallback = 'Question unavailable',
+  fallback = QUESTION_DISPLAY_FALLBACKS[language],
 ): string {
   const rawText = language === 'en' ? question?.questionEn : question?.questionSv;
   return stripSourceAuthorityPhrasing(rawText) || fallback;
 }
 
-export function getQuestionTranslationText(question?: QuestionTextSource): string | undefined {
-  const translation = stripSourceAuthorityPhrasing(question?.questionEn);
+export function getQuestionTranslationText(
+  question?: QuestionTextSource,
+  language: QuestionTextLanguage = 'sv',
+): string | undefined {
+  const translation = stripSourceAuthorityPhrasing(
+    language === 'en' ? question?.questionSv : question?.questionEn,
+  );
   return translation || undefined;
 }
 
-export function getQuestionSourceCitation(question?: QuestionTextSource): string {
-  if (!question?.uhrReference) return 'Source citation unavailable';
+export function getQuestionSourceCitation(
+  question?: QuestionTextSource,
+  language: QuestionTextLanguage = 'sv',
+): string {
+  if (!question?.uhrReference) {
+    return language === 'en' ? 'Source citation unavailable' : 'Källhänvisning saknas';
+  }
 
   const { chapter, pageApprox, section } = question.uhrReference;
-  return `Källa/Source: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
+  return language === 'en'
+    ? `Source: Sverige i fokus, ${chapter}, ${section}, p. ${pageApprox}`
+    : `Källa: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
 }
 
 function capitalizeSentenceStart(text: string): string {
