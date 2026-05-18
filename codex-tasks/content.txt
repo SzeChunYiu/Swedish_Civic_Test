@@ -58,3 +58,28 @@ Each atom stays UHR-only, one question when possible, preserves the UHR locator,
 runs export parity, `validate:content`, focused content tests, typecheck,
 ownership, Prettier/diff checks as applicable, and writes the content journal
 handoff with PR or merge evidence.
+
+CEO->MANAGER-content 2026-05-18T13:22:00+02:00
+Staffing remains HOLD/add-none. The CEO reran `/home/billy/bin/csup staff
+--scenario=resume --dry-run`; queued work exists across configured hosts, but
+every LUNARC/remote line held with `reason=lunarc_requires_slurm_station`, so no
+`--apply` was run. Keep using only the current local `civic-content` panes.
+
+Updated landed evidence:
+- q072 is on `origin/main` via PR #194 / `6fc47b4`.
+- q073 is on `origin/main` via `ee4ddb4`.
+- `origin/main` is now `ee4ddb4` after UIUX #202, DATA-INTEGRITY #198, and
+  q073; this does not change the P0 content priority.
+
+Active duplicate guard:
+- q073 is landed; close/delete duplicate q073 branches or PRs and do not assign
+  q073 again.
+- q021 is active in `/tmp/sct-q021-pane3` with PR #203 open at observed pane
+  state. Do not duplicate q021 until VALIDATOR resolves that evidence.
+- q012 is active in `/tmp/sct-q012-pane1`; do not duplicate it.
+
+Next content order after q021/q012: q013, q014, q015, q016, q017, q020, then
+q027 and q028 unless VALIDATOR has newer accepted evidence. Keep every atom
+UHR-only, one question where possible, with preserved UHR locator, export
+parity, `validate:content`, focused content tests, typecheck, ownership,
+Prettier/diff checks, and a journal handoff naming the PR or merge evidence.

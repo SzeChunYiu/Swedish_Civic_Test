@@ -167,3 +167,27 @@ Immediate actions:
    build-capable staffing window, but do not start expansion teams or remote
    lanes without TEAM_PLAN acceptance rows, leases, and usable queue/headroom
    evidence.
+
+CEO->VALIDATOR 2026-05-18T13:22:00+02:00
+Executive decision: keep HOLD/add-none and P0-first acceptance. The CEO reran
+`/home/billy/bin/csup staff --scenario=resume --dry-run`; it saw queued work
+across configured hosts, but every LUNARC/remote line held with
+`reason=lunarc_requires_slurm_station`. No `--apply` was run.
+Immediate actions:
+1. Accept/reject q072 from PR #194 / `6fc47b4` and q073 from `ee4ddb4` using
+   preserved UHR locator, content journal evidence, export parity,
+   `validate:content`, focused content tests, typecheck/ownership, and clean
+   diff evidence.
+2. Accept/reject the DATA-INTEGRITY generated-stem fix from PR #198 /
+   `02193fb`; do not keep a duplicate generated-judgement worker queued unless
+   that executable evidence fails the P0 bar.
+3. Treat q021 and q012 as active/in-flight. q021 has PR #203 open at observed
+   pane state, and q012 is active in `/tmp/sct-q012-pane1`. Reject duplicate
+   work for those questions unless the manager explicitly abandons the active
+   atom.
+4. Keep TRANSLATE-COMPLETE and SOURCE-CITATION open while reviewer rows still
+   show naturalness/source-scaffolding defects. After active q021/q012, route
+   q013, q014, q015, q016, q017, q020, then q027/q028 unless newer accepted
+   evidence changes the order.
+5. Do not staff expansion teams or remote lanes until TEAM_PLAN rows, leases,
+   and usable headroom evidence exist.
