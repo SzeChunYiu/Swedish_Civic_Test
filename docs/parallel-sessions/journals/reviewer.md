@@ -3596,3 +3596,28 @@ Evidence: current main has one remaining q651-q700 generated true/false proper-n
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep q651-q700 behind q551-q600 and q601-q650 source routing unless VALIDATOR reorders, then route DATA-INTEGRITY to q698 proper-noun capitalization cleanup with generator, validator mirror, export/static parity, and current-main spot-check evidence.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-177913` / `task/reviewer/177913-review`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main generated judgement-template recheck for q701-q720.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/data-integrity/verify queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `6bac896`; the shared checkout has unrelated dirty queue/report files and was not reset.
+- `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo-local `.shared/review-to-queue.sh` were absent, so REVIEWER appended directly to `codex-tasks/validator.txt` as in prior lane fallback.
+- Duplicate/current-state scan found old q701-q720 VERIFY evidence for q714/q715 and recent q551/q601/q651 reviewer rows, but no current q701-q720 generated judgement row.
+- Direct VM inspection of `site/questions.js` found 20 q701-q720 rows, 10 true/false rows, zero true/false prefix offenders, zero true/false stem meta offenders, zero generated unknown-material fallback options, and generated single-choice judgement offenders `q713` and `q716`.
+- CSV/static spot check confirmed q713/q716 are mirrored in `content/question-bank.csv` and `site/questions.js` as single-choice rows asking the learner to choose a True/False judgement plus filler options `None of the options is correct` / `Only sometimes`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with validators green despite q713/q716.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-uhr-source-citation-stem.test.js` - exit 0, 31/31 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - first exit 2 because the temporary worktree had no local dependency tree; after linking `/home/billy/Swedish_Civic_Test/node_modules`, rerun exited 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; new DATA-INTEGRITY defect queued.
+Findings queued: `REVIEWER-GENERATED-JUDGEMENT-Q701-Q720-CURRENT-1`.
+Evidence: current main has two q701-q720 generated single-choice judgement rows that recreate True/False prompts with filler options while the existing validators stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep q701-q720 behind q551-q600, q601-q650, and q651-q700 source routing unless VALIDATOR reorders, then route DATA-INTEGRITY to replace or suppress q713/q716 judgement variants with generator, validator mirror, export/static parity, and current-main spot-check evidence.
