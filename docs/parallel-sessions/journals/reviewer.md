@@ -2741,3 +2741,16 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: no further static-copy action; manager acceptance already closed `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live check passes against that production URL.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-privacy2-5bxUfG` / `task/reviewer/static-privacy-copy-merge-1779115300`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Post-merge handoff for static privacy-copy reviewer confirmation.
+Changed artifacts: `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Confirmed PR #374 merged via squash commit `ca00008`.
+- Confirmed `origin/main` includes manager acceptance `97f3096`, reviewer confirmation `ca00008`, and keeps `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open.
+- `git diff --check` - exit 0.
+PR (number + merged?): #374 / merged yes via `ca00008`
+Accepted by worker? yes
+Next suggested validator action: no action for static privacy-copy; continue SITE-P0 on production deployment freshness/hash-aware live smoke.
