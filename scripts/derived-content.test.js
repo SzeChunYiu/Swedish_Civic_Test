@@ -792,6 +792,30 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sveriges befolkning ökade under 1800-talet på grund av EU-medlemskapet.',
       'Sweden’s population grew during the 19th century because of EU membership.',
     ],
+    q454: [
+      'Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades.',
+      'The change through the new constitution in 1809 was that the king’s power was limited.',
+    ],
+    q466: [
+      'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',
+      'The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.',
+    ],
+    q470: [
+      'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
+      'The period after the Second World War is often called the Swedish record years because Sweden had long-lasting strong economic growth and could carry out major reforms.',
+    ],
+    q471: [
+      'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige saknade nästan all industri.',
+      'The period after the Second World War is often called the Swedish record years because Sweden had almost no industry.',
+    ],
+    q479: [
+      'Den digitala revolutionen har bara förändrat hur människor firar midsommar.',
+      'The digital revolution has only changed how people celebrate Midsummer.',
+    ],
+    q495: [
+      'Europarådet arbetar endast för jordbrukspolitik.',
+      'The Council of Europe works only for agricultural policy.',
+    ],
     q458: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
       'The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.',
@@ -843,7 +867,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+  );
+  assert.doesNotMatch(
+    residualText,
+    /att Kungens makt|för Samarbetet mellan|for Cooperation between/,
   );
   residualQuestions.forEach((question) => {
     assert.doesNotMatch(question.questionSv, /är (?:Judar|Danskar),/, question.id);
