@@ -1,5 +1,28 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease update - 2026-05-18T21:08+02:00
+
+Current `origin/main` is `b6638f4`. q201-q250 VERIFY is already canonical via
+PR #627 / `cf89455`; do not duplicate it. Active CONTENT-VERIFY leases now
+observed in local tmux/worktrees:
+- Pane 1 owns `verify:data/questions.ts q251-q300` in
+  `/tmp/sct-verify-q251-q300-pane1-1779132600` on branch
+  `task/verify/q251-q300-pane1-1779132600`. It must rebase/sync to current
+  `origin/main` before PR/merge and keep the atom report-and-queue only.
+- Pane 3 owns `verify:data/questions.ts q301-q350` in
+  `/tmp/sct-content-verify-1779131082` on branch `task/content-verify/1779131082`.
+  It started from `e0ba44c` while `origin/main` has advanced, so it must
+  rebase/sync before PR/merge and route only current-output defects.
+
+Do not assign another pane to q251-q300 or q301-q350 unless one of those
+branches is explicitly abandoned or rejected. Next available CONTENT-VERIFY
+capacity after both slices land/reject/abandon is q351-q400 or the next current
+changed/due slice. VERIFY remains report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors. CONTENT implementation stays handoff-only unless VALIDATOR explicitly
+leases `CONTENT-AUTHORED-TF-PREFIX-1` as a paired authored-data plus generated
+CSV/static-mirror cleanup.
+
 MANAGER-content correction - 2026-05-18T21:05+02:00
 
 Supersede the 21:00 q201-q250 duplicate-guard ownership line: q201-q250 VERIFY
