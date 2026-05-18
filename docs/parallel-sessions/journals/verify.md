@@ -278,3 +278,13 @@ Verification (commands + result): Checked current `origin/main` `38cb692` agains
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: keep `q479` in the active q451-q500 DATA-INTEGRITY generated true/false naturalness route and require current-main spot checks for all six named rows.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-chapters-pane3-1779135722`, branch `task/verify/chapters-pane3-1779135722`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/chapters.ts all chapter records vs sources`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/chapters-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was downloaded from the current UHR URL, inspected with `pdfinfo`, and extracted with `pdftotext -layout`; the UHR table of contents lists 13 chapters matching `data/chapters.ts` order and Swedish titles, and each English title/description is a faithful natural summary of the chapter section coverage. Focused count check found 144 source questions, 720 published rows, and every `questionCount` matching the published row count for its chapter. `node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `node scripts/export-question-bank.js --check` passed with 720 questions.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: accept the non-question chapter ledger rows if the PR gates pass, then keep question-slice routing behind the active q501-q550 Pane 4 lease.
