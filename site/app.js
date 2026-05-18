@@ -29,10 +29,57 @@ function route() {
   }
   // if there's an inner-page anchor like "/privacy#p3", scroll to it
   const innerAnchor = pathRaw.match(/#(.+)$/);
+  smtSetMobileNav(false);
 }
 
 window.addEventListener("hashchange", route);
 window.addEventListener("DOMContentLoaded", route);
+
+function smtMobileNavLabel(open) {
+  const sv = document.documentElement.lang === "sv";
+  if (open) return sv ? "Stäng navigering" : "Close navigation";
+  return sv ? "Öppna navigering" : "Open navigation";
+}
+
+function smtSetMobileNav(open) {
+  const topbar = document.querySelector(".topbar");
+  const toggle = document.getElementById("nav-toggle");
+  if (!topbar || !toggle) return;
+  topbar.classList.toggle("is-nav-open", open);
+  toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  toggle.setAttribute("aria-label", smtMobileNavLabel(open));
+}
+
+document.addEventListener("click", (e) => {
+  const toggle = e.target.closest("#nav-toggle");
+  if (toggle) {
+    smtSetMobileNav(toggle.getAttribute("aria-expanded") !== "true");
+    return;
+  }
+  if (e.target.closest(".nav a")) {
+    smtSetMobileNav(false);
+    return;
+  }
+  if (!e.target.closest(".topbar")) {
+    smtSetMobileNav(false);
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") smtSetMobileNav(false);
+});
+
+window.addEventListener("resize", () => {
+  if (window.matchMedia("(min-width: 721px)").matches) smtSetMobileNav(false);
+});
+window.addEventListener("smt:languagechange", () => {
+  const toggle = document.querySelector("#nav-toggle");
+  const isOpen =
+    toggle && typeof toggle.getAttribute === "function"
+      ? toggle.getAttribute("aria-expanded") === "true"
+      : false;
+  smtSetMobileNav(isOpen);
+});
 
 /* ============================ LANGUAGE TOGGLE + DICT */
 

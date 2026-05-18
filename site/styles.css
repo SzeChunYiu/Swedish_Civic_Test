@@ -67,7 +67,8 @@ img { max-width: 100%; display: block; }
   display: flex; align-items: center; gap: 28px;
   padding: 14px 28px;
 }
-.brand { display: flex; align-items: center; gap: 12px; font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -.01em; color: var(--ink); }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -.01em; color: var(--ink); }
+.brand [data-i18n="brand"] { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .brand__mark {
   width: 34px; height: 24px; border-radius: 4px;
   background: var(--flag-blue);
@@ -83,12 +84,14 @@ img { max-width: 100%; display: block; }
 
 .nav { display: flex; gap: 4px; margin-left: auto; align-items: center; }
 .nav a {
+  display: inline-flex; align-items: center; justify-content: center;
   color: var(--ink); font-weight: 600; font-size: 15px;
   padding: 8px 14px; border-radius: 999px;
   transition: background .15s, color .15s;
 }
 .nav a:hover { background: rgba(0,106,167,.08); text-decoration: none; }
 .nav a.is-active { background: var(--ink); color: var(--paper); }
+.nav-toggle { display: none; }
 
 .lang {
   display: inline-flex; align-items: center;
@@ -1392,7 +1395,52 @@ p.deck {
 @media (max-width: 720px) {
   .icon-btn span:not([aria-hidden]) { display: none; }
   .icon-btn { padding: 9px; border-radius: 50%; }
-  .nav a:nth-child(n+3) { display: none; }
+  .topbar__inner {
+    gap: 10px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    flex: 1 1 auto;
+    gap: 10px;
+    font-size: 17px;
+  }
+  .brand__mark {
+    width: 30px;
+    height: 22px;
+  }
+  .brand__mark::before { left: 10px; width: 4px; }
+  .brand__mark::after  { top: 9px; height: 4px; }
+  .nav-toggle {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+  .topbar__tools {
+    flex: 0 0 auto;
+    margin-left: 0;
+  }
+  .nav {
+    order: 10;
+    display: none;
+    flex: 1 0 100%;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .topbar.is-nav-open .nav { display: flex; }
+  .nav a {
+    min-height: 44px;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 10px 14px;
+  }
 }
 
 /* ==================================================================
