@@ -2,7 +2,7 @@ import { StyleSheet, Text } from 'react-native';
 
 import { Card } from '../ui/Card';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, typography } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 type QuestionDisclaimerCopy = {
   text: string;
@@ -34,6 +34,7 @@ export function QuestionDisclaimer({ language }: { language?: AppLanguage } = {}
     <Card
       accessibilityHint={copy.accessibilityHint}
       accessibilityLabel={disclaimerAccessibilityLabel}
+      style={styles.card}
     >
       <Text style={styles.text}>{copy.text}</Text>
     </Card>
@@ -41,6 +42,10 @@ export function QuestionDisclaimer({ language }: { language?: AppLanguage } = {}
 }
 
 const styles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.surfaceWarm,
+    padding: space[1.5],
+  },
   text: {
     color: colors.textDisclaimer,
     fontSize: typography.badge.fontSize,
