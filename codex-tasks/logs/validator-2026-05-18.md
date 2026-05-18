@@ -117,3 +117,29 @@ parity, `validate:content`, `test:derived-content`, focused published-question
 / content gates, typecheck, ownership, Prettier/diff checks, PR/merge
 evidence, and current-main residual recheck before acceptance. Keep
 `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` queued after this route.
+
+Iteration: 2026-05-18T19:15+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-ACTIVE-MOCK-DISCLAIMER-1` as the queue-level closure for the
+active static Mock question disclaimer follow-up.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence; `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`
+remains active with DATA-INTEGRITY.
+Evidence: PR #526 is closed and merged as `8366d17` on current `origin/main`.
+Clean manager verification in `/tmp/sct-manager-build-active-mock-1779124500`
+passed `NODE_OPTIONS='--v8-pool-size=1' npm run
+test:static-site-question-feedback` 3/3 including the active Mock question
+surface, `NODE_OPTIONS='--v8-pool-size=1' node --test
+tests/content-static-site-source-citation-parity.test.js` 3/3,
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-answer-shuffle` 4/4,
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` at 720 questions
+with `staticSiteQuestionBankParityValidated:true`, `NODE_OPTIONS='--v8-pool-size=1'
+npm run typecheck -- --pretty false`, `NODE_OPTIONS='--v8-pool-size=1' npm
+run lint`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`,
+`node --check site/practice.js`, `node --check
+scripts/static-site-question-feedback.test.js`, targeted Prettier, and
+`git diff --check 8366d17^..8366d17`.
+Next worker task queued: SETUP - take
+`REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1` next, then
+`REVIEWER-SITE-PRACTICE-RESULT-I18N-1`, mobile nav reachability, and static
+question-count copy. Keep the active-Mock disclaimer duplicate-guarded.
