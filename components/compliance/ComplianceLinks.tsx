@@ -5,7 +5,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
-type ComplianceLinkKey = 'disclaimer' | 'privacy' | 'terms' | 'sources' | 'support';
+type ComplianceLinkKey =
+  | 'disclaimer'
+  | 'privacy'
+  | 'terms'
+  | 'sources'
+  | 'support'
+  | 'aboutTheTest';
 type ComplianceHref = ComponentProps<typeof Link>['href'];
 type ComplianceLinksCopy = {
   title: string;
@@ -13,7 +19,14 @@ type ComplianceLinksCopy = {
   links: Record<ComplianceLinkKey, string>;
 };
 
-const linkKeys = ['disclaimer', 'privacy', 'terms', 'sources', 'support'] as const;
+const linkKeys = [
+  'aboutTheTest',
+  'disclaimer',
+  'privacy',
+  'terms',
+  'sources',
+  'support',
+] as const;
 
 const linkHrefs: Record<ComplianceLinkKey, ComplianceHref> = {
   disclaimer: '/disclaimer',
@@ -21,6 +34,7 @@ const linkHrefs: Record<ComplianceLinkKey, ComplianceHref> = {
   terms: '/terms',
   sources: '/sources',
   support: '/support',
+  aboutTheTest: '/about-the-test',
 };
 
 const complianceLinksCopy: Record<AppLanguage, ComplianceLinksCopy> = {
@@ -28,6 +42,7 @@ const complianceLinksCopy: Record<AppLanguage, ComplianceLinksCopy> = {
     title: 'Juridik och källor',
     openLabel: (label) => `Öppna ${label}`,
     links: {
+      aboutTheTest: 'Om provet',
       disclaimer: 'Information',
       privacy: 'Integritet',
       terms: 'Villkor',
@@ -39,6 +54,7 @@ const complianceLinksCopy: Record<AppLanguage, ComplianceLinksCopy> = {
     title: 'Legal and sources',
     openLabel: (label) => `Open ${label}`,
     links: {
+      aboutTheTest: 'About the test',
       disclaimer: 'Disclaimer',
       privacy: 'Privacy',
       terms: 'Terms',
