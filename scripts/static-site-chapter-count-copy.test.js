@@ -24,6 +24,10 @@ function homeChapterListCount(indexHtml) {
   return (listMatch[1].match(/<li>/g) ?? []).length;
 }
 
+function normalizeWhitespace(value) {
+  return value.replace(/\s+/g, ' ');
+}
+
 test('static site chapter-count copy rejects stale twelve-chapter claims', () => {
   const chapterCount = staticChapterCount();
   const indexHtml = read('site/index.html');
@@ -47,6 +51,7 @@ test('static site chapter-count copy has non-numeric localized chapter wording',
   const surface = [read('site/index.html'), read('site/app.js'), read('site/i18n-extras.js')].join(
     '\n',
   );
+  const normalizedSurface = normalizeWhitespace(surface);
 
   [
     /Short, source-backed chapters/,
@@ -57,5 +62,5 @@ test('static site chapter-count copy has non-numeric localized chapter wording',
     /فصول قصيرة/,
     /Cutubyo gaaban/,
     /data-i18n="chap\.13\.t">Traditions, holidays &amp; everyday culture/,
-  ].forEach((pattern) => assert.match(surface, pattern));
+  ].forEach((pattern) => assert.match(normalizedSurface, pattern));
 });

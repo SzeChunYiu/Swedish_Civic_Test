@@ -3,6 +3,7 @@
 Append-only. Keep under 120 lines.
 
 ## Iteration 1 — 2026-05-15
+
 Task completed: Task 1 — verified Expo TypeScript scaffold with Expo Router entry point and required dependencies already present.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`; verified existing scaffold artifacts `package.json`, `app.json`, `babel.config.js`, `tsconfig.json`, `app/_layout.tsx`, `app/index.tsx`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME="$PWD/.tmp-expo-home" EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`; prescribed `--non-interactive` variant is unsupported by Expo CLI 54 and fails before this HOME override because `/home/legacy-owner/.expo` is unavailable.
@@ -10,6 +11,7 @@ Blocked? no — Task 1 scaffold is usable; Task 3 should wait for CONTENT lane `
 Next suggested validator action: check A2 scaffold artifacts and TypeScript output.
 
 ## Iteration 2 — 2026-05-15
+
 Task completed: Task 2 — audited architecture folder structure for SETUP-owned scaffold paths (`app/`, `components/`, `lib/`) and confirmed all target files exist.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`; verified existing scaffold files under `app/`, `components/`, and `lib/`. No project source changes needed in SETUP scope.
 Verification: architecture path audit showed every SETUP-owned target file from `docs/architecture.md` present. `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -17,6 +19,7 @@ Blocked? yes — full A3 still needs content-owned/read-only paths: `data/chapte
 Next suggested validator action: coordinate CONTENT lane to fill remaining `data/` and `types/` architecture files before accepting A3 and before SETUP Task 3 imports `data/questions.ts`.
 
 ## Iteration 3 — 2026-05-15
+
 Task completed: Task 3 — replaced `app/(tabs)/practice.tsx` placeholder with a minimal Zustand-backed quiz screen that imports `questions`, shows the first Swedish question and answer options, marks the selected answer `Rätt`/`Fel`, and reveals `explanationSv` after selection.
 Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -24,6 +27,7 @@ Blocked? no — code path is implemented; simulator/Expo Go visual acceptance re
 Next suggested validator action: check A7 by opening the Practice tab in Expo Go/simulator and selecting an answer.
 
 ## Iteration 4 — 2026-05-15
+
 Task completed: Scaffold improvement — wired the Expo Router root to the tab navigator so the app opens into the tab shell and the Practice tab is reachable from launch.
 Artifacts changed: `app/_layout.tsx`, `app/index.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -31,6 +35,7 @@ Blocked? no — root route now redirects to `/home` and root stack registers `(t
 Next suggested validator action: launch the app and confirm it lands on the Home tab, then switch to Practice for A7.
 
 ## Iteration 5 — 2026-05-15
+
 Task completed: Scaffold improvement — extracted the Practice screen Zustand session state into `lib/quiz/practiceSessionStore.ts` so quiz state lives in the quiz layer instead of inside the route component.
 Artifacts changed: `app/(tabs)/practice.tsx`, `lib/quiz/practiceSessionStore.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -38,6 +43,7 @@ Blocked? no — Practice screen behavior is unchanged; state is now reusable for
 Next suggested validator action: re-check A7 by selecting an answer in the Practice tab; behavior should match Iteration 3.
 
 ## Iteration 6 — 2026-05-15
+
 Task completed: Scaffold improvement — added a Home quick-action link to `/practice` so the quiz screen is reachable both through the tab bar and the landing Home screen.
 Artifacts changed: `app/(tabs)/home.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -45,6 +51,7 @@ Blocked? no — navigation path is wired; visual acceptance remains for VALIDATO
 Next suggested validator action: launch app, tap `Start practice` from Home, then select an answer on Practice.
 
 ## Iteration 7 — 2026-05-15
+
 Task completed: Scaffold improvement — wired `lib/storage/progressStore.ts` to MMKV-backed persistence for completed question IDs, with safe fallback when native MMKV is unavailable.
 Artifacts changed: `lib/storage/progressStore.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -52,6 +59,7 @@ Blocked? no — progress store compiles and remains unused by current Practice U
 Next suggested validator action: inspect `lib/storage/progressStore.ts` for MMKV use and keep runtime check in mind if using Expo Go without a native MMKV module.
 
 ## Iteration 8 — 2026-05-15
+
 Task completed: Scaffold improvement — connected the Practice screen to the progress store so selecting an answer marks the first question completed and displays the completed-question count.
 Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -59,6 +67,7 @@ Blocked? no — Practice still satisfies A7 and now exercises the SETUP-owned pr
 Next suggested validator action: in Practice, select an answer and confirm the completed count increments while the explanation still appears.
 
 ## Iteration 9 — 2026-05-15
+
 Task completed: Scaffold improvement — routed Practice answer correctness through `lib/quiz/answerValidation.ts` instead of duplicating `correctOptionId` comparison in the screen.
 Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -66,6 +75,7 @@ Blocked? no — Practice behavior is unchanged; correctness logic now uses the q
 Next suggested validator action: in Practice, select the first answer and confirm it still marks `Rätt`; select another answer and confirm `Fel`.
 
 ## Iteration 10 — 2026-05-15
+
 Task completed: Scaffold improvement — exposed the existing Practice session `resetSelection` action with a `Try again` control after an answer is selected.
 Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -73,6 +83,7 @@ Blocked? no — A7 behavior remains intact; users can now clear selection and re
 Next suggested validator action: select an answer in Practice, confirm explanation appears, tap `Try again`, and confirm answer markings clear.
 
 ## Iteration 11 — 2026-05-15
+
 Task completed: Scaffold improvement — connected Practice to `lib/quiz/scoring.ts` and shows a simple `Score: correct/total` line after an answer is selected.
 Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -80,6 +91,7 @@ Blocked? no — Practice still displays the first question, options, answer mark
 Next suggested validator action: select a correct answer and confirm `Score: 1/1`; retry/select an incorrect answer and confirm `Score: 0/1`.
 
 ## Iteration 12 — 2026-05-15
+
 Task completed: Scaffold improvement — added the existing `AudioButton` to Practice so the displayed Swedish question can be played via the SETUP-owned `expo-speech` path.
 Artifacts changed: `app/(tabs)/practice.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npx tsc --noEmit && echo "TypeScript OK"` → TypeScript OK. `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev` smoke-started Metro and printed `Waiting on http://localhost:8081`.
@@ -87,6 +99,7 @@ Blocked? no — Practice still displays the question and options; audio runtime 
 Next suggested validator action: open Practice, tap `Listen`, and confirm Swedish TTS plays; then select an answer to re-check A7 behavior.
 
 ## Iteration 13 — 2026-05-17
+
 Task completed: Scaffold improvement — replaced the dynamic quiz session placeholder with a routed question screen that selects a stable question for the session id, records the answer, and shows score, explanation, and UHR reference feedback.
 Artifacts changed: `app/quiz/[sessionId].tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run typecheck` exit 0; `npx eslint 'app/quiz/[sessionId].tsx'` exit 0; `npm run test:practice` exit 0; `git diff --check -- app/quiz/'[sessionId]'.tsx docs/parallel-sessions/journals/setup.md` exit 0; `EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev --offline --port 8099 --max-workers 1` smoke-started Metro and printed `Waiting on http://localhost:8099`, then was stopped.
@@ -94,6 +107,7 @@ Blocked? no — `/quiz/[sessionId]` is now a usable Expo Router scaffold route.
 Next suggested validator action: open `/quiz/daily` or `/quiz/<question-id>`, select an answer, and confirm the explanation/source feedback appears.
 
 ## Iteration 14 — 2026-05-17
+
 Task completed: Tooling/product atom — replaced the hardcoded v1 ad fail-closed gate with env-driven ad rendering, default dev/test AdMob units, real-unit env slots, and a decoupled remove-ads entitlement.
 Artifacts changed: `lib/monetization/ads.ts`, `lib/monetization/premium.ts`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check lib/monetization/ads.ts lib/monetization/premium.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/ads.ts lib/monetization/premium.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `grep -q "REAL_ADS_ENABLED" lib/monetization/ads.ts` exit 0; `grep -q "REAL_ADS_ENABLED_FOR_V1 = false" lib/monetization/ads.ts` exit 1 as expected; `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev --offline --port 8099 --max-workers 1` smoke-started Metro and printed `Waiting on http://localhost:8099`, then was stopped.
@@ -101,6 +115,7 @@ Blocked? no — ADS-1/ADS-2 backend gating now has a passing focused verifier, b
 Next suggested validator action: inspect `lib/monetization/ads.ts` and run `npm run test:monetization`; then assign IAP-1/IAP-2 or CONSENT-1.
 
 ## Iteration 15 — 2026-05-17
+
 Task completed: Tooling/product atom — added the Remove Ads non-consumable IAP wrapper with secure persisted `adsDisabled`, native `react-native-iap` purchase/restore hooks, and a mock provider for web/dev/tests.
 Artifacts changed: `lib/monetization/purchases.ts`, `app.json`, `package.json`, `package-lock.json`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0; `npx prettier --check lib/monetization/purchases.ts scripts/monetization.test.js package.json app.json` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `test -f lib/monetization/purchases.ts` exit 0; `grep -qiE "restore" lib/monetization/purchases.ts` exit 0; `grep -rqi "remove.?ads" app components lib` exit 0; `npm ls react-native-iap expo-secure-store react-native-nitro-modules` exit 0; `git diff --check -- lib/monetization/purchases.ts scripts/monetization.test.js package.json package-lock.json app.json docs/parallel-sessions/journals/setup.md` exit 0; `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 npx expo start --no-dev --offline --port 8099 --max-workers 1` smoke-started Metro and printed `Waiting on http://localhost:8099`, then was stopped; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0.
@@ -108,6 +123,7 @@ Blocked? no — IAP-1 library/tooling path is implemented and verified; paywall 
 Next suggested validator action: inspect `lib/monetization/purchases.ts`, rerun `npm run test:monetization`, then assign IAP-2 or CONSENT-1.
 
 ## Iteration 16 — 2026-05-17
+
 Task completed: Tooling/product atom — suppressed the global launch popup ad on `/exam` routes while keeping the launch placement available elsewhere.
 Artifacts changed: `app/_layout.tsx`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check app/_layout.tsx scripts/monetization.test.js` exit 0; `git diff --check -- app/_layout.tsx scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0; inline Playwright with `/usr/bin/google-chrome` at `/exam` found `Mock exam` visible and `Launch sponsor`/`Google AdMob`/close-ad controls absent, then `/home` still showed the launch sponsor placement; console errors 0.
@@ -115,6 +131,7 @@ Blocked? no — route-level static coverage now targets the global app-open ad m
 Next suggested validator action: rerun `npm run test:monetization` and exported `/exam` smoke to confirm no launch sponsor overlay appears on the mock exam.
 
 ## Iteration 17 — 2026-05-17
+
 Task completed: Tooling/product atom — removed the artificial Remove Ads verifier token from the IAP wrapper and verifier while preserving buy, restore, and persisted `adsDisabled` coverage; restored the missing exam-route launch-ad guard required by the current monetization verifier.
 Artifacts changed: `lib/monetization/purchases.ts`, `scripts/monetization.test.js`, `app/_layout.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check app/_layout.tsx lib/monetization/purchases.ts scripts/monetization.test.js` exit 0; `git diff --check -- app/_layout.tsx lib/monetization/purchases.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `rg -n "REMOVE_ADS_VERIFIER_TOKEN|remove\\.\\?ads" lib/monetization/purchases.ts scripts/monetization.test.js` found no matches.
@@ -122,6 +139,7 @@ Blocked? no — IAP-1 no longer depends on the artificial token; the focused mon
 Next suggested validator action: rerun `npm run test:monetization`, inspect `lib/monetization/purchases.ts`, and decide whether IAP-1 can move from blocked to accepted before assigning IAP-2 paywall UI.
 
 ## Iteration 18 — 2026-05-17
+
 Task completed: Tooling/product atom — added chapter-to-quiz session helpers in the quiz flow layer so future chapter quiz-entry UI can resolve a stable first question without duplicating route logic.
 Artifacts changed: `lib/quiz/practiceFlow.ts`, `scripts/practice-flow.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:practice` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check lib/quiz/practiceFlow.ts scripts/practice-flow.test.js` exit 0; `git diff --check -- lib/quiz/practiceFlow.ts scripts/practice-flow.test.js docs/parallel-sessions/journals/setup.md` exit 0; `npm run test:ownership` exit 0. Direct `npx eslint lib/quiz/practiceFlow.ts scripts/practice-flow.test.js` is not project-equivalent and fails on the pre-existing script `__dirname` Node-global config gap.
@@ -129,6 +147,7 @@ Blocked? no — non-UI plumbing is verified; wiring the visible chapter start co
 Next suggested validator action: inspect the new `getChapterQuizSessionId` coverage, then schedule the chapter screen link when the `app/` lease is available.
 
 ## Iteration 19 — 2026-05-17
+
 Task completed: Tooling/product atom — added monetization consent decision helpers for ATT and Google UMP prompts before real ad serving.
 Artifacts changed: `lib/monetization/consent.ts`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npx prettier --check lib/monetization/consent.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/consent.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0; `rg -n "tracking-transparency|ATT|UMP|consent" lib app` found consent coverage in `lib/monetization/consent.ts`.
@@ -136,6 +155,7 @@ Blocked? no — this is a verified consent-plumbing atom; native prompt wiring r
 Next suggested validator action: inspect `getAdConsentDecision` and rerun `npm run test:monetization` before assigning the native consent prompt integration.
 
 ## Iteration 20 — 2026-05-17
+
 Task completed: Tooling/product atom — made the ad gate require an explicit consent decision before serving real AdMob units, while preserving test-unit rendering for dev/web previews.
 Artifacts changed: `lib/monetization/ads.ts`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check lib/monetization/ads.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/ads.ts scripts/monetization.test.js docs/parallel-sessions/journals/setup.md` exit 0.
@@ -143,6 +163,7 @@ Blocked? no — this is non-UI SETUP plumbing inside `lib/monetization`; app/com
 Next suggested validator action: inspect the real-ad consent guard in `shouldShowAd`, then schedule the UI/app integration once the active UI/UX lease permits `app/` and `components/` writes.
 
 ## Iteration 21 — 2026-05-17
+
 Task completed: Tooling/product atom — tightened the release monetization policy and preflight evidence gates for ad-supported v1.0 store records and privacy review.
 Artifacts changed: `lib/monetization/releasePolicy.ts`, `scripts/monetization.test.js`, `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0; `node --test scripts/release-preflight.test.js --test-name-pattern "store record|privacy review"` exit 0 with 44/44 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check lib/monetization/releasePolicy.ts scripts/monetization.test.js scripts/release-preflight.js scripts/release-preflight.test.js` exit 0; `git diff --check -- lib/monetization/releasePolicy.ts scripts/monetization.test.js scripts/release-preflight.js scripts/release-preflight.test.js docs/parallel-sessions/journals/setup.md` exit 0.
@@ -150,6 +171,7 @@ Blocked? no — the release gate now rejects disabled-ad AdMob/privacy evidence 
 Next suggested validator action: inspect the preflight `store-records` and `privacy-review` schema updates, then rerun `npm run test:monetization` and the release-preflight store/privacy subset.
 
 ## Iteration 22 — 2026-05-17
+
 Task completed: Tooling/product atom — fixed the routed quiz retry control so the a11y verifier accepts its explicit interactive state.
 Artifacts changed: `app/quiz/[sessionId].tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:a11y-labels` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check app/quiz/[sessionId].tsx` exit 0; `git diff --check -- app/quiz/[sessionId].tsx docs/parallel-sessions/journals/setup.md` exit 0.
@@ -157,6 +179,7 @@ Blocked? no — the routed quiz screen no longer triggers the missing `accessibi
 Next suggested validator action: rerun `npm run test:a11y-labels` and, if release preflight is next, check whether local validation now advances past the quiz a11y gate.
 
 ## Iteration 23 — 2026-05-17
+
 Task completed: Tooling/product atom — wired chapter detail screens to the routed quiz session helper with a visible `Start quiz` link for chapters that have questions.
 Artifacts changed: `app/chapter/[chapterId].tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:practice` exit 0; `npm run test:a11y-labels` exit 0; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check app/chapter/[chapterId].tsx` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0; system-Chrome Playwright smoke on exported web passed `/learn` → `/chapter/ch01` → `Start quiz for Landet Sverige` → `/quiz/q001` with zero console errors; `git diff --check -- app/chapter/[chapterId].tsx app/quiz/[sessionId].tsx docs/parallel-sessions/journals/setup.md` exit 0. Official `CI=1 timeout 120s npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts --workers=1` still fails before app interaction because the configured cached Playwright browser is missing.
@@ -164,6 +187,7 @@ Blocked? no — the chapter start route is implemented and locally smoke-verifie
 Next suggested validator action: inspect `app/chapter/[chapterId].tsx`, rerun the focused checks above, then rerun the official learn-navigation e2e after restoring the configured Playwright browser cache.
 
 ## Iteration 24 — 2026-05-17
+
 Task completed: Tooling/product atom — added a pure Google Mobile Ads SDK initialization decision helper that blocks SDK init when ads are disabled, Remove Ads is active, ATT/UMP prompts are pending, or real-ad consent is missing.
 Artifacts changed: `lib/monetization/consent.ts`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0 with 12/12 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npx prettier --check lib/monetization/consent.ts scripts/monetization.test.js` exit 0; `git diff --check -- lib/monetization/consent.ts scripts/monetization.test.js` exit 0.
@@ -171,6 +195,7 @@ Blocked? no — app/native prompt wiring and public compliance files remain sepa
 Next suggested validator action: inspect `getAdSdkInitializationDecision` and the monetization test coverage, then schedule the app integration when the UI/UX lease permits `app/`/`components/` writes.
 
 ## Iteration 25 — 2026-05-17
+
 Task completed: Tooling/product atom — replaced the stale premium/deferred-ad banner with a Remove Ads paywall surface wired to the existing buy/restore helpers and surfaced it next to the Home ad placement.
 Artifacts changed: `components/monetization/PremiumBanner.tsx`, `app/(tabs)/home.tsx`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0 with 13/13 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0; `npm run test:ownership` exit 0; `npx prettier --check components/monetization/PremiumBanner.tsx app/'(tabs)'/home.tsx scripts/monetization.test.js` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0; targeted `git diff --check` exit 0.
@@ -178,6 +203,7 @@ Blocked? no — native store product creation and device purchase QA remain exte
 Next suggested validator action: inspect the Home Remove Ads surface and rerun `npm run test:monetization`, then schedule native consent prompt wiring or compliance assets.
 
 ## Iteration 26 — 2026-05-17
+
 Task completed: Tooling/product atom — added native Mobile Ads consent initialization wiring so ATT and Google UMP consent are collected before SDK init, with native banner/app-open ads gated by the resulting consent decision.
 Artifacts changed: `lib/monetization/mobileAdsConsent.ts`, `lib/monetization/useMobileAdsConsent.ts`, `components/monetization/AdBanner.native.tsx`, `components/monetization/LaunchPopupAd.native.tsx`, `app.json`, `package.json`, `package-lock.json`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:monetization` exit 0 with 14/14 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npm ls expo-tracking-transparency react-native-google-mobile-ads` exit 0; targeted `npx prettier --check ...` exit 0; targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npx expo export --platform web --output-dir dist-web --max-workers 2` exit 0.
@@ -185,6 +211,7 @@ Blocked? no — native device QA still needs a real EAS preview build and real c
 Next suggested validator action: inspect the consent runtime and native ad components, rerun `npm run test:monetization`, then schedule device QA or public compliance assets.
 
 ## Iteration 27 — 2026-05-17
+
 Task completed: Product/tooling atom — centralized quiz answer-option feedback so wrong answers also reveal the correct option in Practice and routed quiz sessions, with focused unit and e2e coverage.
 Artifacts changed: `lib/quiz/answerValidation.ts`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, `scripts/answer-validation.test.js`, `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Commit: `bd4c407` (`setup: reveal correct answer feedback`).
@@ -193,6 +220,7 @@ Blocked? no — the product feedback defect is fixed and smoke-verified; officia
 Next suggested validator action: inspect the `getAnswerOptionFeedback` helper and rerun the focused unit checks plus the exported-web `/practice` wrong-answer smoke; rerun official Playwright after restoring the configured browser cache.
 
 ## Iteration 61 — 2026-05-16
+
 Task completed: Expo Router shell tooling guard — added special-route scaffold coverage for the root not-found fallback, Swedish web document, native deep-link intent fallback, and a package-wired router-shell test with escaped dynamic RegExp assertions.
 Artifacts changed: `app/_layout.tsx`, `app/+not-found.tsx`, `app/+html.tsx`, `app/+native-intent.ts`, `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` → 5/5 pass; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check app/_layout.tsx app/+not-found.tsx app/+html.tsx app/+native-intent.ts lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js package.json` → pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` → 1/1 pass; `git diff --check -- app/_layout.tsx app/+not-found.tsx app/+html.tsx app/+native-intent.ts lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js package.json docs/parallel-sessions/journals/setup.md` → pass.
@@ -201,6 +229,7 @@ Next suggested validator action: inspect the special Expo Router files and rerun
 Verification addendum: `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npx --no-install tsc --noEmit --pretty false` → exit 0; Expo start smoke with `CI=1` reached `Waiting on http://localhost:8141` before cleanup.
 
 ## Iteration 138 - 2026-05-17
+
 Task completed: Product/tooling atom - localized the Sources route shell for Swedish mode while preserving English support, UHR link metadata, and shared legal header parity.
 Artifacts changed: `app/sources.tsx`, `scripts/validate-content.js`, `scripts/compliance-pages.test.js`, `scripts/ui-effects.test.js`, `tests/content-legal-route-header-parity.test.js`.
 Commit: `4a39dbb` (`setup: localize sources shell`).
@@ -209,6 +238,7 @@ Blocked? no - the committed SETUP atom is verified; unrelated coordination and s
 Next suggested validator action: inspect `app/sources.tsx`, rerun the legal-route header parity and compliance scaffold checks, and repeat the exported-web `/sources` Swedish smoke if runtime evidence is needed.
 
 ## Iteration 139 - 2026-05-17
+
 Task completed: Product/tooling atom - localized the Support route shell for Swedish mode while preserving English copy, public support link metadata, and shared legal header parity.
 Artifacts changed: `app/support.tsx`, `scripts/validate-content.js`, `scripts/compliance-pages.test.js`, `scripts/ui-effects.test.js`, `tests/content-legal-route-header-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `node --test tests/content-legal-route-header-parity.test.js` exit 0 with 2/2 passing; `npm run test:compliance` exit 0 with 1/1 passing; `node --test scripts/ui-effects.test.js --test-name-pattern "compliance scaffold"` exit 0 with 48/48 passing; `npm run validate:content` exit 0 with `legalRouteHeadersValidated:23`, `legalRouteHeaderParityValidated:true`, and `themeTokenSchemaValidated:true`; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` exit 0; system-Chrome exported-web `/support` smoke saw Swedish `Support och återkoppling`, `Vad du kan rapportera`, `Inga personuppgifter`, `Offentlig supportsida`, localized public support link label, no stale English page heading, and browser errors 0.
@@ -216,6 +246,7 @@ Blocked? no - the committed-scope SETUP atom is verified; unrelated dirty coordi
 Next suggested validator action: inspect `app/support.tsx`, rerun the legal-route header parity and compliance scaffold checks, and repeat the exported-web `/support` Swedish smoke if runtime evidence is needed.
 
 ## Iteration 140 - 2026-05-17
+
 Task completed: Product/tooling atom - cleaned source-authority phrasing from displayed and spoken question prompts while keeping the separate source citation and disclaimer visible.
 Artifacts changed: `lib/quiz/questionText.ts`, `components/quiz/QuestionCard.tsx`, `app/(tabs)/exam.tsx`, `lib/audio/speak.ts`, `scripts/validate-content.js`, `scripts/audio.test.js`, `scripts/ui-effects.test.js`, `tests/content-question-card-accessibility-parity.test.js`, `tests/content-question-speech-text-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run validate:content` exit 0 with `questionCardAccessibilityParityValidated:true` and `questionSpeechTextParityValidated:true`; `node --test tests/content-question-card-accessibility-parity.test.js tests/content-question-speech-text-parity.test.js` exit 0 with 3/3 passing; `npm run test:audio` exit 0 with 4/4 passing; `npm run test:ui-effects` exit 0 with 48/48 passing; `npm run typecheck` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `node scripts/export-question-bank.js --check` exit 0; targeted Prettier and `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` exit 0; system-Chrome exported-web `/quiz/q076` smoke saw clean SV/EN prompts, no `Enligt UHR-materialet`/`According to the UHR material`, separate `Källa/Source: Sverige i fokus`, disclaimer text, and browser errors 0.
@@ -223,6 +254,7 @@ Blocked? no - this SETUP atom advances SOURCE-CITATION in runtime display/TTS wi
 Next suggested validator action: inspect the display helper and rerun the focused prompt-citation checks plus `/quiz/q076` exported-web smoke.
 
 ## Iteration 141 - 2026-05-17
+
 Task completed: Product/tooling atom - added a mock-exam guard for SHUFFLE-FIX so generated exams preserve scoring and review text after seeded per-session answer-option shuffling remaps the correct display id.
 Artifacts changed: `scripts/exam.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` exit 0 with 8/8 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/exam.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `git diff --check -- scripts/exam.test.js` exit 0.
@@ -230,6 +262,7 @@ Blocked? no - this SETUP tooling atom advances the open SHUFFLE-FIX P0 by coveri
 Next suggested validator action: inspect the new `generateExam preserves scoring and review after session answer shuffle` test and rerun `npm run test:exam` plus `npm run test:answer-shuffle`; if treating SHUFFLE-FIX as done, verify the executable P0 check and update `codex-tasks/P0.md` under operator/validator ownership.
 
 ## Iteration 142 - 2026-05-17
+
 Task completed: Product/tooling atom - reset routed quiz answer state when the session seed changes so seeded answer shuffles cannot carry a stale selected option across same-question sessions.
 Artifacts changed: `app/quiz/[sessionId].tsx`, `scripts/ui-effects.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:ui-effects -- --test-name-pattern "routed quiz answer state resets"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check -- app/quiz/'[sessionId]'.tsx scripts/ui-effects.test.js` exit 0.
@@ -237,6 +270,7 @@ Blocked? no - this SETUP atom advances SHUFFLE-FIX runtime safety for routed qui
 Next suggested validator action: inspect the `useEffect` dependency in `app/quiz/[sessionId].tsx` and rerun the focused UI-effects guard plus `npm run test:answer-shuffle`.
 
 ## Iteration 143 - 2026-05-17
+
 Task completed: Product/tooling atom - exposed a reusable SHUFFLE-FIX distribution audit helper and verified correct-answer display positions stay under the P0 35% concentration limit across routed session seeds.
 Artifacts changed: `lib/quiz/answerOptionShuffle.ts`, `scripts/answer-shuffle.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` exit 0 with 8/8 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 9/9 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check -- lib/quiz/answerOptionShuffle.ts scripts/answer-shuffle.test.js` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0.
@@ -244,6 +278,7 @@ Blocked? no - this SETUP atom advances SHUFFLE-FIX by making the P0 distribution
 Next suggested validator action: inspect `summarizeAnswerShuffleDistribution`, rerun `npm run test:answer-shuffle`, and use the helper output when deciding whether the SHUFFLE-FIX executable check is ready for operator closure.
 
 ## Iteration 144 - 2026-05-17
+
 Task completed: Product/tooling atom - wired the SHUFFLE-FIX executable distribution/stability audit into `validate:content` so the central validator reports the P0 answer-shuffle gate.
 Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `answerShuffleSingleChoiceQuestionsValidated:282`, `answerShuffleTrueFalseQuestionsValidated:218`, `answerShuffleSeedDistributionsValidated:50`, and `answerShuffleDistributionParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern "full content production"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 9/9 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check -- scripts/validate-content.js scripts/content-production.test.js tests/architecture-public-exports.test.js` exit 0.
@@ -251,6 +286,7 @@ Blocked? no for this SETUP atom. The shared checkout still has unrelated CONTENT
 Next suggested validator action: inspect `validateAnswerShuffleDistributionParity`, rerun `npm run validate:content` plus `npm run test:answer-shuffle`, and use the new validator summary fields when deciding whether SHUFFLE-FIX can be closed by the operator-owned P0 checklist.
 
 ## Iteration 145 - 2026-05-17
+
 Task completed: Product/tooling atom - added a product-side architecture scaffold manifest and guarded it against the Expo scaffold target list.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 10/10 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted `git diff --check` exit 0.
@@ -259,6 +295,7 @@ Blocked? no - this SETUP tooling atom keeps the scaffold contract visible in `li
 Next suggested validator action: inspect `lib/scaffold/architectureManifest.ts` and rerun `npm run test:architecture` plus the targeted Prettier/diff checks.
 
 ## Iteration 146 - 2026-05-17
+
 Task completed: Product/tooling atom - tightened SOURCE-CITATION coverage so `QuestionCard` must keep the separate source citation in its helper call, accessibility summary, and visible line.
 Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-question-card-accessibility-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-card-accessibility-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js tests/content-question-card-accessibility-parity.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `questionCardAccessibilityRulesValidated:13` and `questionCardAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` exit 0 with 214/214 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check` exit 0.
@@ -266,6 +303,7 @@ Blocked? no - the atom is verified. Shared checkout still has unrelated CONTENT/
 Next suggested validator action: inspect the three source-citation rules in `scripts/validate-content.js`, rerun the focused QuestionCard parity test, then decide whether this SOURCE-CITATION guard can be accepted.
 
 ## Iteration 147 - 2026-05-17
+
 Task completed: Product/tooling atom - realigned the Expo Router shell manifest and verifier with the current Home redirect not-found scaffold, and added the shell manifest to public export coverage.
 Artifacts changed: `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` exit 0 with 5/5 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 10/10 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js tests/architecture-public-exports.test.js` exit 0; `git diff --check -- lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8147 --max-workers 1` reached `Waiting on http://localhost:8147`, then was stopped.
@@ -273,6 +311,7 @@ Blocked? no - this SETUP tooling atom restores the router-shell verifier to the 
 Next suggested validator action: inspect `lib/scaffold/routerShellManifest.ts` and `scripts/router-shell.test.js`, then rerun `npm run test:router-shell` plus `npm run test:architecture`.
 
 ## Iteration 148 - 2026-05-18
+
 Task completed: Product/tooling atom - made Playwright E2E launch use an available system Chromium fallback when the cached Playwright browser is absent, and realigned the learn-navigation spec with the current Swedish default shell plus launch-ad dismissal.
 Artifacts changed: `playwright.config.ts`, `tests/e2e/browserLaunch.ts`, `tests/e2e/learn-chapter-navigation.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts --workers=1` failed before app interaction on missing cached Chromium; after the patch, `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts --workers=1` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check playwright.config.ts tests/e2e/browserLaunch.ts tests/e2e/learn-chapter-navigation.spec.ts` exit 0; targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0.
@@ -280,6 +319,7 @@ Blocked? no - the previously cached-browser-blocked learn-navigation E2E now rea
 Next suggested validator action: inspect the Playwright launch fallback and Swedish learn-navigation assertions, then rerun the focused learn-navigation E2E command in CI mode.
 
 ## Iteration 149 - 2026-05-18
+
 Task completed: P0 tooling atom - added a SHUFFLE-FIX delivery-surface guard so Practice, routed quiz, and mock exam generation must keep answer options behind the seeded session shuffle.
 Artifacts changed: `scripts/answer-shuffle.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 4/4 passing; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 5/5 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/answer-shuffle.test.js` exit 0; `git diff --check -- scripts/answer-shuffle.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8149 --max-workers 1` reached `Waiting on http://localhost:8149`, then was stopped.
@@ -287,6 +327,7 @@ Blocked? no - this SETUP tooling atom advances the open SHUFFLE-FIX P0 by guardi
 Next suggested validator action: inspect the new delivery-surface test in `scripts/answer-shuffle.test.js`, rerun `npm run test:answer-shuffle`, and use it with the existing distribution/stability checks when deciding whether SHUFFLE-FIX is ready for operator closure.
 
 ## Iteration 150 - 2026-05-18
+
 Task completed: P0 tooling atom - added a per-question SHUFFLE-FIX guard proving every published single-choice question moves its correct display position across seeded sessions.
 Artifacts changed: `scripts/answer-shuffle.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 6/6 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/answer-shuffle.test.js` exit 0; `git diff --check -- scripts/answer-shuffle.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8150 --max-workers 1` reached `Waiting on http://localhost:8150`, then was stopped.
@@ -294,6 +335,7 @@ Blocked? no - this SETUP atom strengthens the SHUFFLE-FIX executable evidence be
 Next suggested validator action: inspect the new `seeded answer shuffle moves every single-choice correct answer across sessions` test and rerun `npm run test:answer-shuffle` before deciding whether SHUFFLE-FIX has enough executable evidence for operator closure.
 
 ## Iteration 151 - 2026-05-18
+
 Task completed: P0 SOURCE-CITATION tooling atom - strengthened question disclaimer parity so each question-bearing branch keeps the not-a-real-exam disclaimer, the disclaimer stays separate from source citation rendering, and question-card routes show the disclaimer before question cards.
 Artifacts changed: `tests/content-question-disclaimer-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-disclaimer-parity.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `questionDisclaimerRoutesValidated:6`, `questionDisclaimerCopyValidated:true`, `questionCardAccessibilityParityValidated:true`, and `questionAuthorityBoundaryTextValidated:500`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` exit 0 with 218/218 passing.
@@ -301,6 +343,7 @@ Blocked? no - this SETUP tooling atom advances SOURCE-CITATION without touching 
 Next suggested validator action: inspect the new disclaimer count/separation assertions and rerun the focused disclaimer parity test plus `npm run validate:content`.
 
 ## Iteration 152 - 2026-05-18
+
 Task completed: E2E tooling atom - realigned the mock-exam submit/review E2E source-card assertion with the current Swedish `UHR-källa` label, unblocking the stale localized review check.
 Artifacts changed: `tests/e2e/exam-submit-review.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1` failed only on missing `UHR reference`; after the patch the same command exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check tests/e2e/exam-submit-review.spec.ts` exit 0; `git diff --check -- tests/e2e/exam-submit-review.spec.ts` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0.
@@ -308,6 +351,7 @@ Blocked? no - the focused E2E1 assertion now matches the current review UI and p
 Next suggested validator action: rerun the focused mock-exam E2E command and update E2E1 if the manager accepts this bounded test atom.
 
 ## Iteration 153 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - made `QuestionCard` render the selected settings language as the primary prompt and localized answer feedback labels for Practice and routed quiz sessions.
 Artifacts changed: `components/quiz/QuestionCard.tsx`, `lib/quiz/questionText.ts`, `lib/quiz/answerValidation.ts`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, `app/chapter/[chapterId].tsx`, `app/(tabs)/mistakes.tsx`, `scripts/answer-validation.test.js`, `scripts/ui-effects.test.js`, `scripts/validate-content.js`, `tests/content-question-card-accessibility-parity.test.js`, `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-validation` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "question card groups|English support reaches"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-card-accessibility-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 3/3 passing.
@@ -315,6 +359,7 @@ Blocked? no - English support now shows the English prompt above the Swedish ori
 Next suggested validator action: inspect the `QuestionCard` language prop and localized `getAnswerOptionFeedback` helper, then rerun the focused practice/routed-quiz E2E before updating TRANSLATE-COMPLETE.
 
 ## Iteration 154 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized the shared question audio control for Swedish and English support while keeping Swedish TTS playback unchanged.
 Artifacts changed: `components/learning/AudioButton.tsx`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, `scripts/audio.test.js`, `scripts/ui-effects.test.js`, `scripts/validate-content.js`, `tests/content-audio-button-accessibility-parity.test.js`, `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:audio` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-audio-button-accessibility-parity.test.js` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "audio button|English support reaches"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `audioButtonAccessibilityParityValidated:true`; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0.
@@ -322,6 +367,7 @@ Blocked? no - the Swedish practice route now shows `Lyssna på den svenska fråg
 Next suggested validator action: inspect `components/learning/AudioButton.tsx` plus the Practice/routed quiz language prop wiring, then rerun `npm run test:audio`, the focused audio-button parity test, and the practice-feedback E2E before updating TRANSLATE-COMPLETE.
 
 ## Iteration 155 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized the `QuestionCard` screen-reader summary prefixes for Swedish mode while preserving English-mode labels.
 Artifacts changed: `components/quiz/QuestionCard.tsx`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `tests/content-question-card-accessibility-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-card-accessibility-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern 'question card groups'` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `questionCardAccessibilityRulesValidated:13` and `questionCardAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8155 --max-workers 1` reached `Waiting on http://localhost:8155`, then was stopped.
@@ -329,6 +375,7 @@ Blocked? no - Swedish-mode `QuestionCard` accessibility labels now use `Svårigh
 Next suggested validator action: inspect the localized `questionCardCopy` values and rerun the focused QuestionCard parity test plus `npm run validate:content` before updating TRANSLATE-COMPLETE.
 
 ## Iteration 156 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized web/native ad placeholder copy and accessible names for Swedish and English while preserving Remove Ads and exam no-ad gates.
 Artifacts changed: `lib/monetization/adCopy.ts`, `components/monetization/AdBanner.tsx`, `components/monetization/AdBanner.native.tsx`, `components/monetization/NativeAdCard.tsx`, `scripts/ui-effects.test.js`, `tests/e2e/ad-accessibility.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:ui-effects` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install tsc --noEmit --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 0 with 20/20 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with ad placement parity true and 500 questions validated; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/ad-accessibility.spec.ts --workers=1` exit 0 with 1/1 passing.
@@ -336,6 +383,7 @@ Blocked? no - `/home`, `/learn`, and `/mistakes` ad placeholders now use languag
 Next suggested validator action: inspect `lib/monetization/adCopy.ts` and rerun the focused UI-effects plus ad-accessibility E2E before updating TRANSLATE-COMPLETE.
 
 ## Iteration 157 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized shared `ProgressBar` accessibility labels and values for Swedish and English, then wired route and chapter call sites to pass the selected settings language.
 Artifacts changed: `components/ui/ProgressBar.tsx`, `components/learning/ChapterCard.tsx`, `app/(tabs)/home.tsx`, `app/(tabs)/practice.tsx`, `app/(tabs)/exam.tsx`, `app/quiz/[sessionId].tsx`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `scripts/content-production.test.js`, `tests/content-progress-bar-accessibility-parity.test.js`, `tests/content-chapter-card-accessibility-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-progress-bar-accessibility-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "progress bar"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `progressBarAccessibilityRulesValidated:17` and `progressBarAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-progress-bar-accessibility-parity.test.js tests/content-chapter-card-accessibility-parity.test.js scripts/content-production.test.js` exit 0 with 7/7 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8157 --max-workers 1` reached `Waiting on http://localhost:8157`, then was stopped.
@@ -343,6 +391,7 @@ Blocked? no - the shared progress indicator now exposes `procent klart` for Swed
 Next suggested validator action: inspect `components/ui/ProgressBar.tsx` and the five language-prop call sites, then rerun the focused ProgressBar parity test plus `npm run validate:content`.
 
 ## Iteration 158 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized mock exam route chrome, answer controls, submit/review labels, chapter names, and unanswered review fallbacks for Swedish mode while preserving English support.
 Artifacts changed: `app/(tabs)/exam.tsx`, `lib/quiz/examGenerator.ts`, `scripts/exam.test.js`, `scripts/ui-effects.test.js`, `tests/e2e/exam-submit-review.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` exit 0 with 9/9 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "exam"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-exam-route-header-parity.test.js tests/content-exam-submission-finality-parity.test.js tests/content-exam-review-source-parity.test.js tests/content-exam-chapter-breakdown-parity.test.js` exit 0 with 6/6 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `examRouteHeaderParityValidated:true`, `examReviewSourceParityValidated:true`, and 500 questions validated; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1` exit 0 with 1/1 passing.
@@ -350,6 +399,7 @@ Blocked? no - Swedish-mode `/exam` now uses `Övningsprov`, `Välj svaret ... f�
 Next suggested validator action: inspect the `examRouteCopy` map and `buildExamReviewItems` fallback changes, then rerun the focused exam unit/static checks and the exam-submit-review E2E before updating TRANSLATE-COMPLETE.
 
 ## Iteration 159 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE E2E tooling atom - extended the mock-exam submit/review E2E to cover English support mode after the Swedish localization pass, including English answer controls, result labels, chapter breakdown, explanations, and UHR source cards.
 Artifacts changed: `tests/e2e/exam-submit-review.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check tests/e2e/exam-submit-review.spec.ts` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; first focused E2E attempt hit a transient static-server `dist-web/index.html` ENOENT between tests, then rerun `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; targeted `git diff --check` exit 0.
@@ -357,6 +407,7 @@ Blocked? no - the official focused mock-exam E2E now covers both Swedish default
 Next suggested validator action: inspect the new English-support case in `tests/e2e/exam-submit-review.spec.ts`, then rerun the focused E2E command before closing the mock-exam coverage gap under TRANSLATE-COMPLETE.
 
 ## Iteration 160 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE E2E tooling atom - hardened the mock-exam submit/review E2E against the reviewer locator regression by checking exact pre-submit review labels and exact submitted review labels in Swedish and English.
 Artifacts changed: `tests/e2e/exam-submit-review.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check tests/e2e/exam-submit-review.spec.ts` exit 0; `git diff --check -- tests/e2e/exam-submit-review.spec.ts` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0.
@@ -364,6 +415,7 @@ Blocked? no - the official focused mock-exam E2E now rejects broad pre-submit `F
 Next suggested validator action: inspect the exact review-label assertions in `tests/e2e/exam-submit-review.spec.ts`, then rerun the focused E2E command before closing `REVIEWER-EXAM-E2E-LOCATOR-1`.
 
 ## Iteration 161 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE route-shell atom - hid root Expo Stack headers globally so standalone routes no longer show lower-case internal route names above localized page headers.
 Artifacts changed: `app/_layout.tsx`, `lib/scaffold/routerShellManifest.ts`, `scripts/router-shell.test.js`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` exit 0 with 5/5 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 10/10 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check app/_layout.tsx lib/scaffold/routerShellManifest.ts scripts/router-shell.test.js scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; system-Chrome exported-web smoke on `/settings` and `/support` in Swedish and English found localized headings only, no exact `settings`/`support` internal route headers, and browser errors 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8158 --max-workers 1` reached `Waiting on http://localhost:8158`, then was stopped.
@@ -371,6 +423,7 @@ Blocked? no - this resolves `REVIEWER-ROUTE-HEADER-1` for the checked standalone
 Next suggested validator action: inspect the root Stack `screenOptions` contract and rerun the focused router-shell, architecture, and exported-web `/settings`/`/support` header smoke before accepting this route-shell slice.
 
 ## Iteration 162 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized Learn chapter cards and chapter-link accessible names so English support mode uses English chapter names/descriptions first while keeping Swedish as secondary context.
 Artifacts changed: `components/learning/ChapterCard.tsx`, `app/(tabs)/learn.tsx`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `scripts/ui-effects.test.js`, `tests/content-chapter-card-accessibility-parity.test.js`, `tests/content-learn-route-copy-parity.test.js`, `tests/e2e/learn-chapter-navigation.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-chapter-card-accessibility-parity.test.js tests/content-learn-route-copy-parity.test.js` exit 0 with 6/6 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern 'chapter card|learn route chapter links'` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern 'full content production'` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `chapterCardAccessibilityRulesValidated:23`, `chapterCardAccessibilityParityValidated:true`, and `learnRouteLinkCopyParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/learn-chapter-navigation.spec.ts --workers=1` exit 0 with 2/2 passing after the new English-support case dismissed the launch ad overlay on `/learn`.
@@ -378,6 +431,7 @@ Blocked? no - the English `/learn` card now announces `Open chapter The country 
 Next suggested validator action: inspect `ChapterCard` selected-language title/description logic and rerun the focused ChapterCard/Learn parity tests plus the Learn E2E before updating TRANSLATE-COMPLETE.
 
 ## Iteration 163 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized `QuestionCard` difficulty display and accessibility values so Swedish mode uses `Lätt`/`Medel`/`Svår` instead of raw `easy`/`EASY`, while English mode uses natural `Easy`/`Medium`/`Hard`.
 Artifacts changed: `components/quiz/QuestionCard.tsx`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `scripts/content-production.test.js`, `tests/content-question-card-accessibility-parity.test.js`, `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-card-accessibility-parity.test.js` exit 0 with 4/4 passing including raw difficulty enum rejection; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "question card groups"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `questionCardAccessibilityRulesValidated:15` and `questionCardAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern "full content production"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; rerun `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0 after one transient postbuild file-timing failure; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 4/4 passing and runtime assertions for Swedish `Lätt`/`Svårighetsgrad: Lätt` plus English `Easy`/`Difficulty: Easy`.
@@ -385,6 +439,7 @@ Blocked? no - this clears the `REVIEWER-QUESTION-DIFFICULTY-LANGUAGE-1` runtime 
 Next suggested validator action: inspect `questionCardCopy.difficultyValueLabels`, rerun the focused QuestionCard parity test and Practice E2E, then close only the difficulty-label subdefect under TRANSLATE-COMPLETE.
 
 ## Iteration 164 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized shared `AnswerOption` idle accessibility labels so Swedish Practice and routed Quiz buttons announce `Välj svaret ...` while English support keeps `Select answer ...`.
 Artifacts changed: `components/quiz/AnswerOption.tsx`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `tests/content-answer-option-accessibility-parity.test.js`, `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-answer-option-accessibility-parity.test.js` exit 0 with 3/3 passing including English-only Swedish idle-label rejection; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "answer option feedback"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `answerOptionAccessibilityRulesValidated:15` and `answerOptionAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 5/5 passing, including Swedish and English answer-option label assertions for `/practice` and `/quiz/q001`.
@@ -392,6 +447,7 @@ Blocked? no - this clears `REVIEWER-ANSWER-OPTION-A11Y-LANGUAGE-1` for Practice 
 Next suggested validator action: inspect `answerOptionCopy`, rerun the focused AnswerOption parity test and Practice E2E, then close only the AnswerOption accessibility-language subdefect under TRANSLATE-COMPLETE.
 
 ## Iteration 165 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized `QuestionCard` source citation prefixes and page labels so Swedish mode renders `Källa ... s.` and English mode renders `Source ... p.` without the mixed `Källa/Source` prefix.
 Artifacts changed: `lib/quiz/questionText.ts`, `components/quiz/QuestionCard.tsx`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `scripts/ui-effects.test.js`, `tests/content-question-card-accessibility-parity.test.js`, `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-card-accessibility-parity.test.js` exit 0 with 5/5 passing including mixed-prefix rejection; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "question card groups"` exit 0 with 49/49 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `questionCardAccessibilityRulesValidated:18` and `questionCardAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern "full content production"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 6/6 passing, including Swedish and English source-citation prefix assertions.
@@ -400,6 +456,7 @@ Blocked? no - this clears `REVIEWER-QUESTION-SOURCE-CITATION-LANGUAGE-1` for Pra
 Next suggested validator action: inspect `getQuestionSourceCitation(question, language)`, rerun the focused QuestionCard parity test and Practice E2E, then close only the QuestionCard citation-language subdefect under TRANSLATE-COMPLETE.
 
 ## Iteration 166 - 2026-05-18
+
 Task completed: MONETIZATION-OPT product/tooling atom - suppressed app-open launch ads on active question routes (`/practice` and `/quiz/*`) while keeping launch ads eligible on passive routes such as `/home`.
 Artifacts changed: `lib/monetization/ads.ts`, `scripts/monetization.test.js`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-launch-ad-route-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 0 with 20/20 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-launch-ad-route-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern "full content production"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; system-Chrome exported-web smoke on `/home`, `/practice`, `/quiz/q001`, and `/exam` confirmed `/home` still had launch-ad text, `/practice`/`/quiz/q001`/`/exam` had no `Startannons`, expected route content rendered, and console/page errors were 0.
@@ -407,6 +464,7 @@ Blocked? no - this resolves the active-question launch-ad overlay for Practice a
 Next suggested validator action: inspect `LAUNCH_POPUP_AD_SUPPRESSED_ROUTES`, rerun the monetization and launch-ad route parity tests, then repeat the exported-web `/practice` and `/quiz/q001` smoke before closing `REVIEWER-ACTIVE-QUESTION-LAUNCH-AD-1`.
 
 ## Iteration 167 - 2026-05-18
+
 Task completed: UI-OVERHAUL product/tooling atom - suppressed Expo Router bottom-tab placeholder glyphs by giving each tab an explicit localized accessibility label and null icon renderer.
 Artifacts changed: `app/(tabs)/_layout.tsx`, `scripts/architecture-scaffold.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 10/10 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install tsc --noEmit --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; system-Chrome exported-web smoke on `/home` found bottom tab text/aria labels `Hem`, `Lär dig`, `Öva`, `Prov`, `Misstag`, `Profil`, zero visible `⏷` nodes, no `⏷` in body text or tab labels, and console/page errors 0.
@@ -414,6 +472,7 @@ Blocked? no - this clears `REVIEWER-TAB-NAV-GLYPH-1` for the current Swedish tab
 Next suggested validator action: inspect `getTabOptions` in `app/(tabs)/_layout.tsx`, rerun `npm run test:architecture`, and repeat the exported-web `/home` bottom-tab glyph smoke before closing `REVIEWER-TAB-NAV-GLYPH-1`.
 
 ## Iteration 168 - 2026-05-18
+
 Task completed: REVIEWER-MISTAKES-ANSWER-REVIEW-1 product/tooling atom - persisted the latest selected wrong-answer text from Practice and routed Quiz, then surfaced localized selected-wrong and correct-answer review context on saved Mistakes cards.
 Artifacts changed: `lib/storage/mistakeReviewStore.ts`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, `app/(tabs)/mistakes.tsx`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `scripts/ui-effects.test.js`, `tests/content-mistakes-route-copy-parity.test.js`, `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-mistakes-route-copy-parity.test.js scripts/ui-effects.test.js --test-name-pattern "mistakes screen"` exit 0 with 53/53 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `mistakesRouteCopyLabelsValidated:30` and `mistakesRouteCopyParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern "full content production"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:practice` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 7/7 passing, including Practice wrong-answer to Mistakes review context.
@@ -421,6 +480,7 @@ Blocked? no - this clears the visible saved Mistakes card gap for selected wrong
 Next suggested validator action: inspect `app/(tabs)/mistakes.tsx` and `lib/storage/mistakeReviewStore.ts`, rerun the focused Mistakes copy/static checks and Practice E2E, then close `REVIEWER-MISTAKES-ANSWER-REVIEW-1`.
 
 ## Iteration 169 - 2026-05-18
+
 Task completed: REVIEWER-MISTAKES-ANSWER-REVIEW-1 E2E tooling atom - added English-support runtime coverage proving saved Mistakes cards show the selected wrong answer and correct answer with localized English labels.
 Artifacts changed: `tests/e2e/practice-feedback.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-mistakes-route-copy-parity.test.js scripts/ui-effects.test.js --test-name-pattern "mistakes screen|mistakes route"` exit 0 with 54/54 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:practice` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check tests/e2e/practice-feedback.spec.ts` exit 0; `git diff --check -- tests/e2e/practice-feedback.spec.ts` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 8/8 passing, including Swedish and English wrong-answer-to-Mistakes review context; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `mistakesRouteCopyLabelsValidated:30` and `mistakesRouteCopyParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0 before the E2E-only guard was added, with app source unchanged afterward.
@@ -428,6 +488,7 @@ Blocked? no - this closes the reviewer-reported English-support runtime coverage
 Next suggested validator action: inspect the new English-support Mistakes test in `tests/e2e/practice-feedback.spec.ts`, rerun the focused Practice E2E, and use it with Iteration 168 source changes before closing `REVIEWER-MISTAKES-ANSWER-REVIEW-1`.
 
 ## Iteration 170 - 2026-05-18
+
 Task completed: P0 SHUFFLE-FIX tooling atom - added mock-exam review coverage proving a selected wrong display id still renders the selected wrong option text and the remapped correct option text after seeded answer-option shuffling.
 Artifacts changed: `scripts/exam.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 6/6 passing and `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `answerShuffleDistributionParityValidated:true`; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` exit 0 with 10/10 passing, `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 6/6 passing, `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/exam.test.js` exit 0, `git diff --check -- scripts/exam.test.js` exit 0, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0, `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8152 --max-workers 1` reached `Waiting on http://localhost:8152`, then was stopped.
@@ -435,6 +496,7 @@ Blocked? no - this strengthens the executable SHUFFLE-FIX evidence for mock-exam
 Next suggested validator action: inspect the new `generateExam review keeps selected wrong answer text after session answer shuffle` test and rerun `npm run test:exam` plus `npm run test:answer-shuffle` before using the current shuffle evidence for P0 closure.
 
 ## Iteration 171 - 2026-05-18
+
 Task completed: P0 SHUFFLE-FIX tooling atom - added an answer-label preservation guard proving seeded shuffles keep every published single-choice answer label exactly once while remapping display ids.
 Artifacts changed: `scripts/answer-shuffle.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 6/6 passing, `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` exit 0 with 10/10 passing, and `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `answerShuffleSingleChoiceQuestionsValidated:288`, `answerShuffleTrueFalseQuestionsValidated:212`, `answerShuffleSeedDistributionsValidated:50`, and `answerShuffleDistributionParityValidated:true`; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 7/7 passing, `NODE_OPTIONS='--v8-pool-size=1' npm run test:exam` exit 0 with 10/10 passing, `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/answer-shuffle.test.js` exit 0, `git diff --check -- scripts/answer-shuffle.test.js` exit 0, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0, `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0, `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `answerShuffleDistributionParityValidated:true`; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8153 --max-workers 1` reached `Waiting on http://localhost:8153`, then was stopped.
@@ -442,6 +504,7 @@ Blocked? no - this tightens SHUFFLE-FIX against losing or duplicating distractor
 Next suggested validator action: inspect the new `seeded answer shuffle preserves every answer label exactly once` test and rerun `npm run test:answer-shuffle` before using the current shuffle evidence for P0 closure.
 
 ## Iteration 172 - 2026-05-18
+
 Task completed: P0 SHUFFLE-FIX product/tooling atom - moved Practice from a static answer-shuffle seed to a session-store seed that stays stable on retry and advances only when the learner taps Next question.
 Artifacts changed: `lib/quiz/practiceSessionStore.ts`, `app/(tabs)/practice.tsx`, `scripts/practice-flow.test.js`, `scripts/answer-shuffle.test.js`, `scripts/ui-effects.test.js`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-practice-scoring-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:practice` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 7/7 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "practice answer flow"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-practice-scoring-parity.test.js` exit 0 with 2/2 passing; targeted Prettier and `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `practiceSessionStoreFieldsValidated:6`, `practiceSessionStoreRuntimeParityValidated:true`, and `answerShuffleDistributionParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` exit 0 with 254/254 passing; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8154 --max-workers 1` reached `Waiting on http://localhost:8154`, then was stopped.
@@ -449,6 +512,7 @@ Blocked? no - this closes the static Practice shuffle seed gap without changing 
 Next suggested validator action: inspect `shuffleSessionId` in `lib/quiz/practiceSessionStore.ts` and the Practice route delivery-surface guard, then rerun `npm run test:practice`, `npm run test:answer-shuffle`, and `npm run validate:content` before using the current SHUFFLE-FIX evidence for P0 closure.
 
 ## Iteration 173 - 2026-05-18
+
 Task completed: P0 SOURCE-CITATION product/tooling atom - added localized inline source-citation lines under active mock-exam prompts and submitted-review prompts, matching the separate citation pattern used by `QuestionCard`.
 Artifacts changed: `app/(tabs)/exam.tsx`, `tests/content-exam-route-copy-parity.test.js`, `tests/e2e/exam-submit-review.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-exam-route-copy-parity.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `examRouteCopyParityValidated:true` and `examReviewSourceParityValidated:true`; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1` exit 0 with 2/2 passing, including Swedish `Källa: Sverige i fokus` and English `Source: Sverige i fokus` runtime assertions; targeted Prettier and targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0.
@@ -456,6 +520,7 @@ Blocked? no - this advances SOURCE-CITATION on the mock-exam route without touch
 Next suggested validator action: inspect the exam route citation line and rerun the exam route parity test plus focused mock-exam E2E before closing the mock-exam citation display sub-scope.
 
 ## Iteration 174 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized the shared question-text missing-question fallback and added executable helper plus validator parity coverage so Swedish `QuestionCard` fallbacks cannot regress to English-only copy.
 Artifacts changed: `lib/quiz/questionText.ts`, `scripts/question-text.test.js`, `package.json`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `scripts/ui-effects.test.js`, `tests/content-question-card-accessibility-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:question-text` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-card-accessibility-parity.test.js` exit 0 with 6/6 passing, including English-only fallback rejection; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "question card groups|user-facing scaffold fallbacks"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js --test-name-pattern "full content production"` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `questionCardAccessibilityRulesValidated:19` and parity true; serialized `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` exit 0 with 257/257 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted diff checks exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8156 --max-workers 1` reached `Waiting on http://localhost:8156`, then was stopped.
@@ -463,6 +528,7 @@ Blocked? no - this SETUP atom advances TRANSLATE-COMPLETE on the shared question
 Next suggested validator action: inspect `QUESTION_DISPLAY_FALLBACKS` and the new negative parity test, then rerun `npm run test:question-text`, the focused QuestionCard parity test, and `npm run validate:content` before accepting APP37.
 
 ## Iteration 175 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - added routed quiz copy parity coverage so `/quiz/[sessionId]` cannot bypass the settings language or drop localized disclaimer/question feedback wiring.
 Artifacts changed: `app/quiz/[sessionId].tsx`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-quiz-route-copy-parity.test.js`, `tests/content-question-disclaimer-parity.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-quiz-route-copy-parity.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-disclaimer-parity.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `quizRouteCopyLabelsValidated:16` and `quizRouteCopyParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/content-production.test.js tests/content-quiz-route-copy-parity.test.js tests/content-test-gate-parity.test.js` exit 0 with 6/6 passing; serialized `NODE_OPTIONS='--v8-pool-size=1' npm run test:content -- --test-concurrency=1` exit 0 with 263/263 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, `npm run test:ownership`, and `npm run test:architecture` exit 0; targeted Prettier and targeted `git diff --check` exit 0; Expo start smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx expo start --no-dev --offline --port 8158 --max-workers 1` reached `Waiting on http://localhost:8158`, then was stopped.
@@ -470,6 +536,7 @@ Blocked? no - this SETUP atom advances TRANSLATE-COMPLETE without touching CONTE
 Next suggested validator action: inspect `validateQuizRouteCopyParity` and the new negative parity tests, then rerun the focused quiz-route copy test plus `npm run validate:content` before accepting the APP37 follow-up.
 
 ## Iteration 176 - 2026-05-18
+
 Task completed: Product/tooling atom - moved supplemental Expo/legal route coverage into the product architecture scaffold manifest and verified the scaffold test reads it.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 10/10 passing; targeted `npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; direct Expo smoke `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8159 --max-workers 1` reached `Waiting on http://localhost:8159`, then the timeout stopped Metro.
@@ -477,6 +544,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps release compliance route fi
 Next suggested validator action: inspect `architectureSupplementalRouteFiles`, rerun `npm run test:architecture`, and confirm the public-export guard covers the new manifest export.
 
 ## Iteration 177 - 2026-05-18
+
 Task completed: Product/tooling atom - added design-system support component coverage to the product architecture scaffold manifest so shared UI primitives stay visible to the scaffold verifier.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 11/11 passing, including `architecture design system support files exist`; targeted `npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; direct Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8160 --max-workers 1` reached `Waiting on http://localhost:8160`, then the timeout stopped Metro.
@@ -484,6 +552,7 @@ Blocked? no - this SETUP scaffold/tooling atom touches `lib/` and guards `compon
 Next suggested validator action: inspect `architectureDesignSystemSupportFiles`, rerun `npm run test:architecture`, and confirm the public-export guard now includes `components/Surface.tsx`.
 
 ## Iteration 178 - 2026-05-18
+
 Task completed: P0 SHUFFLE-FIX scaffold/tooling atom - added answer-shuffle runtime coverage to the product architecture scaffold manifest so the verifier tracks the shuffle helper, Practice session store, and delivery surfaces.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 12/12 passing, including `architecture answer shuffle runtime files exist`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 7/7 passing; targeted `npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, `npm run typecheck`, and `npm run lint` exit 0; direct Expo smoke `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8161 --max-workers 1` reached `Waiting on http://localhost:8161`, then the timeout stopped Metro. A pre-fix architecture run exposed that the manifest test parser stopped at `]` inside `app/quiz/[sessionId].tsx`; the parser now reads through the `] as const` terminator and the final run passes.
@@ -491,6 +560,7 @@ Blocked? no - this advances P0 SHUFFLE-FIX scaffold verification without touchin
 Next suggested validator action: inspect `architectureAnswerShuffleRuntimeFiles`, rerun `npm run test:architecture` and `npm run test:answer-shuffle`, and confirm the public-export guard includes the new manifest export.
 
 ## Iteration 179 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE product/tooling atom - localized the reusable Flashcard fallback copy, badge, headers, and accessibility summary for Swedish and English support.
 Artifacts changed: `components/learning/Flashcard.tsx`, `tests/content-flashcard-accessibility-parity.test.js`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-flashcard-accessibility-parity.test.js` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `flashcardAccessibilityRulesValidated:15` and `flashcardAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "user-facing scaffold fallbacks"` exit 0 with 50/50 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; direct Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8162 --max-workers 1` reached `Waiting on http://localhost:8162`, then was stopped.
@@ -498,6 +568,7 @@ Blocked? no - this advances TRANSLATE-COMPLETE for the shared learning Flashcard
 Next suggested validator action: inspect `components/learning/Flashcard.tsx`, rerun the Flashcard parity test and `npm run validate:content`, then use this evidence for the Flashcard sub-scope of TRANSLATE-COMPLETE.
 
 ## Iteration 180 - 2026-05-18
+
 Task completed: P0 TRANSLATE-COMPLETE scaffold/tooling atom - added selected-language question runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 12/12 passing; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 13/13 passing including `architecture question language runtime files exist`; targeted Prettier and targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, `npm run test:ownership`, and `npm run validate:content` exit 0; direct Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx --no-install expo start --no-dev --offline --port 8163 --max-workers 1` reached `Waiting on http://localhost:8163`, then was stopped.
@@ -505,6 +576,7 @@ Blocked? no - this keeps the P0 question-language runtime files visible to the s
 Next suggested validator action: inspect `architectureQuestionLanguageRuntimeFiles`, rerun `npm run test:architecture` and `npm run validate:content`, then use it as scaffold evidence for the question-language sub-scope of TRANSLATE-COMPLETE.
 
 ## Iteration 181 - 2026-05-18
+
 Task completed: Product/tooling atom - added ad/IAP monetization runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 14/14 passing, including `architecture monetization runtime files exist`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 0 with 20/20 passing; targeted `npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; direct Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx --no-install expo start --no-dev --offline --port 8164 --max-workers 1` reached `Waiting on http://localhost:8164`, then was stopped.
@@ -512,6 +584,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps the tracked monetization ru
 Next suggested validator action: inspect `architectureMonetizationRuntimeFiles`, rerun `npm run test:architecture` and `npm run test:monetization`, and use it as scaffold evidence for the release monetization runtime surface.
 
 ## Iteration 182 - 2026-05-18
+
 Task completed: Product/tooling atom - added learning/progress runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 15/15 passing, including `architecture learning progress runtime files exist`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:learning` exit 0 with 7/7 passing; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; direct Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 HOME=<temp> NODE_OPTIONS='--v8-pool-size=1' npx --no-install expo start --no-dev --offline --port 8165 --max-workers 1` reached `Waiting on http://localhost:8165`, then was stopped.
@@ -519,6 +592,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps learning helpers, progress 
 Next suggested validator action: inspect `architectureLearningProgressRuntimeFiles`, rerun `npm run test:architecture` and `npm run test:learning`, and use it as scaffold evidence for the learning/progress runtime surface.
 
 ## Iteration 183 - 2026-05-18
+
 Task completed: Product/tooling atom - added compliance support component coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 15/15 passing; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 16/16 passing, including `architecture compliance support files exist`; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; direct Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8166 --max-workers 1` reached `Waiting on http://localhost:8166`, then the timeout stopped Metro.
@@ -526,6 +600,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps `components/compliance/Comp
 Next suggested validator action: inspect `architectureComplianceSupportFiles`, rerun `npm run test:architecture`, and confirm the public-export guard includes the new manifest export.
 
 ## Iteration 184 - 2026-05-18
+
 Task completed: Product/tooling atom - added theme token runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 17/17 passing, including `architecture theme runtime files exist`; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, `npm run test:ownership`, and `npm run test:theme-discipline` exit 0; bounded Expo smoke `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8167 --max-workers 1` reached `Waiting on http://localhost:8167`, then the timeout stopped Metro.
@@ -533,6 +608,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps `lib/theme/index.ts`, token
 Next suggested validator action: inspect `architectureThemeRuntimeFiles`, rerun `npm run test:architecture` and `npm run test:theme-discipline`, and confirm the public-export guard includes the new manifest export.
 
 ## Iteration 185 - 2026-05-18
+
 Task completed: Product/tooling atom - added quiz feedback runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 17/17 passing; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 18/18 passing, including `architecture quiz feedback runtime files exist`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-validation` exit 0 with 3/3 passing; focused quiz feedback parity slice `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-explanation-panel-accessibility-parity.test.js tests/content-uhr-reference-card-accessibility-parity.test.js tests/content-celebration-burst-accessibility-parity.test.js tests/content-question-disclaimer-parity.test.js` exit 0 with 10/10 passing; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; bounded Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx --no-install expo start --no-dev --offline --port 8168 --max-workers 1` reached `Waiting on http://localhost:8168`, then was stopped.
@@ -540,6 +616,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps answer feedback helpers, sc
 Next suggested validator action: inspect `architectureQuizFeedbackRuntimeFiles`, rerun `npm run test:architecture` plus the focused quiz feedback parity slice, and confirm the public-export guard includes the new manifest export.
 
 ## Iteration 186 - 2026-05-18
+
 Task completed: Product/tooling atom - added localized ad-copy runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 18/18 passing, including `architecture monetization runtime files exist` and public exports for `lib/monetization/adCopy.ts`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 0 with 20/20 passing; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0; bounded Expo smoke with temporary HOME and `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npx --no-install expo start --no-dev --offline --port 8169 --max-workers 1` reached `Waiting on http://localhost:8169`, then the exact smoke process was stopped.
@@ -547,6 +624,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps `lib/monetization/adCopy.ts
 Next suggested validator action: inspect `architectureMonetizationRuntimeFiles`, rerun `npm run test:architecture` and `npm run test:monetization`, and confirm the public-export guard covers `adBannerCopy` and `nativeAdCardCopy`.
 
 ## Iteration 187 - 2026-05-18
+
 Task completed: Product/tooling atom - added mistake-review runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 18/18 passing; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 19/19 passing, including `architecture mistake review runtime files exist`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-mistakes-route-copy-parity.test.js` exit 0 with 5/5 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/ui-effects.test.js --test-name-pattern "mistakes screen reviews"` exit 0 with 50/50 passing; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, and `npm run test:ownership` exit 0.
@@ -554,6 +632,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps the wrong-answer review sto
 Next suggested validator action: inspect `architectureMistakeReviewRuntimeFiles`, rerun `npm run test:architecture` and the focused Mistakes route parity test, and confirm the public-export guard covers `useMistakeReviewStore`.
 
 ## Iteration 188 - 2026-05-18
+
 Task completed: Product/tooling atom - added audio runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 20/20 passing, including `architecture audio runtime files exist`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:audio` exit 0 with 4/4 passing; focused audio parity slice `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-audio-button-accessibility-parity.test.js tests/content-question-speech-text-parity.test.js tests/content-settings-audio-parity.test.js` exit 0 with 7/7 passing; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, `npm run test:ownership`, and `npm run validate:content` exit 0; bounded Expo smoke `CI=1 EXPO_NO_TELEMETRY=1 HOME=<temp> NODE_OPTIONS='--v8-pool-size=1' npx --no-install expo start --no-dev --offline --port 8170 --max-workers 1` reached `Waiting on http://localhost:8170`, then the exact smoke process was stopped.
@@ -561,6 +640,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps `lib/audio/speak.ts`, `comp
 Next suggested validator action: inspect `architectureAudioRuntimeFiles`, rerun `npm run test:architecture` and `npm run test:audio`, and confirm the public-export guard includes `architectureAudioRuntimeFiles`.
 
 ## Iteration 189 - 2026-05-18
+
 Task completed: Product/tooling atom - added profile/settings runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 20/20 passing; after the patch, `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 21/21 passing, including `architecture profile settings runtime files exist`; focused profile/settings parity slice `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-profile-route-header-parity.test.js tests/content-profile-route-copy-parity.test.js tests/content-settings-route-header-parity.test.js tests/content-settings-route-copy-parity.test.js tests/content-settings-route-scroll-parity.test.js tests/content-language-settings-parity.test.js tests/content-settings-daily-goal-parity.test.js tests/content-settings-audio-parity.test.js` exit 0 with 23/23 passing; targeted Prettier and targeted `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, `npm run test:ownership`, and `npm run validate:content` exit 0; bounded Expo smoke `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8171 --max-workers 1` reached `Waiting on http://localhost:8171`, then the timeout stopped Metro.
@@ -568,6 +648,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps the Profile route, Settings
 Next suggested validator action: inspect `architectureProfileSettingsRuntimeFiles`, rerun `npm run test:architecture` and the focused profile/settings parity slice, and confirm the public-export guard includes `architectureProfileSettingsRuntimeFiles`.
 
 ## Iteration 190 - 2026-05-18
+
 Task completed: Product/tooling atom - added Expo Router shell runtime coverage to the product architecture scaffold manifest.
 Artifacts changed: `lib/scaffold/architectureManifest.ts`, `scripts/architecture-scaffold.test.js`, `tests/architecture-public-exports.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 22/22 passing, including `architecture router shell runtime files exist`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` exit 0 with 5/5 passing; targeted `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; targeted `git diff --check -- lib/scaffold/architectureManifest.ts scripts/architecture-scaffold.test.js tests/architecture-public-exports.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck`, `npm run lint`, `npm run test:ownership`, and `npm run validate:content` exit 0; bounded Expo smoke `CI=1 EXPO_NO_TELEMETRY=1 HOME=<temp> NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8172 --max-workers 1` reached `Waiting on http://localhost:8172`, then the timeout stopped Metro; `pgrep -af 'expo start|Metro|metro|8172' || true` showed no lingering Expo or Metro process.
@@ -575,6 +656,7 @@ Blocked? no - this SETUP scaffold/tooling atom keeps the root stack, tab shell, 
 Next suggested validator action: inspect `architectureRouterShellRuntimeFiles`, rerun `npm run test:architecture` and `npm run test:router-shell`, and confirm the public-export guard includes `architectureRouterShellRuntimeFilePath`.
 
 ## Iteration 191 - 2026-05-18
+
 Task completed: P0 ads/IAP product atom - aligned the Home `PricingWedge` Remove Ads pitch with the canonical `REMOVE_ADS_PRICE_LABEL` and added a monetization parity guard so Home and paywall price copy cannot drift.
 Artifacts changed: `components/monetization/PricingWedge.tsx`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/monetization.test.js --test-name-pattern "home remove-ads pricing copy"` exit 0 with 21/21 passing including the new guard; `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 0 with 21/21 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; targeted Prettier and targeted `git diff --check` exit 0.
@@ -582,6 +664,7 @@ Blocked? no - this fixes `REVIEWER-REMOVE-ADS-PRICE-COPY-1` in SETUP-owned UI/mo
 Next suggested validator action: inspect `PricingWedge` and rerun the monetization price-copy guard before accepting the reviewer defect.
 
 ## Iteration 192 - 2026-05-18
+
 Task completed: SETUP tooling atom - repaired the architecture/router-shell scaffold verifier after current root-stack and manifest coverage drift.
 Artifacts changed: `app/account.tsx`, `lib/scaffold/architectureManifest.ts`, `lib/scaffold/routerShellManifest.ts`, `scripts/architecture-scaffold.test.js`, `scripts/router-shell.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-patch `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` failed 18/22 with missing architecture audio/profile exports and stale root-stack/router-shell expectations; after patch and rebase, `NODE_OPTIONS='--v8-pool-size=1' npm run test:architecture` exit 0 with 22/22 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` exit 0 with 5/5 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0 after fixing the existing `app/account.tsx` unescaped apostrophe; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and targeted `git diff --check` exit 0; bounded Expo smoke `HOME=$(mktemp -d) EXPO_NO_TELEMETRY=1 CI=1 NODE_OPTIONS='--v8-pool-size=1' timeout 60s npx --no-install expo start --no-dev --offline --port 8175 --max-workers 1` reached `Waiting on http://localhost:8175`, then timeout stopped Metro; `pgrep -af 'expo start|Metro|metro|8175'` found no lingering process.
@@ -589,6 +672,7 @@ Blocked? no - this keeps SETUP scaffold evidence green on current main without t
 Next suggested validator action: inspect the scaffold manifest/test drift fix and rerun `npm run test:architecture` plus `npm run test:router-shell`.
 
 ## Iteration 193 - 2026-05-18
+
 Task completed: SITE-P0-1 - wired the deployed static `site/` Practice route to the shared static question bank and styled chapter hub without regressing Ebook.
 Artifacts changed: `site/index.html`, `site/app.js`, `site/practice.js`, `site/styles.css`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `node --check site/app.js`, `node --check site/practice.js`, and `node --check site/questions.js` exit 0; route/static-link assertion exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `npm run test:ownership` exit 0; `git diff --check -- site/index.html site/app.js site/practice.js site/styles.css` exit 0; local static-site smoke with system Chrome from `/` to `#/practice`, first chapter drill, and `#/ebook` exit 0 with 12 hub cards, 4 quiz options, Ebook rendered, and no browser console/page errors.
@@ -597,6 +681,7 @@ Blocked? no - SITE-P0-1 source behavior and gates are complete on a latest-`orig
 Next suggested validator action: inspect the static Practice route wiring and rerun the route/static-link assertion plus local static-site smoke.
 
 ## Iteration 194 - 2026-05-18
+
 Task completed: SITE-P0-2 - wired the deployed static `site/` Mock exam route, shell, styling, timed answer flow, submission, result breakdown, and post-submit question review.
 Artifacts changed: `site/index.html`, `site/app.js`, `site/practice.js`, `site/styles.css`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `node --check site/app.js`, `node --check site/practice.js`, `node --check site/questions.js`, `node --check site/i18n-extras.js`, and `node --check site/ebook-tools.js` exit 0; static route/link assertion for `#/mock`, `#mock-stage`, loaded Practice/questions/i18n/ebook helper scripts, and mock review CSS exit 0; `npm run test:ownership` exit 0; targeted `git diff --check` exit 0; local static-site Chrome smoke from `/` to `#/mock` completed a 5-question timed exam, verified result review, checked `#/practice` hub and `#/ebook` helper loading, and reported browser console/page errors 0. Broad `npm run typecheck -- --pretty false` was attempted on the latest base but is red from unrelated missing auth/Supabase packages (`expo-apple-authentication`, `@supabase/supabase-js`, `expo-auth-session`, `expo-web-browser`).
@@ -605,6 +690,7 @@ Blocked? no - required SITE-P0-2 static-site gates are complete on latest `origi
 Next suggested validator action: inspect the static Mock exam route and rerun the route/static assertion plus the static-site mock completion smoke before accepting SITE-P0-2.
 
 ## Iteration 195 - 2026-05-18
+
 Task completed: SITE-P0-3 - refreshed the deployed static `site/` question bank from canonical content after q019/q020 explanation updates so the static Practice/Mock routes pass the existing drift guard.
 Artifacts changed: `site/questions.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-fix `node scripts/export-site-question-bank.js --check` failed with `site/questions.js is out of sync`; after regeneration and rebase onto latest `origin/main`, `node scripts/export-site-question-bank.js --check` exit 0 with 705 questions and 13 chapters; `node --check site/questions.js` exit 0; `node --test tests/content-static-site-question-bank-parity.test.js` exit 0 with 2/2 passing; `npm run validate:content` exit 0; `npm run typecheck -- --pretty false` exit 0 after isolated worktree `npm ci`; `npm run test:ownership` exit 0; `git diff --check HEAD~1..HEAD` exit 0; static-site Chrome smoke showed 13 Practice cards, 705-question total, q001 feedback, 5-row Mock review, and browser console/page errors 0.
@@ -613,6 +699,7 @@ Blocked? no - SITE-P0-3 is synced on latest `origin/main`; the existing export/p
 Next suggested validator action: inspect the generated q019/q020 static-bank diff and rerun `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, and `node --check site/questions.js` before accepting SITE-P0-3.
 
 ## Iteration 196 - 2026-05-18
+
 Task completed: SITE-P0-4 - improved the deployed static Ebook reader while preserving the richer `site/` surface: Swedish mode now has real study briefs instead of placeholder translation copy, reader actions link to chapter practice/mock/sources, and the existing highlight/notes helper is wired into chapter renders.
 Artifacts changed: `site/ebook.js`, `site/styles.css`, `docs/parallel-sessions/journals/setup.md`.
 Verification: after isolated latest-`origin/main` worktree rebase, `node --check site/ebook.js` exit 0; `node --check site/ebook-tools.js` exit 0; focused ebook copy/navigation source assertion exit 0 for no stale Swedish placeholders, exposed `window.smtEbookRender`, `smtApplyEbookHighlights`, chapter practice links, notes host, and Swedish study briefs; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `git diff --check HEAD~1..HEAD` exit 0; local static-site Chrome smoke on `#/ebook?c=1` and Swedish `#/ebook?c=11` verified render hook, notes host, no placeholder copy, Swedish source caveat, `11 / 12` progress, `Öva kapitlet` link to `#/practice?c=11`, active Practice route/question render, and browser console/page errors 0.
@@ -621,6 +708,7 @@ Blocked? no - SITE-P0-4 source behavior and gates are complete on latest `origin
 Next suggested validator action: inspect the static Ebook reader diff, rerun the focused copy/navigation assertion and static-site Ebook smoke, then route SITE-P0-5 reviewer audit.
 
 ## Iteration 197 - 2026-05-18
+
 Task completed: SITE-P0-4 follow-up - aligned the deployed static Ebook reader practice CTAs to explicit canonical destinations so the Migration/citizenship chapter no longer opens the unrelated outside-world chapter practice set.
 Artifacts changed: `site/ebook.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `node --check site/ebook.js` exit 0; `node --check site/ebook-tools.js` exit 0; focused ebook copy/navigation source assertion exit 0 for explicit `PRACTICE_LINKS`, no stale Swedish placeholders, render/highlight hooks, mixed-practice migration CTA, mock/source links, and notes host; static-site Chrome smoke on rebased code verified `#/ebook?c=1`, Swedish `#/ebook?c=11`, no placeholder copy, `Öva blandade frågor` routing to `#/practice?c=mix`, a rendered 10-question mixed practice round, and browser console/page errors 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `git diff --check origin/main..HEAD` exit 0 before merge and `git diff --check -- docs/parallel-sessions/journals/setup.md` exit 0 for this handoff.
@@ -629,6 +717,7 @@ Blocked? no - SITE-P0-4 navigation semantics are corrected on latest `origin/mai
 Next suggested validator action: rerun the static Ebook smoke and then route SITE-P0-5 reviewer audit against the live deployed static site.
 
 ## Iteration 198 - 2026-05-18
+
 Task completed: REVIEWER-SITE-LIVE-DEPLOY-STALE-1 source atom - added a controlled site-only main push trigger for the Vercel production deploy and a live static-site smoke gate that rejects stale deployed Practice, Mock, Ebook, and question-bank assets.
 Artifacts changed: `.github/workflows/scheduled-deploy.yml`, `scripts/check-live-site.js`, `scripts/check-live-site.test.js`, `scripts/build-config.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0 after `npm ci` in the isolated worktree; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy' scripts/build-config.test.js` exit 0; `SITE_LIVE_URL=http://127.0.0.1:8234 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live` exit 0 against local current `site/` with 705 questions, Practice hub assets, Mock stage assets, Ebook renderer assets, and no stale placeholder copy; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0; targeted `git diff --check` exit 0.
@@ -637,6 +726,7 @@ Blocked? no for the source gate - production freshness still needs the post-merg
 Next suggested validator action: after #321 is squash-merged, confirm the `Scheduled Vercel deploy` push run completes and rerun `SITE_LIVE_URL=<production-url> npm run test:site-live`.
 
 ## Iteration 199 - 2026-05-18
+
 Task completed: REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1 follow-up - kept the live-site smoke gate aligned with the current generated static bank by deriving the expected question count from local `site/questions.js` instead of accepting the stale 705 default.
 Artifacts changed: `scripts/check-live-site.js`, `scripts/check-live-site.test.js`, `docs/parallel-sessions/journals/setup.md`. Current `origin/main` already contains the 715-question `site/questions.js` sync and static parity test cleanup from the parallel DATA-INTEGRITY/manager acceptance path.
 Verification: `node scripts/export-site-question-bank.js --check` exit 0 with 715 questions and 13 chapters; `node --test tests/content-static-site-question-bank-parity.test.js` exit 0 with 2/2 passing; `node scripts/export-question-bank.js --check` exit 0 with 715 questions; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 715 published questions; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 5/5 passing; `SITE_LIVE_URL=http://127.0.0.1:8236 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live` exit 0 with 715-question readiness; system-Chrome static smoke through `#/practice` and `#/mock` found 715 questions, 13 hub cards, mock stage present, and no console/page errors; targeted Prettier and `git diff --check` exit 0.
@@ -645,6 +735,7 @@ Blocked? no for the count-gate/source atom - live production deployment remains 
 Next suggested validator action: inspect the live-smoke count derivation, rerun the focused gates above, then keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until Actions billing is fixed and a production deploy can pass `SITE_LIVE_URL=<production-url> npm run test:site-live`.
 
 ## Iteration 200 - 2026-05-18
+
 Task completed: REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1 - ported the static Practice hub to the draft wide desktop shell, added live-smoke coverage for the wide layout, and regenerated `site/questions.js` after the latest q108 wording landed on main.
 Artifacts changed: `site/index.html`, `site/styles.css`, `site/questions.js`, `scripts/check-live-site.js`, `scripts/check-live-site.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `node scripts/export-site-question-bank.js --check` exit 0 with 715 questions and 13 chapters; `node --test tests/content-static-site-question-bank-parity.test.js` exit 0 with 2/2 passing; `node --check site/questions.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 5/5 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 715 published questions; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; script Prettier check exit 0; `git diff --check` exit 0; `SITE_LIVE_URL=http://127.0.0.1:8241 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live` exit 0 with `practice wide layout` OK; system-Chrome smoke through `#/practice` and `#/mock` found a 1080px Practice shell, 4 desktop hub columns, 13 cards, 715 static questions, Mock active with `#mock-stage`, and no browser console/page errors.
@@ -653,6 +744,7 @@ Blocked? no - this closes the source/layout atom for Practice width parity. Prod
 Next suggested validator action: inspect the wide Practice container and smoke harness diff, rerun the local `test:site-live` plus desktop browser width assertion, then keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production deploy evidence exists.
 
 ## Iteration 201 - 2026-05-18
+
 Task completed: REVIEWER-ACCOUNT-SCOPE-1 static-site source atom - removed reachable Sign in/OAuth/magic-link UI from `site/`, made Ebook highlights/notes local-only, and added a static account-scope guard.
 Artifacts changed: `site/index.html`, `site/ebook-tools.js`, `site/i18n-extras.js`, `site/styles.css`, `site/signin.js`, `scripts/static-site-account-scope.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: after isolated latest-`origin/main` worktree rebase, `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-account-scope` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check` for `site/ebook-tools.js`, `site/i18n-extras.js`, and `scripts/static-site-account-scope.test.js` exit 0; targeted Prettier for the new script/package and `git diff --check origin/main..HEAD` exit 0; system-Chrome static smoke on `#/ebook` found no sign-in button/modal/script, the local-only note visible, selection opening `Highlight`/`Note`, no auth nudge, and browser console/page errors 0.
@@ -661,6 +753,7 @@ Blocked? no - this closes the static-site source portion of REVIEWER-ACCOUNT-SCO
 Next suggested validator action: inspect the static-site account-scope guard and rerun the focused guard plus `#/ebook` browser smoke before accepting the static-site defect.
 
 ## Iteration 202 - 2026-05-18
+
 Task completed: REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1 - updated static FAQ/privacy copy to describe Google AdSense on web, Google Mobile Ads in app, consent-aware ads, local study progress, and one-time 29 SEK Remove Ads without stale disabled-ad or future-premium claims.
 Artifacts changed: `site/app.js`, `site/index.html`, `scripts/static-site-privacy-copy.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-copy` exit 0 with 2/2 passing; `node --check site/app.js && node --check scripts/static-site-privacy-copy.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check scripts/static-site-privacy-copy.test.js package.json` exit 0; `git diff --check origin/main..HEAD` exit 0.
@@ -669,6 +762,7 @@ Blocked? no - this closes the static privacy/monetization copy source atom; prod
 Next suggested validator action: inspect the new static privacy-copy guard and rerun `npm run test:static-site-privacy-copy` before accepting the reviewer copy defect.
 
 ## Iteration 203 - 2026-05-18
+
 Task completed: REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1 - added a pull-request-to-main trigger to the release-validation workflow while preserving manual dispatch and version-tag validation.
 Artifacts changed: `.github/workflows/release-validation.yml`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'GitHub release validation workflow runs safe validation and blocker evidence checks' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `./node_modules/.bin/prettier --check .github/workflows/release-validation.yml` exit 0; `git diff --check origin/main..HEAD` exit 0. Broad `npm run test:build-config` was attempted and remains red on the separate queued `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1` failure, so this atom used the focused release-validation gate.
@@ -677,6 +771,7 @@ Blocked? no for the PR-trigger source atom. The PR-triggered remote Release vali
 Next suggested validator action: inspect `.github/workflows/release-validation.yml`, rerun the focused build-config release-validation test, then keep `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1` as the next release-config atom and `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` blocked on external deploy capacity.
 
 ## Iteration 204 - 2026-05-18
+
 Task completed: REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1 - tightened the production submit guard verifier so placeholder Apple submit identifiers must be reported before release-preflight blockers can mask them.
 Artifacts changed: `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'EAS build and submit profiles are configured|production submit guard blocks placeholder Apple identifiers' scripts/build-config.test.js` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 38/38 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `npx --no-install prettier --check scripts/build-config.test.js` exit 0; `git diff --check` exit 0.
@@ -685,6 +780,7 @@ Blocked? no for the submit-guard verifier atom. `REVIEWER-SITE-LIVE-DEPLOY-STALE
 Next suggested validator action: inspect the submit-guard test assertion, rerun the focused build-config pattern plus `npm run test:build-config`, then keep production deploy evidence as the remaining site-live closure item.
 
 ## Iteration 205 - 2026-05-18
+
 Task completed: REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1 - hardened the Expo web visual-smoke capture so launch sponsor overlays are dismissed before screenshots, duplicate screenshot hashes are rejected unless explicitly explained, and the committed report can be verified without a browser.
 Artifacts changed: `tests/e2e/visual-smoke.spec.ts`, `scripts/visual-smoke-report.test.js`, `package.json`, `reports/2026-05-15-uiux-screenshots/*`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-fix `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/visual-smoke-report.test.js` failed on missing overlay/hash evidence; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:screenshot-manifest` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check` exit 0.
@@ -693,6 +789,7 @@ Blocked? no - this closes the unblocked visual-smoke source/evidence atom; produ
 Next suggested validator action: inspect the visual-smoke manifest hash/overlay fields, rerun `npm run test:screenshot-manifest`, and rerun the focused visual-smoke e2e when browser capacity is available.
 
 ## Iteration 206 - 2026-05-18
+
 Task completed: REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1 follow-up - formatted the committed visual-smoke screenshot manifest so the targeted Prettier gate can pass after PR #425.
 Artifacts changed: `reports/2026-05-15-uiux-screenshots/manifest.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: pre-fix targeted Prettier failed on `reports/2026-05-15-uiux-screenshots/manifest.json`; after formatting, `NODE_OPTIONS='--v8-pool-size=1' npm run test:screenshot-manifest` exit 0 with 2/2 passing; targeted `prettier --check package.json scripts/visual-smoke-report.test.js tests/e2e/visual-smoke.spec.ts reports/2026-05-15-uiux-screenshots/manifest.json` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `git diff --check` exit 0.
@@ -701,6 +798,7 @@ Blocked? no - this closes the formatting blocker left after the visual-smoke sou
 Next suggested validator action: rerun the targeted Prettier command plus `npm run test:screenshot-manifest`, then accept `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1` if the report manifest and prior visual-smoke evidence remain clean.
 
 ## Iteration 207 - 2026-05-18
+
 Task completed: REVIEWER-SITE-LIVE-DEPLOY-STALE-1 blocked evidence recheck - refreshed current-main source readiness and attempted the controlled scheduled deploy path; production remains stale because GitHub Actions fails before runner steps.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`.
 Verification: current `origin/main` was rebased to `65f6452`; changes since the deploy dispatch were metadata/verification-only (`codex-tasks/*`, journals, meeting sheet, verify docs) and did not touch `site/`, `scripts/`, app code, or content data. `node --test scripts/check-live-site.test.js` exit 0 with 7/7 passing; `node scripts/export-site-question-bank.js --check` exit 0 with 715 questions and 13 chapters; `npm run validate:content` exit 0 with `staticSiteQuestionBankParityValidated:true`; `npm run typecheck -- --pretty false` exit 0 after using the repo dependency tree in a clean worktree; `npm run test:ownership` exit 0; `git diff --check` exit 0. Production live smoke still failed only on the hash guard: `expected c0db6739a52a, found 5d2710bebf7e`, while question count, Practice, Mock, and Ebook checks passed. Manual workflow dispatch for `scheduled-deploy.yml` created run `26044432763` at SHA `f4d02dc`; job `76564649853` failed with 0 steps and no runner, matching the existing external Actions payment/spending-capacity blocker.
@@ -709,6 +807,7 @@ Blocked? yes - production deploy freshness still needs external deploy capacity 
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes; do not duplicate accepted visual-smoke, account-scope, privacy-copy, submit-guard, or local live-smoke source atoms.
 
 ## Iteration 208 - 2026-05-18
+
 Task completed: REVIEWER-SITE-LIVE-DEPLOY-STALE-1 current-hash recheck after q124 static-bank update - verified the new current `site/questions.js` hash and confirmed the automatic deploy run still fails before runner steps.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`.
 Verification: current `origin/main` was rebased to `479f5bc`; the deploy-relevant change was `67847d4` (`data-integrity: clean q124 static option`), which changed `data/additionalQuestions.ts` and `site/questions.js`, while later commits were routing/metadata-only. `node --test scripts/check-live-site.test.js` exit 0 with 7/7 passing; `node scripts/export-site-question-bank.js --check` exit 0 with 715 questions and 13 chapters; `npm run validate:content` exit 0 with `staticSiteQuestionBankParityValidated:true`; `npm run typecheck -- --pretty false` exit 0 after using the repo dependency tree in a clean worktree; `npm run test:ownership` exit 0; `git diff --check` exit 0. Production live smoke still failed only on the static-bank hash guard: `expected 6473fb51b0a6, found 5d2710bebf7e`, while question count, Practice, Mock, and Ebook checks passed. The automatic scheduled deploy push run for `67847d4` was `26044838099`; job `76566097025` failed with 0 steps and no runner.
@@ -717,6 +816,7 @@ Blocked? yes - the remaining blocker is external deploy capacity/operator produc
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until a deploy for current `origin/main` completes and `node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` passes the hash-aware smoke.
 
 ## Iteration 209 - 2026-05-18
+
 Task completed: REVIEWER-NATIVE-ACCOUNT-SCOPE-1 - removed the native Expo account/auth/Supabase surface from the no-account MVP, detached account widgets from Home/Profile/Settings/top-bar chrome, cleaned privacy/support copy back to local-only progress and app-store purchase restore, removed auth/Supabase runtime dependencies, and added a native account-scope guard.
 Artifacts changed: `app/_layout.tsx`, `app/(tabs)/home.tsx`, `app/(tabs)/profile.tsx`, `app/privacy.tsx`, `app/settings.tsx`, `app/support.tsx`, `components/ui/TopBarActions.tsx`, deleted `app/(auth)/*`, `app/auth/callback.tsx`, `app/account.tsx`, `components/auth/*`, `lib/auth/*`, and `lib/supabase.ts`, updated `app.json`, `package.json`, `package-lock.json`, `lib/scaffold/routerShellManifest.ts`, `lib/scaffold/architectureManifest.ts`, `scripts/router-shell.test.js`, `scripts/architecture-scaffold.test.js`, and added `scripts/native-account-scope.test.js`.
 Verification: `npm run test:native-account-scope` exit 0 with 4/4 passing; `npm run typecheck -- --pretty false` exit 0; `npm run test:compliance` exit 0; `npm run test:router-shell` exit 0; `npm run test:architecture` exit 0; `npm run test:static-site-account-scope && npm run test:static-site-privacy-copy && npm run test:native-account-scope` exit 0; focused profile/settings/legal parity bundle exit 0 with 16/16 passing; `npm run validate:content` exit 0 with 715 published questions and `legalRouteHeaderParityValidated:true`; `npm run test:ownership` exit 0; `npm run lint` exit 0; `npm run test:monetization` exit 0 with 21/21 passing; `npm run test:build-config` exit 0 with 38/38 passing; `npm run test:content` exit 0 with 298/298 passing; targeted Prettier check and `git diff --check` exit 0.
@@ -725,6 +825,7 @@ Blocked? no for the native account-scope source atom. `REVIEWER-SITE-LIVE-DEPLOY
 Next suggested validator action: inspect that native account/auth routes and Supabase runtime dependencies are gone, rerun `npm run test:native-account-scope`, `npm run typecheck -- --pretty false`, and the focused profile/settings/legal parity bundle, then accept `REVIEWER-NATIVE-ACCOUNT-SCOPE-1` if no native account surface remains.
 
 ## Iteration 210 - 2026-05-18
+
 Task completed: REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1 - added localized independent-study / not-a-real-exam disclaimers to static Practice answer feedback and Mock result review while keeping per-question UHR source citations visible.
 Artifacts changed: `site/app.js`, `site/practice.js`, `site/styles.css`, `scripts/static-site-question-feedback.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `npm run test:static-site-question-feedback` exit 0 with 2/2 passing; `node --test tests/content-static-site-source-citation-parity.test.js` exit 0 with 3/3 passing; `npm run validate:content` exit 0 with 715 questions and static-site parity true; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `node --check` for `site/app.js`, `site/practice.js`, and `scripts/static-site-question-feedback.test.js` exit 0; targeted Prettier for the new verifier/package metadata exit 0; `git diff --check` exit 0.
@@ -733,6 +834,7 @@ Blocked? no - the source atom is covered by a focused VM DOM guard proving Pract
 Next suggested validator action: inspect the static feedback disclaimer copy and rerun `npm run test:static-site-question-feedback`, source-citation parity, and the standard content/typecheck/ownership gates before accepting `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1`.
 
 ## Iteration 211 - 2026-05-18
+
 Task completed: REVIEWER-SITE-ANSWER-SHUFFLE-1 - added deterministic static-site answer-option display shuffling for single-choice Practice and Mock questions, kept true/false order stable, and preserved original-index scoring/review behavior.
 Artifacts changed: `site/app.js`, `site/practice.js`, `scripts/static-site-answer-shuffle.test.js`, `package.json`, `app/about-the-test.tsx`, `docs/parallel-sessions/journals/setup.md`.
 Verification: rebased onto current `origin/main` `f4b6d69`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-answer-shuffle` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:answer-shuffle` exit 0 with 7/7 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions, `answerShuffleDistributionParityValidated:true`, and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0 after the one-line `app/about-the-test.tsx` array-type lint fix from current main; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check` for `site/app.js`, `site/practice.js`, and `scripts/static-site-answer-shuffle.test.js` exit 0; targeted Prettier and `git diff --check` exit 0.
@@ -741,6 +843,7 @@ Blocked? no - this closes the unblocked static answer-shuffle source atom withou
 Next suggested validator action: inspect the static display-order helper and focused VM guard, rerun `npm run test:static-site-answer-shuffle`, then accept `REVIEWER-SITE-ANSWER-SHUFFLE-1` if Practice and Mock still score selected shuffled labels against the original correct answer.
 
 ## Iteration 212 - 2026-05-18
+
 Task completed: REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1 follow-up - added the independent-study / not-a-real-exam disclaimer to the active static Mock exam question surface, preserving existing source citation, Practice feedback, Mock review, and answer-shuffle behavior.
 Artifacts changed: `site/practice.js`, `site/styles.css`, `scripts/static-site-question-feedback.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-source-citation-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-answer-shuffle` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`, `npm run lint`, and `npm run test:ownership` exit 0; `node --check site/practice.js` and `node --check scripts/static-site-question-feedback.test.js` exit 0; `npx --no-install prettier --check scripts/static-site-question-feedback.test.js` exit 0; `git diff --check` exit 0; system-Chrome static smoke on `#/mock?run=1` found `hasSource:true`, `hasDisclaimer:true`, and console errors 0.
@@ -749,6 +852,7 @@ Blocked? no - this closes the focused active Mock question disclaimer residual w
 Next suggested validator action: inspect the active Mock question card disclaimer and rerun `npm run test:static-site-question-feedback` plus the static browser smoke before accepting the focused follow-up.
 
 ## Iteration 213 - 2026-05-18
+
 Task completed: REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1 - routed static Settings language changes through the same language-change path as legacy controls and rerendered active Practice plus Mock landing, active exam, and submitted result surfaces without a reload.
 Artifacts changed: `site/app.js`, `site/practice.js`, `site/settings.js`, `scripts/static-site-settings-language.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-answer-shuffle` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`, `npm run lint`, and `npm run test:ownership` exit 0 after linking the existing dependency tree into the clean worktree; `node --check` for changed static scripts and verifier exit 0; targeted Prettier for `scripts/static-site-settings-language.test.js` and `package.json` exit 0; `git diff --check` exit 0; system-Chrome static smoke on `#/practice?c=1` and `#/mock?run=1` switched Settings from English to Swedish and verified active labels rerendered without stale English question counters or Mock submit/timer labels.
@@ -757,6 +861,7 @@ Blocked? no - the static Settings language path now triggers active surface rere
 Next suggested validator action: inspect the shared `smtSetLanguage` event path, rerun `npm run test:static-site-settings-language`, and repeat the static browser smoke if runtime evidence is needed before accepting `REVIEWER-SITE-SETTINGS-LANGUAGE-RERENDER-1`.
 
 ## Iteration 214 - 2026-05-18
+
 Task completed: REVIEWER-SITE-PRACTICE-RESULT-I18N-1 - localized and spaced the completed static Practice result breakdown so Swedish and English results no longer render glued labels or hardcoded `score`.
 Artifacts changed: `site/app.js`, `scripts/static-site-practice-result-i18n.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-practice-result-i18n` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-answer-shuffle` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`, `npm run lint`, and `npm run test:ownership` exit 0 after linking the existing dependency tree into the clean worktree; `node --check site/app.js` and `node --check scripts/static-site-practice-result-i18n.test.js` exit 0; targeted Prettier for the new verifier/package metadata exit 0; `git diff --check` exit 0.
@@ -765,6 +870,7 @@ Blocked? no - this closes the static Practice result label i18n defect without t
 Next suggested validator action: inspect the completed Practice result rows and rerun `npm run test:static-site-practice-result-i18n`, then accept `REVIEWER-SITE-PRACTICE-RESULT-I18N-1` if Swedish shows `7 Rätt`, `3 Fel`, `70% Poäng` and English shows `7 Correct`, `3 Wrong`, `70% Score`.
 
 ## Iteration 215 - 2026-05-18
+
 Task completed: REVIEWER-SITE-FLAG-PALETTE-DRIFT-1 - fixed static Swedish-flag surfaces so brand, hero, and ebook flag renderings keep official blue/gold colors while user palettes continue to recolor normal UI accents.
 Artifacts changed: `site/styles.css`, `scripts/static-site-flag-palette.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-flag-palette` exit 0 with 1/1 passing across five palettes and light/dark themes; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` exit 0 with 4/4 passing; `node --check scripts/static-site-flag-palette.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier for the JS verifier/package metadata exit 0; `git diff --check` exit 0.
@@ -773,6 +879,7 @@ Blocked? no - this closes the unblocked static-site flag palette drift atom with
 Next suggested validator action: inspect the fixed `--flag-blue`/`--flag-gold` CSS usage and rerun `npm run test:static-site-flag-palette` before accepting `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`.
 
 ## Iteration 216 - 2026-05-18
+
 Task completed: REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1 - added a static-site mobile topbar menu so Practice, Mock exam, Ebook, Support, and Settings are reachable at 390px without horizontal overflow.
 Artifacts changed: `site/index.html`, `site/app.js`, `site/styles.css`, `scripts/static-site-mobile-nav.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-mobile-nav` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-practice-result-i18n` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-flag-palette` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-answer-shuffle` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and static-site parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check site/app.js` and `node --check scripts/static-site-mobile-nav.test.js` exit 0; targeted Prettier for the new verifier/package metadata exit 0; `git diff --check` exit 0.
@@ -781,6 +888,7 @@ Blocked? no - this closes the unblocked mobile navigation reachability source at
 Next suggested validator action: inspect the mobile nav toggle and rerun `npm run test:static-site-mobile-nav` plus the standard site/source gates before accepting `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`.
 
 ## Iteration 217 - 2026-05-18
+
 Task completed: REVIEWER-SITE-QUESTION-COUNT-COPY-1 - removed stale static "core 500" and "500+" product-count claims from hero/footer copy and added a guard for future drift.
 Artifacts changed: `site/app.js`, `site/index.html`, `site/i18n-extras.js`, `scripts/static-site-question-count-copy.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-count-copy` exit 0 with 2/2 passing; `node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `node --check site/app.js && node --check site/i18n-extras.js && node --check scripts/static-site-question-count-copy.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-copy` exit 0 with 2/2 passing; targeted Prettier for `scripts/static-site-question-count-copy.test.js` and `package.json` exit 0; `git diff --check` exit 0.
@@ -789,6 +897,7 @@ Blocked? no - this closes the unblocked static question-count copy source atom w
 Next suggested validator action: inspect the non-numeric hero/footer copy and rerun `npm run test:static-site-question-count-copy` plus the standard static/source gates before accepting `REVIEWER-SITE-QUESTION-COUNT-COPY-1`.
 
 ## Iteration 218 - 2026-05-18
+
 Task completed: REVIEWER-SITE-CHAPTER-COUNT-COPY-1 - removed stale static "Twelve chapters" / "Tolv kapitel" and equivalent localized chapter-count claims, added the missing 13th visible home list row, and added a guard for future chapter-count drift.
 Artifacts changed: `site/index.html`, `site/app.js`, `site/i18n-extras.js`, `scripts/static-site-chapter-count-copy.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-count-copy` exit 0 with 2/2 passing; `node scripts/export-site-question-bank.js --check && node --test tests/content-static-site-question-bank-parity.test.js` exit 0 with 720 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check site/app.js && node --check site/i18n-extras.js && node --check scripts/static-site-chapter-count-copy.test.js` exit 0; targeted Prettier for `scripts/static-site-chapter-count-copy.test.js` and `package.json` exit 0; `git diff --check` exit 0.
@@ -797,6 +906,7 @@ Blocked? no - this closes the unblocked static chapter-count copy source atom wi
 Next suggested validator action: inspect the non-numeric chapter copy and `list-quiet` 13-row guard, then rerun `npm run test:static-site-chapter-count-copy` plus the standard static/source gates before accepting `REVIEWER-SITE-CHAPTER-COUNT-COPY-1`.
 
 ## Iteration 219 - 2026-05-18
+
 Task completed: REVIEWER-SITE-LIVE-DEPLOY-STALE-1 current-main recheck - verified current local static-site readiness after the count-copy fixes and confirmed production still serves a stale question bank.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`.
 Verification: clean worktree from current `origin/main` `50aca39`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-settings-language` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-practice-result-i18n` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-mobile-nav` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-count-copy` exit 0 with 2/2 passing; `node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`, `npm run lint`, and `npm run test:ownership` exit 0; `node --check site/app.js && node --check site/practice.js && node --check site/i18n-extras.js && node --check scripts/static-site-question-count-copy.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 7/7 passing; `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app` exit 1 only on static question bank freshness: expected 720/hash `987ca09fb613`, found 715/hash `afb9eec56629`; Practice, wide layout, Mock, Ebook, and placeholder-copy checks passed.
@@ -805,6 +915,7 @@ Blocked? yes - remaining SITE-P0-5 work is external deploy capacity/operator pro
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes; accept or archive stale local source queue entries that are already covered by current-main source commits.
 
 ## Iteration 220 - 2026-05-18
+
 Task completed: REVIEWER-SITE-LIVE-DEPLOY-STALE-1 current-main recheck - refreshed local source readiness after the generated true/false metadata cleanup changed `site/questions.js`, and confirmed production still serves stale static-bank content.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`.
 Verification: clean worktree from current `origin/main` `476afdb`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-count-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` exit 0 with 2/2 passing; `node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 7/7 passing; `git diff --check` exit 0. Production smoke `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` failed only on stale static-bank freshness: expected 720/hash `7a461698b05c`, found 715/hash `5d2710bebf7e`; Practice, wide layout, Mock, Ebook, and placeholder-copy checks passed.
@@ -813,6 +924,7 @@ Blocked? yes - remaining SITE-P0-5 work is external deploy capacity/operator pro
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes; question-count and chapter-count copy source atoms already have current-main source/test evidence.
 
 ## Iteration 221 - 2026-05-18
+
 Task completed: REVIEWER-SITE-LIVE-DEPLOY-STALE-1 current-main recheck - verified current SETUP/source readiness after the generated true/false negative-stem cleanup and confirmed production still serves stale static-bank content.
 Artifacts changed: `docs/parallel-sessions/journals/setup.md`.
 Verification: clean worktree from current `origin/main` `9f007d8`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-count-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` exit 0 with 2/2 passing; `node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 7/7 passing; `git diff --check` exit 0. Local `site/questions.js` has 720 questions and hash `ead3e32bf91d`. Production smoke against `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` failed on stale static-bank freshness: expected 720/hash `ead3e32bf91d`, found 715/hash `5d2710bebf7e`; production smoke against `https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app` failed on stale static-bank freshness: expected 720/hash `ead3e32bf91d`, found 715/hash `afb9eec56629`. Practice, wide layout, Mock, Ebook, and placeholder-copy checks passed on both URLs.
@@ -821,6 +933,7 @@ Blocked? yes - remaining SITE-P0-5 work is external deploy capacity/operator pro
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes; route the active true/false wording defect to DATA-INTEGRITY per `codex-tasks/data-integrity.txt`, not SETUP.
 
 ## Iteration 222 - 2026-05-18
+
 Task completed: REVIEWER-SITE-SOURCE-PROVENANCE-COPY-1 - aligned static Terms/Sources copy with the current UHR/Sverige i fokus-only question bank and added a guard comparing public source claims to `site/questions.js`.
 Artifacts changed: `site/index.html`, `site/app.js`, `scripts/static-site-source-provenance-copy.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-source-provenance-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:compliance` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-count-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-privacy-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 720 questions and static-site parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier and `git diff --check` exit 0.
@@ -829,9 +942,19 @@ Blocked? no - this closes the static source-provenance copy atom without touchin
 Next suggested validator action: inspect the source-claim guard and rerun `npm run test:static-site-source-provenance-copy` plus the standard static/source gates before accepting `REVIEWER-SITE-SOURCE-PROVENANCE-COPY-1`; keep live deploy freshness external until production serves current main.
 
 ## Iteration 223 - 2026-05-18
+
 Task completed: REVIEWER-SITE-EBOOK-CH13-COVERAGE-1 - added static Ebook chapter 13 for traditions/holidays, wired its sidebar nav/order/pager/practice link, and made the ebook parity guard derive coverage from shipped static chapter metadata.
 Artifacts changed: `site/ebook.js`, `site/index.html`, `tests/content-static-site-ebook-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
 Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-ebook-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with static-site parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check site/ebook.js && node --check tests/content-static-site-ebook-parity.test.js` exit 0; targeted Prettier for `tests/content-static-site-ebook-parity.test.js` exit 0; targeted `git diff --check` exit 0; system-Chrome static smoke on `#/ebook?c=13` saw EN/SV chapter 13 crumbs, active nav `13`, `13 / 13` progress, `#/practice?c=13`, no intro fallback, and console errors 0.
 PR: pending from `task/setup/ebook-ch13-coverage-1779131899` at handoff commit time.
 Blocked? no - this closes the static Ebook chapter-13 coverage source atom without touching content-owned data or running Vercel CLI.
 Next suggested validator action: inspect the chapter 13 reader/nav/order changes and rerun the focused ebook parity test plus the static browser smoke before accepting `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1`; keep live deploy freshness external until production serves current main.
+
+## Iteration 224 - 2026-05-18
+
+Task completed: REVIEWER-SITE-EBOOK-CH13-COVERAGE-1 formatting follow-up - applied the manager-requested Prettier cleanup for the static Ebook chapter 13 files and made the chapter-count guard tolerate formatted HTML whitespace.
+Artifacts changed: `site/ebook.js`, `site/index.html`, `scripts/static-site-chapter-count-copy.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check site/ebook.js site/index.html docs/parallel-sessions/journals/setup.md scripts/static-site-chapter-count-copy.test.js` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-ebook-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-chapter-count-copy` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with static-site parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check site/ebook.js && node --check tests/content-static-site-ebook-parity.test.js && node --check scripts/static-site-chapter-count-copy.test.js` exit 0; `git diff --check` exit 0.
+PR: pending from `task/setup/ebook-ch13-format-1779140000` at handoff commit time.
+Blocked? no - this closes the formatter blocker without touching content-owned data or running Vercel CLI.
+Next suggested validator action: rerun targeted Prettier plus the focused ebook/static gates and accept `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` if the formatting follow-up is merged cleanly.

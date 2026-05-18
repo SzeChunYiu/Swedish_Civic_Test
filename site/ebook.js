@@ -4,27 +4,27 @@
 */
 
 (function () {
-  "use strict";
+  'use strict';
 
   function svStudyBrief(points, facts, practiceHint) {
-    const items = points.map((point) => `<li>${point}</li>`).join("");
+    const items = points.map((point) => `<li>${point}</li>`).join('');
     return `
       <h2>Det viktigaste</h2>
       <ul>${items}</ul>
       <h2>Plugga smart</h2>
-      <p>${practiceHint || "Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om."}</p>
+      <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
       <div class="ebook__factbox"><h4>Fakta att kunna</h4><p>${facts}</p></div>
     `;
   }
 
   const CHAPTERS = {
     intro: {
-      kicker: { en: "How to read this book", sv: "Hur man läser den här boken" },
-      title:  { en: "Slow down.", sv: "Sakta in." },
-      title_em: { en: "We've got coffee.", sv: "Vi har kaffe." },
-      lede:   {
+      kicker: { en: 'How to read this book', sv: 'Hur man läser den här boken' },
+      title: { en: 'Slow down.', sv: 'Sakta in.' },
+      title_em: { en: "We've got coffee.", sv: 'Vi har kaffe.' },
+      lede: {
         en: "This is a companion, not a textbook. Read a chapter, take a quiz, take a fika. The order doesn't matter — but if you finish in order you get a feel for how Sweden's pieces fit together.",
-        sv: "Det här är ett sällskap, inte en lärobok. Läs ett kapitel, gör ett quiz, ta en fika. Ordningen spelar mindre roll — men i ordning får du en känsla för hur Sveriges delar passar ihop.",
+        sv: 'Det här är ett sällskap, inte en lärobok. Läs ett kapitel, gör ett quiz, ta en fika. Ordningen spelar mindre roll — men i ordning får du en känsla för hur Sveriges delar passar ihop.',
       },
       body: {
         en: `
@@ -60,13 +60,13 @@
       },
     },
 
-    "1": {
-      kicker: { en: "Chapter 01 · History", sv: "Kapitel 01 · Historia" },
-      title:  { en: "A very short", sv: "En kort historia" },
-      title_em: { en: "history of Sweden.", sv: "om Sverige." },
+    1: {
+      kicker: { en: 'Chapter 01 · History', sv: 'Kapitel 01 · Historia' },
+      title: { en: 'A very short', sv: 'En kort historia' },
+      title_em: { en: 'history of Sweden.', sv: 'om Sverige.' },
       lede: {
-        en: "From Vikings to NATO in under 4,000 words. The dynasties are skippable. The patterns are not.",
-        sv: "Från vikingar till NATO på under 4 000 ord. Dynastierna kan du hoppa över. Mönstren kan du inte.",
+        en: 'From Vikings to NATO in under 4,000 words. The dynasties are skippable. The patterns are not.',
+        sv: 'Från vikingar till NATO på under 4 000 ord. Dynastierna kan du hoppa över. Mönstren kan du inte.',
       },
       body: {
         en: `
@@ -93,23 +93,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Sveriges historia handlar om hur ett äldre kungarike blev en modern demokrati med riksdag, grundlagar och offentlig välfärd.",
-            "Nationaldagen den 6 juni kopplas till Gustav Vasas val till kung 1523 och till 1809 års regeringsform.",
-            "Under 1900-talet byggdes folkhemmet ut med skola, vård, pensioner och socialförsäkringar finansierade med skatter.",
-            "I modern tid är EU-medlemskapet 1995, euroomröstningen 2003 och NATO-medlemskapet 2024 centrala hållpunkter.",
+            'Sveriges historia handlar om hur ett äldre kungarike blev en modern demokrati med riksdag, grundlagar och offentlig välfärd.',
+            'Nationaldagen den 6 juni kopplas till Gustav Vasas val till kung 1523 och till 1809 års regeringsform.',
+            'Under 1900-talet byggdes folkhemmet ut med skola, vård, pensioner och socialförsäkringar finansierade med skatter.',
+            'I modern tid är EU-medlemskapet 1995, euroomröstningen 2003 och NATO-medlemskapet 2024 centrala hållpunkter.',
           ],
-          "Nationaldag: 6 juni · EU: 1995 · Euroomröstning: 2003 · NATO: 2024.",
+          'Nationaldag: 6 juni · EU: 1995 · Euroomröstning: 2003 · NATO: 2024.',
         ),
       },
     },
 
-    "2": {
-      kicker: { en: "Chapter 02 · Government", sv: "Kapitel 02 · Statsskick" },
-      title:  { en: "How Sweden", sv: "Hur Sverige" },
-      title_em: { en: "is governed.", sv: "styrs." },
+    2: {
+      kicker: { en: 'Chapter 02 · Government', sv: 'Kapitel 02 · Statsskick' },
+      title: { en: 'How Sweden', sv: 'Hur Sverige' },
+      title_em: { en: 'is governed.', sv: 'styrs.' },
       lede: {
         en: "A king who can't decide, a Riksdag that does, and 290 municipalities you'll mostly only meet at the recycling station.",
-        sv: "En kung som inte bestämmer, en riksdag som gör det, och 290 kommuner du oftast bara träffar vid återvinningen.",
+        sv: 'En kung som inte bestämmer, en riksdag som gör det, och 290 kommuner du oftast bara träffar vid återvinningen.',
       },
       body: {
         en: `
@@ -138,23 +138,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Sverige är både en konstitutionell monarki och en parlamentarisk demokrati: kungen har ceremoniella uppgifter, medan riksdag och regering fattar politiska beslut.",
-            "Riksdagen har 349 ledamöter, beslutar om lagar och statsbudget och kontrollerar regeringen.",
-            "Regionerna ansvarar främst för hälso- och sjukvård och kollektivtrafik. Kommunerna ansvarar bland annat för skola, socialtjänst, vatten och avfall.",
-            "Allmänna val hålls vart fjärde år. Svenska medborgare röstar till riksdagen, regionen och kommunen.",
+            'Sverige är både en konstitutionell monarki och en parlamentarisk demokrati: kungen har ceremoniella uppgifter, medan riksdag och regering fattar politiska beslut.',
+            'Riksdagen har 349 ledamöter, beslutar om lagar och statsbudget och kontrollerar regeringen.',
+            'Regionerna ansvarar främst för hälso- och sjukvård och kollektivtrafik. Kommunerna ansvarar bland annat för skola, socialtjänst, vatten och avfall.',
+            'Allmänna val hålls vart fjärde år. Svenska medborgare röstar till riksdagen, regionen och kommunen.',
           ],
-          "Riksdag: 349 ledamöter · Val: vart fjärde år · Regioner: 21 · Kommuner: 290.",
+          'Riksdag: 349 ledamöter · Val: vart fjärde år · Regioner: 21 · Kommuner: 290.',
         ),
       },
     },
 
-    "3": {
-      kicker: { en: "Chapter 03 · Rights", sv: "Kapitel 03 · Rättigheter" },
-      title:  { en: "Four basic laws,", sv: "Fyra grundlagar," },
-      title_em: { en: "one long list of rights.", sv: "en lång lista av rättigheter." },
+    3: {
+      kicker: { en: 'Chapter 03 · Rights', sv: 'Kapitel 03 · Rättigheter' },
+      title: { en: 'Four basic laws,', sv: 'Fyra grundlagar,' },
+      title_em: { en: 'one long list of rights.', sv: 'en lång lista av rättigheter.' },
       lede: {
         en: "Sweden's constitution is split across four laws. The Press Act is the oldest in the world. The rest is almost as interesting.",
-        sv: "Sveriges författning står i fyra grundlagar. Tryckfrihetsförordningen är världens äldsta. Resten är nästan lika kul.",
+        sv: 'Sveriges författning står i fyra grundlagar. Tryckfrihetsförordningen är världens äldsta. Resten är nästan lika kul.',
       },
       body: {
         en: `
@@ -181,23 +181,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Sverige har fyra grundlagar: regeringsformen, successionsordningen, tryckfrihetsförordningen och yttrandefrihetsgrundlagen.",
-            "Grundlagarna skyddar bland annat yttrandefrihet, religionsfrihet, föreningsfrihet och rätten att demonstrera.",
-            "Offentlighetsprincipen betyder att många handlingar hos myndigheter är offentliga, om de inte omfattas av sekretess.",
-            "Rättigheter hör ihop med ansvar: hot, hets mot folkgrupp, förtal och diskriminering kan fortfarande vara förbjudet.",
+            'Sverige har fyra grundlagar: regeringsformen, successionsordningen, tryckfrihetsförordningen och yttrandefrihetsgrundlagen.',
+            'Grundlagarna skyddar bland annat yttrandefrihet, religionsfrihet, föreningsfrihet och rätten att demonstrera.',
+            'Offentlighetsprincipen betyder att många handlingar hos myndigheter är offentliga, om de inte omfattas av sekretess.',
+            'Rättigheter hör ihop med ansvar: hot, hets mot folkgrupp, förtal och diskriminering kan fortfarande vara förbjudet.',
           ],
-          "Grundlagar: 4 · Tryckfrihetsförordningen: 1766 · Offentlighetsprincipen: insyn i myndigheter.",
+          'Grundlagar: 4 · Tryckfrihetsförordningen: 1766 · Offentlighetsprincipen: insyn i myndigheter.',
         ),
       },
     },
 
-    "4": {
-      kicker: { en: "Chapter 04 · Work & taxes", sv: "Kapitel 04 · Arbete & skatt" },
-      title:  { en: "Work,", sv: "Arbete," },
-      title_em: { en: "taxes, and the welfare state.", sv: "skatt och välfärdsstaten." },
+    4: {
+      kicker: { en: 'Chapter 04 · Work & taxes', sv: 'Kapitel 04 · Arbete & skatt' },
+      title: { en: 'Work,', sv: 'Arbete,' },
+      title_em: { en: 'taxes, and the welfare state.', sv: 'skatt och välfärdsstaten.' },
       lede: {
         en: "Sweden takes a lot of your salary and gives most of it back. The trick is knowing what it's paying for.",
-        sv: "Sverige tar mycket av din lön och ger tillbaka det mesta. Knepet är att veta vad det går till.",
+        sv: 'Sverige tar mycket av din lön och ger tillbaka det mesta. Knepet är att veta vad det går till.',
       },
       body: {
         en: `
@@ -214,23 +214,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Arbetsmarknaden bygger mycket på kollektivavtal mellan fackförbund och arbetsgivare. Där regleras ofta lön, arbetstid och villkor.",
-            "Skatter finansierar gemensam välfärd som skola, vård, omsorg, pensioner och socialförsäkringar.",
-            "Skatteverket hanterar skatt och folkbokföring. Personnummer och folkbokföringsadress används i många vardagliga kontakter.",
-            "Privatekonomi i Sverige handlar ofta om lön efter skatt, räkningar, försäkringar, sparande och att betala i tid.",
+            'Arbetsmarknaden bygger mycket på kollektivavtal mellan fackförbund och arbetsgivare. Där regleras ofta lön, arbetstid och villkor.',
+            'Skatter finansierar gemensam välfärd som skola, vård, omsorg, pensioner och socialförsäkringar.',
+            'Skatteverket hanterar skatt och folkbokföring. Personnummer och folkbokföringsadress används i många vardagliga kontakter.',
+            'Privatekonomi i Sverige handlar ofta om lön efter skatt, räkningar, försäkringar, sparande och att betala i tid.',
           ],
-          "Kollektivavtal · Kommunalskatt · Skatteverket · Välfärd finansieras gemensamt.",
+          'Kollektivavtal · Kommunalskatt · Skatteverket · Välfärd finansieras gemensamt.',
         ),
       },
     },
 
-    "5": {
-      kicker: { en: "Chapter 05 · Equality", sv: "Kapitel 05 · Jämställdhet" },
-      title:  { en: "Equality", sv: "Jämställdhet" },
-      title_em: { en: "and the modern household.", sv: "och det moderna hemmet." },
+    5: {
+      kicker: { en: 'Chapter 05 · Equality', sv: 'Kapitel 05 · Jämställdhet' },
+      title: { en: 'Equality', sv: 'Jämställdhet' },
+      title_em: { en: 'and the modern household.', sv: 'och det moderna hemmet.' },
       lede: {
-        en: "Sweden is a quiet feminist project. The laws are clearer than the dinner-table conversations, but both are worth knowing.",
-        sv: "Sverige är ett tyst feministiskt projekt. Lagarna är tydligare än middagsbordssamtalen — men båda är värda att kunna.",
+        en: 'Sweden is a quiet feminist project. The laws are clearer than the dinner-table conversations, but both are worth knowing.',
+        sv: 'Sverige är ett tyst feministiskt projekt. Lagarna är tydligare än middagsbordssamtalen — men båda är värda att kunna.',
       },
       body: {
         en: `
@@ -248,23 +248,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Jämställdhet betyder att kvinnor och män ska ha samma rättigheter, skyldigheter och möjligheter.",
-            "Diskrimineringslagen skyddar mot diskriminering i till exempel arbetsliv, utbildning, vård och samhällsservice.",
-            "Sverige erkänner samkönade äktenskap och familjer med olika sammansättning.",
-            "Föräldraförsäkringen är byggd för att båda föräldrarna ska kunna ta ansvar för barn och arbete.",
+            'Jämställdhet betyder att kvinnor och män ska ha samma rättigheter, skyldigheter och möjligheter.',
+            'Diskrimineringslagen skyddar mot diskriminering i till exempel arbetsliv, utbildning, vård och samhällsservice.',
+            'Sverige erkänner samkönade äktenskap och familjer med olika sammansättning.',
+            'Föräldraförsäkringen är byggd för att båda föräldrarna ska kunna ta ansvar för barn och arbete.',
           ],
-          "Diskrimineringslagen · Samkönade äktenskap: 2009 · Föräldraledighet: 480 dagar per barn.",
+          'Diskrimineringslagen · Samkönade äktenskap: 2009 · Föräldraledighet: 480 dagar per barn.',
         ),
       },
     },
 
-    "6": {
-      kicker: { en: "Chapter 06 · Society", sv: "Kapitel 06 · Samhälle" },
-      title:  { en: "Society, school,", sv: "Samhälle, skola" },
-      title_em: { en: "and healthcare.", sv: "och vård." },
+    6: {
+      kicker: { en: 'Chapter 06 · Society', sv: 'Kapitel 06 · Samhälle' },
+      title: { en: 'Society, school,', sv: 'Samhälle, skola' },
+      title_em: { en: 'and healthcare.', sv: 'och vård.' },
       lede: {
-        en: "Sweden runs the boring parts of life — school, healthcare, eldercare — through the public sector, and is largely on first-name terms with its bureaucrats.",
-        sv: "Sverige sköter livets tråkiga delar — skola, vård, äldreomsorg — i offentlig regi, och är på förnamn med byråkraterna.",
+        en: 'Sweden runs the boring parts of life — school, healthcare, eldercare — through the public sector, and is largely on first-name terms with its bureaucrats.',
+        sv: 'Sverige sköter livets tråkiga delar — skola, vård, äldreomsorg — i offentlig regi, och är på förnamn med byråkraterna.',
       },
       body: {
         en: `
@@ -282,23 +282,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Skolan ska ge barn kunskaper och likvärdiga möjligheter. Grundskolan omfattar förskoleklass och årskurs 1-9.",
-            "Regionerna ansvarar för hälso- och sjukvård. 1177 används för sjukvårdsrådgivning och kontakt med vården.",
-            "Kommunerna ansvarar för äldreomsorg, socialtjänst och många vardagliga välfärdstjänster.",
-            "Socialtjänsten kan ge stöd när någon behöver skydd, råd, ekonomisk hjälp eller omsorg.",
+            'Skolan ska ge barn kunskaper och likvärdiga möjligheter. Grundskolan omfattar förskoleklass och årskurs 1-9.',
+            'Regionerna ansvarar för hälso- och sjukvård. 1177 används för sjukvårdsrådgivning och kontakt med vården.',
+            'Kommunerna ansvarar för äldreomsorg, socialtjänst och många vardagliga välfärdstjänster.',
+            'Socialtjänsten kan ge stöd när någon behöver skydd, råd, ekonomisk hjälp eller omsorg.',
           ],
-          "Grundskola: 10 år · 1177 · Regioner ansvarar för vård · Kommuner ansvarar för omsorg och socialtjänst.",
+          'Grundskola: 10 år · 1177 · Regioner ansvarar för vård · Kommuner ansvarar för omsorg och socialtjänst.',
         ),
       },
     },
 
-    "7": {
-      kicker: { en: "Chapter 07 · Nature", sv: "Kapitel 07 · Natur" },
-      title:  { en: "Nature, climate,", sv: "Natur, klimat" },
-      title_em: { en: "and allemansrätten.", sv: "och allemansrätten." },
+    7: {
+      kicker: { en: 'Chapter 07 · Nature', sv: 'Kapitel 07 · Natur' },
+      title: { en: 'Nature, climate,', sv: 'Natur, klimat' },
+      title_em: { en: 'and allemansrätten.', sv: 'och allemansrätten.' },
       lede: {
         en: "Sweden is mostly forest, and the forest is mostly open to you. The rule is simple: don't disturb, don't destroy.",
-        sv: "Sverige är mest skog, och skogen är mest öppen för dig. Regeln är enkel: stör inte, förstör inte.",
+        sv: 'Sverige är mest skog, och skogen är mest öppen för dig. Regeln är enkel: stör inte, förstör inte.',
       },
       body: {
         en: `
@@ -315,23 +315,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Allemansrätten gör det möjligt att röra sig i naturen, plocka bär och svamp och vistas ute med hänsyn.",
-            "Huvudregeln är enkel: inte störa och inte förstöra. Du får inte skada mark, djur, växter eller gå in på privat tomt.",
-            "Sverige har stora skogar, många sjöar, fjäll i norr och lång kust. Klimatet varierar mycket mellan norr och söder.",
-            "Miljöarbete märks i vardagen genom återvinning, pant, naturvård och mål för minskade utsläpp.",
+            'Allemansrätten gör det möjligt att röra sig i naturen, plocka bär och svamp och vistas ute med hänsyn.',
+            'Huvudregeln är enkel: inte störa och inte förstöra. Du får inte skada mark, djur, växter eller gå in på privat tomt.',
+            'Sverige har stora skogar, många sjöar, fjäll i norr och lång kust. Klimatet varierar mycket mellan norr och söder.',
+            'Miljöarbete märks i vardagen genom återvinning, pant, naturvård och mål för minskade utsläpp.',
           ],
-          "Allemansrätten · Inte störa, inte förstöra · Vänern är största sjön · Miljömål och återvinning.",
+          'Allemansrätten · Inte störa, inte förstöra · Vänern är största sjön · Miljömål och återvinning.',
         ),
       },
     },
 
-    "8": {
-      kicker: { en: "Chapter 08 · Culture", sv: "Kapitel 08 · Kultur" },
-      title:  { en: "Culture, traditions,", sv: "Kultur, traditioner" },
-      title_em: { en: "and the Swedish calendar.", sv: "och svenska kalendern." },
+    8: {
+      kicker: { en: 'Chapter 08 · Culture', sv: 'Kapitel 08 · Kultur' },
+      title: { en: 'Culture, traditions,', sv: 'Kultur, traditioner' },
+      title_em: { en: 'and the Swedish calendar.', sv: 'och svenska kalendern.' },
       lede: {
         en: "If you don't know when midsummer is, you'll get a polite explanation. If you don't know what fika is, you'll get one whether you want it or not.",
-        sv: "Vet du inte när midsommar är får du en artig förklaring. Vet du inte vad fika är får du en — vare sig du vill eller inte.",
+        sv: 'Vet du inte när midsommar är får du en artig förklaring. Vet du inte vad fika är får du en — vare sig du vill eller inte.',
       },
       body: {
         en: `
@@ -352,23 +352,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Traditioner förändras över tid, men de hjälper människor att känna igen året och skapa gemenskap.",
-            "Midsommar, jul, påsk, nyår, lucia, första maj, nationaldagen och alla helgons dag är vanliga provnära exempel.",
-            "Fika är en vardaglig social vana: kaffe eller te, något litet att äta och tid att prata.",
-            "Nya traditioner från människor som flyttat till Sverige är också en del av dagens samhälle.",
+            'Traditioner förändras över tid, men de hjälper människor att känna igen året och skapa gemenskap.',
+            'Midsommar, jul, påsk, nyår, lucia, första maj, nationaldagen och alla helgons dag är vanliga provnära exempel.',
+            'Fika är en vardaglig social vana: kaffe eller te, något litet att äta och tid att prata.',
+            'Nya traditioner från människor som flyttat till Sverige är också en del av dagens samhälle.',
           ],
-          "Nationaldag: 6 juni · Midsommar: tredje fredagen i juni · Lucia: 13 december · Jul firas främst 24 december.",
+          'Nationaldag: 6 juni · Midsommar: tredje fredagen i juni · Lucia: 13 december · Jul firas främst 24 december.',
         ),
       },
     },
 
-    "9": {
-      kicker: { en: "Chapter 09 · Money", sv: "Kapitel 09 · Pengar" },
-      title:  { en: "Money,", sv: "Pengar," },
-      title_em: { en: "banks, and BankID.", sv: "banker och BankID." },
+    9: {
+      kicker: { en: 'Chapter 09 · Money', sv: 'Kapitel 09 · Pengar' },
+      title: { en: 'Money,', sv: 'Pengar,' },
+      title_em: { en: 'banks, and BankID.', sv: 'banker och BankID.' },
       lede: {
-        en: "Sweden is one of the least cash-dependent countries on earth. Almost every transaction now passes through one little app.",
-        sv: "Sverige är ett av världens minst kontantberoende länder. Nästan varje transaktion går genom en liten app.",
+        en: 'Sweden is one of the least cash-dependent countries on earth. Almost every transaction now passes through one little app.',
+        sv: 'Sverige är ett av världens minst kontantberoende länder. Nästan varje transaktion går genom en liten app.',
       },
       body: {
         en: `
@@ -386,23 +386,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Sverige använder svenska kronor, SEK. Sverige röstade nej till euron i folkomröstningen 2003.",
-            "Riksbanken är Sveriges centralbank och ansvarar för penningpolitiken.",
-            "BankID och Swish är vanliga i vardagen, men de är bankanknutna tjänster och inte samma sak som medborgarskap.",
-            "Pensionen består ofta av allmän pension, tjänstepension och eventuellt privat sparande.",
+            'Sverige använder svenska kronor, SEK. Sverige röstade nej till euron i folkomröstningen 2003.',
+            'Riksbanken är Sveriges centralbank och ansvarar för penningpolitiken.',
+            'BankID och Swish är vanliga i vardagen, men de är bankanknutna tjänster och inte samma sak som medborgarskap.',
+            'Pensionen består ofta av allmän pension, tjänstepension och eventuellt privat sparande.',
           ],
-          "Valuta: svensk krona · Euroomröstning: 2003 · Riksbanken · Swish · BankID.",
+          'Valuta: svensk krona · Euroomröstning: 2003 · Riksbanken · Swish · BankID.',
         ),
       },
     },
 
-    "10": {
-      kicker: { en: "Chapter 10 · EU & world", sv: "Kapitel 10 · EU & världen" },
-      title:  { en: "Sweden,", sv: "Sverige," },
-      title_em: { en: "the EU, and the world.", sv: "EU och världen." },
+    10: {
+      kicker: { en: 'Chapter 10 · EU & world', sv: 'Kapitel 10 · EU & världen' },
+      title: { en: 'Sweden,', sv: 'Sverige,' },
+      title_em: { en: 'the EU, and the world.', sv: 'EU och världen.' },
       lede: {
-        en: "Sweden spent two centuries avoiding war and one decade rapidly joining alliances. The pattern is the same — be useful, stay out of trouble.",
-        sv: "Sverige tillbringade två sekel med att undvika krig och ett årtionde med att snabbt gå med i allianser. Mönstret är detsamma — gör nytta, undvik bråk.",
+        en: 'Sweden spent two centuries avoiding war and one decade rapidly joining alliances. The pattern is the same — be useful, stay out of trouble.',
+        sv: 'Sverige tillbringade två sekel med att undvika krig och ett årtionde med att snabbt gå med i allianser. Mönstret är detsamma — gör nytta, undvik bråk.',
       },
       body: {
         en: `
@@ -420,23 +420,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Sverige är medlem i EU sedan 1995 och deltar i europeiskt samarbete om bland annat handel, miljö och fri rörlighet.",
-            "Sverige använder fortfarande kronan efter folkomröstningen om euron 2003.",
-            "Sverige blev medlem i NATO 2024 efter en lång period av militär alliansfrihet.",
-            "Sverige är också medlem i FN och deltar i internationellt samarbete, bistånd och säkerhetspolitik.",
+            'Sverige är medlem i EU sedan 1995 och deltar i europeiskt samarbete om bland annat handel, miljö och fri rörlighet.',
+            'Sverige använder fortfarande kronan efter folkomröstningen om euron 2003.',
+            'Sverige blev medlem i NATO 2024 efter en lång period av militär alliansfrihet.',
+            'Sverige är också medlem i FN och deltar i internationellt samarbete, bistånd och säkerhetspolitik.',
           ],
-          "EU: 1995 · Euroomröstning: 2003 · NATO: 2024 · FN-medlem: 1946.",
+          'EU: 1995 · Euroomröstning: 2003 · NATO: 2024 · FN-medlem: 1946.',
         ),
       },
     },
 
-    "11": {
-      kicker: { en: "Chapter 11 · Migration", sv: "Kapitel 11 · Migration" },
-      title:  { en: "Migration, residence,", sv: "Migration, uppehåll" },
-      title_em: { en: "and citizenship.", sv: "och medborgarskap." },
+    11: {
+      kicker: { en: 'Chapter 11 · Migration', sv: 'Kapitel 11 · Migration' },
+      title: { en: 'Migration, residence,', sv: 'Migration, uppehåll' },
+      title_em: { en: 'and citizenship.', sv: 'och medborgarskap.' },
       lede: {
-        en: "Becoming a Swedish citizen is a process more than an event. The paperwork is long, but the rules are unusually clear.",
-        sv: "Att bli svensk medborgare är mer en process än ett ögonblick. Pappersarbetet är långt, men reglerna är ovanligt tydliga.",
+        en: 'Becoming a Swedish citizen is a process more than an event. The paperwork is long, but the rules are unusually clear.',
+        sv: 'Att bli svensk medborgare är mer en process än ett ögonblick. Pappersarbetet är långt, men reglerna är ovanligt tydliga.',
       },
       body: {
         en: `
@@ -463,24 +463,24 @@
         `,
         sv: svStudyBrief(
           [
-            "Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.",
-            "Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.",
-            "Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.",
-            "Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.",
+            'Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.',
+            'Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.',
+            'Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.',
+            'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
           ],
-          "Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.",
-          "Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.",
+          'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
+          'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
         ),
       },
     },
 
-    "12": {
-      kicker: { en: "Chapter 12 · Mock exam", sv: "Kapitel 12 · Provexempel" },
-      title:  { en: "Mock exam", sv: "Provexempel" },
-      title_em: { en: "and survival guide.", sv: "och överlevnadsguide." },
+    12: {
+      kicker: { en: 'Chapter 12 · Mock exam', sv: 'Kapitel 12 · Provexempel' },
+      title: { en: 'Mock exam', sv: 'Provexempel' },
+      title_em: { en: 'and survival guide.', sv: 'och överlevnadsguide.' },
       lede: {
         en: "You've read the whole book. Now do twenty questions, take a fika, and book the real test.",
-        sv: "Du har läst hela boken. Nu gör du tjugo frågor, tar en fika, och bokar det riktiga provet.",
+        sv: 'Du har läst hela boken. Nu gör du tjugo frågor, tar en fika, och bokar det riktiga provet.',
       },
       body: {
         en: `
@@ -507,23 +507,23 @@
         `,
         sv: svStudyBrief(
           [
-            "Provträning ska likna provsituationen: tidsgräns, blandade frågor och ingen återkoppling förrän du är klar.",
-            "Efter ett provexempel ska du inte bara titta på poängen. Läs igenom fel svar och gå tillbaka till kapitlen där du tappade flest poäng.",
-            "Använd UHR:s officiella studiematerial som kontrollpunkt veckan före provet.",
-            "På provdagen är giltig legitimation, god marginal och lugn läsning viktigare än sista-minuten-plugg.",
+            'Provträning ska likna provsituationen: tidsgräns, blandade frågor och ingen återkoppling förrän du är klar.',
+            'Efter ett provexempel ska du inte bara titta på poängen. Läs igenom fel svar och gå tillbaka till kapitlen där du tappade flest poäng.',
+            'Använd UHR:s officiella studiematerial som kontrollpunkt veckan före provet.',
+            'På provdagen är giltig legitimation, god marginal och lugn läsning viktigare än sista-minuten-plugg.',
           ],
-          "UHR · Sverige i fokus · Tidsatt provträning · Repetera svaga kapitel efter resultatet.",
+          'UHR · Sverige i fokus · Tidsatt provträning · Repetera svaga kapitel efter resultatet.',
         ),
       },
     },
 
-    "13": {
-      kicker: { en: "Chapter 13 · Traditions", sv: "Kapitel 13 · Traditioner" },
-      title:  { en: "Traditions,", sv: "Traditioner," },
-      title_em: { en: "holidays, and change.", sv: "högtider och förändring." },
+    13: {
+      kicker: { en: 'Chapter 13 · Traditions', sv: 'Kapitel 13 · Traditioner' },
+      title: { en: 'Traditions,', sv: 'Traditioner,' },
+      title_em: { en: 'holidays, and change.', sv: 'högtider och förändring.' },
       lede: {
-        en: "Swedish traditions are not museum pieces. Some are old, some are borrowed, and most are just ways people mark the year together.",
-        sv: "Svenska traditioner är inte museiföremål. Vissa är gamla, vissa har kommit hit senare, och de flesta hjälper människor att känna igen året tillsammans.",
+        en: 'Swedish traditions are not museum pieces. Some are old, some are borrowed, and most are just ways people mark the year together.',
+        sv: 'Svenska traditioner är inte museiföremål. Vissa är gamla, vissa har kommit hit senare, och de flesta hjälper människor att känna igen året tillsammans.',
       },
       body: {
         en: `
@@ -553,105 +553,112 @@
         `,
         sv: svStudyBrief(
           [
-            "Traditioner är vanor och högtider som människor delar. De kan vara gamla, nya, religiösa, sekulära, lokala eller komma från människor som flyttat till Sverige.",
-            "Nationaldagen firas den 6 juni. Dagen kopplas till Gustav Vasa 1523 och 1809 års regeringsform, och många kommuner välkomnar nya medborgare.",
-            "Året innehåller många återkommande högtider: påsk, valborg, första maj, midsommar, alla helgons dag, advent, lucia, jul och nyår.",
-            "Många kristna högtider är också kultur- och familjehögtider för personer som inte ser sig som religiösa.",
-            "Nya traditioner, till exempel id al-fitr, Nouruz och Newroz, visar att traditioner kan tas med, delas och förändras.",
+            'Traditioner är vanor och högtider som människor delar. De kan vara gamla, nya, religiösa, sekulära, lokala eller komma från människor som flyttat till Sverige.',
+            'Nationaldagen firas den 6 juni. Dagen kopplas till Gustav Vasa 1523 och 1809 års regeringsform, och många kommuner välkomnar nya medborgare.',
+            'Året innehåller många återkommande högtider: påsk, valborg, första maj, midsommar, alla helgons dag, advent, lucia, jul och nyår.',
+            'Många kristna högtider är också kultur- och familjehögtider för personer som inte ser sig som religiösa.',
+            'Nya traditioner, till exempel id al-fitr, Nouruz och Newroz, visar att traditioner kan tas med, delas och förändras.',
           ],
-          "Nationaldag: 6 juni · Valborg: 30 april · Midsommarafton: fredag 19-25 juni · Lucia: 13 december · Julafton: 24 december.",
-          "Läs kapitlet tillsammans med övningen för traditioner och högtider. Datum, handlingar och vad högtiderna betyder är vanligare än detaljfrågor om exakt hur varje familj firar.",
+          'Nationaldag: 6 juni · Valborg: 30 april · Midsommarafton: fredag 19-25 juni · Lucia: 13 december · Julafton: 24 december.',
+          'Läs kapitlet tillsammans med övningen för traditioner och högtider. Datum, handlingar och vad högtiderna betyder är vanligare än detaljfrågor om exakt hur varje familj firar.',
         ),
       },
     },
   };
 
-  const ORDER = ["intro", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
+  const ORDER = ['intro', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
 
   function getLang() {
-    try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
+    try {
+      return localStorage.getItem('smt_lang') || 'en';
+    } catch {
+      return 'en';
+    }
   }
   function getActiveChapter() {
-    const hash = (location.hash || "#/").replace(/^#/, "");
+    const hash = (location.hash || '#/').replace(/^#/, '');
     const m = hash.match(/[?&]c=([^&]+)/);
-    return m ? m[1] : "intro";
+    return m ? m[1] : 'intro';
   }
   const PRACTICE_LINKS = {
-    intro: { href: "#/practice", en: "Open practice", sv: "Öppna övning" },
-    "1": { href: "#/practice?c=10", en: "Practice history", sv: "Öva historia" },
-    "2": { href: "#/practice?c=3", en: "Practice government", sv: "Öva statsskick" },
-    "3": { href: "#/practice?c=5", en: "Practice rights", sv: "Öva rättigheter" },
-    "4": { href: "#/practice?c=8", en: "Practice work and money", sv: "Öva arbete och ekonomi" },
-    "5": { href: "#/practice?c=7", en: "Practice equality", sv: "Öva jämställdhet" },
-    "6": { href: "#/practice?c=9", en: "Practice welfare", sv: "Öva välfärd" },
-    "7": { href: "#/practice?c=1", en: "Practice nature", sv: "Öva natur" },
-    "8": { href: "#/practice?c=13", en: "Practice traditions", sv: "Öva traditioner" },
-    "9": { href: "#/practice?c=8", en: "Practice money", sv: "Öva ekonomi" },
-    "10": { href: "#/practice?c=11", en: "Practice EU and world", sv: "Öva EU och omvärld" },
-    "11": { href: "#/practice?c=mix", en: "Practice mixed questions", sv: "Öva blandade frågor" },
-    "12": { href: "#/mock", en: "Start mock exam", sv: "Starta provexempel" },
-    "13": { href: "#/practice?c=13", en: "Practice traditions", sv: "Öva traditioner" },
+    intro: { href: '#/practice', en: 'Open practice', sv: 'Öppna övning' },
+    1: { href: '#/practice?c=10', en: 'Practice history', sv: 'Öva historia' },
+    2: { href: '#/practice?c=3', en: 'Practice government', sv: 'Öva statsskick' },
+    3: { href: '#/practice?c=5', en: 'Practice rights', sv: 'Öva rättigheter' },
+    4: { href: '#/practice?c=8', en: 'Practice work and money', sv: 'Öva arbete och ekonomi' },
+    5: { href: '#/practice?c=7', en: 'Practice equality', sv: 'Öva jämställdhet' },
+    6: { href: '#/practice?c=9', en: 'Practice welfare', sv: 'Öva välfärd' },
+    7: { href: '#/practice?c=1', en: 'Practice nature', sv: 'Öva natur' },
+    8: { href: '#/practice?c=13', en: 'Practice traditions', sv: 'Öva traditioner' },
+    9: { href: '#/practice?c=8', en: 'Practice money', sv: 'Öva ekonomi' },
+    10: { href: '#/practice?c=11', en: 'Practice EU and world', sv: 'Öva EU och omvärld' },
+    11: { href: '#/practice?c=mix', en: 'Practice mixed questions', sv: 'Öva blandade frågor' },
+    12: { href: '#/mock', en: 'Start mock exam', sv: 'Starta provexempel' },
+    13: { href: '#/practice?c=13', en: 'Practice traditions', sv: 'Öva traditioner' },
   };
   function practiceLink(id) {
-    return PRACTICE_LINKS[id] || { href: "#/practice", en: "Open practice", sv: "Öppna övning" };
+    return PRACTICE_LINKS[id] || { href: '#/practice', en: 'Open practice', sv: 'Öppna övning' };
   }
 
   function render() {
-    const reader = document.getElementById("ebook-reader");
+    const reader = document.getElementById('ebook-reader');
     if (!reader) return;
     const requestedId = getActiveChapter();
-    const id = ORDER.includes(requestedId) ? requestedId : "intro";
+    const id = ORDER.includes(requestedId) ? requestedId : 'intro';
     const lang = getLang();
     const ch = CHAPTERS[id] || CHAPTERS.intro;
-    const sv = lang === "sv";
+    const sv = lang === 'sv';
 
     const titleHtml = ch.title
-      ? `<h1 class="ebook__h1"><span>${(ch.title[lang] || ch.title.en)}</span> <em>${(ch.title_em[lang] || ch.title_em.en)}</em></h1>`
-      : `<h1 class="ebook__h1"><em>${(ch.kicker[lang] || ch.kicker.en).split("·")[1]?.trim() || (ch.kicker[lang] || ch.kicker.en)}</em></h1>`;
+      ? `<h1 class="ebook__h1"><span>${ch.title[lang] || ch.title.en}</span> <em>${ch.title_em[lang] || ch.title_em.en}</em></h1>`
+      : `<h1 class="ebook__h1"><em>${(ch.kicker[lang] || ch.kicker.en).split('·')[1]?.trim() || ch.kicker[lang] || ch.kicker.en}</em></h1>`;
 
-    const ledeHtml = ch.lede
-      ? `<p class="ebook__lede">${ch.lede[lang] || ch.lede.en}</p>`
-      : "";
+    const ledeHtml = ch.lede ? `<p class="ebook__lede">${ch.lede[lang] || ch.lede.en}</p>` : '';
 
     const bodyHtml = ch.body
-      ? (ch.body[lang] || ch.body.en)
+      ? ch.body[lang] || ch.body.en
       : `<div class="ebook__stub">
-          <h3>${sv ? "Kapitlet kunde inte öppnas" : "Chapter could not be opened"}</h3>
-          <p>${sv
-              ? "Välj ett kapitel i listan eller gå tillbaka till introduktionen."
-              : "Choose a chapter from the list or return to the introduction."}</p>
+          <h3>${sv ? 'Kapitlet kunde inte öppnas' : 'Chapter could not be opened'}</h3>
+          <p>${
+            sv
+              ? 'Välj ett kapitel i listan eller gå tillbaka till introduktionen.'
+              : 'Choose a chapter from the list or return to the introduction.'
+          }</p>
         </div>`;
 
     const idx = ORDER.indexOf(id);
     const prev = idx > 0 ? ORDER[idx - 1] : null;
     const next = idx < ORDER.length - 1 ? ORDER[idx + 1] : null;
     const practice = practiceLink(id);
-    const progressLabel = id === "intro" ? (sv ? "Guide" : "Guide") : `${idx} / ${ORDER.length - 1}`;
+    const progressLabel =
+      id === 'intro' ? (sv ? 'Guide' : 'Guide') : `${idx} / ${ORDER.length - 1}`;
     const actions = `
-      <aside class="ebook__study-actions" aria-label="${sv ? "Nästa steg" : "Next study steps"}">
+      <aside class="ebook__study-actions" aria-label="${sv ? 'Nästa steg' : 'Next study steps'}">
         <div>
           <span class="ebook__progress">${progressLabel}</span>
-          <p>${sv
-            ? "Gör kapitlet aktivt: öva direkt, kontrollera källor eller kör ett provexempel när du har läst klart."
-            : "Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading."}</p>
+          <p>${
+            sv
+              ? 'Gör kapitlet aktivt: öva direkt, kontrollera källor eller kör ett provexempel när du har läst klart.'
+              : 'Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading.'
+          }</p>
         </div>
         <div class="ebook__study-links">
           <a class="btn btn--gold btn--sm" href="${practice.href}">${practice[lang]} →</a>
-          <a class="btn btn--ghost btn--sm" href="#/mock">${sv ? "Provexempel" : "Mock exam"}</a>
-          <a class="btn btn--ghost btn--sm" href="#/sources">${sv ? "Källor" : "Sources"}</a>
+          <a class="btn btn--ghost btn--sm" href="#/mock">${sv ? 'Provexempel' : 'Mock exam'}</a>
+          <a class="btn btn--ghost btn--sm" href="#/sources">${sv ? 'Källor' : 'Sources'}</a>
         </div>
       </aside>
     `;
     const notes = `
-      <section class="ebook__notes" aria-label="${sv ? "Dina markeringar" : "Your highlights"}">
-        <h2>${sv ? "Markeringar i kapitlet" : "Chapter highlights"}</h2>
+      <section class="ebook__notes" aria-label="${sv ? 'Dina markeringar' : 'Your highlights'}">
+        <h2>${sv ? 'Markeringar i kapitlet' : 'Chapter highlights'}</h2>
         <div id="eb-notes-list"></div>
       </section>
     `;
     const pager = `
       <nav class="ebook__pager">
-        ${prev ? `<a href="#/ebook?c=${prev}"><span class="lbl">${sv ? "Förra" : "Previous"}</span><span>${(CHAPTERS[prev].kicker[lang] || CHAPTERS[prev].kicker.en)}</span></a>` : `<span></span>`}
-        ${next ? `<a href="#/ebook?c=${next}" class="next"><span class="lbl">${sv ? "Nästa" : "Next"}</span><span>${(CHAPTERS[next].kicker[lang] || CHAPTERS[next].kicker.en)}</span></a>` : `<span></span>`}
+        ${prev ? `<a href="#/ebook?c=${prev}"><span class="lbl">${sv ? 'Förra' : 'Previous'}</span><span>${CHAPTERS[prev].kicker[lang] || CHAPTERS[prev].kicker.en}</span></a>` : `<span></span>`}
+        ${next ? `<a href="#/ebook?c=${next}" class="next"><span class="lbl">${sv ? 'Nästa' : 'Next'}</span><span>${CHAPTERS[next].kicker[lang] || CHAPTERS[next].kicker.en}</span></a>` : `<span></span>`}
       </nav>
     `;
 
@@ -666,8 +673,8 @@
     `;
 
     // highlight sidebar
-    document.querySelectorAll(".ebook__nav a[data-eb]").forEach((a) => {
-      a.classList.toggle("is-active", a.dataset.eb === id);
+    document.querySelectorAll('.ebook__nav a[data-eb]').forEach((a) => {
+      a.classList.toggle('is-active', a.dataset.eb === id);
     });
 
     // scroll reader to top
@@ -676,15 +683,22 @@
   }
 
   function isOnEbook() {
-    const path = (location.hash || "#/").replace(/^#/, "").split("?")[0];
-    return path === "/ebook";
+    const path = (location.hash || '#/').replace(/^#/, '').split('?')[0];
+    return path === '/ebook';
   }
 
   window.smtEbookRender = render;
-  window.addEventListener("hashchange", () => { if (isOnEbook()) render(); });
-  window.addEventListener("DOMContentLoaded", () => { if (isOnEbook()) render(); });
-  document.addEventListener("click", (e) => {
-    if (e.target.closest(".lang button[data-lang]") || e.target.closest('[data-set="language"] button')) {
+  window.addEventListener('hashchange', () => {
+    if (isOnEbook()) render();
+  });
+  window.addEventListener('DOMContentLoaded', () => {
+    if (isOnEbook()) render();
+  });
+  document.addEventListener('click', (e) => {
+    if (
+      e.target.closest('.lang button[data-lang]') ||
+      e.target.closest('[data-set="language"] button')
+    ) {
       if (isOnEbook()) setTimeout(render, 50);
     }
   });
