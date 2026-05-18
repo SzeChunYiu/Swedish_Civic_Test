@@ -1607,3 +1607,9 @@ Question count / verification: No content source changed. Routing evidence: curr
 Verification for this manager note: `git diff --check -- codex-tasks/content.txt docs/parallel-sessions/journals/content.md`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`.
 PR: #382 (opened; merge pending at handoff time).
 Blocked / next validator action: no CONTENT-owned source work - keep q114 and q144 duplicate-guarded; route generated true/false naturalness to DATA-INTEGRITY, and release new authored content only with explicit VALIDATOR/CEO lease.
+
+## Iteration 348 - 2026-05-18
+Task completed: CONTENT Pane 1 q123 source-section audit - re-read the required lane docs, synced remote state, and found the remaining learner-visible q123 explanation phrase `avsnittet` / `this section` in canonical authored content and the static-site mirror.
+Artifacts changed: `docs/parallel-sessions/journals/content.md`.
+Question count / verification: No content source changed. Current `origin/main` is `85a93a6`; q114 source cleanup and its DATA-INTEGRITY static mirror are landed, while q144 remains held unless VALIDATOR explicitly leases non-site content. Focused scan found q123 only in `data/additionalQuestions.ts` and mirrored `site/questions.js`; it preserves the UHR `En sekulär stat och ett mångreligiöst land` / `Hinduism och buddhism`, printed page 43 locator, but its explanation still uses source-section phrasing. A CONTENT-only data fix would make `site/questions.js` stale, and CONTENT remains barred from `site/**`, so no data branch was opened.
+Blocked / next validator action: blocked outside CONTENT lease - VALIDATOR should either route a bundled DATA-INTEGRITY/static-mirror q123 cleanup or explicitly lease a cross-lane static mirror path. CONTENT must not edit `site/**` or open duplicate q144 work.
