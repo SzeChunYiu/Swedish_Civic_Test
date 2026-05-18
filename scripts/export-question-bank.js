@@ -44,17 +44,7 @@ function csvCell(value) {
   return `"${String(value ?? '').replaceAll('"', '""')}"`;
 }
 
-function optionPayload(question, field) {
-  return JSON.stringify(
-    question.options.map((option) => ({
-      id: option.id,
-      text: option[field],
-    })),
-  );
-}
-
 const questions = loadTs('data/questions.ts', 'questions');
-const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
 const rows = [
   [
     'id',
@@ -62,18 +52,13 @@ const rows = [
     'type',
     'questionSv',
     'questionEn',
-    'explanationSv',
-    'explanationEn',
     'correctOptionId',
-    'optionSv',
-    'optionEn',
     'uhrChapter',
     'uhrSection',
     'uhrPageApprox',
     'difficulty',
     'reviewStatus',
     'tags',
-    'questionProvenance',
   ],
   ...questions.map((question) => [
     question.id,
@@ -81,18 +66,13 @@ const rows = [
     question.type,
     question.questionSv,
     question.questionEn,
-    question.explanationSv,
-    question.explanationEn,
     question.correctOptionId,
-    optionPayload(question, 'textSv'),
-    optionPayload(question, 'textEn'),
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),
-    getQuestionProvenance(question),
   ]),
 ];
 

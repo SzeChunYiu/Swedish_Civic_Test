@@ -1,4 +1,4 @@
-/* Almost Swedish — Ebook reader
+/* Sveriges Medborgartest — Ebook reader
    Intro + 13 study chapters with EN reader text and SV study briefs.
    Hash: #/ebook?c=intro|1|2|...|13
 */
@@ -16,14 +16,6 @@
       <div class="ebook__factbox"><h4>Fakta att kunna</h4><p>${facts}</p></div>
     `;
   }
-
-  const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze({
-    retrievedDate: '2026-05-19',
-    aboutUrl: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-    faqUrl: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-    registrationUrl: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-    studyMaterialUrl: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  });
 
   const CHAPTERS = {
     intro: {
@@ -48,7 +40,7 @@
             <li>If you forget something, that's normal. The practice quiz brings it back.</li>
           </ul>
           <blockquote><p>You don't need to remember everything. You need to remember the right things. That's what we're here for.</p></blockquote>
-          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Short, repeated sessions make it easier to notice what you know, what needs review, and when to check UHR's material again.</p></div>
+          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Most people who pass this way do it in three weeks, not three days.</p></div>
         `,
         sv: `
           <h2>Vad den här boken är</h2>
@@ -487,14 +479,14 @@
       title: { en: 'Mock exam', sv: 'Provexempel' },
       title_em: { en: 'and survival guide.', sv: 'och överlevnadsguide.' },
       lede: {
-        en: "You've read the whole book. Now do twenty questions, take a fika, and keep UHR's current instructions close.",
-        sv: 'Du har läst hela boken. Nu gör du tjugo frågor, tar en fika och håller UHR:s aktuella instruktioner nära.',
+        en: "You've read the whole book. Now do twenty questions, take a fika, and book the real test.",
+        sv: 'Du har läst hela boken. Nu gör du tjugo frågor, tar en fika, och bokar det riktiga provet.',
       },
       body: {
         en: `
-          <h2>What UHR has confirmed</h2>
-          <p>UHR is responsible for the citizenship test. As of 19 May 2026, UHR says the first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. Registration is expected to open in early June 2026, and only people who receive a letter from Migrationsverket can sign up. Seats are limited.</p>
-          <p>UHR also says the August sitting is a trial sitting, will be free of charge, and will allow generous time. UHR has not yet published the exact time and place, adaptation details, full practical-day instructions, whether another sitting is possible after a failed result, or any future cost information.</p>
+          <h2>Format of the real test</h2>
+          <p>The Swedish citizenship test (medborgarskapsprovet) is delivered by UHR — the same agency that runs Högskoleprovet (the university entrance exam). The test covers civic knowledge from the official study material <em>Sverige i fokus</em>. It is multiple-choice and timed.</p>
+          <p>The Swedish-language test runs in parallel: comprehension, reading, and writing at an A2/B1 level. There are exemptions for some applicants — check Migrationsverket and UHR for the current rules.</p>
           <h2>How to study</h2>
           <ol>
             <li>Read this ebook end-to-end at least once. Use the Practice tab to drill what you forget.</li>
@@ -502,39 +494,26 @@
             <li>Skim the official <em>Sverige i fokus</em> PDF (free download from UHR) the week before the test. Don't try to memorise it.</li>
             <li>Sleep, eat, do not cram the night before. Sweden does not reward last-minute heroics.</li>
           </ol>
-          <h2>Before test day</h2>
+          <h2>On the day</h2>
           <ul>
-            <li>Wait for your Migrationsverket letter before trying to register.</li>
-            <li>Use UHR's study material as the source of truth, then use this app for repetition.</li>
-            <li>Check UHR's registration page, FAQ, and any letter you receive close to the date for identity, arrival, adaptation, and result instructions.</li>
-            <li>If a practical detail is missing from UHR, do not treat old internet advice as confirmed.</li>
+            <li>Bring valid ID (BankID, passport, or Swedish driver's licence).</li>
+            <li>Arrive 30 minutes early. The test centre is strict.</li>
+            <li>If you don't know an answer, eliminate the most obviously wrong options first.</li>
+            <li>Multiple-choice: every question is a chance, not a trap.</li>
           </ul>
-          <h2>If details change</h2>
-          <p>This chapter should help you prepare without inventing logistics. When UHR publishes more practical information, follow UHR and Migrationsverket first and treat app copy as a study aid.</p>
-          <div class="ebook__factbox"><h4>Current official status</h4><p>Provider: UHR · First civic-knowledge sitting: 15 August 2026 in Stockholm · Registration: early June 2026 with a Migrationsverket letter and limited seats · August sitting: free trial sitting with generous time · Practical details pending from UHR.</p><p class="ebook__source-note">Sources accessed ${OFFICIAL_TEST_SOURCE_NOTES.retrievedDate}: <a href="${OFFICIAL_TEST_SOURCE_NOTES.aboutUrl}">UHR about the citizenship test</a>; <a href="${OFFICIAL_TEST_SOURCE_NOTES.faqUrl}">UHR questions and answers</a>; <a href="${OFFICIAL_TEST_SOURCE_NOTES.registrationUrl}">UHR registration page</a>; <a href="${OFFICIAL_TEST_SOURCE_NOTES.studyMaterialUrl}">UHR study material page</a>.</p></div>
+          <h2>If you fail</h2>
+          <p>You may retake the test. There is a small fee. Treat the result as a study guide: the topics you missed are the chapters you re-read.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Test provider: UHR · Official material: Sverige i fokus · Language requirement: A2–B1 (separate test) · Retakes: allowed.</p></div>
         `,
-        sv: `
-          <h2>Vad UHR har bekräftat</h2>
-          <p>UHR ansvarar för medborgarskapsprovet. Den 19 maj 2026 anger UHR att det första samhällskunskapsprovet inom medborgarskapsprovet genomförs den 15 augusti 2026 i Stockholm. Anmälan väntas öppna i början av juni 2026, och bara den som har fått brev från Migrationsverket kan anmäla sig. Antalet platser är begränsat.</p>
-          <p>UHR anger också att augustiprovet är ett utprövningsprov, att det är kostnadsfritt och att alla får generöst med tid. Exakt tid och plats, anpassningar, fullständiga instruktioner för provdagen, vad som händer efter ett underkänt resultat och eventuella framtida kostnader var inte publicerade när detta skrevs.</p>
-          <h2>Så pluggar du</h2>
-          <ol>
-            <li>Läs den här boken från början till slut minst en gång. Använd sedan Öva för att repetera det du glömmer.</li>
-            <li>Skriv upp fakta du missar två gånger. Kylskåpslappar är låg teknik, men de fungerar.</li>
-            <li>Skumma UHR:s officiella <em>Sverige i fokus</em> veckan före provet och kontrollera att begreppen känns bekanta.</li>
-            <li>Sov, ät och undvik sista-minuten-plugg. Hjärnan gillar lagom bättre än panik.</li>
-          </ol>
-          <h2>Inför provdagen</h2>
-          <ul>
-            <li>Vänta på brevet från Migrationsverket innan du försöker anmäla dig.</li>
-            <li>Använd UHR:s studiematerial som huvudkälla och den här appen för repetition.</li>
-            <li>Kontrollera UHR:s anmälningssida, frågor och svar samt brevet du får nära provdatumet för praktiska instruktioner.</li>
-            <li>Om en praktisk detalj saknas hos UHR ska äldre råd på nätet inte behandlas som bekräftade.</li>
-          </ul>
-          <h2>När uppgifter ändras</h2>
-          <p>Det här kapitlet ska hjälpa dig att förbereda dig utan att hitta på logistik. När UHR publicerar mer praktisk information ska UHR och Migrationsverket gå först, och appen ska ses som ett studiehjälpmedel.</p>
-          <div class="ebook__factbox"><h4>Aktuell officiell status</h4><p>Ansvarig myndighet: UHR · Första samhällskunskapsprovet: 15 augusti 2026 i Stockholm · Anmälan: början av juni 2026 med brev från Migrationsverket och begränsat antal platser · Augustiprovet: kostnadsfritt utprövningsprov med generöst med tid · Praktiska detaljer väntar hos UHR.</p><p class="ebook__source-note">Källor hämtade ${OFFICIAL_TEST_SOURCE_NOTES.retrievedDate}: <a href="${OFFICIAL_TEST_SOURCE_NOTES.aboutUrl}">UHR om medborgarskapsprovet</a>; <a href="${OFFICIAL_TEST_SOURCE_NOTES.faqUrl}">UHR frågor och svar</a>; <a href="${OFFICIAL_TEST_SOURCE_NOTES.registrationUrl}">UHR anmälan</a>; <a href="${OFFICIAL_TEST_SOURCE_NOTES.studyMaterialUrl}">UHR studiematerial</a>.</p></div>
-        `,
+        sv: svStudyBrief(
+          [
+            'Provträning ska likna provsituationen: tidsgräns, blandade frågor och ingen återkoppling förrän du är klar.',
+            'Efter ett provexempel ska du inte bara titta på poängen. Läs igenom fel svar och gå tillbaka till kapitlen där du tappade flest poäng.',
+            'Använd UHR:s officiella studiematerial som kontrollpunkt veckan före provet.',
+            'På provdagen är giltig legitimation, god marginal och lugn läsning viktigare än sista-minuten-plugg.',
+          ],
+          'UHR · Sverige i fokus · Tidsatt provträning · Repetera svaga kapitel efter resultatet.',
+        ),
       },
     },
 
@@ -621,15 +600,6 @@
     return PRACTICE_LINKS[id] || { href: '#/practice', en: 'Open practice', sv: 'Öppna övning' };
   }
 
-  function renderEbookProvenanceBadge(lang) {
-    const sv = lang === 'sv';
-    const label = sv ? 'Redaktionell' : 'Editorial';
-    const note = sv
-      ? 'Källtyp: Redaktionell. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet.'
-      : 'Provenance: Editorial. Original study guide; verify facts through the Sources page and UHR material.';
-    return `<span class="ebook__provenance-badge" role="text" aria-label="${note}" title="${note}">${label}</span>`;
-  }
-
   function render() {
     const reader = document.getElementById('ebook-reader');
     if (!reader) return;
@@ -693,10 +663,7 @@
     `;
 
     reader.innerHTML = `
-      <div class="ebook__meta-row">
-        <div class="ebook__crumb">${ch.kicker[lang] || ch.kicker.en}</div>
-        ${renderEbookProvenanceBadge(lang)}
-      </div>
+      <div class="ebook__crumb">${ch.kicker[lang] || ch.kicker.en}</div>
       ${titleHtml}
       ${ledeHtml}
       ${bodyHtml}

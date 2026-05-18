@@ -59,7 +59,6 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     practiceLabel: 'Öva först',
     questionCountLabel: 'Frågor',
     resetLabel: 'Återställ',
-    scoreModeLabel: 'Övningsresultat',
     selectedChaptersValueLabel: (count) => (count === 1 ? '1 valt' : `${count} valda`),
     startLabel: 'Starta provet',
   },

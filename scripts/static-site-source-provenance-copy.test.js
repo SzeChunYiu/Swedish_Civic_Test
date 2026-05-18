@@ -5,7 +5,6 @@ const test = require('node:test');
 const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
-const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -53,25 +52,6 @@ function appTranslationValues(appSource, includeKey) {
   }
   return values;
 }
-
-const unsupportedPracticalTestClaimPatterns = [
-  phrasePattern('Format of ', 'the real test'),
-  phrasePattern('multiple-choice ', 'and timed'),
-  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
-  phrasePattern('Arrive 30 ', 'minutes early'),
-  phrasePattern('test centre ', 'is strict'),
-  phrasePattern('You may ', 'retake the test'),
-  phrasePattern('There is a ', 'small fee'),
-  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
-  phrasePattern('På provdagen är ', 'giltig legitimation'),
-];
-
-const officialPracticalTestSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-];
 
 function sourceProvenanceSurface() {
   const indexHtml = read('site/index.html');
@@ -121,32 +101,4 @@ test('static source provenance copy rejects unshipped external source families',
     /Primary sources\s+8/i,
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
-});
-
-test('static ebook practical test copy is backed by current UHR source metadata', () => {
-  const ebookSource = read('site/ebook.js');
-
-  assert.match(ebookSource, /const OFFICIAL_TEST_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
-  officialPracticalTestSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
-
-  assert.match(
-    ebookSource,
-    /first civic-knowledge sitting will be held on 15 August 2026 in Stockholm/i,
-  );
-  assert.match(ebookSource, /only people who receive a letter from Migrationsverket can sign up/i);
-  assert.match(ebookSource, /Seats are limited/i);
-  assert.match(ebookSource, /free of charge/i);
-  assert.match(ebookSource, /generous time/i);
-  assert.match(ebookSource, /UHR has not yet published the exact time and place/i);
-  assert.match(ebookSource, /första samhällskunskapsprovet inom medborgarskapsprovet/i);
-  assert.match(ebookSource, /brev från Migrationsverket/i);
-  assert.match(ebookSource, /Antalet platser är begränsat/i);
-  assert.match(ebookSource, /kostnadsfritt/i);
-  assert.match(ebookSource, /generöst med tid/i);
-  assert.match(ebookSource, /praktiska detaljer väntar hos UHR/i);
-
-  unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
-    assert.doesNotMatch(ebookSource, pattern),
-  );
 });

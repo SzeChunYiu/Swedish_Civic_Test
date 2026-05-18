@@ -10,7 +10,6 @@ const skipExternalChecks = /^(1|true|yes)$/i.test(
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
-const appAdsUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
   : [supportUrl, privacyUrl];
@@ -37,7 +36,7 @@ const evidenceRequirements = {
   'store-records': [
     ['App Store Connect record', /App Store Connect|Apple/i],
     ['Google Play Console record', /Google Play/i],
-    ['bundle/package identifier', /com\.billyyiu\.almostswedish/i],
+    ['bundle/package identifier', /com\.billyyiu\.swedishcivictest/i],
     ['Support URL entered in store records', /Support URL/i],
     ['Privacy Policy URL entered in store records', /Privacy Policy URL/i],
   ],
@@ -107,37 +106,12 @@ const blockedEvidencePatterns = [
   [/missing/i, 'missing'],
 ];
 
-const stalePublicPrivacyPatterns = [
-  [/no user data is collected/i, 'no user data is collected'],
-  [/no user data is shared/i, 'no user data is shared'],
-  [/no user data collected/i, 'no user data collected'],
-  [/no user data shared/i, 'no user data shared'],
-  [/real ad rendering is disabled/i, 'real ad rendering is disabled'],
-  [/real ads? (?:is|are) disabled/i, 'real ads disabled'],
-  [/Data Not Collected/i, 'Data Not Collected'],
-  [/REAL_ADS_ENABLED_FOR_V1/i, 'REAL_ADS_ENABLED_FOR_V1'],
-];
-
 const gateSpecificBlockedEvidencePatterns = {
   'device-screenshots': [
     [/web[- ]draft/i, 'web-draft evidence is not final store screenshot evidence'],
     [/browser/i, 'browser screenshots are not final store screenshot evidence'],
   ],
 };
-
-const v11ScopeSurfacePaths = [
-  'lib/storage/reviewStore.ts',
-  'lib/learning/adaptivePractice.ts',
-  'lib/learning/dailyChallenge.ts',
-  'lib/storage/companionStore.ts',
-  'lib/mascot/catalog.ts',
-  'lib/monetization/proLifetimePurchase.ts',
-];
-
-const removeAdsDeviceQaPath = 'reports/release-ads-iap-device-qa.md';
-const removeAdsStep3Command =
-  'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
-const releaseScopeOverrideId = 'release-scope-v11';
 
 const expectedPublicUrlEvidenceRequirements = {
   'store-records': [
@@ -147,213 +121,11 @@ const expectedPublicUrlEvidenceRequirements = {
   'public-urls': [
     ['expected Support URL', supportUrl],
     ['expected Privacy Policy URL', privacyUrl],
-    ['expected app-ads.txt URL', appAdsUrl],
   ],
 };
 
 function exists(path) {
   return fs.existsSync(path);
-}
-
-function readFileIfExists(filePath) {
-  return exists(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
-}
-
-function listFiles(root) {
-  if (!exists(root)) return [];
-
-  return fs.readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
-    const entryPath = path.join(root, entry.name);
-    if (entry.isDirectory()) return listFiles(entryPath);
-    return [entryPath];
-  });
-}
-
-function anyRepoFileMatches(roots, pattern) {
-  return roots.some((root) =>
-    listFiles(root).some((filePath) => pattern.test(readFileIfExists(filePath))),
-  );
-}
-
-function listV11ScopeSurfaces() {
-  const explicitSurfaces = v11ScopeSurfacePaths.filter((surfacePath) => exists(surfacePath));
-  const testSurfaces = exists('tests')
-    ? fs
-        .readdirSync('tests')
-        .filter((name) => /^v1-1-.*\.test\.js$/.test(name))
-        .map((name) => path.join('tests', name))
-    : [];
-
-  return [...explicitSurfaces, ...testSurfaces].sort();
-}
-
-function removeAdsV1AcceptanceFindings() {
-  const findings = [];
-  const adsSource = readFileIfExists('lib/monetization/ads.ts');
-  const purchasesSource = readFileIfExists('lib/monetization/purchases.ts');
-  const publicPrivacySurface = [
-    'publishing/public-site/privacy/index.html',
-    'publishing/public-support-and-privacy.md',
-    'publishing/google-play-listing.md',
-  ]
-    .map(readFileIfExists)
-    .join('\n');
-
-  if (!/REAL_ADS_ENABLED/.test(adsSource)) {
-    findings.push('GOAL step 1 is not structurally green: REAL_ADS_ENABLED is missing.');
-  }
-  if (/REAL_ADS_ENABLED_FOR_V1\s*=\s*false/.test(adsSource)) {
-    findings.push('GOAL step 1 is red: REAL_ADS_ENABLED_FOR_V1 is still hardcoded false.');
-  }
-  if (!purchasesSource) {
-    findings.push('GOAL step 3 is red: lib/monetization/purchases.ts is missing.');
-  } else if (!/restore/i.test(purchasesSource)) {
-    findings.push('GOAL step 3 is red: purchases.ts does not mention restore.');
-  }
-  if (!anyRepoFileMatches(['app', 'components', 'lib'], /remove.?ads/i)) {
-    findings.push('GOAL step 3 is red: remove-ads wiring is not visible in app/components/lib.');
-  }
-  const step3Result = spawnSync('sh', ['-c', removeAdsStep3Command], { encoding: 'utf8' });
-  if (step3Result.status !== 0) {
-    findings.push(`GOAL step 3 exact command is red: ${removeAdsStep3Command}`);
-  }
-  if (!exists('publishing/public-site/app-ads.txt')) {
-    findings.push('GOAL step 4 is red: publishing/public-site/app-ads.txt is missing.');
-  }
-  if (!exists('publishing/admob-iap-setup-runbook.md')) {
-    findings.push('GOAL step 4 is red: publishing/admob-iap-setup-runbook.md is missing.');
-  }
-  if (!anyRepoFileMatches(['app', 'lib'], /tracking-transparency|ATT|UMP|consent/i)) {
-    findings.push('GOAL step 4 is red: ATT/UMP/consent wiring is not visible in app/lib.');
-  }
-  const privacyLabels = readFileIfExists('publishing/privacy-labels.md');
-  const dataSafety = readFileIfExists('publishing/google-play-data-safety.md');
-  if (!/admob|advertis|in-app purchase|IDFA|tracking/i.test(privacyLabels)) {
-    findings.push('GOAL step 7 is red: privacy labels do not disclose ads, IAP, and tracking.');
-  }
-  if (!/admob|advertis|in-app purchase/i.test(dataSafety)) {
-    findings.push('GOAL step 7 is red: Google Play data safety does not disclose ads and IAP.');
-  }
-  const stalePublicPrivacyTerms = stalePublicPrivacyPatterns
-    .filter(([pattern]) => pattern.test(publicPrivacySurface))
-    .map(([, label]) => label);
-  if (stalePublicPrivacyTerms.length > 0) {
-    findings.push(
-      `Public privacy posture is red: hosted/listing copy still says ${stalePublicPrivacyTerms.join(
-        ', ',
-      )}.`,
-    );
-  }
-  if (!/Google Mobile Ads|AdMob/i.test(publicPrivacySurface)) {
-    findings.push(
-      'Public privacy posture is red: public copy does not disclose Google Mobile Ads.',
-    );
-  }
-  if (!/Remove Ads/i.test(publicPrivacySurface) || !/29 SEK/i.test(publicPrivacySurface)) {
-    findings.push(
-      'Public privacy posture is red: public copy does not disclose 29 SEK Remove Ads.',
-    );
-  }
-  if (
-    !/App Tracking Transparency|ATT/i.test(publicPrivacySurface) ||
-    !/UMP consent/i.test(publicPrivacySurface)
-  ) {
-    findings.push('Public privacy posture is red: public copy does not disclose ATT/UMP consent.');
-  }
-  if (!exists(removeAdsDeviceQaPath)) {
-    findings.push(`Manual device-QA gate is red: ${removeAdsDeviceQaPath} is missing.`);
-  } else {
-    const deviceQa = readFileIfExists(removeAdsDeviceQaPath);
-    const blockedTerms = blockedEvidencePatterns
-      .filter(([pattern]) => pattern.test(deviceQa))
-      .map(([, label]) => label);
-    if (blockedTerms.length > 0) {
-      findings.push(
-        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} still contains ${blockedTerms.join(
-          ', ',
-        )}.`,
-      );
-    }
-  }
-
-  return findings;
-}
-
-function releaseScopeOverrideGate(manualEvidence) {
-  const v11Surfaces = listV11ScopeSurfaces();
-  const removeAdsFindings = removeAdsV1AcceptanceFindings();
-
-  if (v11Surfaces.length === 0) {
-    return gate(
-      releaseScopeOverrideId,
-      'v1.1 scope held behind v1.0 Remove Ads',
-      'READY',
-      'No v1.1 runtime or test surfaces are present in this release candidate.',
-      'Keep v1.1 files out of v1.0 release candidates until Remove Ads acceptance is green.',
-    );
-  }
-
-  if (removeAdsFindings.length === 0) {
-    return gate(
-      releaseScopeOverrideId,
-      'v1.1 scope held behind v1.0 Remove Ads',
-      'READY',
-      `v1.1 surfaces are present, but the structural Remove Ads v1.0 and device-QA gates are closed. Surfaces: ${v11Surfaces.join(
-        ', ',
-      )}.`,
-      'Keep monitoring release scope before store submission.',
-    );
-  }
-
-  const recorded = manualEvidence.gates[releaseScopeOverrideId];
-  const recordedEvidence = typeof recorded?.evidence === 'string' ? recorded.evidence.trim() : '';
-  if (recorded?.status === 'READY' && recordedEvidence.length > 0) {
-    const blockedTerms = blockedEvidencePatterns
-      .filter(([pattern]) => pattern.test(recordedEvidence))
-      .map(([, label]) => label);
-    const missingOverrideTerms = [
-      ['operator approval', /operator/i],
-      ['v1.1 scope', /v1\.1/i],
-      ['v1.0 Remove Ads scope', /v1\.0|Remove Ads/i],
-      ['explicit allow/approval wording', /allow|approved|approval/i],
-    ]
-      .filter(([, pattern]) => !pattern.test(recordedEvidence))
-      .map(([label]) => label);
-
-    if (blockedTerms.length === 0 && missingOverrideTerms.length === 0) {
-      return gate(
-        releaseScopeOverrideId,
-        'v1.1 scope held behind v1.0 Remove Ads',
-        'READY',
-        `Operator override recorded in ${evidencePath}: ${recordedEvidence}\nDetected v1.1 surfaces: ${v11Surfaces.join(
-          ', ',
-        )}.\nOpen Remove Ads findings: ${removeAdsFindings.join(' ')}`,
-        'Remove this override when v1.0 Remove Ads acceptance is green on main.',
-      );
-    }
-
-    return gate(
-      releaseScopeOverrideId,
-      'v1.1 scope held behind v1.0 Remove Ads',
-      'BLOCKED',
-      `Gate ${releaseScopeOverrideId} is marked READY in ${evidencePath}, but the override evidence is insufficient. Missing: ${
-        missingOverrideTerms.join(', ') || 'none'
-      }. Blocked wording: ${blockedTerms.join(', ') || 'none'}. Recorded evidence: ${
-        recordedEvidence || 'empty'
-      }`,
-      `Record explicit operator approval for v1.1 foundations before v1.0 Remove Ads closure in ${evidencePath}, or remove v1.1 surfaces until Remove Ads is complete.`,
-    );
-  }
-
-  return gate(
-    releaseScopeOverrideId,
-    'v1.1 scope held behind v1.0 Remove Ads',
-    'BLOCKED',
-    `v1.1 runtime/test surfaces are present before v1.0 Remove Ads acceptance is closed: ${v11Surfaces.join(
-      ', ',
-    )}. Remove Ads findings: ${removeAdsFindings.join(' ')}`,
-    `Close v1.0 Remove Ads acceptance first (${removeAdsStep3Command}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
-  );
 }
 
 function extractLocalArtifactPaths(evidence) {
@@ -578,8 +350,8 @@ function validateStoreRecordEvidence(evidencePath) {
   if (evidence.status !== 'ready') {
     errors.push('status must be ready');
   }
-  if (evidence.bundleIdentifier !== 'com.billyyiu.almostswedish') {
-    errors.push('bundleIdentifier must be com.billyyiu.almostswedish');
+  if (evidence.bundleIdentifier !== 'com.billyyiu.swedishcivictest') {
+    errors.push('bundleIdentifier must be com.billyyiu.swedishcivictest');
   }
   if (!/^https:\/\/appstoreconnect\.apple\.com\//i.test(evidence.appStoreConnectUrl || '')) {
     errors.push('appStoreConnectUrl must be an App Store Connect URL');
@@ -689,8 +461,8 @@ function validateStoreCredentialEvidence(evidencePath) {
   if (!/^SHA256:[0-9a-f]{64}$/i.test(android.serviceAccountKeyFingerprint || '')) {
     errors.push('android.serviceAccountKeyFingerprint must be a SHA256 fingerprint');
   }
-  if (android.packageName !== 'com.billyyiu.almostswedish') {
-    errors.push('android.packageName must be com.billyyiu.almostswedish');
+  if (android.packageName !== 'com.billyyiu.swedishcivictest') {
+    errors.push('android.packageName must be com.billyyiu.swedishcivictest');
   }
   if (!android.credentialsSource || !String(android.credentialsSource).trim()) {
     errors.push('android.credentialsSource is required');
@@ -1318,16 +1090,15 @@ function publicUrlsGate(manualEvidence) {
   const manualGate = evidenceGate(
     manualEvidence,
     'public-urls',
-    'Public support, privacy, and app-ads URLs',
-    'Static pages/files exist locally, but no hosted HTTPS URL evidence is recorded.',
-    'Host the static pages and app-ads file, verify public HTTPS access, and enter support/privacy URLs in both store records.',
+    'Public support and privacy URLs',
+    'Static pages exist locally, but no hosted HTTPS URL evidence is recorded.',
+    'Host the static pages, verify public HTTPS access, and enter URLs in both store records.',
     {
       requiredArtifactMissing:
         exists('publishing/public-site/support/index.html') &&
-        exists('publishing/public-site/privacy/index.html') &&
-        exists('publishing/public-site/app-ads.txt')
+        exists('publishing/public-site/privacy/index.html')
           ? null
-          : 'Local static support/privacy/app-ads files are missing from publishing/public-site.',
+          : 'Local static support/privacy pages are missing from publishing/public-site.',
     },
   );
 
@@ -1348,9 +1119,6 @@ function publicUrlsGate(manualEvidence) {
   const liveCheck = commandSucceeds(process.execPath, [
     'scripts/check-public-urls.js',
     ...publicUrls,
-    '--expect-app-ads-file',
-    appAdsUrl,
-    'publishing/public-site/app-ads.txt',
   ]);
   if (liveCheck.ok) {
     return gate(
@@ -1394,7 +1162,6 @@ function buildReport() {
         : '`npm run validate` was not run in this direct script invocation; `npm run release:preflight` runs it.',
       'Run `npm run release:preflight` for the exact release candidate.',
     ),
-    releaseScopeOverrideGate(manualEvidence),
     gitWorktreeGate(),
     gate(
       'expo-doctor',

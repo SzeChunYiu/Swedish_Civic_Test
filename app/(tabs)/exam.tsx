@@ -26,7 +26,6 @@ import {
 import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
-import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -217,7 +216,6 @@ export default function Screen() {
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
-  const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
   const {
@@ -261,8 +259,6 @@ export default function Screen() {
   }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
-  const resultCorrectCount = result?.correctCount ?? 0;
-  const resultTotalCount = result?.totalCount ?? 0;
   const chapterBreakdown = result
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
@@ -344,14 +340,6 @@ export default function Screen() {
     if (!submitted || completionRecorded) return undefined;
 
     let isMounted = true;
-    recordMockExamSession({
-      sessionId: examSessionId,
-      score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: new Date().toISOString(),
-      correctCount: resultCorrectCount,
-      totalCount: resultTotalCount,
-    });
-
     void recordExamCompletion()
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
@@ -365,16 +353,7 @@ export default function Screen() {
     return () => {
       isMounted = false;
     };
-  }, [
-    completionRecorded,
-    copy.completionStoreFailure,
-    examSessionId,
-    recordExamCompletion,
-    recordMockExamSession,
-    resultCorrectCount,
-    resultTotalCount,
-    submitted,
-  ]);
+  }, [completionRecorded, copy.completionStoreFailure, recordExamCompletion, submitted]);
 
   if (!result && !examUnlocked) {
     return (

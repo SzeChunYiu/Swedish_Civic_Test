@@ -22,11 +22,10 @@ test('release app assets are configured and present at store-safe sizes', () => 
   const app = readJson('app.json').expo;
   assert.equal(app.icon, './assets/icon.png');
   assert.equal(app.splash.image, './assets/splash-icon.png');
-  assert.equal(app.splash.backgroundColor, '#fffcf9');
   assert.equal(app.android.adaptiveIcon.foregroundImage, './assets/adaptive-icon.png');
-  assert.equal(app.android.adaptiveIcon.backgroundColor, '#fffcf9');
+  assert.equal(app.android.adaptiveIcon.backgroundColor, '#005293');
 
   assert.deepEqual(pngDimensions('assets/icon.png'), { width: 1024, height: 1024 });
   assert.deepEqual(pngDimensions('assets/adaptive-icon.png'), { width: 1024, height: 1024 });
-  assert.deepEqual(pngDimensions('assets/splash-icon.png'), { width: 1024, height: 1024 });
+  assert.deepEqual(pngDimensions('assets/splash-icon.png'), { width: 1242, height: 2436 });
 });

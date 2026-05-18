@@ -1,19 +1,12 @@
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import { useId, type PropsWithChildren } from 'react';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
-
-/**
- * Defaults: `variant="primary"`, `accessibilityRole="button"`, plain text
- * children as the spoken label, `hitSlop=space[0.5]`, and token pressed
- * feedback. Pass `accessibilityLabel` when children are not readable text.
- */
-export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>> {
-  style?: StyleProp<ViewStyle>;
-  variant?: ButtonVariant;
-}
+type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
+type ButtonProps = PropsWithChildren<
+  Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle>; variant?: ButtonVariant }
+>;
 
 export function Button({
   accessibilityHint,
@@ -84,9 +77,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     justifyContent: 'center',
-    minHeight: space[6],
+    minHeight: 44,
     paddingHorizontal: space[2],
     paddingVertical: space[1.25],
   },
@@ -125,7 +118,7 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   pressed: {
-    transform: [{ scale: motion.pressedScale }],
+    opacity: 0.86,
   },
   label: {
     fontSize: typography.navButton.fontSize,

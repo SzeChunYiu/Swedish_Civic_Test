@@ -1,4 +1,4 @@
-/* Almost Swedish — Study Buddies (10 of them)
+/* Sveriges Medborgartest — Study Buddies (10 of them)
    Each buddy has SVG art, personality tips, "Did you know" facts about Sweden,
    and "pet me" reactions. Buddies change seasonally if user hasn't picked one.
 */

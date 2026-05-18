@@ -37,8 +37,6 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="search" />
-        <Stack.Screen name="dashboard" />
-        <Stack.Screen name="citizenship-requirements" />
         <Stack.Screen name="+not-found" />
       </Stack>
       {!suppressLaunchPopupAd && entitlementsReady ? (
