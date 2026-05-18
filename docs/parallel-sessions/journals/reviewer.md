@@ -3805,6 +3805,6 @@ Verification (commands + result):
 Workspace contract: pass - no product source edited; existing DATA-INTEGRITY finding updated instead of filing a duplicate.
 Findings queued: `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1 partial resolution recheck [2026-05-19 00:00 CEST]`.
 Evidence: current main closes the generic filler-option and true/false judgement-shell surfaces, but still publishes 133 ordinary generated single-choice meta-prefix stems while current validators stay green.
-PR (number + merged?): pending at handoff commit time.
+PR (number + merged?): #791 merged yes, squash `6ef2182`.
 Accepted by worker? yes
 Next suggested validator action: accept only the filler-option/judgement-shell subclosure after source/PR inspection; keep DATA-INTEGRITY routed to remove or rewrite the remaining 133 ordinary generated single-choice meta-stems in canonical CSV and static output.
