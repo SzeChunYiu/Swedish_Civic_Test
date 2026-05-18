@@ -3077,3 +3077,23 @@ Evidence: SETUP commit `d372521` plus the new static result test and independent
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: accept the Practice result i18n atom after reviewing SETUP source/handoff, then keep static flag palette drift, mobile nav reachability, question-count copy, and live deploy freshness in the active route.
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-mobile-nav-current/wt` / `task/reviewer/mobile-nav-current-1779126200`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, current `origin/main` setup/validator queues, blocker notes, and reviewer journal context.
+- Used a clean temporary worktree on `origin/main` `58980df` because the shared checkout has unrelated dirty queue/report files and is on a gone task branch.
+- Confirmed `/home/billy/Desktop/projects/.shared/review-to-queue.sh` is absent, so the existing validator queue row was updated directly.
+- Source scan found `site/index.html` still has Home, Practice, Mock exam, Ebook, and Support links, while `site/styles.css` hides `.nav a:nth-child(n+3)` under `@media (max-width: 720px)` and exposes no replacement mobile menu.
+- `node --check site/app.js`, `node --check site/practice.js`, and `node --check site/settings.js` - exit 0.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- Served current `site/` with `python3 -m http.server 8261 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright at 390x844 returned `innerWidth:390`, `documentScrollWidth:448`, `bodyScrollWidth:448`, visible nav `["Home","Practice"]`, hidden required nav `["Mock exam","Ebook","Support"]`, `menuButtonCount:0`, `settingsVisible:true`, and browser console/page errors empty.
+Workspace contract: pass - no product source edited; existing finding updated instead of filing a duplicate.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1 update [2026-05-18 19:43 CEST]`.
+Evidence: current static site still hides required top-level routes on narrow mobile and has horizontal overflow; existing syntax/static-bank checks pass and do not cover route reachability.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep this queued behind static flag palette drift; SETUP/site should add accessible mobile navigation and a <=390px regression guard before accepting SITE-P0-5 local readiness.
