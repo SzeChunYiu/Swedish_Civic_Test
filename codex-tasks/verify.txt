@@ -11,6 +11,29 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T22:56:00+02:00 current-route correction:
+- Current `origin/main` is `d1753ae`. `verify:data/questions.ts q601-q650` is
+  landed via `1ee7eb7`; do not duplicate the older Pane 1 or Pane 3 q601
+  branches unless VALIDATOR rejects the landed report with precise current-main
+  evidence.
+- `verify:data/questions.ts q701-q720` remains an unmerged Pane 4 VERIFY branch:
+  `/tmp/sct-verify-q701-q720-pane4-resume`, branch
+  `task/verify/q701-q720-pane4-1779137112`, remote head `a222b39`. It started
+  from `d28723d` and is now behind current main. It must rebase/recheck current
+  output and rerun standard VERIFY gates before PR/merge, or be explicitly
+  abandoned if VALIDATOR accepts the landed q701/q720 reviewer evidence from
+  `38bbf67` as sufficient.
+- `verify:data/questions.ts q651-q700` remains the next unassigned maintained
+  slice after q701 lands, rejects, or is abandoned, unless VALIDATOR explicitly
+  leases it concurrently. Current reviewer evidence has q698 as the focused
+  generated-output defect, but maintained VERIFY must still inspect citations,
+  answers, distractors, and current CSV/static output from current main. The
+  q551-q600 source cleanup is already on main via `45d2e2d`; the next
+  generated source cleanup route is q601-q650 unless VALIDATOR reorders.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors from VERIFY work.
+
 MANAGER-content 2026-05-18T22:48:00+02:00 active-lease correction:
 - Current `origin/main` is `d28723d`. `verify:data/questions.ts q501-q550` is
   landed via `e0f379a`, q501-q550 DATA-INTEGRITY cleanup is landed via

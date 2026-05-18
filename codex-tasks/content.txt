@@ -1,5 +1,33 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route correction - 2026-05-18T22:56+02:00
+
+Current `origin/main` is `d1753ae`. q601-q650 maintained VERIFY is now on
+main via `1ee7eb7`, and the separate q701/q720 reviewer judgement-template
+defect is queued via `38bbf67`; do not duplicate q601-q650 VERIFY or q701/q720
+reviewer evidence.
+
+CONTENT-VERIFY Pane 4's maintained q701-q720 branch remains unmerged:
+`/tmp/sct-verify-q701-q720-pane4-resume`,
+`task/verify/q701-q720-pane4-1779137112`, remote head `a222b39`. It was based
+on `d28723d` and is behind current main after q601 VERIFY, reviewer q701/q720,
+ebook copy, manager-build acceptance, content handoff, q551-q600 cleanup,
+live-deploy evidence, and q551 handoff commits. Do not merge or publish that
+branch as current evidence until it is rebased/rechecked on current main, or
+VALIDATOR explicitly abandons it in favor of the landed reviewer evidence.
+
+q651-q700 remains the next unassigned maintained CONTENT-VERIFY slice only
+after the q701-q720 branch lands, is rejected, or is explicitly abandoned,
+unless VALIDATOR grants a non-conflicting concurrent lease. q551-q600 source
+cleanup is now on main via `45d2e2d`; keep generated source cleanup order with
+DATA-INTEGRITY/VALIDATOR at q601-q650 next, then q651-q700 q698, then
+q701-q720 q713/q716 unless VALIDATOR reorders.
+
+CONTENT source implementation remains handoff-only unless VALIDATOR explicitly
+leases authored-content work. VERIFY remains report-and-queue only: no edits
+to `data/**`, `content/question-bank.csv`, `site/**`, generator templates, or
+validator mirrors from CONTENT/VERIFY work.
+
 MANAGER-content active-lease correction - 2026-05-18T22:48+02:00
 
 Current `origin/main` is `d28723d`. q501-q550 VERIFY is on main via `e0f379a`,
