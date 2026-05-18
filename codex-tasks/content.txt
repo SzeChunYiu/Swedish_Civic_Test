@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T14:47:50+02:00
+MANAGER-content queue - 2026-05-18T15:47:00+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
@@ -35,6 +35,12 @@ Landed:
 - q079 is on `origin/main` as `afb12f9` via PR #273.
 - q080 is on `origin/main` as `5f0ff48` via PR #284.
 - q081 is on `origin/main` as `ff9bb56` via PR #282.
+- q070 is on `origin/main` as `6d2bd46` via PR #308, with merge evidence
+  recorded by `cb8bdf4`.
+- q142 is on `origin/main` as `4636321` via PR #295, with merge evidence
+  recorded by PR #311 / `2b3fab0`.
+- q143 is on `origin/main` as `98bc031` via PR #316.
+- q109 is on `origin/main` as `b2c4e5d` via PR #318.
 
 Duplicate guard:
 - PR #178 and branch `task/content/q009-naturalness-pane1-1779100218` were
@@ -57,10 +63,18 @@ Duplicate guard:
   or republish that duplicate q016 diff.
 - q074, q078, q079, q080, and q081 are landed. Do not reopen or republish
   stale q074/q078/q079/q080/q081 worktrees or branches.
+- q070, q109, q142, and q143 are landed. Do not reopen or republish stale
+  q070/q109/q142/q143 branches or worktrees.
+- q018 is canonical in PR #317 on branch
+  `task/content/q018-naturalness-pane4-1779104569`; duplicate PR #329 was
+  closed unmerged. Do not open another q018 branch. If static-site generated
+  bank parity is required before merge, route the `site/questions.js` sync to
+  SETUP/build or DATA-INTEGRITY; CONTENT must not edit `site/**`.
 
 Active dispatch:
-- q016, q017, q019, q020, q074, q078, q079, q080, and q081 are landed. The
-  earlier q016/q019/q020/q074/q078/q079/q080/q081 assignments are superseded.
+- q016, q017, q019, q020, q070, q074, q078, q079, q080, q081, q109, q142,
+  and q143 are landed. The earlier q016/q019/q020/q070/q074/q078/q079/q080/
+  q081/q109/q142/q143 assignments are superseded.
 - Operator directive in `codex-tasks/open.txt` supersedes the earlier idle-hold
   behavior: managers must not park CONTENT panes while build-capable SITE-P0
   staffing is unavailable. Keep panes on independent Phase-A UHR-only
@@ -68,20 +82,29 @@ Active dispatch:
 - SITE-P0 work remains build-owned; CONTENT must not edit `site/**` and must
   not present content atoms as SITE-P0 progress.
 
-Current scan on `origin/main` after q080/q081 found zero raw source-authority
-matches for `UHR-avsnittet`, `The UHR section`, `UHR-materialet`, `UHR
-material`, or `the material` in `data/questions.ts`,
-`data/additionalQuestions.ts`, and `content/question-bank.csv`. Do not route
-q084 from stale handoff text; q084 is not a current source-authority target.
+Current scan on `origin/main` after q143/q109 found q018's `Avsnittet Staten
+säger...` source-note explanation in `data/questions.ts`; q018 is already
+covered by PR #317 and must not be duplicated. The next visible
+TRANSLATE-COMPLETE/SOURCE-CITATION cleanup after q018 is `q108` in
+`data/additionalQuestions.ts`: remove the learner-visible
+`avsnittets innehåll` / `the section` wording from the Hinduism/Buddhism
+explanations while preserving the prompt, answer, options, tags, difficulty,
+and UHR `En sekulär stat och ett mångreligiöst land` /
+`Hinduism och buddhism`, printed page 43 locator.
 
-Next content work: route fresh content-only capacity to Phase-A UHR
-SOURCE-EXPANSION `q142` unless VALIDATOR files a newer concrete P0 content
-defect first. The q142 atom must add one distinct, UHR-only `Sverige i fokus`
-fact/concept not already covered, preserve a specific UHR chapter/section/page
-locator, regenerate `content/question-bank.csv`, update count gates if needed,
-and pass export parity, `validate:content`, focused content tests, typecheck,
-ownership, Prettier/diff checks, and a content journal handoff with PR/merge
-evidence.
+Next content work:
+1. Keep q018 duplicate-guarded in PR #317; do not open new q018 work.
+2. Route fresh CONTENT-VERIFY capacity to q108 as the next UHR-only
+   TRANSLATE-COMPLETE/SOURCE-CITATION atom.
+3. Route additional fresh capacity to Phase-A UHR SOURCE-EXPANSION `q144`
+   only if q108 is already owned or no newer concrete P0 content defect lands
+   first. q144 must add one distinct, UHR-only `Sverige i fokus` fact/concept
+   not already covered, preserve a specific UHR chapter/section/page locator,
+   regenerate `content/question-bank.csv`, update count gates if needed, and
+   pass export parity, `validate:content`, focused content tests, typecheck,
+   ownership, Prettier/diff checks, and a content journal handoff with PR/merge
+   evidence. CONTENT still must not edit `site/**`; any static-site bank sync
+   remains SETUP/build or DATA-INTEGRITY-owned.
 
 Every released atom must preserve UHR locator evidence, run export parity,
 `validate:content`, focused content tests, typecheck, ownership,
