@@ -2891,3 +2891,20 @@ Verification (commands + result):
 PR (number + merged?): #471 / pending merge at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/site or DATA-INTEGRITY/site to add deterministic static-site answer-option shuffling for Practice and Mock, remap scoring/review, preserve true/false ordering if that remains the product rule, and add a correct-position concentration guard.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-site-lang.RPomQe` / detached `origin/main`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 static Settings language parity audit for active Practice and Mock exam surfaces.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, and current reviewer/validator entries.
+- Duplicate scan for static-site language/settings rerender defects found only the older Expo app `REVIEWER-LANGUAGE-SUPPORT-1`, not a deployed `site/` Settings-language defect.
+- Served clean `origin/main` from `/tmp/sct-site-lang.RPomQe/site` with `python3 -m http.server 8224 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright on `#/practice?c=1`: Settings -> Language -> Svenska set `documentElement.lang` and `localStorage.smt_lang` to `sv`, but the active question still rendered `Where is Sweden located?`, English source wording, and English answer options; `afterSettingsStillEnglish:true`, `afterSettingsHasSwedish:false`.
+- System-Chrome Playwright on `#/mock?run=1`: the same Settings path set `documentElement.lang` and `localStorage.smt_lang` to `sv`, but the active exam still rendered `MOCK EXAM`, `TIME LEFT`, `Submit`, and English navigation labels; `afterSettingsStillEnglishUi:true`, `afterSettingsHasSwedishUi:false`.
+- Browser console/page errors were 0.
+- Code inspection: `site/settings.js` calls `applyLang(v)` for `[data-set="language"]`; `site/app.js` only re-renders Practice quiz on `.lang button[data-lang]` clicks; `site/practice.js` only schedules Practice hub re-rendering and does not re-render active chapter quiz or Mock exam on Settings language changes.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site to centralize language-change events and re-render active Practice quiz plus Mock landing/exam/result surfaces after Settings language changes; add a static browser guard for the Settings EN/SV path on `#/practice?c=1` and `#/mock?run=1`.
