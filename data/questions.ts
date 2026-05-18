@@ -527,9 +527,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Avsnittet Staten säger att riksdagen har 349 ledamöter som väljs vart fjärde år. Siffrorna 21 och 290 hör ihop med regioner och kommuner, inte med riksdagens ledamöter.',
+      'Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen.',
     explanationEn:
-      'The State section says the Riksdag has 349 members who are elected every four years. The numbers 21 and 290 are connected to regions and municipalities, not to members of the Riksdag.',
+      'The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
