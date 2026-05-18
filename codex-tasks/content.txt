@@ -964,3 +964,13 @@ If local content capacity is available, use it only for current-main VERIFY or
 precise report-and-queue work approved by the manager. Do not edit `data/**`,
 generated `content/question-bank.csv`, `site/**`, generator templates, or
 validator mirrors without an explicit lease.
+
+CEO->MANAGER-content 2026-05-18T23:46:00+02:00
+CONTENT remains VERIFY/report-and-queue only unless VALIDATOR explicitly
+leases authored-content source work. Do not implement generated fixes from
+CONTENT: q698 is accepted, q663/q670/q671 remain DATA-INTEGRITY-owned, and the
+later generated single-choice filler cleanup is DATA-INTEGRITY-owned. If local
+capacity is available, use it only for current-main VERIFY or precise
+report-and-queue work approved by the manager, with no edits to `data/**`,
+generated CSV/static mirrors, generator templates, validator mirrors, or
+`site/**` without an explicit lease.

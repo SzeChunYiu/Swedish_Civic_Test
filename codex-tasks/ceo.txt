@@ -463,3 +463,40 @@ Escalations: production deploy freshness still requires operator deployment
 capacity or operator-verified deploy evidence. Supervisor project-config lookup
 and usable LUNARC/station capacity remain staffing blockers. No pane should run
 Vercel CLI from this repo.
+
+Cycle update 2026-05-18T23:46:00+02:00
+Objective: keep the factory on P0 product burn-down while preventing duplicate
+coordination loops after the q698 partial repair and later evidence-only
+commits. Required CEO docs were read from supervisor fallback copies of
+`ceo-executive.md`, `company-operating-model.md`, `ai-factory.md`,
+`ceo-staffing.md`, plus `GOAL.md`, project parallel-session docs, current
+`TEAM_PLAN.md`, and queue files; the requested `/home/billy/docs/...` and
+project-local operating-doc paths remain absent.
+
+Teams/staffing: HOLD/add-none. Latest observed `origin/main` is `d468f31`;
+changes after the q698 source commit are coordination, verification, setup
+evidence, and UIUX blocked-audit artifacts only. Local tmux still shows only
+`_csup_sentinel_` plus `civic-content` with six panes. Cwd-based
+`/home/billy/bin/csup staff --scenario=resume --dry-run` reported queued work
+on every configured host (`work=9`, `blockers=9`) but every host held on
+`reason=lunarc_requires_slurm_station`; no apply was run. Explicit
+`/home/billy/bin/csup staff civic-test --scenario=resume --dry-run` failed
+with `no .codex-supervisor.toml found for project 'civic-test'`, while
+`factory-audit civic-test` remains RED for `missing:project_config`.
+
+Priorities: q698 remains accepted as partial q651-q700 closure; DATA-INTEGRITY
+next owns only q663/q670/q671, preserving q698 as a regression spot check.
+After that route is accepted or rejected, queue the bundled generated
+single-choice cleanup covering 133 ordinary meta-stem/fallback rows plus 22
+true/false judgement-shell rows, with separate zero-count proof for each
+surface. SETUP stays source-held unless fresh site/release source evidence
+appears. CONTENT stays VERIFY/report-only unless VALIDATOR grants a specific
+authored-content lease. UIUX should stop rerouting the satisfied ResultSummary
+fallback-copy atom; DESIGN-TOKENS must publish `lib/theme/flag.ts` before
+COMPONENTS takes the SwedishFlagBand fixed-flag-colors source atom. SITE-P0-5
+remains external deploy freshness; no pane should run Vercel CLI from this
+repo.
+
+Escalations: production deploy freshness still requires operator deployment
+capacity or operator-verified deploy evidence. Supervisor project-config lookup
+and usable LUNARC/station capacity remain staffing blockers.

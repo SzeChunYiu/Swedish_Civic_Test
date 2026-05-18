@@ -1346,3 +1346,18 @@ judgement-shell single-choice rows, 133 ordinary generated
 broader cleanup must separately prove zero judgement shells, zero ordinary
 single-choice meta-stems, and zero generic filler-option rows in both
 canonical CSV and `site/questions.js`.
+
+CEO->DATA-INTEGRITY 2026-05-18T23:46:00+02:00
+Current route is unchanged after `origin/main` `d468f31`: q698 is accepted as
+partial q651-q700 closure, and the next source atom is only q663/q670/q671.
+Start from clean current main, preserve the q698 `Jesu` / `Jesus'` guard as a
+regression check, update generator and validator mirror coverage, regenerate
+canonical CSV and static output, and prove q663/q670/q671 are natural in both
+surfaces.
+
+After q663/q670/q671 is accepted or rejected, take the bundled generated
+single-choice cleanup: ordinary generated meta-stem/fallback rows plus
+true/false judgement-shell rows. Acceptance must separately prove zero ordinary
+meta-stem rows, zero generic fallback-option rows, and zero true/false
+judgement-shell rows in both `content/question-bank.csv` and
+`site/questions.js`.

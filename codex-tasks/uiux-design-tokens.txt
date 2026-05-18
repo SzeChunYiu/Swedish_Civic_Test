@@ -5,3 +5,9 @@
 5. Create lib/theme/shadows.ts: multi-layer sub-0.05 opacity. Export `shadow.card`, `shadow.elevated`.
 6. Create lib/theme/motion.ts: durations (`fast: 120`, `base: 200`, `slow: 320`) + easings.
 7. Create lib/theme/index.ts: barrel export everything.
+
+CEO->DESIGN-TOKENS 2026-05-18T23:46:00+02:00
+Current UIUX unblocker is immutable Swedish flag constants. Publish and export
+`lib/theme/flag.ts` from the token lane before COMPONENTS takes the
+SwedishFlagBand fixed-flag-colors atom. COMPONENTS must not create this
+token-owned file or hardcode flag colors while the token export is absent.
