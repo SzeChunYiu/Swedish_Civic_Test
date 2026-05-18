@@ -2447,3 +2447,22 @@ Verification (commands + result):
 PR (number + merged?): #227 / merged yes
 Accepted by worker? yes
 Next suggested validator action: assign a CONTENT-owned q074 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 31 elderly-care municipal responsibility facts and citation; keep TRANSLATE-COMPLETE open because current validators stay green while this user-visible English defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-main.clsyyS` / `task/reviewer/q078-en-naturalness-1779104365`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q078 English naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, `codex-tasks/content.txt`, and current reviewer/content queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on `task/data-integrity/1779098835` and is 66 commits behind / 6 ahead of `origin/main`.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Duplicate scan for `REVIEWER-Q078-EN-NATURALNESS` / q078 naturalness rows - exit 1; existing q078 rows cover older source-citation prompt cleanup, not the learner-facing English explanation.
+- `nl -ba data/additionalQuestions.ts | sed -n '1332,1352p'` - q078 `explanationEn` begins `The UHR section Sweden’s path to democracy says...`; `explanationSv` begins `UHR-avsnittet Sveriges väg till demokrati säger...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0; 705 questions and 705 bilingual text pairs validated.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0; 705-question export parity OK.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0; 6/6 passing.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` - exit 1 because Expo could not resolve the configured `expo-web-browser` plugin from the shared `node_modules`; no dependency install was performed in the shared checkout.
+PR (number + merged?): #234 / merged yes
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q078 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 1809 constitution / limited royal power / restricted suffrage facts; keep TRANSLATE-COMPLETE open because current validators stay green while this defect exists.
