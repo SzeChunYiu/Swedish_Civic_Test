@@ -16,5 +16,7 @@ tmp/
 test-results/
 playwright-report/
 dist/
+lib/monetization/ad-units.real.ts
+lib/monetization/ad-units.real.json
 codex-tasks/logs/.watchdog-*
 codex-tasks/logs/events.jsonl
