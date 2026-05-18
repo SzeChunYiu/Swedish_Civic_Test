@@ -271,56 +271,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q248 | judgement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 719cb3b | defect | queued-data-integrity-single-choice-filler-options |
 | q249 | section-practice | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 719cb3b | ok | rolling-source-slice |
 | q250 | true-false | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 719cb3b | ok | rolling-source-slice |
-| q251 | false-statement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q252 | judgement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | b8e66f7 | ok | rolling-source-slice |
-| q253 | section-practice | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | b8e66f7 | ok | rolling-source-slice |
-| q254 | true-false | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q255 | false-statement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | b8e66f7 | defect | queued-data-integrity-false-explanation+tf-prefix |
-| q256 | judgement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | b8e66f7 | ok | rolling-source-slice |
-| q257 | section-practice | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | ok | rolling-source-slice |
-| q258 | true-false | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q259 | false-statement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q260 | judgement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | ok | rolling-source-slice |
-| q261 | section-practice | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | ok | rolling-source-slice |
-| q262 | true-false | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q263 | false-statement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q264 | judgement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | b8e66f7 | ok | rolling-source-slice |
-| q265 | section-practice | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | b8e66f7 | ok | rolling-source-slice |
-| q266 | true-false | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q267 | false-statement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q268 | judgement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | b8e66f7 | ok | rolling-source-slice |
-| q269 | section-practice | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | b8e66f7 | ok | rolling-source-slice |
-| q270 | true-false | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q271 | false-statement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q272 | judgement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | b8e66f7 | ok | rolling-source-slice |
-| q273 | section-practice | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | b8e66f7 | ok | rolling-source-slice |
-| q274 | true-false | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q275 | false-statement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q276 | judgement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | b8e66f7 | ok | rolling-source-slice |
-| q277 | section-practice | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | ok | rolling-source-slice |
-| q278 | true-false | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q279 | false-statement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q280 | judgement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | ok | rolling-source-slice |
-| q281 | section-practice | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | ok | rolling-source-slice |
-| q282 | true-false | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q283 | false-statement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q284 | judgement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | b8e66f7 | ok | rolling-source-slice |
-| q285 | section-practice | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | b8e66f7 | ok | rolling-source-slice |
-| q286 | true-false | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q287 | false-statement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q288 | judgement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | b8e66f7 | ok | rolling-source-slice |
-| q289 | section-practice | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | b8e66f7 | ok | rolling-source-slice |
-| q290 | true-false | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q291 | false-statement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q292 | judgement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | b8e66f7 | ok | rolling-source-slice |
-| q293 | section-practice | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | b8e66f7 | ok | rolling-source-slice |
-| q294 | true-false | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q295 | false-statement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q296 | judgement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | b8e66f7 | ok | rolling-source-slice |
-| q297 | section-practice | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | b8e66f7 | ok | rolling-source-slice |
-| q298 | true-false | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q299 | false-statement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | b8e66f7 | defect | queued-data-integrity-tf-prefix-surface |
-| q300 | judgement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | b8e66f7 | ok | rolling-source-slice |
+| q251 | false-statement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 6ef2182 | ok | rolling-source-slice |
+| q252 | judgement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q253 | section-practice | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 6ef2182 | ok | rolling-source-slice |
+| q254 | true-false | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 6ef2182 | ok | rolling-source-slice |
+| q255 | false-statement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 6ef2182 | ok | rolling-source-slice |
+| q256 | judgement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 6ef2182 | ok | rolling-source-slice |
+| q257 | section-practice | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | ok | rolling-source-slice |
+| q258 | true-false | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | ok | rolling-source-slice |
+| q259 | false-statement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | ok | rolling-source-slice |
+| q260 | judgement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q261 | section-practice | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | ok | rolling-source-slice |
+| q262 | true-false | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | ok | rolling-source-slice |
+| q263 | false-statement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | ok | rolling-source-slice |
+| q264 | judgement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q265 | section-practice | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 6ef2182 | ok | rolling-source-slice |
+| q266 | true-false | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 6ef2182 | ok | rolling-source-slice |
+| q267 | false-statement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 6ef2182 | ok | rolling-source-slice |
+| q268 | judgement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 6ef2182 | ok | rolling-source-slice |
+| q269 | section-practice | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 6ef2182 | ok | rolling-source-slice |
+| q270 | true-false | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 6ef2182 | defect | queued-data-integrity-standalone-stem |
+| q271 | false-statement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 6ef2182 | defect | queued-data-integrity-standalone-stem |
+| q272 | judgement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q273 | section-practice | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 6ef2182 | ok | rolling-source-slice |
+| q274 | true-false | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 6ef2182 | ok | rolling-source-slice |
+| q275 | false-statement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 6ef2182 | ok | rolling-source-slice |
+| q276 | judgement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q277 | section-practice | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | ok | rolling-source-slice |
+| q278 | true-false | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | ok | rolling-source-slice |
+| q279 | false-statement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | ok | rolling-source-slice |
+| q280 | judgement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q281 | section-practice | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | ok | rolling-source-slice |
+| q282 | true-false | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | ok | rolling-source-slice |
+| q283 | false-statement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | ok | rolling-source-slice |
+| q284 | judgement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q285 | section-practice | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 6ef2182 | ok | rolling-source-slice |
+| q286 | true-false | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 6ef2182 | ok | rolling-source-slice |
+| q287 | false-statement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 6ef2182 | ok | rolling-source-slice |
+| q288 | judgement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q289 | section-practice | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 6ef2182 | ok | rolling-source-slice |
+| q290 | true-false | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 6ef2182 | ok | rolling-source-slice |
+| q291 | false-statement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 6ef2182 | ok | rolling-source-slice |
+| q292 | judgement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q293 | section-practice | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 6ef2182 | ok | rolling-source-slice |
+| q294 | true-false | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 6ef2182 | ok | rolling-source-slice |
+| q295 | false-statement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 6ef2182 | ok | rolling-source-slice |
+| q296 | judgement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
+| q297 | section-practice | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 6ef2182 | ok | rolling-source-slice |
+| q298 | true-false | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 6ef2182 | ok | rolling-source-slice |
+| q299 | false-statement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 6ef2182 | ok | rolling-source-slice |
+| q300 | judgement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 6ef2182 | defect | queued-data-integrity-single-choice-meta-stem |
 | q301 | section-practice | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 8bb2ccf | ok | rolling-source-slice |
 | q302 | true-false | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 8bb2ccf | ok | rolling-source-slice |
 | q303 | false-statement | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 8bb2ccf | ok | rolling-source-slice |
