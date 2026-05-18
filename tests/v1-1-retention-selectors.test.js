@@ -97,7 +97,7 @@ test('streakWithFreeze: freezeBannerCopy emits Sv + En only when a freeze was us
   const { freezeBannerCopy } = loadTs('lib/learning/streakWithFreeze.ts');
   const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 0 } };
   assert.match(freezeBannerCopy(withRescue, 'en'), /protected/i);
-  assert.match(freezeBannerCopy(withRescue, 'sv'), /räddad/i);
+  assert.match(freezeBannerCopy(withRescue, 'sv'), /räddat/i);
   const noRescue = { rescuedThisRun: [], freezeState: { available: 1 } };
   assert.equal(freezeBannerCopy(noRescue, 'en'), null);
 });
