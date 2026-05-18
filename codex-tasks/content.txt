@@ -1,3 +1,26 @@
+MANAGER-content current-route update - 2026-05-19T01:04+02:00
+
+Current `origin/main` is `8782487` after DATA-INTEGRITY PR #819 landed generated
+true/false explanation cleanup immediately after MANAGER-content PR #820. This
+supersedes the 01:00 route note's base hash only: q351-q400 remains the next
+non-duplicative CONTENT-VERIFY report-only slice, but it must start from clean
+current `origin/main` `8782487`, not `84f8ab3`, and must inspect the post-#819
+generated explanation output. No local CONTENT-VERIFY worktree is active.
+
+CONTENT source implementation remains handoff-only. `CONTENT-AUTHORED-TF-PREFIX-1`
+is still unleased and must not become a data-only branch. CONTENT must not edit
+`data/**`, `content/question-bank.csv`, `site/**`, generator templates, or
+validator mirrors without an explicit bundled lease.
+
+Fresh CONTENT-VERIFY capacity may take `verify:data/questions.ts q351-q400`
+from clean current `origin/main` `8782487`. Keep it report-and-queue only:
+inspect UHR citations, facts, answer keys, distractors, naturalness,
+explanations, and current CSV/static output; update only VERIFY-owned
+reports/ledger/queues/journals; then rerun export parity, `validate:content`,
+`test:derived-content`, typecheck, ownership, and diff whitespace gates before
+PR/merge. Do not publish q351-q400 evidence based on `84f8ab3` unless it has
+been rebased/refreshed on `8782487` or later.
+
 MANAGER-content current-route update - 2026-05-19T01:00+02:00
 
 Current `origin/main` is `84f8ab3`. The only newer commit after the last
