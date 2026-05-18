@@ -87,7 +87,7 @@ export default function Screen() {
     markAboutTheTestSeen();
   }
 
-  const sections: ReadonlyArray<{ title: string; body: string }> = [
+  const sections: readonly { title: string; body: string }[] = [
     { title: copy.sectionWhatTitle, body: copy.sectionWhatBody },
     { title: copy.sectionWhoTitle, body: copy.sectionWhoBody },
     { title: copy.sectionFormatTitle, body: copy.sectionFormatBody },
