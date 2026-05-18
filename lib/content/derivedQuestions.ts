@@ -982,6 +982,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka krav gäller för (.+)$/i);
   if (match) return `För ${match[1]} måste ${lowerFirst(stripLeadingMustSv(answer))}`;
 
+  match = q.match(/^Varför röstar väljare bakom en skärm i vallokalen$/i);
+  if (match)
+    return `En anledning till att väljare röstar bakom en skärm i vallokalen är att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
+
   match = q.match(/^Varför bildades Förenta nationerna efter andra världskriget$/i);
   if (match)
     return `Förenta nationerna bildades efter andra världskriget för att ${lowerFirst(
@@ -1408,6 +1414,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Which requirements apply to (.+)$/i);
   if (match) return `To ${requirementTargetEn(match[1])}, ${lowerFirst(answer)}`;
+
+  match = q.match(/^Why do voters vote behind a screen at the polling station$/i);
+  if (match)
+    return `One reason voters vote behind a screen at the polling station is that ${lowerFirst(
+      stripLeadingPurposeEn(answer),
+    )}`;
 
   match = q.match(/^Why was the United Nations created after the Second World War$/i);
   if (match)
