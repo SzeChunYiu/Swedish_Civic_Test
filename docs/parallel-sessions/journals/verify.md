@@ -67,3 +67,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF opened for 
 PR (number + merged?): #453 opened; merge pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: review the q151-q200 VERIFY report, keep DATA-INTEGRITY on the queued residual generator/static-mirror naturalness atom, and assign the next rolling VERIFY slice starting at `q201`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q251-q300-pane3-1779120741`, branch `task/verify/q251-q300-pane3-1779120741`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q251-q300` generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q251-q300-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF opened from the current UHR URL and extracted locally for cited pages 12-17; q251-q300 source support, answer keys, and distractors are acceptable; generated rows `q253`, `q254`, `q261`, `q262`, `q265`, `q266`, `q270`, `q273`, `q274`, `q285`, `q286`, `q289`, `q290`, `q297`, and `q298` fail natural-language quality in canonical CSV and `site/questions.js`; `docs/verify/ledger.md` rows q251-q300 updated at `0478154`, with those 15 rows marked `defect` and the rest `ok`; `VERIFY-GENERATED-TF-RESIDUAL-Q251-Q300-1` appended to `codex-tasks/data-integrity.txt`. Focused CSV scan over q251-q300 reported `badCount: 15`; `site/questions.js` contained all q251-q300 rows; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed; `git diff --check` passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q251-Q300-1` to DATA-INTEGRITY with the existing residual generated-template/static-mirror repair, then assign the next rolling VERIFY slice starting at `q301`.
