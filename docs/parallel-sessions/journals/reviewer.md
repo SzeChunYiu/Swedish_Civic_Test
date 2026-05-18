@@ -2485,3 +2485,21 @@ Verification (commands + result):
 PR (number + merged?): #238 / merged yes via squash commit `69b2220`.
 Accepted by worker? yes
 Next suggested validator action: assign a CONTENT-owned q079 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 33 popular-movements facts about labour, free church, women, and temperance movements; keep TRANSLATE-COMPLETE open because current validators stay green while this defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-origin-main` / `task/reviewer/site-static-wiring-1779105600`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 SITE reviewer audit for deployed `site/` practice/mock/ebook wiring.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, `codex-tasks/setup.txt`, and current reviewer/setup queues.
+- Used a clean temporary worktree at `origin/main` because the shared checkout is on `task/data-integrity/1779098835` with unrelated dirty task/report files.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Duplicate scan for `SITE-P0`, `STATIC-SITE`, `site.*mock`, `practice.js`, `questions.js`, and `mockStage` found the setup queue but no existing reviewer defect for static site script/route wiring.
+- `for f in site/app.js site/practice.js site/questions.js site/ebook.js site/ebook-tools.js site/settings.js site/signin.js site/extras.js site/buddies.js site/fx.js; do node --check "$f" || exit 1; done` - exit 0.
+- `rg -n "practice.js|questions.js|ebook-tools.js|i18n-extras.js|data-page=\"/mock\"|#/mock|known =" site -S` after rebasing onto `origin/main` `c4404d8` - exit 0; output shows `questions.js` and `practice.js` are now loaded, `#/mock` links are only inside `site/practice.js`, `site/app.js` still allow-lists no `/mock` route, and `ebook-tools.js` / `i18n-extras.js` are still not loaded.
+- Served `/tmp/sct-review-origin-main/site` with `python3 -m http.server 8197 --bind 127.0.0.1`.
+- System-Chrome static-site smoke after the rebase - exit 2 by design. Home script list includes `questions.js` and `practice.js`; `window.smtRecordAnswer` is present; `window.SMT_QUESTIONS` has 57 questions; `/practice` shows the new hub with `hubCards:12` and one `#/mock` link; `#/mock` still falls back to active page `/` with `mockStageExists:false`; `/ebook` still renders with 13 chapter links and `ebookToolsLoaded:false`.
+PR (number + merged?): #244 / draft, pending
+Accepted by worker? yes
+Next suggested validator action: assign SETUP to add the static `/mock` route shell/stage, allow-list `/mock`, make the Practice mock link open the live mock exam flow, preserve/load ebook helper tooling, and add a static smoke guard that fails when present SITE P0 files are not reachable through the deployed page shell.
