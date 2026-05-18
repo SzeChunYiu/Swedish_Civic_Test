@@ -54,7 +54,7 @@ test('static site chapter-count copy has non-numeric localized chapter wording',
   const normalizedSurface = normalizeWhitespace(surface);
 
   [
-    /Short, source-backed chapters/,
+    /Short study chapters/,
     /Compact chapters, lagom-sized/,
     /Korta kapitel, lagom stora/,
     /简短章节/,

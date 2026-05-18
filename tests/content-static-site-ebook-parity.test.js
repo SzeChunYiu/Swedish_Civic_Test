@@ -107,10 +107,39 @@ function assertNoStaleEbookCopy(value) {
   }
 }
 
+function hasUnsupportedEbookSourcePromise(value) {
+  return [
+    /source-backed\s+chapters/i,
+    /source-backed\s+ebook/i,
+    /ebook\s+claims?\s+are\s+footnoted/i,
+    /every\s+claim\s+here\s+is\s+footnoted/i,
+    /footnoted\s+in\s+the\s+sources\s+page/i,
+  ].some((pattern) => pattern.test(value));
+}
+
+function hasEbookCitationCoverage(value) {
+  return [
+    /data-source-claims="ebook"/i,
+    /data-source-scope="ebook"/i,
+    /EBOOK_SOURCE_NOTES/,
+    /ebookSourceNotes/,
+  ].some((pattern) => pattern.test(value));
+}
+
 test('static ebook source contains no stale untranslated placeholder copy', () => {
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
   assertNoStaleEbookCopy(source);
+});
+
+test('static ebook does not promise source-backed footnotes without citation coverage', () => {
+  const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
+
+  assert.equal(
+    hasUnsupportedEbookSourcePromise(source) && !hasEbookCitationCoverage(source),
+    false,
+    'ebook source-backed or footnoted claims need ebook citation metadata or Sources-page coverage',
+  );
 });
 
 test('static ebook navigation covers every shipped static chapter', () => {
