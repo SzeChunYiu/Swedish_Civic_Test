@@ -194,7 +194,25 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
    - Reviewer evidence: Swedish `#/practice?c=mix` completion rendered rows
      `["7Rätt","3Fel","70%score"]` with `hasEnglishScore:true`.
 
-2. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
+2. `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`
+   - Scope: deployed static `site/` visible Swedish flag surfaces across user
+     palette and theme choices.
+   - Required behavior: actual flag renderings must keep fixed official flag
+     colors, independent from palette/theme variables. Normal UI accents may
+     remain palette-driven, but `.brand__mark`, `.hero__cross`, and any other
+     static-site flag/easter-egg/favicons that depict the Swedish flag must not
+     use mutable `--blue` / `--gold` accents.
+   - Required gates: static browser guard cycling all static-site palettes in
+     light and dark mode and failing if visible flag surfaces differ from
+     official blue/yellow; `node --check` for changed `site/` scripts; lint;
+     typecheck; ownership; targeted Prettier/diff checks; journal handoff; and
+     PR/merge evidence.
+   - Reviewer evidence: current static source uses `var(--blue)` and
+     `var(--gold)` for `.brand__mark` and `.hero__cross`, while Settings
+     palettes mutate those variables; browser audit showed Midsommar, Falu,
+     Skargarden, and Norrsken recolor the flag surfaces.
+
+3. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`
    - Scope: deployed static `site/` mobile header/navigation at <=390px width.
    - Required behavior: Practice, Mock exam, Ebook, Support, and Settings must
      be reachable without horizontal overflow or hidden 0x0 nav links.
@@ -207,7 +225,7 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
      scroll width in a 390px viewport, visible nav only `Home` and `Practice`,
      hidden `Mock exam`, `Ebook`, and `Support`, and no menu button.
 
-3. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
+4. `REVIEWER-SITE-QUESTION-COUNT-COPY-1`
    - Scope: deployed static `site/` user-visible question-count/product-count
      copy in `site/index.html`, `site/i18n-extras.js`, and any related static
      copy surface.
