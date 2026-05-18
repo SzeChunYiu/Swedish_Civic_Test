@@ -318,3 +318,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-Q551-Q600-CURRENT-1` to DATA-INTEGRITY after q501-q550, then continue rolling VERIFY with q601-q650 or the next current changed/due slice.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q601-q650-pane3-1779137270`, branch `task/content-verify/q601-q650-pane3-1779137270`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-q551 rolling current-output refresh for `verify:data/questions.ts q601-q650`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q601-q650-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL and checked for printed pages 42-47; q601-q650 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current generated/static output clears the older q601-q650 fragment, prefix, meta-wrapper, and unknown-material fallback defects. Current remaining generated-output defects are `q606`, `q607`, `q611`, and `q622`: `q606` has awkward parallel construction around protecting religious practice and protection from discrimination; `q607` has `protects that...` / `skyddar att...`; `q611` treats a debatable Eid al-Fitr/Newroz statement as clearly false; and `q622` says `in the country` / `i landet` instead of naming Sweden. Focused CSV/static/ledger/report/queue assertion passed with 50 checked rows, 25 true/false rows, 4 current defects, zero stale prefix/meta/old-unknown-option hits, no missing static rows, and no static text mismatches. Passed: `node scripts/export-question-bank.js --check`, `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, `npm run test:derived-content`, `npm run typecheck -- --pretty false`, `npm run test:ownership`, and `git diff --check`.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-Q601-Q650-CURRENT-1` to DATA-INTEGRITY after q551-q600 unless VALIDATOR reorders, then continue rolling VERIFY with q651-q700 or the next current changed/due slice.
