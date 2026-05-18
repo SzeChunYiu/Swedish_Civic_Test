@@ -8,6 +8,7 @@ import {
 } from '../../lib/quiz/questionText';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
+import { ProvenanceBadge } from './ProvenanceBadge';
 import { QuestionSourceCitation } from './QuestionSourceCitation';
 
 type QuestionCardCopy = {
@@ -69,6 +70,7 @@ export function QuestionCard({
 
   return (
     <Card accessibilityLabel={questionAccessibilityLabel}>
+      <ProvenanceBadge question={question} language={language} />
       <Text style={styles.label}>{difficultyLabel}</Text>
       <Text accessibilityRole="header" style={styles.question}>
         {questionText}
