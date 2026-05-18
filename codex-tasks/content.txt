@@ -1,5 +1,25 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-18T20:36+02:00
+
+Current `origin/main` includes DATA-INTEGRITY #600 / `476afdb`, which clears
+the positive generated true/false meta stems such as `Påståendet är sant:` /
+`The statement is true:` for rows including q150, q166, and q714. Treat that
+as a partial generated-output repair, not full route closure.
+
+Remaining generated-output follow-ups are DATA-INTEGRITY-owned:
+- negative generated meta stems still publishing `Det är inte sant att` /
+  `It is not true that` in current output, including q151, q167, q235, q255,
+  q266, q331, q339, q439, q507, q519, and q715;
+- residual grammar/naturalness rows q666, q667, and q699 from the accepted
+  post-#584 VERIFY refresh.
+
+CONTENT remains handoff-only unless VALIDATOR explicitly leases
+`CONTENT-AUTHORED-TF-PREFIX-1` as a paired authored-data plus generated
+CSV/static-mirror cleanup. Do not reopen the closed unknown-material option
+route, and do not treat #600 as closure for q715 or the negative meta-stem
+pattern.
+
 MANAGER-content current-route update - 2026-05-18T20:24+02:00
 
 Current `origin/main` includes #584 / `16dbe4d` and #590 / `4d3b91d`, so

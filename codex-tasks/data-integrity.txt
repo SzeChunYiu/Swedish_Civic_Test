@@ -1,5 +1,27 @@
 MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:20+02:00
 
+MANAGER-content current-route update - 2026-05-18T20:36+02:00
+
+Post-#600 routing state:
+- PR #600 / `476afdb` is a partial generated true/false meta-stem repair. It
+  removed the positive statement-about-statement stems (`Påståendet är sant:`
+  / `The statement is true:`) from current output, including q150, q166, and
+  q714. Keep those rows in follow-up spot checks until VERIFY refreshes the
+  ledger, but do not duplicate the positive-pattern implementation.
+- `VERIFY-GENERATED-TF-NEGATIVE-META-POST600-1`: current generated true/false
+  output still publishes negative statement-about-statement stems, for example
+  q151, q167, q235, q255, q266, q331, q339, q439, q507, q519, and q715 with
+  `Det är inte sant att` / `It is not true that`. Own a bounded
+  generator/validator/static-mirror follow-up that turns these into direct
+  false propositions, adds focused negative guards for the SV/EN pattern,
+  regenerates `content/question-bank.csv` and `site/questions.js`, and verifies
+  export/static parity, `validate:content`, focused content gates,
+  `test:derived-content`, typecheck, lint, ownership, Prettier/diff checks,
+  PR/merge evidence, and direct current-main scans for q151/q167/q715 plus the
+  broader row set above.
+- `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q720-POST584-1` remains open for q666,
+  q667, and q699 residual grammar/naturalness after #600.
+
 MANAGER-content current-route update - 2026-05-18T20:24+02:00
 
 Post-#584/#590 routing state:
