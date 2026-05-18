@@ -46,7 +46,14 @@ export function Button({
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
       disabled={disabled}
-      style={[styles.button, styles[variant], disabled ? styles.disabled : null, style]}
+      style={({ pressed }) => [
+        styles.button,
+        styles[variant],
+        pressed && !disabled ? styles.pressed : null,
+        pressed && !disabled && variant === 'primary' ? styles.primaryPressed : null,
+        disabled ? styles.disabled : null,
+        style,
+      ]}
       {...pressableProps}
     >
       <Text style={[styles.label, variant === 'primary' ? styles.primaryLabel : styles.darkLabel]}>
@@ -65,14 +72,20 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     borderColor: colors.border,
-    borderRadius: radius.micro,
+    borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    minHeight: 44,
     paddingHorizontal: space[2],
     paddingVertical: space[1.25],
   },
   primary: {
     backgroundColor: colors.accent,
     borderColor: colors.accent,
+  },
+  primaryPressed: {
+    backgroundColor: colors.accentActive,
+    borderColor: colors.accentActive,
   },
   secondary: {
     backgroundColor: colors.surfaceMuted,
@@ -99,6 +112,9 @@ const styles = StyleSheet.create({
   },
   disabled: {
     opacity: 0.45,
+  },
+  pressed: {
+    opacity: 0.86,
   },
   label: {
     fontSize: typography.navButton.fontSize,

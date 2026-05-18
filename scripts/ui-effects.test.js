@@ -84,6 +84,15 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
+  assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
+  assert.match(source, /pressed && !disabled \? styles\.pressed : null/);
+  assert.match(
+    source,
+    /pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null/,
+  );
+  assert.match(source, /minHeight: 44/);
+  assert.match(source, /borderRadius: radius\.card/);
+  assert.match(source, /backgroundColor: colors\.accentActive/);
   assert.match(source, /nativeID=\{buttonAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
