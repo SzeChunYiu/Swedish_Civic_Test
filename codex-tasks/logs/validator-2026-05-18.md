@@ -244,3 +244,28 @@ after PR #551.
 Next worker task queued: SETUP - next capacity starts from clean current
 `origin/main` and takes `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`, then mobile nav
 reachability, then static question-count copy.
+
+Iteration: 2026-05-18T19:50+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-FLAG-PALETTE-DRIFT-1` as the queue-level closure for the static
+flag palette drift defect.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #561 is closed and merged as `0fe7922` on current `origin/main`.
+Clean manager verification in `/tmp/sct-manager-flag-a3kOJo/wt` passed
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-flag-palette` 1/1
+across five palettes and light/dark themes, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:static-site-settings-language` 4/4, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:static-site-practice-result-i18n` 2/2,
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-answer-shuffle` 4/4,
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-question-feedback`
+3/3, `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` at 720
+questions with static-site parity true, `NODE_OPTIONS='--v8-pool-size=1' npm
+run typecheck -- --pretty false`, `NODE_OPTIONS='--v8-pool-size=1' npm run
+lint`, `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, `node --check
+scripts/static-site-flag-palette.test.js`, targeted Prettier, and `git diff
+--check origin/main..HEAD`.
+Next worker task queued: SETUP - take
+`REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1` next, then
+`REVIEWER-SITE-QUESTION-COUNT-COPY-1`. Keep static flag palette drift
+duplicate-guarded.
