@@ -3121,3 +3121,23 @@ Evidence: current main remains locally ready but Production still serves the old
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open; production must deploy `655a63a` or newer and pass the hash-aware live smoke before SITE-P0-5 can be accepted.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-mobile-nav-latest-u6SKZ8/wt` / `task/reviewer/mobile-nav-current-1779126884`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1` after static flag palette acceptance.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `codex-tasks/blockers.txt`, current `origin/main` setup/validator queues, and reviewer journal context.
+- Used a clean temporary worktree on `origin/main` `db77064` because the shared checkout has unrelated dirty queue/report files and is on a gone task branch.
+- Source scan found `site/styles.css` still hides `.nav a:nth-child(n+3)` under `@media (max-width: 720px)` and no replacement menu control exists.
+- `node --check site/app.js`, `node --check site/practice.js`, and `node --check site/settings.js` - exit 0.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- Served current `site/` with `python3 -m http.server 8267 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright at 390x844 returned `innerWidth:390`, `documentScrollWidth:448`, `bodyScrollWidth:448`, `overflowX:true`, visible nav `["Home","Practice"]`, hidden required nav `["Mock exam","Ebook","Support"]`, `menuButtonCount:0`, `settingsVisible:false`, and browser console/page errors empty.
+Workspace contract: pass - no product source edited; existing finding updated instead of filing a duplicate.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1 update [2026-05-18 19:56 CEST]`.
+Evidence: current static site still hides required top-level routes on narrow mobile, Settings is not reachable at 390px, and horizontal overflow remains after the accepted flag-palette source change.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep this as the next SETUP/site atom; require an accessible mobile navigation path and a <=390px regression guard before accepting SITE-P0-5 local readiness.
