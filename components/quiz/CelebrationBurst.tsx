@@ -1,12 +1,34 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 
-type CelebrationBurstProps = {
-  active: boolean;
-  streak?: number;
+type CelebrationBurstCopy = {
+  correctAnswerLabel: string;
+  streakLabel: (streak: number) => string;
 };
+
+const celebrationBurstCopy: Record<AppLanguage, CelebrationBurstCopy> = {
+  sv: {
+    correctAnswerLabel: 'Rätt svar',
+    streakLabel: (streak) => `${streak} rätt i rad`,
+  },
+  en: {
+    correctAnswerLabel: 'Correct answer',
+    streakLabel: (streak) => `${streak} correct in a row`,
+  },
+};
+
+/**
+ * Defaults: `streak=0`, decorative accessibility-hidden motion, and success
+ * copy from settings. Pass `languageOverride` for screen-specific language.
+ */
+export interface CelebrationBurstProps {
+  active: boolean;
+  languageOverride?: AppLanguage;
+  streak?: number;
+}
 
 const particles = [
   { label: '✓', x: -42, y: -34, tone: colors.success },
@@ -15,8 +37,15 @@ const particles = [
   { label: '•', x: 52, y: -12, tone: colors.pink },
 ] as const;
 
-export function CelebrationBurst({ active, streak = 0 }: CelebrationBurstProps) {
+function getCelebrationLabel(copy: CelebrationBurstCopy, streak: number) {
+  return streak > 1 ? copy.streakLabel(streak) : copy.correctAnswerLabel;
+}
+
+export function CelebrationBurst({ active, languageOverride, streak = 0 }: CelebrationBurstProps) {
   const progress = useRef(new Animated.Value(0)).current;
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const copy = celebrationBurstCopy[language];
 
   useEffect(() => {
     if (!active) {
@@ -55,7 +84,7 @@ export function CelebrationBurst({ active, streak = 0 }: CelebrationBurstProps) 
       ]}
     >
       <View style={styles.pill}>
-        <Text style={styles.pillText}>{streak > 1 ? `${streak} rätt i rad` : 'Rätt svar'}</Text>
+        <Text style={styles.pillText}>{getCelebrationLabel(copy, streak)}</Text>
       </View>
       {particles.map((particle) => {
         const translateX = progress.interpolate({
@@ -98,7 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.successSoft,
     borderColor: colors.success,
     borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     paddingHorizontal: space[2],
     paddingVertical: space[0.75],
   },
