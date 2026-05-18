@@ -3,6 +3,7 @@
 const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
 const LOCAL_SITE_QUESTIONS_PATH = path.join(__dirname, '..', 'site', 'questions.js');
@@ -43,6 +44,10 @@ function readStaticQuestionCount(source) {
   return questions.length;
 }
 
+function hashStaticQuestionBank(source) {
+  return crypto.createHash('sha256').update(String(source).replace(/\r\n/g, '\n')).digest('hex');
+}
+
 function resolveRequiredQuestionCount(options = {}) {
   if (Number.isInteger(options.requiredQuestionCount)) return options.requiredQuestionCount;
 
@@ -65,6 +70,26 @@ function resolveRequiredQuestionCount(options = {}) {
   return fromLocalSite;
 }
 
+function resolveRequiredQuestionBankHash(options = {}) {
+  if (typeof options.requiredQuestionBankHash === 'string' && options.requiredQuestionBankHash) {
+    return options.requiredQuestionBankHash.toLowerCase();
+  }
+
+  if (process.env.SITE_LIVE_REQUIRED_QUESTION_HASH) {
+    const fromEnv = process.env.SITE_LIVE_REQUIRED_QUESTION_HASH.trim().toLowerCase();
+    if (/^[0-9a-f]{64}$/.test(fromEnv)) return fromEnv;
+    throw new Error('SITE_LIVE_REQUIRED_QUESTION_HASH must be a 64-character SHA-256 hex digest');
+  }
+
+  if (!fs.existsSync(LOCAL_SITE_QUESTIONS_PATH)) {
+    throw new Error(
+      'Cannot derive expected live question hash; set SITE_LIVE_REQUIRED_QUESTION_HASH',
+    );
+  }
+
+  return hashStaticQuestionBank(fs.readFileSync(LOCAL_SITE_QUESTIONS_PATH, 'utf8'));
+}
+
 function pass(name, details = '') {
   return { name, ok: true, details };
 }
@@ -80,6 +105,7 @@ function containsAll(source, needles) {
 async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
+  const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
   const [index, styles, practice, ebook, questions] = await Promise.all([
     fetchText(baseUrl, 'index.html'),
     fetchText(baseUrl, 'styles.css'),
@@ -89,12 +115,25 @@ async function checkLiveSite(inputUrl, options = {}) {
   ]);
 
   const questionCount = readStaticQuestionCount(questions);
+  const questionBankHash = hashStaticQuestionBank(questions);
   const checks = [];
 
   checks.push(
     questionCount === requiredQuestionCount
       ? pass('static question bank', `${questionCount} questions`)
       : fail('static question bank', `expected ${requiredQuestionCount}, found ${questionCount}`),
+  );
+
+  checks.push(
+    questionBankHash === requiredQuestionBankHash
+      ? pass('static question bank content', questionBankHash.slice(0, 12))
+      : fail(
+          'static question bank content',
+          `expected ${requiredQuestionBankHash.slice(0, 12)}, found ${questionBankHash.slice(
+            0,
+            12,
+          )}`,
+        ),
   );
 
   checks.push(
@@ -164,7 +203,9 @@ if (require.main === module) {
 
 module.exports = {
   checkLiveSite,
+  hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 };
