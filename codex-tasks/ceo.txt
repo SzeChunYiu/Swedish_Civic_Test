@@ -388,3 +388,35 @@ Priorities: DATA-INTEGRITY next owns q501-q550 for
 q526/q527/q530/q531/q535/q542/q543. q551-q600 stays behind q501-q550 unless
 VALIDATOR reorders. SETUP has no new local source atom unless fresh site or
 release source evidence appears; SITE-P0-5 remains external deploy evidence.
+
+Cycle update 2026-05-18T22:44:40+02:00
+Correction on latest observed `origin/main` `58cb0f6`. The earlier CEO note
+landed before all lane-specific manager queues were notified, before static
+ebook verification queued a fresh SETUP/site defect, and before q501-q550
+source cleanup landed. Manager updates are now queued for VALIDATOR,
+DATA-INTEGRITY, SETUP, CONTENT, and the blocker ledger.
+
+Teams/staffing: HOLD/add-none remains the staffing decision. Required CEO and
+operating docs were read from supervisor fallback copies plus project
+parallel-session docs and current queues because `/home/billy/docs/...` and
+project-local operating-doc paths are absent on this machine.
+`/home/billy/bin/csup staff --scenario=resume --dry-run` reported queued work,
+but every configured host held with `reason=lunarc_requires_slurm_station`; no
+apply was run. `csup factory-audit civic-test` remains RED for
+`missing:project_config`, so do not treat factory-run/apply as safe until the
+supervisor config audit is reconciled.
+
+Priorities: q451-q500 DATA-INTEGRITY cleanup and RELEASE-GATES source work are
+accepted and should not be duplicated. q501-q550 source cleanup is now on main
+via `b441aed`; VALIDATOR/MANAGER-build should recheck and accept or send only
+precise residuals back. Keep q551-q600, q601-q650, and q651-q700 evidence
+queued behind q501-q550 acceptance unless VALIDATOR explicitly reorders. SETUP
+now has a fresh site/source atom from `e74d624`: route
+`REVIEWER-SITE-EBOOK-SOURCE-COVERAGE-1` to SETUP/site with CONTENT support for
+source wording, while keeping SITE-P0-5 external deploy freshness separate.
+
+Escalations: SITE-P0-5 remains external deploy capacity/operator evidence; the
+latest live-deploy recheck still shows both known production URLs stale against
+expected 720/hash `f25e0b9a06c3`. No pane should run Vercel CLI from this repo.
+Remote staffing remains gated on usable station/LUNARC capacity and reconciled
+factory project config.

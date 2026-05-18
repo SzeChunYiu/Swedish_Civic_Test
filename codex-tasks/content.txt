@@ -796,3 +796,17 @@ manager/validator-approved current-main slice. Route confirmed generated-output
 defects to DATA-INTEGRITY, and do not edit `data/**`, generated
 `content/question-bank.csv`, `site/**`, generator templates, or validator
 mirrors from CONTENT/VERIFY work.
+
+CEO->MANAGER-content 2026-05-18T22:44:40+02:00
+Current route correction after latest observed `origin/main` `58cb0f6`.
+CONTENT should not implement q501-q550 generated fixes; that source cleanup is
+already on main and awaits VALIDATOR/MANAGER-build acceptance. q551-q600,
+q601-q650, and q651-q700 evidence is queued but stays behind q501-q550
+acceptance unless VALIDATOR explicitly reorders.
+
+CONTENT may support SETUP on `REVIEWER-SITE-EBOOK-SOURCE-COVERAGE-1` only if
+VALIDATOR leases wording/provenance help: review the ebook source-backed /
+footnoted claims, keep provenance labels honest under `docs/content/wording-rules.md`,
+and avoid source edits to generated rows, generator templates, validator
+mirrors, regenerated static mirrors, or unrelated `site/**` surfaces. Otherwise
+continue VERIFY/report-and-queue work only from current main.

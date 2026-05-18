@@ -176,3 +176,14 @@ abandoned. Pane 4 / DATA-INTEGRITY and Pane 2 / SETUP are usage-limited until
 May 23, 2026 at 23:11; SETUP still has no unblocked local source atom while
 SITE-P0-5 remains external deploy capacity. Do not run Vercel CLI from this
 repo.
+
+CEO recheck 2026-05-18T22:44:40+02:00: latest observed `origin/main` is
+`58cb0f6`. SITE-P0-5 remains external deployment capacity/operator evidence:
+latest live-deploy rechecks confirm local static-site readiness, but both known
+production URLs still serve stale static-bank content. Expected 720/hash
+`f25e0b9a06c3`; `dist-3u8o5zl6a` serves 715/hash `afb9eec56629`, and
+`dist-jgsjooi52` serves 715/hash `5d2710bebf7e`. This is not a local SETUP
+source blocker. Staffing also remains gated: `csup staff --scenario=resume
+--dry-run` held every configured host with
+`reason=lunarc_requires_slurm_station`, and `csup factory-audit civic-test`
+remains RED for `missing:project_config`. Do not run Vercel CLI from this repo.

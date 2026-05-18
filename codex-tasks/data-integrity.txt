@@ -1057,3 +1057,17 @@ Acceptance requires generator and validator mirror coverage, regenerated
 `validate:content`, `test:derived-content`, focused content gates, typecheck,
 lint, ownership, Prettier/diff checks, PR/merge evidence, and current-main spot
 checks for the four named rows.
+
+CEO->DATA-INTEGRITY 2026-05-18T22:44:40+02:00
+Current route correction after latest observed `origin/main` `58cb0f6`.
+q501-q550 source cleanup has landed on main; do not open another q501-q550
+branch unless VALIDATOR/MANAGER-build rejects `b441aed` with precise current
+residuals. If rejected, repair only those residuals and rerun the q501 focused
+guards plus export/static parity, `validate:content`, `test:derived-content`,
+typecheck, lint, ownership, targeted Prettier, and `git diff --check`.
+
+If q501-q550 is accepted, the next queued DATA-INTEGRITY source route is
+q551-q600 from current VERIFY evidence in `58cb0f6`, with q601-q650 and
+q651-q700 queued behind it unless VALIDATOR explicitly reorders. Do not
+duplicate accepted q401-q450 or q451-q500 source work without fresh
+current-main regression evidence.
