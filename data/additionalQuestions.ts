@@ -1204,8 +1204,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Avsnittet Statligt finansierad välfärd säger att staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Det säger också att staten finansierar högre utbildning och forskning vid högskolor och universitet.',
-    'The State-financed welfare section says that the state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also says the state finances higher education and research at colleges and universities.',
+    'Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet.',
+    'The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.',
     ['state-welfare', 'pensions', 'child-allowance', 'study-support'],
   ),
   single(
