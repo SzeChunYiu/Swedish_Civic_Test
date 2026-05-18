@@ -1,0 +1,6 @@
+# SITE lane queue — site/ is the Vercel-deployed product. See docs/parallel-sessions/site.md
+wire Practice route + page into site/index.html (site/practice.js exists, make it reachable + styled)
+build Mock-exam page in site/ (timed exam + result) per docs/design/drafts/practice-mockexam-2026-05-18
+sync site/questions.js from data/questions.ts q001-q050 (then q051+ in slices)
+improve site/ebook.js writing quality (keep #154 richness, native voice); never regress
+polish site/index.html nav so Practice/Mock-exam/Ebook are all reachable + consistent
