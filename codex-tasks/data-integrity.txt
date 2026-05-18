@@ -231,3 +231,21 @@ mirror coverage, focused negative tests, export/static parity,
 evidence, and a recheck of VERIFY ledger rows `q357`, `q358`, `q361`, `q362`,
 `q365`, `q366`, `q373`, `q374`, `q377`, `q378`, `q381`, `q382`, `q385`,
 `q386`, `q389`, `q390`, `q393`, and `q394`.
+
+MANAGER-build QA 2026-05-18T18:48+02:00
+Do not accept `cda854f` for `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; it is
+merged but still partial. Clean current-main worktree `/tmp/sct-manager-di-current`
+passed `validate:content`, `test:derived-content`, export/static parity,
+typecheck, ownership, and `git diff --check cda854f^..cda854f`, but a direct
+CSV/static scan still found generated residual rows including `q317`, `q318`,
+`q325`, `q326`, `q329`, `q330`, `q333`, `q334`, `q345`, `q346`, `q365`,
+`q366`, `q373`, `q374`, `q377`, `q378`, `q389`, `q390`, `q393`, `q394`,
+`q501`, `q502`, `q505`, `q506`, `q517`, `q518`, `q549`, and `q550`. This shows
+the green validator mirror is not sufficient coverage for the current
+naturalness bar. Keep the TF residual route open for a follow-up that closes
+the full verifier row set, regenerates `content/question-bank.csv` and
+`site/questions.js`, and reruns export/static parity, `validate:content`,
+`test:derived-content`, focused published-question/content gates, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
+recheck. Keep `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` queued after this
+true/false residual route.
