@@ -5753,6 +5753,7 @@ let answerFeedbackRuntimeParityValidated = false;
 let answerShuffleSingleChoiceQuestionsValidated = 0;
 let answerShuffleTrueFalseQuestionsValidated = 0;
 let answerShuffleSeedDistributionsValidated = 0;
+let answerShuffleSessionMovementQuestionsValidated = 0;
 let answerShuffleDistributionParityValidated = false;
 let questionSpeechTextQuestionsValidated = 0;
 let questionSpeechTextOptionsValidated = 0;
@@ -11336,6 +11337,11 @@ function validateAnswerShuffleDistributionParity() {
     singleChoiceQuestions,
     'p0-answer-shuffle',
   );
+  const movementSessionIds = Array.from(
+    { length: 8 },
+    (_unused, index) => `p0-answer-shuffle-movement-${index}`,
+  );
+
   if (baseDistribution.totalQuestions !== singleChoiceQuestions.length) {
     reject(
       `answer shuffle distribution saw ${baseDistribution.totalQuestions} questions, expected ${singleChoiceQuestions.length}`,
@@ -11359,6 +11365,11 @@ function validateAnswerShuffleDistributionParity() {
     const secondShuffle = shuffleQuestionOptionsForSession(question, 'p0-answer-shuffle');
     const shuffledCorrectOption = firstShuffle.options.find(
       (option) => option.id === firstShuffle.correctOptionId,
+    );
+    const movementPositions = new Set(
+      movementSessionIds.map(
+        (sessionId) => shuffleQuestionOptionsForSession(question, sessionId).correctOptionId,
+      ),
     );
 
     function rejectQuestion(message) {
@@ -11391,8 +11402,14 @@ function validateAnswerShuffleDistributionParity() {
     if (!isCorrectAnswer(firstShuffle, firstShuffle.correctOptionId)) {
       rejectQuestion(`${question.id} shuffled correctOptionId does not score as correct`);
     }
+    if (movementPositions.size < 2) {
+      rejectQuestion(`${question.id} answer shuffle ignores the session seed`);
+    }
 
-    if (questionIsValid) answerShuffleSingleChoiceQuestionsValidated += 1;
+    if (questionIsValid) {
+      answerShuffleSingleChoiceQuestionsValidated += 1;
+      answerShuffleSessionMovementQuestionsValidated += 1;
+    }
   });
 
   trueFalseQuestionsForShuffle.forEach((question) => {
@@ -11430,7 +11447,8 @@ function validateAnswerShuffleDistributionParity() {
     runtimeParityIsValid &&
     answerShuffleSingleChoiceQuestionsValidated === singleChoiceQuestions.length &&
     answerShuffleTrueFalseQuestionsValidated === trueFalseQuestionsForShuffle.length &&
-    answerShuffleSeedDistributionsValidated === 50
+    answerShuffleSeedDistributionsValidated === 50 &&
+    answerShuffleSessionMovementQuestionsValidated === singleChoiceQuestions.length
   ) {
     answerShuffleDistributionParityValidated = true;
   }
@@ -13348,6 +13366,7 @@ console.log(
       answerShuffleSingleChoiceQuestionsValidated,
       answerShuffleTrueFalseQuestionsValidated,
       answerShuffleSeedDistributionsValidated,
+      answerShuffleSessionMovementQuestionsValidated,
       answerShuffleDistributionParityValidated,
       questionSpeechTextQuestionsValidated,
       questionSpeechTextOptionsValidated,
