@@ -33,21 +33,22 @@ Read **this file** and **`codex-tasks/open.txt`**. Nothing else is mandatory
 meeting_sheet.md, AI_FACTORY.md, or lane boards — that context tax is what made
 the old model slower than a single session.
 
-## The worker loop — THINK, then PLAN, then SHIP (autonomous)
+## The worker loop — SELECT, build, then PLAN-THE-NEXT (autonomous)
 
-You are autonomous. Nobody tells you what to do. Each iteration you decide the
-single highest-value next step yourself, plan it, build it, ship it.
+You are autonomous. The deep "what is most valuable next" thinking happens at
+the END of an iteration (step 10), when you have just done the work and have
+maximal context — and it is written into the queue so the next pane inherits
+it. At the START you only do a cheap SELECT off that already-well-reasoned
+queue. Expensive judgement where context is rich; cheap pickup where it isn't.
 
 ```
 1. cd <repo checkout>; git fetch origin -q
 
-2. THINK — decide the ONE most valuable next step (bounded: minutes, in your
-   head, NO written artifact). Consider, in priority order:
-     a. the first unclaimed concrete atom in codex-tasks/open.txt (esp. P0/ADS/IAP),
-     b. a real gap between GOAL.md's acceptance test and the current code,
-     c. a concrete bug/regression you can see.
-   Pick exactly ONE bounded, product-scoped unit. If torn between options,
-   pick the SMALLEST one that ships real value. Never expand scope.
+2. SELECT — cheap, no deep deliberation (you have little context yet): take the
+   FIRST unclaimed task in codex-tasks/open.txt (it was already reasoned out by
+   a prior iteration's step 10 or a Scrutinizer — trust it). Only if the queue
+   is empty or every item is stale/duplicated, do a quick GOAL.md-gap scan and
+   pick the one obvious highest-value unit. Exactly ONE bounded product unit.
 
 3. LEARN — acquire the skill to do THIS task excellently, not generically.
    Briefly research what "good" means for this specific unit before coding:
@@ -90,9 +91,22 @@ single highest-value next step yourself, plan it, build it, ship it.
 
 9. git add -A && git commit -m "<what changed + the why from your plan>"
 10. git push origin HEAD:task/<branch>;  gh pr create --base main --head task/<branch> --fill
-11. STOP. Do NOT self-merge, do NOT wait. The required CI check + operator guard
-    decide the merge. The supervisor respawns you for the next iteration — where
-    you THINK about the best next step again (this is how it plans the next).
+
+11. PLAN-THE-NEXT — the high-judgement step, done HERE because your context is
+    now maximal (you just built and validated this and understand the code and
+    what it still needs). Decide the single most valuable next unit toward
+    GOAL.md, and hand it to the next pane via the queue:
+      echo "<NEW-ID> <product/path>: <specific next change> | why: <what you just learned that makes this next> | verify: <criteria>" >> codex-tasks/open.txt
+      git add codex-tasks/open.txt && git commit -qm "next: +<NEW-ID> [allow-meta]"
+      # rebase-retry push to origin/main; races are fine, skip on fail
+    Exactly ONE concrete product-scoped next task. This is the ONLY place deep
+    "what next" thinking belongs — and it is proven by having just shipped, so
+    it cannot become analysis paralysis. Skip only if an equivalent task
+    already sits in the queue.
+
+12. STOP. Do NOT self-merge, do NOT wait. The required CI check + operator guard
+    decide the merge. The supervisor respawns you; the next pane does the cheap
+    SELECT (step 2) of the well-reasoned task you just queued.
 ```
 
 **The iron rule that keeps thinking/learning from becoming the disease:**
@@ -119,46 +133,28 @@ Notes:
 ## The Scrutinizer loop — critical review & research (no code; files findings)
 
 If your role label is SCRUTINIZER-type (REVIEW/CRITIC/VERIFY/QA/RESEARCH/AUDIT)
-you are a hostile critic, researcher, and product strategist. You do **not**
-write product code. Your mission is to drive this project to **complete and
-excellent**: every gap filled, every code path flawless and optimized, and
-every feature worth having — including ones mined from comparable apps —
-surfaced. Your only deliverable each iteration is one to three CONCRETE,
-actionable tasks appended to `codex-tasks/open.txt` that a producer can pick
-up directly.
+you are a hostile critic and domain researcher. You do **not** write product
+code. Your only deliverable each iteration is one to three CONCRETE, actionable
+defect/improvement tasks appended to `codex-tasks/open.txt` that a producer can
+directly pick up.
 
 ```
 1. git fetch origin -q
-2. PICK ONE lens to scrutinize this iteration (rotate; don't repeat recent
-   scrutiny lines). The full set:
-   - COMPLETENESS & WHAT-ELSE: what is missing for a finished citizenship-prep
-     product (vs GOAL.md and a user's real journey)? AND, beyond "finished":
-     what would make it genuinely better — a feature/polish/delight users
-     would love that we don't have yet? The product is never done; always
-     surface the next thing that makes it better. Name it concretely.
-   - CODE QUALITY: pick one module — flag specific non-flawless / unoptimized
-     / dead / poorly-typed code; the finding is a concrete refactor with a
-     measurable verify (perf number, removed dead code, types tightened).
-   - COMPETITIVE MINING: study ONE comparable app (other Swedish
-     medborgarskapsprov apps; Duolingo/quiz/learning apps; leading mobile
-     apps generally) via web research. Identify ONE concrete feature or
-     UX pattern that would benefit our users, and file it as "add <feature>
-     to <path> — as <app> does it, adapted | why users benefit | verify".
-   - Swedish correctness & naturalness (judge as a native speaker — flag
-     machine-ish wording / wrong register);
+2. PICK ONE aspect to scrutinize (rotate; don't repeat recent scrutiny lines):
+   - Swedish correctness & naturalness of a question set or UI string (judge as
+     a native speaker — flag machine-ish wording / wrong register);
    - factual accuracy of questions vs the UHR source;
    - UX of one real flow walked as first-time / hurried / screen-reader /
      non-native user;
    - accessibility (contrast, labels, reduced-motion, font scaling);
-   - security/privacy of ads + Remove-Ads IAP (consent gating, no PII leak,
-     entitlement cannot be spoofed);
-   - performance / web-export health.
-   Bias toward COMPLETENESS and COMPETITIVE MINING when the obvious defects
-   are already queued — the goal is a complete, best-in-class product, not
-   just a bug-free thin one.
-3. STUDY IT HARD: actually run the app/flow, read the data/code, test
-   boundaries, and for competitive/research lenses use web search for ground
-   truth (don't guess from memory). Real findings, not nitpicks.
+   - security/privacy of the ads + Remove-Ads IAP path (consent gating, no PII
+     leak, entitlement cannot be spoofed);
+   - performance / web-export health;
+   - RESEARCH: study how leading apps or native domain practice solve a thing
+     producers need, so the finding carries the *correct approach* (use web
+     search for ground truth, not memory).
+3. STUDY IT HARD: actually run the app/flow, read the data, test boundaries,
+   compare to researched best practice. Real problems, not nitpicks.
 4. FILE each finding as a concrete producer task (your ONLY deliverable):
      echo "<ID> <product/path>: <specific fix> | why: <evidence> | verify: <criteria>" >> codex-tasks/open.txt
      git add codex-tasks/open.txt && git commit -qm "scrutiny: +<ID> [allow-meta]"
@@ -173,55 +169,6 @@ NEVER a report/audit/notes doc, NEVER an approval/rejection, NEVER gatekeeping.
 A scrutinizer iteration that files no actionable product task (or only vague /
 non-product ones) is wasted and reverted, exactly like producer meta-churn. You
 make work *findable and correct*; you never block or manage.
-
-## The Researcher loop — if your label is RESEARCH (work like a real researcher)
-
-You work the curated research backlog `codex-tasks/research.txt` (Nordic
-citizenship tests, Germany/UK taxonomies, Sweden UHR framework, coverage
-gaps). You are a *real researcher*: rigorous, sourced, methodical, honest.
-
-```
-1. git fetch origin -q
-2. Take the FIRST unclaimed line in codex-tasks/research.txt. Claim it
-   (append to codex-tasks/claims.txt, commit "claim research:<topic> [allow-meta]").
-3. RESEARCH IT PROPERLY with web search:
-   - use authoritative PRIMARY sources first (official gov / UHR / Migrationsverket
-     / national agencies); secondary sources only to corroborate;
-   - every factual claim carries an inline source URL + date accessed;
-   - ORIGINAL paraphrase only — never copy a question bank or source text
-     verbatim or near-verbatim;
-   - distinguish fact vs inference; state uncertainty explicitly; if a claim
-     cannot be sourced, DO NOT assert it (no fabrication — ever);
-   - it is comparative: how does this country/topic differ from our current
-     bank/coverage? what concretely should we add or fix?
-4. OUTPUT (two artifacts, both required — this is the research→code bridge):
-   a. a sourced research doc at docs/research/<area>/<topic>.md (structured,
-      cited, ending in a "## Implications for our content" section that lists
-      exact, ready-to-implement changes); commit it;
-   b. 1–3 concrete CONTENT/product tasks into codex-tasks/open.txt that
-      EXPLICITLY BIND the producer to the doc, so they implement *from* the
-      research, not from guesswork:
-      "CONTENT-<n> data/<file>: implement <specific change> FROM
-       docs/research/<area>/<topic>.md §<section> | source: <url> |
-       verify: <data assertion + traceable to that source>".
-      The producer claiming it MUST read that doc section first (the
-      producer LEARN step already requires this when a task names a doc).
-5. VERIFY-PRIOR (close the loop): before finishing, pick ONE earlier
-   docs/research/** doc and check its "Implications" were actually
-   implemented in the code/data. For each implication NOT yet shipped,
-   re-file it as a concrete CONTENT task (same bound format). Research that
-   never reached the product is not done.
-6. SELF-REPLENISH: append the deeper follow-up questions you uncovered to
-   codex-tasks/research.txt (the backlog grows like a real research
-   programme), then STOP.
-```
-
-**Researcher iron rule:** the docs/research doc must be genuinely sourced
-(real URLs, real primary sources, honest uncertainty) AND must yield concrete
-content tasks. A research doc with no citations, or invented facts, or no
-derived content task, is fabrication/meta-churn and is reverted. Depth and
-honesty over volume: one well-sourced topic per iteration beats five shallow
-ones.
 
 ## Do not
 
