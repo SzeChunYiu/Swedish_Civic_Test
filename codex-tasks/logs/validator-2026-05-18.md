@@ -362,3 +362,27 @@ rows to direct false propositions, regenerate CSV/static mirrors, and rerun
 export/static parity plus content/type/lint/ownership/diff gates. Keep q666,
 q667, and q699 residual grammar behind that route unless safely bundled with
 focused evidence.
+
+Iteration: 2026-05-18T21:01+02:00
+Rows moved to accepted: none.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence. `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`
+remains open after PR #618 / `9f007d8`; that PR is partial negative/meta-stem
+progress, not closure for the prefix-surface route.
+Evidence: clean current-main worktree `/tmp/sct-manager-live-recheck-1779130822`
+at `origin/main` `64bdae6` passed `NODE_OPTIONS='--v8-pool-size=1' node
+scripts/export-site-question-bank.js --check` with 720 questions and 13
+chapters, and `NODE_OPTIONS='--v8-pool-size=1' node --test
+scripts/check-live-site.test.js` 7/7. Both known production URLs remain stale:
+`https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app` serves 715
+questions/hash `afb9eec56629`, and
+`https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` serves 715
+questions/hash `5d2710bebf7e`, while current main expects 720/hash
+`ead3e32bf91d`. Current reviewer evidence after #618 still requires zero
+canonical/static true/false prefix offenders, fixed false-answer explanations
+for q151/q167/q235/q255/q331/q339/q715, and fixed q666/q667/q699 generated
+stem grammar/capitalization before accepting `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`.
+Next worker task queued: DATA-INTEGRITY - continue the active prefix-surface
+atom from clean current main or rebase before PR; keep live deploy freshness
+external until production serves current main and the hash-aware live smoke
+passes.

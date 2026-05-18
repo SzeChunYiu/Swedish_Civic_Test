@@ -1,5 +1,29 @@
 MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:20+02:00
 
+MANAGER-build current-route update - 2026-05-18T21:01+02:00
+
+Post-#618/#64bdae6 routing state:
+- PR #618 / `9f007d8` is accepted only as partial progress: it clears the
+  generated true/false stem-level meta wrappers, including `Påståendet är
+  sant:`, `The statement is true:`, `Det är inte sant att`, and `It is not true
+  that`.
+- `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` remains the first active
+  DATA-INTEGRITY route. Current reviewer evidence on `origin/main` `64bdae6`
+  still shows 299/299 true/false rows in both `content/question-bank.csv` and
+  `site/questions.js` beginning with the UI-afforded `Sant eller falskt:` /
+  `True or false:` prefix.
+- The same current evidence still has false-answer explanation mismatches in
+  q151, q167, q235, q255, q331, q339, and q715, plus q666/q667/q699 stem
+  grammar/capitalization residuals. Do not accept prefix-only closure if those
+  current generated-output defects remain green under the validators.
+- Acceptance now requires zero canonical/static true/false prefix offenders,
+  aligned false-answer explanations for the seven rows above, fixed
+  q666/q667/q699 stems, regenerated `content/question-bank.csv` and
+  `site/questions.js`, validator/static guards for those defects,
+  export/static parity, `npm run validate:content`, `npm run
+  test:derived-content`, focused content gates, typecheck, lint, ownership,
+  Prettier/diff checks, PR/merge evidence, and a clean current-main recheck.
+
 MANAGER-build current-route update - 2026-05-18T20:41+02:00
 
 Post-#600/#604 routing state:
