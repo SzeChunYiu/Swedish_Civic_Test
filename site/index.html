@@ -3,13 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Almost Swedish — Study, fika, pass.</title>
+    <title>Sveriges Medborgartest — Study, fika, pass.</title>
     <meta
       name="description"
       content="A friendly, unofficial study app for the Swedish citizenship test. Quiz, learn, mock-exam — all in lagom-sized chapters."
     />
-    <link rel="icon" type="image/png" href="icon.png" />
-    <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="icon" href="data:," />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -42,7 +41,7 @@
       <div class="topbar__inner">
         <a class="brand" href="#/" data-route="/">
           <span class="brand__mark" aria-hidden="true"></span>
-          <span data-i18n="brand">Almost Swedish</span>
+          <span data-i18n="brand">Sveriges Medborgartest</span>
         </a>
         <button
           class="icon-btn icon-btn--square nav-toggle"
@@ -130,14 +129,6 @@
         </div>
       </section>
 
-      <!-- V1.1 DASHBOARD (hidden until user has progress) -->
-      <section id="v11-dashboard-wrap" class="band v11-band" data-screen-label="01.15 Dashboard" style="display:none">
-        <div class="wrap">
-          <span class="eyebrow">Your progress</span>
-          <div id="v11-dashboard"></div>
-        </div>
-      </section>
-
       <!-- TRY A QUESTION -->
       <section id="try" class="band demo" data-screen-label="01.2 Try a question">
         <div class="wrap wrap--narrow">
@@ -208,94 +199,55 @@
           <ol class="list-quiet">
             <li>
               <span class="list-quiet__n">01</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.1.t">A very short history of Sweden</span
-                ><span class="list-quiet__meta" data-i18n="chap.1.m1"></span
-              ></span>
+              ><span data-i18n="chap.1.t">A very short history of Sweden</span>
             </li>
             <li>
               <span class="list-quiet__n">02</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.2.t">How Sweden is governed</span
-                ><span class="list-quiet__meta" data-i18n="chap.2.m1"></span
-              ></span>
+              ><span data-i18n="chap.2.t">How Sweden is governed</span>
             </li>
             <li>
               <span class="list-quiet__n">03</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.3.t">Rights, freedoms &amp; the four basic laws</span
-                ><span class="list-quiet__meta" data-i18n="chap.3.m1"></span
-              ></span>
+              ><span data-i18n="chap.3.t">Rights, freedoms &amp; the four basic laws</span>
             </li>
             <li>
               <span class="list-quiet__n">04</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.4.t">Work, taxes &amp; the welfare state</span
-                ><span class="list-quiet__meta" data-i18n="chap.4.m1"></span
-              ></span>
+              ><span data-i18n="chap.4.t">Work, taxes &amp; the welfare state</span>
             </li>
             <li>
               <span class="list-quiet__n">05</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.5.t">Equality &amp; the modern household</span
-                ><span class="list-quiet__meta" data-i18n="chap.5.m1"></span
-              ></span>
+              ><span data-i18n="chap.5.t">Equality &amp; the modern household</span>
             </li>
             <li>
               <span class="list-quiet__n">06</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.6.t">Society, school &amp; healthcare</span
-                ><span class="list-quiet__meta" data-i18n="chap.6.m1"></span
-              ></span>
+              ><span data-i18n="chap.6.t">Society, school &amp; healthcare</span>
             </li>
             <li>
               <span class="list-quiet__n">07</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.7.t">Nature, climate &amp; allemansrätten</span
-                ><span class="list-quiet__meta" data-i18n="chap.7.m1"></span
-              ></span>
+              ><span data-i18n="chap.7.t">Nature, climate &amp; allemansrätten</span>
             </li>
             <li>
               <span class="list-quiet__n">08</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.8.t">Culture, traditions &amp; the calendar</span
-                ><span class="list-quiet__meta" data-i18n="chap.8.m1"></span
-              ></span>
+              ><span data-i18n="chap.8.t">Culture, traditions &amp; the calendar</span>
             </li>
             <li>
               <span class="list-quiet__n">09</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.9.t">Money, banks &amp; BankID</span
-                ><span class="list-quiet__meta" data-i18n="chap.9.m1"></span
-              ></span>
+              ><span data-i18n="chap.9.t">Money, banks &amp; BankID</span>
             </li>
             <li>
               <span class="list-quiet__n">10</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.10.t">Sweden, the EU &amp; the world</span
-                ><span class="list-quiet__meta" data-i18n="chap.10.m1"></span
-              ></span>
+              ><span data-i18n="chap.10.t">Sweden, the EU &amp; the world</span>
             </li>
             <li>
               <span class="list-quiet__n">11</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.11.t">Migration, residence &amp; citizenship</span
-                ><span class="list-quiet__meta" data-i18n="chap.11.m1"></span
-              ></span>
+              ><span data-i18n="chap.11.t">Migration, residence &amp; citizenship</span>
             </li>
             <li>
               <span class="list-quiet__n">12</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.12.t">Mock exam &amp; survival guide</span
-                ><span class="list-quiet__meta" data-i18n="chap.12.m1"></span
-              ></span>
+              ><span data-i18n="chap.12.t">Mock exam &amp; survival guide</span>
             </li>
             <li>
               <span class="list-quiet__n">13</span
-              ><span class="list-quiet__copy"
-                ><span data-i18n="chap.13.t">Traditions, holidays &amp; everyday culture</span
-                ><span class="list-quiet__meta" data-i18n="chap.13.m1"></span
-              ></span>
+              ><span data-i18n="chap.13.t">Traditions, holidays &amp; everyday culture</span>
             </li>
           </ol>
         </div>
@@ -487,7 +439,7 @@
             <em data-i18n="privacy.h1b">stays on your phone.</em>
           </h1>
           <p class="doc__lede" data-i18n="privacy.lede">
-            Almost Swedish is an independent study app. We don't ask for an account, and
+            Sveriges Medborgartest is an independent study app. We don't ask for an account, and
             study progress stays local. This page explains the Google AdSense web ads, Google Mobile
             Ads app ads, and optional one-time Remove Ads purchase.
           </p>
@@ -521,7 +473,7 @@
             <div class="doc__main">
               <h2 id="p1" data-i18n="privacy.s1.t">Independence</h2>
               <p data-i18n="privacy.s1.p">
-                Almost Swedish is an independent study app for Swedish civic knowledge
+                Sveriges Medborgartest is an independent study app for Swedish civic knowledge
                 practice. It is not official and is not affiliated with UHR, Skolverket,
                 Migrationsverket, or the Swedish government. Anything you read here represents what
                 <em>this app</em> does — nothing more.
@@ -751,7 +703,7 @@
             <div class="doc__main">
               <h2 id="t1" data-i18n="terms.s1.t">What this is</h2>
               <p data-i18n="terms.s1.p">
-                Almost Swedish is an unofficial study app. It is not the exam, it is not run
+                Sveriges Medborgartest is an unofficial study app. It is not the exam, it is not run
                 by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score
                 here does not grant citizenship.
               </p>
@@ -919,7 +871,7 @@
           <div class="footer__brag">
             <a class="footer__brand" href="#/">
               <span class="brand__mark" aria-hidden="true"></span>
-              <span data-i18n="brand">Almost Swedish</span>
+              <span data-i18n="brand">Sveriges Medborgartest</span>
             </a>
             <h3 class="footer__tagline">
               <span data-i18n="footer.t1">Pass the test.</span><br />
@@ -1056,7 +1008,7 @@
 
         <div class="footer__bottom">
           <span data-i18n="footer.copyright"
-            >© 2026 Almost Swedish. Made with kanelbullar in Stockholm.</span
+            >© 2026 Sveriges Medborgartest. Made with kanelbullar in Stockholm.</span
           >
           <span data-i18n="footer.fika">Lagom built · Fika tested</span>
         </div>
@@ -1268,21 +1220,5 @@
     <script src="ebook.js"></script>
     <script type="text/babel" src="tweaks-panel.jsx"></script>
     <script type="text/babel" src="tweaks.jsx"></script>
-    <script src="v11.js"></script>
-    <script>
-      // Show dashboard wrapper once v11 has content.
-      (function () {
-        var wrap = document.getElementById('v11-dashboard-wrap');
-        var db = document.getElementById('v11-dashboard');
-        function check() {
-          if (!wrap || !db) return;
-          wrap.style.display = db.style.display === 'none' || db.textContent.trim() === '' ? 'none' : '';
-        }
-        var obs = new MutationObserver(check);
-        if (db) obs.observe(db, { childList: true, attributes: true, subtree: false });
-        window.addEventListener('hashchange', function () { setTimeout(check, 50); });
-        setTimeout(check, 800);
-      })();
-    </script>
   </body>
 </html>

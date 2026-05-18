@@ -25,24 +25,17 @@ Includes:
 - extra challenge modes,
 - optional offline packs later.
 
-## Premium pricing (v1.0 → v1.1)
+## Recommended premium pricing
 
-v1.0 ships **Remove Ads** only at **29 SEK** one-time non-consumable (see GOAL.md).
+Start simple:
 
-v1.1 introduces **Pro Lifetime** at **59 SEK** one-time non-consumable. No
-monthly or yearly tier — the citizenship test is a one-shot exam, lifetime
-converts better than subscription for this audience. See
-[13_pro_tier.md](13_pro_tier.md) for the full entitlement matrix and upgrade
-path for existing Remove Ads buyers.
+| Plan | Example |
+|---|---|
+| Monthly | Low monthly fee |
+| Yearly | Discounted |
+| Lifetime | One-time purchase |
 
-| SKU | Product ID | Price | Type |
-|---|---|---|---|
-| Remove Ads | `com.billyyiu.swedishcivictest.removeads` | 29 SEK | non-consumable |
-| Pro Lifetime | `com.billyyiu.swedishcivictest.prolifetime` | 59 SEK | non-consumable |
-
-RevenueCat is not used. The app talks to StoreKit / Google Play Billing directly
-via `react-native-iap` (already wired for Remove Ads). Two non-consumable SKUs
-is simpler than a subscription cohort for this audience.
+Use RevenueCat to manage subscriptions and purchases across Android and iOS.
 
 ## Ads
 
