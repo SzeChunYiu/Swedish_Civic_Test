@@ -5,6 +5,17 @@
 
 You own the **design token system** in `lib/theme/`. Every color, spacing unit, font size, radius, shadow, and motion duration in the app must come from here. Hardcoded values elsewhere are bugs.
 
+> **HARD EXCEPTION — Swedish flag colors (do not tokenize).** The
+> Swedish flag's blue (≈ `#006AA7`) and yellow (≈ `#FECC00`) are
+> **fixed national constants**. They must NEVER be theme/palette
+> tokens and must NEVER change when the palette or theme changes
+> (dark mode, accent swaps, palette switch). Expose them as immutable
+> brand constants (e.g. `lib/theme/flag.ts` with literal hex), used
+> verbatim by every flag rendering (flag band, hero, mascots,
+> favicons, the static `site/`). Treat any flag element that recolors
+> with the theme as a P0 bug. Other lanes consume these constants;
+> do not "fix" the flag by routing it through tokens.
+
 ## Required reading every iteration
 
 1. `DESIGN.md` — single source of truth.

@@ -350,3 +350,10 @@ SCREENS: port Mock-exam-page improvements from the 2026-05-18 design draft (layo
 COMPONENTS: extract reusable components implied by the draft (cards, option rows, progress/result) using theme tokens
 DELIGHT: match the motion/feel/fun shown in the draft mockups (reduced-motion safe), wire to Practice/Mock-exam
 REVIEWER: audit live Practice + Mock-exam vs docs/design/drafts/practice-mockexam-2026-05-18/uploads/*.png; queue parity defects
+
+# === P0 BRAND RULE 2026-05-18: Swedish flag colors are FIXED ===
+DESIGN-TOKENS: add immutable flag constants (lib/theme/flag.ts: blue ~#006AA7, yellow ~#FECC00); document the do-not-tokenize exception
+COMPONENTS: make every Swedish-flag element use the fixed flag constants, never theme/palette tokens (flag band, hero, favicons)
+DELIGHT: ensure any flag motion/effect keeps official fixed colors across theme/dark-mode
+MASCOT-ART: any flag on mascots uses the fixed official colors, not palette
+REVIEWER: audit live app + static site in light AND dark AND each palette — flag must stay official colors; queue P0 defects; add a regression guard
