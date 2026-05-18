@@ -23,12 +23,16 @@ function generatedQuestions(count) {
 function currentAssets() {
   return {
     '/index.html': [
-      '<main data-page="/practice"><div id="quiz-stage"></div></main>',
+      '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
       '<script src="questions.js"></script>',
       '<script src="practice.js"></script>',
       '<script src="ebook-tools.js"></script>',
       '<script src="ebook.js"></script>',
+    ].join('\n'),
+    '/styles.css': [
+      '.practice__inner--wide { max-width: 1080px; }',
+      '.hub__grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }',
     ].join('\n'),
     '/practice.js': [
       'function renderPracticeHub(){ return `<a class="hub__card" href="#/mock">hub__grid</a>`; }',
@@ -44,6 +48,7 @@ function currentAssets() {
 function staleAssets() {
   return {
     '/index.html': '<main data-page="/"><div id="hero"></div></main>',
+    '/styles.css': '.practice__inner { max-width: 720px; }',
     '/practice.js': 'function renderPractice(){ return "old"; }',
     '/ebook.js': 'const copy = "Svenska översättningen kommer i v1.1";',
     '/questions.js': generatedQuestions(57),
@@ -106,6 +111,7 @@ test('live site check rejects stale deploy assets', async () => {
       [
         'static question bank',
         'practice hub assets',
+        'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',
         'ebook placeholder copy',
