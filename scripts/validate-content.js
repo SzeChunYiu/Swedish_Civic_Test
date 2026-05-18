@@ -1295,9 +1295,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
-const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
-const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -3742,6 +3740,7 @@ const EXPECTED_PURCHASE_INTERFACES = [
     name: 'MockPurchaseProviderOptions',
     fields: [
       { name: 'owned', type: 'boolean', optional: true },
+      { name: 'ownedProductIds', type: 'readonly string[]', optional: true },
       { name: 'pendingPurchase', type: 'boolean', optional: true },
       { name: 'receiptValidationStatus', type: 'RemoveAdsReceiptValidationStatus', optional: true },
     ],
@@ -12978,7 +12977,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     ],
     [
       normalizedPurchaseSource.includes(
-        'if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];',
+        'productIds.some((productId) => purchaseMatchesProductId(purchase, productId))',
+      ) &&
+        normalizedPurchaseSource.includes(
+          'normalizePurchases(purchase).find((candidate) => purchaseMatchesProductId(candidate, productId)',
+        ),
+      'shared native purchase provider must match the requested product id for buy and restore',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'productIds.includes(REMOVE_ADS_PRODUCT_ID) && ownedProductIdsSet.has(REMOVE_ADS_PRODUCT_ID)',
       ) && normalizedPurchaseSource.includes("return [createMockPurchase('restore-remove-ads')];"),
       'mock Remove Ads restore must require the canonical product id',
     ],
