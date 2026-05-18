@@ -1,4 +1,4 @@
-MANAGER-build queue - 2026-05-18T14:43+02:00
+MANAGER-build queue - 2026-05-18T14:58+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
 items, SETUP should take only atoms that close validator/reviewer defects with
@@ -42,6 +42,14 @@ Accepted P0 SETUP atoms:
      `npm run test:ownership`, `git diff --check HEAD~2..HEAD`, and static-site
      Chrome smoke for English and Swedish Ebook, notes host, chapter practice
      navigation, and no console/page errors all exit 0.
+   - Follow-up accepted on current `origin/main`: PR #288 / `ea3c8dd` plus
+     handoff PR #292 / `dd16767` route static ebook practice CTAs to explicit
+     canonical destinations, including migration/citizenship to mixed practice;
+     PR #289 / `ed3d3d6` plus handoff PR #293 / `99d99f7` adds the static ebook
+     parity guard and refreshes static question-bank drift. Clean manager
+     recheck passed site JS syntax, static site export parity, focused static
+     ebook/question-bank tests, typecheck, content validation, ownership, and
+     targeted whitespace checks.
 
 Active P0 REVIEWER atoms:
 

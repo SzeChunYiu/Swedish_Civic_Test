@@ -307,3 +307,26 @@ MANAGER-build acceptance 2026-05-18T14:43+02:00
 - SITE-P0 stop-the-line remains active only for `SITE-P0-5`: REVIEWER must
   audit the live deployed static site against the draft mockups and queue
   concrete parity defects. Do not close `SITE-P0-5` with a report-only audit.
+
+MANAGER-build acceptance 2026-05-18T14:58+02:00
+- Accepted the SITE-P0-4 follow-up source PR #288 / `ea3c8dd`, with SETUP
+  handoff PR #292 / `dd16767`. This fixes the static ebook practice CTAs so
+  migration/citizenship routes to mixed practice instead of the outside-world
+  chapter.
+- Accepted the DATA-INTEGRITY static ebook parity guard from PR #289 /
+  `ed3d3d6`, with handoff PR #293 / `99d99f7`. This adds
+  `tests/content-static-site-ebook-parity.test.js` to `test:content`, keeps
+  stale ebook placeholder copy rejected, and preserves static question-bank
+  drift checks after recent content updates.
+- Clean current-main manager verification after rebasing onto `3575d22` passed: `node --check`
+  for `site/ebook.js`, `site/ebook-tools.js`, and `site/questions.js`;
+  `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js
+  --check`; focused static ebook/question-bank/test-gate tests 5/5;
+  `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`;
+  `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`;
+  `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`; targeted
+  `git diff --check`; and merge-base checks for `ea3c8dd` and `ed3d3d6`.
+- Keep `SITE-P0-5` as the active REVIEWER live deployed-site audit. If the
+  reviewer confirms deployment staleness or a concrete parity defect, route that
+  as the next focused SETUP/release atom; otherwise the next known SETUP/site P0
+  is static `REVIEWER-ACCOUNT-SCOPE-1`.

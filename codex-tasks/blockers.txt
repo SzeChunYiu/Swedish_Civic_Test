@@ -27,7 +27,9 @@ STANDING POLICY (operator, hard — read every cycle):
 # Vercel serves ONLY site/. Factory built into app/ + docs/design/drafts/,
 # so the LIVE site lacked Practice & Mock-exam and a thin ebook. SITE-P0-1 is
 # accepted via PR #242 / c4404d8; SITE-P0-2 is accepted via PR #252 / 5e834b9;
-# SITE-P0-3 is accepted via PR #264 / 19a420e; SITE-P0-4 is accepted via
-# PR #279 / 9def23a plus handoff PR #280 / 41a6bcb. Remaining SITE-P0 items
-# stay highest priority until site/ is the full product.
+# SITE-P0-3 is accepted via PR #264 / 19a420e. SITE-P0-4 is accepted via
+# PR #279 / 9def23a plus handoff PR #280 / 41a6bcb, follow-up PR #288 /
+# ea3c8dd plus handoff PR #292 / dd16767, and parity guard PR #289 /
+# ed3d3d6 plus handoff PR #293 / 99d99f7. Remaining SITE-P0 items stay
+# highest priority until site/ is the full product.
 SITE-P0-5: REVIEWER audit the LIVE deployed site vs the draft mockups; queue parity defects until site/ is the full well-written product

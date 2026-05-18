@@ -172,3 +172,11 @@ explicit defer decision before any new non-site content assignment. Local
 non-site worktrees for q018, q020, and q074 were observed after the CEO 13:32
 update and are unaccepted unless VALIDATOR explicitly leases content despite
 SITE-P0.
+
+2026-05-18T14:58:00+02:00: MANAGER-build verified current `origin/main`
+`3575d22`. SITE-P0-4 follow-up PR #288 / `ea3c8dd` with handoff #292 /
+`dd16767`, and DATA-INTEGRITY parity PR #289 / `ed3d3d6` with handoff #293 /
+`99d99f7`, are accepted with clean syntax, static-site parity, typecheck,
+content validation, ownership, and whitespace evidence. Keep SITE-P0-5 live
+deployed-site audit active; next SETUP/site atom is only a concrete reviewer
+defect, otherwise static `REVIEWER-ACCOUNT-SCOPE-1`. No new teams.
