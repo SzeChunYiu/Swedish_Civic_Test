@@ -3018,3 +3018,20 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open; latest production still does not serve current `origin/main`. Require production deploy from `e55ef7f` or newer plus a passing hash-aware live smoke before accepting SITE-P0-5.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-flag-b9pEhG/wt` / `task/reviewer/static-flag-colors-1779125438`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 brand-rule audit for fixed Swedish flag colors on the deployable static site.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `docs/parallel-sessions/design-tokens.md`, `DESIGN.md`, `GOAL.md`, `codex-tasks/P0.md`, `codex-tasks/blockers.txt`, `codex-tasks/open.txt`, `codex-tasks/setup.txt`, and current reviewer/validator context.
+- Used a clean temporary worktree from `origin/main` `c03f88f` because the shared checkout has unrelated dirty queue/report files and is on a gone task branch.
+- Duplicate scan found existing `B-UIUX-COMPONENTS-FLAG-CONSTANTS-20260518` for the React Native `SwedishFlagBand`/`lib/theme/flag.ts` prerequisite, but no static-site palette-drift finding.
+- Static source check: `site/styles.css` ties `.brand__mark` and `.hero__cross` to `var(--blue)`/`var(--gold)`, while `site/settings.js` palette choices mutate those variables to non-flag colors.
+- Served the static site with `python3 -m http.server 8247 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright clicked Settings palette choices across light and dark themes. `Sverigeflaggan` kept `brandBg rgb(0,106,167)` and bars `rgb(254,204,0)`, but `Midsommar`, `Falu`, `Skargarden`, and `Norrsken` recolored the header flag mark and hero flag cross to palette colors in both themes; browser page/console errors were empty.
+- `git diff --check` - exit 0.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: route SITE/SETUP to add immutable static-site flag colors plus a browser guard that cycles all palettes in light and dark mode and proves visible flag surfaces stay official blue/yellow.
