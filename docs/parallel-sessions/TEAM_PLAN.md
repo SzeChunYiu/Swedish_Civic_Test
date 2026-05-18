@@ -87,6 +87,23 @@ Next suggested validator action:
 
 ## CEO cycle handoff
 
+2026-05-18T21:16:59+02:00: Executive cycle decision remains HOLD/add-none.
+Required CEO/GM operating docs were read from current `origin/main`. Latest
+observed `origin/main` is `268cc9d` (`manager-build: record ebook format
+followup`). Live tmux shows only `_csup_sentinel_` and `civic-meta-local`; no
+build/content/uiux/qa/release worker pane is active. `csup factory-audit` from
+the clean worktree reports YELLOW for disabled/fs10 host configs and GREEN/no
+queued local fs9 host lanes. `csup staff
+/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/_ceo-cycle-20260518T211659
+--scenario=resume --dry-run` reports STAFF-UP with queued work/blockers for the
+configured hosts, but every host HOLDS with `reason=lunarc_requires_slurm_station`;
+no `--apply` was run. Active source-side route remains DATA-INTEGRITY
+generated true/false cleanup: `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` has
+partial progress and `25655ba` implements false-explanation alignment that
+still needs VALIDATOR/manager acceptance evidence. External deployment
+freshness remains the SITE-P0 blocker requiring operator/deploy evidence. Do
+not stop the meta pane or run Vercel CLI from this repo.
+
 2026-05-18T12:27:59+02:00: Executive cycle decision remains HOLD/add-none.
 Required CEO and operating docs were read from the supervisor repo fallback
 plus this board. `csup staff --scenario=resume --dry-run` returned

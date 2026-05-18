@@ -238,3 +238,28 @@ Do not run Vercel CLI from this repo. Manager updates were queued in
 `codex-tasks/setup.txt`, `codex-tasks/content.txt`, and
 `codex-tasks/blockers.txt`; MANAGER-content also received a direct tmux notice
 because it is the only active local manager lane.
+
+Cycle update 2026-05-18T21:16:59+02:00
+Objective: keep the factory on P0 burn-down. Current `origin/main` is
+`268cc9d` (`manager-build: record ebook format followup`), so earlier q011 and
+generated-judgement routing is superseded by the current generated true/false
+cleanup lane plus SITE-P0 deploy freshness.
+Read: `docs/parallel-sessions.md`, `AI_FACTORY.md`, `TEAM_PLAN.md`, `gm.md`,
+GM journal, meeting sheet, `AGENTS.md`, `CLAUDE.md`, company operating model,
+and staffing policy.
+Teams/staffing: HOLD/add-none. Live tmux shows only `_csup_sentinel_` and
+`civic-meta-local`; no local build/content/uiux/qa/release worker pane is
+active. Clean-worktree `csup factory-audit` reports YELLOW for disabled/fs10
+host configs and GREEN/no queued local fs9 host lanes. Clean-worktree
+`csup staff /projects/hep/fs9/shared/nnbar/billy/civic-lunarc/_ceo-cycle-20260518T211659
+--scenario=resume --dry-run` reports STAFF-UP with queued work/blockers for
+configured hosts, but every host HOLDS with `reason=lunarc_requires_slurm_station`;
+no `--apply` was run.
+Priorities: DATA-INTEGRITY has fresh implementation evidence in `25655ba`
+(`data-integrity: align false true-false explanations`) that needs
+VALIDATOR/manager acceptance against the generated true/false cleanup route.
+SITE-P0 production deploy freshness remains external/operator evidence; do not
+close it from local source readiness alone and do not run Vercel CLI from this
+repo. Do not stop the meta pane.
+Escalations: usable worker capacity or operator-verified production deployment
+evidence is still required. The active thread goal remains open.
