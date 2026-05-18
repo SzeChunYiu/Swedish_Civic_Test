@@ -164,13 +164,13 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q141 | authored-source | q141 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | 998185a | ok | rolling-source-slice |
 | q142 | authored-source | q142 | data/additionalQuestions.ts | ch01 | Landet Sverige | Skogar, sjöar och öar | 6 | 998185a | ok | rolling-source-slice |
 | q143 | authored-source | q143 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 998185a | ok | rolling-source-slice |
-| q144 | authored-source | q144 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 332bfc9 | ok | rolling-source-slice |
-| q145 | section-practice | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
-| q146 | true-false | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
-| q147 | false-statement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
-| q148 | judgement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
-| q149 | section-practice | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
-| q150 | true-false | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
+| q144 | authored-source | q144 | data/additionalQuestions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
+| q145 | section-practice | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
+| q146 | true-false | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
+| q147 | false-statement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
+| q148 | judgement | q001 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
+| q149 | section-practice | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | ok | rolling-source-slice |
+| q150 | true-false | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 16dbe4d | defect | queued-data-integrity-post570-tf-meta |
 | q151 | false-statement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | 998185a | ok | rolling-source-slice |
 | q152 | judgement | q002 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |
 | q153 | section-practice | q003 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Geografi, klimat och natur | 5 | d4a2146 | ok | rolling-source-slice |

@@ -157,3 +157,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q700-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q651-Q700-1` into the active DATA-INTEGRITY generated-output repairs. The maintained VERIFY ledger now covers q001-q720; next VERIFY capacity should resume the rolling queue from the oldest changed or due recheck slice instead of duplicating q651-q700.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-q101-q150-post570-pane3-1779128080`, branch `task/verify/q101-q150-post570-pane3-1779128080`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-#570/#584 rolling recheck for `verify:data/questions.ts q101-q150`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q101-q150-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` text opened for printed pages 5 and 6; q144 inventory corrected to authored-source, q145-q149 remain source-supported/current-output `ok`, and q150 is current-output `defect` because the generated true/false stem still says `Påståendet är sant:` / `The statement is true:` instead of a direct proposition. `VERIFY-GENERATED-TF-META-Q101-Q150-POST570-1` appended to DATA-INTEGRITY. Focused ledger/report/static assertion passed; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route q150's generated meta-stem defect to DATA-INTEGRITY with the next generated true/false template recheck; then continue the rolling post-#570 recheck with q151-q200.
