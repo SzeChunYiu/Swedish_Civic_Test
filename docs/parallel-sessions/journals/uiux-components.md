@@ -107,3 +107,13 @@ A11y props: default `accessibilityRole="none"`; decorative dividers default to `
 Verification: `./node_modules/.bin/prettier --check components/Divider.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/Divider.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/Divider.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review Divider and mark the core component set ready for SCREENS dependency review.
+
+## Iteration 11 - 2026-05-18
+
+Component: Core component barrel - `components/index.ts`
+Variants/states implemented: root named exports for `Surface`, `Text`, `Button`, `OptionCard`, `PillBadge`, `ProgressBar`, `ChapterRow`, `DisclaimerBanner`, `Screen`, and `Divider` so screens can consume the accepted atom set through one library entry point.
+Tokens used: no runtime visual tokens; barrel-only export file preserves each component's existing token usage.
+A11y props: no runtime UI; exported components retain their existing accessibility props, roles, labels, states, hit slop, and decorative-hidden behavior.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; token discipline grep on `components/index.ts` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review the barrel exports and mark the core component library ready for SCREENS dependency review.
