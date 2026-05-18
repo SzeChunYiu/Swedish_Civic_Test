@@ -1,3 +1,27 @@
+MANAGER-content current-route update - 2026-05-19T01:00+02:00
+
+Current `origin/main` is `84f8ab3`. The only newer commit after the last
+MANAGER-content route is a SETUP live-deploy recheck, so it opens no CONTENT
+source work. `git worktree list --porcelain` shows no active local
+CONTENT-VERIFY worktree, and tmux shows only the `civic-content` node pane plus
+the supervisor sentinel. Do not revive q251-q300 or q301-q350 branches: those
+are on main via `415e73c` and `ec01444`, and their generated residual lists are
+stale after the accepted generated-output fixes.
+
+CONTENT source implementation remains handoff-only. `CONTENT-AUTHORED-TF-PREFIX-1`
+is still unleased and must not become a data-only branch. CONTENT must not edit
+`data/**`, `content/question-bank.csv`, `site/**`, generator templates, or
+validator mirrors without an explicit bundled lease.
+
+Fresh CONTENT-VERIFY capacity may take `verify:data/questions.ts q351-q400`
+from clean current `origin/main` `84f8ab3`. Keep it report-and-queue only:
+inspect UHR citations, facts, answer keys, distractors, naturalness, and current
+CSV/static output; update only VERIFY-owned reports/ledger/queues/journals; then
+rerun export parity, `validate:content`, `test:derived-content`, typecheck,
+ownership, and diff whitespace gates before PR/merge. If q351-q400 is rejected
+or explicitly deferred, choose the next current changed/due slice rather than a
+stale q251/q301 residual branch.
+
 MANAGER-content current-route update - 2026-05-19T00:50+02:00
 
 Current `origin/main` is `c1f02eb`. The generated single-choice cleanup is now
