@@ -134,6 +134,19 @@ function lowerLeadingSwedishCommonStart(value: string): string {
   return value.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När)\b/, (match) => match.toLowerCase());
 }
 
+function lowerLeadingSwedishClauseStart(value: string): string {
+  return value.replace(
+    /^(Havet|Nästan|Ungefär|Ett|En|Man|När|Oppositionen|Politiker|All)\b/,
+    (match) => match.toLowerCase(),
+  );
+}
+
+function lowerLeadingEnglishClauseStart(value: string): string {
+  return value.replace(/^(The|In|A|An|At|On|Almost|Politicians|All)\b/, (match) =>
+    match.toLowerCase(),
+  );
+}
+
 function stripLeadingMustSv(value: string): string {
   return value.replace(/^man måste\s+/i, 'man ').replace(/^du måste\s+/i, 'du ');
 }
@@ -160,13 +173,92 @@ function stripLeadingPurposeSv(value: string): string {
 }
 
 function stripLeadingPurposeEn(value: string): string {
-  return value.replace(/^to\s+/i, '').replace(/^because\s+/i, '');
+  return value
+    .replace(/^to\s+/i, '')
+    .replace(/^because\s+/i, '')
+    .replace(/^so\s+/i, '');
 }
 
 function embeddedSwedishClause(value: string): string {
   return lowerFirst(stripLeadingPurposeSv(value))
     .replace(/^det är alltid\s+/i, 'det alltid är ')
     .replace(/^domstolarna avgör bara\s+/i, 'domstolarna bara avgör ');
+}
+
+function replaceLeadingSwedishSubject(subject: string, value: string): string {
+  const normalizedSubject = upperFirst(subject.trim());
+  return value
+    .replace(/^De\s+/i, `${normalizedSubject} `)
+    .replace(/^Den\s+/i, `${normalizedSubject} `)
+    .replace(/^Det är\s+/i, `${normalizedSubject} är `);
+}
+
+function replaceLeadingEnglishSubject(subject: string, value: string): string {
+  const normalizedSubject = upperFirst(subject.trim());
+  return value
+    .replace(/^They are\s+/i, `${normalizedSubject} are `)
+    .replace(/^They\s+/i, `${normalizedSubject} `)
+    .replace(/^It is\s+/i, `${normalizedSubject} is `)
+    .replace(/^It (gives|lets|applies)\b/i, `${normalizedSubject} $1`);
+}
+
+function describesStatementSv(subject: string, answer: string): string {
+  if (/^Som\s+/i.test(answer) && /Sverige för tvåhundra år sedan/i.test(subject)) {
+    return `För tvåhundra år sedan var Sverige ${lowerFirst(answer.replace(/^Som\s+/i, ''))}`;
+  }
+  if (/^De ska\s+/i.test(answer) && /fria medier/i.test(subject)) {
+    return `Fria medier i en demokrati ska ${lowerFirst(answer.replace(/^De ska\s+/i, ''))}`;
+  }
+  if (/^Att\s+/i.test(answer)) {
+    return `${upperFirst(subject)} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+
+function describesStatementEn(subject: string, answer: string): string {
+  if (/^As\s+/i.test(answer) && /Sweden two hundred years ago/i.test(subject)) {
+    return `Two hundred years ago, Sweden was ${lowerFirst(answer.replace(/^As\s+/i, ''))}`;
+  }
+  if (/^They should\s+/i.test(answer) && /free media/i.test(subject)) {
+    return `Free media in a democracy should ${lowerFirst(answer.replace(/^They should\s+/i, ''))}`;
+  }
+  if (/^To\s+/i.test(answer)) {
+    return `${upperFirst(subject)} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+
+function commonStatementSv(subject: string, answer: string): string {
+  if (/^Gemensamma\s+/i.test(answer)) {
+    return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+
+function commonStatementEn(subject: string, answer: string): string {
+  if (/^Shared\s+/i.test(answer)) {
+    return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+
+function meaningStatementSv(subject: string, answer: string): string {
+  const subjectStatement = replaceLeadingSwedishSubject(subject, answer);
+  if (subjectStatement !== answer) return subjectStatement;
+  return `${upperFirst(subject)} innebär att ${embeddedSwedishClause(answer)}`;
+}
+
+function meaningStatementEn(subject: string, answer: string): string {
+  const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
+  if (subjectStatement !== answer) return subjectStatement;
+  return `${upperFirst(subject)} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+}
+
+function appliesStatementEn(subject: string, answer: string): string {
+  if (/^They are\s+/i.test(answer)) {
+    return replaceLeadingEnglishSubject(subject, answer);
+  }
+  return answer;
 }
 
 function stripTrueFalsePromptSv(value: string): string {
@@ -190,11 +282,13 @@ function truthStatementEn(statement: string): string {
 }
 
 function sourceStatementJudgementSv(statement: string, isTrue: boolean): string {
-  return `${isTrue ? 'Det stämmer i sak att' : 'Det stämmer inte att'} ${statement}`;
+  return `${isTrue ? 'Det stämmer i sak att' : 'Det stämmer inte att'} ${lowerLeadingSwedishClauseStart(
+    statement,
+  )}`;
 }
 
 function sourceStatementJudgementEn(statement: string, isTrue: boolean): string {
-  return `${isTrue ? 'It is factually true that' : 'It is not true that'} ${lowerLeadingEnglishArticle(
+  return `${isTrue ? 'It is factually true that' : 'It is not true that'} ${lowerLeadingEnglishClauseStart(
     statement,
   )}`;
 }
@@ -309,7 +403,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
   match = q.match(/^Hur väljer (.+?) (.+)$/i);
-  if (match) return `${upperFirst(match[1])} väljer ${match[2]} ${lowerFirst(answer)}`;
+  if (match) {
+    if (/^Genom att\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} väljer ${match[2]} ${lowerFirst(answer)}`;
+    }
+    return upperFirst(answer);
+  }
 
   match = q.match(/^Hur många (.+?) har (.+)$/i);
   if (match) return `${upperFirst(match[2])} har ${lowerFirst(answer)} ${match[1]}`;
@@ -331,7 +430,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} har uppgiften att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vilket påstående beskriver (.+)$/i);
-  if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
+  if (match) return describesStatementSv(match[1], answer);
 
   match = q.match(/^Vilken är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
@@ -349,7 +448,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `En anledning är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vad har (.+?) gemensamt$/i);
-  if (match) return `${upperFirst(match[1])} har ${lowerFirst(answer)} gemensamt`;
+  if (match) return commonStatementSv(match[1], answer);
 
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
   if (match) {
@@ -358,22 +457,22 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^Vilken lista innehåller (.+)$/i);
-  if (match) return `${upperFirst(answer)} är listan som innehåller ${match[1]}`;
+  if (match) return `Listan med ${lowerFirst(answer)} innehåller ${match[1]}`;
 
   match = q.match(/^Vad säger (.+?) om (.+)$/i);
-  if (match) return `${upperFirst(match[1])} säger att ${lowerFirst(answer)} om ${match[2]}`;
+  if (match) return `${upperFirst(match[1])} säger att ${lowerLeadingSwedishClauseStart(answer)}`;
 
   match = q.match(/^Vad reglerar (.+)$/i);
   if (match) return `${upperFirst(match[1])} reglerar ${lowerFirst(answer)}`;
 
   match = q.match(/^Vad innebär (.+)$/i);
-  if (match) return `${upperFirst(match[1])} innebär att ${embeddedSwedishClause(answer)}`;
+  if (match) return meaningStatementSv(match[1], answer);
 
   match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
   if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
 
   match = q.match(/^Vad gäller för (.+)$/i);
-  if (match) return `För ${match[1]} gäller att ${embeddedSwedishClause(answer)}`;
+  if (match) return upperFirst(answer);
 
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
@@ -389,7 +488,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilket svar beskriver (.+)$/i);
-  if (match) return `${upperFirst(answer)} beskriver ${match[1]}`;
+  if (match) return describesStatementSv(match[1], answer);
 
   match = q.match(/^Vad beslutade (.+?) som (.+)$/i);
   if (match)
@@ -438,7 +537,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(answer)} are important ${match[1]} in Sweden`;
 
   match = q.match(/^What does (.+) mean$/i);
-  if (match) return `${upperFirst(match[1])} means ${lowerFirst(answer)}`;
+  if (match) return meaningStatementEn(match[1], answer);
 
   match = q.match(/^Which of the following is part of (.+)$/i);
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
@@ -453,7 +552,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
 
   match = q.match(/^How do (.+?) choose (.+)$/i);
-  if (match) return `${upperFirst(match[1])} choose ${match[2]} ${lowerFirst(answer)}`;
+  if (match) {
+    if (/^By\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} choose ${match[2]} ${lowerFirst(answer)}`;
+    }
+    return upperFirst(answer);
+  }
 
   match = q.match(/^How many (.+?) does (.+?) have$/i);
   if (match) return `${upperFirst(match[2])} has ${lowerFirst(answer)} ${match[1]}`;
@@ -478,7 +582,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} has the task to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^Which statement describes (.+)$/i);
-  if (match) return `${upperFirst(answer)} describes ${match[1]}`;
+  if (match) return describesStatementEn(match[1], answer);
 
   match = q.match(/^What is the foremost task of (.+)$/i);
   if (match) {
@@ -501,28 +605,28 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `One reason is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^What do (.+?) have in common$/i);
-  if (match) return `${upperFirst(match[1])} have ${lowerFirst(answer)} in common`;
+  if (match) return commonStatementEn(match[1], answer);
 
   match = q.match(/^What happens in (.+?) if (.+)$/i);
   if (match) return `In ${match[1]}, ${lowerFirst(answer)} if ${match[2]}`;
 
   match = q.match(/^Which list contains (.+)$/i);
-  if (match) return `${upperFirst(answer)} is the list that contains ${match[1]}`;
+  if (match) return `The list with ${lowerLeadingEnglishArticle(answer)} contains ${match[1]}`;
 
   match = q.match(/^What does (.+?) say about (.+)$/i);
-  if (match) return `${upperFirst(match[1])} says that ${lowerFirst(answer)} about ${match[2]}`;
+  if (match) return `${upperFirst(match[1])} says that ${lowerLeadingEnglishClauseStart(answer)}`;
 
   match = q.match(/^What does (.+?) regulate$/i);
   if (match) return `${upperFirst(match[1])} regulates ${lowerFirst(answer)}`;
 
   match = q.match(/^What does (.+?) mean$/i);
-  if (match) return `${upperFirst(match[1])} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) return meaningStatementEn(match[1], answer);
 
   match = q.match(/^Which authorities are part of (.+)$/i);
   if (match) return `${upperFirst(answer)} are part of ${match[1]}`;
 
   match = q.match(/^What applies to (.+)$/i);
-  if (match) return `For ${match[1]}, ${lowerFirst(answer)}`;
+  if (match) return appliesStatementEn(match[1], answer);
 
   match = q.match(/^From what age is (.+)$/i);
   if (match) return `From ${lowerFirst(answer)}, ${match[1]}`;
@@ -537,7 +641,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
 
   match = q.match(/^Which answer describes (.+)$/i);
-  if (match) return `${upperFirst(answer)} describes ${match[1]}`;
+  if (match) return describesStatementEn(match[1], answer);
 
   match = q.match(/^What did (.+?) decide as (.+)$/i);
   if (match)

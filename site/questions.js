@@ -9109,8 +9109,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy the courts elect all members of the Riksdag.",
-      "sv": "Sant eller falskt: Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati domstolarna väljer alla riksdagsledamöter."
+      "en": "True or false: The courts elect all members of the Riksdag.",
+      "sv": "Sant eller falskt: Domstolarna väljer alla riksdagsledamöter."
     },
     "opts": [
       {
@@ -10446,8 +10446,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: They implement decisions and must follow laws and government instructions describes government agencies.",
-      "sv": "Sant eller falskt: De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter."
+      "en": "True or false: Government agencies implement decisions and must follow laws and government instructions.",
+      "sv": "Sant eller falskt: Statliga myndigheter genomför beslut och måste följa lagar och regeringens instruktioner."
     },
     "opts": [
       {
@@ -10485,8 +10485,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: They replace courts in criminal cases describes government agencies.",
-      "sv": "Sant eller falskt: De ersätter domstolarna i brottmål beskriver statliga myndigheter."
+      "en": "True or false: Government agencies replace courts in criminal cases.",
+      "sv": "Sant eller falskt: Statliga myndigheter ersätter domstolarna i brottmål."
     },
     "opts": [
       {
@@ -11135,7 +11135,7 @@
     "type": "true_false",
     "q": {
       "en": "True or false: It is factually true that the opposition should scrutinize the government’s work and propose alternative policies.",
-      "sv": "Sant eller falskt: Det stämmer i sak att Oppositionen ska granska regeringens arbete och föreslå annan politik."
+      "sv": "Sant eller falskt: Det stämmer i sak att oppositionen ska granska regeringens arbete och föreslå annan politik."
     },
     "opts": [
       {
@@ -11174,7 +11174,7 @@
     "type": "true_false",
     "q": {
       "en": "True or false: It is not true that the opposition should scrutinize the government’s work and propose alternative policies.",
-      "sv": "Sant eller falskt: Det stämmer inte att Oppositionen ska granska regeringens arbete och föreslå annan politik."
+      "sv": "Sant eller falskt: Det stämmer inte att oppositionen ska granska regeringens arbete och föreslå annan politik."
     },
     "opts": [
       {
@@ -11650,8 +11650,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that Politicians in Sweden must follow the result of a referendum.",
-      "sv": "Sant eller falskt: Det stämmer inte att Politiker i Sverige måste följa resultatet av en folkomröstning."
+      "en": "True or false: It is not true that politicians in Sweden must follow the result of a referendum.",
+      "sv": "Sant eller falskt: Det stämmer inte att politiker i Sverige måste följa resultatet av en folkomröstning."
     },
     "opts": [
       {
@@ -11689,8 +11689,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is factually true that Politicians in Sweden must follow the result of a referendum.",
-      "sv": "Sant eller falskt: Det stämmer i sak att Politiker i Sverige måste följa resultatet av en folkomröstning."
+      "en": "True or false: It is factually true that politicians in Sweden must follow the result of a referendum.",
+      "sv": "Sant eller falskt: Det stämmer i sak att politiker i Sverige måste följa resultatet av en folkomröstning."
     },
     "opts": [
       {
@@ -11861,7 +11861,7 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: One reason is that so votes are counted faster.",
+      "en": "True or false: One reason is that votes are counted faster.",
       "sv": "Sant eller falskt: En anledning är att rösterna ska räknas snabbare."
     },
     "opts": [
@@ -11994,8 +11994,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: People in a political party have shared ideas about how society should be governed in common.",
-      "sv": "Sant eller falskt: Människor i ett politiskt parti har gemensamma idéer om hur samhället ska styras gemensamt."
+      "en": "True or false: People in a political party have shared ideas about how society should be governed.",
+      "sv": "Sant eller falskt: Människor i ett politiskt parti har gemensamma idéer om hur samhället ska styras."
     },
     "opts": [
       {
@@ -12033,8 +12033,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: People in a political party have they replace the courts in common.",
-      "sv": "Sant eller falskt: Människor i ett politiskt parti har de ersätter domstolarna gemensamt."
+      "en": "True or false: People in a political party replace the courts.",
+      "sv": "Sant eller falskt: Människor i ett politiskt parti ersätter domstolarna."
     },
     "opts": [
       {
@@ -12510,8 +12510,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: The Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession is the list that contains only Sweden's four constitutional laws.",
-      "sv": "Sant eller falskt: Regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen är listan som innehåller bara Sveriges fyra grundlagar."
+      "en": "True or false: The list with the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession contains only Sweden's four constitutional laws.",
+      "sv": "Sant eller falskt: Listan med regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen innehåller bara Sveriges fyra grundlagar."
     },
     "opts": [
       {
@@ -12549,8 +12549,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: The Education Act, Social Services Act, Environmental Code, and Annual Leave Act is the list that contains only Sweden's four constitutional laws.",
-      "sv": "Sant eller falskt: Skollagen, socialtjänstlagen, miljöbalken och semesterlagen är listan som innehåller bara Sveriges fyra grundlagar."
+      "en": "True or false: The list with the Education Act, Social Services Act, Environmental Code, and Annual Leave Act contains only Sweden's four constitutional laws.",
+      "sv": "Sant eller falskt: Listan med skollagen, socialtjänstlagen, miljöbalken och semesterlagen innehåller bara Sveriges fyra grundlagar."
     },
     "opts": [
       {
@@ -12682,8 +12682,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: The Instrument of Government says that all public power comes from the people about public power in Sweden.",
-      "sv": "Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från folket om offentlig makt i Sverige."
+      "en": "True or false: The Instrument of Government says that all public power comes from the people.",
+      "sv": "Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från folket."
     },
     "opts": [
       {
@@ -12721,8 +12721,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: The Instrument of Government says that all public power comes from the courts about public power in Sweden.",
-      "sv": "Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från domstolarna om offentlig makt i Sverige."
+      "en": "True or false: The Instrument of Government says that all public power comes from the courts.",
+      "sv": "Sant eller falskt: Regeringsformen säger att all offentlig makt utgår från domstolarna."
     },
     "opts": [
       {
@@ -13026,8 +13026,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: The right of public access means it gives everyone the opportunity to be in nature, but people must act responsibly.",
-      "sv": "Sant eller falskt: Allemansrätten innebär att den ger alla möjlighet att vara i naturen, men man måste visa ansvar."
+      "en": "True or false: The right of public access gives everyone the opportunity to be in nature, but people must act responsibly.",
+      "sv": "Sant eller falskt: Allemansrätten ger alla möjlighet att vara i naturen, men man måste visa ansvar."
     },
     "opts": [
       {
@@ -13065,8 +13065,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: The right of public access means it gives a right to walk on fields and into private gardens.",
-      "sv": "Sant eller falskt: Allemansrätten innebär att den ger rätt att gå på åkrar och in i privata trädgårdar."
+      "en": "True or false: The right of public access gives a right to walk on fields and into private gardens.",
+      "sv": "Sant eller falskt: Allemansrätten ger rätt att gå på åkrar och in i privata trädgårdar."
     },
     "opts": [
       {
@@ -13370,8 +13370,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: Courts are independent, and everyone has the right to defend themselves and appeal a judgment describes legal certainty in Sweden.",
-      "sv": "Sant eller falskt: Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom beskriver rättssäkerhet i Sverige."
+      "en": "True or false: Courts are independent, and everyone has the right to defend themselves and appeal a judgment.",
+      "sv": "Sant eller falskt: Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom."
     },
     "opts": [
       {
@@ -13409,8 +13409,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: The government or Riksdag can decide how courts should judge cases describes legal certainty in Sweden.",
-      "sv": "Sant eller falskt: Regering eller riksdag kan bestämma hur domstolar ska döma beskriver rättssäkerhet i Sverige."
+      "en": "True or false: The government or Riksdag can decide how courts should judge cases.",
+      "sv": "Sant eller falskt: Regering eller riksdag kan bestämma hur domstolar ska döma."
     },
     "opts": [
       {
@@ -13542,8 +13542,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: For a person suspected of a crime in Sweden, a suspected person should be considered innocent until the person has been convicted.",
-      "sv": "Sant eller falskt: För en person som är misstänkt för brott i Sverige gäller att en misstänkt person ska betraktas som oskyldig tills personen har dömts."
+      "en": "True or false: A suspected person should be considered innocent until the person has been convicted.",
+      "sv": "Sant eller falskt: En misstänkt person ska betraktas som oskyldig tills personen har dömts."
     },
     "opts": [
       {
@@ -13581,8 +13581,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: For a person suspected of a crime in Sweden, courts decide only disputes between parents.",
-      "sv": "Sant eller falskt: För en person som är misstänkt för brott i Sverige gäller att domstolarna bara avgör frågor mellan föräldrar."
+      "en": "True or false: Courts decide only disputes between parents.",
+      "sv": "Sant eller falskt: Domstolarna avgör bara frågor mellan föräldrar."
     },
     "opts": [
       {
@@ -13714,8 +13714,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: To maintain law and order and prevent and investigate crimes describes the role of the police in Sweden.",
-      "sv": "Sant eller falskt: Att upprätthålla lag och ordning samt förebygga och utreda brott beskriver polisens uppgift i Sverige."
+      "en": "True or false: The role of the police in Sweden is to maintain law and order and prevent and investigate crimes.",
+      "sv": "Sant eller falskt: Polisens uppgift i Sverige är att upprätthålla lag och ordning samt förebygga och utreda brott."
     },
     "opts": [
       {
@@ -13753,8 +13753,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "True or false: To decide the state budget describes the role of the police in Sweden.",
-      "sv": "Sant eller falskt: Att besluta statens budget beskriver polisens uppgift i Sverige."
+      "en": "True or false: The role of the police in Sweden is to decide the state budget.",
+      "sv": "Sant eller falskt: Polisens uppgift i Sverige är att besluta statens budget."
     },
     "opts": [
       {
@@ -14058,8 +14058,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: To inform, enable public debate, and scrutinize people with power describes an important role of free media in a democracy.",
-      "sv": "Sant eller falskt: Att informera, möjliggöra samhällsdebatt och granska personer med makt beskriver en viktig uppgift för fria medier i en demokrati."
+      "en": "True or false: An important role of free media in a democracy is to inform, enable public debate, and scrutinize people with power.",
+      "sv": "Sant eller falskt: En viktig uppgift för fria medier i en demokrati är att informera, möjliggöra samhällsdebatt och granska personer med makt."
     },
     "opts": [
       {
@@ -14097,8 +14097,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: They should replace political elections describes an important role of free media in a democracy.",
-      "sv": "Sant eller falskt: De ska ersätta politiska val beskriver en viktig uppgift för fria medier i en demokrati."
+      "en": "True or false: Free media in a democracy should replace political elections.",
+      "sv": "Sant eller falskt: Fria medier i en demokrati ska ersätta politiska val."
     },
     "opts": [
       {
@@ -15611,8 +15611,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: For violence in close relationships and honour-related violence and oppression in Sweden, they are crimes under Swedish law.",
-      "sv": "Sant eller falskt: För våld i nära relationer och hedersrelaterat våld och förtryck i Sverige gäller att det är brottsligt enligt svensk lag."
+      "en": "True or false: Violence in close relationships and honour-related violence and oppression in Sweden are crimes under Swedish law.",
+      "sv": "Sant eller falskt: Det är brottsligt enligt svensk lag."
     },
     "opts": [
       {
@@ -15651,8 +15651,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: For violence in close relationships and honour-related violence and oppression in Sweden, they are always private family matters and not crimes.",
-      "sv": "Sant eller falskt: För våld i nära relationer och hedersrelaterat våld och förtryck i Sverige gäller att det alltid är en privat familjefråga och inte ett brott."
+      "en": "True or false: Violence in close relationships and honour-related violence and oppression in Sweden are always private family matters and not crimes.",
+      "sv": "Sant eller falskt: Det är alltid en privat familjefråga och inte ett brott."
     },
     "opts": [
       {
@@ -15786,8 +15786,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: For buying sex in Sweden, it is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "Sant eller falskt: För att köpa sex i Sverige gäller att det är olagligt att köpa sex, men personen som säljer straffas inte."
+      "en": "True or false: It is illegal to buy sex, but the person who sells it is not punished.",
+      "sv": "Sant eller falskt: Det är olagligt att köpa sex, men personen som säljer straffas inte."
     },
     "opts": [
       {
@@ -15825,8 +15825,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: For buying sex in Sweden, it is always legal to buy sex.",
-      "sv": "Sant eller falskt: För att köpa sex i Sverige gäller att det alltid är lagligt att köpa sex."
+      "en": "True or false: It is always legal to buy sex.",
+      "sv": "Sant eller falskt: Det är alltid lagligt att köpa sex."
     },
     "opts": [
       {
@@ -16646,8 +16646,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: For marriage between people of the same sex in Sweden, it is permitted to marry a person of the same sex.",
-      "sv": "Sant eller falskt: För äktenskap mellan personer av samma kön i Sverige gäller att det är tillåtet att gifta sig med en person av samma kön."
+      "en": "True or false: It is permitted to marry a person of the same sex.",
+      "sv": "Sant eller falskt: Det är tillåtet att gifta sig med en person av samma kön."
     },
     "opts": [
       {
@@ -16685,8 +16685,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "True or false: For marriage between people of the same sex in Sweden, it is prohibited to marry a person of the same sex.",
-      "sv": "Sant eller falskt: För äktenskap mellan personer av samma kön i Sverige gäller att det är förbjudet att gifta sig med en person av samma kön."
+      "en": "True or false: It is prohibited to marry a person of the same sex.",
+      "sv": "Sant eller falskt: Det är förbjudet att gifta sig med en person av samma kön."
     },
     "opts": [
       {
@@ -19234,8 +19234,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: As a typical agricultural country where almost everyone lived in the countryside describes Sweden two hundred years ago.",
-      "sv": "Sant eller falskt: Som ett typiskt jordbruksland där nästan alla bodde på landet beskriver Sverige för tvåhundra år sedan."
+      "en": "True or false: Two hundred years ago, Sweden was a typical agricultural country where almost everyone lived in the countryside.",
+      "sv": "Sant eller falskt: För tvåhundra år sedan var Sverige ett typiskt jordbruksland där nästan alla bodde på landet."
     },
     "opts": [
       {
@@ -19273,8 +19273,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "True or false: As a high-tech information society describes Sweden two hundred years ago.",
-      "sv": "Sant eller falskt: Som ett högteknologiskt informationssamhälle beskriver Sverige för tvåhundra år sedan."
+      "en": "True or false: Two hundred years ago, Sweden was a high-tech information society.",
+      "sv": "Sant eller falskt: För tvåhundra år sedan var Sverige ett högteknologiskt informationssamhälle."
     },
     "opts": [
       {

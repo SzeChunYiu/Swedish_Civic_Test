@@ -52,7 +52,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.quizRouteCopyParityValidated, true);
   assert.equal(summary.practiceRouteHeadersValidated, 1);
   assert.equal(summary.practiceRouteHeaderParityValidated, true);
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 28);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 38);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.chapterRouteHeadersValidated, 3);
   assert.equal(summary.chapterRouteHeaderParityValidated, true);
@@ -160,7 +160,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.supportedLanguagesValidated, 2);
   assert.equal(summary.localizationStringsValidated, summary.localizationStrings);
   assert.equal(summary.languageSettingsParityValidated, true);
-  assert.equal(summary.settingsStoreFieldsValidated, 6);
+  assert.equal(summary.settingsStoreFieldsValidated, 10);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
   assert.equal(summary.settingsDailyGoalOptionsValidated, 4);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
