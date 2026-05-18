@@ -3097,3 +3097,27 @@ Evidence: current static site still hides required top-level routes on narrow mo
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep this queued behind static flag palette drift; SETUP/site should add accessible mobile navigation and a <=390px regression guard before accepting SITE-P0-5 local readiness.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-live-current-qLm6qT/wt` / detached `origin/main` `655a63a`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after `origin/main` advanced beyond the previous live-deploy evidence.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- `git fetch origin`; current `origin/main` is `655a63a`.
+- `/home/billy/.local/bin/gh auth status` - exit 0, active GitHub account `SzeChunYiu`.
+- GitHub deployments API reports latest Production deployment `4731442202`, SHA `3be70d4`, created `2026-05-18T16:56:19Z`, target `https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app`.
+- Used clean worktree `/tmp/sct-review-live-current-qLm6qT/wt` on `origin/main` `655a63a`, with shared `node_modules` symlinked for local checks.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0 with 7/7 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 720 questions and `staticSiteQuestionBankParityValidated:true`.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' npm run test:site-live -- https://dist-3u8o5zl6a-billy10384-5430s-projects.vercel.app` - exit 1; live serves 715 questions with hash prefix `afb9eec56629`, current main expects 720 with hash prefix `57e05be047f9`; Practice hub, wide layout, Mock route, Ebook renderer, and placeholder-copy asset checks pass.
+- `git diff --name-only 3be70d421e0489485ddb7f53c804477c50b1aa95..origin/main -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json .github/workflows vercel.json` - product deltas include `content/question-bank.csv`, `data/additionalQuestions.ts`, `data/chapters.ts`, `package.json`, `site/app.js`, `site/practice.js`, `site/questions.js`, `site/settings.js`, and `site/styles.css`.
+- `git diff --check` - exit 0.
+Workspace contract: pass - no product source edited; existing finding updated instead of filing a duplicate.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 19:48 CEST]`.
+Evidence: current main remains locally ready but Production still serves the older 715-question static bank from deployment SHA `3be70d4`.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open; production must deploy `655a63a` or newer and pass the hash-aware live smoke before SITE-P0-5 can be accepted.
