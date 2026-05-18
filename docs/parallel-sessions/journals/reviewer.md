@@ -2939,3 +2939,23 @@ Verification (commands + result):
 PR (number + merged?): #497 / pending merge at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/site to add responsive accessible mobile navigation plus a <=390px static guard covering Practice, Mock exam, Ebook, and Support reachability.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-privacy-1779120000` / `task/reviewer/site-p0-current-update-1779122958`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 current-main recheck for static question disclaimer and answer-order evidence after `origin/main` advanced to `4998697`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree on current `origin/main` `1972b55`, then rebased to `4998697` after `setup: add static question disclaimers` and manager QA landed, because the shared checkout is on an older UIUX branch with unrelated dirty source, queue, and report files.
+- Duplicate scan found existing `REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1` and `REVIEWER-SITE-ANSWER-SHUFFLE-1`, so this pass updates those rows instead of filing duplicates.
+- Code inspection showed `site/app.js` renders `smtQuizSourceCitation(q, lang)` and, after the rebase, `setup: add static question disclaimers` added disclaimer copy to Practice feedback and Mock review details.
+- Served current `site/` with `python3 -m http.server 8231 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright on `#/practice?c=1` after answering q001 found `hasSource:true`, `hasDisclaimer:true`, and visible copy `Independent study practice, not a real exam or an official UHR question.`; browser console/page errors were 0.
+- System-Chrome Playwright on `#/mock?run=1` before submission found the active Mock exam question had `hasSource:true` but `hasDisclaimer:false`; after accepting submit confirmation and expanding the first review detail, the review had `hasSource:true` and `hasDisclaimer:true`.
+- Direct VM load of `site/questions.js` reported `total:715`, `single:418`, correct-answer slot counts `[388,18,12,0]`, and max correct-position share `0.928`, so the static answer-order issue remains above the 0.35 bar on the current mirror.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 715 questions and 13 chapters.
+- `git diff --check` - exit 0.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: accept the Practice-feedback and Mock-review disclaimer fix if the SETUP source PR evidence is otherwise complete; keep only a focused active-Mock-exam disclaimer follow-up if the bar remains "disclaimer present on every question screen." Keep `REVIEWER-SITE-ANSWER-SHUFFLE-1` open with current 715-question evidence.
