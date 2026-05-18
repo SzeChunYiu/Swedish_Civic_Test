@@ -242,6 +242,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.trueFalseOptionLabelsValidated, summary.trueFalseQuestions);
   assert.equal(summary.questionTagsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.staticSiteQuestionBankQuestionsValidated, summary.publishedQuestions);
+  assert.equal(summary.staticSiteQuestionBankChaptersValidated, 13);
+  assert.equal(summary.staticSiteQuestionBankParityValidated, true);
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapExactSchemaKeysValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);

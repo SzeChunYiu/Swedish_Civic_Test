@@ -2,6 +2,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+const {
+  buildSiteQuestionBank,
+  generateStaticSiteQuestionBankJs,
+} = require('./export-site-question-bank');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -4683,6 +4687,9 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let staticSiteQuestionBankQuestionsValidated = 0;
+let staticSiteQuestionBankChaptersValidated = 0;
+let staticSiteQuestionBankParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -10960,6 +10967,40 @@ function validateQuestionBankCsvContract() {
   });
 }
 
+function validateStaticSiteQuestionBankParity() {
+  if (failures.length > 0) return;
+
+  const siteQuestionBankPath = path.join(repoRoot, 'site/questions.js');
+  let expected = '';
+  let bank;
+  let actual = '';
+
+  try {
+    expected = generateStaticSiteQuestionBankJs();
+    bank = buildSiteQuestionBank();
+  } catch (error) {
+    fail(`site/questions.js parity could not be generated: ${error.message}`);
+    return;
+  }
+
+  try {
+    actual = fs.readFileSync(siteQuestionBankPath, 'utf8');
+  } catch (error) {
+    fail(`site/questions.js could not be read: ${error.message}`);
+    return;
+  }
+
+  staticSiteQuestionBankQuestionsValidated = bank.questions.length;
+  staticSiteQuestionBankChaptersValidated = bank.chapters.length;
+
+  if (actual !== expected) {
+    fail('site/questions.js is out of sync; run node scripts/export-site-question-bank.js');
+    return;
+  }
+
+  staticSiteQuestionBankParityValidated = true;
+}
+
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'id',
   'chapterId',
@@ -11895,6 +11936,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
+validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
 
 if (failures.length) {
@@ -12149,6 +12191,9 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      staticSiteQuestionBankQuestionsValidated,
+      staticSiteQuestionBankChaptersValidated,
+      staticSiteQuestionBankParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,
