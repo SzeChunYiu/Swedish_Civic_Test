@@ -2790,6 +2790,6 @@ Verification (commands + result):
 - `npm run typecheck -- --pretty false` - exit 0 after linking this temporary worktree to the shared `node_modules` install; the first attempt without local dependencies failed to resolve Expo/React types.
 - `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
 - `git diff --check` - exit 0.
-PR (number + merged?): pending at handoff commit time
+PR (number + merged?): #403 / merged yes via `6d4a5fe`
 Accepted by worker? yes
 Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker until production serves current `origin/main` and the hash-aware live check passes.
