@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 
 import { LaunchPopupAd } from '../components/monetization/LaunchPopupAd';
+import { FirstRunAboutTheTestModal } from '../components/onboarding/FirstRunAboutTheTestModal';
 import { LanguagePicker } from '../components/ui/LanguagePicker';
 import { shouldSuppressLaunchPopupAdForPath } from '../lib/monetization/ads';
 import { useRemoveAdsEntitlements } from '../lib/monetization/useRemoveAdsEntitlements';
@@ -41,6 +42,7 @@ export default function RootLayout() {
       {!suppressLaunchPopupAd && entitlementsReady ? (
         <LaunchPopupAd entitlements={monetizationEntitlements} />
       ) : null}
+      <FirstRunAboutTheTestModal />
       <StatusBar style="auto" />
     </>
   );
