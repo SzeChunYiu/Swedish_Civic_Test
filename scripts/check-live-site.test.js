@@ -4,13 +4,18 @@ const test = require('node:test');
 
 const {
   checkLiveSite,
+  hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 } = require('./check-live-site');
 
-function generatedQuestions(count) {
-  const questions = Array.from({ length: count }, (_, index) => ({ id: `q${index + 1}` }));
+function generatedQuestions(count, label = 'current') {
+  const questions = Array.from({ length: count }, (_, index) => ({
+    id: `q${index + 1}`,
+    why: index === 17 ? `${label} q018 explanation` : `${label} explanation`,
+  }));
   return [
     '(function () {',
     '  "use strict";',
@@ -18,6 +23,10 @@ function generatedQuestions(count) {
     '})();',
     '',
   ].join('\n');
+}
+
+function currentQuestionBank() {
+  return generatedQuestions(715, 'current');
 }
 
 function currentAssets() {
@@ -41,7 +50,7 @@ function currentAssets() {
       'function renderMockResult(){}',
     ].join('\n'),
     '/ebook.js': 'const PRACTICE_LINKS = {}; window.smtEbookRender = function render() {};',
-    '/questions.js': generatedQuestions(705),
+    '/questions.js': currentQuestionBank(),
   };
 }
 
@@ -51,7 +60,14 @@ function staleAssets() {
     '/styles.css': '.practice__inner { max-width: 720px; }',
     '/practice.js': 'function renderPractice(){ return "old"; }',
     '/ebook.js': 'const copy = "Svenska översättningen kommer i v1.1";',
-    '/questions.js': generatedQuestions(57),
+    '/questions.js': generatedQuestions(57, 'stale'),
+  };
+}
+
+function sameCountStaleAssets() {
+  return {
+    ...currentAssets(),
+    '/questions.js': generatedQuestions(715, 'stale'),
   };
 }
 
@@ -83,7 +99,7 @@ test('normalizes production URL inputs', () => {
 });
 
 test('reads the generated static question count', () => {
-  assert.equal(readStaticQuestionCount(generatedQuestions(705)), 705);
+  assert.equal(readStaticQuestionCount(currentQuestionBank()), 715);
 });
 
 test('derives the expected live count from the local generated site bank', () => {
@@ -91,9 +107,17 @@ test('derives the expected live count from the local generated site bank', () =>
   assert.ok(count >= 715);
 });
 
+test('derives the expected live bank hash from the local generated site bank', () => {
+  const hash = resolveRequiredQuestionBankHash();
+  assert.match(hash, /^[0-9a-f]{64}$/);
+});
+
 test('live site check passes current static assets', async () => {
   await withStaticServer(currentAssets(), async (baseUrl) => {
-    const result = await checkLiveSite(baseUrl, { requiredQuestionCount: 705 });
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
     assert.equal(result.ok, true);
     assert.equal(
       result.checks.every((check) => check.ok),
@@ -104,18 +128,36 @@ test('live site check passes current static assets', async () => {
 
 test('live site check rejects stale deploy assets', async () => {
   await withStaticServer(staleAssets(), async (baseUrl) => {
-    const result = await checkLiveSite(baseUrl, { requiredQuestionCount: 705 });
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
     assert.equal(result.ok, false);
     assert.deepEqual(
       result.checks.filter((check) => !check.ok).map((check) => check.name),
       [
         'static question bank',
+        'static question bank content',
         'practice hub assets',
         'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',
         'ebook placeholder copy',
       ],
+    );
+  });
+});
+
+test('live site check rejects same-count stale question banks', async () => {
+  await withStaticServer(sameCountStaleAssets(), async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    assert.equal(result.ok, false);
+    assert.deepEqual(
+      result.checks.filter((check) => !check.ok).map((check) => check.name),
+      ['static question bank content'],
     );
   });
 });
