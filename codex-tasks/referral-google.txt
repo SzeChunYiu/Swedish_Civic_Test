@@ -1,0 +1,33 @@
+# LANE: referral-google
+# Blueprint: swedish_citizenship_app_project_plan/16_referral_google.md
+# Owners: MANAGER-build (auth + redemption), MANAGER-uiux (CTAs)
+# Status: BLOCKED on Supabase auth landing first (NO referral work until auth ships)
+
+## Iteration 1 (PREREQ — blocking) — Supabase + Google sign-in
+- [ ] `supabase init`, add project URL + anon key to env.
+- [ ] `lib/auth/supabase.ts` client.
+- [ ] `lib/auth/googleSignIn.ts` (Expo AuthSession provider).
+- [ ] Onboarding screen "Continue with Google" + "Continue without account" (must remain usable without auth for the no-account path per CLAUDE.md "Out of scope: user accounts" — auth is OPTIONAL and unlocks referral only).
+Commit: "auth: optional Supabase + Google sign-in for referral [referral:i1]".
+
+## Iteration 2 — referral schema + RPC
+- [ ] `supabase/migrations/2026XXXX_referrals.sql` with profiles + referrals tables, RLS, and `redeem_referral(code text)` RPC (server-side cap + self-ref + uniqueness checks).
+- [ ] `lib/referral/redeemReferral.ts` client wrapper.
+- [ ] `lib/referral/generateCode.ts` (8 alphanum, collision-checked at insert time).
+
+## Iteration 3 — deep link + grant integration
+- [ ] Deep link handler for `swedishcivictest://r/{code}` + universal link `/r/[code]` web route.
+- [ ] Store pending code in SecureStore before sign-in.
+- [ ] After sign-in: call RPC, if grant returned write `monetization.referral.proGrant.expiresAt.v1`.
+- [ ] Entitlement engine: union of (IAP entitlement) ∪ (unexpired referral grant). Add helper `getEffectiveEntitlements()`.
+
+## Iteration 4 — surfaces
+- [ ] Profile "Invite a friend" with system share sheet.
+- [ ] Post-mock-pass moment CTA.
+- [ ] Pro-grant banner with expiry date + soft "keep Pro" upsell.
+
+## Definition of done
+- All acceptance commands in 16_referral_google.md pass.
+- Two-real-Google-accounts preview-build test recorded in reports/referral-device-qa.md.
+- Reviewer fraud-attempter persona blocked at DB level (not just client).
+- change_log entry.

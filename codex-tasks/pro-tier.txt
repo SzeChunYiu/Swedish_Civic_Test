@@ -1,0 +1,39 @@
+# LANE: pro-tier
+# Blueprint: swedish_citizenship_app_project_plan/13_pro_tier.md
+# Owner: MANAGER-build
+# Status: queued (do NOT start until current Remove-Ads sprint GOAL.md acceptance passes)
+
+## Iteration 1 — extend types (NO IAP wiring yet)
+- [ ] Extend `PremiumEntitlements` in `types/monetization.ts` with fields per blueprint matrix (spacedRepetition, nativeLangExplanations, customStudyPlan, notesExport, predictedPassProbability, confidenceSlider, multiColorHighlights). Default false in FREE_ENTITLEMENTS and REMOVE_ADS_ENTITLEMENTS.
+- [ ] Add `PRO_LIFETIME_ENTITLEMENTS` to `lib/monetization/premium.ts` (all true).
+- [ ] Add `hasProEntitlement(e)` helper. Update `isPremiumUser` to test the new gate set.
+- [ ] Update existing `monetization` unit tests so REMOVE_ADS_ENTITLEMENTS doesn't accidentally satisfy Pro.
+- [ ] tsc + lint + npm test -- monetization MUST pass. Remove-Ads acceptance test MUST still pass.
+Acceptance: blueprint acceptance steps 2, 3, 4 pass. Commit message: "pro-tier: extend entitlement type + helpers (no IAP wiring) [pro-tier:i1]".
+
+## Iteration 2 — IAP product + restore wiring
+- [ ] Add PRO_LIFETIME_PRODUCT_ID + PRO_LIFETIME_PRICE_LABEL ('59 SEK') + PRO_LIFETIME_STORAGE_KEY to purchases.ts.
+- [ ] Add `buyProLifetime`, `restoreProLifetime` mirroring the existing Remove-Ads flow.
+- [ ] `getPurchaseEntitlements` now reads both Remove-Ads and Pro Lifetime keys and merges.
+- [ ] Mock provider supports both SKUs for tests.
+Acceptance: blueprint acceptance steps 1, 5 pass. Tests cover: buy Pro, restore Pro, restore both, restore neither.
+
+## Iteration 3 — paywall + upgrade-from-removeads banner
+- [ ] New `<ProPaywall />` component, surfaced from: locked features (FSRS, multi-color highlight, native-lang explanation), profile screen, mistakes >20 cap.
+- [ ] Detect Remove-Ads ownership → render upgrade banner per blueprint § Upgrade path.
+- [ ] All copy in Sv + En via existing i18n pattern.
+Acceptance: blueprint step 3 passes (≥3 hasProEntitlement gate sites). Reviewer files cost-anxious-immigrant persona pass.
+
+## Iteration 4 — Free / Ad-Free / Pro comparison table (REQUIRED — user-requested)
+- [ ] lib/monetization/tierComparison.ts — single source of truth for the table rows (Sv + En, every row maps to an entitlement flag or known invariant).
+- [ ] components/TierComparisonTable.tsx — renders the table. Uses theme tokens, no hardcoded colors.
+- [ ] Embedded as the headline of <ProPaywall />, NOT behind a "Compare plans" disclosure.
+- [ ] Two CTAs under the table: primary "Buy Pro 59 kr" + secondary "Just remove ads 29 kr" (or "Upgrade to Pro" if already own Ad-Free).
+- [ ] tests/content-tier-comparison-parity.test.js asserts every row in the table corresponds to a real entitlement flag or documented invariant; catches drift between marketing copy and code.
+- [ ] Reviewer cost-anxious-immigrant + power-user personas both find the choice clear (file findings if not).
+Acceptance: TierComparisonTable rendered on paywall screen with all rows from blueprint table; parity test green; no urgency / no "best value" badge.
+
+## Definition of done for the lane
+- All 6 acceptance commands in 13_pro_tier.md pass on `main`.
+- Reviewer (REVIEWER lane) files zero open blocker/major findings.
+- change_log/2026-05-XX-pro-tier.md committed.

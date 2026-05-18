@@ -1,0 +1,31 @@
+# LANE: ebook-highlights
+# Blueprint: swedish_citizenship_app_project_plan/15_ebook_highlights.md
+# Owners: MANAGER-content (15a — BLOCKING), MANAGER-build (15b), MANAGER-uiux (15b UI)
+
+## Iteration 1 (CONTENT — BLOCKING) — ebook bodies
+- [ ] Extend `Chapter` type in `types/content.ts` per blueprint § 15a (bodySv, bodyEn, ChapterBlock union).
+- [ ] Author block-structured bodies for chapters 1–5, Sv + En, every block has stable id.
+- [ ] Content must paraphrase UHR material — never copy verbatim more than 1 sentence per page.
+- [ ] Pre-commit: validate every block has matching Sv + En (script `scripts/validate-chapter-bodies.ts`).
+Commit: "content: ebook bodies for chapters 1–5 [highlights:i1]".
+
+## Iteration 2 (BUILD) — highlightsStore + selection plumbing
+- [ ] `lib/storage/highlightsStore.ts` skeleton (operator session is shipping this in parallel — verify, integrate, do not duplicate).
+- [ ] Long-press selection handler on `<Text>` block components.
+- [ ] 4-color popover; 3 colors locked behind Pro + a "tap to unlock" CTA.
+- [ ] Notes input modal (Pro only).
+- [ ] Persistence + cross-app-relaunch test.
+
+## Iteration 3 (BUILD) — render highlighted text + edit/delete
+- [ ] Rendering: split each block's text by highlight ranges, wrap in colored <Text>.
+- [ ] Tap existing highlight → edit color / note / delete.
+- [ ] Orphan handling: highlight whose block was deleted → tombstone log entry + drop silently next launch.
+
+## Iteration 4 (BUILD) — export (Pro)
+- [ ] `scripts/export-highlights.ts` for PDF + Markdown.
+- [ ] Profile "Export my notes" button → triggers share sheet.
+
+## Definition of done
+- All acceptance commands in 15_ebook_highlights.md pass.
+- Reviewer dyslexic-user + returning-user personas pass.
+- change_log entry.

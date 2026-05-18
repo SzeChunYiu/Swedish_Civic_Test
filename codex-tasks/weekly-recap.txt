@@ -1,0 +1,25 @@
+# LANE: weekly-recap
+# Blueprint: swedish_citizenship_app_project_plan/19_weekly_recap.md
+# Owner: MANAGER-build
+# Status: queued (no Pro/auth dependency — can start as soon as v1.0 ships)
+
+## Iteration 1 — recap selector
+- [ ] lib/learning/weeklyRecap.ts — pure selector over progress + mastery + streak.
+- [ ] Frozen-clock unit tests for: zero-activity week, normal week, mastery-crossing week.
+- [ ] NO push token / server code paths.
+
+## Iteration 2 — recap screen + history
+- [ ] app/recap.tsx renders WeeklyRecap stats with practice CTA.
+- [ ] Persist last 8 weeks to MMKV.
+- [ ] Profile "Past weeks" link.
+
+## Iteration 3 — opt-in local notification scheduling
+- [ ] expo-notifications dep + permission flow.
+- [ ] Settings toggle (default OFF) with "local-only, no tracking" reassurance.
+- [ ] Day-of-week + time picker.
+- [ ] Notification copy pool reviewed for tone (Sv + En).
+
+## Definition of done
+- All blueprint acceptance commands pass.
+- Reviewer lapsed-7-day persona sees encouraging copy.
+- change_log entry.

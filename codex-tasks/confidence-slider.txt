@@ -1,0 +1,24 @@
+# LANE: confidence-slider
+# Blueprint: swedish_citizenship_app_project_plan/17_confidence_slider.md
+# Owner: MANAGER-build
+# Status: queued (depends on pro-tier IAP + FSRS review store landing first)
+
+## Iteration 1 — answer-event extension + capture UI
+- [ ] Extend AnswerEvent type with confidenceRating?: 1..5.
+- [ ] Components/ConfidenceSlider.tsx with 5 dots, Sv + En labels, a11y.
+- [ ] Wire into quiz screen — selecting confidence is optional; submission still works without it.
+- [ ] Free users see the slider grayed-out with a "Pro" lock chip.
+
+## Iteration 2 — FSRS grade mapping override
+- [ ] When confidenceRating present, use the mapping table from blueprint § FSRS grade mapping.
+- [ ] Unit tests cover all 5 levels × correct/wrong = 10 cases.
+
+## Iteration 3 — calibration screen
+- [ ] app/calibration.tsx; renders the 5-row calibration table from answer history.
+- [ ] Empty state if < 20 rated answers.
+- [ ] Linked from profile (Pro only).
+
+## Definition of done
+- All blueprint acceptance commands pass.
+- Reviewer overconfident-cram + anxious-underestimator personas pass.
+- change_log entry.

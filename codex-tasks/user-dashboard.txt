@@ -1,0 +1,35 @@
+# LANE: user-dashboard
+# Blueprint: swedish_citizenship_app_project_plan/22_user_dashboard.md
+# Owner: MANAGER-uiux + MANAGER-build
+# Status: queued (selectors shipped by operator in batch17; UI lane unblocked, can start as soon as v1.0 ships)
+
+## Iteration 1 — Free-tier dashboard route + sections 1/2/3
+- [ ] Install victory-native dep (verify Expo Web compatibility).
+- [ ] app/dashboard.tsx route with stack: ActivityHeatmap + PerChapterBars + StreakSparkline.
+- [ ] components/dashboard/ActivityHeatmap.tsx (53-week grid; tap to drill day).
+- [ ] components/dashboard/PerChapterBars.tsx (accuracy + coverage; weakest-first sort toggle).
+- [ ] components/dashboard/StreakSparkline.tsx.
+- [ ] Empty states per section with Sv + En copy.
+- [ ] Profile screen "View dashboard →" CTA.
+- [ ] Home hero summary chip linking to /dashboard.
+
+## Iteration 2 — Pro-tier analytics sections 4/5/6
+- [ ] components/dashboard/MockExamChart.tsx — line chart + pass-line reference.
+- [ ] components/dashboard/TimeOfDayPattern.tsx — 24-bin radial chart.
+- [ ] components/dashboard/MistakeConvergence.tsx — area chart with "N resolved this week" insight.
+- [ ] Gate all three behind hasProEntitlement() with <ProPaywall /> teaser.
+
+## Iteration 3 — a11y + i18n
+- [ ] Every chart has accessibilityLabel that enumerates data points (table-fallback for screen readers).
+- [ ] Reduced-motion compliant — no auto-spinning charts.
+- [ ] Full Sv + En localization via existing i18n pattern.
+
+## Iteration 4 (optional, depends on Supabase auth landing) — cloud sync
+- [ ] Mirror UserProgress to user_progress table on auth + on foreground.
+- [ ] Conflict resolution: last-write-wins per question, max(seenCount) for counters.
+- [ ] Local-first — sync never blocks UI; offline mode fully functional.
+
+## Definition of done
+- All blueprint acceptance commands pass.
+- Reviewer no-progress-new-user + data-loving-power-user personas pass.
+- change_log entry.
