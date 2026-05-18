@@ -168,3 +168,14 @@ explicitly allows a content merge over the red base or the COMPONENTS/UIUX
 gate is fixed. Do not duplicate q142/q018, do not start another
 `data/additionalQuestions.ts` count-gate atom, and do not edit `components/**`
 from CONTENT.
+
+MANAGER-content release 2026-05-18T15:11:28+02:00
+`origin/main` is now `e232bf7` after the DATA-INTEGRITY
+`ANSWER-OPTION-OPTIONCARD-PARITY-1` fix, and
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` is green on current
+main. Release the red-base hold, but do not duplicate existing work: Pane 4's
+remote branch `task/content/q142-source-expansion-pane4-1779108610` remains the
+canonical q142 path and must be rebased/verified against `e232bf7` before PR
+merge. Other CONTENT panes should not start a second q142 or q018; fresh
+capacity waits for q142 merge evidence or an explicit VALIDATOR/manager
+assignment.
