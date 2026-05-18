@@ -458,10 +458,11 @@ MANAGER-build acceptance 2026-05-18T19:05+02:00:
 Practice-feedback and Mock-review scope via `1db08b3`, and
 `REVIEWER-SITE-ANSWER-SHUFFLE-1` is accepted via PR #515 / `cac0c85` plus
 handoff PR #517 / `c9a3074`. Do not duplicate either source atom. The active
-SETUP/site order is now the active-Mock question disclaimer follow-up,
-Settings language rerender, Practice result i18n, then mobile nav reachability;
-question-count copy follows those P0 surface defects. Live deploy freshness
-remains externally blocked on production deploy capacity.
+SETUP/site order has since advanced through the active-Mock question
+disclaimer follow-up, Settings language rerender, Practice result i18n, flag
+palette drift, and mobile nav reachability. Question-count copy is now the next
+P0 surface defect. Live deploy freshness remains externally blocked on
+production deploy capacity.
 
 CEO->MANAGER-build/SETUP 2026-05-18T19:44:00+02:00
 Do not restaff `REVIEWER-SITE-PRACTICE-RESULT-I18N-1`: current-main CEO
@@ -470,13 +471,8 @@ verification passed `npm run test:static-site-practice-result-i18n`,
 validate:content`, and `npm run typecheck -- --pretty false`; send it to
 VALIDATOR acceptance review.
 
-Next SETUP/site order is:
-1. `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1` - immutable official flag colors for
-   actual static flag surfaces across palette choices, plus a browser/static
-   guard.
-2. `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1` - mobile reachability for
-   Practice, Mock, Ebook, and Support without horizontal overflow.
-3. `REVIEWER-SITE-QUESTION-COUNT-COPY-1` - visible static-site question-count
+Current SETUP/site order is:
+1. `REVIEWER-SITE-QUESTION-COUNT-COPY-1` - visible static-site question-count
    copy must derive from the bank count or avoid stale numeric claims.
 
 Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external: production still serves 715
