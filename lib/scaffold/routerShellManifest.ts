@@ -330,8 +330,8 @@ export const expoRouterStandaloneHeaderHiddenRoutes = [
 
 export const expoRouterShellContract = {
   notFoundRouteName: '+not-found',
-  notFoundHeaderMode: 'hidden',
-  rootStackHeaderMode: 'hidden',
+  notFoundHeaderMode: 'visible-language-picker',
+  rootStackHeaderMode: 'visible-language-picker',
   notFoundRedirectHref: '/home',
   notFoundFileProtocolFallback: 'HomeScreen',
   webLanguage: 'sv',

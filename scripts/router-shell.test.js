@@ -100,13 +100,13 @@ test('router shell fallback is registered in the root Expo stack', () => {
   assertMatches(rootLayout, /<Stack\b/, 'root layout should render the Expo Router stack');
   assertMatches(
     rootLayout,
-    /<Stack\s+screenOptions=\{\{\s*headerShown:\s*false\s*\}\}>/,
-    'root stack should hide standalone route headers so in-page localized headers are the only visible headings',
+    /<Stack\s+screenOptions=\{\{[\s\S]*headerShown:\s*true,[\s\S]*headerTitle:\s*'',[\s\S]*headerBackVisible:\s*false,[\s\S]*headerShadowVisible:\s*false,[\s\S]*headerStyle:\s*\{\s*backgroundColor:\s*colors\.canvas\s*\},[\s\S]*headerRight:\s*\(\)\s*=>\s*<LanguagePicker\s*\/>,[\s\S]*\}\}/,
+    'root stack should expose the empty-title language picker header contract',
   );
   assertMatches(
     rootLayout,
     /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/,
-    'root stack should register the not-found recovery route under the hidden root header contract',
+    'root stack should register the not-found recovery route under the language picker header contract',
   );
   assertMatches(
     rootLayout,
@@ -230,8 +230,8 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'terms',
   ]);
   assert.deepEqual(manifest.notFoundRouteNames, ['+not-found']);
-  assert.deepEqual(manifest.notFoundHeaderModes, ['hidden']);
-  assert.deepEqual(manifest.rootStackHeaderModes, ['hidden']);
+  assert.deepEqual(manifest.notFoundHeaderModes, ['visible-language-picker']);
+  assert.deepEqual(manifest.rootStackHeaderModes, ['visible-language-picker']);
   assert.deepEqual(manifest.notFoundRedirectHrefs, ['/home']);
   assert.deepEqual(manifest.notFoundFileProtocolFallbacks, ['HomeScreen']);
   assert.deepEqual(manifest.webLanguages, ['sv']);
@@ -255,8 +255,8 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
 
   assertMatches(
     rootLayout,
-    /<Stack\s+screenOptions=\{\{\s*headerShown:\s*false\s*\}\}>/,
-    'root stack should hide standalone route headers from the manifest contract',
+    /<Stack\s+screenOptions=\{\{[\s\S]*headerShown:\s*true,[\s\S]*headerTitle:\s*'',[\s\S]*headerRight:\s*\(\)\s*=>\s*<LanguagePicker\s*\/>,[\s\S]*\}\}/,
+    'root stack should expose the language picker header from the manifest contract',
   );
   for (const routeName of manifest.standaloneHeaderHiddenRoutes) {
     assert.equal(
@@ -270,7 +270,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     new RegExp(
       `<Stack\\.Screen\\s+name=["']${escapeRegExp(manifest.notFoundRouteNames[0])}["']\\s*\\/>`,
     ),
-    'root stack should register the fallback route under the hidden header contract',
+    'root stack should register the fallback route under the language picker header contract',
   );
   assertContains(rootLayout, `SystemUI.setBackgroundColorAsync(${manifest.themeColorTokens[0]})`);
   assertContains(rootLayout, `<StatusBar style="${manifest.statusBarStyles[0]}" />`);

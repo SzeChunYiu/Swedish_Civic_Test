@@ -629,11 +629,12 @@ test('question disclaimer exposes the non-official warning as an accessible summ
   assert.match(source, /Study disclaimer/);
   assert.match(source, /const disclaimerAccessibilityLabel =/);
   assert.match(source, /\$\{copy\.accessibilityLabelPrefix\}: \$\{copy\.text\}/);
+  assert.match(source, /import \{ DisclaimerBanner \} from '\.\.\/DisclaimerBanner';/);
+  assert.match(source, /<DisclaimerBanner/);
   assert.match(source, /accessibilityHint=\{copy\.accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{disclaimerAccessibilityLabel\}/);
-  assert.match(source, /style=\{styles\.card\}/);
-  assert.match(source, /backgroundColor: colors\.surfaceWarm/);
-  assert.match(source, /padding: space\[1\.5\]/);
+  assert.match(source, /message=\{copy\.text\}/);
+  assert.match(source, /title=\{copy\.title\}/);
   assert.match(source, /Independent study tool/);
   assert.match(source, /Not official/);
   assert.match(source, /not real exam questions/);

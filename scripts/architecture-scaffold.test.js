@@ -566,10 +566,22 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
     'index',
     'search',
   ]);
-  assert.match(rootLayout, /<Stack\s+screenOptions=\{\{\s*headerShown:\s*false\s*\}\}>/);
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']index["']\s*\/>/);
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']\(tabs\)["']\s*\/>/);
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']\(auth\)["']/);
+  assert.match(
+    rootLayout,
+    /<Stack\s+screenOptions=\{\{[\s\S]*headerShown:\s*true,[\s\S]*headerTitle:\s*'',[\s\S]*headerRight:\s*\(\)\s*=>\s*<LanguagePicker\s*\/>,[\s\S]*\}\}/,
+  );
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']index["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
+  );
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
+  );
+  assert.match(
+    rootLayout,
+    /<Stack\.Screen\s+name=["']\(auth\)["']\s+options=\{\{\s*presentation:\s*'modal',\s*headerShown:\s*false\s*\}\}/,
+  );
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']account["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']search["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/);

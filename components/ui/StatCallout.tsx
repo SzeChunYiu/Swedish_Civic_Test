@@ -43,12 +43,7 @@ const toneStyles: Record<
 export function StatCallout({ value, label, tone = 'default' }: StatCalloutProps) {
   const t = toneStyles[tone];
   return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: t.background, borderColor: t.borderColor },
-      ]}
-    >
+    <View style={[styles.card, { backgroundColor: t.background, borderColor: t.borderColor }]}>
       <Text style={[styles.value, { color: t.valueColor }]}>{value}</Text>
       <Text style={[styles.label, { color: t.labelColor }]}>{label}</Text>
     </View>
