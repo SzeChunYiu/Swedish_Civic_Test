@@ -2857,6 +2857,6 @@ Verification (commands + result):
 - `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
 - `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` - exit 1 on the already-queued `REVIEWER-ROUTE-HEADER-1` Stack header contract; this was noted but not duplicated as part of the native account-scope defect.
 - `git diff --check` - exit 0.
-PR (number + merged?): pending at handoff commit time
+PR (number + merged?): #463 / merged yes via `2703afc`
 Accepted by worker? yes
 Next suggested validator action: route `REVIEWER-NATIVE-ACCOUNT-SCOPE-1` to SETUP/build for either native account/auth removal or an explicit operator scope change; keep static-site account cleanup accepted and separate.
