@@ -167,3 +167,13 @@ Verification (commands + result): UHR official `Sverige i fokus` text opened for
 PR (number + merged?): #589 merged via squash (`9f4c068`)
 Accepted by worker? yes
 Next suggested validator action: route q150's generated meta-stem defect to DATA-INTEGRITY with the next generated true/false template recheck; then continue the rolling post-#570 recheck with q151-q200.
+
+Lane: CONTENT-VERIFY / CONTENT Pane 1
+Host/branch: local worktree `/tmp/sct-content-pane1-post584`, branch `task/content/post584-verify-ledger-pane1-1779128200`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-#584 VERIFY ledger/report recheck for q651-q720 generated unknown-option fallback and remaining residual naturalness
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q651-q700-2026-05-18.md`, `docs/verify/q701-q720-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): Focused q651-q720 CSV/static/ledger assertion checked 70 rows, found zero fallback-option rows, no missing or mismatched static rows, and confirmed residual defects remain only for `q666`, `q667`, `q699`, `q714`, and `q715`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with static-site parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: attach this post-#584 evidence to the accepted generated unknown-option route and keep DATA-INTEGRITY focused on the remaining residual naturalness rows `q666`, `q667`, `q699`, `q714`, and `q715` plus any older ledger slices still marked with stale unknown-option status.
