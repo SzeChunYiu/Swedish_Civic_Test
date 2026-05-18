@@ -31,8 +31,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/chapters.ts')) {
     return String(contents).replace(
-      '    questionCount: 50,\\n  },',
-      "    questionCount: 50,\\n    editorNote: 'internal chapter note',\\n  },",
+      '    questionCount: 55,\\n  },',
+      "    questionCount: 55,\\n    editorNote: 'internal chapter note',\\n  },",
     );
   }
   return contents;
