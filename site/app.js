@@ -682,8 +682,7 @@ document.addEventListener("click", (e) => {
 /* ============================ ADS + CONSENT */
 
 const SMT_ADS = {
-  // Replace with your real AdSense publisher ID
-  publisherId: "ca-pub-XXXXXXXXXXXXXXXX",
+  publisherId: "ca-pub-2451892671779738",
   scriptLoaded: false,
 };
 
