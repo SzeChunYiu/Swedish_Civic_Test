@@ -5,7 +5,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Platform } from 'react-native';
 
-import { supabase } from '../supabase';
+import { isSupabaseConfigured, supabase } from '../supabase';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -72,12 +72,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>('loading');
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setStatus('anonymous');
+      return;
+    }
     let cancelled = false;
-    supabase.auth.getSession().then(({ data }) => {
-      if (cancelled) return;
-      setSession(data.session);
-      setStatus(data.session ? 'authenticated' : 'anonymous');
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (cancelled) return;
+        setSession(data.session);
+        setStatus(data.session ? 'authenticated' : 'anonymous');
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('anonymous');
+      });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
