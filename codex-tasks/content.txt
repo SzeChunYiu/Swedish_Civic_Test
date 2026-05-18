@@ -45,21 +45,27 @@ Duplicate guard:
 Active dispatch:
 - q016 and q017 are both landed. The earlier q016 rate-limit assignment is
   superseded.
-- Do not automatically route q020/q027/q028 or q074/q078/non-site content while
-  the SITE-P0 deployed-site blockers in `codex-tasks/blockers.txt` are active.
-- Fresh capacity after q016 goes to VALIDATOR for SITE lease/staffing or an
-  explicit defer decision before any new non-site content assignment.
+- Operator directive in `codex-tasks/open.txt` supersedes the earlier idle-hold
+  behavior: managers must not park CONTENT panes while build-capable SITE-P0
+  staffing is unavailable. Keep panes on independent Phase-A UHR-only
+  CONTENT-VERIFY/SOURCE-CITATION atoms that do not touch `site/**`.
 - Local non-site worktrees observed after the CEO 13:32 update
   (`/tmp/sct-q018-pane4-1779104569`, `/tmp/sct-q020-pane1`, and
   `/tmp/sct-q074-pane3`) are not accepted for push/PR unless VALIDATOR
   explicitly leases content despite SITE-P0.
 
-Next content work is HOLD pending VALIDATOR's SITE-P0 staffing decision. If
-VALIDATOR/CEO explicitly releases content capacity despite SITE-P0, resume with
-the latest accepted reviewer queue and keep every atom UHR-only, one question
-where possible, with preserved UHR locator, export parity, `validate:content`,
-focused content tests, typecheck, ownership, Prettier/diff checks, and a
-journal handoff naming the PR or merge evidence.
+Next content work: q019 CONTENT-VERIFY only. Remove source-authority phrasing
+from q019 explanations while preserving the prompt, answer, options, tags,
+difficulty, and UHR `Politiska val och partier` / `Val och röstning` locator.
+This advances SOURCE-CITATION/TRANSLATE-COMPLETE without duplicating the
+observed q018/q020/q074 worktrees or editing deployed-site files. After q019,
+continue with the next independent UHR-only CONTENT-VERIFY or SOURCE-EXPANSION
+atom unless VALIDATOR has newer accepted evidence.
+
+Every released atom must preserve UHR locator evidence, run export parity,
+`validate:content`, focused content tests, typecheck, ownership,
+Prettier/diff checks, and write a journal handoff naming the PR or merge
+evidence.
 
 Acceptance guard: every content handoff must name the question id, changed
 artifact, UHR locator, verification commands, PR number or merge commit, and
