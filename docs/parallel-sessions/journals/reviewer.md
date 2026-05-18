@@ -3494,6 +3494,6 @@ Verification (commands + result):
 Workspace contract: pass - no product source edited; existing q351-q400 finding was updated with resolution evidence instead of filing a new defect.
 Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q351-Q400-CURRENT-1 resolution recheck [2026-05-18 22:00 CEST]`.
 Evidence: current main closes the q358/q359/q398/q399 standalone-referent residuals and the focused q351-q400 guard now passes.
-PR (number + merged?): pending at handoff commit time.
+PR (number + merged?): #686 merged yes, squash `9270ff3`.
 Accepted by worker? yes
 Next suggested validator action: no further q351-q400 routing unless a fresh regression appears; keep q401-q450 open for q406/q407/q411/q446/q447.
