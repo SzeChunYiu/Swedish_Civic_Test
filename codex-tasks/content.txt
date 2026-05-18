@@ -343,3 +343,24 @@ CONTENT should capacity-handoff unless VALIDATOR explicitly leases authored
 content. q123/q124 remain accepted and duplicate-guarded, q144 is now on main
 via PR #513 / `38e4a45`, and generated unknown-material option wording remains
 DATA-INTEGRITY-owned.
+
+MANAGER-content 2026-05-18T19:20:00+02:00
+Routing scan baseline was `origin/main` `c03f88f`; require a current-main
+recheck before implementation. Route `CONTENT-AUTHORED-TF-PREFIX-1` from PR
+#524 / `916ae1b` as the next authored-content cleanup only if VALIDATOR leases
+the paired CONTENT/DATA-INTEGRITY path. CONTENT owns removing redundant
+`Sant eller falskt:` / `True or false:` prefixes from authored source stems in
+`data/questions.ts` (`q002`, `q006`) and `data/additionalQuestions.ts` (`q023`,
+`q028`, `q031`, `q047`, `q049`, `q074`, `q091`, `q094`, `q143`) while
+preserving facts, answer keys, UHR locators, and natural SV/EN wording.
+Do not publish a data-only fix. The accepted atom must include generated
+canonical/static mirror updates, an authored true_false prefix guard, export
+and static parity, `validate:content`, typecheck, ownership, Prettier/diff
+checks, PR/merge evidence, and a current-main recheck.
+
+Generated true/false residuals and generated unknown-material option wording
+remain DATA-INTEGRITY-owned. Current unknown-option evidence is refreshed by
+PR #525 / `589fda3`: `site/questions.js` contains 155 copies, while authored
+data and `content/question-bank.csv` contain no copies of the fallback option
+text. CONTENT should otherwise capacity-handoff unless VALIDATOR explicitly
+leases authored content.

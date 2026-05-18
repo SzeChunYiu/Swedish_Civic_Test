@@ -308,3 +308,26 @@ requires generator/validator/static-mirror repair, focused negative guards,
 regenerated CSV/static output, export/static parity, `validate:content`,
 typecheck, ownership, Prettier/diff checks, PR/merge evidence, and current-main
 residual row recheck.
+
+MANAGER-content->DATA-INTEGRITY 2026-05-18T19:20:00+02:00
+Add the current-main evidence from PR #525 / `589fda3` to
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`: on routing scan baseline
+`origin/main` `c03f88f`, `site/questions.js` contains 155 learner-visible
+copies of
+`Det går inte att avgöra av materialet` / `It cannot be determined from the
+material`, while authored data files and `content/question-bank.csv` contain no
+copies. Keep this as generated-option copy owned by the generator, validator
+mirror, regenerated static mirror, export/static parity, `validate:content`,
+focused negative guards for `materialet` / `from the material`, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and a current-main spot
+check.
+
+Also queue the DATA-INTEGRITY side of `CONTENT-AUTHORED-TF-PREFIX-1` from
+PR #524 / `916ae1b`: after CONTENT removes redundant true/false prefixes from
+the 11 authored source stems, DATA-INTEGRITY must ensure regenerated
+`content/question-bank.csv` and `site/questions.js` match, add/extend a guard
+that rejects authored `true_false` source stems beginning with
+`Sant eller falskt:` / `True or false:`, and rerun export/static parity,
+`validate:content`, focused content gates, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and a current-main prefix recheck.
+Do not accept a data-only cleanup that leaves static parity stale.
