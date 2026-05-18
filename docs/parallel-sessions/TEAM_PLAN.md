@@ -55,7 +55,7 @@ Role types: `fixed-executive`, `fixed-management`, `fixed-quality`,
 | Lane group | Session (prompts file) | Writable scope |
 |---|---|---|
 | meta/CEO | `codex-prompts-meta.txt` | priorities, queues, scope protection (no product code) |
-| build | `codex-prompts-team-build.txt` | `app/ components/` (UIUX), scaffold/tooling (SETUP), schema/parity (DATA-INTEGRITY) |
+| build | `codex-prompts-team-build.txt` | `site/` deployed static surface, `app/ components/` (UIUX), scaffold/tooling (SETUP), schema/parity (DATA-INTEGRITY) |
 | uiux | `codex-prompts-team-uiux.txt` / `-uiux-design` / `-uiux-runtime` | `lib/theme/` tokens, `components/`, screen polish, motion/a11y |
 | content | `codex-prompts-civic-content.txt` | `data/` questions + chapters, UHR citations only |
 | qa | `codex-prompts-civic-team-qa.txt` | `__tests__/`, e2e specs, unit tests |
