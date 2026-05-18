@@ -417,3 +417,13 @@ A11y props: default `accessible=true` and `accessibilityRole="summary"` remain; 
 Verification: `./node_modules/.bin/prettier --check components/DisclaimerBanner.tsx` -> pass; token discipline `rg -n "#[0-9a-fA-F]{3,8}|rgba?\(|\b[0-9]+\s*,\s*[0-9]+\s*,\s*[0-9]+" components/DisclaimerBanner.tsx` -> no matches; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/DisclaimerBanner.tsx` -> pass.
 Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
 Next: Manager can review this bounded TRANSLATE-COMPLETE DisclaimerBanner fallback atom; the separate SwedishFlagBand fixed-flag-color atom remains blocked on DESIGN-TOKENS publishing `lib/theme/flag.ts`.
+
+## Iteration 42 - 2026-05-18
+
+Component: CountdownBanner alert spoken-summary atom - `components/ui/CountdownBanner.tsx`
+Variants/states implemented: preserved localized SV/EN countdown copy, hourly day refresh, and expired-banner null state; added a documented `CountdownBannerProps` interface, optional caller `accessibilityLabel`, derived localized alert summary copy, and tokenized hairline border width.
+Tokens used: `colors.warningSoft`, `colors.warning`, `colors.text`, `radius.card`, `space.hairline`, `space[0.5]`, `space[2]`, `typography.displaySecondary`, `typography.cardTitle`, `typography.micro`, and `typography.bodyTight`.
+A11y props: `accessibilityRole="alert"` remains; banner now exposes a localized `accessibilityLabel` such as the remaining-days label plus the banner body, with caller override support.
+Verification: `./node_modules/.bin/prettier --check components/ui/CountdownBanner.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/ui/CountdownBanner.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/ui/CountdownBanner.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
+Next: Manager can review this bounded component a11y/token atom; SwedishFlagBand fixed-flag-color work remains blocked on DESIGN-TOKENS publishing `lib/theme/flag.ts`.

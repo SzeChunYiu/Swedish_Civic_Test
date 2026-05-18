@@ -19,7 +19,17 @@ const copy = {
   },
 } as const;
 
-export function CountdownBanner({ language }: { language: 'sv' | 'en' }) {
+/**
+ * Defaults: localized countdown body, tokenized warning surface, and
+ * `accessibilityRole="alert"`. Pass `accessibilityLabel` only when the route
+ * needs a more specific spoken summary.
+ */
+export interface CountdownBannerProps {
+  accessibilityLabel?: string;
+  language: 'sv' | 'en';
+}
+
+export function CountdownBanner({ accessibilityLabel, language }: CountdownBannerProps) {
   const [days, setDays] = useState<number>(() => daysUntil(EXAM_REFORM_DATE));
 
   useEffect(() => {
@@ -31,9 +41,15 @@ export function CountdownBanner({ language }: { language: 'sv' | 'en' }) {
 
   const t = copy[language];
   const dateString = formatExamDate(EXAM_REFORM_DATE, language);
+  const resolvedAccessibilityLabel =
+    accessibilityLabel ?? `${t.label(days)} ${t.untilLabel}. ${t.body(dateString)}`;
 
   return (
-    <View accessibilityRole="alert" style={styles.banner}>
+    <View
+      accessibilityLabel={resolvedAccessibilityLabel}
+      accessibilityRole="alert"
+      style={styles.banner}
+    >
       <View style={styles.daysBlock}>
         <Text style={styles.daysNumber}>{days}</Text>
         <Text style={styles.daysLabel}>{t.untilLabel}</Text>
@@ -49,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warningSoft,
     borderColor: colors.warning,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     flexDirection: 'row',
     gap: space[2],
     padding: space[2],
