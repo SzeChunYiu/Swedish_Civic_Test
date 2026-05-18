@@ -57,3 +57,13 @@ A11y props: default `accessible=true`; default `accessibilityRole="text"`; deriv
 Verification: `/home/billy/Swedish_Civic_Test/node_modules/.bin/prettier --check components/PillBadge.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/PillBadge.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/PillBadge.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review PillBadge and then queue ProgressBar if accepted.
+
+## Iteration 6 - 2026-05-18
+
+Component: ProgressBar progress atom - `components/ProgressBar.tsx`
+Variants/states implemented: clamped progress values, animated accent fill by default, optional static mode, caller track/fill style passthrough, and generated percent-complete value label.
+Tokens used: `colors.surfaceWarm`, `colors.border`, `colors.accent`, `motion.duration.slow`, `radius.pill`, `space[1.5]`, and `space.hairline`.
+A11y props: default `accessibilityRole="progressbar"`; derives `accessibilityLabel` and `accessibilityValue.text` from progress percent or caller `valueLabel`; sets min/max/now/text progress values plus web `aria-value*` mirrors.
+Verification: `/home/billy/Swedish_Civic_Test/node_modules/.bin/prettier --check components/ProgressBar.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/ProgressBar.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/ProgressBar.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? yes - PR #190 is open and mergeable, but merge is held because the only remote status is a Vercel failure with a build-rate-limit URL; `codex-tasks/blockers.txt` standing policy says not to file this as a shared blocker because local gates passed and the push succeeded.
+Next: Manager can retry PR #190 merge after the Vercel rate-limit status clears, then queue ChapterRow if accepted.
