@@ -378,3 +378,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: accept the recent-data regression ledger refresh if PR gates pass; keep generated q663/q670/q671 and generated single-choice filler/judgement cleanup with DATA-INTEGRITY, and keep `CONTENT-AUTHORED-TF-PREFIX-1` behind an explicit bundled lease.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-q251-q300-pane3-1779142500`, branch `task/content-verify/q251-q300-pane3-1779142500`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-generated-cleanup rolling current-output refresh for `verify:data/questions.ts q251-q300`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q251-q300-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF text was opened from the current local extraction and inspected for printed pages 12-17; q251-q300 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current output at `origin/main` `6ef2182` clears the stale q251-q300 true/false prefix defects, old q255 false-answer explanation mismatch, generic fallback options, and true/false judgement-shell option rows. Current remaining generated-output defects are ordinary single-choice meta-stem rows `q252`, `q260`, `q264`, `q272`, `q276`, `q280`, `q284`, `q288`, `q292`, `q296`, and `q300`, plus standalone-stem true/false rows `q270` and `q271`. Focused CSV/static/ledger/report/queue assertion passed with 50 checked rows, 25 true/false rows, 13 current defects, zero stale prefix hits, q255 aligned, no missing static rows, and no static text mismatches. Passed after the rebase/conflict resolution: `node scripts/export-question-bank.js --check`, `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, `npm run test:derived-content`, `npm run typecheck -- --pretty false` after temporarily linking the shared dependency install into the isolated worktree, `npm run test:ownership`, and `git diff --check`.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: fold q251-q300 current evidence into DATA-INTEGRITY generated single-choice meta-stem cleanup plus the next generated true/false standalone-stem follow-up, then continue rolling VERIFY with q301-q350 or the next current changed/due slice after active generated-output routes land.
