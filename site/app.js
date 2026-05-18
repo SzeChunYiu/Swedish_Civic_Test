@@ -13,7 +13,7 @@ function route() {
   const [pathRaw] = hash.split("?");
   let path = pathRaw.startsWith("/") ? pathRaw : "/";
   // map unknown paths to /
-  const known = ["/", "/practice", "/ebook", "/privacy", "/support", "/terms", "/sources"];
+  const known = ["/", "/practice", "/mock", "/ebook", "/privacy", "/support", "/terms", "/sources"];
   if (!known.includes(path)) path = "/";
 
   document.querySelectorAll("[data-page]").forEach((el) => {
@@ -41,6 +41,8 @@ const i18n = window.i18n = {
     "brand": "Sveriges Medborgartest",
     "nav.home": "Home",
     "nav.practice": "Practice",
+    "nav.mock": "Mock exam",
+    "nav.ebook": "Ebook",
     "nav.support": "Support",
     "nav.privacy": "Privacy",
     "nav.terms": "Terms",
@@ -331,6 +333,8 @@ const i18n = window.i18n = {
     "brand": "Sveriges Medborgartest",
     "nav.home": "Hem",
     "nav.practice": "Öva",
+    "nav.mock": "Provexempel",
+    "nav.ebook": "E-bok",
     "nav.support": "Support",
     "nav.privacy": "Integritet",
     "nav.terms": "Villkor",
