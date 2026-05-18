@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T14:19:16+02:00
+MANAGER-content queue - 2026-05-18T14:24:12+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE or SOURCE-CITATION. Keep all
@@ -22,6 +22,7 @@ Landed:
 - q017 is on `origin/main` as `fc19b58` via PR #222, with merge evidence
   recorded by PR #226 / `d827682`.
 - q019 is on `origin/main` as `67b6005` via PR #259.
+- q020 is on `origin/main` as `b35ef8f` via PR #262.
 - q021 is on `origin/main` as `0bb6cc4` via PR #203.
 - q037 is on `origin/main` as `cd89504` via PR #189.
 - q071 is on `origin/main` as `4e1faf9` via PR #192.
@@ -40,6 +41,8 @@ Duplicate guard:
 - q019 is landed via PR #259 / `67b6005`. Do not reopen or republish q019;
   `/tmp/sct-q019-pane1-1779106498` and `/tmp/sct-q019-pane2` are stale after
   the merge.
+- q020 is landed via PR #262 / `b35ef8f`. Do not reopen or republish q020;
+  `/tmp/sct-pane4-q020` is stale after the merge.
 - Pane 2's duplicate q015 worktree `/tmp/sct-q015-pane2` is abandoned; do not
   commit, push, or PR that duplicate q015 diff.
 - Duplicate q016 draft PR #230 was closed unmerged, and branch
@@ -47,22 +50,22 @@ Duplicate guard:
   or republish that duplicate q016 diff.
 
 Active dispatch:
-- q016, q017, and q019 are landed. The earlier q016 and q019 assignments are
-  superseded.
+- q016, q017, q019, and q020 are landed. The earlier q016, q019, and q020
+  assignments are superseded.
 - Operator directive in `codex-tasks/open.txt` supersedes the earlier idle-hold
   behavior: managers must not park CONTENT panes while build-capable SITE-P0
   staffing is unavailable. Keep panes on independent Phase-A UHR-only
   CONTENT-VERIFY/SOURCE-CITATION atoms that do not touch `site/**`.
-- Pane 4 owns q020 in `/tmp/sct-pane4-q020` on branch
-  `task/content/q020-naturalness-pane4-1779106625`. Rebase it onto current
-  `origin/main`, keep it to q020 data plus content journal handoff, run the
+- Pane 1 owns q074 in `/tmp/sct-q074-pane1-1779106974` on branch
+  `task/content/q074-naturalness-pane1-1779106974`. Rebase it onto current
+  `origin/main`, keep it to q074 data plus content journal handoff, run the
   full content gates, then PR/merge or report the concrete gate failure. Do not
-  duplicate q020.
+  duplicate q074.
 - SITE-P0-3 and SITE-P0-4 remain build-owned; CONTENT must not edit `site/**`
   and must not present content atoms as SITE-P0 progress.
 
-Next content work after q020: route fresh content-only capacity to reviewer-filed
-UHR-only naturalness atoms q074, then q078, then q079 unless newer accepted
+Next content work after q074: route fresh content-only capacity to
+reviewer-filed UHR-only naturalness atoms q078, then q079 unless newer accepted
 evidence lands first. Do not reopen q018 without an explicit VALIDATOR release.
 q027/q028 and source-expansion are behind those visible reviewer defects unless
 VALIDATOR records a different current-main priority.
