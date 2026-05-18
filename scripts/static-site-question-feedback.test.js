@@ -146,3 +146,30 @@ test('static Mock review renders citation and disclaimer for every reviewed ques
     /class="mock-review__disclaimer">Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga\.<\/p>/,
   );
 });
+
+test('static active Mock question renders citation and independent-study disclaimer', () => {
+  const { sandbox, element } = createRenderContext({ hash: '#/mock?run=1', language: 'en' });
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    [
+      'MOCK.questions = window.SMT_QUESTIONS;',
+      'MOCK.answers = [null];',
+      'MOCK.startedAt = 123456;',
+      'MOCK.endsAt = Date.now() + 120000;',
+      'MOCK.submitted = false;',
+      'renderMockExam();',
+      '})();',
+    ].join('\n'),
+  );
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  const html = element('mock-stage').innerHTML;
+  assert.match(
+    html,
+    /class="quiz__source">Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7<\/p>/,
+  );
+  assert.match(
+    html,
+    /class="quiz__disclaimer">Independent study practice, not a real exam or an official UHR question\.<\/p>/,
+  );
+});

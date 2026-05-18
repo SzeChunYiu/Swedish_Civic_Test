@@ -577,6 +577,12 @@ p.deck {
   letter-spacing: .04em;
   line-height: 1.5;
 }
+.quiz__disclaimer {
+  margin: -14px 0 24px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.45;
+}
 .quiz__opts { display: flex; flex-direction: column; gap: 10px; }
 .quiz__opt {
   display: flex; align-items: center; gap: 14px;
