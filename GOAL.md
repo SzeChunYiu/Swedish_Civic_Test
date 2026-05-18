@@ -81,6 +81,19 @@ see `publishing/admob-iap-setup-runbook.md`.
 
 - queue-refresh, planner-audit-without-source-diff, validator-policy-refresh, manager-review-without-rejection-or-accept, docs-only-handoff, status-summary-as-deliverable, "intake" / "sync evidence" / "audit posture" iterations.
 
+## PR rule (merge-gate — enforced by operator guard, not just hooks)
+
+Opening **or** merging any pull request whose diff touches **zero** product
+path (see "Product source paths" above; `publishing/` counts only for the
+release team) is a BANNED iteration. "record handoff", "current audit",
+"route refresh", "no-work audit", "staffing cycle" PRs do **not** count as
+iterations and will be **auto-closed** by the operator PR guard before they
+merge; any that already merged will be **auto-reverted** on `main`. A pane's
+iteration is complete only when a product-path diff is merged. Handoffs go in
+the pane journal, never a PR. This closes the server-side-merge loophole:
+local pre-commit hooks do not run on GitHub merges, so this rule + the
+operator guard are the merge-gate until branch protection or CI is restored.
+
 ## Productivity targets
 
 - ≥6 source-touching commits per day across all civic teams combined.
