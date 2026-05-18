@@ -6705,8 +6705,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. That makes True correct, while False contradicts the fact.",
-      "sv": "Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7400,8 +7400,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
-      "sv": "Påståendet är sant: Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
+      "en": "Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
+      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10335,8 +10335,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
-      "sv": "Påståendet är sant: riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
+      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
+      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11195,8 +11195,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies, and in the Riksdag the governing parties and the opposition debate different proposals before members vote.",
-      "sv": "Påståendet är sant: partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik, och i riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
+      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies, and in the Riksdag the governing parties and the opposition debate different proposals before members vote.",
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik, och i riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11711,8 +11711,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
+      "en": "Politicians in Sweden do not have to follow the result of a referendum.",
+      "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14463,8 +14463,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: a person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
-      "sv": "Påståendet är sant: en person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
+      "en": "A person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
+      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14811,8 +14811,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true. Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
-      "sv": "Påståendet är sant. Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
+      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
+      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19123,8 +19123,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.",
-      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22051,8 +22051,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence, so the statement is true.",
-      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret, därför är påståendet sant."
+      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence.",
+      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22567,8 +22567,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community; that makes the statement true.",
-      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund; därför är påståendet sant."
+      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community.",
+      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31209,8 +31209,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
-      "sv": "Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
     },
     "source": {
       "title": "Sverige i fokus",
