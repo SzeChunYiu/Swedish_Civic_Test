@@ -152,15 +152,15 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionSv),
     [
-      'Sant eller falskt: Det stämmer att Sverige ligger i Norden.',
-      'Sant eller falskt: Det är inte sant att Sverige ligger i Norden.',
+      'Sant eller falskt: Sverige ligger i Norden.',
+      'Sant eller falskt: Sverige ligger inte i Norden.',
     ],
   );
   assert.deepEqual(
     trueFalseVariants.map((question) => question.questionEn),
     [
-      'True or false: It is true that Sweden is in the Nordic region.',
-      'True or false: It is not true that Sweden is in the Nordic region.',
+      'True or false: Sweden is in the Nordic region.',
+      'True or false: Sweden is not in the Nordic region.',
     ],
   );
   assert.equal(
@@ -174,7 +174,7 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   assert.ok(
     trueFalseVariants.every(
       (question) =>
-        !/Sant eller falskt:\s*Ett korrekt svar|True or false:\s*A correct answer/.test(
+        !/Sant eller falskt:\s*(?:Ett korrekt svar|Det är inte sant att|Det stämmer att)|True or false:\s*(?:A correct answer|It is not true that|It is true that)/.test(
           `${question.questionSv} ${question.questionEn}`,
         ),
     ),
@@ -627,6 +627,75 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
     text.includes(
       'True or false: A suspected person should be considered innocent until the person has been convicted.',
     ),
+  );
+});
+
+test('derivePublishedQuestions writes direct source true/false propositions', () => {
+  const { questions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const expectedRows = {
+    q151: [
+      'Sant eller falskt: Sveriges nordligaste del ligger inte norr om polcirkeln.',
+      "True or false: Sweden's northernmost part does not lie north of the Arctic Circle.",
+    ],
+    q167: [
+      'Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat.',
+      "True or false: The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
+    ],
+    q235: [
+      'Sant eller falskt: Riksdagen väljer inte statsminister.',
+      'True or false: The Riksdag does not choose the prime minister.',
+    ],
+    q255: [
+      'Sant eller falskt: Oppositionen ska inte granska regeringens arbete och föreslå annan politik.',
+      'True or false: The opposition should not scrutinize the government’s work and propose alternative policies.',
+    ],
+    q266: [
+      'Sant eller falskt: Politiker i Sverige behöver inte följa resultatet av en folkomröstning.',
+      'True or false: Politicians in Sweden do not have to follow the result of a referendum.',
+    ],
+    q267: [
+      'Sant eller falskt: Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning.',
+      'True or false: Politicians in Sweden are required to follow the result of a referendum.',
+    ],
+    q331: [
+      'Sant eller falskt: Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym.',
+      'True or false: A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.',
+    ],
+    q339: [
+      'Sant eller falskt: Public service-företag ska inte vara oberoende av politiska och andra intressen.',
+      'True or false: Public service companies should not be independent of political and other interests.',
+    ],
+    q439: [
+      'Sant eller falskt: Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',
+      'True or false: Swedish municipalities do not have to offer older people support and help.',
+    ],
+    q507: [
+      'Sant eller falskt: Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret.',
+      'True or false: Swedish total defence does not include both military defence and civil defence.',
+    ],
+    q519: [
+      'Sant eller falskt: År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt.',
+      'True or false: In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.',
+    ],
+    q715: [
+      'Sant eller falskt: Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
+      'True or false: Sweden is not usually divided into Götaland, Svealand, and Norrland.',
+    ],
+  };
+
+  for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
+    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
+    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+  }
+
+  const checkedText = Object.keys(expectedRows)
+    .map((id) => `${byId.get(id)?.questionSv} ${byId.get(id)?.questionEn}`)
+    .join('\n');
+
+  assert.doesNotMatch(
+    checkedText,
+    /Det är inte sant att|Det stämmer inte att|Det stämmer att|It is not true that|It is true that|Påståendet är sant|The statement is true/i,
   );
 });
 

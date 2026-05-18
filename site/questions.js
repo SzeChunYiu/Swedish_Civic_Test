@@ -6728,8 +6728,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that Sweden's northernmost part lies north of the Arctic Circle.",
-      "sv": "Sant eller falskt: Det är inte sant att Sveriges nordligaste del ligger norr om polcirkeln."
+      "en": "True or false: Sweden's northernmost part does not lie north of the Arctic Circle.",
+      "sv": "Sant eller falskt: Sveriges nordligaste del ligger inte norr om polcirkeln."
     },
     "opts": [
       {
@@ -7423,8 +7423,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that the Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
-      "sv": "Sant eller falskt: Det är inte sant att Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat."
+      "en": "True or false: The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
+      "sv": "Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
     },
     "opts": [
       {
@@ -10359,8 +10359,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that the Riksdag chooses the prime minister.",
-      "sv": "Sant eller falskt: Det är inte sant att Riksdagen väljer statsminister."
+      "en": "True or false: The Riksdag does not choose the prime minister.",
+      "sv": "Sant eller falskt: Riksdagen väljer inte statsminister."
     },
     "opts": [
       {
@@ -11219,8 +11219,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that the opposition should scrutinize the government’s work and propose alternative policies.",
-      "sv": "Sant eller falskt: Det är inte sant att oppositionen ska granska regeringens arbete och föreslå annan politik."
+      "en": "True or false: The opposition should not scrutinize the government’s work and propose alternative policies.",
+      "sv": "Sant eller falskt: Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
     },
     "opts": [
       {
@@ -11696,8 +11696,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that politicians in Sweden must follow the result of a referendum.",
-      "sv": "Sant eller falskt: Det är inte sant att politiker i Sverige måste följa resultatet av en folkomröstning."
+      "en": "True or false: Politicians in Sweden do not have to follow the result of a referendum.",
+      "sv": "Sant eller falskt: Politiker i Sverige behöver inte följa resultatet av en folkomröstning."
     },
     "opts": [
       {
@@ -11735,8 +11735,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is true that politicians in Sweden must follow the result of a referendum.",
-      "sv": "Sant eller falskt: Det stämmer att politiker i Sverige måste följa resultatet av en folkomröstning."
+      "en": "True or false: Politicians in Sweden are required to follow the result of a referendum.",
+      "sv": "Sant eller falskt: Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
     },
     "opts": [
       {
@@ -14487,8 +14487,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that a person who gives information to newspapers, radio, and TV has the right to be anonymous.",
-      "sv": "Sant eller falskt: Det är inte sant att den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym."
+      "en": "True or false: A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.",
+      "sv": "Sant eller falskt: Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
     },
     "opts": [
       {
@@ -14835,8 +14835,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that Public service companies should be independent of political and other interests.",
-      "sv": "Sant eller falskt: Det är inte sant att Public service-företag ska vara oberoende av politiska och andra intressen."
+      "en": "True or false: Public service companies should not be independent of political and other interests.",
+      "sv": "Sant eller falskt: Public service-företag ska inte vara oberoende av politiska och andra intressen."
     },
     "opts": [
       {
@@ -19147,8 +19147,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that Swedish municipalities must offer older people support and help.",
-      "sv": "Sant eller falskt: Det är inte sant att Sveriges kommuner ska erbjuda äldre personer stöd och hjälp."
+      "en": "True or false: Swedish municipalities do not have to offer older people support and help.",
+      "sv": "Sant eller falskt: Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
     },
     "opts": [
       {
@@ -22075,8 +22075,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that Swedish total defence includes both military defence and civil defence.",
-      "sv": "Sant eller falskt: Det är inte sant att det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
+      "en": "True or false: Swedish total defence does not include both military defence and civil defence.",
+      "sv": "Sant eller falskt: Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
     },
     "opts": [
       {
@@ -22591,8 +22591,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that in 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated.",
-      "sv": "Sant eller falskt: Det är inte sant att år 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
+      "en": "True or false: In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.",
+      "sv": "Sant eller falskt: År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
     },
     "opts": [
       {
@@ -31235,8 +31235,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "True or false: It is not true that Sweden is usually divided into Götaland, Svealand, and Norrland.",
-      "sv": "Sant eller falskt: Det är inte sant att Sverige brukar delas in i Götaland, Svealand och Norrland."
+      "en": "True or false: Sweden is not usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Sant eller falskt: Sverige brukar inte delas in i Götaland, Svealand och Norrland."
     },
     "opts": [
       {

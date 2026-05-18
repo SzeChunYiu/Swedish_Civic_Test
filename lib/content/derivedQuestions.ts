@@ -363,7 +363,7 @@ function sourceDirectStatementSv(
     }
   }
 
-  return `Det stämmer att ${lowerLeadingSwedishClauseStart(statement)}`;
+  return truthStatementSv(statement);
 }
 
 function sourceDirectStatementEn(
@@ -384,33 +384,101 @@ function sourceDirectStatementEn(
     }
   }
 
-  return `It is true that ${lowerLeadingEnglishClauseStart(statement)}`;
+  return truthStatementEn(statement);
 }
 
-function sourceStatementJudgementSv(statement: string, isTrue: boolean): string {
-  if (isTrue) return truthStatementSv(statement);
-  return `Det är inte sant att ${lowerLeadingSwedishClauseStart(statement)}`;
+function sourceOppositeStatementSv(statement: string): string {
+  const replacements: Array<[RegExp, string]> = [
+    [/\bmåste\b/i, 'behöver inte'],
+    [/\bska\b/i, 'ska inte'],
+    [/\bhar rätt att\b/i, 'har inte rätt att'],
+    [/\bbrukar\b/i, 'brukar inte'],
+    [/\bblev\b/i, 'blev inte'],
+    [/\bomfattar\b/i, 'omfattar inte'],
+    [/\bbidrar till\b/i, 'bidrar inte till'],
+    [/\bligger\b/i, 'ligger inte'],
+    [/\bväljer\b/i, 'väljer inte'],
+    [/\bär\b/i, 'är inte'],
+    [/\bhar\b/i, 'har inte'],
+  ];
+
+  for (const [pattern, replacement] of replacements) {
+    if (pattern.test(statement)) return upperFirst(statement.replace(pattern, replacement));
+  }
+
+  return `Det stämmer inte att ${lowerLeadingSwedishClauseStart(statement)}`;
 }
 
-function sourceStatementJudgementEn(statement: string, isTrue: boolean): string {
-  if (isTrue) return truthStatementEn(statement);
+function sourceOppositeStatementEn(statement: string): string {
+  const replacements: Array<[RegExp, string]> = [
+    [/\bmust\b/i, 'do not have to'],
+    [/\bshould\b/i, 'should not'],
+    [/\bhas the right to\b/i, 'does not have the right to'],
+    [/\bis usually divided\b/i, 'is not usually divided'],
+    [/\bbecame\b/i, 'did not become'],
+    [/\bincludes\b/i, 'does not include'],
+    [/\bhelps make\b/i, 'does not help make'],
+    [/\bhelp make\b/i, 'do not help make'],
+    [/\blies\b/i, 'does not lie'],
+    [/\bchooses\b/i, 'does not choose'],
+    [/\bare\b/i, 'are not'],
+    [/\bis\b/i, 'is not'],
+    [/\bhas\b/i, 'does not have'],
+  ];
+
+  for (const [pattern, replacement] of replacements) {
+    if (pattern.test(statement)) return upperFirst(statement.replace(pattern, replacement));
+  }
+
   return `It is not true that ${lowerLeadingEnglishClauseStart(statement)}`;
+}
+
+function sourceFalseRestatementSv(statement: string): string {
+  const replacements: Array<[RegExp, string]> = [
+    [/\bmåste\b/i, 'är skyldiga att'],
+    [/\bska\b/i, 'är skyldiga att'],
+  ];
+
+  for (const [pattern, replacement] of replacements) {
+    if (pattern.test(statement)) return upperFirst(statement.replace(pattern, replacement));
+  }
+
+  return truthStatementSv(statement);
+}
+
+function sourceFalseRestatementEn(statement: string): string {
+  const replacements: Array<[RegExp, string]> = [
+    [/\bmust\b/i, 'are required to'],
+    [/\bshould\b/i, 'are required to'],
+  ];
+
+  for (const [pattern, replacement] of replacements) {
+    if (pattern.test(statement)) return upperFirst(statement.replace(pattern, replacement));
+  }
+
+  return truthStatementEn(statement);
 }
 
 function trueFalseSourceStatementSv(source: PracticeQuestion, variantIsTrue: boolean): string {
   const sourceStatementIsTrue = source.correctOptionId === 'true';
   const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
   const statement = stripTrueFalsePromptSv(source.questionSv);
-  if (assertionIsTrue) return sourceDirectStatementSv(source, statement, sourceStatementIsTrue);
-  return sourceStatementJudgementSv(statement, assertionIsTrue);
+  if (assertionIsTrue) {
+    if (!sourceStatementIsTrue) return sourceFalseRestatementSv(statement);
+    return sourceDirectStatementSv(source, statement, sourceStatementIsTrue);
+  }
+  return sourceOppositeStatementSv(statement);
 }
 
 function trueFalseSourceStatementEn(source: PracticeQuestion, variantIsTrue: boolean): string {
   const sourceStatementIsTrue = source.correctOptionId === 'true';
   const assertionIsTrue = variantIsTrue === sourceStatementIsTrue;
   const statement = stripTrueFalsePromptEn(source.questionEn);
-  if (assertionIsTrue) return sourceDirectStatementEn(source, statement, sourceStatementIsTrue);
-  return sourceStatementJudgementEn(statement, assertionIsTrue);
+  if (assertionIsTrue) {
+    if (!sourceStatementIsTrue) return sourceFalseRestatementEn(statement);
+    return sourceDirectStatementEn(source, statement, sourceStatementIsTrue);
+  }
+  return sourceOppositeStatementEn(statement);
 }
 
 function generatedTrueFalseStatementSv(
