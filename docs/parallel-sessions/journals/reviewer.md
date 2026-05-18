@@ -2754,3 +2754,22 @@ Verification (commands + result):
 PR (number + merged?): #374 / merged yes via `ca00008`
 Accepted by worker? yes
 Next suggested validator action: no action for static privacy-copy; continue SITE-P0 on production deployment freshness/hash-aware live smoke.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-live-1779116258` / `task/reviewer/site-live-recheck-1779116258`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after `origin/main` advanced to `998185a`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `DESIGN.md`, `docs/architecture.md`, current `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree rebased on `origin/main` `998185a` because the shared checkout has unrelated dirty lane files.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0 with 7/7 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 715 questions and `staticSiteQuestionBankParityValidated:true`.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 715 questions and 13 chapters.
+- `git diff --name-only 034fe61..HEAD -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json .github/workflows vercel.json` - only `.github/workflows/release-validation.yml`, so current-main source readiness has not superseded the existing live-deploy blocker.
+- `git diff --name-only 11e60ac..ae25584` - only `docs/parallel-sessions/journals/setup.md`, so that rebase did not add new site/content/live-check changes.
+- `git diff --name-only ae25584..origin/main` - only queue/journal files, so the latest rebase also did not add new site/content/live-check changes.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 1; count and route assets pass, but static question-bank content fails with expected hash prefix `3c425f0ad2c7` and live hash prefix `5d2710bebf7e`.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker until production serves current `origin/main` and the hash-aware live check passes.
