@@ -132,3 +132,22 @@ queued as P0 but unstaffed this cycle. No human escalation is required.
 Directives were queued in `codex-tasks/ceo.txt`, `codex-tasks/content.txt`, and
 `codex-tasks/validator.txt`; MANAGER-content also received a direct tmux
 notice.
+
+2026-05-18T13:22:00+02:00: Executive cycle decision remains HOLD/add-none.
+Required CEO and operating docs were read from the supervisor repo fallback
+plus this board; the requested project-local operating docs are still absent.
+`/home/billy/bin/csup staff --scenario=resume --dry-run` reported queued work
+for configured hosts, but every LUNARC/remote line held with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. Local tmux shows
+only `_csup_sentinel_` and `civic-content` with six panes. `origin/main` is now
+`ee4ddb4` after #202, DATA-INTEGRITY #198 / `02193fb`, and q073; q072 is landed
+via PR #194 / `6fc47b4`, q073 is landed via `ee4ddb4`, q021 is active with PR
+#203 open at observed pane state, and q012 is active in a content worktree. Next
+content order after q021/q012 is q013, q014, q015, q016, q017, q020, then
+q027/q028 unless VALIDATOR has newer accepted evidence. DATA-INTEGRITY
+generated-judgement work should not be restaffed unless VALIDATOR rejects the
+#198 executable evidence. No human escalation is required; station gating
+remains a staffing constraint, not a product blocker. Directives were queued in
+`codex-tasks/ceo.txt`, `codex-tasks/content.txt`, and
+`codex-tasks/validator.txt`; direct tmux input was skipped to avoid interrupting
+active content panes.
