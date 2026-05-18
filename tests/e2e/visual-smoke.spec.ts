@@ -2,8 +2,7 @@ import { expect, test } from '@playwright/test';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-
-import { dismissBlockingModals } from './browserLaunch';
+import type { Page } from '@playwright/test';
 
 const screenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
 type RouteCapture = {
@@ -12,8 +11,6 @@ type RouteCapture = {
   file: string;
   bytes: number;
   sha256: string;
-  firstRunAboutDismissed: boolean;
-  languagePickerDismissed: boolean;
   launchOverlayDismissed: boolean;
   launchOverlayVisibleAfterDismissal: boolean;
 };
@@ -42,6 +39,26 @@ const explainedDuplicateScreenshotGroups = [
     reason: 'The root route is a redirect to /home, so it may match the Home screenshot exactly.',
   },
 ] as const;
+
+async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
+
+  if (
+    await closeLaunchAd
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
+    await closeLaunchAd.first().click();
+    await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+    return true;
+  }
+
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+  return false;
+}
 
 function sha256File(filePath: string): string {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
@@ -80,7 +97,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
 
   for (const [name, route] of routes) {
     await page.goto(route, { waitUntil: 'networkidle' });
-    const dismissal = await dismissBlockingModals(page);
+    const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
     await expect(page.locator('body')).not.toContainText('Not Found');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
     const file = `${name}.png`;
@@ -100,9 +117,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
       file,
       bytes,
       sha256,
-      firstRunAboutDismissed: dismissal.firstRunAboutDismissed,
-      languagePickerDismissed: dismissal.languagePickerDismissed,
-      launchOverlayDismissed: dismissal.launchOverlayDismissed,
+      launchOverlayDismissed,
       launchOverlayVisibleAfterDismissal,
     });
   }
@@ -118,7 +133,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
         viewport: 'iPhone 12 via Playwright project config',
         source: 'dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs',
         launchOverlayPolicy:
-          'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible overlays.',
+          'Visual smoke dismisses the launch sponsor overlay before every screenshot and rejects visible overlays.',
         duplicatePolicy:
           'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
         duplicateExplanations: explainedDuplicateScreenshotGroups,

@@ -734,61 +734,11 @@ function sourceTrueFactEn(source: PracticeQuestion): string {
   return ensureSentence(truthStatementEn(stripTrueFalsePromptEn(source.questionEn)));
 }
 
-function cleanTrueFalseSourceExplanationSv(source: PracticeQuestion): string {
-  return ensureSentence(
-    upperFirst(
-      source.explanationSv
-        .replace(/^Påståendet är sant[:.]?\s*/i, '')
-        .replace(
-          /\s*Därför\s+stämmer\s+alternativet\s+Sant,\s+medan\s+Falskt\s+motsäger\s+uppgiften\.?$/i,
-          '',
-        )
-        .replace(
-          /\s*[;,]?\s*(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\.?$/i,
-          '',
-        )
-        .trim(),
-    ),
-  );
-}
-
-function cleanTrueFalseSourceExplanationEn(source: PracticeQuestion): string {
-  return ensureSentence(
-    upperFirst(
-      source.explanationEn
-        .replace(/^The statement is true[:.]?\s*/i, '')
-        .replace(
-          /\s*That\s+makes\s+True\s+correct,\s+while\s+False\s+contradicts\s+the\s+fact\.?$/i,
-          '',
-        )
-        .replace(/\s*,?\s*so\s+the\s+statement\s+is\s+true\.?$/i, '')
-        .replace(/\s*[;,]?\s*that\s+makes\s+the\s+statement\s+true\.?$/i, '')
-        .trim(),
-    ),
-  );
-}
-
-function trueStatementExplanationSv(source: PracticeQuestion): string {
-  if (isTrueFalseSource(source)) {
-    if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationSv(source);
-    return ensureSentence(trueFalseSourceStatementSv(source, true));
-  }
-
-  return source.explanationSv;
-}
-
-function trueStatementExplanationEn(source: PracticeQuestion): string {
-  if (isTrueFalseSource(source)) {
-    if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationEn(source);
-    return ensureSentence(trueFalseSourceStatementEn(source, true));
-  }
-
-  return source.explanationEn;
-}
-
 function falseStatementExplanationSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return ensureSentence(sourceTrueFactSv(source));
+    return `${sourceTrueFactSv(
+      source,
+    )} Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.`;
   }
 
   return source.explanationSv;
@@ -796,7 +746,9 @@ function falseStatementExplanationSv(source: PracticeQuestion): string {
 
 function falseStatementExplanationEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return ensureSentence(sourceTrueFactEn(source));
+    return `${sourceTrueFactEn(
+      source,
+    )} Therefore the statement in the question is false, so False is correct.`;
   }
 
   return source.explanationEn;
@@ -1029,12 +981,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilka krav gäller för (.+)$/i);
   if (match) return `För ${match[1]} måste ${lowerFirst(stripLeadingMustSv(answer))}`;
-
-  match = q.match(/^Varför röstar väljare bakom en skärm i vallokalen$/i);
-  if (match)
-    return `En anledning till att väljare röstar bakom en skärm i vallokalen är att ${lowerFirst(
-      stripLeadingPurposeSv(answer),
-    )}`;
 
   match = q.match(/^Varför bildades Förenta nationerna efter andra världskriget$/i);
   if (match)
@@ -1463,12 +1409,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which requirements apply to (.+)$/i);
   if (match) return `To ${requirementTargetEn(match[1])}, ${lowerFirst(answer)}`;
 
-  match = q.match(/^Why do voters vote behind a screen at the polling station$/i);
-  if (match)
-    return `One reason voters vote behind a screen at the polling station is that ${lowerFirst(
-      stripLeadingPurposeEn(answer),
-    )}`;
-
   match = q.match(/^Why was the United Nations created after the Second World War$/i);
   if (match)
     return `The United Nations was created after the Second World War to ${lowerFirst(
@@ -1808,8 +1748,6 @@ function buildTrueStatementVariant(source: PracticeQuestion, id: string): Practi
     trueFalseOptions(),
     'true',
     ['published-variant', 'true-false'],
-    trueStatementExplanationSv(source),
-    trueStatementExplanationEn(source),
   );
 }
 

@@ -3,7 +3,6 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
-import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/launchPopupSession';
 
 /**
  * Suppress on routes where a blocking modal would be hostile to flow:
@@ -47,13 +46,11 @@ const firstRunCopy: Record<AppLanguage, FirstRunCopy> = {
 
 /**
  * Defaults: uses the settings-store language and first-run flag, suppresses
- * exam/quiz/auth/about routes, defers for the same app launch after a launch
- * sponsor modal appears, and dismisses after backdrop, skip, hardware back,
- * or guide-open actions.
+ * exam/quiz/auth/about routes, and dismisses after backdrop, skip, hardware
+ * back, or guide-open actions.
  */
 export interface FirstRunAboutTheTestModalProps {
   languageOverride?: AppLanguage;
-  deferWhenLaunchPopupAdShown?: boolean;
   suppressedPathPrefixes?: readonly string[];
 }
 
@@ -66,7 +63,6 @@ function pathIsSuppressed(
 }
 
 export function FirstRunAboutTheTestModal({
-  deferWhenLaunchPopupAdShown = true,
   languageOverride,
   suppressedPathPrefixes = SUPPRESSED_PATH_PREFIXES,
 }: FirstRunAboutTheTestModalProps = {}) {
@@ -78,7 +74,6 @@ export function FirstRunAboutTheTestModal({
 
   if (hasSeen) return null;
   if (pathIsSuppressed(pathname, suppressedPathPrefixes)) return null;
-  if (deferWhenLaunchPopupAdShown && shouldDeferFirstRunAboutModalForLaunchSession()) return null;
 
   const language = languageOverride ?? settingsLanguage;
   const copy = firstRunCopy[language];
@@ -89,25 +84,26 @@ export function FirstRunAboutTheTestModal({
 
   return (
     <Modal
-      accessibilityViewIsModal
       animationType="fade"
       transparent
       visible
       onRequestClose={markSeen}
       accessibilityLabel={copy.title}
     >
-      <View style={styles.backdrop}>
+      <Pressable
+        accessibilityLabel={copy.skipAccessibilityLabel}
+        accessibilityRole="button"
+        hitSlop={space[1]}
+        onPress={markSeen}
+        style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
+      >
         <Pressable
-          accessible={false}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          onPress={markSeen}
-          style={({ pressed }) => [
-            styles.backdropDismissLayer,
-            pressed ? styles.backdropPressed : null,
-          ]}
-        />
-        <View accessibilityRole="none" style={styles.card}>
+          accessibilityRole="none"
+          accessibilityLabel={copy.title}
+          hitSlop={space[0]}
+          onPress={(event) => event.stopPropagation()}
+          style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
+        >
           <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
           <Text accessibilityRole="header" style={styles.title}>
             {copy.title}
@@ -139,8 +135,8 @@ export function FirstRunAboutTheTestModal({
               <Text style={styles.secondaryButtonText}>{copy.skip}</Text>
             </Pressable>
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -156,9 +152,6 @@ const styles = StyleSheet.create({
   backdropPressed: {
     backgroundColor: colors.focusSoft,
   },
-  backdropDismissLayer: {
-    ...StyleSheet.absoluteFillObject,
-  },
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
@@ -168,7 +161,9 @@ const styles = StyleSheet.create({
     maxWidth: 480,
     padding: space[3],
     width: '100%',
-    zIndex: 1,
+  },
+  cardPressed: {
+    transform: [{ scale: motion.pressedScale }],
   },
   eyebrow: {
     color: colors.badgeBlueText,

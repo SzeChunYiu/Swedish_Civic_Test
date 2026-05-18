@@ -11,108 +11,25 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
-MANAGER-content 2026-05-19T01:20:00+02:00 current-route correction:
-- Current `origin/main` is `cf1034b`, after SETUP live-deploy evidence
-  `69b94c4` and MANAGER-build generated true/false closure acceptance
-  `cf1034b`. These commits do not open CONTENT source work, but they supersede
-  the q351 route base and the old q351-q400 defect state.
-- A direct current static scan on `cf1034b` shows the old q351-q400 defect rows
-  `q358`, `q359`, `q371`, `q374`, `q375`, `q398`, and `q399` now publish
-  standalone, learner-visible stems. The existing
-  `docs/verify/q351-q400-2026-05-18.md` report and `docs/verify/ledger.md`
-  rows are still pinned to `120d440` and mark those rows as defects.
-- No local CONTENT-VERIFY worktree is active at this checkout. The next
-  available CONTENT-VERIFY task remains `verify:data/questions.ts q351-q400`,
-  now as a refresh/ledger cleanup from clean current main `cf1034b` or later.
-- Keep q351-q400 report-and-queue only: verify UHR citations, facts, answer
-  keys, distractors, naturalness, explanations, and current canonical/static
-  output; update VERIFY-owned reports/ledger/queues/journals only; rerun export
-  parity, `validate:content`, `test:derived-content`, typecheck, ownership, and
-  `git diff --check` before PR/merge. Keep VERIFY out of `data/**`,
-  `content/question-bank.csv`, `site/**`, generator templates, and validator
-  mirrors.
-- Do not publish q351-q400 evidence based on `120d440`, `84f8ab3`, `8782487`,
-  `e33d142`, or pre-`cf1034b` branches unless it has been rebased/refreshed on
-  `cf1034b` or later.
-
-MANAGER-content 2026-05-19T01:08:00+02:00 current-route correction:
-- Current `origin/main` is `e33d142` after PR #823 merged the pre-amend 01:04
-  route text. This correction supersedes that stale base note: q351-q400
-  remains the next non-duplicative CONTENT-VERIFY report-only slice, now from
-  clean current main `e33d142` or later.
-- The later non-content `889fc6d` Pro-tier/learning/monetization work and the
-  PR #823 manager route commit do not touch content source, generated static
-  banks, or VERIFY reports, but q351-q400 must inspect the post-#819 generated
-  explanation output now present on current main.
-- No local CONTENT-VERIFY worktree is active at this checkout. The q251-q300
-  and q301-q350 report slices remain on main via `415e73c` and `ec01444`; do
-  not revive their old branches or stale generated residual lists.
-- Keep q351-q400 report-and-queue only: verify UHR citations, facts, answer
-  keys, distractors, naturalness, explanations, and current canonical/static
-  output; update VERIFY reports/ledger/queues/journals only; rerun export
-  parity, `validate:content`, `test:derived-content`, typecheck, ownership, and
-  `git diff --check` before PR/merge.
-- Do not publish q351-q400 evidence based on `84f8ab3`, `8782487`, or pre-#823
-  branches unless it has been rebased/refreshed on `e33d142` or later. Keep
-  VERIFY out of `data/**`, `content/question-bank.csv`, `site/**`, generator
-  templates, and validator mirrors.
-
-MANAGER-content 2026-05-19T01:04:00+02:00 current-route update:
-- Current `origin/main` is `8782487`. DATA-INTEGRITY PR #819 landed generated
-  true/false explanation cleanup immediately after MANAGER-content PR #820, so
-  the 01:00 q351-q400 route is superseded only for base hash freshness.
-- No local CONTENT-VERIFY worktree is active at this checkout. The q251-q300
-  and q301-q350 report slices remain on main via `415e73c` and `ec01444`; do
-  not revive their old branches or stale generated residual lists.
-- Next available CONTENT-VERIFY capacity remains
-  `verify:data/questions.ts q351-q400`, now from clean current main `8782487`.
-  Keep it report-and-queue only: verify UHR citations, facts, answer keys,
-  distractors, naturalness, explanations, and current canonical/static output;
-  update VERIFY reports/ledger/queues/journals only; rerun export parity,
-  `validate:content`, `test:derived-content`, typecheck, ownership, and
-  `git diff --check` before PR/merge.
-- Do not publish q351-q400 evidence based on `84f8ab3` unless it has been
-  rebased/refreshed on `8782487` or later. Keep VERIFY out of `data/**`,
-  `content/question-bank.csv`, `site/**`, generator templates, and validator
-  mirrors.
-
-MANAGER-content 2026-05-19T01:00:00+02:00 current-route update:
-- Current `origin/main` is `84f8ab3`. The only commit after the previous
-  MANAGER-content route is SETUP live-deploy evidence and does not open new
-  content source work.
-- No local CONTENT-VERIFY worktree is active at this checkout. The q251-q300
-  and q301-q350 report slices are already on main via `415e73c` and `ec01444`;
-  do not revive their old branches or stale generated residual lists.
-- Next available CONTENT-VERIFY capacity is
-  `verify:data/questions.ts q351-q400` from clean current main `84f8ab3`.
-  Keep it report-and-queue only: verify UHR citations, facts, answer keys,
-  distractors, naturalness, and current canonical/static output; update VERIFY
-  reports/ledger/queues/journals only; rerun export parity, `validate:content`,
-  `test:derived-content`, typecheck, ownership, and `git diff --check` before
-  PR/merge.
-- Keep VERIFY out of `data/**`, `content/question-bank.csv`, `site/**`,
-  generator templates, and validator mirrors.
-
-MANAGER-content 2026-05-19T00:50:00+02:00 current-route update:
-- Current `origin/main` is `c1f02eb`. Generated single-choice meta-stems,
-  generic filler options, true/false-shell rows, stale True/False single-choice
-  explanation labels, and q270/q271 reason-target wording are all zero in the
-  current static scan after `13bd3b3` / `3fcc83e` and `81c3295` / `6e63e8b`.
-  Later `8d1cd21` and `c1f02eb` did not open new VERIFY work. Do not publish
-  VERIFY evidence that still describes those surfaces as current unless it has
-  been refreshed after those commits.
-- `verify:data/questions.ts q251-q300` is already on main via `415e73c`, and
-  `verify:data/questions.ts q301-q350` is already on main via `ec01444`.
-  Their report-and-queue evidence remains useful for source/citation/fact
-  coverage, but the generated residual lists in those reports are stale after
-  the later DATA-INTEGRITY repairs above.
-- The previously named q251-q300 local worktree
-  `/tmp/sct-content-verify-q251-q300-pane3-1779142500` is absent from
-  `git worktree list` and must not be revived as an active lease. If VALIDATOR
-  needs more VERIFY capacity, start a fresh current-main report-only slice
-  such as q351-q400 or the next changed/due slice. Keep VERIFY out of `data/**`,
-  `content/question-bank.csv`, `site/**`, generator templates, and validator
-  mirrors.
+MANAGER-content 2026-05-19T00:04:00+02:00 current-route update:
+- Current `origin/main` is `0c3cb0e` and includes DATA-INTEGRITY source commit
+  `e1d04ea`, reviewer recheck `6ef2182`, and MANAGER-build partial acceptance
+  `4550a1c`. Current-output proof now shows zero generic single-choice
+  filler-option rows and zero true/false option-shell judgement rows; do not
+  publish VERIFY evidence that still describes those old filler-shell defects
+  as current unless it has been refreshed after those commits.
+- `verify:data/questions.ts q251-q300` is in local CONTENT-VERIFY Pane 3:
+  `/tmp/sct-content-verify-q251-q300-pane3-1779142500`, branch
+  `task/content-verify/q251-q300-pane3-1779142500`, now behind/conflicted after
+  the latest route updates. It must remain report-only, resolve the conflict,
+  recheck current output on `0c3cb0e`, and remove stale generic-fallback /
+  true-false-shell claims before PR or merge. Ordinary meta-stem rows such as
+  `q252` may still be current, but they are a separate generated-template
+  route from the now-zero filler-shell counts.
+- Do not start duplicate q251-q300, recent-data regression, or no-source
+  handoff branches unless VALIDATOR rejects the landed/current evidence with
+  precise residuals. Keep VERIFY out of `data/**`, `content/question-bank.csv`,
+  `site/**`, generator templates, and validator mirrors.
 
 MANAGER-content 2026-05-18T23:54:00+02:00 current-route update:
 - `regress:re-check the 10 most recently changed data/ items` is landed via

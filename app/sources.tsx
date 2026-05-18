@@ -6,16 +6,13 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { colors, typography } from '../lib/theme';
 
 const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
-const UHR_ABOUT_TEST_URL = 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/';
 
 type LegalRouteSectionCopy = {
   body: string;
-  sourceLabel?: string;
   title: string;
 };
 
 type SourcesRouteCopy = {
-  openAuthorityBoundarySourceAccessibilityLabel: string;
   openEducationMaterialAccessibilityLabel: string;
   sections: {
     authorityBoundaries: LegalRouteSectionCopy;
@@ -27,12 +24,10 @@ type SourcesRouteCopy = {
 
 const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
   sv: {
-    openAuthorityBoundarySourceAccessibilityLabel: 'Öppna UHR:s sida Om medborgarskapsprovet',
     openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial',
     sections: {
       authorityBoundaries: {
-        body: 'UHR:s sida Om medborgarskapsprovet säger att UHR har tagit fram utbildningsmaterialet. Den säger också att övningsprov på internet kan vara gjorda av andra personer eller företag; UHR står inte bakom dem och kvaliteten är inte kontrollerad av UHR eller någon annan myndighet. Appen håller samma gräns tydlig: det här är oberoende övningsinnehåll. Källa hämtad 2026-05-19:',
-        sourceLabel: 'UHR, Om medborgarskapsprovet',
+        body: 'UHR varnar för att övningar som andra skapar inte är kvalitetsgranskade av UHR eller någon annan myndighet. Appen håller samma gräns tydlig: det är oberoende övningsinnehåll.',
         title: 'Myndighetsgräns',
       },
       primaryStudyMaterial: {
@@ -40,19 +35,17 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
         title: 'Primärt studiematerial',
       },
       questionReferences: {
-        body: 'Varje övningsfråga visar en källrad med UHR:s kapitel, avsnitt och ungefärliga sida. Källraden ligger under frågan och är skild från själva frågetexten, så du kan kontrollera uppgiften mot studiematerialet.',
+        body: 'Varje övningsfråga sparar UHR-kapitel, avsnitt och ungefärlig sidmetadata. Avsnittskartan finns i content/uhr-section-map.json och den kalkylbladsvänliga innehållsdatabasen exporteras till content/question-bank.csv.',
         title: 'Frågereferenser',
       },
     },
     title: 'Källor',
   },
   en: {
-    openAuthorityBoundarySourceAccessibilityLabel: 'Open UHR About the citizenship test page',
     openEducationMaterialAccessibilityLabel: 'Open UHR education material',
     sections: {
       authorityBoundaries: {
-        body: "UHR's About the citizenship test page says that UHR has produced the study material. It also says internet practice tests may be made by other people or companies; UHR does not stand behind them and their quality is not checked by UHR or any other authority. This app keeps the same boundary clear: it is independent practice content. Source accessed 2026-05-19:",
-        sourceLabel: 'UHR, About the citizenship test',
+        body: 'UHR warns that exercises created by others are not quality-controlled by UHR or another authority. This app keeps the same boundary clear: it is independent practice content.',
         title: 'Authority boundaries',
       },
       primaryStudyMaterial: {
@@ -60,7 +53,7 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
         title: 'Primary study material',
       },
       questionReferences: {
-        body: 'Every practice question shows a source line with the UHR chapter, section, and approximate page. The source line appears below the question and stays separate from the question text, so you can check the fact against the study material.',
+        body: 'Each practice question stores UHR chapter, section, and approximate page metadata. The section map is tracked in content/uhr-section-map.json and the spreadsheet-friendly content database is exported to content/question-bank.csv.',
         title: 'Question references',
       },
     },
@@ -89,15 +82,7 @@ export default function Screen() {
         {copy.sections.questionReferences.body}
       </LegalSection>
       <LegalSection title={copy.sections.authorityBoundaries.title}>
-        {copy.sections.authorityBoundaries.body}{' '}
-        <Link
-          accessibilityLabel={copy.openAuthorityBoundarySourceAccessibilityLabel}
-          accessibilityRole="link"
-          href={UHR_ABOUT_TEST_URL}
-          style={styles.externalLink}
-        >
-          {copy.sections.authorityBoundaries.sourceLabel}
-        </Link>
+        {copy.sections.authorityBoundaries.body}
       </LegalSection>
     </LegalPage>
   );

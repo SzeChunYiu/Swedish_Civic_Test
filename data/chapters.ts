@@ -16,7 +16,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.',
     descriptionEn:
       'Democracy, rule by the people, ways to influence society, and threats to democracy.',
-    questionCount: 50,
+    questionCount: 25,
   },
   {
     id: 'ch03',
@@ -52,7 +52,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Fria medier, olika slags medier, public service och källkritik.',
     descriptionEn:
       'Free media, different types of media, public service broadcasting, and source criticism.',
-    questionCount: 55,
+    questionCount: 30,
   },
   {
     id: 'ch07',

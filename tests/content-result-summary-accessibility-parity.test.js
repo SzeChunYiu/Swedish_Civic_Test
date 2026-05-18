@@ -18,15 +18,15 @@ function assertResultSummaryFallbackParity(source) {
     ],
     [/type ResultSummaryCopy = \{/, 'copy contract type'],
     [/const resultSummaryCopy: Record<AppLanguage, ResultSummaryCopy> = \{/, 'copy table'],
-    [/resultBadgeLabel: 'Övningsresultat'/, 'Swedish result badge fallback'],
+    [/passingLineLabel: 'Gräns för godkänt'/, 'Swedish passing-line fallback'],
     [/scoreLabel: 'Poäng'/, 'Swedish score fallback'],
-    [/strong: 'Starkt övningsresultat'/, 'Swedish strong status fallback'],
+    [/pass: 'Godkänt'/, 'Swedish pass status fallback'],
     [/review: 'Behöver repeteras'/, 'Swedish review status fallback'],
     [/`\$\{correctCount\}\/\$\{totalCount\} rätt`/, 'Swedish metric fallback'],
     [/`\$\{percent\} procent rätt`/, 'Swedish progress fallback'],
-    [/resultBadgeLabel: 'Practice result'/, 'English result badge fallback'],
+    [/passingLineLabel: 'Passing line'/, 'English passing-line fallback'],
     [/scoreLabel: 'Score'/, 'English score fallback'],
-    [/strong: 'Strong practice result'/, 'English strong status fallback'],
+    [/pass: 'Passed'/, 'English pass status fallback'],
     [/review: 'Needs review'/, 'English review status fallback'],
     [/`\$\{correctCount\}\/\$\{totalCount\} correct`/, 'English metric fallback'],
     [/`\$\{percent\} percent correct`/, 'English progress fallback'],
@@ -38,12 +38,16 @@ function assertResultSummaryFallbackParity(source) {
     [/const language = languageOverride \?\? settingsLanguage;/, 'language resolution'],
     [/const copy = resultSummaryCopy\[language\];/, 'copy table lookup'],
     [
-      /const resolvedStatusLabel =\s+statusLabel \?\? \(status \? copy\.statusLabels\[status\] : copy\.resultBadgeLabel\);/,
+      /const resolvedStatusLabel = statusLabel \?\? copy\.statusLabels\[resolvedStatus\];/,
       'localized status default',
     ],
     [
       /const resolvedMetricLabel = metricLabel \?\? copy\.metricLabel\(safeCorrect, safeTotal\);/,
       'localized metric default',
+    ],
+    [
+      /const resolvedPassingLineText = passingLineLabel \?\? copy\.passingLineLabel;/,
+      'localized passing-line default',
     ],
     [/const percentAccessibilityLabel = copy\.percentLabel\(percent\);/, 'localized percent label'],
     [
@@ -61,10 +65,7 @@ function assertResultSummaryFallbackParity(source) {
       'nested action language forwarding',
     ],
     [/\{resolvedScoreLabel\}/, 'visible score label fallback'],
-    [
-      /<PillBadge variant=\{badgeVariant\}>\{resolvedStatusLabel\}<\/PillBadge>/,
-      'status badge label',
-    ],
+    [/\{resolvedPassingLineText\}/, 'visible passing-line fallback'],
   ];
 
   for (const [pattern, label] of requiredRules) {
@@ -73,27 +74,9 @@ function assertResultSummaryFallbackParity(source) {
 
   assert.doesNotMatch(
     source,
-    /resultBadgeLabel = 'Practice result'|scoreLabel = 'Score'/,
+    /passingLineLabel = 'Passing line'|scoreLabel = 'Score'/,
     'ResultSummary should not keep English defaults in parameter destructuring',
   );
-
-  const unsupportedFragments = [
-    ['pass', 'ing', 'Percent'].join(''),
-    ['pass', 'ing', 'Line'].join(''),
-    ['Gräns för ', 'godkänt'].join(''),
-    ['Passing ', 'line'].join(''),
-    ['God', 'känt'].join(''),
-    ['Pass', 'ed'].join(''),
-    '75' + '%',
-  ];
-
-  for (const fragment of unsupportedFragments) {
-    assert.doesNotMatch(
-      source,
-      new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
-      `ResultSummary should not expose unsupported mock-exam score-source copy: ${fragment}`,
-    );
-  }
 }
 
 test('ResultSummary fallback labels follow the selected settings language', () => {
@@ -102,13 +85,13 @@ test('ResultSummary fallback labels follow the selected settings language', () =
 
 test('ResultSummary fallback parity rejects Swedish copy drift', () => {
   const mutatedSource = readSource().replace(
-    "resultBadgeLabel: 'Övningsresultat'",
-    "resultBadgeLabel: 'Practice result'",
+    "passingLineLabel: 'Gräns för godkänt'",
+    "passingLineLabel: 'Passing line'",
   );
 
   assert.throws(
     () => assertResultSummaryFallbackParity(mutatedSource),
-    /Swedish result badge fallback/,
+    /Swedish passing-line fallback/,
   );
 });
 
