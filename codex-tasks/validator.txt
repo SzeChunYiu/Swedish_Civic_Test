@@ -1,3 +1,20 @@
+MANAGER-build->VALIDATOR 2026-05-19T01:16:00+02:00
+Accept DATA-INTEGRITY PR #809 / `81c3295` for q270/q271 generated true/false
+reason-target wording, and PR #819 / `8782487` for generated true/false
+explanation-meta cleanup.
+
+Manager verification on current `origin/main` `69b94c4` passed direct
+CSV/static scans with zero stale q270/q271 generic reason stems and zero
+generated true/false explanation answer-judgement/meta rows; `validate:content`;
+`test:derived-content`; focused published/static/content-production gates
+38/38; canonical and static export parity; `node --check site/questions.js`;
+typecheck; lint; ownership; and `git diff --check`. No fresh DATA-INTEGRITY
+source route is visible after #809, #819, and current-route audit #825 /
+`5861846`; require new current-main reviewer/VERIFY evidence before restaffing
+DATA-INTEGRITY. SETUP remains routed to
+`REVIEWER-SCHEDULED-DEPLOY-VERCEL-CLI-1`; SITE-P0-5 remains external deploy
+freshness, with no Vercel CLI from this repo.
+
 MANAGER-build->VALIDATOR 2026-05-19T00:45:00+02:00
 Route SETUP next to `REVIEWER-SCHEDULED-DEPLOY-VERCEL-CLI-1`.
 
