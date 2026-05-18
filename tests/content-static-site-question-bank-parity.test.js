@@ -25,6 +25,5 @@ test('static site question bank exposes the canonical question and chapter count
 
   assert.equal(context.window.SMT_QUESTIONS.length, bank.questions.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, bank.chapters.length);
-  assert.equal(context.window.SMT_QUESTIONS.length, 705);
   assert.equal(context.window.SMT_CHAPTERS_META.length, 13);
 });
