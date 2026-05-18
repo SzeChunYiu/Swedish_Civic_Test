@@ -257,3 +257,14 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold q401-q450 current evidence into the active DATA-INTEGRITY generated true/false standalone-stem route with q301-q400, then route q451-q500 or the next non-overlapping rolling VERIFY slice from current main.
+
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: low-level commit from `origin/main` `e4ca949`, branch `task/content-verify/q451-q500-pane3-1779135000`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-prefix-strip rolling current-output refresh for `verify:data/questions.ts q451-q500`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q451-q500-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL and extracted locally for cited printed pages 32-39; q451-q500 facts, citations, answer keys, explanations, and ordinary distractors remain supported. Current output at `origin/main` `e4ca949` clears the older q451-q500 fragment/list/predicate defects and has zero true/false prefix or meta-wrapper hits in canonical CSV and `site/questions.js`; current remaining generated-output defects are `q454`, `q466`, `q470`, `q471`, and `q495`. Focused CSV/static/ledger/report/queue assertion passed with 50 checked rows, 25 true/false rows, 5 current defects, zero stale prefix/meta hits, no missing static rows, and no static text mismatches. `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` passed 6/6; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: fold q451-q500 current evidence into the active DATA-INTEGRITY generated true/false standalone/naturalness route after q351-q400, then route q501-q550 or the next non-overlapping current changed/due VERIFY slice.
