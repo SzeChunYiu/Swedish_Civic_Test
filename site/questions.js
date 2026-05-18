@@ -4790,8 +4790,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; the options about agencies, courts, and only the Church of Sweden do not describe the section.",
-      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; alternativen om myndigheter, domstolar och endast Svenska kyrkan beskriver inte avsnittets innehåll."
+      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; agencies, courts, and the Church of Sweden do not have that role.",
+      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; myndigheter, domstolar och Svenska kyrkan har inte den rollen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24926,8 +24926,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; the options about agencies, courts, and only the Church of Sweden do not describe the section.",
-      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; alternativen om myndigheter, domstolar och endast Svenska kyrkan beskriver inte avsnittets innehåll."
+      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; agencies, courts, and the Church of Sweden do not have that role.",
+      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; myndigheter, domstolar och Svenska kyrkan har inte den rollen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24966,8 +24966,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; the options about agencies, courts, and only the Church of Sweden do not describe the section.",
-      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; alternativen om myndigheter, domstolar och endast Svenska kyrkan beskriver inte avsnittets innehåll."
+      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; agencies, courts, and the Church of Sweden do not have that role.",
+      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; myndigheter, domstolar och Svenska kyrkan har inte den rollen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -25006,8 +25006,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; the options about agencies, courts, and only the Church of Sweden do not describe the section.",
-      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; alternativen om myndigheter, domstolar och endast Svenska kyrkan beskriver inte avsnittets innehåll."
+      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; agencies, courts, and the Church of Sweden do not have that role.",
+      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; myndigheter, domstolar och Svenska kyrkan har inte den rollen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -25054,8 +25054,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; the options about agencies, courts, and only the Church of Sweden do not describe the section.",
-      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; alternativen om myndigheter, domstolar och endast Svenska kyrkan beskriver inte avsnittets innehåll."
+      "en": "There are both Buddhist and Hindu congregations and temples in different places in Sweden. Prayers, rituals, and religious festivals take place there; agencies, courts, and the Church of Sweden do not have that role.",
+      "sv": "Det finns både buddhistiska och hinduiska församlingar och tempel på olika platser i Sverige. Där genomförs böner, ritualer och religiösa fester; myndigheter, domstolar och Svenska kyrkan har inte den rollen."
     },
     "source": {
       "title": "Sverige i fokus",

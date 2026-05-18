@@ -80,8 +80,9 @@ function containsAll(source, needles) {
 async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
-  const [index, practice, ebook, questions] = await Promise.all([
+  const [index, styles, practice, ebook, questions] = await Promise.all([
     fetchText(baseUrl, 'index.html'),
+    fetchText(baseUrl, 'styles.css'),
     fetchText(baseUrl, 'practice.js'),
     fetchText(baseUrl, 'ebook.js'),
     fetchText(baseUrl, 'questions.js'),
@@ -99,12 +100,23 @@ async function checkLiveSite(inputUrl, options = {}) {
   checks.push(
     containsAll(index, [
       'data-page="/practice"',
+      'practice__inner practice__inner--wide',
       'id="quiz-stage"',
       'questions.js',
       'practice.js',
     ]) && containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
       ? pass('practice hub assets')
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
+  );
+
+  checks.push(
+    containsAll(styles, [
+      '.practice__inner--wide',
+      'max-width: 1080px',
+      'grid-template-columns: repeat(auto-fill, minmax(240px, 1fr))',
+    ])
+      ? pass('practice wide layout')
+      : fail('practice wide layout', 'missing wide Practice shell or responsive hub grid CSS'),
   );
 
   checks.push(
