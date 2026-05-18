@@ -1,4 +1,4 @@
-MANAGER-build queue - 2026-05-18T13:57+02:00
+MANAGER-build queue - 2026-05-18T14:08+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
 items, SETUP should take only atoms that close validator/reviewer defects with
@@ -15,19 +15,18 @@ Accepted P0 SETUP atoms:
      `npm run test:ownership`, targeted `git diff --check`, and local
      static-site smoke from `/` to `#/practice`, first chapter drill, and
      `#/ebook` all exit 0.
+2. `SITE-P0-2` accepted via PR #252 / `5e834b9` plus handoff PR #254 /
+   `bfd6c7e`.
+   - Clean manager verification on current `origin/main` after `npm ci`:
+     `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+     `node --check` for `site/app.js`, `site/practice.js`, `site/questions.js`,
+     `site/i18n-extras.js`, and `site/ebook-tools.js`, targeted `git diff --check`,
+     and static-site Chrome smoke from `/` to `#/mock`, 5-question exam
+     completion/result review, `#/practice`, and `#/ebook` all exit 0.
 
 Active P0 SETUP atoms:
 
-1. `SITE-P0-2`
-   - Scope: `site/` static mock-exam page and navigation.
-   - Required behavior: Mock exam is reachable from `site/index.html` and has
-     a timed flow, answer submission, and result/review UX matching the current
-     product contract and `docs/design/drafts/practice-mockexam-2026-05-18`.
-   - Required gates: static-site smoke for `/` to mock exam through completion,
-     no console errors, `node --check` for changed site JS, and
-     `git diff --check`.
-
-2. `SITE-P0-3`
+1. `SITE-P0-3`
    - Scope: `site/questions.js` and any focused generator/parity verifier.
    - Required behavior: the static site question bank is synced from the
      canonical app data and cannot silently drift from exported questions.
@@ -35,7 +34,7 @@ Active P0 SETUP atoms:
      `npm run validate:content`, `node --check site/questions.js`, and
      `git diff --check`.
 
-3. `SITE-P0-4`
+2. `SITE-P0-4`
    - Scope: `site/ebook.js`, `site/ebook-tools.js`, and related site reading
      UI only.
    - Required behavior: preserve the richer ebook surface already on `site/`
@@ -44,7 +43,7 @@ Active P0 SETUP atoms:
    - Required gates: static-site ebook smoke, focused copy/navigation check,
      `node --check` for changed site JS, and `git diff --check`.
 
-4. `SITE-P0-5`
+3. `SITE-P0-5`
    - Scope: REVIEWER audit, not SETUP implementation.
    - Required behavior: after SITE-P0-1 through SITE-P0-4 have source PRs,
      REVIEWER audits the live deployed static site against the draft mockups
@@ -53,7 +52,7 @@ Active P0 SETUP atoms:
 
 Existing P0 SETUP atoms behind the static-site P0 queue:
 
-5. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+4. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -63,7 +62,7 @@ Existing P0 SETUP atoms behind the static-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-6. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+5. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -73,7 +72,7 @@ Existing P0 SETUP atoms behind the static-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-7. `REVIEWER-ACCOUNT-SCOPE-1`
+6. `REVIEWER-ACCOUNT-SCOPE-1`
    - Scope: SETUP/build product shell, route manifests, dependencies, and
      scaffold/router-shell tests.
    - Required behavior: the MVP has no reachable account/authentication
@@ -86,7 +85,7 @@ Existing P0 SETUP atoms behind the static-site P0 queue:
    - Keep `REVIEWER-SEARCH-PLACEHOLDER-1` separate; do not expand this atom
      into Search implementation/removal.
 
-8. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+7. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
