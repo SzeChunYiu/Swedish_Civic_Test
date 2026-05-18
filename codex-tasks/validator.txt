@@ -617,3 +617,16 @@ MANAGER-build acceptance 2026-05-18T18:10+02:00
   and serialized `npm run test:content -- --test-concurrency=1` 298/298.
 - Do not duplicate q123. Keep `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` as
   the active DATA-INTEGRITY generated-template route.
+
+MANAGER-build routing 2026-05-18T18:15+02:00
+- Consolidated `VERIFY-GENERATED-TF-RESIDUAL-Q201-Q250-1` into the active
+  `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` DATA-INTEGRITY route.
+- Evidence is on current `origin/main`: commit `661adad` adds
+  `docs/verify/q201-q250-2026-05-18.md` and ledger defects for `q206`, `q237`,
+  and `q238`. Manager spot-checks confirmed the same generated true/false
+  splice text remains in both `content/question-bank.csv` and
+  `site/questions.js`: q206 source-question/wrong-option splice and q237/q238
+  `describes government agencies` / `beskriver statliga myndigheter` splices.
+- Keep this as one generator/static-mirror atom with q151-q200 and Iteration
+  361 residual evidence; do not route q201-q250 as a separate hand-edited
+  CONTENT task.

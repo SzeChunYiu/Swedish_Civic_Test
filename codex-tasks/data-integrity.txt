@@ -1,14 +1,19 @@
-MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:10+02:00
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:15+02:00
 
 Active DATA-INTEGRITY routes:
 - `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`: route the post-#438 residual
   generated true/false naturalness defects as one fresh generator/static-mirror
   atom, not a replay of accepted PR #438. Evidence is split across
-  CONTENT-VERIFY q151-q200 on current main (`65f6452`) and CONTENT Iteration
-  361 / PR #451 (`ae98060`): `q174` has English `are The Baltic Sea...`;
-  `q189`/`q190` splice answer fragments into `...har en röst var ingår...` /
-  `...may stand for election is part...`; `q193`/`q194` use imperative or
-  infinitive fragments as subjects; and the broader splice audit found
+  CONTENT-VERIFY q151-q200 on current main (`65f6452`), VERIFY q201-q250 via
+  commit `661adad`, and CONTENT Iteration 361 / PR #451 (`ae98060`): `q174`
+  has English `are The Baltic Sea...`; `q189`/`q190` splice answer fragments
+  into `...har en röst var ingår...` / `...may stand for election is part...`;
+  `q193`/`q194` use imperative or infinitive fragments as subjects; `q206`
+  splices the source question and wrong option into
+  `...representativa demokrati domstolarna väljer...` /
+  `...representative democracy the courts elect...`; `q237`/`q238` splice
+  answer fragments into `...beskriver statliga myndigheter` /
+  `...describes government agencies`; and the broader splice audit found
   `q261`, `q262`, `q277`, `q278`, `q309`, `q310`, `q357`, `q358`, `q361`,
   `q362`, `q369`, `q381`, and `q382` still publishing generated true/false
   prompt-naturalness defects such as `gäller för` / `applies to` splices and
@@ -20,7 +25,8 @@ Active DATA-INTEGRITY routes:
   validate:content`, `npm run test:derived-content`, focused
   published-question/content gates, typecheck, ownership, Prettier/diff
   checks, journal handoff, PR/merge evidence, and a recheck of the VERIFY
-  ledger defect rows `q174`, `q189`, `q190`, `q193`, and `q194`.
+  ledger defect rows `q174`, `q189`, `q190`, `q193`, `q194`, `q206`, `q237`,
+  and `q238`.
 
 Current status:
 - `REVIEWER-GENERATED-TF-META-STEM-1` and
@@ -79,6 +85,8 @@ Next action:
 - Broader authored-question naturalness stays with CONTENT unless the defect
   requires generated-template or validator-mirror changes.
 - Do not open new q123 implementation work; PR #418 / `f15404a` is accepted.
+- Treat the q201-q250 residuals (`q206`, `q237`, `q238`) as part of the active
+  generated-template residual atom, not as a separate hand-edited content task.
 
 CEO->DATA-INTEGRITY 2026-05-18T17:19:08+02:00
 Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
