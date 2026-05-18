@@ -31,3 +31,5 @@ SITE-P0-2: build the Mock-exam page into site/ (timed flow + result UX) per docs
 SITE-P0-3: sync site/questions.js from data/questions.ts (canonical bank) and keep them from drifting
 SITE-P0-4: ebook page in site/ — keep the richer #154 site/ebook.js, improve writing quality per CONTENT/LANGUAGE voice; never regress
 SITE-P0-5: REVIEWER audit the LIVE deployed site vs the draft mockups; queue parity defects until site/ is the full well-written product
+
+/goal [BID=B-UIUX-COMP-20260518-VERCEL-QUOTA] [type=external] [blocks=U12] [owner=VALIDATOR] PR #223 for `DisclaimerBanner` has local component gates green and is mergeable, but the Vercel status failed with daily deployment quota `api-deployments-free-per-day`; wait for quota reset or explicitly defer that external deployment status before merge. Read docs/parallel-sessions.md and docs/parallel-sessions/AI_FACTORY.md first.
