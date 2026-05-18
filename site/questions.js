@@ -28933,8 +28933,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "The church service early on the morning of 25 December is called Lucia procession.",
-      "sv": "Gudstjänsten tidigt på morgonen den 25 december kallas Luciatåg."
+      "en": "The church service early on the morning of 25 December is called a Lucia procession.",
+      "sv": "Gudstjänsten tidigt på morgonen den 25 december kallas ett luciatåg."
     },
     "opts": [
       {
@@ -29249,8 +29249,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Children often open one door each day until Christmas Eve with an Advent calendar at home.",
-      "sv": "Barn öppnar en lucka varje dag fram till julafton med en adventskalender hemma."
+      "en": "Children with an Advent calendar at home often open one door each day until Christmas Eve.",
+      "sv": "Barn med en adventskalender hemma öppnar en lucka varje dag fram till julafton."
     },
     "opts": [
       {
@@ -29289,8 +29289,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Children often light large bonfires in the evening with an Advent calendar at home.",
-      "sv": "Barn tänder stora brasor på kvällen med en adventskalender hemma."
+      "en": "During Advent, children often light large bonfires in the evening.",
+      "sv": "Under advent tänder barn stora brasor på kvällen."
     },
     "opts": [
       {
