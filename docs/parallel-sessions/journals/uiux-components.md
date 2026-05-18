@@ -77,3 +77,13 @@ A11y props: default `accessibilityRole="button"`; derives `accessibilityLabel` f
 Verification: `./node_modules/.bin/prettier --write components/ChapterRow.tsx` -> unchanged; token discipline grep on `components/ChapterRow.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; post-rebase `./node_modules/.bin/prettier --check components/ChapterRow.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; `git diff --check origin/main..HEAD -- components/ChapterRow.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review ChapterRow and then queue DisclaimerBanner if accepted.
+
+## Iteration 8 - 2026-05-18
+
+Component: DisclaimerBanner independent-app notice atom - `components/DisclaimerBanner.tsx`
+Variants/states implemented: Swedish and English default disclaimer copy; optional custom `text`; caller `style` and `textStyle` passthrough; warm subtle banner surface with compact disclaimer typography.
+Tokens used: `colors.surfaceWarm`, `colors.border`, `colors.textDisclaimer`, `radius.card`, `space[1.5]`, `space[2]`, `space.hairline`, and `typography.disclaimer`.
+A11y props: default `accessible=true`; default `accessibilityRole="summary"`; derives `accessibilityLabel` from visible copy; caller can override inherited View accessibility props.
+Verification: `./node_modules/.bin/prettier --check components/DisclaimerBanner.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/DisclaimerBanner.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check origin/main..HEAD -- components/DisclaimerBanner.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? yes - implementation is scoped and green after rebase onto `origin/main`, but PR #208 is left open because the only remote status is a Vercel build-rate-limit failure.
+Next: Operator/VALIDATOR can rerun or merge PR #208 once the external Vercel rate limit clears; after acceptance, Manager can queue Screen.
