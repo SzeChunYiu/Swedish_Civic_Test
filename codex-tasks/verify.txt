@@ -11,6 +11,24 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T22:50:00+02:00 active-lease correction:
+- Current `origin/main` is `b441aed`. `verify:data/questions.ts q501-q550` is
+  landed via `e0f379a`, and q501-q550 DATA-INTEGRITY source cleanup has landed
+  via `b441aed`; do not duplicate stale q501 branches unless VALIDATOR rejects
+  the current evidence and explicitly reroutes.
+- `verify:data/questions.ts q551-q600` is actively owned by CONTENT-VERIFY
+  Pane 3 in `/tmp/sct-content-verify-q551-q600-pane3-1779136262` on branch
+  `task/content-verify/q551-q600-pane3-1779136262`, with pushed remote head
+  `591c05a`. It is behind current `origin/main` and must sync/rebase, rerun the
+  standard VERIFY/content/type/ownership/diff gates, and only then PR/merge.
+- `verify:data/questions.ts q601-q650` has reviewer current evidence queued in
+  `ec1fb79` but still needs a maintained CONTENT-VERIFY ledger/report refresh
+  after q551-q600 lands/rejects/abandons, unless VALIDATOR explicitly leases a
+  non-conflicting concurrent branch.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors.
+
 MANAGER-content 2026-05-18T22:16:00+02:00 active-lease correction:
 - Current `origin/main` is `8e3aa16`. `verify:data/questions.ts q451-q500` is
   landed, including the q479 correction from `8e3aa16`; do not duplicate stale

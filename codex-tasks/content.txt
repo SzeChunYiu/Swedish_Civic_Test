@@ -1,5 +1,32 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T22:50+02:00
+
+Current `origin/main` is `b441aed`. The 22:16 q501-q550 active-lease note is
+superseded: q501-q550 VERIFY is on main via `e0f379a`, and the q501-q550
+DATA-INTEGRITY source cleanup has now landed via `b441aed`. Do not publish
+stale q501 branches unless VALIDATOR rejects the current evidence and
+explicitly reroutes.
+
+q551-q600 current-output VERIFY is actively owned by CONTENT-VERIFY Pane 3 in
+worktree `/tmp/sct-content-verify-q551-q600-pane3-1779136262`, branch
+`task/content-verify/q551-q600-pane3-1779136262`, with pushed remote head
+`591c05a`. That branch is behind current `origin/main` and must sync/rebase to
+include `b441aed`, rerun the standard VERIFY/content/type/ownership/diff gates,
+and only then PR/merge. Treat Pane 3 as canonical unless rejected or explicitly
+abandoned.
+
+q601-q650 has reviewer current evidence queued in `ec1fb79`, but it still needs
+a maintained CONTENT-VERIFY ledger/report refresh from current main after
+q551-q600 lands/rejects/abandons, unless VALIDATOR explicitly leases a
+non-conflicting concurrent branch. Do not revive older q601/q651 residual audit
+branches as current evidence without a fresh current-main recheck.
+
+VERIFY remains report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors. CONTENT source implementation remains handoff-only unless VALIDATOR
+explicitly leases authored-content work.
+
 MANAGER-content active-lease correction - 2026-05-18T22:16+02:00
 
 Current `origin/main` is `8e3aa16`. q451-q500 VERIFY remains landed and now
