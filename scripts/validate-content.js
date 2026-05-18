@@ -3267,6 +3267,24 @@ function findQuestionTrueFalseStemPrefix(question) {
   );
 }
 
+function findQuestionFalseAnswerExplanationMismatch(question) {
+  if (
+    question.type !== 'true_false' ||
+    question.correctOptionId !== 'false' ||
+    !question.tags?.includes('false-statement')
+  ) {
+    return null;
+  }
+
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return [
+    /Därför\s+stämmer\s+alternativet\s+Sant/i,
+    /alternativet\s+Sant\s+stämmer/i,
+    /\b(?:makes|make)\s+True\s+correct\b/i,
+    /\bTrue\s+is\s+correct\b/i,
+  ].find((pattern) => pattern.test(text));
+}
+
 function findGeneratedOptionSourceMaterialIssue(question) {
   if (!Array.isArray(question.options)) return null;
 
@@ -3651,6 +3669,30 @@ function trueFalseSourceStatementEn(source, variantIsTrue) {
     return sourceDirectStatementEn(source, statement, sourceStatementIsTrue);
   }
   return sourceOppositeStatementEn(statement);
+}
+function sourceTrueFactSv(source) {
+  return ensureSentence(truthStatementSv(stripTrueFalsePromptSv(source.questionSv)));
+}
+function sourceTrueFactEn(source) {
+  return ensureSentence(truthStatementEn(stripTrueFalsePromptEn(source.questionEn)));
+}
+function falseStatementExplanationSv(source) {
+  if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
+    return `${sourceTrueFactSv(
+      source,
+    )} Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.`;
+  }
+
+  return source.explanationSv;
+}
+function falseStatementExplanationEn(source) {
+  if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
+    return `${sourceTrueFactEn(
+      source,
+    )} Therefore the statement in the question is false, so False is correct.`;
+  }
+
+  return source.explanationEn;
 }
 function generatedTrueFalseStatementSv(source, option, variantIsTrue) {
   if (isTrueFalseSource(source)) return trueFalseSourceStatementSv(source, variantIsTrue);
@@ -4234,6 +4276,20 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   return {
     questionSv: judgementPromptSv(sourceQuestion),
     questionEn: judgementPromptEn(sourceQuestion),
+  };
+}
+
+function expectedGeneratedExplanation(sourceQuestion, variantIndex) {
+  if (variantIndex === 2) {
+    return {
+      explanationSv: falseStatementExplanationSv(sourceQuestion),
+      explanationEn: falseStatementExplanationEn(sourceQuestion),
+    };
+  }
+
+  return {
+    explanationSv: sourceQuestion.explanationSv,
+    explanationEn: sourceQuestion.explanationEn,
   };
 }
 
@@ -5203,6 +5259,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
 let questionTypeOptionCountsValidated = 0;
@@ -5231,6 +5288,7 @@ let sourcePublicationParityValidated = 0;
 let generationParityValidated = false;
 let chapterGenerationParityValidated = 0;
 let generatedSourceMetadataParityValidated = 0;
+let generatedExplanationTemplateParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
 let generatedOptionSourceMaterialWordingValidated = 0;
@@ -11799,13 +11857,7 @@ function validateGeneratedSourceMetadataParity() {
         reject(`${label} type is ${variant.type}, expected ${convention.type}`);
       }
 
-      for (const field of [
-        'chapterId',
-        'difficulty',
-        'explanationSv',
-        'explanationEn',
-        'uhrReference',
-      ]) {
+      for (const field of ['chapterId', 'difficulty', 'uhrReference']) {
         if (!jsonEqual(variant[field], sourceQuestion[field])) {
           reject(`${label} ${field} does not match source question`);
         }
@@ -11838,6 +11890,43 @@ function validateGeneratedSourceMetadataParity() {
 }
 
 validateGeneratedSourceMetadataParity();
+
+function validateGeneratedExplanationTemplateParity() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return;
+  }
+
+  sourceQuestions.forEach((sourceQuestion, sourceIndex) => {
+    const variants = generatedPublishedQuestions.slice(
+      sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+      (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+    );
+
+    variants.forEach((variant, variantIndex) => {
+      const label = `${sourceQuestion.id} generated variant[${variantIndex}]`;
+      if (!variant) {
+        fail(`${label} is missing`);
+        return;
+      }
+
+      let variantIsValid = true;
+      const expected = expectedGeneratedExplanation(sourceQuestion, variantIndex);
+
+      if (variant.explanationSv !== expected.explanationSv) {
+        variantIsValid = false;
+        fail(`${label} explanationSv does not match generated explanation template`);
+      }
+      if (variant.explanationEn !== expected.explanationEn) {
+        variantIsValid = false;
+        fail(`${label} explanationEn does not match generated explanation template`);
+      }
+
+      if (variantIsValid) generatedExplanationTemplateParityValidated += 1;
+    });
+  });
+}
+
+validateGeneratedExplanationTemplateParity();
 
 function validateGeneratedPromptTemplateParity() {
   if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
@@ -12300,6 +12389,7 @@ if (Array.isArray(questions)) {
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
+      const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
       } else if (stemSourceAuthorityReference) {
@@ -12324,6 +12414,11 @@ if (Array.isArray(questions)) {
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
+      }
+      if (falseAnswerExplanationMismatch) {
+        fail(`${label} contains a false-answer explanation that says True is correct`);
+      } else {
+        questionFalseAnswerExplanationsValidated += 1;
       }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
@@ -12717,6 +12812,7 @@ console.log(
       generationParityValidated,
       chapterGenerationParityValidated,
       generatedSourceMetadataParityValidated,
+      generatedExplanationTemplateParityValidated,
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
       generatedOptionSourceMaterialWordingValidated,
@@ -12733,6 +12829,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
       questionTypeOptionCountsValidated,

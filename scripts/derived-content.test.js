@@ -681,6 +681,30 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     checkedText,
     /Det är inte sant att|Det stämmer inte att|Det stämmer att|It is not true that|It is true that|Påståendet är sant|The statement is true/i,
   );
+
+  assert.equal(
+    byId.get('q151')?.explanationSv,
+    'Sveriges nordligaste del ligger norr om polcirkeln. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.',
+  );
+  assert.equal(
+    byId.get('q151')?.explanationEn,
+    "Sweden's northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",
+  );
+
+  const falseExplanationOffenders = [...byId.values()]
+    .filter(
+      (question) =>
+        question.type === 'true_false' &&
+        question.correctOptionId === 'false' &&
+        question.tags.includes('false-statement'),
+    )
+    .filter((question) =>
+      /Därför\s+stämmer\s+alternativet\s+Sant|That makes True correct|True is correct/i.test(
+        `${question.explanationSv} ${question.explanationEn}`,
+      ),
+    )
+    .map((question) => question.id);
+  assert.deepEqual(falseExplanationOffenders, []);
 });
 
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
