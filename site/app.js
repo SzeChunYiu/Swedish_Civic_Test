@@ -947,6 +947,27 @@ function smtQuizCurrentLang() {
   try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
 }
 
+function smtQuizEscapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"]/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+  }[c]));
+}
+
+function smtQuizSourceCitation(question, lang) {
+  const source = question && question.source;
+  if (!source) return lang === "sv" ? "Källhänvisning saknas" : "Source citation unavailable";
+  const title = source.title || "Sverige i fokus";
+  if (!source.chapter || !source.section || source.page === undefined || source.page === null) {
+    return lang === "sv" ? "Källhänvisning saknas" : "Source citation unavailable";
+  }
+  return lang === "sv"
+    ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
+    : `Source: ${title}, ${source.chapter}, ${source.section}, p. ${source.page}`;
+}
+
 function smtQuizHash() {
   return (location.hash || "#/").replace(/^#/, "");
 }
@@ -1042,6 +1063,7 @@ function smtQuizRender() {
   const q = questions[SMT_QUIZ.i];
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
+  const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
   const dots = Array.from({ length: n }, (_, k) => {
     let cls = "";
     if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === questions[k].answer ? "is-right" : "is-wrong";
@@ -1084,6 +1106,7 @@ function smtQuizRender() {
     <div class="quiz__card">
       <div class="quiz__crumb">${q.chapter}</div>
       <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
+      <p class="quiz__source">${sourceCitation}</p>
       <div class="quiz__opts">${opts}</div>
       ${feedback}
       <div class="quiz__actions">

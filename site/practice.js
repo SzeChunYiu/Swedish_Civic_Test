@@ -13,12 +13,24 @@
   function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
   function tr(map) { return (map && (map[lang()] || map.en)) || ""; }
   function escapeHtml(value) {
-    return String(value).replace(/[&<>"]/g, (c) => ({
+    return String(value ?? "").replace(/[&<>"]/g, (c) => ({
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
       '"': "&quot;",
     }[c]));
+  }
+  function sourceCitation(question) {
+    const sv = lang() === "sv";
+    const source = question && question.source;
+    if (!source) return sv ? "Källhänvisning saknas" : "Source citation unavailable";
+    const title = source.title || "Sverige i fokus";
+    if (!source.chapter || !source.section || source.page === undefined || source.page === null) {
+      return sv ? "Källhänvisning saknas" : "Source citation unavailable";
+    }
+    return sv
+      ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
+      : `Source: ${title}, ${source.chapter}, ${source.section}, p. ${source.page}`;
   }
 
   function getProgress() {
@@ -408,6 +420,7 @@
         <div class="mock-card">
           <div class="quiz__crumb">Ch ${q.chapterId}</div>
           <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
+          <p class="quiz__source">${escapeHtml(sourceCitation(q))}</p>
           <div class="quiz__opts">${opts}</div>
         </div>
 
@@ -494,6 +507,7 @@
               </div>
             </dl>
             <p class="mock-review__why">${escapeHtml(tr(q.why))}</p>
+            <p class="mock-review__source">${escapeHtml(sourceCitation(q))}</p>
           </div>
         </details>
       `;
