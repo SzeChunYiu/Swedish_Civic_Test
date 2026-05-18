@@ -3808,3 +3808,26 @@ Evidence: current main closes the generic filler-option and true/false judgement
 PR (number + merged?): #791 merged yes, squash `6ef2182`.
 Accepted by worker? yes
 Next suggested validator action: accept only the filler-option/judgement-shell subclosure after source/PR inspection; keep DATA-INTEGRITY routed to remove or rewrite the remaining 133 ordinary generated single-choice meta-stems in canonical CSV and static output.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-Uz36Ns/wt` / detached `origin/main` `fd1c12f`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main GOAL.md ads/IAP step-3 acceptance-gate recheck for `REVIEWER-ADS-IAP-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active validator/data-integrity/setup queues, blockers, and reviewer history before queueing.
+- Used a clean temporary worktree on current `origin/main` `fd1c12f`; the shared checkout has unrelated dirty queue/report files and a divergent local auto-flush commit, so it was not reset.
+- Exact GOAL step-3 command segment: `test -f lib/monetization/purchases.ts` - exit 0.
+- Exact GOAL step-3 command segment: `grep -qiE "restore" lib/monetization/purchases.ts` - exit 0.
+- Exact GOAL step-3 command segment: `grep -rqi "remove.?ads" app components lib` - exit 1.
+- Product/source evidence: `rg -n -i "remove.?ads|remove ads|ta bort annonser|REMOVE_ADS|removeAds|remove_ads" app components lib -S` finds `REMOVE_ADS_PRODUCT_ID`, `REMOVE_ADS_PRICE_LABEL = '29 SEK'`, `REMOVE_ADS_STORAGE_KEY`, `buyRemoveAds`, `restoreRemoveAdsPurchase`, `PremiumBanner` buy/restore UI, persisted `removeAds` paths, and localized Remove Ads copy.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` - exit 0, 21/21 passing, including remove-ads buy/restore/persistence and paywall-surfacing tests.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:publishing` - exit 0, 7/7 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing ADS/IAP finding updated instead of filing an unrelated duplicate.
+Findings queued: `REVIEWER-ADS-IAP-1 current GOAL step-3 gate update [2026-05-19 00:09 CEST]`.
+Evidence: current product source and monetization tests show Remove Ads purchase wiring, but the literal `GOAL.md` step-3 grep remains red, so release acceptance cannot honestly report all GOAL commands passing.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep product wiring closed unless fresh product evidence regresses; route VALIDATOR/RELEASE to replace this brittle GOAL step with a project guard or request an operator-owned GOAL correction.
