@@ -15,8 +15,8 @@ Post-#642/#ebe18cc routing state:
   `npm run test:ownership`, and `git diff --check ebe18cc^..ebe18cc`.
 - Do not close the full reviewer route yet. A precise current-main scan still
   finds false-answer explanation mismatches for `q151`, `q167`, `q235`,
-  `q255`, `q331`, `q339`, and `q715`: false propositions still explain that
-  the statement is true / `Påståendet är sant`.
+  `q255`, `q331`, `q339`, `q439`, `q507`, and `q715`: false propositions
+  still explain that the statement is true / `Påståendet är sant`.
 - Next DATA-INTEGRITY route:
   `REVIEWER-GENERATED-TF-FALSE-EXPLANATION-1`, starting from clean current
   main. Own generator, validator, and static-mirror cleanup for those
@@ -24,7 +24,7 @@ Post-#642/#ebe18cc routing state:
   `site/questions.js`; add focused negative guards; rerun export/static parity,
   `validate:content`, `test:derived-content`, focused content gates,
   typecheck, lint, ownership, Prettier/diff; provide PR/merge evidence and a
-  direct recheck of all seven rows.
+  direct recheck of all nine rows.
 
 MANAGER-build current-route update - 2026-05-18T21:01+02:00
 
