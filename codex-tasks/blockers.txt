@@ -151,3 +151,14 @@ configured host with `reason=lunarc_requires_slurm_station`, and `csup
 factory-audit civic-test` still reports RED `missing:project_config`; do not
 treat factory-run/apply as safe until that tooling audit is reconciled. Do not
 run Vercel CLI from this repo.
+
+MANAGER-build rate-limit note 2026-05-18T22:01+02:00:
+`VERIFY-GENERATED-TF-STANDALONE-Q351-Q400-POST642-1` is accepted on
+`origin/main` via PR #680 / `67846c5` and manager acceptance PR #681 /
+`18e20de`. Pane 4 / DATA-INTEGRITY then hit the Codex usage limit while idle
+after the merge, with retry date May 23, 2026 at 23:11. The next
+DATA-INTEGRITY route remains `VERIFY-GENERATED-TF-STANDALONE-Q401-Q450-POST656-1`
+for q406/q407/q411/q446/q447 from clean current main; do not reopen or
+duplicate q351-q400 without fresh current-main regression evidence. Pane 2 /
+SETUP is also usage-limited after the live-deploy recheck; SETUP has no
+unblocked local source atom while SITE-P0-5 remains external deploy capacity.

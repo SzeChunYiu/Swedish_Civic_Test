@@ -460,3 +460,24 @@ parity, `validate:content`, `test:derived-content`, focused content gates,
 typecheck, lint, ownership, Prettier/diff, PR/merge evidence, and direct spot
 checks proving the five rows name their referents and capitalize `EU`
 correctly.
+
+Iteration: 2026-05-18T22:01+02:00
+Rows moved to accepted: none beyond the 21:58 q351-q400 queue-level
+acceptance.
+Rows blocked: DATA-INTEGRITY pane capacity is now blocked by Codex usage
+limit after PR #680 / `67846c5`; SETUP pane capacity is also usage-limited
+after its live-deploy recheck. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains
+blocked on external production deploy capacity/operator evidence.
+Evidence: tmux pane `civic-laptop-build:0.4` shows the q351-q400 merge,
+current-main recheck, then usage-limit errors with retry date May 23, 2026 at
+23:11. tmux pane `civic-laptop-build:0.2` shows usage-limit errors after the
+accepted SETUP live-deploy recheck. Current `origin/main` includes PR #680 /
+`67846c5`, MANAGER-build acceptance PR #681 / `18e20de`, and later SETUP
+live-deploy recheck `f249e7b`.
+Next worker task queued: DATA-INTEGRITY -
+`VERIFY-GENERATED-TF-STANDALONE-Q401-Q450-POST656-1` remains next for
+q406/q407/q411/q446/q447 when DATA-INTEGRITY capacity returns. Start from
+clean current main; require generator/validator/static mirror evidence,
+standard content/type/lint/ownership/Prettier/diff gates, PR/merge evidence,
+and direct spot checks. Do not restaff q351-q400 without fresh regression
+evidence.
