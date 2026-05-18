@@ -375,9 +375,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet En stark demokrati listar flera sätt att påverka och delta i samhället, bland annat att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. Därför är alternativet med politiker, demonstrationer och namninsamlingar rätt; de andra alternativen skulle begränsa demokratiskt deltagande.',
+      'Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin.',
     explanationEn:
-      'The A strong democracy section lists several ways to influence and participate in society, including contacting politicians, demonstrating, and starting or signing a petition. Therefore the option about politicians, demonstrations, and petitions is correct; the other options would restrict democratic participation.',
+      'People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'En stark demokrati',
