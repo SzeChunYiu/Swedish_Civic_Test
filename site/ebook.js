@@ -528,10 +528,23 @@
     const m = hash.match(/[?&]c=([^&]+)/);
     return m ? m[1] : "intro";
   }
-  function practiceHref(id) {
-    if (id === "intro") return "#/practice";
-    const chapterId = Number.parseInt(id, 10);
-    return Number.isFinite(chapterId) ? `#/practice?c=${chapterId}` : "#/practice";
+  const PRACTICE_LINKS = {
+    intro: { href: "#/practice", en: "Open practice", sv: "Öppna övning" },
+    "1": { href: "#/practice?c=10", en: "Practice history", sv: "Öva historia" },
+    "2": { href: "#/practice?c=3", en: "Practice government", sv: "Öva statsskick" },
+    "3": { href: "#/practice?c=5", en: "Practice rights", sv: "Öva rättigheter" },
+    "4": { href: "#/practice?c=8", en: "Practice work and money", sv: "Öva arbete och ekonomi" },
+    "5": { href: "#/practice?c=7", en: "Practice equality", sv: "Öva jämställdhet" },
+    "6": { href: "#/practice?c=9", en: "Practice welfare", sv: "Öva välfärd" },
+    "7": { href: "#/practice?c=1", en: "Practice nature", sv: "Öva natur" },
+    "8": { href: "#/practice?c=13", en: "Practice traditions", sv: "Öva traditioner" },
+    "9": { href: "#/practice?c=8", en: "Practice money", sv: "Öva ekonomi" },
+    "10": { href: "#/practice?c=11", en: "Practice EU and world", sv: "Öva EU och omvärld" },
+    "11": { href: "#/practice?c=mix", en: "Practice mixed questions", sv: "Öva blandade frågor" },
+    "12": { href: "#/mock", en: "Start mock exam", sv: "Starta provexempel" },
+  };
+  function practiceLink(id) {
+    return PRACTICE_LINKS[id] || { href: "#/practice", en: "Open practice", sv: "Öppna övning" };
   }
 
   function render() {
@@ -563,6 +576,7 @@
     const idx = ORDER.indexOf(id);
     const prev = idx > 0 ? ORDER[idx - 1] : null;
     const next = idx < ORDER.length - 1 ? ORDER[idx + 1] : null;
+    const practice = practiceLink(id);
     const progressLabel = id === "intro" ? (sv ? "Guide" : "Guide") : `${idx} / 12`;
     const actions = `
       <aside class="ebook__study-actions" aria-label="${sv ? "Nästa steg" : "Next study steps"}">
@@ -573,7 +587,7 @@
             : "Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading."}</p>
         </div>
         <div class="ebook__study-links">
-          <a class="btn btn--gold btn--sm" href="${practiceHref(id)}">${id === "intro" ? (sv ? "Öppna övning" : "Open practice") : (sv ? "Öva kapitlet" : "Practice chapter")} →</a>
+          <a class="btn btn--gold btn--sm" href="${practice.href}">${practice[lang]} →</a>
           <a class="btn btn--ghost btn--sm" href="#/mock">${sv ? "Provexempel" : "Mock exam"}</a>
           <a class="btn btn--ghost btn--sm" href="#/sources">${sv ? "Källor" : "Sources"}</a>
         </div>
