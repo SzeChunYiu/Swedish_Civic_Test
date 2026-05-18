@@ -93,3 +93,27 @@ Next worker task queued: SETUP - fix
 static-site guards, typecheck, ownership, diff checks, journal handoff, and
 PR/merge evidence. Keep native account-scope duplicate-guarded and keep live
 deploy freshness blocked on external production deploy evidence.
+
+Iteration: 2026-05-18T18:48+02:00
+Rows moved to accepted: none; merged commit `cda854f` is not accepted for
+`REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`.
+Rows blocked: `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` remains open for a
+rebased DATA-INTEGRITY follow-up; `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains
+blocked on external production deploy capacity/operator evidence.
+Evidence: clean current-main worktree `/tmp/sct-manager-di-current` initially
+failed content/export checks only because `node_modules` was absent; after
+linking the shared dependency install, `validate:content`, `test:derived-content`,
+export/static parity, typecheck, ownership, and `git diff --check
+cda854f^..cda854f` passed. A direct CSV/static scan still found current
+generated residuals such as `q317`/`q318` missing the English verb before
+`criminally responsible`, `q325`/`q326` fragment prompts, `q329`/`q330` meta
+scaffolding, `q333`/`q334` list-only prompts, `q345`/`q346` "One reason is
+that prevent/decide" English stems, and q501-q550 samples. The green validator
+mirror does not yet cover the full current naturalness bar.
+Next worker task queued: DATA-INTEGRITY - rebase or replace the residual TF
+splice branch, close the full current verifier row set, regenerate
+`content/question-bank.csv` and `site/questions.js`, then rerun export/static
+parity, `validate:content`, `test:derived-content`, focused published-question
+/ content gates, typecheck, ownership, Prettier/diff checks, PR/merge
+evidence, and current-main residual recheck before acceptance. Keep
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` queued after this route.
