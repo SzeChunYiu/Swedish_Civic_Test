@@ -549,3 +549,25 @@ a current binary-reviewed evidence file justifies them.
 Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external until production serves
 current main and the hash-aware live smoke passes. Do not run Vercel CLI from
 this repo.
+
+MANAGER-build acceptance 2026-05-18T22:43+02:00
+`REVIEWER-RELEASE-GATES-1` SETUP/COMPLY source guard is accepted on current
+`origin/main` via PR #707 / `9d40c89`. SETUP updated
+`publishing/privacy-labels.md`, `publishing/google-play-data-safety.md`, and
+`scripts/publishing.test.js` for the current Google Mobile Ads + Remove Ads
+non-consumable IAP + ATT/UMP consent posture, with the setup journal handoff
+landed in `docs/parallel-sessions/journals/setup.md`.
+
+Clean manager recheck in `/tmp/sct-manager-release-accept.GdKYjj` passed
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:publishing` 7/7,
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:release-preflight` 44/44,
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run lint`, `npm run test:ownership`,
+`node --check scripts/publishing.test.js`, targeted Prettier,
+`git diff --check 9d40c89^..9d40c89`, and a stale-copy scan with zero guarded
+matches for the old disabled-ads/no-data release contract.
+
+Do not reopen the release/privacy docs guard without fresh current binary or
+store-console evidence. External App Store Connect / Play Console submission,
+binary privacy review, and production deploy freshness remain separate manual
+or operator-owned gates; no pane should run Vercel CLI from this repo.
