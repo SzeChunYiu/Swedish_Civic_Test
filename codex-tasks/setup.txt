@@ -1,4 +1,4 @@
-MANAGER-build queue - 2026-05-18T14:29+02:00
+MANAGER-build queue - 2026-05-18T14:43+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked launch/release/product
 items, SETUP should take only atoms that close validator/reviewer defects with
@@ -33,28 +33,28 @@ Accepted P0 SETUP atoms:
      `npm run test:ownership`, targeted `git diff --check`, and static-site
      Chrome smoke showing 13 Practice cards, 705-question total, q001 feedback,
      5-row Mock review, and no console/page errors all exit 0.
+4. `SITE-P0-4` accepted via PR #279 / `9def23a` plus handoff PR #280 /
+   `41a6bcb`.
+   - Clean manager verification on current `origin/main`: `node --check
+     site/ebook.js`, `node --check site/ebook-tools.js`, focused ebook
+     copy/navigation source assertion, `npm run validate:content`,
+     `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+     `npm run test:ownership`, `git diff --check HEAD~2..HEAD`, and static-site
+     Chrome smoke for English and Swedish Ebook, notes host, chapter practice
+     navigation, and no console/page errors all exit 0.
 
-Active P0 SETUP atoms:
+Active P0 REVIEWER atoms:
 
-1. `SITE-P0-4`
-   - Scope: `site/ebook.js`, `site/ebook-tools.js`, and related site reading
-     UI only.
-   - Required behavior: preserve the richer ebook surface already on `site/`
-     while improving visible writing quality and navigation; do not replace it
-     with a thin placeholder.
-   - Required gates: static-site ebook smoke, focused copy/navigation check,
-     `node --check` for changed site JS, and `git diff --check`.
-
-2. `SITE-P0-5`
+1. `SITE-P0-5`
    - Scope: REVIEWER audit, not SETUP implementation.
    - Required behavior: after SITE-P0-1 through SITE-P0-4 have source PRs,
      REVIEWER audits the live deployed static site against the draft mockups
      and queues concrete parity defects. Do not close this with a report-only
      audit.
 
-Existing P0 SETUP atoms behind the static-site P0 queue:
+Existing P0 SETUP atoms behind the SITE-P0-5 reviewer audit:
 
-3. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+2. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -64,7 +64,7 @@ Existing P0 SETUP atoms behind the static-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-4. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+3. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -74,7 +74,7 @@ Existing P0 SETUP atoms behind the static-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-5. `REVIEWER-ACCOUNT-SCOPE-1`
+4. `REVIEWER-ACCOUNT-SCOPE-1`
    - Scope: SETUP/build product shell, route manifests, dependencies, and
      scaffold/router-shell tests.
    - Required behavior: the MVP has no reachable account/authentication
@@ -87,7 +87,7 @@ Existing P0 SETUP atoms behind the static-site P0 queue:
    - Keep `REVIEWER-SEARCH-PLACEHOLDER-1` separate; do not expand this atom
      into Search implementation/removal.
 
-6. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+5. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
