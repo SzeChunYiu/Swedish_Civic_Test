@@ -2838,3 +2838,25 @@ Verification (commands + result):
 PR (number + merged?): #440 / merged yes via `31a8146`
 Accepted by worker? yes
 Next suggested validator action: route `REVIEWER-COMPONENT-FALLBACK-COPY-1` to UIUX/COMPONENTS as a focused `ResultSummary` source atom with parity tests; do not reopen already-localized Button, ProgressBar, ChapterProgressCard, or QuestionNavigator work.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-iter-1779120061` / `task/reviewer/site-current-audit-1779120061`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Critical-review pass for native account scope under the no-account v1.0 goal.
+Changed artifacts: `codex-tasks/validator.txt`; `codex-tasks/setup.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree on current `origin/main` `479f5bc` because the shared checkout is on an old UIUX branch with unrelated dirty source, queue, and report files.
+- Duplicate scan found only the accepted static-site `REVIEWER-ACCOUNT-SCOPE-1`; no native-app account-scope row was queued.
+- Source audit found `app/_layout.tsx` mounts `AuthProvider` and registers `(auth)`/`account`; `app/(auth)/sign-in.tsx` exposes Google/Facebook/Apple sign-in and account sync copy; `app/account.tsx` writes Supabase profile data and reads remote entitlements; Home/Profile/Settings surface `AccountHeader`, `AccountSection`, and `WelcomeBanner`; `lib/supabase.ts` creates the Supabase client and `package.json` carries the Supabase runtime dependency.
+- After rebasing to `origin/main` `cb7df5a`, the same account/auth/Supabase markers remained present in `app/`, `components/auth/`, `lib/auth/`, `lib/supabase.ts`, and `package.json`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:static-site-account-scope` - exit 0, proving the existing accepted guard only covers `site/`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:compliance` - exit 0; focused profile/legal route tests also passed, so current green compliance/profile gates do not reject native account surfaces.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0 after linking this temporary worktree to the shared `node_modules` install.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with 715 questions and static-site parity true.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` - exit 0.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` - exit 1 on the already-queued `REVIEWER-ROUTE-HEADER-1` Stack header contract; this was noted but not duplicated as part of the native account-scope defect.
+- `git diff --check` - exit 0.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: route `REVIEWER-NATIVE-ACCOUNT-SCOPE-1` to SETUP/build for either native account/auth removal or an explicit operator scope change; keep static-site account cleanup accepted and separate.
