@@ -269,3 +269,18 @@ MANAGER-build acceptance 2026-05-18T14:08+02:00
   errors.
 - Next SETUP/build atom is `SITE-P0-3`: sync `site/questions.js` from canonical
   app data and add/keep a parity guard before the SITE-P0-4 ebook quality pass.
+
+MANAGER-build acceptance 2026-05-18T14:29+02:00
+- Accepted `SITE-P0-3` from PR #264 / `19a420e`, with SETUP handoff PR #267 /
+  `4f2f9c5`. This closes the static question-bank drift portion of SITE-P0.
+- Clean manager verification on current `origin/main` passed: `node
+  scripts/export-site-question-bank.js --check`; `node --test
+  tests/content-static-site-question-bank-parity.test.js`; `node
+  scripts/export-question-bank.js --check`; `node --check site/questions.js`;
+  `npm run validate:content`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`;
+  `npm run test:ownership`; targeted `git diff --check`; and static-site Chrome
+  smoke showing 13 Practice cards, 705-question total, q001 feedback, 5-row Mock
+  review, and no browser console/page errors.
+- Next SETUP/build atom is `SITE-P0-4`: preserve the richer `site/ebook.js` and
+  `site/ebook-tools.js` surface while improving visible writing/navigation
+  quality. Keep `SITE-P0-5` as reviewer audit only after SITE-P0-4 lands.
