@@ -1,0 +1,24 @@
+MANAGER-content queue - 2026-05-18T12:25:00+02:00
+
+P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
+content work that advances TRANSLATE-COMPLETE or SOURCE-CITATION. Keep all
+content panes on UHR-only atoms; do not read, copy, paraphrase, or compare
+against any competitor question bank.
+
+Landed:
+- q005/q006 are on `origin/main` via PR #157.
+- q007 is on `origin/main` as `c48945c` via PR #163. Do not publish duplicate
+  local q007 diffs.
+
+Active dispatch:
+- Pane 4: q008 naturalness in `/home/billy/sct-content-q008`.
+- Pane 1: q009 naturalness after stopping duplicate q007 work and syncing
+  safely.
+- Pane 3: q010 naturalness after stopping duplicate q007 work and syncing
+  safely.
+
+Next queue after active dispatch: q011, q037, q071, q072, then later
+validator-filed naturalness rows. Keep each atom to one question when possible,
+preserve its UHR locator, run focused content gates, and hand off the question
+id, changed artifacts, verification commands, PR number, and which P0 item the
+atom advances.
