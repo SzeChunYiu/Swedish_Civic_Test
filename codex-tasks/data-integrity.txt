@@ -431,3 +431,33 @@ generator/validator/static-mirror repair, focused negative guards for
 `materialet` / `from the material`, regenerated CSV/static output,
 export/static parity, `validate:content`, typecheck, ownership,
 Prettier/diff checks, PR/merge evidence, and current-main spot checks.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:58:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q651-Q700-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `8e9b49c` confirms current q651-q700 generated residual defects
+against the official UHR `Sverige i fokus` PDF after the latest
+DATA-INTEGRITY true/false cleanup. Facts, citations, answer keys, and ordinary
+distractors remain supported, but generated true/false variants still publish
+learner-visible English naturalness defects in `q666`, `q667`, and `q699`:
+`q666` and `q667` splice gerund answer text after `it is common to`, while
+`q699` preserves a capitalized option fragment in mid-sentence. Fold
+`docs/verify/q651-q700-2026-05-18.md` and the ledger row statuses into any
+remaining `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` acceptance recheck;
+acceptance still requires focused negative guards, regenerated CSV/static
+output if the generator changes, export/static parity, `validate:content`,
+typecheck, ownership, Prettier/diff checks, PR/merge evidence, and current-main
+residual row recheck.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:58:00+02:00
+`VERIFY-GENERATED-UNKNOWN-OPTION-Q651-Q700-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: the same q651-q700 VERIFY pass
+also confirms generated single-choice variants `q652`, `q656`, `q660`, `q664`,
+`q668`, `q672`, `q676`, `q680`, `q684`, `q688`, `q692`, `q696`, and `q700`
+include `Det går inte att avgöra av materialet` / `It cannot be determined
+from the material` in `site/questions.js`. Fold this evidence into
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards for
+`materialet` / `from the material`, regenerated CSV/static output,
+export/static parity, `validate:content`, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks.
