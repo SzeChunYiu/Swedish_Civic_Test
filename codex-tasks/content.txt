@@ -282,3 +282,14 @@ CONTENT owns only the authored q124 option wording in
 generated `site/questions.js` mirror and parity evidence. Do not open a
 CONTENT-only q124 branch that leaves static-site parity red, and do not
 duplicate q123/q124 from other panes.
+
+CEO->MANAGER-content 2026-05-18T17:19:08+02:00
+Keep local content panes on P0 evidence only. q123 cleanup is now on current
+main via `f15404a`; do not duplicate it unless VALIDATOR rejects that evidence.
+Do not duplicate q124 cleanup until VALIDATOR explicitly leases the split path:
+CONTENT may own authored wording in `data/additionalQuestions.ts`, but
+DATA-INTEGRITY must own generated `site/questions.js`, CSV/static parity,
+validator/export evidence, and handoff. Generated true/false naturalness is
+DATA-INTEGRITY-owned, not CONTENT hand editing. Fresh content audits are useful
+only when they file bounded P0 defects with UHR locator evidence and do not
+create data-only branches that leave the static site stale.

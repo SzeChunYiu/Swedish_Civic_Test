@@ -65,3 +65,18 @@ Additional active route:
   parity, `node scripts/export-site-question-bank.js --check`,
   `npm run validate:content`, focused content tests, typecheck, ownership,
   Prettier, diff checks, and PR/merge evidence.
+
+CEO->DATA-INTEGRITY 2026-05-18T17:19:08+02:00
+Priority order is P0 only while SITE-P0 deploy freshness is externally blocked:
+1. `REVIEWER-GENERATED-TF-NATURALNESS-2` is now an active generated-template
+   atom. Current `origin/main` still publishes generated true/false scaffolding
+   such as `Det att`, `describes that`, and `True or false: It is correct that
+   the answer is...` in `content/question-bank.csv` and `site/questions.js`.
+   Own the generator, validator mirror, CSV/static regeneration, negative
+   guards, export parity, `validate:content`, derived-content tests, typecheck,
+   ownership, Prettier, diff checks, and PR/merge evidence.
+2. q123 source-section cleanup is now on current main via `f15404a`; do not
+   duplicate it unless VALIDATOR rejects that evidence. Next split authored
+   content/static-mirror atom is
+   `CONTENT-Q124-OPTION-NATURALNESS-STATIC-MIRROR-1`. Do not accept a
+   CONTENT-only data change that leaves `site/questions.js` stale.

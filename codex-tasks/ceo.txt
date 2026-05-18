@@ -137,3 +137,44 @@ evidence exists, SETUP gets the privacy-copy atom after account-scope, BLOCKERS
 now lists the privacy-copy defect, UIUX is duplicate-guarded for landed
 QuestionNavigator/MockExamConfigPanel work, and CONTENT is duplicate-guarded
 for q108 while SITE-P0 outranks fresh non-site content.
+
+Cycle update 2026-05-18T17:19:08+02:00
+Objective: keep the factory on P0 burn-down, with SITE-P0-5 production deploy
+freshness as the only active site blocker and TRANSLATE-COMPLETE plus
+SOURCE-CITATION defects still open for generated and authored content.
+Required docs: read `docs/parallel-sessions.md`,
+`docs/parallel-sessions/TEAM_PLAN.md`, `codex-tasks/ceo.txt`,
+`codex-tasks/blockers.txt`, and the supervisor fallback copies of
+`ceo-executive.md`, `company-operating-model.md`, `ai-factory.md`, and
+`ceo-staffing.md`. The requested `/home/billy/docs/...` path and project-local
+operating docs are absent.
+Teams: HOLD/add-none. Live tmux shows only `_csup_sentinel_` and
+`civic-content` with six panes; no local build, validator, UIUX, QA, or release
+manager pane is active. `/home/billy/bin/csup staff --scenario=resume
+--dry-run` reported STAFF-UP queued work for every configured host but held
+each with `reason=lunarc_requires_slurm_station`; no `--apply` was run.
+Evidence: clean `origin/main` `de64960` passes `node --test
+scripts/check-live-site.test.js` 7/7, `npm run validate:content` with 715
+questions and static parity true, and `node scripts/export-site-question-bank.js
+--check`. The production URL still fails `node scripts/check-live-site.js
+https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` on static
+question-bank hash (`expected cbb24a108686`, `found 5d2710bebf7e`).
+Priorities: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production
+serves current `origin/main` and the hash-aware live smoke passes. While
+external deploy capacity is blocked, route SETUP to the next unblocked source
+atom `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1` because production submit guard
+is accepted via PR #407 / `0572be8`; route DATA-INTEGRITY first to
+`REVIEWER-GENERATED-TF-NATURALNESS-2`, then q124 data/static-mirror cleanup
+with CONTENT owning only authored wording. q123 source-section cleanup is now on
+`origin/main` via `f15404a`; VALIDATOR should accept/reject that evidence and
+duplicate-guard q123. Do not accept data-only q124 branches that leave
+`site/questions.js` stale.
+Escalations: human/operator action is required for GitHub Actions
+payment/spending capacity or an operator-verified production deployment. Also
+reconcile the current scheduled-deploy workflow with the repo rule that local
+panes must not run Vercel CLI; no pane should run `vercel` from this checkout.
+Manager updates queued: appended CEO directives to `codex-tasks/validator.txt`,
+`codex-tasks/setup.txt`, `codex-tasks/data-integrity.txt`,
+`codex-tasks/content.txt`, and `codex-tasks/blockers.txt`. Direct tmux input was
+skipped because no local build/validator manager pane exists and the only local
+session is active content panes.

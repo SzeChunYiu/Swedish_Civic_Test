@@ -520,3 +520,31 @@ REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1 reviewer confirmation [2026-05-18 16:3
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 17:17 CEST][P0 SITE][external/live]: Rechecked clean current `origin/main` `998185a` after the release-validation workflow PR-trigger and queue handoff changes. Local readiness remains green: `node --test scripts/check-live-site.test.js` exits 0 with 7/7 passing, `npm run validate:content` exits 0 with 715 questions and `staticSiteQuestionBankParityValidated:true`, and `node scripts/export-site-question-bank.js --check` exits 0 with 715 questions and 13 chapters. `git diff --name-only 034fe61..HEAD -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json .github/workflows vercel.json` shows only `.github/workflows/release-validation.yml`; `git diff --name-only 11e60ac..ae25584` shows only `docs/parallel-sessions/journals/setup.md`; and `git diff --name-only ae25584..origin/main` shows only queue/journal files, so no current-main site/content fix supersedes the previous live-deploy blocker. Production is still stale: `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` exits 1 because static question-bank content has expected hash prefix `3c425f0ad2c7` but live hash prefix `5d2710bebf7e`, while Practice, Mock, Ebook, wide layout, and placeholder-copy asset checks pass. Manager action: keep this as the only active SITE-P0 blocker; restore deployment capacity or provide an operator-verified production deploy from current `origin/main`, then rerun the hash-aware live smoke before accepting SITE-P0-5.
 
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1 update [2026-05-18 17:08 CEST][P0 SITE][external/live]: Rechecked clean current `origin/main` `6d6398f` after the UIUX top-bar a11y label merge. Local readiness is still green: `node --test scripts/check-live-site.test.js` exits 0 with 7/7 passing; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with 715 questions and `staticSiteQuestionBankParityValidated:true`; and `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 0 with 715 questions and 13 chapters. `git diff --name-only 998185a..HEAD -- site scripts/check-live-site.js scripts/check-live-site.test.js tests/content-static-site-question-bank-parity.test.js data content package.json .github/workflows vercel.json` is empty, so no current-main site/content/live-check source change supersedes the existing blocker. Production remains stale: `SITE_LIVE_TIMEOUT_MS=30000 NODE_OPTIONS='--v8-pool-size=1' node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` exits 1 because static question-bank content has expected hash prefix `3c425f0ad2c7` but live hash prefix `5d2710bebf7e`; Practice, wide layout, Mock, Ebook, and placeholder-copy asset checks pass. Manager action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the only active SITE-P0 blocker; restore deployment capacity or provide an operator-verified production deploy from current `origin/main`, then rerun the hash-aware live smoke before accepting SITE-P0-5.
+
+CEO->VALIDATOR 2026-05-18T17:19:08+02:00
+Executive decision: HOLD/add-none and P0-first acceptance. Clean
+`origin/main` is now `de64960`; local readiness remains green for
+`node --test scripts/check-live-site.test.js` 7/7, `npm run validate:content`
+with 715 questions and static parity true, and
+`node scripts/export-site-question-bank.js --check`. Production still fails the
+hash-aware live check against
+`https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` with expected
+hash `cbb24a108686` and live hash `5d2710bebf7e`.
+Immediate actions:
+1. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open. Do not accept SITE-P0-5 from
+   local smoke, workflow edits, or source readiness alone; acceptance requires a
+   production deploy from current `origin/main` plus passing hash-aware live
+   smoke.
+2. Escalate the external deploy-capacity blocker to the operator: GitHub
+   Actions payment/spending capacity must be restored, or an operator-verified
+   production deployment must be provided. No pane should run local `vercel`
+   commands from this checkout.
+3. While deploy capacity is externally blocked, accept only P0 source atoms:
+   SETUP visual-smoke launch-overlay evidence, DATA-INTEGRITY generated
+   true/false naturalness, and q124 data/static-mirror cleanup with CONTENT
+   limited to authored wording. Production submit guard is already accepted via
+   PR #407 / `0572be8`; q123 cleanup is on current main via `f15404a` and needs
+   normal validator acceptance/duplicate-guarding.
+4. Reject data-only q124 or generated-content branches that leave
+   `site/questions.js`, `content/question-bank.csv`, validator mirrors, or
+   static-site parity stale.
