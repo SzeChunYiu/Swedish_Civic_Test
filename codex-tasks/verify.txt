@@ -11,6 +11,25 @@ regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
 
+MANAGER-content 2026-05-18T23:06:00+02:00 current-route correction:
+- Current `origin/main` is `b7fde22`. `verify:data/questions.ts q701-q720` is
+  landed via `e3fe9dd`; do not duplicate or merge stale q701 branches,
+  including `/tmp/sct-verify-q701-q720-pane4-final` /
+  `task/verify/q701-q720-pane4-1779137112` local head `6dd1ee9`, unless
+  VALIDATOR rejects the landed report with precise current-main residuals.
+- `verify:data/questions.ts q651-q700` is active in CONTENT-VERIFY Pane 3:
+  `/tmp/sct-content-verify-q651-q700-pane3-1779138370`, branch
+  `task/content-verify/q651-q700-pane3-1779138370`, clean at `b7fde22` at
+  manager check time. It must stay report-and-queue only, inspect citations,
+  facts, answer keys, distractors, and current CSV/static output from current
+  main, then rerun the standard VERIFY/content/type/ownership/diff gates before
+  PR/merge.
+- The generated source cleanup route remains DATA-INTEGRITY q601-q650 next,
+  then q651-q700 q698, then q701-q720 q713/q716 unless VALIDATOR reorders.
+- Keep VERIFY report-and-queue only. Do not edit `data/**`,
+  `content/question-bank.csv`, `site/**`, generator templates, or validator
+  mirrors from VERIFY work.
+
 MANAGER-content 2026-05-18T22:56:00+02:00 current-route correction:
 - Current `origin/main` is `d1753ae`. `verify:data/questions.ts q601-q650` is
   landed via `1ee7eb7`; do not duplicate the older Pane 1 or Pane 3 q601
