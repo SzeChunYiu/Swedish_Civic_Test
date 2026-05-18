@@ -3738,3 +3738,27 @@ Evidence: current main still publishes 133 ordinary generated single-choice rows
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route DATA-INTEGRITY to clean or suppress generated ordinary single-choice variants so acceptance proves zero `Vilket svar är korrekt?` / `Which answer is correct?` meta-prefix rows, zero ordinary fallback-option rows, and zero true/false judgement-shell rows.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-current-TDR8Ox/wt` / `task/reviewer/q651-q700-followup-1779149000`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main follow-up for `REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` after the q698 repair.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/content/wording-rules.md`, `codex-tasks/P0.md`, active validator/data-integrity queues, blockers, and reviewer journal context before queueing.
+- Used a clean temporary worktree on current `origin/main` `09d8cb3`; the shared checkout has unrelated local WIP and was not reset.
+- `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo-local `.shared/review-to-queue.sh` were absent, so REVIEWER appended directly to `codex-tasks/validator.txt` as in prior lane fallback.
+- Direct VM inspection of `site/questions.js` found 720 total questions, 50 q651-q700 rows, 25 true/false rows, zero true/false prefix offenders, zero true/false meta-stem offenders, q698 capitalized correctly, and current residuals only in q663/q670/q671.
+- q663 still says the 25 December church service is called `Lucia procession`; q670/q671 still attach `with an Advent calendar at home` / `med en adventskalender hemma` awkwardly after the action.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 720 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionGeneratedTrueFalseNaturalnessValidated:720`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 0, 6/6 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-published-question-types.test.js tests/content-static-site-question-bank-parity.test.js tests/content-test-gate-parity.test.js` - exit 0, 32/32 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `git diff --check` - exit 0 before queue edits.
+Workspace contract: pass - no product source edited; existing q651-q700 reviewer finding updated instead of filing a duplicate.
+Findings queued: `REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1 follow-up [2026-05-18 23:39 CEST]`.
+Evidence: current main closes q698 but still leaves q663/q670/q671 naturalness defects while the focused guards stay green.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: keep q651-q700 open only for q663/q670/q671, require generator/validator/static-mirror coverage, and keep q698 closed unless a fresh regression appears.
