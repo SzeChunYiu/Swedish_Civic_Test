@@ -481,3 +481,32 @@ clean current main; require generator/validator/static mirror evidence,
 standard content/type/lint/ownership/Prettier/diff gates, PR/merge evidence,
 and direct spot checks. Do not restaff q351-q400 without fresh regression
 evidence.
+
+Iteration: 2026-05-18T23:02+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`VERIFY-GENERATED-TF-Q501-Q550-CURRENT-1` as the queue-level DATA-INTEGRITY
+closure for q526/q527/q530/q531/q535/q542/q543 generated true/false
+naturalness and grammar defects.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: PR #716 is squash-merged on current `origin/main` as `b441aed`, with
+handoff commit `557fe95`. Clean manager recheck in
+`/tmp/sct-manager-q501-accept-1779137048` passed `npm run validate:content`,
+`npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 29/29, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier, `git diff --check b441aed^..b441aed`, direct CSV/static
+scan over q526/q527/q530/q531/q535/q542/q543 with zero residual offenders, and
+serialized `npm run test:content -- --test-concurrency=1` 314/314.
+Next worker task queued: DATA-INTEGRITY -
+`REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1` is next for
+q563/q574/q598/q599. Start from clean current main and require generator and
+validator mirror coverage, regenerated canonical/static output, export/static
+parity, `validate:content`, `test:derived-content`, focused content gates,
+typecheck, lint, ownership, Prettier/diff, PR/merge evidence, and direct spot
+checks proving q563 uses "on a Saturday", q574 capitalizes Buddhist/Hindu
+naturally, q598 has subject/verb agreement, and q599 is a standalone
+learner-facing true/false stem.
