@@ -7,7 +7,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import { deriveBadges } from '../../lib/learning/badges';
+import { badgeCatalog, deriveBadges } from '../../lib/learning/badges';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -78,15 +78,26 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
 };
 
-const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
+type BadgeId = keyof typeof badgeCatalog;
+
+const localizedBadgeTitles: Record<AppLanguage, Record<BadgeId, string>> = {
   sv: {
     first_practice: 'Första övningen',
     level_2: 'Nivå 2',
     mistake_reviewer: 'Misstagsrepetition',
     streak_3: 'Tre dagars svit',
   },
-  en: {},
+  en: {
+    first_practice: 'First practice',
+    level_2: 'Level 2',
+    mistake_reviewer: 'Mistake reviewer',
+    streak_3: 'Three-day streak',
+  },
 };
+
+function isBadgeId(id: string): id is BadgeId {
+  return Object.hasOwn(badgeCatalog, id);
+}
 
 function formatBadges(
   badges: ReturnType<typeof deriveBadges>,
@@ -95,7 +106,9 @@ function formatBadges(
 ): string {
   if (badges.length === 0) return emptyLabel;
 
-  return badges.map((badge) => localizedBadgeTitles[language][badge.id] ?? badge.title).join(', ');
+  return badges
+    .map((badge) => (isBadgeId(badge.id) ? localizedBadgeTitles[language][badge.id] : badge.title))
+    .join(', ');
 }
 
 export default function Screen() {

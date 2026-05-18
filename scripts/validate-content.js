@@ -432,17 +432,22 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
     'Open settings',
+    'First practice',
+    'Level 2',
+    'Mistake reviewer',
+    'Three-day streak',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
   ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
+  ['type BadgeId = keyof typeof badgeCatalog;', 'profile route must type badge-title locales'],
   [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
   [
-    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
+    'const localizedBadgeTitles: Record<AppLanguage, Record<BadgeId, string>> = {',
     'profile route must define localized badge-title overrides',
   ],
   [
