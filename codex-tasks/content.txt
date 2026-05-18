@@ -1,5 +1,20 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content current-route update - 2026-05-18T20:24+02:00
+
+Current `origin/main` includes #584 / `16dbe4d` and #590 / `4d3b91d`, so
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` is closed for current routing.
+Fresh CONTENT capacity must not write another unknown-material capacity handoff
+using the old 155-copy evidence. Exact-main verification found zero old
+`materialet` / `from the material` generated option copies.
+
+No standalone CONTENT source atom is leased. `CONTENT-AUTHORED-TF-PREFIX-1`
+still requires an explicit paired CONTENT/DATA-INTEGRITY/static-mirror lease
+before source edits. Remaining generated true/false naturalness/meta-stem
+follow-ups are DATA-INTEGRITY-owned (`q150`, `q666`, `q667`, `q699`, `q714`,
+`q715`); static-site count/deploy work remains SETUP/build-owned; VERIFY work
+remains report-and-queue only.
+
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE, SOURCE-CITATION, or Phase-A
 SOURCE-EXPANSION. Keep all content panes on UHR-only atoms; do not read, copy,
