@@ -236,11 +236,16 @@ Current P0 SETUP routing from the SITE-P0-5 live audit:
   `npm run lint`, `npm run test:ownership`, targeted Prettier, and
   `git diff --check 847f386^..847f386`. Do not duplicate static source-family
   copy work unless REVIEWER files fresh provenance drift.
-- No unblocked local SETUP source atom is currently ahead of
-  `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`. Keep live deploy freshness external
-  until production serves current `origin/main` and the hash-aware live smoke
-  passes. If REVIEWER files a new static-site defect, route it as one fresh
-  source atom from clean current main.
+- `REVIEWER-SITE-EBOOK-CH13-COVERAGE-1` is the next local SETUP/site source
+  atom when SETUP capacity returns. Scope: add chapter 13 Ebook
+  reader/nav/order/pager/practice-link coverage for the shipped static bank
+  (`Traditions and holidays` / `Traditioner och högtider`), make
+  `#/ebook?c=13` resolve to chapter 13 instead of Intro, update static ebook
+  parity so all 13 chapters are covered, and add a runtime/static guard for
+  chapter 13. Keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external until
+  production serves current `origin/main` and the hash-aware live smoke passes.
+  SETUP pane 2 is currently usage-limited; route from clean current main when
+  capacity returns.
 
 MANAGER-build note 2026-05-18T15:25+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
