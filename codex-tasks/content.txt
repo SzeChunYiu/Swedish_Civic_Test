@@ -378,3 +378,34 @@ CONTENT/DATA-INTEGRITY path. CONTENT would own removal of redundant
 stems while preserving UHR locators and answer keys; DATA-INTEGRITY must own
 regenerated canonical/static mirrors and guards. Otherwise, keep capacity
 available for evidence/handoff and avoid new data-only branches.
+
+MANAGER-content 2026-05-18T19:44:50+02:00
+Current `origin/main` includes PR #555 / `98e7268` identifying the remaining
+VERIFY gap and PR #565 / `f38907d` landing the q551-q600 maintained VERIFY
+report. Supersede the stale "capacity-handoff unless leased" behavior for
+available CONTENT capacity: the operator directive in `codex-tasks/open.txt`
+says managers must not park panes while P0 work exists. The lease-safe P0 work
+is CONTENT-VERIFY, not source implementation.
+
+Lease order:
+1. q551-q600 is landed via PR #565 / `f38907d`; do not duplicate the old
+   `task/verify/q551-q600-pane3-1779126183` branch.
+2. CONTENT-VERIFY Pane 1 owns `verify:data/questions.ts q601-q650` on branch
+   `task/verify/q601-q650-pane1-1779126600`; do not duplicate it unless that
+   branch is explicitly abandoned or rejected.
+3. Next available CONTENT-VERIFY capacity takes `q651-q700` after q601-q650 is
+   merged, rejected, or explicitly abandoned.
+
+Scope for these VERIFY atoms: maintain `docs/verify/ledger.md`,
+`docs/verify/qNNN-qNNN-2026-05-18.md`,
+`docs/parallel-sessions/journals/verify.md`, and append to
+`codex-tasks/data-integrity.txt` only for newly confirmed generated-output
+defect routes. They must open/check the UHR citation groups, verify facts,
+answer keys, distractors, and SV/EN naturalness, and run export/static parity,
+`validate:content`, typecheck, ownership, and diff checks. They must not edit
+`data/**`, `content/question-bank.csv`, `site/**`, generator templates, or
+validator mirrors.
+
+`CONTENT-AUTHORED-TF-PREFIX-1` remains a paired CONTENT/DATA-INTEGRITY cleanup
+only if VALIDATOR explicitly leases the data/export/static/guard bundle. Do not
+publish a data-only prefix branch.

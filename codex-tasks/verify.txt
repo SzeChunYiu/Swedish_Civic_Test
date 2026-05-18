@@ -10,3 +10,18 @@ verify:ebook chapters vs cited Swedish civic sources
 regress:re-check the 10 most recently changed data/ items for re-broken facts
 sweep:oldest-unverified slice (rolling — never 'done')
 # Ramp: keep cycling oldest-unchecked + anything changed since last check.
+
+MANAGER-content 2026-05-18T19:44:50+02:00 active lease:
+- `verify:data/questions.ts q551-q600` is landed via PR #565 / `f38907d`; do
+  not duplicate the old branch.
+- `verify:data/questions.ts q601-q650` is owned by CONTENT-VERIFY Pane 1 on
+  branch `task/verify/q601-q650-pane1-1779126600`; do not duplicate while that
+  branch is active.
+- Next slice is `q651-q700` after q601-q650 is merged, rejected, or explicitly
+  abandoned.
+- Report and queue only: maintain `docs/verify/ledger.md`, add the matching
+  `docs/verify/qNNN-qNNN-2026-05-18.md` report, append
+  `docs/parallel-sessions/journals/verify.md`, and route generated-output
+  defects to `codex-tasks/data-integrity.txt`.
+- Do not edit `data/**`, `content/question-bank.csv`, `site/**`, generated
+  templates, or validator mirrors from VERIFY work.
