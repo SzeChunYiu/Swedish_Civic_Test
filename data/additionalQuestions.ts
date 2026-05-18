@@ -2842,4 +2842,16 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['geography', 'islands', 'archipelago', 'sweden'],
     'easy',
   ),
+  trueFalse(
+    'q143',
+    'ch01',
+    { chapter: 'Landet Sverige', section: 'Sveriges indelning', pageApprox: 6 },
+    'Sant eller falskt: Sverige brukar delas in i Götaland, Svealand och Norrland.',
+    'True or false: Sweden is usually divided into Götaland, Svealand, and Norrland.',
+    true,
+    'Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta.',
+    "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+    ['geography', 'landsdelar', 'gotaland', 'svealand', 'norrland'],
+    'easy',
+  ),
 ];
