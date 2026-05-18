@@ -39,25 +39,41 @@ jobs:
         with:
           node-version: 22.x
 
-      - name: Trigger production deploy hook
+      - name: Deploy site/ to production (Vercel CLI + token)
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
           VERCEL_PRODUCTION_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
         run: |
           set -e
-          if [ -z "$HOOK" ]; then
-            echo "::error::VERCEL_DEPLOY_HOOK is required."
+          if [ -n "$VERCEL_TOKEN" ]; then
+            mkdir -p .vercel
+            printf '%s' '{"projectId":"prj_vcIMvYMI7UhysjdP32HsREXyLoil","orgId":"team_TmhR7bmC3MrdyIbVtzAHTQTx"}' > .vercel/project.json
+            echo "Deploying static site/ to production via Vercel CLI..."
+            deploy_output="$(npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN")"
+            printf '%s\n' "$deploy_output"
+            deployment_url="$(printf '%s\n' "$deploy_output" | awk '/^https:\/\// { url=$0 } END { print url }')"
+            if [ -z "$deployment_url" ]; then
+              echo "::error::Vercel CLI did not print a deployment URL."
+              exit 1
+            fi
+            node scripts/check-live-site.js "$deployment_url"
+            echo "Production deploy triggered."
+          elif [ -n "$HOOK" ]; then
+            echo "VERCEL_TOKEN not set; falling back to Deploy Hook."
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$HOOK")
+            echo "Deploy hook responded HTTP $code"
+            case "$code" in
+              2*) echo "Deploy triggered." ;;
+              *)  echo "::error::Deploy hook failed (HTTP $code)"; exit 1 ;;
+            esac
+            if [ -z "$VERCEL_PRODUCTION_URL" ]; then
+              echo "::error::VERCEL_PRODUCTION_URL is required to verify deploy-hook production output."
+              exit 1
+            fi
+            sleep 30
+            node scripts/check-live-site.js "$VERCEL_PRODUCTION_URL"
+          else
+            echo "::error::Neither VERCEL_TOKEN nor VERCEL_DEPLOY_HOOK set."
             exit 1
           fi
-          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$HOOK")
-          echo "Deploy hook responded HTTP $code"
-          case "$code" in
-            2*) echo "Deploy triggered." ;;
-            *)  echo "::error::Deploy hook failed (HTTP $code)"; exit 1 ;;
-          esac
-          if [ -z "$VERCEL_PRODUCTION_URL" ]; then
-            echo "::error::VERCEL_PRODUCTION_URL is required to verify deploy-hook production output."
-            exit 1
-          fi
-          sleep 30
-          node scripts/check-live-site.js "$VERCEL_PRODUCTION_URL"

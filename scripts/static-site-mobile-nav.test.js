@@ -61,30 +61,7 @@ function chromeExecutablePath() {
   if (process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH) {
     return process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
   }
-
-  const systemCandidates = [
-    '/usr/bin/google-chrome',
-    '/usr/bin/chromium',
-    '/usr/bin/chromium-browser',
-  ];
-  return systemCandidates.find((candidate) => fs.existsSync(candidate));
-}
-
-function hasPlayableChromium() {
-  return Boolean(chromeExecutablePath()) || fs.existsSync(chromium.executablePath());
-}
-
-function chromiumTestOptions() {
-  return hasPlayableChromium()
-    ? {}
-    : {
-        skip: 'Chromium is not available; set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH or install a supported browser.',
-      };
-}
-
-function chromiumLaunchOptions() {
-  const executablePath = chromeExecutablePath();
-  return executablePath ? { executablePath } : {};
+  return fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined;
 }
 
 function assertNoHorizontalOverflow(snapshot, label) {
@@ -106,88 +83,83 @@ function assertReachableBox(box, label) {
   assert.ok(box.right <= 390, `${label} should fit inside the 390px viewport`);
 }
 
-test(
-  'static mobile topbar reaches key routes and settings without horizontal overflow',
-  chromiumTestOptions(),
-  async () => {
-    const server = await createStaticServer();
-    let browser;
+test('static mobile topbar reaches key routes and settings without horizontal overflow', async () => {
+  const server = await createStaticServer();
+  const browser = await chromium.launch({
+    executablePath: chromeExecutablePath(),
+  });
 
-    try {
-      browser = await chromium.launch(chromiumLaunchOptions());
-      const page = await browser.newPage({ viewport: { width: 390, height: 840 } });
-      await page.addInitScript(() => {
-        window.localStorage.setItem('smt_consent', 'min');
-        window.localStorage.setItem('smt_buddy_hidden', '1');
-      });
+  try {
+    const page = await browser.newPage({ viewport: { width: 390, height: 840 } });
+    await page.addInitScript(() => {
+      window.localStorage.setItem('smt_consent', 'min');
+      window.localStorage.setItem('smt_buddy_hidden', '1');
+    });
 
-      await page.goto(server.url, { waitUntil: 'domcontentloaded' });
-      await page.waitForSelector('#nav-toggle');
+    await page.goto(server.url, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#nav-toggle');
 
-      const closed = await page.evaluate(() => {
-        const boxFor = (selector) => {
-          const node = document.querySelector(selector);
-          if (!node) return null;
-          const rect = node.getBoundingClientRect();
-          return {
-            height: rect.height,
-            left: rect.left,
-            right: rect.right,
-            width: rect.width,
-          };
-        };
-
+    const closed = await page.evaluate(() => {
+      const boxFor = (selector) => {
+        const node = document.querySelector(selector);
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
         return {
-          bodyScrollWidth: document.body.scrollWidth,
-          documentClientWidth: document.documentElement.clientWidth,
-          documentScrollWidth: document.documentElement.scrollWidth,
-          navToggle: boxFor('#nav-toggle'),
-          settings: boxFor('#settings-open'),
+          height: rect.height,
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
         };
-      });
+      };
 
-      assertNoHorizontalOverflow(closed, 'closed mobile nav');
-      assertReachableBox(closed.navToggle, 'mobile navigation button');
-      assertReachableBox(closed.settings, 'settings button');
+      return {
+        bodyScrollWidth: document.body.scrollWidth,
+        documentClientWidth: document.documentElement.clientWidth,
+        documentScrollWidth: document.documentElement.scrollWidth,
+        navToggle: boxFor('#nav-toggle'),
+        settings: boxFor('#settings-open'),
+      };
+    });
 
-      await page.click('#nav-toggle');
+    assertNoHorizontalOverflow(closed, 'closed mobile nav');
+    assertReachableBox(closed.navToggle, 'mobile navigation button');
+    assertReachableBox(closed.settings, 'settings button');
 
-      const open = await page.evaluate((routes) => {
-        const boxFor = (selector) => {
-          const node = document.querySelector(selector);
-          if (!node) return null;
-          const rect = node.getBoundingClientRect();
-          return {
-            height: rect.height,
-            left: rect.left,
-            right: rect.right,
-            width: rect.width,
-          };
-        };
+    await page.click('#nav-toggle');
 
+    const open = await page.evaluate((routes) => {
+      const boxFor = (selector) => {
+        const node = document.querySelector(selector);
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
         return {
-          bodyScrollWidth: document.body.scrollWidth,
-          documentClientWidth: document.documentElement.clientWidth,
-          documentScrollWidth: document.documentElement.scrollWidth,
-          expanded: document.getElementById('nav-toggle')?.getAttribute('aria-expanded'),
-          routes: Object.fromEntries(
-            routes.map(({ label, route }) => [label, boxFor(`.nav a[data-route="${route}"]`)]),
-          ),
+          height: rect.height,
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
         };
-      }, requiredRoutes);
+      };
 
-      assert.equal(open.expanded, 'true');
-      assertNoHorizontalOverflow(open, 'open mobile nav');
-      requiredRoutes.forEach(({ label }) => assertReachableBox(open.routes[label], label));
+      return {
+        bodyScrollWidth: document.body.scrollWidth,
+        documentClientWidth: document.documentElement.clientWidth,
+        documentScrollWidth: document.documentElement.scrollWidth,
+        expanded: document.getElementById('nav-toggle')?.getAttribute('aria-expanded'),
+        routes: Object.fromEntries(
+          routes.map(({ label, route }) => [label, boxFor(`.nav a[data-route="${route}"]`)]),
+        ),
+      };
+    }, requiredRoutes);
 
-      await page.click('#settings-open');
-      const settingsOpen = await page.locator('#settings-modal').evaluate((node) => !node.hidden);
-      assert.equal(settingsOpen, true, 'settings modal should open from the mobile topbar');
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-      await server.close();
-    }
-  },
-);
+    assert.equal(open.expanded, 'true');
+    assertNoHorizontalOverflow(open, 'open mobile nav');
+    requiredRoutes.forEach(({ label }) => assertReachableBox(open.routes[label], label));
+
+    await page.click('#settings-open');
+    const settingsOpen = await page.locator('#settings-modal').evaluate((node) => !node.hidden);
+    assert.equal(settingsOpen, true, 'settings modal should open from the mobile topbar');
+  } finally {
+    await browser.close();
+    await server.close();
+  }
+});

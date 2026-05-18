@@ -89,25 +89,26 @@ export function FirstRunAboutTheTestModal({
 
   return (
     <Modal
-      accessibilityViewIsModal
       animationType="fade"
       transparent
       visible
       onRequestClose={markSeen}
       accessibilityLabel={copy.title}
     >
-      <View style={styles.backdrop}>
+      <Pressable
+        accessibilityLabel={copy.skipAccessibilityLabel}
+        accessibilityRole="button"
+        hitSlop={space[1]}
+        onPress={markSeen}
+        style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
+      >
         <Pressable
-          accessible={false}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          onPress={markSeen}
-          style={({ pressed }) => [
-            styles.backdropDismissLayer,
-            pressed ? styles.backdropPressed : null,
-          ]}
-        />
-        <View accessibilityRole="none" style={styles.card}>
+          accessibilityRole="none"
+          accessibilityLabel={copy.title}
+          hitSlop={space[0]}
+          onPress={(event) => event.stopPropagation()}
+          style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
+        >
           <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
           <Text accessibilityRole="header" style={styles.title}>
             {copy.title}
@@ -139,8 +140,8 @@ export function FirstRunAboutTheTestModal({
               <Text style={styles.secondaryButtonText}>{copy.skip}</Text>
             </Pressable>
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -156,9 +157,6 @@ const styles = StyleSheet.create({
   backdropPressed: {
     backgroundColor: colors.focusSoft,
   },
-  backdropDismissLayer: {
-    ...StyleSheet.absoluteFillObject,
-  },
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
@@ -168,7 +166,9 @@ const styles = StyleSheet.create({
     maxWidth: 480,
     padding: space[3],
     width: '100%',
-    zIndex: 1,
+  },
+  cardPressed: {
+    transform: [{ scale: motion.pressedScale }],
   },
   eyebrow: {
     color: colors.badgeBlueText,

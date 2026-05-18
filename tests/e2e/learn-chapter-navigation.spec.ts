@@ -1,7 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
-
 test('learning path opens a source-backed chapter detail screen and returns to the chapter list', async ({
   page,
 }) => {
@@ -13,7 +11,12 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
+  if (await closeLaunchAd.isVisible()) {
+    await closeLaunchAd.click();
+  }
 
   await expect(page.locator('body')).toContainText('Studieväg');
   await expect(page.locator('body')).toContainText('13 samhällsområden');
@@ -25,7 +28,7 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await firstChapter.click();
 
   await expect(page).toHaveURL(/\/chapter\/ch01$/);
-  await expect(page.getByLabel('Starta frågepass för Landet Sverige')).toBeVisible();
+  await expect(page.getByLabel('Starta quiz för Landet Sverige')).toBeVisible();
 
   const chapterScreen = page.locator('body');
   await expect(chapterScreen).toContainText('Landet Sverige');
@@ -57,7 +60,12 @@ test('learning path chapter cards follow English support mode', async ({ page })
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
+  if (await closeLaunchAd.isVisible()) {
+    await closeLaunchAd.click();
+  }
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
@@ -67,7 +75,9 @@ test('learning path chapter cards follow English support mode', async ({ page })
   );
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  if (await closeLaunchAd.isVisible()) {
+    await closeLaunchAd.click();
+  }
 
   await expect(page.locator('body')).toContainText('Learning path');
   const firstChapter = page.getByLabel(
