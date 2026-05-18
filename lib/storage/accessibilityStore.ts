@@ -11,13 +11,9 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
-import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
-
 const easyReadFontKey = 'a11y.easyReadFont.v1';
 const fontSizeStepKey = 'a11y.fontSizeStep.v1';
 const audioPlaybackRateKey = 'a11y.audioPlaybackRate.v1';
-const accessibilityStorageId = 'accessibility';
 
 /** Four discrete steps for the text-size stepper. */
 export type FontSizeStep = 0 | 1 | 2 | 3;
@@ -35,7 +31,7 @@ export const AUDIO_PLAYBACK_RATES: readonly AudioPlaybackRate[] = [0.5, 0.75, 1.
 let accessibilityStorage: MMKV | null = null;
 
 try {
-  accessibilityStorage = createMMKV({ id: accessibilityStorageId });
+  accessibilityStorage = createMMKV({ id: 'accessibility' });
 } catch {
   accessibilityStorage = null;
 }
@@ -60,48 +56,29 @@ type AccessibilityState = {
   easyReadFont: boolean;
   fontSizeStep: FontSizeStep;
   audioPlaybackRate: AudioPlaybackRate;
-  persistenceWarning: RecoverablePersistenceWarning | null;
   setEasyReadFont: (enabled: boolean) => void;
   setFontSizeStep: (step: FontSizeStep) => void;
   setAudioPlaybackRate: (rate: AudioPlaybackRate) => void;
-  clearPersistenceWarning: () => void;
 };
 
 export const useAccessibilityStore = create<AccessibilityState>((set) => ({
   easyReadFont: readEasyReadFont(),
   fontSizeStep: readFontSizeStep(),
   audioPlaybackRate: readAudioPlaybackRate(),
-  persistenceWarning: null,
   setEasyReadFont: (enabled) => {
-    const persistenceWarning = writeRecoverably(
-      accessibilityStorage,
-      accessibilityStorageId,
-      easyReadFontKey,
-      enabled,
-    );
-    set({ easyReadFont: enabled, persistenceWarning });
+    accessibilityStorage?.set(easyReadFontKey, enabled);
+    set({ easyReadFont: enabled });
   },
   setFontSizeStep: (step) => {
     const clamped: FontSizeStep = step === 0 || step === 1 || step === 2 || step === 3 ? step : 1;
-    const persistenceWarning = writeRecoverably(
-      accessibilityStorage,
-      accessibilityStorageId,
-      fontSizeStepKey,
-      clamped,
-    );
-    set({ fontSizeStep: clamped, persistenceWarning });
+    accessibilityStorage?.set(fontSizeStepKey, clamped);
+    set({ fontSizeStep: clamped });
   },
   setAudioPlaybackRate: (rate) => {
     const clamped: AudioPlaybackRate = AUDIO_PLAYBACK_RATES.includes(rate) ? rate : 1.0;
-    const persistenceWarning = writeRecoverably(
-      accessibilityStorage,
-      accessibilityStorageId,
-      audioPlaybackRateKey,
-      clamped,
-    );
-    set({ audioPlaybackRate: clamped, persistenceWarning });
+    accessibilityStorage?.set(audioPlaybackRateKey, clamped);
+    set({ audioPlaybackRate: clamped });
   },
-  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 /** Pure selector for the active font scale multiplier. */
