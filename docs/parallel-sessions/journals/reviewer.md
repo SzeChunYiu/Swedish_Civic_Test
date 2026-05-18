@@ -2860,3 +2860,34 @@ Verification (commands + result):
 PR (number + merged?): #463 / merged yes via `2703afc`
 Accepted by worker? yes
 Next suggested validator action: route `REVIEWER-NATIVE-ACCOUNT-SCOPE-1` to SETUP/build for either native account/auth removal or an explicit operator scope change; keep static-site account cleanup accepted and separate.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-p0-1779120745` / `task/reviewer/site-p0-static-audit-1779120745`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 static Practice/Mock question citation and disclaimer check.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, and current reviewer/validator entries.
+- Duplicate scan for `REVIEWER-SITE-QUESTION-CITATION`, `SITE.*CITATION`, `static.*citation`, `Practice.*citation`, `Mock.*citation`, and `disclaimer.*site` found no existing static-site question citation/disclaimer defect.
+- Static source check showed `site/questions.js` q001 includes source metadata: `Sverige i fokus`, `Landet Sverige`, `Geografi, klimat och natur`, page 5.
+- Served the deployable static `site/` artifact with `python3 -m http.server 8214 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright on `#/practice?c=1` rendered q001 and answer options, then after answering reported `practiceAfterHasCitation:false` and `practiceAfterHasDisclaimer:false`.
+- System-Chrome Playwright on `#/mock?run=1` completed a 25-question run and opened the result review; it reported `mockReviewHasCitation:false` and `mockReviewHasDisclaimer:false`.
+- Code inspection confirms `site/app.js` `smtQuizRender()` and `site/practice.js` `renderMockResult()` render `q.why` but not `q.source` or disclaimer copy; browser console/page errors were 0.
+PR (number + merged?): #471 / pending merge at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site to render localized source citations and independent/not-official-exam disclaimers on static Practice feedback and Mock review, then add a static browser guard for both flows.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-p0-1779120745` / `task/reviewer/site-p0-static-audit-1779120745`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 static Practice/Mock answer-order audit.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Duplicate scan for `shuffle`, `correct.*position`, `answer.*A`, `site.*shuffle`, `static.*shuffle`, and `smtQuiz` found the accepted app-side shuffle tests and no static-site shuffle guard or reviewer defect.
+- Static distribution check loaded `site/questions.js` in a VM and counted 705 questions with answer indexes `[533,160,12,0]`; max correct-position share is 0.756, above the accepted app P0 bar of 0.35.
+- Code inspection shows `site/app.js` `smtQuizRender()` renders `q.opts.map(...)` in stored order and scores against `q.answer`.
+- Code inspection shows `site/practice.js` `renderMockExam()` renders `q.opts.map(...)` in stored order; `pickMockQuestions()` shuffles question order only, not answer options.
+PR (number + merged?): #471 / pending merge at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site or DATA-INTEGRITY/site to add deterministic static-site answer-option shuffling for Practice and Mock, remap scoring/review, preserve true/false ordering if that remains the product rule, and add a correct-position concentration guard.
