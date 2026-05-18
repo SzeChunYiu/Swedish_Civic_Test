@@ -109,7 +109,7 @@ export const chapters: Chapter[] = [
       'Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället.',
     descriptionEn:
       "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
-    questionCount: 90,
+    questionCount: 95,
   },
   {
     id: 'ch13',
