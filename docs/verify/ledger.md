@@ -421,56 +421,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q398 | true-false | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | defect | queued-data-integrity-standalone-stem |
 | q399 | false-statement | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | defect | queued-data-integrity-standalone-stem |
 | q400 | judgement | q064 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | ok | rolling-source-slice |
-| q401 | section-practice | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 711b20f | ok | rolling-source-slice |
-| q402 | true-false | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 3be70d4 | defect | queued-data-integrity-residual |
-| q403 | false-statement | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 3be70d4 | defect | queued-data-integrity-residual |
-| q404 | judgement | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 3be70d4 | ok | rolling-source-slice |
-| q405 | section-practice | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 3be70d4 | ok | rolling-source-slice |
-| q406 | true-false | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 3be70d4 | defect | queued-data-integrity-residual |
-| q407 | false-statement | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 3be70d4 | defect | queued-data-integrity-residual |
-| q408 | judgement | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 3be70d4 | ok | rolling-source-slice |
-| q409 | section-practice | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 3be70d4 | ok | rolling-source-slice |
-| q410 | true-false | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 3be70d4 | ok | rolling-source-slice |
-| q411 | false-statement | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 3be70d4 | defect | queued-data-integrity-residual |
-| q412 | judgement | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 3be70d4 | ok | rolling-source-slice |
-| q413 | section-practice | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 3be70d4 | ok | rolling-source-slice |
-| q414 | true-false | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 3be70d4 | ok | rolling-source-slice |
-| q415 | false-statement | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 3be70d4 | defect | queued-data-integrity-residual |
-| q416 | judgement | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 3be70d4 | ok | rolling-source-slice |
-| q417 | section-practice | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q418 | true-false | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q419 | false-statement | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q420 | judgement | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q421 | section-practice | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q422 | true-false | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q423 | false-statement | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q424 | judgement | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q425 | section-practice | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q426 | true-false | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 3be70d4 | defect | queued-data-integrity-residual |
-| q427 | false-statement | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 3be70d4 | defect | queued-data-integrity-residual |
-| q428 | judgement | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 3be70d4 | ok | rolling-source-slice |
-| q429 | section-practice | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 3be70d4 | ok | rolling-source-slice |
-| q430 | true-false | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 3be70d4 | defect | queued-data-integrity-residual |
-| q431 | false-statement | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 3be70d4 | defect | queued-data-integrity-residual |
-| q432 | judgement | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 3be70d4 | ok | rolling-source-slice |
-| q433 | section-practice | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | ok | rolling-source-slice |
-| q434 | true-false | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | defect | queued-data-integrity-residual |
-| q435 | false-statement | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | defect | queued-data-integrity-residual |
-| q436 | judgement | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | ok | rolling-source-slice |
-| q437 | section-practice | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | ok | rolling-source-slice |
-| q438 | true-false | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | defect | queued-data-integrity-residual |
-| q439 | false-statement | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 476afdb | defect | queued-data-integrity-false-explanation+tf-prefix |
-| q440 | judgement | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 3be70d4 | ok | rolling-source-slice |
-| q441 | section-practice | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 3be70d4 | ok | rolling-source-slice |
-| q442 | true-false | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 3be70d4 | ok | rolling-source-slice |
-| q443 | false-statement | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 3be70d4 | ok | rolling-source-slice |
-| q444 | judgement | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 3be70d4 | ok | rolling-source-slice |
-| q445 | section-practice | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
-| q446 | true-false | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | defect | queued-data-integrity-residual |
-| q447 | false-statement | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | defect | queued-data-integrity-residual |
-| q448 | judgement | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
-| q449 | section-practice | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
-| q450 | true-false | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
+| q401 | section-practice | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | ok | rolling-source-slice |
+| q402 | true-false | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | ok | rolling-source-slice |
+| q403 | false-statement | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | ok | rolling-source-slice |
+| q404 | judgement | q065 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | 120d440 | ok | rolling-source-slice |
+| q405 | section-practice | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 120d440 | ok | rolling-source-slice |
+| q406 | true-false | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q407 | false-statement | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q408 | judgement | q066 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | 120d440 | ok | rolling-source-slice |
+| q409 | section-practice | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 120d440 | ok | rolling-source-slice |
+| q410 | true-false | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 120d440 | ok | rolling-source-slice |
+| q411 | false-statement | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q412 | judgement | q067 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | 120d440 | ok | rolling-source-slice |
+| q413 | section-practice | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 120d440 | ok | rolling-source-slice |
+| q414 | true-false | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 120d440 | ok | rolling-source-slice |
+| q415 | false-statement | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 120d440 | ok | rolling-source-slice |
+| q416 | judgement | q068 | lib/content/derivedQuestions.ts -> data/questions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | 120d440 | ok | rolling-source-slice |
+| q417 | section-practice | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q418 | true-false | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q419 | false-statement | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q420 | judgement | q069 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q421 | section-practice | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q422 | true-false | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q423 | false-statement | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q424 | judgement | q070 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q425 | section-practice | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q426 | true-false | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q427 | false-statement | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q428 | judgement | q071 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | 120d440 | ok | rolling-source-slice |
+| q429 | section-practice | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 120d440 | ok | rolling-source-slice |
+| q430 | true-false | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 120d440 | ok | rolling-source-slice |
+| q431 | false-statement | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 120d440 | ok | rolling-source-slice |
+| q432 | judgement | q072 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | 120d440 | ok | rolling-source-slice |
+| q433 | section-practice | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q434 | true-false | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q435 | false-statement | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q436 | judgement | q073 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q437 | section-practice | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q438 | true-false | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q439 | false-statement | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q440 | judgement | q074 | lib/content/derivedQuestions.ts -> data/questions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | 120d440 | ok | rolling-source-slice |
+| q441 | section-practice | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 120d440 | ok | rolling-source-slice |
+| q442 | true-false | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 120d440 | ok | rolling-source-slice |
+| q443 | false-statement | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 120d440 | ok | rolling-source-slice |
+| q444 | judgement | q075 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | 120d440 | ok | rolling-source-slice |
+| q445 | section-practice | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 120d440 | ok | rolling-source-slice |
+| q446 | true-false | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q447 | false-statement | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 120d440 | defect | queued-data-integrity-standalone-stem |
+| q448 | judgement | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 120d440 | ok | rolling-source-slice |
+| q449 | section-practice | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 120d440 | ok | rolling-source-slice |
+| q450 | true-false | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 120d440 | ok | rolling-source-slice |
 | q451 | false-statement | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | c03f88f | ok | rolling-source-slice |
 | q452 | judgement | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | c03f88f | ok | rolling-source-slice |
 | q453 | section-practice | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | c03f88f | ok | rolling-source-slice |
