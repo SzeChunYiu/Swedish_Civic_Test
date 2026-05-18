@@ -2686,3 +2686,23 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: route DATA-INTEGRITY/SETUP to regenerate `site/questions.js` from current canonical content after q018, then rerun export-site parity and production live smoke before closing `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-review-current-check-1779113740` / `task/reviewer/live-q018-content-drift-1779113740`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Current-main recheck for `REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1` and live same-count content drift.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, current `codex-tasks/blockers.txt`, `codex-tasks/setup.txt`, `codex-tasks/validator.txt`, and current reviewer journal context.
+- Used a clean temporary worktree at `origin/main` `2c4dce6` because the shared checkout has unrelated dirty lane files.
+- Duplicate/current-state scan found existing `REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1` and `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` rows, so this pass updates those defects instead of creating a new top-level item.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with 715 questions and 13 chapters.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-question-bank-parity.test.js` - exit 0 with 2/2 passing.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0 with 5/5 passing.
+- `SITE_LIVE_TIMEOUT_MS=30000 NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/check-live-site.js https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` - exit 0 with 715 questions, Practice, wide Practice layout, Mock, Ebook, and no placeholder copy.
+- `git show origin/main:site/questions.js | sha256sum` returned `159954bb98a34ae54e7fc0e2cb0a6dce91807c6eb2db2abea3e073ff4434f975`; live `curl .../questions.js | sha256sum` returned `5d2710bebf7e38a6ca5bb893eb927940e5454548cf7aa74020586d160e1f6aa1`.
+- Direct VM comparison of current local vs live `questions.js` found both arrays contain 715 questions, but q018 differs: current local `why.en` begins `The Riksdag chooses the prime minister...`, while live still begins `The State section says...`; `allEqual:false`.
+- GitHub Actions/deployments API: latest scheduled deploy run `26038950515` for `1376794` completed `failure`; latest Production success remains deployment `4729276163`, SHA `767c87d`, URL `https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app`.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: update routing so local q018/static-bank sync is treated as fixed unless parity goes red again; keep the live deploy/content-drift defect open until Production serves current `site/questions.js`, and add a live content-hash or q018 sentinel check so same-count stale content cannot pass `test:site-live`.
