@@ -169,6 +169,11 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'UHR-källa',
     'Tilläggsfråga',
     'Redaktionell',
+    'Om källorna',
+    'Stäng om källorna',
+    'Frågor som kommer direkt från UHR:s utbildningsmaterial Sverige i fokus. Allt innehåll i mock-provet är UHR.',
+    'Variant som genererats utifrån en UHR-fråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
+    'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
   ],
   en: [
     '5-minute practice',
@@ -190,6 +195,11 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'UHR source',
     'Supplementary',
     'Editorial',
+    'About the sources',
+    'Close about-the-sources',
+    "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
+    'Variant generated from a UHR question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
+    'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
   ],
 };
 const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
