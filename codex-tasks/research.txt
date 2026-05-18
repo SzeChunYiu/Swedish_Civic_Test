@@ -1,0 +1,15 @@
+# RESEARCH lane queue. One sourced finding per iteration. No bank copying.
+# Output: docs/research/** + question-candidates/** + queued CONTENT atoms.
+nordic:norway citizenship/residence test — structure, topics, sources
+nordic:denmark indfødsretsprøven — structure, topics, recent reforms, sources
+nordic:finland citizenship/language requirement — structure, sources
+nordic:iceland citizenship test/criteria — structure, sources
+sweden:UHR medborgarskapsprov official framework + any updates (authoritative)
+compare:germany Einbürgerungstest topic taxonomy vs our coverage
+compare:uk Life in the UK topic taxonomy vs our coverage
+gap:swedish history coverage — what an official test expects vs our bank
+gap:swedish law & rights coverage vs official expectations
+gap:swedish society/work/everyday-life coverage vs official expectations
+enrich:propose 20 original sourced SV+EN question candidates (history)
+enrich:propose 20 original sourced SV+EN question candidates (law/rights)
+# Ramp: per gap found, queue CONTENT atoms; deepen Nordic comparisons.
