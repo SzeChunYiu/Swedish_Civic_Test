@@ -71,56 +71,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q048 | authored-source | q048 | data/additionalQuestions.ts | ch06 | Mediernas roll | Public service | 21 | 97f3096 | ok | rolling-source-slice |
 | q049 | authored-source | q049 | data/additionalQuestions.ts | ch06 | Mediernas roll | Public service | 21 | 97f3096 | ok | rolling-source-slice |
 | q050 | authored-source | q050 | data/additionalQuestions.ts | ch06 | Mediernas roll | Källkritik | 21 | 97f3096 | ok | rolling-source-slice |
-| q051 | authored-source | q051 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | - | restate | oldest-unverified |
-| q052 | authored-source | q052 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | - | restate | oldest-unverified |
-| q053 | authored-source | q053 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | - | restate | oldest-unverified |
-| q054 | authored-source | q054 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | - | restate | oldest-unverified |
-| q055 | authored-source | q055 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | - | restate | oldest-unverified |
-| q056 | authored-source | q056 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | - | restate | oldest-unverified |
-| q057 | authored-source | q057 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | - | restate | oldest-unverified |
-| q058 | authored-source | q058 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | - | restate | oldest-unverified |
-| q059 | authored-source | q059 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | - | restate | oldest-unverified |
-| q060 | authored-source | q060 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | - | restate | oldest-unverified |
-| q061 | authored-source | q061 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | - | restate | oldest-unverified |
-| q062 | authored-source | q062 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | - | restate | oldest-unverified |
-| q063 | authored-source | q063 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | - | restate | oldest-unverified |
-| q064 | authored-source | q064 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | - | restate | oldest-unverified |
-| q065 | authored-source | q065 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | - | restate | oldest-unverified |
-| q066 | authored-source | q066 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | - | restate | oldest-unverified |
-| q067 | authored-source | q067 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | - | restate | oldest-unverified |
-| q068 | authored-source | q068 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | - | restate | oldest-unverified |
-| q069 | authored-source | q069 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | - | restate | oldest-unverified |
-| q070 | authored-source | q070 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | - | restate | oldest-unverified |
-| q071 | authored-source | q071 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | - | restate | oldest-unverified |
-| q072 | authored-source | q072 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | - | restate | oldest-unverified |
-| q073 | authored-source | q073 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | - | restate | oldest-unverified |
-| q074 | authored-source | q074 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | - | restate | oldest-unverified |
-| q075 | authored-source | q075 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | - | restate | oldest-unverified |
-| q076 | authored-source | q076 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | - | restate | oldest-unverified |
-| q077 | authored-source | q077 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | - | restate | oldest-unverified |
-| q078 | authored-source | q078 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | - | restate | oldest-unverified |
-| q079 | authored-source | q079 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | - | restate | oldest-unverified |
-| q080 | authored-source | q080 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | - | restate | oldest-unverified |
-| q081 | authored-source | q081 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | - | restate | oldest-unverified |
-| q082 | authored-source | q082 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | - | restate | oldest-unverified |
-| q083 | authored-source | q083 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | - | restate | oldest-unverified |
-| q084 | authored-source | q084 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | - | restate | oldest-unverified |
-| q085 | authored-source | q085 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | - | restate | oldest-unverified |
-| q086 | authored-source | q086 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q087 | authored-source | q087 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q088 | authored-source | q088 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q089 | authored-source | q089 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | - | restate | oldest-unverified |
-| q090 | authored-source | q090 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | - | restate | oldest-unverified |
-| q091 | authored-source | q091 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | - | restate | oldest-unverified |
-| q092 | authored-source | q092 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q093 | authored-source | q093 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q094 | authored-source | q094 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | - | restate | oldest-unverified |
-| q095 | authored-source | q095 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | - | restate | oldest-unverified |
-| q096 | authored-source | q096 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | - | restate | oldest-unverified |
-| q097 | authored-source | q097 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nyår | 45 | - | restate | oldest-unverified |
-| q098 | authored-source | q098 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | - | restate | oldest-unverified |
-| q099 | authored-source | q099 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | - | restate | oldest-unverified |
-| q100 | authored-source | q100 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | - | restate | oldest-unverified |
+| q051 | authored-source | q051 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Mänskliga rättigheter gäller alla | 22 | ca00008 | ok | rolling-source-slice |
+| q052 | authored-source | q052 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | FN:s förklaring om de mänskliga rättigheterna | 22 | ca00008 | ok | rolling-source-slice |
+| q053 | authored-source | q053 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Jämställdhet mellan könen | 23 | ca00008 | ok | rolling-source-slice |
+| q054 | authored-source | q054 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Könsrelaterat våld och förtryck | 23 | ca00008 | ok | rolling-source-slice |
+| q055 | authored-source | q055 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Sexköpslagen | 24 | ca00008 | ok | rolling-source-slice |
+| q056 | authored-source | q056 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 24 | ca00008 | ok | rolling-source-slice |
+| q057 | authored-source | q057 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Barns rättigheter | 25 | ca00008 | ok | rolling-source-slice |
+| q058 | authored-source | q058 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | ca00008 | ok | rolling-source-slice |
+| q059 | authored-source | q059 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Nationella minoriteter och urfolk | 25 | ca00008 | ok | rolling-source-slice |
+| q060 | authored-source | q060 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Hbtqi-personer | 26 | ca00008 | ok | rolling-source-slice |
+| q061 | authored-source | q061 | data/additionalQuestions.ts | ch07 | Mänskliga rättigheter | Arbetet mot diskriminering | 26 | ca00008 | ok | rolling-source-slice |
+| q062 | authored-source | q062 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | ca00008 | ok | rolling-source-slice |
+| q063 | authored-source | q063 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Så fungerar arbetsmarknaden | 27 | ca00008 | ok | rolling-source-slice |
+| q064 | authored-source | q064 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | ca00008 | ok | rolling-source-slice |
+| q065 | authored-source | q065 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Arbetsmarknadens parter | 28 | ca00008 | ok | rolling-source-slice |
+| q066 | authored-source | q066 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Lagar och regler på arbetsmarknaden | 29 | ca00008 | ok | rolling-source-slice |
+| q067 | authored-source | q067 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | A-kassan | 29 | ca00008 | ok | rolling-source-slice |
+| q068 | authored-source | q068 | data/additionalQuestions.ts | ch08 | Arbetsmarknad och privatekonomi | Privatekonomi i Sverige | 29 | ca00008 | ok | rolling-source-slice |
+| q069 | authored-source | q069 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | ca00008 | ok | rolling-source-slice |
+| q070 | authored-source | q070 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Skatter för Sveriges välfärd | 30 | ca00008 | ok | rolling-source-slice |
+| q071 | authored-source | q071 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Statligt finansierad välfärd | 30 | ca00008 | ok | rolling-source-slice |
+| q072 | authored-source | q072 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Regionerna ansvarar för sjukvården | 30 | ca00008 | ok | rolling-source-slice |
+| q073 | authored-source | q073 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | ca00008 | ok | rolling-source-slice |
+| q074 | authored-source | q074 | data/additionalQuestions.ts | ch09 | Välfärdssamhället | Kommunerna har ett stort ansvar | 31 | ca00008 | ok | rolling-source-slice |
+| q075 | authored-source | q075 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Från jordbrukssamhälle till industrisamhälle | 32 | ca00008 | ok | rolling-source-slice |
+| q076 | authored-source | q076 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | ca00008 | ok | rolling-source-slice |
+| q077 | authored-source | q077 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | ca00008 | ok | rolling-source-slice |
+| q078 | authored-source | q078 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | ca00008 | ok | rolling-source-slice |
+| q079 | authored-source | q079 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | ca00008 | ok | rolling-source-slice |
+| q080 | authored-source | q080 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | ca00008 | ok | rolling-source-slice |
+| q081 | authored-source | q081 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | ca00008 | ok | rolling-source-slice |
+| q082 | authored-source | q082 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | ca00008 | ok | rolling-source-slice |
+| q083 | authored-source | q083 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | ca00008 | ok | rolling-source-slice |
+| q084 | authored-source | q084 | data/additionalQuestions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | ca00008 | ok | rolling-source-slice |
+| q085 | authored-source | q085 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | ca00008 | ok | rolling-source-slice |
+| q086 | authored-source | q086 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | ca00008 | ok | rolling-source-slice |
+| q087 | authored-source | q087 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | ca00008 | ok | rolling-source-slice |
+| q088 | authored-source | q088 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | ca00008 | ok | rolling-source-slice |
+| q089 | authored-source | q089 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | ca00008 | ok | rolling-source-slice |
+| q090 | authored-source | q090 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | ca00008 | ok | rolling-source-slice |
+| q091 | authored-source | q091 | data/additionalQuestions.ts | ch11 | Sverige och omvärlden | Sveriges försvar | 40 | ca00008 | ok | rolling-source-slice |
+| q092 | authored-source | q092 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | ca00008 | ok | rolling-source-slice |
+| q093 | authored-source | q093 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | ca00008 | ok | rolling-source-slice |
+| q094 | authored-source | q094 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Religionsfrihet | 42 | ca00008 | ok | rolling-source-slice |
+| q095 | authored-source | q095 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Kristendom | 43 | ca00008 | ok | rolling-source-slice |
+| q096 | authored-source | q096 | data/additionalQuestions.ts | ch12 | En sekulär stat och ett mångreligiöst land | Islam | 44 | ca00008 | ok | rolling-source-slice |
+| q097 | authored-source | q097 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Nyår | 45 | ca00008 | ok | rolling-source-slice |
+| q098 | authored-source | q098 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | ca00008 | ok | rolling-source-slice |
+| q099 | authored-source | q099 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Midsommar | 46 | ca00008 | ok | rolling-source-slice |
+| q100 | authored-source | q100 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Lucia | 47 | ca00008 | ok | rolling-source-slice |
 | q101 | authored-source | q101 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Påsk | 45 | - | restate | oldest-unverified |
 | q102 | authored-source | q102 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Valborgsmässoafton | 46 | - | restate | oldest-unverified |
 | q103 | authored-source | q103 | data/additionalQuestions.ts | ch13 | Traditioner och högtider | Första maj | 46 | - | restate | oldest-unverified |
