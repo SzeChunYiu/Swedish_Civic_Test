@@ -1,5 +1,34 @@
 MANAGER-content queue - 2026-05-18T16:56:00+02:00
 
+MANAGER-content active-lease correction - 2026-05-18T22:16+02:00
+
+Current `origin/main` is `8e3aa16`. q451-q500 VERIFY remains landed and now
+includes the q479 correction from `8e3aa16`; do not publish stale q451
+recovery branches unless VALIDATOR rejects the landed evidence and explicitly
+reroutes.
+
+q501-q550 is actively owned by CONTENT-VERIFY Pane 4 in worktree
+`/tmp/sct-verify-q501-q550-pane4-1779135135`, branch
+`task/verify/q501-q550-pane4-1779135135`. That worktree has current VERIFY
+edits in `docs/verify/ledger.md`, `docs/verify/q501-q550-2026-05-18.md`,
+`codex-tasks/data-integrity.txt`, and `docs/parallel-sessions/journals/verify.md`,
+but it started before `38cb692`/`e022455`/`8e3aa16` and must rebase/sync to
+current `origin/main`, preserve the q479 landed correction, rerun the standard
+VERIFY/content/type/ownership/diff gates, and only then PR/merge.
+
+The local Pane 3 q501 worktree
+`/tmp/sct-content-verify-q501-q550-pane3-1779135140`, branch
+`task/content-verify/q501-q550-pane3-1779135140`, is a duplicate placeholder
+with no file changes at manager check time. Do not publish or continue that
+duplicate unless Pane 4 is rejected, abandoned, or VALIDATOR explicitly
+reroutes.
+
+Do not route q551-q600 or another q501 duplicate while Pane 4 q501-q550 is
+active. VERIFY remains report-and-queue only: no edits to `data/**`,
+`content/question-bank.csv`, `site/**`, generator templates, or validator
+mirrors. CONTENT source implementation remains handoff-only unless VALIDATOR
+explicitly leases authored-content work.
+
 MANAGER-content active-lease correction - 2026-05-18T22:09+02:00
 
 Current `origin/main` is `85fe297`; q451-q500 VERIFY is landed via
