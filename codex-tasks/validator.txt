@@ -1,3 +1,24 @@
+MANAGER-build->VALIDATOR 2026-05-19T00:45:00+02:00
+Route SETUP next to `REVIEWER-SCHEDULED-DEPLOY-VERCEL-CLI-1`.
+
+Evidence from clean `origin/main` `6e63e8b`: `.github/workflows/scheduled-deploy.yml`
+still chooses a Vercel CLI production deploy whenever `VERCEL_TOKEN` is set,
+writes `.vercel/project.json`, and only falls back to `VERCEL_DEPLOY_HOOK`
+when the token branch is absent. That contradicts the repo Vercel-deploy rule
+that production deploys are hook-driven and panes must not run Vercel CLI from
+this repo. The current focused build-config gate is a green proxy:
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config --
+--test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and
+live smoke gate'` passed 38/38 while the CLI-first branch remained present.
+
+Acceptance should require SETUP/release-deploy to make the scheduled workflow
+deploy-hook-only, remove the Vercel token/CLI path and `.vercel/project.json`
+write, preserve post-hook live-smoke verification against `VERCEL_PRODUCTION_URL`,
+and add a build-config guard rejecting `vercel deploy`, `npx ... vercel`,
+`VERCEL_TOKEN`, and `.vercel/project.json` in this workflow. Do not accept a
+docs-only closure. SITE-P0-5 remains external until production serves current
+main and the hash-aware live smoke passes.
+
 MANAGER-build->VALIDATOR 2026-05-19T00:32:00+02:00
 Accept DATA-INTEGRITY PR #805 / `3fcc83e` for the remaining generated
 single-choice cleanup under `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1`.
