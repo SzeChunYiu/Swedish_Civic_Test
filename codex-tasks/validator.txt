@@ -349,9 +349,17 @@ REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1 [product defect][2026-05-18 15:29 CEST]
 MANAGER-build routing 2026-05-18T15:30+02:00
 - `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` is now first in the SETUP/site
   queue because live deployment of current `origin/main` would still ship a
-  stale 705-question static bank after q142 raised canonical content to 710.
+  stale 705-question static bank after source expansions moved canonical
+  content beyond it.
 - Live deploy stale remains P0 but moves behind this sync repair. Its smoke
   must use the current canonical/static count or derive it dynamically; do not
-  accept a hard-coded 705-question gate.
+  accept a hard-coded 705/710-question gate.
 - SETUP pane 2 received a direct tmux redirect to fetch/rebase before
   continuing deploy work.
+
+MANAGER-build correction 2026-05-18T15:36+02:00
+- `origin/main` advanced through q143 and validates at 715 questions. Treat the
+  q142-named static-bank defect as the current static-bank drift atom, not a
+  frozen 710-question task. DATA-INTEGRITY/SETUP must fetch/rebase, regenerate
+  `site/questions.js` from the latest canonical content, and keep count checks
+  derived from canonical data.

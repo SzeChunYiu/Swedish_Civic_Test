@@ -186,6 +186,7 @@ from PR #303 / `e232bf7`; current `origin/main` `ff117b1` is green for
 Practice width parity, then static account-scope before lower-priority work.
 
 2026-05-18T15:30+02:00: MANAGER-build rerouted SITE P0 after PR #315 /
-`bab3190`: q142 raised canonical content to 710 questions while
-`site/questions.js` remains 705. SETUP must sync the static bank first, then
-resume live-deploy stale work with dynamic/current count smoke expectations.
+`bab3190`: source expansions have moved canonical content beyond the 705
+questions still in `site/questions.js` (715 at the 15:36 audit). SETUP must sync
+the static bank from current canonical content first, then resume live-deploy
+stale work with dynamic/current count smoke expectations.
