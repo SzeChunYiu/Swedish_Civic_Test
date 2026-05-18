@@ -1,4 +1,5 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
+import { isUhrQuestion } from '../content/provenance';
 import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
 
 export type ExamOptions = {
@@ -65,7 +66,8 @@ export function shouldAutoSubmitExam({
 function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
   return (
     ['reviewed', 'published'].includes(question.reviewStatus) &&
-    Boolean(question.uhrReference?.chapter)
+    Boolean(question.uhrReference?.chapter) &&
+    isUhrQuestion(question)
   );
 }
 

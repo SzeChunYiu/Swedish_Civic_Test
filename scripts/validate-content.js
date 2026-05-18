@@ -153,6 +153,11 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     'Försök igen',
     'Försök igen med den här övningsfrågan',
+    'Inkludera tilläggsfrågor',
+    'Bara UHR-frågor',
+    'UHR-källa',
+    'Tilläggsfråga',
+    'Redaktionell',
   ],
   en: [
     '5-minute practice',
@@ -169,6 +174,11 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Answer, get instant feedback, then review the UHR source before moving on.',
     'Try again',
     'Try this practice question again',
+    'Include supplementary questions',
+    'UHR questions only',
+    'UHR source',
+    'Supplementary',
+    'Editorial',
   ],
 };
 const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
@@ -576,9 +586,13 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
   { name: 'audioEnabled', type: 'boolean', optional: false },
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
+  { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
+  { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
+  { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
+  { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
 ];
 const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-router',

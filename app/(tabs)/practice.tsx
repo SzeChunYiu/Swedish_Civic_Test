@@ -13,6 +13,7 @@ import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
+import { filterQuestionsByProvenance, getQuestionProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
@@ -37,6 +38,11 @@ type PracticeCopy = {
   subtitle: string;
   tryAgain: string;
   tryAgainAccessibilityLabel: string;
+  supplementaryToggleOn: string;
+  supplementaryToggleOff: string;
+  provenanceUhrLabel: string;
+  provenanceSupplementaryLabel: string;
+  provenanceEditorialLabel: string;
 };
 
 const practiceCopy: Record<AppLanguage, PracticeCopy> = {
@@ -55,6 +61,11 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     subtitle: 'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     tryAgain: 'Försök igen',
     tryAgainAccessibilityLabel: 'Försök igen med den här övningsfrågan',
+    supplementaryToggleOn: 'Inkludera tilläggsfrågor',
+    supplementaryToggleOff: 'Bara UHR-frågor',
+    provenanceUhrLabel: 'UHR-källa',
+    provenanceSupplementaryLabel: 'Tilläggsfråga',
+    provenanceEditorialLabel: 'Redaktionell',
   },
   en: {
     badge: '5-minute practice',
@@ -71,6 +82,11 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     subtitle: 'Answer, get instant feedback, then review the UHR source before moving on.',
     tryAgain: 'Try again',
     tryAgainAccessibilityLabel: 'Try this practice question again',
+    supplementaryToggleOn: 'Include supplementary questions',
+    supplementaryToggleOff: 'UHR questions only',
+    provenanceUhrLabel: 'UHR source',
+    provenanceSupplementaryLabel: 'Supplementary',
+    provenanceEditorialLabel: 'Editorial',
   },
 };
 
@@ -88,9 +104,19 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const includeSupplementary = useSettingsStore(
+    (state) => state.includeSupplementaryQuestions,
+  );
+  const setIncludeSupplementary = useSettingsStore(
+    (state) => state.setIncludeSupplementaryQuestions,
+  );
   const copy = practiceCopy[language];
+  const filteredQuestions = useMemo(
+    () => filterQuestionsByProvenance(questions, { includeSupplementary }),
+    [includeSupplementary],
+  );
   const rawQuestion = getPracticeQuestionForSession(
-    questions,
+    filteredQuestions,
     completedQuestionIds,
     activeQuestionId,
   );
@@ -113,9 +139,9 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
-  const questionIndex = questions.findIndex((candidate) => candidate.id === question.id);
+  const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress = questions.length > 0 ? questionNumber / questions.length : 0;
+  const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -154,8 +180,53 @@ export default function Screen() {
             {isBookmarked ? copy.bookmarked : copy.bookmark}
           </Text>
         </Pressable>
+        <Pressable
+          accessibilityRole="switch"
+          accessibilityState={{ checked: includeSupplementary }}
+          accessibilityLabel={
+            includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+          }
+          onPress={() => setIncludeSupplementary(!includeSupplementary)}
+          style={[
+            styles.bookmarkButton,
+            includeSupplementary ? styles.bookmarkButtonActive : null,
+          ]}
+        >
+          <Text
+            style={[
+              styles.bookmarkText,
+              includeSupplementary ? styles.bookmarkTextActive : null,
+            ]}
+          >
+            {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
+          </Text>
+        </Pressable>
       </View>
       <QuestionDisclaimer />
+      {(() => {
+        const provenance = getQuestionProvenance(question);
+        const label =
+          provenance === 'uhr'
+            ? copy.provenanceUhrLabel
+            : provenance === 'derived'
+              ? copy.provenanceSupplementaryLabel
+              : copy.provenanceEditorialLabel;
+        const tone =
+          provenance === 'uhr'
+            ? styles.provenanceUhr
+            : provenance === 'derived'
+              ? styles.provenanceSupplementary
+              : styles.provenanceEditorial;
+        return (
+          <Text
+            accessibilityRole="text"
+            accessibilityLabel={`Provenance: ${label}`}
+            style={[styles.provenanceBadge, tone]}
+          >
+            {label}
+          </Text>
+        );
+      })()}
       <QuestionCard question={question} language={language} />
       <AudioButton
         enabled={audioEnabled}
@@ -262,6 +333,29 @@ const styles = StyleSheet.create({
   meta: {
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
+  },
+  provenanceBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: radius.pill,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+    overflow: 'hidden',
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.5],
+    textTransform: 'uppercase',
+  },
+  provenanceUhr: {
+    backgroundColor: colors.badgeBlueBg,
+    color: colors.badgeBlueText,
+  },
+  provenanceSupplementary: {
+    backgroundColor: colors.surfaceWarm,
+    color: colors.text,
+  },
+  provenanceEditorial: {
+    backgroundColor: colors.surfaceMuted,
+    color: colors.textMuted,
   },
   bookmarkButton: {
     alignSelf: 'flex-start',
