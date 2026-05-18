@@ -1,4 +1,4 @@
-MANAGER-content queue - 2026-05-18T12:58:00+02:00
+MANAGER-content queue - 2026-05-18T13:04:00+02:00
 
 P0-first rule: while `codex-tasks/P0.md` has unchecked items, accept only
 content work that advances TRANSLATE-COMPLETE or SOURCE-CITATION. Keep all
@@ -10,6 +10,7 @@ Landed:
 - q007 is on `origin/main` as `c48945c` via PR #163.
 - q008 is on `origin/main` via PR #172.
 - q009 is on `origin/main` as `734c75c` via PR #177.
+- q010 is on `origin/main` via PR #182.
 - q011 is on `origin/main` as `793ec73` via PR #180.
 
 Duplicate guard:
@@ -17,12 +18,11 @@ Duplicate guard:
   closed/deleted as duplicate q009 work. Do not reopen or republish q009.
 
 Active dispatch:
-- Pane 3: q010 naturalness only. Start from current `origin/main` and keep the
-  diff bounded to q010 plus the required content handoff.
-- Pane 1: q037 naturalness only, if continuing. Start from current
-  `origin/main`; do not publish q009 or q011 duplicate work.
+- Pane 4: q037 naturalness only in `/tmp/sct-q037-pane4`. Before pushing,
+  rebase or fresh-apply onto current `origin/main`; do not publish q009, q010,
+  or q011 duplicate work.
 
-Next queue after active dispatch: q071, q072, q021, then later validator-filed
+Next queue after q037 lands: q071, q072, q021, then later validator-filed
 naturalness rows. Keep each atom to one question when possible, preserve its
 UHR locator, run focused content gates, and hand off the question id, changed
 artifacts, verification commands, PR number or merge commit, and which P0 item
