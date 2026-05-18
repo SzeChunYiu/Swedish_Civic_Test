@@ -107,3 +107,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was downloa
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q401-Q450-1` into the active DATA-INTEGRITY residual generator/static-mirror repair, then assign the next rolling VERIFY slice starting at `q451`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-verify-q451-q500-pane3-1779124844`, branch `task/verify/q451-q500-pane3-1779124844`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q451-q500` generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q451-q500-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL and extracted locally for cited printed pages 32-39; q451-q500 source support, answer keys, and distractors are acceptable; generated rows `q458`, `q459`, `q462`, `q463`, `q466`, `q467`, `q470`, `q471`, `q474`, `q475`, `q478`, `q479`, `q482`, `q483`, `q486`, `q487`, `q490`, `q491`, `q494`, `q495`, `q498`, and `q499` fail natural-language quality in canonical CSV and `site/questions.js`; `docs/verify/ledger.md` rows q451-q500 updated at `c03f88f`, with those 22 rows marked `defect` and the rest `ok`; focused CSV/static mirror assertion reported 50 checked rows, 25 true/false rows, 22 defects, and no static mirror missing IDs; `node scripts/export-question-bank.js --check`, `node scripts/export-site-question-bank.js --check`, `npm run validate:content`, `npm run typecheck -- --pretty false`, `npm run test:ownership`, and `git diff --check` all passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q451-Q500-1` into the active DATA-INTEGRITY residual generator/static-mirror repair, then assign the next rolling VERIFY slice starting at `q501`.

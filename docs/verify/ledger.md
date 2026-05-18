@@ -471,56 +471,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q448 | judgement | q076 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
 | q449 | section-practice | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
 | q450 | true-false | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
-| q451 | false-statement | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | 3be70d4 | ok | rolling-source-slice |
-| q452 | judgement | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | - | restate | oldest-unverified |
-| q453 | section-practice | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | - | restate | oldest-unverified |
-| q454 | true-false | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | - | restate | oldest-unverified |
-| q455 | false-statement | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | - | restate | oldest-unverified |
-| q456 | judgement | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | - | restate | oldest-unverified |
-| q457 | section-practice | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | - | restate | oldest-unverified |
-| q458 | true-false | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | - | restate | oldest-unverified |
-| q459 | false-statement | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | - | restate | oldest-unverified |
-| q460 | judgement | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | - | restate | oldest-unverified |
-| q461 | section-practice | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | - | restate | oldest-unverified |
-| q462 | true-false | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | - | restate | oldest-unverified |
-| q463 | false-statement | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | - | restate | oldest-unverified |
-| q464 | judgement | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | - | restate | oldest-unverified |
-| q465 | section-practice | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | - | restate | oldest-unverified |
-| q466 | true-false | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | - | restate | oldest-unverified |
-| q467 | false-statement | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | - | restate | oldest-unverified |
-| q468 | judgement | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | - | restate | oldest-unverified |
-| q469 | section-practice | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | - | restate | oldest-unverified |
-| q470 | true-false | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | - | restate | oldest-unverified |
-| q471 | false-statement | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | - | restate | oldest-unverified |
-| q472 | judgement | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | - | restate | oldest-unverified |
-| q473 | section-practice | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | - | restate | oldest-unverified |
-| q474 | true-false | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | - | restate | oldest-unverified |
-| q475 | false-statement | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | - | restate | oldest-unverified |
-| q476 | judgement | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | - | restate | oldest-unverified |
-| q477 | section-practice | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | - | restate | oldest-unverified |
-| q478 | true-false | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | - | restate | oldest-unverified |
-| q479 | false-statement | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | - | restate | oldest-unverified |
-| q480 | judgement | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | - | restate | oldest-unverified |
-| q481 | section-practice | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | - | restate | oldest-unverified |
-| q482 | true-false | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | - | restate | oldest-unverified |
-| q483 | false-statement | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | - | restate | oldest-unverified |
-| q484 | judgement | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | - | restate | oldest-unverified |
-| q485 | section-practice | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q486 | true-false | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q487 | false-statement | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q488 | judgement | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q489 | section-practice | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q490 | true-false | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q491 | false-statement | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q492 | judgement | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q493 | section-practice | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q494 | true-false | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q495 | false-statement | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q496 | judgement | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | - | restate | oldest-unverified |
-| q497 | section-practice | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | - | restate | oldest-unverified |
-| q498 | true-false | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | - | restate | oldest-unverified |
-| q499 | false-statement | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | - | restate | oldest-unverified |
-| q500 | judgement | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | - | restate | oldest-unverified |
+| q451 | false-statement | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | c03f88f | ok | rolling-source-slice |
+| q452 | judgement | q077 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Befolkningsökning | 32 | c03f88f | ok | rolling-source-slice |
+| q453 | section-practice | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | c03f88f | ok | rolling-source-slice |
+| q454 | true-false | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | c03f88f | ok | rolling-source-slice |
+| q455 | false-statement | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | c03f88f | ok | rolling-source-slice |
+| q456 | judgement | q078 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sveriges väg till demokrati | 33 | c03f88f | ok | rolling-source-slice |
+| q457 | section-practice | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | c03f88f | ok | rolling-source-slice |
+| q458 | true-false | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | c03f88f | defect | queued-data-integrity-residual |
+| q459 | false-statement | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | c03f88f | defect | queued-data-integrity-residual |
+| q460 | judgement | q079 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Folkrörelserna | 33 | c03f88f | ok | rolling-source-slice |
+| q461 | section-practice | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | c03f88f | ok | rolling-source-slice |
+| q462 | true-false | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | c03f88f | defect | queued-data-integrity-residual |
+| q463 | false-statement | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | c03f88f | defect | queued-data-integrity-residual |
+| q464 | judgement | q080 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Demokratins genombrott | 34 | c03f88f | ok | rolling-source-slice |
+| q465 | section-practice | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | c03f88f | ok | rolling-source-slice |
+| q466 | true-false | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | c03f88f | defect | queued-data-integrity-residual |
+| q467 | false-statement | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | c03f88f | defect | queued-data-integrity-residual |
+| q468 | judgement | q081 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Den svenska modellen | 35 | c03f88f | ok | rolling-source-slice |
+| q469 | section-practice | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | c03f88f | ok | rolling-source-slice |
+| q470 | true-false | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | c03f88f | defect | queued-data-integrity-residual |
+| q471 | false-statement | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | c03f88f | defect | queued-data-integrity-residual |
+| q472 | judgement | q082 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Rekordåren | 36 | c03f88f | ok | rolling-source-slice |
+| q473 | section-practice | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | c03f88f | ok | rolling-source-slice |
+| q474 | true-false | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | c03f88f | defect | queued-data-integrity-residual |
+| q475 | false-statement | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | c03f88f | defect | queued-data-integrity-residual |
+| q476 | judgement | q083 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Sverige blir ett invandrarland | 36 | c03f88f | ok | rolling-source-slice |
+| q477 | section-practice | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | c03f88f | ok | rolling-source-slice |
+| q478 | true-false | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | c03f88f | defect | queued-data-integrity-residual |
+| q479 | false-statement | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | c03f88f | defect | queued-data-integrity-residual |
+| q480 | judgement | q084 | lib/content/derivedQuestions.ts -> data/questions.ts | ch10 | Sveriges moderna historia | Digital revolution och globalisering | 38 | c03f88f | ok | rolling-source-slice |
+| q481 | section-practice | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | c03f88f | ok | rolling-source-slice |
+| q482 | true-false | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q483 | false-statement | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q484 | judgement | q085 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Nordiskt samarbete | 39 | c03f88f | ok | rolling-source-slice |
+| q485 | section-practice | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | ok | rolling-source-slice |
+| q486 | true-false | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q487 | false-statement | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q488 | judgement | q086 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | ok | rolling-source-slice |
+| q489 | section-practice | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | ok | rolling-source-slice |
+| q490 | true-false | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q491 | false-statement | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q492 | judgement | q087 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | ok | rolling-source-slice |
+| q493 | section-practice | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | ok | rolling-source-slice |
+| q494 | true-false | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q495 | false-statement | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q496 | judgement | q088 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | EU och Europarådet | 39 | c03f88f | ok | rolling-source-slice |
+| q497 | section-practice | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | c03f88f | ok | rolling-source-slice |
+| q498 | true-false | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q499 | false-statement | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | c03f88f | defect | queued-data-integrity-residual |
+| q500 | judgement | q089 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Globalt samarbete | 39 | c03f88f | ok | rolling-source-slice |
 | q501 | section-practice | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | - | restate | oldest-unverified |
 | q502 | true-false | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | - | restate | oldest-unverified |
 | q503 | false-statement | q090 | lib/content/derivedQuestions.ts -> data/questions.ts | ch11 | Sverige och omvärlden | Efter kalla krigets slut | 40 | - | restate | oldest-unverified |
