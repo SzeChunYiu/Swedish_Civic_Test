@@ -3,7 +3,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 
 import { locales, type LocaleOption } from '../../lib/i18n/locales';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 import { GlobeIcon } from './icons/GlobeIcon';
 
 type LanguagePickerCopy = {
@@ -39,11 +39,21 @@ const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
   },
 };
 
-export function LanguagePicker() {
-  const language = useSettingsStore((state) => state.language);
+/**
+ * Defaults: reads and writes the settings-store language, opens the locale
+ * menu in-place, and uses settings copy unless `languageOverride` is provided
+ * for focused previews or tests.
+ */
+export interface LanguagePickerProps {
+  languageOverride?: AppLanguage;
+}
+
+export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const [open, setOpen] = useState(false);
 
+  const language = languageOverride ?? settingsLanguage;
   const currentCode = language === 'sv' ? 'sv' : 'en';
   const currentLabel = currentCode.toUpperCase();
   const copy = languagePickerCopy[language];
@@ -60,8 +70,9 @@ export function LanguagePicker() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={copy.triggerLabel(currentLabel)}
+        hitSlop={space[1]}
         onPress={() => setOpen(true)}
-        style={styles.trigger}
+        style={({ pressed }) => [styles.trigger, pressed ? styles.triggerPressed : null]}
       >
         <GlobeIcon size={16} color={colors.textMuted} />
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
@@ -71,14 +82,16 @@ export function LanguagePicker() {
         <Pressable
           accessibilityLabel={copy.closeLabel}
           accessibilityRole="button"
+          hitSlop={space[1]}
           onPress={() => setOpen(false)}
-          style={styles.backdrop}
+          style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
         >
           <Pressable
             accessibilityLabel={copy.menuLabel}
             accessibilityRole="menu"
-            style={styles.card}
+            hitSlop={space[0]}
             onPress={(e) => e.stopPropagation()}
+            style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
           >
             <Text style={styles.title}>{copy.title}</Text>
             <Text style={styles.subtitle}>{copy.subtitle}</Text>
@@ -91,8 +104,13 @@ export function LanguagePicker() {
                     accessibilityRole="button"
                     accessibilityLabel={`${opt.label}${opt.available ? '' : copy.unavailableSuffix}`}
                     accessibilityState={{ selected, disabled: !opt.available }}
+                    hitSlop={space[1]}
                     onPress={() => handleSelect(opt)}
-                    style={[styles.row, selected && styles.rowSelected]}
+                    style={({ pressed }) => [
+                      styles.row,
+                      selected ? styles.rowSelected : null,
+                      pressed && opt.available ? styles.rowPressed : null,
+                    ]}
                   >
                     <View style={styles.rowText}>
                       <Text style={[styles.native, !opt.available && styles.dimmed]}>
@@ -134,6 +152,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: space[1.25],
     paddingVertical: space[0.5],
   },
+  triggerPressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
   triggerLabel: {
     color: colors.text,
     fontFamily: typography.badge.fontFamily,
@@ -148,6 +170,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: space[3],
   },
+  backdropPressed: {
+    backgroundColor: colors.focusSoft,
+  },
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
@@ -158,6 +183,9 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     padding: space[3],
     width: '100%',
+  },
+  cardPressed: {
+    transform: [{ scale: motion.pressedScale }],
   },
   title: {
     color: colors.text,
@@ -184,6 +212,10 @@ const styles = StyleSheet.create({
   },
   rowSelected: {
     backgroundColor: colors.badgeBlueBg,
+  },
+  rowPressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
   },
   rowText: {
     flex: 1,
