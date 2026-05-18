@@ -549,9 +549,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Avsnittet Staten säger att riksdagen väljer statsminister, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna i regeringen.',
+      'Riksdagen väljer statsministern, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna; varken kungen, Polismyndigheten eller regionfullmäktige väljer statsminister.',
     explanationEn:
-      'The State section says the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.',
+      'The Riksdag chooses the prime minister, who is then tasked with forming a government. The prime minister chooses the ministers; neither the king, the Swedish Police Authority, nor regional councils choose the prime minister.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
