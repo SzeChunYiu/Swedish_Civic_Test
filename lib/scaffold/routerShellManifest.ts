@@ -105,6 +105,21 @@ export const expoRouterRootStackScreens = [
     purpose: 'Primary tab shell registered in the root stack',
   },
   {
+    name: '(auth)',
+    file: 'app/(auth)/_layout.tsx',
+    purpose: 'Authentication modal stack registered in the root stack',
+  },
+  {
+    name: 'account',
+    file: 'app/account.tsx',
+    purpose: 'Account route registered in the root stack',
+  },
+  {
+    name: 'search',
+    file: 'app/search.tsx',
+    purpose: 'Search route registered in the root stack',
+  },
+  {
     name: '+not-found',
     file: 'app/+not-found.tsx',
     purpose: 'Unknown-route recovery screen registered in the root stack',
