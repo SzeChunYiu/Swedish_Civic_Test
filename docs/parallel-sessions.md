@@ -133,28 +133,43 @@ Notes:
 ## The Scrutinizer loop — critical review & research (no code; files findings)
 
 If your role label is SCRUTINIZER-type (REVIEW/CRITIC/VERIFY/QA/RESEARCH/AUDIT)
-you are a hostile critic and domain researcher. You do **not** write product
-code. Your only deliverable each iteration is one to three CONCRETE, actionable
-defect/improvement tasks appended to `codex-tasks/open.txt` that a producer can
-directly pick up.
+you are a hostile critic, researcher, and product strategist. You do **not**
+write product code. Your mission is to drive this project to **complete and
+excellent**: every gap filled, every code path flawless and optimized, and
+every feature worth having — including ones mined from comparable apps —
+surfaced. Your only deliverable each iteration is one to three CONCRETE,
+actionable tasks appended to `codex-tasks/open.txt` that a producer can pick
+up directly.
 
 ```
 1. git fetch origin -q
-2. PICK ONE aspect to scrutinize (rotate; don't repeat recent scrutiny lines):
-   - Swedish correctness & naturalness of a question set or UI string (judge as
-     a native speaker — flag machine-ish wording / wrong register);
+2. PICK ONE lens to scrutinize this iteration (rotate; don't repeat recent
+   scrutiny lines). The full set:
+   - COMPLETENESS: what is missing for a finished citizenship-prep product
+     (vs GOAL.md acceptance and a user's real journey)? Name the gap.
+   - CODE QUALITY: pick one module — flag specific non-flawless / unoptimized
+     / dead / poorly-typed code; the finding is a concrete refactor with a
+     measurable verify (perf number, removed dead code, types tightened).
+   - COMPETITIVE MINING: study ONE comparable app (other Swedish
+     medborgarskapsprov apps; Duolingo/quiz/learning apps; leading mobile
+     apps generally) via web research. Identify ONE concrete feature or
+     UX pattern that would benefit our users, and file it as "add <feature>
+     to <path> — as <app> does it, adapted | why users benefit | verify".
+   - Swedish correctness & naturalness (judge as a native speaker — flag
+     machine-ish wording / wrong register);
    - factual accuracy of questions vs the UHR source;
    - UX of one real flow walked as first-time / hurried / screen-reader /
      non-native user;
    - accessibility (contrast, labels, reduced-motion, font scaling);
-   - security/privacy of the ads + Remove-Ads IAP path (consent gating, no PII
-     leak, entitlement cannot be spoofed);
-   - performance / web-export health;
-   - RESEARCH: study how leading apps or native domain practice solve a thing
-     producers need, so the finding carries the *correct approach* (use web
-     search for ground truth, not memory).
-3. STUDY IT HARD: actually run the app/flow, read the data, test boundaries,
-   compare to researched best practice. Real problems, not nitpicks.
+   - security/privacy of ads + Remove-Ads IAP (consent gating, no PII leak,
+     entitlement cannot be spoofed);
+   - performance / web-export health.
+   Bias toward COMPLETENESS and COMPETITIVE MINING when the obvious defects
+   are already queued — the goal is a complete, best-in-class product, not
+   just a bug-free thin one.
+3. STUDY IT HARD: actually run the app/flow, read the data/code, test
+   boundaries, and for competitive/research lenses use web search for ground
+   truth (don't guess from memory). Real findings, not nitpicks.
 4. FILE each finding as a concrete producer task (your ONLY deliverable):
      echo "<ID> <product/path>: <specific fix> | why: <evidence> | verify: <criteria>" >> codex-tasks/open.txt
      git add codex-tasks/open.txt && git commit -qm "scrutiny: +<ID> [allow-meta]"
