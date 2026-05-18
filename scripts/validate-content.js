@@ -217,6 +217,19 @@ const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bTrue is correct\b/i,
   /\bwhile False\b/i,
 ];
+const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
+  /\bPåståendet är sant\b/i,
+  /\b(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\b/i,
+  /\balternativet\s+Sant\b/i,
+  /\bmedan\s+Falskt\b/i,
+  /\bThe statement is true\b/i,
+  /\bthe statement is true\b/i,
+  /\bso\s+the\s+statement\s+is\s+true\b/i,
+  /\bthat\s+makes\s+the\s+statement\s+true\b/i,
+  /\bThat makes True correct\b/i,
+  /\bTrue is correct\b/i,
+  /\bwhile False\b/i,
+];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -3350,6 +3363,15 @@ function findQuestionFalseAnswerExplanationMismatch(question) {
   ].find((pattern) => pattern.test(text));
 }
 
+function findGeneratedTrueFalseExplanationMetaIssue(question) {
+  if (question.type !== 'true_false' || !question.tags?.includes('published-variant')) {
+    return null;
+  }
+
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findGeneratedOptionSourceMaterialIssue(question) {
   if (!Array.isArray(question.options)) return null;
 
@@ -3960,6 +3982,54 @@ function sourceTrueFactSv(source) {
 }
 function sourceTrueFactEn(source) {
   return ensureSentence(truthStatementEn(stripTrueFalsePromptEn(source.questionEn)));
+}
+function cleanTrueFalseSourceExplanationSv(source) {
+  return ensureSentence(
+    upperFirst(
+      source.explanationSv
+        .replace(/^Påståendet är sant[:.]?\s*/i, '')
+        .replace(
+          /\s*Därför\s+stämmer\s+alternativet\s+Sant,\s+medan\s+Falskt\s+motsäger\s+uppgiften\.?$/i,
+          '',
+        )
+        .replace(
+          /\s*[;,]?\s*(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\.?$/i,
+          '',
+        )
+        .trim(),
+    ),
+  );
+}
+function cleanTrueFalseSourceExplanationEn(source) {
+  return ensureSentence(
+    upperFirst(
+      source.explanationEn
+        .replace(/^The statement is true[:.]?\s*/i, '')
+        .replace(
+          /\s*That\s+makes\s+True\s+correct,\s+while\s+False\s+contradicts\s+the\s+fact\.?$/i,
+          '',
+        )
+        .replace(/\s*,?\s*so\s+the\s+statement\s+is\s+true\.?$/i, '')
+        .replace(/\s*[;,]?\s*that\s+makes\s+the\s+statement\s+true\.?$/i, '')
+        .trim(),
+    ),
+  );
+}
+function trueStatementExplanationSv(source) {
+  if (isTrueFalseSource(source)) {
+    if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationSv(source);
+    return ensureSentence(trueFalseSourceStatementSv(source, true));
+  }
+
+  return source.explanationSv;
+}
+function trueStatementExplanationEn(source) {
+  if (isTrueFalseSource(source)) {
+    if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationEn(source);
+    return ensureSentence(trueFalseSourceStatementEn(source, true));
+  }
+
+  return source.explanationEn;
 }
 function falseStatementExplanationSv(source) {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
@@ -4719,6 +4789,13 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
 }
 
 function expectedGeneratedExplanation(sourceQuestion, variantIndex) {
+  if (variantIndex === 1) {
+    return {
+      explanationSv: trueStatementExplanationSv(sourceQuestion),
+      explanationEn: trueStatementExplanationEn(sourceQuestion),
+    };
+  }
+
   if (variantIndex === 2) {
     return {
       explanationSv: falseStatementExplanationSv(sourceQuestion),
@@ -5740,6 +5817,7 @@ let generatedOptionSourceMaterialWordingValidated = 0;
 let generatedSingleChoiceFillerOptionsValidated = 0;
 let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
+let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
@@ -12369,6 +12447,14 @@ function validateGeneratedExplanationTemplateParity() {
         fail(`${label} explanationEn does not match generated explanation template`);
       }
 
+      const trueFalseExplanationMetaIssue = findGeneratedTrueFalseExplanationMetaIssue(variant);
+      if (trueFalseExplanationMetaIssue) {
+        variantIsValid = false;
+        fail(`${label} explanation uses true/false answer-judgement wording`);
+      } else if (variant.type === 'true_false') {
+        generatedTrueFalseExplanationMetaValidated += 1;
+      }
+
       if (variantIsValid) generatedExplanationTemplateParityValidated += 1;
     });
   });
@@ -12862,6 +12948,8 @@ if (Array.isArray(questions)) {
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
+      const generatedTrueFalseExplanationMetaIssue =
+        findGeneratedTrueFalseExplanationMetaIssue(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
       } else if (stemSourceAuthorityReference) {
@@ -12891,6 +12979,9 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a false-answer explanation that says True is correct`);
       } else {
         questionFalseAnswerExplanationsValidated += 1;
+      }
+      if (generatedTrueFalseExplanationMetaIssue) {
+        fail(`${label} contains a generated true/false explanation meta-judgement`);
       }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
@@ -13291,6 +13382,7 @@ console.log(
       generatedSingleChoiceFillerOptionsValidated,
       generatedSingleChoiceMetaStemsValidated,
       generatedSingleChoiceExplanationLabelsValidated,
+      generatedTrueFalseExplanationMetaValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
       publishedQuestionTypesValidated,
