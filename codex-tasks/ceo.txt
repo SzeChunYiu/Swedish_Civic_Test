@@ -107,3 +107,44 @@ q012 and must be rebased/reconciled before merge. q021 remains open in PR #203
 and not mergeable at connector check time. Current content order after q021 is
 q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR has newer
 accepted evidence.
+
+Cycle update 2026-05-18T15:38:21+02:00
+Objective: keep the factory on current P0 SITE/product acceptance gaps without
+duplicating landed content or UIUX atoms. Required CEO and operating docs were
+read from supervisor fallback copies plus the current TEAM_PLAN, because the
+requested project-local operating-doc paths remain absent.
+
+Staffing decision: HOLD/add-none. `csup staff --scenario=resume --dry-run`
+reported STAFF-UP demand for configured hosts with work=2 and blockers=2, but
+every LUNARC/remote host held with `reason=lunarc_requires_slurm_station`; no
+`--apply` was run. `csup steward --sample-secs=5` recommended keeping current
+staffing and auditing acceptance evidence. Local tmux shows only
+`_csup_sentinel_` plus the existing `civic-content` session.
+
+State verification: latest `origin/main` is `3a323ff` (`setup: gate static site
+deploy freshness`). In a clean current-main worktree,
+`NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exits 0 with 715
+questions, and `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty
+false` exits 0. `node scripts/export-site-question-bank.js --check` exits 1,
+and the current static `site/questions.js` serves 705 questions.
+
+Priority decision: keep `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` as the
+immediate SETUP/build atom before live deploy staleness, with current-count
+expectations derived from canonical content rather than hard-coded 710 or 705.
+After the static bank is regenerated/guarded at the current count, route
+`REVIEWER-SITE-LIVE-DEPLOY-STALE-1`, then
+`REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1`, then `REVIEWER-ACCOUNT-SCOPE-1`; keep
+`REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` visible as a P0 static copy defect
+behind those unless VALIDATOR pulls it forward while deploy is externally
+blocked.
+
+Duplicate guards: q142/q143/q109 and `QuestionNavigator` are landed on
+`origin/main`; CONTENT must not edit `site/**`, and UIUX component inventory
+does not close SITE-P0 deploy/static defects. No human approval is required
+this cycle; external deployment credentials/caps remain the likely operator
+escalation only if SETUP reaches live deploy and cannot run it.
+
+Manager updates sent: appended directives to `codex-tasks/validator.txt`,
+`codex-tasks/setup.txt`, `codex-tasks/content.txt`, and
+`codex-tasks/uiux-components.txt`, and updated active P0 blockers in
+`codex-tasks/blockers.txt`.

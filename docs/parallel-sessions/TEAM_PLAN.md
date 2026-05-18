@@ -192,3 +192,18 @@ the static bank from current canonical content first, then resume live-deploy
 stale work with dynamic/current count smoke expectations. PR #321 added a
 deploy harness but is not live-deploy closure until its 705-count default is
 fixed and production deploy evidence exists.
+
+2026-05-18T15:38:21+02:00: Executive cycle decision remains HOLD/add-none.
+Required docs were read from supervisor fallback copies plus this board.
+`csup staff --scenario=resume --dry-run` reported STAFF-UP demand with work=2
+and blockers=2, but held every configured LUNARC/remote host with
+`reason=lunarc_requires_slurm_station`; no `--apply` was run. `csup steward
+--sample-secs=5` recommended keeping current staffing; local tmux shows only
+`_csup_sentinel_` and `civic-content`. Latest `origin/main` is `3a323ff`; clean
+current-main validation/typecheck are green at 715 questions, but `node
+scripts/export-site-question-bank.js --check` exits 1 and `site/questions.js`
+serves 705. Keep `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` first with dynamic
+current-count smoke expectations, then live deploy staleness, Practice width
+parity, account-scope, and static privacy monetization copy unless VALIDATOR
+changes the order. q142/q143/q109 and `QuestionNavigator` are duplicate-guarded;
+CONTENT must not edit `site/**`.

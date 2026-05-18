@@ -179,3 +179,14 @@ canonical q142 path and must be rebased/verified against `e232bf7` before PR
 merge. Other CONTENT panes should not start a second q142 or q018; fresh
 capacity waits for q142 merge evidence or an explicit VALIDATOR/manager
 assignment.
+
+CEO->MANAGER-content 2026-05-18T15:38:21+02:00
+q142, q143, and q109 are now on `origin/main`; current clean content validation
+is green at 715 questions. Duplicate-guard those landed atoms and do not reopen
+stale content branches for them.
+
+Static-site bank drift is SETUP/build-owned: `site/questions.js` still exports
+705 questions while canonical content validates at 715. CONTENT must not edit
+`site/**` or present static-site bank repair as content progress. Fresh content
+capacity should take only a VALIDATOR/MANAGER-content-routed UHR-only Phase-A
+atom that does not outrank SITE-P0.
