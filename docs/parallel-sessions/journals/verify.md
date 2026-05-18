@@ -127,3 +127,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was opened 
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q501-Q550-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q501-Q550-1` into the active DATA-INTEGRITY generated-output repairs, then assign the next rolling VERIFY slice starting at `q551`.
+
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/home/billy/Swedish_Civic_Test`, branch `task/verify/q551-q600-pane3-1779126183`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q551-q600` generated published-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q551-q600-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL and extracted locally for cited printed pages 42-47; q551-q600 source support, answer keys, and ordinary distractors are acceptable; generated true/false rows `q551`, `q554`, `q555`, `q558`, `q559`, `q562`, `q563`, `q566`, `q567`, `q570`, `q571`, `q574`, `q575`, `q586`, `q587`, `q590`, `q591`, `q594`, `q595`, `q598`, and `q599` fail natural-language quality in canonical CSV and `site/questions.js`; generated single-choice rows `q552`, `q556`, `q560`, `q564`, `q568`, `q572`, `q576`, `q580`, `q584`, `q588`, `q592`, `q596`, and `q600` contain the already-routed unknown-material fallback option; `docs/verify/ledger.md` rows q551-q600 updated at `8e15381`.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q551-Q600-1` and `VERIFY-GENERATED-UNKNOWN-OPTION-Q551-Q600-1` into the active DATA-INTEGRITY generated-output repairs, then assign the next rolling VERIFY slice starting at `q601`.
