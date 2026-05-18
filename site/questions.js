@@ -11868,8 +11868,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "One reason is the vote is secret and no one else should see their choice.",
-      "sv": "En anledning är att valet är hemligt och ingen annan ska se vilket val de gör."
+      "en": "One reason voters vote behind a screen at the polling station is that the vote is secret and no one else should see their choice.",
+      "sv": "En anledning till att väljare röstar bakom en skärm i vallokalen är att valet är hemligt och ingen annan ska se vilket val de gör."
     },
     "opts": [
       {
@@ -11907,8 +11907,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "One reason is votes are counted faster.",
-      "sv": "En anledning är att rösterna ska räknas snabbare."
+      "en": "One reason voters vote behind a screen at the polling station is that votes are counted faster.",
+      "sv": "En anledning till att väljare röstar bakom en skärm i vallokalen är att rösterna ska räknas snabbare."
     },
     "opts": [
       {
