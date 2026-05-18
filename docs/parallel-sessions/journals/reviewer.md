@@ -2391,3 +2391,18 @@ Workspace contract: pass with caveat - no product source edited; only reviewer q
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q072-EN-NATURALNESS-1`.
 Evidence: `/quiz/q072` rendered `What responsibility do Sweden's regions have within welfare?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Regionerna ansvarar för sjukvården, p. 30`, independent-study disclaimer, correct feedback for `To provide health and medical care for everyone`, and the user-visible explanation beginning `The Regions are responsible for health care section says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
 Next manager action: assign a CONTENT-owned q072 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER-UX
+Artifact reviewed: source-backed mobile persona pass for a free learner evaluating Remove Ads from Home/Profile.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `DESIGN.md`, `docs/architecture.md`, `docs/parallel-sessions/TEAM_PLAN.md`, existing reviewer queue, and blocker policy.
+- `git status --short --branch` - exit 0, `## main...origin/main`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 127 because `expo` is not on PATH.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npx expo export --platform web --output-dir dist-web --max-workers 2` - exit 124 after CLI resolution timed out; no `dist-web` artifact was present.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` - exit 1 because module `typescript` is missing in this checkout.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/accessibility-labels.test.js` - exit 0.
+- `rg -n "29 kr|29 SEK|REMOVE_ADS_PRICE_LABEL" app components lib scripts tests publishing -S` - exit 0.
+Workspace contract: pass with environment caveat - no product source edited; this is queue evidence only, not acceptance.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-REMOVE-ADS-PRICE-COPY-1`.
+Evidence: `components/monetization/PricingWedge.tsx` uses `29 kr` in both Swedish and English Home pitch copy, while `lib/monetization/purchases.ts`, `components/monetization/PremiumBanner.tsx`, `app/privacy.tsx`, and release policy/tests use the canonical `29 SEK` Remove Ads price. This creates inconsistent purchase copy in the learner-facing funnel.
+Next manager action: assign a source-touching UI/monetization atom to align `PricingWedge` with `REMOVE_ADS_PRICE_LABEL` or exact `29 SEK`, add parity coverage, and rerun checks in an environment with local Expo/TypeScript dependencies.
