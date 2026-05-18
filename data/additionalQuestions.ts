@@ -1264,8 +1264,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'Sant eller falskt: Sveriges kommuner ska erbjuda äldre personer stöd och hjälp.',
     'True or false: Swedish municipalities must offer older people support and help.',
     true,
-    'UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunen ansvarar för att gamla och sjuka kan få hjälp när de inte klarar vardagen på egen hand. Under äldreomsorg står det att svensk lag kräver att kommuner erbjuder äldre stöd och hjälp, till exempel vård och service i hemmet.',
-    'The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.',
+    'Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant.',
+    'Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.',
     ['elderly-care', 'municipality', 'welfare'],
   ),
   single(
