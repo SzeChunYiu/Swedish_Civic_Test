@@ -130,6 +130,7 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
   assertNoStaleEbookCopy(source);
+  assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
 });
 
 test('static ebook does not promise source-backed footnotes without citation coverage', () => {
@@ -161,6 +162,18 @@ test('static ebook renders every chapter with Swedish and English body parity', 
 
     assert.match(englishHtml, /ebook__study-actions/);
     assert.match(swedishHtml, /ebook__study-actions/);
+    assert.match(englishHtml, /class="ebook__provenance-badge"/);
+    assert.match(swedishHtml, /class="ebook__provenance-badge"/);
+    assert.match(
+      englishHtml,
+      /aria-label="Provenance: Editorial\. Original study guide; verify facts through the Sources page and UHR material\."/,
+    );
+    assert.match(
+      swedishHtml,
+      /aria-label="Källtyp: Redaktionell\. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet\."/,
+    );
+    assert.match(englishHtml, />Editorial<\/span>/);
+    assert.match(swedishHtml, />Redaktionell<\/span>/);
     assert.match(englishHtml, /href="#\/mock"/);
     assert.match(swedishHtml, /href="#\/mock"/);
     assert.match(englishHtml, /href="#\/sources"/);

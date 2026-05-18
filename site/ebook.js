@@ -600,6 +600,15 @@
     return PRACTICE_LINKS[id] || { href: '#/practice', en: 'Open practice', sv: 'Öppna övning' };
   }
 
+  function renderEbookProvenanceBadge(lang) {
+    const sv = lang === 'sv';
+    const label = sv ? 'Redaktionell' : 'Editorial';
+    const note = sv
+      ? 'Källtyp: Redaktionell. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet.'
+      : 'Provenance: Editorial. Original study guide; verify facts through the Sources page and UHR material.';
+    return `<span class="ebook__provenance-badge" role="text" aria-label="${note}" title="${note}">${label}</span>`;
+  }
+
   function render() {
     const reader = document.getElementById('ebook-reader');
     if (!reader) return;
@@ -663,7 +672,10 @@
     `;
 
     reader.innerHTML = `
-      <div class="ebook__crumb">${ch.kicker[lang] || ch.kicker.en}</div>
+      <div class="ebook__meta-row">
+        <div class="ebook__crumb">${ch.kicker[lang] || ch.kicker.en}</div>
+        ${renderEbookProvenanceBadge(lang)}
+      </div>
       ${titleHtml}
       ${ledeHtml}
       ${bodyHtml}
