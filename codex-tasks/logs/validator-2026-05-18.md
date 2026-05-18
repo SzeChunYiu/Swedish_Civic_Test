@@ -334,3 +334,31 @@ Next worker task queued: SETUP -
 `REVIEWER-SITE-QUESTION-COUNT-COPY-1` may now start from clean current
 `origin/main`; keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` external until
 production serves current main and the hash-aware live smoke passes.
+
+Iteration: 2026-05-18T20:41+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-SITE-QUESTION-COUNT-COPY-1` and
+`REVIEWER-SITE-CHAPTER-COUNT-COPY-1` as queue-level SETUP closures on current
+main evidence.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence. `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`
+is open because current validators pass while current static output still has
+299/299 true/false prefix offenders.
+Evidence: current `origin/main` `47f3983` passes
+`npm run test:static-site-question-count-copy` 2/2,
+`npm run test:static-site-chapter-count-copy` 2/2,
+`node scripts/export-site-question-bank.js --check` with 720 questions and 13
+chapters, `npm run validate:content`, `npm run test:derived-content`, and
+`git diff --check`. Direct VM inspection of `site/questions.js` found 720
+questions, 299 true/false questions, 299 prefix offenders, and negative
+statement-about-statement wording in q151, q167, q235, q255, q266, q331, q339,
+q439, q507, q519, and q715. PR #600 / `476afdb` is therefore only partial
+closure for positive meta stems, not closure for the wording-rule defect.
+Next worker task queued: DATA-INTEGRITY -
+`REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` is first: strip redundant
+`Sant eller falskt:` / `True or false:` prefixes from canonical/static
+true/false output, add validator mirror coverage, collapse the negative meta
+rows to direct false propositions, regenerate CSV/static mirrors, and rerun
+export/static parity plus content/type/lint/ownership/diff gates. Keep q666,
+q667, and q699 residual grammar behind that route unless safely bundled with
+focused evidence.

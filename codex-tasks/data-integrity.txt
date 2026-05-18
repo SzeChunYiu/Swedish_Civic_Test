@@ -1,5 +1,34 @@
 MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:20+02:00
 
+MANAGER-build current-route update - 2026-05-18T20:41+02:00
+
+Post-#600/#604 routing state:
+- PR #600 / `476afdb` is accepted only for removing the positive generated
+  statement-about-statement layer (`Påståendet är sant:` / `The statement is
+  true:`). Do not treat it as closure for the reviewer wording-rule defect.
+- Current `origin/main` `47f3983` still publishes 299 true/false stems in
+  `site/questions.js`, and all 299 begin with the UI-afforded prefixes
+  `Sant eller falskt:` / `True or false:`. The same current-main scan still
+  finds negative meta wording in q151, q167, q235, q255, q266, q331, q339,
+  q439, q507, q519, and q715 (`Det är inte sant att` / `It is not true that`).
+  `npm run validate:content` and `npm run test:derived-content` both pass, so
+  the existing validators do not cover this wording-rule violation.
+- `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` is now the first active
+  DATA-INTEGRITY route. Own one bounded generator/validator/static-mirror atom
+  that strips redundant true/false prefixes from canonical and static
+  true/false stems, adds negative guards across `content/question-bank.csv` and
+  `site/questions.js`, and collapses the negative statement-about-statement
+  rows above into direct false propositions.
+- Acceptance for that atom requires regenerated `content/question-bank.csv` and
+  `site/questions.js`, export/static parity, `npm run validate:content`,
+  `npm run test:derived-content`, focused published-question/content gates,
+  typecheck, lint, ownership, targeted Prettier/diff checks, PR/merge evidence,
+  and current-main spot checks for q002/q150/q151/q166/q666/q699/q714/q715 plus
+  a total prefix-offender count of zero.
+- `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q720-POST584-1` remains behind that route
+  for q666, q667, and q699 residual grammar/naturalness unless the same
+  generator/static-mirror PR safely closes it with focused evidence.
+
 MANAGER-content current-route update - 2026-05-18T20:36+02:00
 
 Post-#600 routing state:
@@ -45,11 +74,12 @@ Post-#584/#590 routing state:
   not accept a data-only cleanup that leaves generated CSV/static mirrors stale.
 
 Active DATA-INTEGRITY routes:
-- `VERIFY-GENERATED-TF-META-Q101-Q150-POST570-1`: current q150 generated
-  true/false meta-stem follow-up.
-- `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q720-POST584-1`: current post-#584
-  generated true/false residual follow-up for `q666`, `q667`, `q699`, `q714`,
-  and `q715`.
+- `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1`: first, current 299/299
+  true/false prefix offenders plus q151/q167/q235/q255/q266/q331/q339/q439/
+  q507/q519/q715 negative meta wording.
+- `VERIFY-GENERATED-TF-RESIDUAL-Q651-Q720-POST584-1`: next, current q666,
+  q667, and q699 residual grammar/naturalness unless closed safely with the
+  prefix-surface atom.
 
 Current status:
 - `REVIEWER-GENERATED-TF-META-STEM-1` and
