@@ -37,6 +37,70 @@
       ? "Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga."
       : "Independent study practice, not a real exam or an official UHR question.";
   }
+  function hashString(value) {
+    let hash = 2166136261;
+    const text = String(value ?? "");
+    for (let index = 0; index < text.length; index++) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+  function seededRandom(seed) {
+    let state = seed >>> 0;
+    return function random() {
+      state += 0x6d2b79f5;
+      let value = state;
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function questionShuffleKey(question) {
+    if (!question) return "";
+    if (question.id) return question.id;
+    if (question.q && (question.q.en || question.q.sv)) return question.q.en || question.q.sv;
+    return JSON.stringify(question.q || question.opts || "");
+  }
+  function shouldShuffleOptions(question) {
+    return (
+      question &&
+      question.type === "single_choice" &&
+      Array.isArray(question.opts) &&
+      question.opts.length > 2
+    );
+  }
+  function localDisplayOptions(question, sessionId) {
+    const options = Array.isArray(question && question.opts) ? question.opts : [];
+    const order = options.map((_, index) => index);
+    if (shouldShuffleOptions(question)) {
+      const seed = hashString(`${questionShuffleKey(question)}:${sessionId || "default"}`);
+      const random = seededRandom(seed);
+      for (let index = order.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(random() * (index + 1));
+        [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
+      }
+      if (order.every((originalIndex, displayIndex) => originalIndex === displayIndex)) {
+        const offset = 1 + (seed % (order.length - 1));
+        return order.slice(offset).concat(order.slice(0, offset)).map((originalIndex, displayIndex) => ({
+          displayIndex,
+          originalIndex,
+          option: options[originalIndex],
+        }));
+      }
+    }
+    return order.map((originalIndex, displayIndex) => ({
+      displayIndex,
+      originalIndex,
+      option: options[originalIndex],
+    }));
+  }
+  function displayOptions(question, sessionId) {
+    if (typeof window.smtQuizDisplayOptions === "function") {
+      return window.smtQuizDisplayOptions(question, sessionId);
+    }
+    return localDisplayOptions(question, sessionId);
+  }
 
   function getProgress() {
     try { return JSON.parse(localStorage.getItem("smt_progress") || "{}"); } catch { return {}; }
@@ -394,11 +458,11 @@
       return `<button class="mock-dot ${cls}" data-go="${k}" aria-label="Question ${k + 1}">${k + 1}</button>`;
     }).join("");
 
-    const opts = q.opts.map((o, k) => {
-      const cls = chosen === k ? "is-chosen" : "";
+    const opts = displayOptions(q, `mock:${MOCK.startedAt || "preview"}:${i}`).map(({ option: o, originalIndex, displayIndex }) => {
+      const cls = chosen === originalIndex ? "is-chosen" : "";
       return `
-        <button class="mock-opt ${cls}" data-pick="${k}">
-          <span class="key">${String.fromCharCode(65 + k)}</span>
+        <button class="mock-opt ${cls}" data-pick="${originalIndex}">
+          <span class="key">${String.fromCharCode(65 + displayIndex)}</span>
           <span>${o[lang()] || o.en}</span>
         </button>
       `;

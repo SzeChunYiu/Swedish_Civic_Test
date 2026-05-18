@@ -973,6 +973,104 @@ function smtQuizQuestionDisclaimer(lang) {
     : "Independent study practice, not a real exam or an official UHR question.";
 }
 
+const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE = 0.35;
+
+function smtQuizHashString(value) {
+  let hash = 2166136261;
+  const text = String(value ?? "");
+  for (let index = 0; index < text.length; index++) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function smtQuizSeededRandom(seed) {
+  let state = seed >>> 0;
+  return function random() {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function smtQuizQuestionShuffleKey(question) {
+  if (!question) return "";
+  if (question.id) return question.id;
+  if (question.q && (question.q.en || question.q.sv)) return question.q.en || question.q.sv;
+  return JSON.stringify(question.q || question.opts || "");
+}
+
+function smtQuizShouldShuffleOptions(question) {
+  return (
+    question &&
+    question.type === "single_choice" &&
+    Array.isArray(question.opts) &&
+    question.opts.length > 2
+  );
+}
+
+function smtQuizOptionDisplayOrder(question, sessionId) {
+  const options = Array.isArray(question && question.opts) ? question.opts : [];
+  const order = options.map((_, index) => index);
+  if (!smtQuizShouldShuffleOptions(question)) return order;
+
+  const seed = smtQuizHashString(`${smtQuizQuestionShuffleKey(question)}:${sessionId || "default"}`);
+  const random = smtQuizSeededRandom(seed);
+  for (let index = order.length - 1; index > 0; index--) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
+  }
+
+  if (order.every((originalIndex, displayIndex) => originalIndex === displayIndex)) {
+    const offset = 1 + (seed % (order.length - 1));
+    return order.slice(offset).concat(order.slice(0, offset));
+  }
+
+  return order;
+}
+
+function smtQuizDisplayOptions(question, sessionId) {
+  const options = Array.isArray(question && question.opts) ? question.opts : [];
+  return smtQuizOptionDisplayOrder(question, sessionId).map((originalIndex, displayIndex) => ({
+    displayIndex,
+    originalIndex,
+    option: options[originalIndex],
+  }));
+}
+
+function smtQuizAnswerShuffleSummary(questions, sessionId) {
+  const counts = [0, 0, 0, 0];
+  let totalQuestions = 0;
+
+  (questions || []).forEach((question) => {
+    if (!smtQuizShouldShuffleOptions(question)) return;
+    const correctDisplayIndex = smtQuizDisplayOptions(question, sessionId).findIndex(
+      (entry) => entry.originalIndex === question.answer,
+    );
+    if (correctDisplayIndex < 0 || correctDisplayIndex >= counts.length) return;
+    counts[correctDisplayIndex]++;
+    totalQuestions++;
+  });
+
+  const maxCorrectPositionShare = totalQuestions
+    ? Math.max(...counts) / totalQuestions
+    : 0;
+
+  return {
+    counts,
+    maxCorrectPositionShare,
+    maxCorrectPositionShareLimit: SMT_QUIZ_MAX_CORRECT_POSITION_SHARE,
+    sessionId,
+    totalQuestions,
+  };
+}
+
+window.smtQuizDisplayOptions = smtQuizDisplayOptions;
+window.smtQuizAnswerShuffleSummary = smtQuizAnswerShuffleSummary;
+
 function smtQuizHash() {
   return (location.hash || "#/").replace(/^#/, "");
 }
@@ -1068,6 +1166,7 @@ function smtQuizRender() {
   const q = questions[SMT_QUIZ.i];
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
+  const sessionId = `practice:${scope}`;
   const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
   const dots = Array.from({ length: n }, (_, k) => {
     let cls = "";
@@ -1076,15 +1175,15 @@ function smtQuizRender() {
     return `<span class="quiz__dot ${cls}"></span>`;
   }).join("");
 
-  const opts = q.opts.map((o, k) => {
-    const letter = String.fromCharCode(65 + k);
+  const opts = smtQuizDisplayOptions(q, sessionId).map(({ option: o, originalIndex, displayIndex }) => {
+    const letter = String.fromCharCode(65 + displayIndex);
     let cls = "";
     if (answered) {
-      if (k === q.answer) cls = "is-correct";
-      else if (k === ans) cls = "is-wrong";
+      if (originalIndex === q.answer) cls = "is-correct";
+      else if (originalIndex === ans) cls = "is-wrong";
     }
     return `
-      <button class="quiz__opt ${cls}" data-i="${k}" ${answered ? "disabled" : ""}>
+      <button class="quiz__opt ${cls}" data-i="${originalIndex}" ${answered ? "disabled" : ""}>
         <span class="key">${letter}</span>
         <span>${o[lang] || o.en}</span>
       </button>`;
