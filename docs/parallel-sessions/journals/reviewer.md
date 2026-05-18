@@ -2959,3 +2959,21 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: accept the Practice-feedback and Mock-review disclaimer fix if the SETUP source PR evidence is otherwise complete; keep only a focused active-Mock-exam disclaimer follow-up if the bar remains "disclaimer present on every question screen." Keep `REVIEWER-SITE-ANSWER-SHUFFLE-1` open with current 715-question evidence.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-site-ebook-sv-1779123700` / `task/reviewer/site-ebook-sv-1779123700`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 current-origin static question-count copy check.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read the shared protocol, AI factory board, TEAM_PLAN, reviewer contract, site lane mandate, GOAL, blockers, setup/site queues, and current reviewer/validator entries in the clean current-origin worktree.
+- Confirmed the earlier Ebook Swedish-placeholder idea was stale on current `origin/main`: `REVIEWER-SITE-EBOOK-SV-PARITY-1` already exists and is closed, and `rg -n "Svenska översättningen kommer i v1\.1" site/ebook.js` exits 1.
+- Duplicate scan for `SITE.*COUNT`, `QUESTION.*COUNT`, `500.*720`, `core 500`, `question-count`, and `SITE-LIVE-SMOKE-COUNT` found only live-smoke/deploy count gates, not a user-visible static-site copy defect.
+- Static source check found `Free for the core 500 questions, always.` in `site/index.html` and extra-language `500` footer variants in `site/i18n-extras.js`.
+- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` - exit 0 with `Static site question-bank parity OK (720 questions, 13 chapters)`.
+- Rebased the reviewer branch onto current `origin/main` `c9a3074` and reran the same static export check; it still exits 0 with 720 questions and 13 chapters.
+- Served the current `site/` artifact with `python3 -m http.server 8233 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright on `#/` exited 2 by design: `window.SMT_QUESTIONS.length` was 720 while visible footer copy still said `Free for the core 500 questions, always.` Browser console/page errors were `[]`.
+PR (number + merged?): pending at handoff commit time.
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site or LANGUAGE/site to update visible question-count copy across localized footer/about variants and add a static guard so count claims cannot drift from the generated static bank.
