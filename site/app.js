@@ -13,7 +13,7 @@ function route() {
   const [pathRaw] = hash.split("?");
   let path = pathRaw.startsWith("/") ? pathRaw : "/";
   // map unknown paths to /
-  const known = ["/", "/practice", "/privacy", "/support", "/terms", "/sources"];
+  const known = ["/", "/practice", "/ebook", "/privacy", "/support", "/terms", "/sources"];
   if (!known.includes(path)) path = "/";
 
   document.querySelectorAll("[data-page]").forEach((el) => {
