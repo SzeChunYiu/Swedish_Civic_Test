@@ -2,18 +2,25 @@ import type { PropsWithChildren } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text as NativeText } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../lib/theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
+const buttonLoadingCopy: Record<AppLanguage, string> = {
+  sv: 'Laddar',
+  en: 'Loading',
+};
+
 /**
  * Defaults: `variant="primary"`, `size="md"`, `loading=false`,
- * `loadingLabel="Loading"`, `accessibilityRole="button"`, and a token-sized
- * `hitSlop`. Pass `accessibilityLabel` when the visible children are not a
- * concise spoken label.
+ * localized loading label from settings, `accessibilityRole="button"`, and a
+ * token-sized `hitSlop`. Pass `accessibilityLabel` when the visible children
+ * are not a concise spoken label.
  */
 export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'children' | 'style'>> {
+  languageOverride?: AppLanguage;
   loading?: boolean;
   loadingLabel?: string;
   size?: ButtonSize;
@@ -43,18 +50,22 @@ export function Button({
   children,
   disabled = false,
   hitSlop,
+  languageOverride,
   loading = false,
-  loadingLabel = 'Loading',
+  loadingLabel,
   size = 'md',
   style,
   textStyle,
   variant = 'primary',
   ...pressableProps
 }: ButtonProps) {
+  const settingsLanguage = useSettingsStore((state) => state.language);
+  const language = languageOverride ?? settingsLanguage;
+  const resolvedLoadingLabel = loadingLabel ?? buttonLoadingCopy[language];
   const isExplicitlyDisabled = disabled === true;
   const isPressDisabled = isExplicitlyDisabled || loading;
   const resolvedAccessibilityLabel =
-    accessibilityLabel ?? (loading ? loadingLabel : getStringLabel(children));
+    accessibilityLabel ?? (loading ? resolvedLoadingLabel : getStringLabel(children));
   const resolvedAccessibilityState = {
     ...accessibilityState,
     disabled: isPressDisabled || accessibilityState?.disabled,
