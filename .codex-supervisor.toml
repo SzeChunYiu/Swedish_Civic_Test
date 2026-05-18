@@ -76,3 +76,78 @@ tasks_dir = "codex-tasks"
 role = "team"
 project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
+
+# fs10-free LUNARC scale-up (1 lu48 node, fs9 worktree, node-local codex
+# scratch, GitHub-durable). SLURM/remote_env live in ~/.config/csup/hosts.toml.
+
+[hosts."lunarc-civic-local"]
+ssh = "lunarc"
+session = "civic-team-build-local"
+prompts = "codex-prompts-team-build.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."lunarc-civic-ceo"]
+ssh = "lunarc"
+session = "civic-meta-local"
+prompts = "codex-prompts-meta.txt"
+tasks_dir = "codex-tasks"
+role = "ceo"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."lunarc-civic-uiux"]
+ssh = "lunarc"
+session = "civic-team-uiux-local"
+prompts = "codex-prompts-team-uiux.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."lunarc-civic-design"]
+ssh = "lunarc"
+session = "civic-team-design-local"
+prompts = "codex-prompts-civic-team-uiux-design.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."lunarc-civic-runtime"]
+ssh = "lunarc"
+session = "civic-team-runtime-local"
+prompts = "codex-prompts-civic-team-uiux-runtime.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."lunarc-civic-qa"]
+ssh = "lunarc"
+session = "civic-team-qa-local"
+prompts = "codex-prompts-civic-team-qa.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."lunarc-civic-release"]
+ssh = "lunarc"
+session = "civic-team-release-local"
+prompts = "codex-prompts-civic-team-release.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
+
+[hosts."lunarc-civic-content"]
+ssh = "lunarc"
+session = "civic-team-content-local"
+prompts = "codex-prompts-civic-content.txt"
+tasks_dir = "codex-tasks"
+role = "team"
+project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test"
+sync_policy = "git-only"
