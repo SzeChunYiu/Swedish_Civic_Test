@@ -189,6 +189,10 @@ function englishInfinitive(value: string): string {
   return /^to\b/i.test(trimmed) ? trimmed : `to ${trimmed}`;
 }
 
+function englishAgePhrase(value: string): string {
+  return value.replace(/^(\d+)\s+years$/i, 'age $1');
+}
+
 function stripLeadingPurposeSv(value: string): string {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
 }
@@ -285,6 +289,8 @@ function replaceLeadingEnglishSubject(subject: string, value: string): string {
     .replace(/^It can\s+/i, `${normalizedSubject} can `)
     .replace(/^It makes\s+/i, `${normalizedSubject} makes `)
     .replace(/^It is\s+/i, `${normalizedSubject} is `)
+    .replace(/^It was\s+/i, `${normalizedSubject} was `)
+    .replace(/^It says\s+/i, `${normalizedSubject} says `)
     .replace(/^It (gives|lets|applies)\b/i, `${normalizedSubject} $1`);
 }
 
@@ -686,6 +692,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket påstående beskriver (.+)$/i);
   if (match) return describesStatementSv(match[1], answer);
 
+  match = q.match(/^Vilket påstående stämmer om (.+)$/i);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+
   match = q.match(/^Vilken är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
 
@@ -697,6 +706,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilka krav gäller för (.+)$/i);
   if (match) return `För ${match[1]} måste ${lowerFirst(stripLeadingMustSv(answer))}`;
+
+  match = q.match(/^Varför bildades Förenta nationerna efter andra världskriget$/i);
+  if (match)
+    return `Förenta nationerna bildades efter andra världskriget för att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
 
   match = q.match(/^Varför (.+)$/i);
   if (match) return reasonStatementSv(answer);
@@ -1035,7 +1050,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^From what age is (.+)$/i);
   if (match) {
     const predicate = match[1].replace(/^(.+?)\s+(criminally responsible\b.*)$/i, '$1 is $2');
-    return `${upperFirst(predicate)} from ${lowerFirst(answer)}`;
+    return `${upperFirst(predicate)} from ${englishAgePhrase(lowerFirst(answer))}`;
   }
 
   match = q.match(/^What does it mean that (.+)$/i);
@@ -1060,6 +1075,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which statement describes (.+)$/i);
   if (match) return describesStatementEn(match[1], answer);
 
+  match = q.match(/^Which statement is correct about (.+)$/i);
+  if (match) return replaceLeadingEnglishSubject(match[1], answer);
+
   match = q.match(/^What is the foremost task of (.+)$/i);
   if (match) {
     return `The foremost task of ${lowerLeadingEnglishArticle(match[1])} is ${englishInfinitive(
@@ -1076,6 +1094,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Which requirements apply to (.+)$/i);
   if (match) return `To ${requirementTargetEn(match[1])}, ${lowerFirst(answer)}`;
+
+  match = q.match(/^Why was the United Nations created after the Second World War$/i);
+  if (match)
+    return `The United Nations was created after the Second World War to ${lowerFirst(
+      stripLeadingPurposeEn(answer),
+    )}`;
 
   match = q.match(/^Why (.+)$/i);
   if (match) return reasonStatementEn(answer);
