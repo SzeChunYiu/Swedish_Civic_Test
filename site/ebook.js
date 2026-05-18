@@ -554,10 +554,10 @@
     const bodyHtml = ch.body
       ? (ch.body[lang] || ch.body.en)
       : `<div class="ebook__stub">
-          <h3>${sv ? "Kommer snart" : "Coming soon"}</h3>
+          <h3>${sv ? "Kapitlet kunde inte öppnas" : "Chapter could not be opened"}</h3>
           <p>${sv
-              ? "Vi skriver det här kapitlet just nu. Tills dess kan du öva på frågorna eller läsa ett av de färdiga kapitlen i sidofältet."
-              : "We're writing this chapter now. In the meantime, drill the questions in Practice, or jump to one of the completed chapters in the sidebar."}</p>
+              ? "Välj ett kapitel i listan eller gå tillbaka till introduktionen."
+              : "Choose a chapter from the list or return to the introduction."}</p>
         </div>`;
 
     const idx = ORDER.indexOf(id);
