@@ -1508,3 +1508,24 @@ Artifacts changed: `data/additionalQuestions.ts`, `docs/parallel-sessions/journa
 Question count / verification: 715 published questions total; authored source-question count remains 143 and generated published-question count remains 572. UHR source checked against existing accepted evidence for Chapter 12, section `Hinduism och buddhism`, printed page 43 / PDF text lines 1265-1272: Buddhist and Hindu congregations and temples exist in different places in Sweden, prayers, rituals, and religious festivals take place there, and present-day Buddhists and Hindus are mainly among immigrants from countries where those religions are large. `NODE_OPTIONS='--v8-pool-size=1' npm run content:export` exported 715 questions; direct q108 assertion passed; source-note scan over `data/additionalQuestions.ts`, `data/questions.ts`, and `content/question-bank.csv` found no `avsnittets innehåll` / `the section` matches; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed at 715 questions; focused source-citation/export/sentence/option/source-wiring/UHR-reference tests passed 22/22; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with 715 questions / 143 source questions / 572 generated questions; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; targeted Prettier check passed; scoped diff whitespace check passed.
 PR: #335 opened from branch `task/content/q108-source-note-pane1-1779115000`; merge pending at handoff update time.
 Blocked / next validator action: no for q108 - review the bounded q108 explanation diff against UHR `Sverige i fokus`, Chapter 12, section `Hinduism och buddhism`, printed page 43. q144 remains available as the next Phase-A source-expansion atom after this q108 route is accepted or superseded.
+
+## Manager-content routing note - 2026-05-18
+Task completed: Recorded q108 landing, duplicate-guarded stale q108 branches,
+and refreshed the CONTENT queue so q108 is no longer assigned after it merged.
+Artifacts changed: `codex-tasks/content.txt`, `docs/parallel-sessions/journals/content.md`.
+Question count / verification: No content source changed in this manager note.
+Routing evidence: q108 is on `origin/main` via PR #335 / `d86717e`; q018
+remains open and canonical in PR #317; q144 remains open and canonical in PR
+#331. Focused source-note scan on current `origin/main` found only q018's
+`The State section says...` wording, already covered by PR #317, and no
+remaining q108 `avsnittets innehåll` / `the section` wording in
+`data/questions.ts`, `data/additionalQuestions.ts`, or `content/question-bank.csv`.
+Verification for this manager note: focused source-note scan,
+`git diff --check -- codex-tasks/content.txt docs/parallel-sessions/journals/content.md`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`, and
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` after
+linking the shared dependency install into the clean manager worktree.
+Blocked / next validator action: no for routing - accept/reject q108 from PR
+#335 / `d86717e`, keep q018 duplicate-guarded in PR #317, and keep q144
+duplicate-guarded in PR #331 with a rebase/verification requirement before
+merge. Do not start a second q144 branch; CONTENT must not edit `site/**`.
