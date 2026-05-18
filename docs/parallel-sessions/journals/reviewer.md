@@ -2908,3 +2908,19 @@ Verification (commands + result):
 PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/site to centralize language-change events and re-render active Practice quiz plus Mock landing/exam/result surfaces after Settings language changes; add a static browser guard for the Settings EN/SV path on `#/practice?c=1` and `#/mock?run=1`.
+
+Lane: REVIEWER
+Host/branch: `/home/billy/Swedish_Civic_Test` / `task/uiux-components/result-summary-1779107759`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: SITE-P0-5 static Practice completion result i18n check.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read the reviewer protocol docs, TEAM_PLAN, blockers, setup queue, existing reviewer journal, and validator queue before this pass.
+- Duplicate scan for `SITE.*score`, `practice.*score`, `static.*score`, `quiz__breakdown`, and Swedish score/result wording found no existing static-site Practice result i18n defect.
+- Served the deployable static `site/` artifact with `python3 -m http.server 8215 --bind 127.0.0.1 --directory site`.
+- System-Chrome Playwright on `#/practice?c=mix` set `smt_lang=sv`, answered the 10-question practice run, and exited 2 by design because the Swedish result included `70%score`.
+- Browser evidence: `document.documentElement.lang:"sv"`, result rows `["7Rätt","3Fel","70%score"]`, `hasEnglishScore:true`, `hasSwedishScoreWord:false`, and browser console/page errors `[]`.
+- Source inspection confirms `site/app.js` `smtQuizRender()` hardcodes `<li><b>${pct}%</b>score</li>` in the result breakdown.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: assign SETUP/site to localize and space the Practice result percentage label for Swedish and English completion results, then add a static browser/i18n guard covering the completed Practice result screen.
