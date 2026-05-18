@@ -2425,3 +2425,25 @@ Verification (commands + result):
 PR (number + merged?): #152 / pending before merge attempt.
 Accepted by worker? yes
 Next suggested validator action: assign a CONTENT-owned q037 naturalness atom; keep TRANSLATE-COMPLETE open because current validators remain green while this user-visible English defect exists.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-q074` / `task/reviewer/q074-en-naturalness-1779103580`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q074 English naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/open.txt`, and current queues.
+- Checked `review-to-queue.sh` at `/Users/billy/Desktop/projects/.shared/review-to-queue.sh`, `/home/billy/Desktop/projects/.shared/review-to-queue.sh`, and repo `.shared/review-to-queue.sh`; all were absent, so this pass used the reviewer lane contract queue file.
+- Removed a candidate q073 finding before queueing because `origin/main` already has the q073 content fix and validator notes q073 as active/accepted evidence.
+- `git show origin/main:data/additionalQuestions.ts | nl -ba | sed -n '1260,1325p'` - q074 still starts `explanationEn` with `The UHR section Municipalities have a large responsibility says...` on `origin/main`.
+- `git show origin/main:codex-tasks/validator.txt | rg -n "REVIEWER-Q074|q074|Q074" -S || true` and the same scan over the reviewer journal - no q074 duplicate found.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0 in the shared checkout.
+- First System-Chrome exported-web pass on `/quiz/q074` timed out on an overly strict `^True` role-name locator; the rerun used `/True/i`.
+- System-Chrome exported-web pass on `/quiz/q074` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, 705 questions.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- `git diff --check -- data/additionalQuestions.ts content/question-bank.csv` - exit 0 in the shared checkout.
+- `git diff --check -- codex-tasks/validator.txt docs/parallel-sessions/journals/reviewer.md` - exit 0 in this clean reviewer worktree.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q074 naturalness atom to rewrite the English explanation idiomatically while preserving the UHR page 31 elderly-care municipal responsibility facts and citation; keep TRANSLATE-COMPLETE open because current validators stay green while this user-visible English defect exists.
