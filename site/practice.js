@@ -32,6 +32,11 @@
       ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
       : `Source: ${title}, ${source.chapter}, ${source.section}, p. ${source.page}`;
   }
+  function questionReviewDisclaimer() {
+    return lang() === "sv"
+      ? "Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga."
+      : "Independent study practice, not a real exam or an official UHR question.";
+  }
 
   function getProgress() {
     try { return JSON.parse(localStorage.getItem("smt_progress") || "{}"); } catch { return {}; }
@@ -508,6 +513,7 @@
             </dl>
             <p class="mock-review__why">${escapeHtml(tr(q.why))}</p>
             <p class="mock-review__source">${escapeHtml(sourceCitation(q))}</p>
+            <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           </div>
         </details>
       `;
