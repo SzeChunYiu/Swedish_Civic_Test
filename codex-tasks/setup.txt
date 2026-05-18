@@ -197,6 +197,16 @@ diff only tightened `scripts/build-config.test.js` and recorded the SETUP
 handoff. The next unblocked P0 SETUP source atom is visual-smoke launch-overlay
 evidence while live deploy freshness remains externally blocked.
 
+MANAGER-build recheck 2026-05-18T17:19+02:00:
+Current `origin/main` is `d24cf14`; local live-smoke unit coverage,
+`validate:content`, and static question-bank parity pass, but production still
+serves the stale static-bank hash (`expected 3c425f0ad2c7`, found
+`5d2710bebf7e`). Latest Production deployment success remains `767c87d` from
+2026-05-18T14:00:23Z. Scheduled deploy run `26042332873` for the latest
+site/deploy-path change at `43101ee` failed before steps; job `76557106333`
+reports the Actions payment/spending-limit blocker. Keep live deploy open;
+visual-smoke launch-overlay evidence remains the next unblocked source atom.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
@@ -211,15 +221,15 @@ evidence while live deploy freshness remains externally blocked.
      PR #328 / `11b2b96` fixed the current-count live-smoke behavior, but this
      is not accepted as live-deploy closure until production serves current
      `origin/main` and live smoke passes with the hash guard.
-   - Latest manager recheck, 2026-05-18T17:05+02:00: current `origin/main`
-     is `3647ed2`; local `check-live-site.test.js`, `validate:content`, and
+   - Latest manager recheck, 2026-05-18T17:19+02:00: current `origin/main`
+     is `d24cf14`; local `check-live-site.test.js`, `validate:content`, and
      `export-site-question-bank --check` pass, but `node
      scripts/check-live-site.js
      https://dist-jgsjooi52-billy10384-5430s-projects.vercel.app` fails on
      `static question bank content` (`expected 3c425f0ad2c7, found
      5d2710bebf7e`). Latest Production success is still deployment
-     `4729276163` at SHA `767c87d`; scheduled deploy run `26040937449` for
-     `f5454ba` failed before any steps; job `76552054427` reports the GitHub
+     `4729276163` at SHA `767c87d`; scheduled deploy run `26042332873` for
+     `43101ee` failed before any steps; job `76557106333` reports the GitHub
      Actions payment/spending-limit blocker. This remains external deployment
      capacity, not a source-readiness task.
 
