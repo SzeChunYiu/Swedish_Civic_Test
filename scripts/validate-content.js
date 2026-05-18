@@ -528,7 +528,7 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.emptyPracticeLink}', 'empty practice link must render localized copy'],
 ];
-const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20];
+const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20, 40];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
 const EXPECTED_DAILY_GOAL_MAX = 50;

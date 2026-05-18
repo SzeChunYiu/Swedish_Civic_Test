@@ -1,0 +1,26 @@
+## Iteration 1 - 2026-05-18
+Screen: Practice answer feedback actions - `app/(tabs)/practice.tsx`
+Components consumed: shared `Button`, existing `AnswerOption`, `ExplanationPanel`, `UHRReferenceCard`, `AdBanner`.
+States covered: answered/success feedback action row; primary next action and secondary retry action keep localized labels and accessible roles.
+A11y: CTA labels remain `copy.nextQuestionAccessibilityLabel` and `copy.tryAgainAccessibilityLabel`; shared `Button` supplies native/web button state wiring; action targets now carry token-derived `minHeight: space[5] + space[0.5]` for the 44px target bar.
+Verification: `prettier --check app/(tabs)/practice.tsx` pass; token grep on `app/(tabs)/practice.tsx` pass; `node --test tests/content-practice-route-copy-parity.test.js tests/content-practice-route-header-parity.test.js` pass 5/5; `npm run test:theme-discipline` pass 1/1; `npm run test:a11y-labels` pass 1/1; `npm run test:ui-effects` pass 50/50; `npm run typecheck -- --pretty false` pass; `npm run lint` pass; `npm run validate:content` pass; `npm run test:ownership` pass; `git diff --check -- app/(tabs)/practice.tsx` pass.
+Blocked? no.
+Next: Continue PANEL-OPT on routed quiz feedback actions so `/quiz/[sessionId]` gets the same shared Button hierarchy.
+
+## Iteration 2 - 2026-05-18
+Screen: Routed quiz answer feedback actions - `app/quiz/[sessionId].tsx`
+Components consumed: shared `Button`, existing `AnswerOption`, `ExplanationPanel`, `UHRReferenceCard`, `ProgressBar`.
+States covered: answered feedback row; retry action uses the shared secondary button and back-to-practice link uses tokenized 44px sizing.
+A11y: retry keeps `copy.tryAgainAccessibilityLabel`, explicit `accessibilityRole="button"`, and `accessibilityState={{ disabled: false }}`; back link keeps role/link label.
+Verification: `prettier --check app/quiz/[sessionId].tsx` pass; token grep on `app/quiz/[sessionId].tsx` pass; `node --test tests/content-quiz-route-copy-parity.test.js tests/content-quiz-route-header-parity.test.js` pass 6/6; `npm run test:a11y-labels` pass 1/1; `npm run test:theme-discipline` pass 1/1; `npm run test:ui-effects` pass 50/50; `npm run typecheck -- --pretty false` pass; `npm run lint` pass; `npm run validate:content` pass; `npm run test:ownership` pass; `git diff --check -- "app/(tabs)/practice.tsx" "app/quiz/[sessionId].tsx" docs/parallel-sessions/journals/uiux-screens.md` pass.
+Blocked? no.
+Next: Continue PANEL-OPT on remaining bespoke app-level action buttons, prioritizing exam results controls.
+
+## Iteration 3 - 2026-05-18
+Screen: Mock exam action controls - `app/(tabs)/exam.tsx`
+Components consumed: shared `Button`, existing `Badge`, `ProgressBar`, `QuestionDisclaimer`, `ExplanationPanel`, `UHRReferenceCard`.
+States covered: locked access CTA, result next-exam CTA, active exam submit CTA; disabled, saving, unlocked, and ready-to-submit states keep localized labels.
+A11y: start/next/submit controls keep explicit `accessibilityLabel`, `accessibilityRole="button"`, `accessibilityState.disabled`, and web `aria-disabled`; shared `Button` supplies native/web button wiring; action targets carry token-derived `minHeight: space[5] + space[0.5]`.
+Verification: `npx prettier --check 'app/(tabs)/exam.tsx'` pass; `node --test tests/content-exam-route-copy-parity.test.js tests/content-exam-route-header-parity.test.js` pass 6/6; `npm run test:theme-discipline` pass 1/1; `npm run test:a11y-labels` pass 1/1; `npm run test:ui-effects -- --test-name-pattern 'exam'` pass 50/50; `npm run typecheck -- --pretty false` pass; `npm run lint` pass; `npm run test:ownership` pass; `npm run validate:content` pass; `npm run test:exam` pass 10/10; `git diff --check -- app/(tabs)/exam.tsx` pass; token grep on `app/(tabs)/exam.tsx` produced no matches.
+Blocked? no.
+Next: Continue PANEL-OPT/UI-OVERHAUL on another clean `app/` screen, prioritizing settings/profile controls that still use bespoke button/link styling.

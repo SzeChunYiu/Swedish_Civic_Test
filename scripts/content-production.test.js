@@ -162,7 +162,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.languageSettingsParityValidated, true);
   assert.equal(summary.settingsStoreFieldsValidated, 6);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
-  assert.equal(summary.settingsDailyGoalOptionsValidated, 3);
+  assert.equal(summary.settingsDailyGoalOptionsValidated, 4);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
   assert.equal(summary.settingsAudioLabelsValidated, 2);
   assert.equal(summary.settingsAudioParityValidated, true);

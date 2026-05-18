@@ -32,6 +32,16 @@ export const architectureSupplementalRouteFiles = [
   'app/terms.tsx',
 ] as const;
 
+export const architectureRouterShellRuntimeFiles = [
+  'app/_layout.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/index.tsx',
+  'app/+not-found.tsx',
+  'app/+html.tsx',
+  'app/+native-intent.ts',
+  'lib/scaffold/routerShellManifest.ts',
+] as const;
+
 export const architectureComplianceSupportFiles = [
   'components/compliance/ComplianceLinks.tsx',
   'components/compliance/LegalPage.tsx',
@@ -52,6 +62,15 @@ export const architectureThemeRuntimeFiles = [
   'lib/theme/shadows.ts',
   'lib/theme/spacing.ts',
   'lib/theme/typography.ts',
+] as const;
+
+export const architectureAudioRuntimeFiles = [
+  'lib/audio/speak.ts',
+  'components/learning/AudioButton.tsx',
+  'lib/storage/settingsStore.ts',
+  'app/settings.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
 ] as const;
 
 export const architectureAnswerShuffleRuntimeFiles = [
@@ -141,6 +160,22 @@ export const architectureLearningProgressRuntimeFiles = [
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
   'app/chapter/[chapterId].tsx',
+] as const;
+
+export const architectureProfileSettingsRuntimeFiles = [
+  'app/(tabs)/profile.tsx',
+  'app/settings.tsx',
+  'lib/storage/settingsStore.ts',
+  'lib/storage/progressStore.ts',
+  'lib/learning/badges.ts',
+  'lib/learning/streaks.ts',
+  'lib/learning/xp.ts',
+  'components/ui/Badge.tsx',
+  'components/ui/Card.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ScreenShell.tsx',
+  'components/monetization/PremiumBanner.tsx',
+  'components/compliance/ComplianceLinks.tsx',
 ] as const;
 
 export const architectureScaffoldFiles = [
@@ -375,11 +410,14 @@ export type ArchitectureScaffoldDirectory = (typeof architectureScaffoldDirector
 export type ArchitectureScaffoldFilePath = (typeof architectureScaffoldFiles)[number]['file'];
 export type ArchitectureSupplementalRouteFilePath =
   (typeof architectureSupplementalRouteFiles)[number];
+export type ArchitectureRouterShellRuntimeFilePath =
+  (typeof architectureRouterShellRuntimeFiles)[number];
 export type ArchitectureComplianceSupportFilePath =
   (typeof architectureComplianceSupportFiles)[number];
 export type ArchitectureDesignSystemSupportFilePath =
   (typeof architectureDesignSystemSupportFiles)[number];
 export type ArchitectureThemeRuntimeFilePath = (typeof architectureThemeRuntimeFiles)[number];
+export type ArchitectureAudioRuntimeFilePath = (typeof architectureAudioRuntimeFiles)[number];
 export type ArchitectureAnswerShuffleRuntimeFilePath =
   (typeof architectureAnswerShuffleRuntimeFiles)[number];
 export type ArchitectureQuestionLanguageRuntimeFilePath =
@@ -392,3 +430,5 @@ export type ArchitectureMonetizationRuntimeFilePath =
   (typeof architectureMonetizationRuntimeFiles)[number];
 export type ArchitectureLearningProgressRuntimeFilePath =
   (typeof architectureLearningProgressRuntimeFiles)[number];
+export type ArchitectureProfileSettingsRuntimeFilePath =
+  (typeof architectureProfileSettingsRuntimeFiles)[number];

@@ -9,6 +9,7 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
@@ -201,22 +202,23 @@ export default function Screen() {
           <UHRReferenceCard language={language} reference={question.uhrReference} />
           <AdBanner placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
-            <Pressable
+            <Button
               accessibilityLabel={copy.nextQuestionAccessibilityLabel}
               accessibilityRole="button"
               onPress={advanceQuestion}
-              style={styles.nextQuestion}
+              style={styles.feedbackButton}
             >
-              <Text style={styles.nextQuestionText}>{copy.nextQuestion}</Text>
-            </Pressable>
-            <Pressable
+              {copy.nextQuestion}
+            </Button>
+            <Button
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               onPress={resetSelection}
-              style={styles.tryAgain}
+              style={styles.feedbackButton}
+              variant="secondary"
             >
-              <Text style={styles.tryAgainText}>{copy.tryAgain}</Text>
-            </Pressable>
+              {copy.tryAgain}
+            </Button>
           </View>
         </View>
       ) : null}
@@ -295,34 +297,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
+  feedbackButton: {
+    minHeight: space[5] + space[0.5],
+  },
   score: {
     color: colors.success,
     fontSize: typography.body.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
-  },
-  nextQuestion: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  nextQuestionText: {
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  tryAgain: {
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  tryAgainText: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
   },
 });

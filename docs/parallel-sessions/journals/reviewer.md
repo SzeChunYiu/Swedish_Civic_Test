@@ -2213,3 +2213,181 @@ Workspace contract: pass with caveats - no product source edited; only reviewer 
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q028-EN-NATURALNESS-1`; dirty-worktree blocker refreshed in `codex-tasks/blockers.txt`.
 Evidence: `/quiz/q028` rendered `True or false: The opposition should scrutinize the government’s work and propose alternative policies.`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Staten, p. 12`, independent-study disclaimer, correct feedback for `True`, and the user-visible explanation beginning `The UHR section The state says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
 Next manager action: assign a CONTENT-owned q028 naturalness atom; current static validation stays green, so this cannot be closed by test status alone. Broader REVIEWER passes remain rate-limited by the mixed dirty checkout.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q001` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `codex-tasks/P0.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q012-q020 and q022-q028 English-naturalness findings already exist, and no q001 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; neither documented helper path is executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `nl -ba data/questions.ts | sed -n '1,60p'` shows q001 `explanationEn` begins with `The UHR section Geography, climate, and nature says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 600 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 for 600 questions.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q001` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass - no product source edited; only reviewer queue/journal notes were changed.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q001-EN-NATURALNESS-1`.
+Evidence: `/quiz/q001` rendered `Where is Sweden located?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5`, independent-study disclaimer, correct feedback for `In the Nordic region in northern Europe`, and the user-visible explanation beginning `The UHR section Geography, climate, and nature says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q001 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q002` English-support content/runtime path.
+Checks run:
+- Reused the current `dist-web` from the q001 pass because only reviewer queue/journal files changed afterward.
+- Checked the existing reviewer queue first; q001, q012-q020, and q022-q028 English-naturalness findings already exist, and no q002 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '36,60p'` shows q002 `explanationEn` begins with `The UHR section Geography, climate, and nature says...`.
+- System-Chrome exported-web pass on `/quiz/q002` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass - no product source edited; only reviewer queue/journal notes were changed.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q002-EN-NATURALNESS-1`.
+Evidence: `/quiz/q002` rendered `True or false: Sweden's northernmost part lies north of the Arctic Circle.`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5`, independent-study disclaimer, correct feedback for `True`, and the user-visible explanation beginning `The UHR section Geography, climate, and nature says...`; browser console/page errors were empty. Static validation from the immediately preceding q001 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q002 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q003` English-support content/runtime path.
+Checks run:
+- Re-read `docs/parallel-sessions/PRODUCTIVITY.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/parallel-sessions.md`, `codex-tasks/P0.md`, `docs/architecture.md`, `DESIGN.md`, current `docs/parallel-sessions/TEAM_PLAN.md`, and current queue/blocker state.
+- Checked the existing reviewer queue first; q001, q002, q012-q020, and q022-q028 English-naturalness findings already exist, and no q003 duplicate was queued.
+- Checked the shared review helper paths from `codex-tasks/open.txt`; neither documented helper path is executable in this container, so this finding was queued through the reviewer lane fallback file.
+- Static source review: `nl -ba data/questions.ts | sed -n '60,112p'` shows q003 `explanationEn` begins with `The UHR section Geography, climate, and nature says...`.
+- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0, including 600 `questionBilingualTextPairsValidated`.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-uhr-source-citation-stem.test.js tests/content-export-parity.test.js tests/content-question-sentence-endings.test.js` - exit 0, 6/6.
+- `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0 for 600 questions.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0.
+- System-Chrome exported-web pass on `/quiz/q003` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass - no product source edited; only reviewer queue/journal notes were changed.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q003-EN-NATURALNESS-1`.
+Evidence: `/quiz/q003` rendered `Approximately how far does Sweden stretch from Treriksröset to Smygehuk?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5`, independent-study disclaimer, correct feedback for `About 1,600 kilometres`, and the user-visible explanation beginning `The UHR section Geography, climate, and nature says...`; browser console/page errors were empty. Static validation stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q003 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q004` English-support content/runtime path.
+Checks run:
+- Reused the current `dist-web` from the q003 pass because only reviewer queue/journal files changed afterward.
+- Checked the existing reviewer queue first; q001-q003, q012-q020, and q022-q028 English-naturalness findings already exist, and no q004 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '87,112p'` shows q004 `explanationEn` begins with `The UHR section Geography, climate, and nature says...`.
+- System-Chrome exported-web pass on `/quiz/q004` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass - no product source edited; only reviewer queue/journal notes were changed.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q004-EN-NATURALNESS-1`.
+Evidence: `/quiz/q004` rendered `What is the sea along Sweden's eastern coast called?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5`, independent-study disclaimer, correct feedback for `The Baltic Sea`, and the user-visible explanation beginning `The UHR section Geography, climate, and nature says...`; browser console/page errors were empty. Static validation from the immediately preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q004 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q005` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q004, q012-q020, and q022-q028 English-naturalness findings already exist, and no q005 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '112,166p'` shows q005 `explanationEn` begins with `The UHR section Geography, climate, and nature says...`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 360s npm run build:web:export -- --max-workers 2` - exit 0 after a fresh `/quiz/[sessionId]` source change appeared.
+- System-Chrome exported-web pass on `/quiz/q005` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass - no product source edited; only reviewer queue/journal notes were changed.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q005-EN-NATURALNESS-1`.
+Evidence: `/quiz/q005` rendered `Which islands are Sweden's two largest?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5`, independent-study disclaimer, correct feedback for `Gotland and Öland`, and the user-visible explanation beginning `The UHR section Geography, climate, and nature says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q005 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q006` English-support content/runtime path.
+Checks run:
+- Reused the current `dist-web` from the q005 rebuild because only reviewer queue/journal files changed afterward.
+- Checked the existing reviewer queue first; q001-q005, q012-q020, and q022-q028 English-naturalness findings already exist, and no q006 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '138,166p'` shows q006 `explanationEn` begins with `The UHR section Geography, climate, and nature says...`.
+- System-Chrome exported-web pass on `/quiz/q006` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass - no product source edited; only reviewer queue/journal notes were changed.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q006-EN-NATURALNESS-1`.
+Evidence: `/quiz/q006` rendered `True or false: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5`, independent-study disclaimer, correct feedback for `True`, and the user-visible explanation beginning `The UHR section Geography, climate, and nature says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q006 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q007` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q006, q012-q020, and q022-q028 English-naturalness findings already exist, and no q007 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '164,224p'` shows q007 `explanationEn` begins with `The UHR section Mountains says...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q007` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q007-EN-NATURALNESS-1`.
+Evidence: `/quiz/q007` rendered `What is the name of Sweden's highest mountain?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Fjäll, p. 6`, independent-study disclaimer, correct feedback for `Kebnekaise`, and the user-visible explanation beginning `The UHR section Mountains says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q007 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q008` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q007, q012-q020, and q022-q028 English-naturalness findings already exist, and no q008 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '186,216p'` shows q008 `explanationEn` begins with `The UHR section Forests, lakes, and islands says...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q008` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q008-EN-NATURALNESS-1`.
+Evidence: `/quiz/q008` rendered `Which are Sweden's three largest lakes?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Skogar, sjöar och öar, p. 6`, independent-study disclaimer, correct feedback for `Vänern, Vättern, and Mälaren`, and the user-visible explanation beginning `The UHR section Forests, lakes, and islands says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q008 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q009` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q008, q012-q020, and q022-q028 English-naturalness findings already exist, and no q009 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '216,246p'` shows q009 `explanationEn` begins with `The UHR section Population says...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q009` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q009-EN-NATURALNESS-1`.
+Evidence: `/quiz/q009` rendered `Approximately how many people live in Sweden?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Befolkning, p. 7`, independent-study disclaimer, correct feedback for `Almost 11 million`, and the user-visible explanation beginning `The UHR section Population says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q009 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q010` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q009, q012-q020, and q022-q028 English-naturalness findings already exist, and no q010 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '232,286p'` shows q010 `explanationEn` begins with `The UHR section Natural resources says...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q010` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q010-EN-NATURALNESS-1`.
+Evidence: `/quiz/q010` rendered `Which natural resources are important in Sweden?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Landet Sverige, Naturresurser, p. 7`, independent-study disclaimer, correct feedback for `Iron ore and other minerals, forest, agricultural land, and water`, and the user-visible explanation beginning `The UHR section Natural resources says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q010 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q011` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q010, q012-q020, and q022-q028 English-naturalness findings already exist, and no q011 duplicate was queued.
+- Static source review: `nl -ba data/questions.ts | sed -n '280,326p'` shows q011 `explanationEn` begins with `The UHR section Democracy means rule by the people says...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q011` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q011-EN-NATURALNESS-1`.
+Evidence: `/quiz/q011` rendered `What does democracy mean?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Sveriges demokratiska system, Demokrati betyder folkstyre, p. 10`, independent-study disclaimer, correct feedback for `Rule by the people`, and the user-visible explanation beginning `The UHR section Democracy means rule by the people says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q011 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q021` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q011, q012-q020, and q022-q028 English-naturalness findings already exist, and no q021 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '68,86p'` shows q021 `explanationEn` includes `Therefore the state, regions, and municipalities is correct...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q021` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q021-EN-NATURALNESS-1`.
+Evidence: `/quiz/q021` rendered `Which three levels share political responsibility in Sweden?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Så här styrs Sverige, Landet styrs på olika nivåer, p. 12`, independent-study disclaimer, correct feedback for `The state, regions, and municipalities`, and the user-visible explanation containing `Therefore the state, regions, and municipalities is correct...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q021 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q071` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q021 and q022-q028 English-naturalness findings already exist, and no q071 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '1180,1210p'` shows q071 `explanationEn` begins with `The State-financed welfare section says...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q071` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q071-EN-NATURALNESS-1`.
+Evidence: `/quiz/q071` rendered `What does the state finance within welfare?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Statligt finansierad välfärd, p. 30`, independent-study disclaimer, correct feedback for `Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance`, and the user-visible explanation beginning `The State-financed welfare section says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q071 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.
+
+Lane: REVIEWER
+Artifact reviewed: current exported web `/quiz/q072` English-support content/runtime path.
+Checks run:
+- Checked the existing reviewer queue first; q001-q021, q022-q028, and q071 English-naturalness findings already exist, and no q072 duplicate was queued.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '1211,1233p'` shows q072 `explanationEn` begins with `The Regions are responsible for health care section says...`.
+- `git status --short --branch` showed `main...origin/main [behind 1]` plus active dirty work from other lanes; REVIEWER did not pull over or overwrite shared source changes.
+- System-Chrome exported-web pass on `/quiz/q072` in English support mode - exit 2 by design because the awkward explanation was visible after answering.
+Workspace contract: pass with caveat - no product source edited; only reviewer queue/journal notes were changed, and the pass used the current shared-checkout export without pulling over active dirty work.
+Findings queued: `codex-tasks/validator.txt` item `REVIEWER-Q072-EN-NATURALNESS-1`.
+Evidence: `/quiz/q072` rendered `What responsibility do Sweden's regions have within welfare?`, the Swedish secondary prompt, localized source citation `Source: Sverige i fokus, Välfärdssamhället, Regionerna ansvarar för sjukvården, p. 30`, independent-study disclaimer, correct feedback for `To provide health and medical care for everyone`, and the user-visible explanation beginning `The Regions are responsible for health care section says...`; browser console/page errors were empty. Static validation from the preceding q003 pass stayed green, so current gates do not catch this naturalness defect.
+Next manager action: assign a CONTENT-owned q072 naturalness atom; current static validation stays green, so this cannot be closed by test status alone.

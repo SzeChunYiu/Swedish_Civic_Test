@@ -92,6 +92,16 @@ const releaseComplianceRouteFiles = [
   'app/terms.tsx',
 ];
 
+const routerShellRuntimeFiles = [
+  'app/_layout.tsx',
+  'app/(tabs)/_layout.tsx',
+  'app/index.tsx',
+  'app/+not-found.tsx',
+  'app/+html.tsx',
+  'app/+native-intent.ts',
+  'lib/scaffold/routerShellManifest.ts',
+];
+
 const complianceSupportComponentFiles = [
   'components/compliance/ComplianceLinks.tsx',
   'components/compliance/LegalPage.tsx',
@@ -112,6 +122,15 @@ const themeRuntimeFiles = [
   'lib/theme/shadows.ts',
   'lib/theme/spacing.ts',
   'lib/theme/typography.ts',
+];
+
+const audioRuntimeFiles = [
+  'lib/audio/speak.ts',
+  'components/learning/AudioButton.tsx',
+  'lib/storage/settingsStore.ts',
+  'app/settings.tsx',
+  'app/(tabs)/practice.tsx',
+  'app/quiz/[sessionId].tsx',
 ];
 
 const answerShuffleRuntimeFiles = [
@@ -203,6 +222,22 @@ const learningProgressRuntimeFiles = [
   'app/chapter/[chapterId].tsx',
 ];
 
+const profileSettingsRuntimeFiles = [
+  'app/(tabs)/profile.tsx',
+  'app/settings.tsx',
+  'lib/storage/settingsStore.ts',
+  'lib/storage/progressStore.ts',
+  'lib/learning/badges.ts',
+  'lib/learning/streaks.ts',
+  'lib/learning/xp.ts',
+  'components/ui/Badge.tsx',
+  'components/ui/Card.tsx',
+  'components/ui/MetricCard.tsx',
+  'components/ui/ScreenShell.tsx',
+  'components/monetization/PremiumBanner.tsx',
+  'components/compliance/ComplianceLinks.tsx',
+];
+
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
@@ -255,6 +290,10 @@ test('product architecture manifest matches the target scaffold files', () => {
     manifest,
     'architectureSupplementalRouteFiles',
   );
+  const manifestRouterShellRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureRouterShellRuntimeFiles',
+  );
   const manifestComplianceSupportFiles = valuesInConstArray(
     manifest,
     'architectureComplianceSupportFiles',
@@ -264,6 +303,7 @@ test('product architecture manifest matches the target scaffold files', () => {
     'architectureDesignSystemSupportFiles',
   );
   const manifestThemeRuntimeFiles = valuesInConstArray(manifest, 'architectureThemeRuntimeFiles');
+  const manifestAudioRuntimeFiles = valuesInConstArray(manifest, 'architectureAudioRuntimeFiles');
   const manifestAnswerShuffleRuntimeFiles = valuesInConstArray(
     manifest,
     'architectureAnswerShuffleRuntimeFiles',
@@ -288,20 +328,27 @@ test('product architecture manifest matches the target scaffold files', () => {
     manifest,
     'architectureLearningProgressRuntimeFiles',
   );
+  const manifestProfileSettingsRuntimeFiles = valuesInConstArray(
+    manifest,
+    'architectureProfileSettingsRuntimeFiles',
+  );
 
   assert.deepEqual(manifestFiles, architectureTargetFiles);
   assert.deepEqual(manifestDirectories, ['app', 'components', 'data', 'lib', 'types']);
   assert.deepEqual(manifestTabRoutes, architectureTabRouteFiles);
   assert.deepEqual(manifestSupplementalRoutes, releaseComplianceRouteFiles);
+  assert.deepEqual(manifestRouterShellRuntimeFiles, routerShellRuntimeFiles);
   assert.deepEqual(manifestComplianceSupportFiles, complianceSupportComponentFiles);
   assert.deepEqual(manifestDesignSystemSupportFiles, designSystemSupportComponentFiles);
   assert.deepEqual(manifestThemeRuntimeFiles, themeRuntimeFiles);
+  assert.deepEqual(manifestAudioRuntimeFiles, audioRuntimeFiles);
   assert.deepEqual(manifestAnswerShuffleRuntimeFiles, answerShuffleRuntimeFiles);
   assert.deepEqual(manifestQuestionLanguageRuntimeFiles, questionLanguageRuntimeFiles);
   assert.deepEqual(manifestQuizFeedbackRuntimeFiles, quizFeedbackRuntimeFiles);
   assert.deepEqual(manifestMistakeReviewRuntimeFiles, mistakeReviewRuntimeFiles);
   assert.deepEqual(manifestMonetizationRuntimeFiles, monetizationRuntimeFiles);
   assert.deepEqual(manifestLearningProgressRuntimeFiles, learningProgressRuntimeFiles);
+  assert.deepEqual(manifestProfileSettingsRuntimeFiles, profileSettingsRuntimeFiles);
 });
 
 test('architecture design system support files exist', () => {
@@ -318,9 +365,32 @@ test('architecture compliance support files exist', () => {
   );
 });
 
+test('architecture router shell runtime files exist', () => {
+  const routerShellManifest = readText('lib/scaffold/routerShellManifest.ts');
+  const routerShellContractFiles = valuesForFieldInSource(routerShellManifest, 'file');
+
+  assert.deepEqual(
+    routerShellRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+  assert.deepEqual(
+    routerShellContractFiles.filter(
+      (relativePath) => !routerShellRuntimeFiles.includes(relativePath),
+    ),
+    [],
+  );
+});
+
 test('architecture theme runtime files exist', () => {
   assert.deepEqual(
     themeRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture audio runtime files exist', () => {
+  assert.deepEqual(
+    audioRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
 });
@@ -363,6 +433,13 @@ test('architecture monetization runtime files exist', () => {
 test('architecture learning progress runtime files exist', () => {
   assert.deepEqual(
     learningProgressRuntimeFiles.filter((relativePath) => !exists(relativePath)),
+    [],
+  );
+});
+
+test('architecture profile settings runtime files exist', () => {
+  assert.deepEqual(
+    profileSettingsRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
 });
