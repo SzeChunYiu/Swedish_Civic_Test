@@ -231,3 +231,16 @@ scripts/static-site-practice-result-i18n.test.js`, targeted Prettier, and
 Next worker task queued: SETUP - take
 `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1` next, then mobile nav reachability, then
 static question-count copy. Keep Practice result i18n duplicate-guarded.
+
+Iteration: 2026-05-18T19:44+02:00
+Rows moved to accepted: none.
+Rows blocked: SETUP pane 2 hit the Codex usage limit after Practice result
+i18n was merged and accepted; `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains
+blocked on external production deploy capacity/operator evidence.
+Evidence: tmux pane `civic-laptop-build:0.2` showed usage-limit errors with
+retry date May 23, 2026 at 23:11 after it had already pushed and merged the
+Practice result i18n source work. No additional source acceptance is implied
+after PR #551.
+Next worker task queued: SETUP - next capacity starts from clean current
+`origin/main` and takes `REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`, then mobile nav
+reachability, then static question-count copy.
