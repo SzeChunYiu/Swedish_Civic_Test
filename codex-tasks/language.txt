@@ -29,5 +29,13 @@ pl:bootstrap locales/pl/ + glossary.md
 pl:ui-strings
 uk:bootstrap locales/uk/ + glossary.md
 uk:ui-strings
+zh-Hans:bootstrap locales/zh-Hans/ + glossary.md (Mainland conventions)
+zh-Hans:ui-strings (native Simplified, not converted)
+zh-Hans:questions q001-q020 (native Mainland phrasing, UHR meaning kept)
+zh-Hans:ebook ch1
+zh-Hant:bootstrap locales/zh-Hant/ + glossary.md (Taiwan/HK conventions)
+zh-Hant:ui-strings (native Traditional, NOT a conversion of zh-Hans)
+zh-Hant:questions q001-q020 (native Traditional phrasing, UHR meaning kept)
+zh-Hant:ebook ch1
 # Ramp: after q001-q020 per lang verified, queue q021+ in 20-question slices,
 # ebook ch2+, store metadata, privacy/legal copy per language.
