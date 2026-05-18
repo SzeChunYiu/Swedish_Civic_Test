@@ -10346,6 +10346,8 @@ const SOURCE_AUTHORITY_REPLACEMENTS = [
   { pattern: /\s+according to the UHR material\b/gi, replacement: '' },
   { pattern: /\s+enligt UHR-avsnittet\s+"[^"]+"/gi, replacement: '' },
   { pattern: /\s+the UHR section\s+"[^"]+"/gi, replacement: '' },
+  { pattern: /^\s*Sant eller falskt\s*:\s*/i, replacement: '' },
+  { pattern: /^\s*True or false\s*:\s*/i, replacement: '' },
 ];
 
 function stripSourceAuthorityPhrasing(text) {

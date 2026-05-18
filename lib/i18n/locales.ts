@@ -32,6 +32,8 @@ export const locales: LocaleOption[] = [
   { code: 'ti', label: 'Tigrinya', nativeLabel: 'ትግርኛ', iso: 'ti', available: false, rtl: false, fallback: 'en' },
   { code: 'pl', label: 'Polish', nativeLabel: 'Polski', iso: 'pl', available: false, rtl: false, fallback: 'en' },
   { code: 'tr', label: 'Turkish', nativeLabel: 'Türkçe', iso: 'tr', available: false, rtl: false, fallback: 'en' },
+  { code: 'zh-Hans', label: 'Chinese (Simplified)', nativeLabel: '简体中文', iso: 'zh', available: false, rtl: false, fallback: 'en' },
+  { code: 'zh-Hant', label: 'Chinese (Traditional)', nativeLabel: '繁體中文', iso: 'zh', available: false, rtl: false, fallback: 'en' },
 ];
 
 export function getLocale(code: string): LocaleOption {

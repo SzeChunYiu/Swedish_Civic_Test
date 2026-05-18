@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 
 import { LaunchPopupAd } from '../components/monetization/LaunchPopupAd';
+import { LanguagePicker } from '../components/ui/LanguagePicker';
 import { AuthProvider } from '../lib/auth/AuthContext';
 import { shouldSuppressLaunchPopupAdForPath } from '../lib/monetization/ads';
 import { useRemoveAdsEntitlements } from '../lib/monetization/useRemoveAdsEntitlements';
@@ -23,10 +24,19 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
+      <Stack
+        screenOptions={{
+          headerShown: true,
+          headerTitle: '',
+          headerBackVisible: false,
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: colors.canvas },
+          headerRight: () => <LanguagePicker />,
+        }}
+      >
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name="account" />
         <Stack.Screen name="search" />
         <Stack.Screen name="+not-found" />
