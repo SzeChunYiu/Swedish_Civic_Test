@@ -127,3 +127,25 @@ requires regenerated `content/question-bank.csv` and `site/questions.js`,
 validator mirror coverage, focused negative tests, export/static parity,
 `validate:content`, typecheck, ownership, Prettier/diff checks, PR/merge
 evidence, and a recheck of VERIFY ledger rows `q206`, `q237`, and `q238`.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T18:32:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q251-Q300-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `0478154` found additional generated true/false residuals in the
+q251-q300 slice. Facts, citations, correct answers, and distractors remain
+supported by UHR `Sverige i fokus`, but learner-visible generated text is not
+natural in both canonical CSV and `site/questions.js`: `q253`, `q254`, `q265`,
+and `q266` embed capitalized full statements after `Det stämmer... att` / `It
+is ... that`; `q261` and `q262` publish `gäller för` / `applies to` splices;
+`q270` says `One reason is that so votes are counted faster`; `q273` and
+`q274` splice political-party answer fragments into `gemensamt` / `in common`;
+`q285` and `q286` use awkward list-predicate wording; `q289` and `q290` append
+`om offentlig makt i Sverige` / `about public power in Sweden`; and `q297` and
+`q298` publish `innebär att ger` / `means it gives` splices. Own or extend the
+residual generated-template repair with guards for these statement-fragment,
+option-fragment, and list-predicate patterns. Acceptance requires regenerated
+`content/question-bank.csv` and `site/questions.js`, validator mirror coverage,
+focused negative tests, export/static parity, `validate:content`, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and a recheck of VERIFY
+ledger rows `q253`, `q254`, `q261`, `q262`, `q265`, `q266`, `q270`, `q273`,
+`q274`, `q285`, `q286`, `q289`, `q290`, `q297`, and `q298`.

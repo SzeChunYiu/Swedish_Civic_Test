@@ -271,56 +271,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q248 | section-practice | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 2703afc | ok | rolling-source-slice |
 | q249 | true-false | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 2703afc | ok | rolling-source-slice |
 | q250 | false-statement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 2703afc | ok | rolling-source-slice |
-| q251 | judgement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | - | restate | oldest-unverified |
-| q252 | section-practice | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q253 | true-false | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q254 | false-statement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q255 | judgement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q256 | section-practice | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q257 | true-false | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q258 | false-statement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q259 | judgement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q260 | section-practice | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q261 | true-false | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q262 | false-statement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q263 | judgement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q264 | section-practice | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q265 | true-false | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q266 | false-statement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q267 | judgement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q268 | section-practice | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | - | restate | oldest-unverified |
-| q269 | true-false | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | - | restate | oldest-unverified |
-| q270 | false-statement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | - | restate | oldest-unverified |
-| q271 | judgement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | - | restate | oldest-unverified |
-| q272 | section-practice | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | - | restate | oldest-unverified |
-| q273 | true-false | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | - | restate | oldest-unverified |
-| q274 | false-statement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | - | restate | oldest-unverified |
-| q275 | judgement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | - | restate | oldest-unverified |
-| q276 | section-practice | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q277 | true-false | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q278 | false-statement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q279 | judgement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q280 | section-practice | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q281 | true-false | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q282 | false-statement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q283 | judgement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | - | restate | oldest-unverified |
-| q284 | section-practice | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | - | restate | oldest-unverified |
-| q285 | true-false | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | - | restate | oldest-unverified |
-| q286 | false-statement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | - | restate | oldest-unverified |
-| q287 | judgement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | - | restate | oldest-unverified |
-| q288 | section-practice | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | - | restate | oldest-unverified |
-| q289 | true-false | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | - | restate | oldest-unverified |
-| q290 | false-statement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | - | restate | oldest-unverified |
-| q291 | judgement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | - | restate | oldest-unverified |
-| q292 | section-practice | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | - | restate | oldest-unverified |
-| q293 | true-false | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | - | restate | oldest-unverified |
-| q294 | false-statement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | - | restate | oldest-unverified |
-| q295 | judgement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | - | restate | oldest-unverified |
-| q296 | section-practice | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | - | restate | oldest-unverified |
-| q297 | true-false | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | - | restate | oldest-unverified |
-| q298 | false-statement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | - | restate | oldest-unverified |
-| q299 | judgement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | - | restate | oldest-unverified |
-| q300 | section-practice | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | - | restate | oldest-unverified |
+| q251 | judgement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 0478154 | ok | rolling-source-slice |
+| q252 | section-practice | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | ok | rolling-source-slice |
+| q253 | true-false | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | defect | queued-data-integrity-residual |
+| q254 | false-statement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | defect | queued-data-integrity-residual |
+| q255 | judgement | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 0478154 | ok | rolling-source-slice |
+| q256 | section-practice | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
+| q257 | true-false | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
+| q258 | false-statement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
+| q259 | judgement | q029 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
+| q260 | section-practice | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
+| q261 | true-false | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | defect | queued-data-integrity-residual |
+| q262 | false-statement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | defect | queued-data-integrity-residual |
+| q263 | judgement | q030 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 0478154 | ok | rolling-source-slice |
+| q264 | section-practice | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | ok | rolling-source-slice |
+| q265 | true-false | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | defect | queued-data-integrity-residual |
+| q266 | false-statement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | defect | queued-data-integrity-residual |
+| q267 | judgement | q031 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 0478154 | ok | rolling-source-slice |
+| q268 | section-practice | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 0478154 | ok | rolling-source-slice |
+| q269 | true-false | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 0478154 | ok | rolling-source-slice |
+| q270 | false-statement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 0478154 | defect | queued-data-integrity-residual |
+| q271 | judgement | q032 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Så här går det till att rösta | 14 | 0478154 | ok | rolling-source-slice |
+| q272 | section-practice | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 0478154 | ok | rolling-source-slice |
+| q273 | true-false | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 0478154 | defect | queued-data-integrity-residual |
+| q274 | false-statement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 0478154 | defect | queued-data-integrity-residual |
+| q275 | judgement | q033 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Politiska partier | 15 | 0478154 | ok | rolling-source-slice |
+| q276 | section-practice | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q277 | true-false | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q278 | false-statement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q279 | judgement | q034 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q280 | section-practice | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q281 | true-false | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q282 | false-statement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q283 | judgement | q035 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Proportionella val | 15 | 0478154 | ok | rolling-source-slice |
+| q284 | section-practice | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 0478154 | ok | rolling-source-slice |
+| q285 | true-false | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 0478154 | defect | queued-data-integrity-residual |
+| q286 | false-statement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 0478154 | defect | queued-data-integrity-residual |
+| q287 | judgement | q036 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Grundlagarna | 16 | 0478154 | ok | rolling-source-slice |
+| q288 | section-practice | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 0478154 | ok | rolling-source-slice |
+| q289 | true-false | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 0478154 | defect | queued-data-integrity-residual |
+| q290 | false-statement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 0478154 | defect | queued-data-integrity-residual |
+| q291 | judgement | q037 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Regeringsformen | 16 | 0478154 | ok | rolling-source-slice |
+| q292 | section-practice | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 0478154 | ok | rolling-source-slice |
+| q293 | true-false | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 0478154 | ok | rolling-source-slice |
+| q294 | false-statement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 0478154 | ok | rolling-source-slice |
+| q295 | judgement | q038 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Successionsordningen | 16 | 0478154 | ok | rolling-source-slice |
+| q296 | section-practice | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 0478154 | ok | rolling-source-slice |
+| q297 | true-false | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 0478154 | defect | queued-data-integrity-residual |
+| q298 | false-statement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 0478154 | defect | queued-data-integrity-residual |
+| q299 | judgement | q039 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Allemansrätten | 17 | 0478154 | ok | rolling-source-slice |
+| q300 | section-practice | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | 0478154 | ok | rolling-source-slice |
 | q301 | true-false | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | - | restate | oldest-unverified |
 | q302 | false-statement | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | - | restate | oldest-unverified |
 | q303 | judgement | q040 | lib/content/derivedQuestions.ts -> data/questions.ts | ch05 | Lag och rätt | Rättsväsendet | 17 | - | restate | oldest-unverified |
