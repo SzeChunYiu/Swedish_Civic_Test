@@ -19,7 +19,6 @@
       "nav.privacy": "隐私",
       "nav.terms": "条款",
       "nav.sources": "来源",
-      "nav.signin": "登录",
 
       "hero.eyebrow": "瑞典公民测验非官方学习应用",
       "hero.h1a": "通过测试。",
@@ -99,7 +98,6 @@
       "nav.privacy": "隱私",
       "nav.terms": "條款",
       "nav.sources": "來源",
-      "nav.signin": "登入",
 
       "hero.eyebrow": "瑞典公民測驗非官方學習應用",
       "hero.h1a": "通過測試。",
@@ -179,7 +177,6 @@
       "nav.privacy": "الخصوصية",
       "nav.terms": "الشروط",
       "nav.sources": "المصادر",
-      "nav.signin": "تسجيل الدخول",
 
       "hero.eyebrow": "تطبيق دراسة غير رسمي لاختبار المواطنة السويدي",
       "hero.h1a": "اجتز الاختبار.",
@@ -259,7 +256,6 @@
       "nav.privacy": "Asturnaanta",
       "nav.terms": "Shuruudaha",
       "nav.sources": "Ilaha",
-      "nav.signin": "Gal",
 
       "hero.eyebrow": "App-ka barashada ee aan rasmi ahayn ee imtixaanka muwaadinnimada Iswiidhan",
       "hero.h1a": "Imtixaanka uga gud.",
