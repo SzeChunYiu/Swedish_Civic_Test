@@ -1378,3 +1378,10 @@ explicitly defer SITE before q020/q027/q028/q074/q078 or other non-site content
 is assigned. Local q018, q020, and q074 worktrees were observed after the CEO
 13:32 update and are unaccepted unless VALIDATOR explicitly leases content
 despite SITE-P0.
+
+## Iteration 331 - 2026-05-18
+Task completed: CONTENT-VERIFY capacity handoff - re-read the shared protocol, TEAM_PLAN, CONTENT lane doc, required content references, current blockers, and origin/main queues; did not start new non-site content because SITE-P0-2 through SITE-P0-5 remain higher priority.
+Artifacts changed: `docs/parallel-sessions/journals/content.md`.
+Question count / verification: No content source changed. Routing evidence from current `origin/main`: `codex-tasks/blockers.txt` marks SITE-P0-2, SITE-P0-3, SITE-P0-4, and SITE-P0-5 active and highest priority; `codex-tasks/setup.txt` routes SITE-P0-2 next; `codex-tasks/content.txt` holds q020/q027/q028/q074/q078/q079 and later non-site atoms pending VALIDATOR/CEO release. Local manager/CEO notice was queued through tmux so content capacity reports for SITE-P0 staffing/release instead of opening another content branch. Verification for this handoff: `git diff --check -- docs/parallel-sessions/journals/content.md`.
+PR: #249 (opened for this journal-only handoff).
+Blocked / next validator action: CONTENT-VERIFY is not blocked by a content gate; it is paused by current routing. VALIDATOR/CEO should either keep capacity on SITE-P0 through SETUP/build or explicitly release CONTENT before accepting q018/q020/q074/q078/q079 or later non-site content.
