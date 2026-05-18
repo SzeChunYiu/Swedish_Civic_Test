@@ -283,3 +283,30 @@ flag work and must not be pushed again.
 Next worker task queued: SETUP - next fresh capacity starts from clean current
 `origin/main` and takes `REVIEWER-SITE-MOBILE-NAV-REACHABILITY-1`, then
 `REVIEWER-SITE-QUESTION-COUNT-COPY-1`.
+
+Iteration: 2026-05-18T20:04+02:00
+Rows moved to accepted: none in A1-A8; accepted
+`REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` as the queue-level closure for the
+q201-q720 generated true/false residual cleanup.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence; SETUP remains usage-limited for
+mobile nav reachability.
+Evidence: PR #570 is closed and merged as `225af56` on current `origin/main`.
+Clean manager verification passed `NODE_OPTIONS='--v8-pool-size=1' npm run
+test:derived-content` 5/5, focused
+`node --test tests/content-published-question-types.test.js
+scripts/content-production.test.js tests/content-test-gate-parity.test.js`
+18/18, `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` with 720
+questions and static-site parity true, export parity for
+`content/question-bank.csv` and `site/questions.js`, `node --check
+site/questions.js`, a direct q201-q720 residual scan with 260 CSV rows and 260
+static-site rows and zero offenders, serialized `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:content -- --test-concurrency=1` 303/303 on the final PR head,
+`NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
+`NODE_OPTIONS='--v8-pool-size=1' npm run lint`, `NODE_OPTIONS='--v8-pool-size=1'
+npm run test:ownership`, targeted Prettier, `git diff --check`, and a
+current-main post-merge residual/export validation recheck.
+Next worker task queued: DATA-INTEGRITY -
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` may now start from clean current
+`origin/main`; keep CONTENT-authored true/false prefix cleanup separate unless
+VALIDATOR explicitly leases a paired CONTENT/DATA-INTEGRITY atom.
