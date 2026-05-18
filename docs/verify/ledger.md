@@ -741,3 +741,21 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q718 | true-false | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
 | q719 | false-statement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
 | q720 | judgement | q144 | lib/content/derivedQuestions.ts -> data/questions.ts | ch01 | Landet Sverige | Sveriges indelning | 6 | 16dbe4d | ok | rolling-source-slice |
+
+## Non-Question Content
+
+| ID | Kind | Source path | UHR source | Last verified commit | Status | Next recheck |
+|---|---|---|---|---|---|---|
+| chapter-ch01 | chapter-record | data/chapters.ts | Landet Sverige, TOC p. 2 / printed p. 5 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch02 | chapter-record | data/chapters.ts | Sveriges demokratiska system, TOC p. 2 / printed p. 10 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch03 | chapter-record | data/chapters.ts | Så här styrs Sverige, TOC p. 2 / printed p. 12 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch04 | chapter-record | data/chapters.ts | Politiska val och partier, TOC p. 2 / printed p. 14 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch05 | chapter-record | data/chapters.ts | Lag och rätt, TOC p. 2 / printed p. 16 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch06 | chapter-record | data/chapters.ts | Mediernas roll, TOC p. 2 / printed p. 20 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch07 | chapter-record | data/chapters.ts | Mänskliga rättigheter, TOC p. 2 / printed p. 22 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch08 | chapter-record | data/chapters.ts | Arbetsmarknad och privatekonomi, TOC p. 2 / printed p. 27 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch09 | chapter-record | data/chapters.ts | Välfärdssamhället, TOC p. 3 / printed p. 30 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch10 | chapter-record | data/chapters.ts | Sveriges moderna historia, TOC p. 3 / printed p. 32 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch11 | chapter-record | data/chapters.ts | Sverige och omvärlden, TOC p. 3 / printed p. 39 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch12 | chapter-record | data/chapters.ts | En sekulär stat och ett mångreligiöst land, TOC p. 3 / printed p. 42 | c6299ce | ok | rolling-chapter-records |
+| chapter-ch13 | chapter-record | data/chapters.ts | Traditioner och högtider, TOC p. 3 / printed p. 45 | c6299ce | ok | rolling-chapter-records |
