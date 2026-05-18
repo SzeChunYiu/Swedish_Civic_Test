@@ -53,19 +53,20 @@ parity second, account-scope third.
 
 MANAGER-build note 2026-05-18T15:30+02:00:
 PR #315 / `bab3190` queued `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1` after
-q142 raised canonical content to 710 questions while `site/questions.js` still
-exports 705. Do not deploy current `site/` until this sync is repaired. The
-active order is now: q142 static-bank drift first, live deploy stale second,
-Practice width parity third, account-scope fourth.
+q142 first exposed static-bank drift. Current `origin/main` has since advanced
+through q143 and validates at 715 canonical questions while `site/questions.js`
+still exports 705. Do not deploy current `site/` until this sync is repaired.
+The active order is now: current static-bank drift first, live deploy stale
+second, Practice width parity third, account-scope fourth.
 
 1. `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`
    - Scope: `site/questions.js`, static question-bank generator/parity tests,
      and any focused static/live smoke count assertions.
    - Required behavior: regenerate the deployed static bank from current
-     canonical content so q142 generated variants are present and static site
-     question count matches the canonical published count. Do not hard-code
-     stale 705-question expectations; derive the expected count or update it to
-     the current canonical count.
+     canonical content so all latest generated variants are present and static
+     site question count matches the canonical published count. Do not hard-code
+     stale 705/710-question expectations; derive the expected count or update it
+     to the current canonical count at execution time.
    - Required gates: `node scripts/export-site-question-bank.js --check`,
      `node --test tests/content-static-site-question-bank-parity.test.js`,
      `node scripts/export-question-bank.js --check`, `npm run validate:content`,
