@@ -4,7 +4,19 @@ schema_version = 1
 name = "civic-test"
 description = "Sweden Citizenship Test Prep — React Native + Expo + TypeScript"
 
+# ── LUNARC scale-up DISABLED 2026-05-18 ──────────────────────────────
+# The ChatGPT/codex ACCOUNT is usage-capped until 2026-05-23 23:11, so
+# every LUNARC civic-sup allocation produces ZERO real codex output —
+# it only burned HPC allocation and spammed origin/main with empty
+# "factory: lunarc civic WIP" flushes. All LUNARC host blocks below are
+# `disabled = true` so multi-watchdog.sh skips them (it greps this very
+# key). Productive civic runs on the laptop. To re-enable after the
+# account resets: flip every `disabled = true` to `false` and re-PR.
+# Reusable infra persists on fs9 (node-env.sh, civic.sif).
+# ─────────────────────────────────────────────────────────────────────
+
 [hosts."civic-meta-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-meta"
 prompts = "codex-prompts-meta.txt"
@@ -14,6 +26,7 @@ project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."civic-team-build-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-build"
 prompts = "codex-prompts-team-build.txt"
@@ -23,6 +36,7 @@ project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."civic-team-uiux-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-uiux"
 prompts = "codex-prompts-team-uiux.txt"
@@ -32,6 +46,7 @@ project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."civic-team-uiux-design-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-uiux-design"
 prompts = "codex-prompts-civic-team-uiux-design.txt"
@@ -41,6 +56,7 @@ project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."civic-team-uiux-runtime-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-uiux-runtime"
 prompts = "codex-prompts-civic-team-uiux-runtime.txt"
@@ -50,6 +66,7 @@ project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."civic-team-qa-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-qa"
 prompts = "codex-prompts-civic-team-qa.txt"
@@ -59,6 +76,7 @@ project_dir = "/projects/hep/fs10/shared/nnbar/billy/Swedish_Civic_Test"
 sync_policy = "git-only"
 
 [hosts."civic-team-release-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-release"
 prompts = "codex-prompts-civic-team-release.txt"
@@ -69,6 +87,7 @@ sync_policy = "git-only"
 
 # Legacy host kept for compatibility — superseded by civic-team-build-lunarc.
 [hosts."civic-lunarc"]
+disabled = true
 ssh = "lunarc"
 session = "civic-test"
 prompts = "codex-prompts.txt"
@@ -81,6 +100,7 @@ sync_policy = "git-only"
 # scratch, GitHub-durable). SLURM/remote_env live in ~/.config/csup/hosts.toml.
 
 [hosts."lunarc-civic-local"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-build-local"
 prompts = "codex-prompts-team-build.txt"
@@ -90,6 +110,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-ceo"]
+disabled = true
 ssh = "lunarc"
 session = "civic-meta-local"
 prompts = "codex-prompts-meta.txt"
@@ -99,6 +120,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-uiux"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-uiux-local"
 prompts = "codex-prompts-team-uiux.txt"
@@ -108,6 +130,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-design"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-design-local"
 prompts = "codex-prompts-civic-team-uiux-design.txt"
@@ -117,6 +140,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-runtime"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-runtime-local"
 prompts = "codex-prompts-civic-team-uiux-runtime.txt"
@@ -126,6 +150,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-qa"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-qa-local"
 prompts = "codex-prompts-civic-team-qa.txt"
@@ -135,6 +160,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-release"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-release-local"
 prompts = "codex-prompts-civic-team-release.txt"
@@ -144,6 +170,7 @@ project_dir = "/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_T
 sync_policy = "git-only"
 
 [hosts."lunarc-civic-content"]
+disabled = true
 ssh = "lunarc"
 session = "civic-team-content-local"
 prompts = "codex-prompts-civic-content.txt"
