@@ -238,6 +238,24 @@ Active P0 SETUP atoms from the SITE-P0-5 live audit:
      footer still says "Free for the core 500 questions, always." and
      `site/i18n-extras.js` repeats `500` in extra-language footer strings.
 
+2. `REVIEWER-SITE-CHAPTER-COUNT-COPY-1`
+   - Scope: deployed static `site/` user-visible chapter-count copy in
+     `site/index.html`, `site/app.js`, and any related localized static copy
+     surface.
+   - Required behavior: visible copy must not promise "Twelve chapters" /
+     "Tolv kapitel" while `window.SMT_CHAPTERS_META.length` is 13. Prefer
+     deriving the chapter count from static metadata or using non-numeric
+     wording that cannot drift across localized variants.
+   - Required gates: static copy guard comparing visible chapter-count claims
+     against `window.SMT_CHAPTERS_META.length` or rejecting stale hardcoded
+     chapter counts, static question-bank parity, `node --check` for changed
+     `site/` scripts, typecheck, lint, ownership, targeted Prettier/diff
+     checks, journal handoff, and PR/merge evidence.
+   - Reviewer evidence: after the question-count copy fix on `origin/main`
+     `60f5827`, a current Home smoke still shows English `Twelve chapters...`
+     and Swedish `Tolv kapitel...` while the static chapter metadata has 13
+     chapters and no stale 500-question claim remains.
+
 MANAGER-build note 2026-05-18T15:25+02:00:
 PANE 2 was redirected away from `REVIEWER-ACCOUNT-SCOPE-1` before edits, then
 hit the Codex usage cap. Do not resume that stale account-scope attempt as the
