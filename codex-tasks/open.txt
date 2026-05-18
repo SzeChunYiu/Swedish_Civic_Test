@@ -341,3 +341,12 @@ upgrade conversion. Reuse existing lib/monetization (ADS-*/IAP-*); keep
 adsDisabled/entitlement gating intact; tsc + npm test -- monetization clean.
 One atom per change; research atom first, then policy test, then tuning.
 === END MONETIZATION-OPT ===
+
+# === DESIGN DRAFT 2026-05-18: Practice + Mock-exam refinement ===
+# Reference (NOT drop-in): docs/design/drafts/practice-mockexam-2026-05-18/
+# (refined site/practice.js, index.html, styles.css + uploads/*.png mockups)
+SCREENS: port Practice-page improvements from the 2026-05-18 design draft into the real app/site incrementally (reconcile, don't clobber)
+SCREENS: port Mock-exam-page improvements from the 2026-05-18 design draft (layout, flow, timer/result UX) incrementally
+COMPONENTS: extract reusable components implied by the draft (cards, option rows, progress/result) using theme tokens
+DELIGHT: match the motion/feel/fun shown in the draft mockups (reduced-motion safe), wire to Practice/Mock-exam
+REVIEWER: audit live Practice + Mock-exam vs docs/design/drafts/practice-mockexam-2026-05-18/uploads/*.png; queue parity defects
