@@ -49,6 +49,16 @@ Accepted by worker? yes
 Next suggested validator action: review the q101-q150 VERIFY report and then assign the next rolling slice starting at `q151`.
 
 Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-pane3-K4TDLY`, branch `task/verify/pane3-current-audit-1779119949`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: `verify:data/questions.ts q201-q250` generated-variant citation/fact/answer/naturalness slice
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q201-q250-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF opened from the current UHR PDF URL and extracted locally for cited pages 11-14; q201-q250 source support, answer keys, and distractors are acceptable; generated rows `q206`, `q237`, and `q238` fail natural-language quality in canonical CSV and `site/questions.js`; `docs/verify/ledger.md` rows q201-q250 updated at `2703afc`, with those three rows marked `defect` and the rest `ok`; direct ledger assertion passed for all 50 rows. `node scripts/export-question-bank.js --check` passed at 715 questions; `npm run validate:content` passed; `npm run typecheck -- --pretty false` passed after linking the shared dependency install into the temporary worktree; `npm run test:ownership` passed; `git diff --check` passed.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-RESIDUAL-Q201-Q250-1` to DATA-INTEGRITY with the existing q151-q200 residual repair, then assign the next rolling VERIFY slice starting at `q251`.
+
+Lane: CONTENT-VERIFY / VERIFY
 Host/branch: local worktree `/tmp/sct-content-verify-q151-q200-pane3-1779119174`, branch `task/verify/q151-q200-pane3-1779119174`
 Role type and manager: dynamic-worker; manager/escalation VALIDATOR
 Task / checklist item: `verify:data/questions.ts q151-q200` generated published-variant citation/fact/answer/naturalness slice

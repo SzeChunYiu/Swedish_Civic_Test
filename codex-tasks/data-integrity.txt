@@ -111,3 +111,21 @@ normalization. Acceptance requires regenerated `content/question-bank.csv` and
 export/static parity, `validate:content`, typecheck, ownership, Prettier/diff
 checks, PR/merge evidence, and a recheck of VERIFY ledger rows `q174`, `q189`,
 `q190`, `q193`, and `q194`.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T18:19:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q201-Q250-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `2703afc` found additional generated true/false residuals in the
+q201-q250 slice. Facts, citations, correct answers, and distractors remain
+supported by UHR `Sverige i fokus`, but learner-visible generated text is not
+natural in both canonical CSV and `site/questions.js`: `q206` splices the
+source question and wrong option into `...representativa demokrati domstolarna
+väljer...` / `...representative democracy the courts elect...`; `q237` and
+`q238` splice answer fragments into `...beskriver statliga myndigheter` /
+`...describes government agencies`. Own a fresh bounded generator/static mirror
+repair or extend the residual generated-template atom with guards for
+question-plus-option and option-plus-definition true/false splices. Acceptance
+requires regenerated `content/question-bank.csv` and `site/questions.js`,
+validator mirror coverage, focused negative tests, export/static parity,
+`validate:content`, typecheck, ownership, Prettier/diff checks, PR/merge
+evidence, and a recheck of VERIFY ledger rows `q206`, `q237`, and `q238`.

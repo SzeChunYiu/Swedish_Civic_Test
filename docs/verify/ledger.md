@@ -221,56 +221,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q198 | false-statement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
 | q199 | judgement | q014 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Demokrati betyder folkstyre | 10 | d4a2146 | ok | rolling-source-slice |
 | q200 | section-practice | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | d4a2146 | ok | rolling-source-slice |
-| q201 | true-false | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
-| q202 | false-statement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
-| q203 | judgement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | - | restate | oldest-unverified |
-| q204 | section-practice | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q205 | true-false | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q206 | false-statement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q207 | judgement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q208 | section-practice | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q209 | true-false | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q210 | false-statement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q211 | judgement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q212 | section-practice | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q213 | true-false | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q214 | false-statement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q215 | judgement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q216 | section-practice | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q217 | true-false | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q218 | false-statement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q219 | judgement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | - | restate | oldest-unverified |
-| q220 | section-practice | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q221 | true-false | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q222 | false-statement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q223 | judgement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | - | restate | oldest-unverified |
-| q224 | section-practice | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | - | restate | oldest-unverified |
-| q225 | true-false | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | - | restate | oldest-unverified |
-| q226 | false-statement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | - | restate | oldest-unverified |
-| q227 | judgement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | - | restate | oldest-unverified |
-| q228 | section-practice | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q229 | true-false | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q230 | false-statement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q231 | judgement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q232 | section-practice | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q233 | true-false | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q234 | false-statement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q235 | judgement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
-| q236 | section-practice | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | - | restate | oldest-unverified |
-| q237 | true-false | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | - | restate | oldest-unverified |
-| q238 | false-statement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | - | restate | oldest-unverified |
-| q239 | judgement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | - | restate | oldest-unverified |
-| q240 | section-practice | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | - | restate | oldest-unverified |
-| q241 | true-false | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | - | restate | oldest-unverified |
-| q242 | false-statement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | - | restate | oldest-unverified |
-| q243 | judgement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | - | restate | oldest-unverified |
-| q244 | section-practice | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | - | restate | oldest-unverified |
-| q245 | true-false | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | - | restate | oldest-unverified |
-| q246 | false-statement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | - | restate | oldest-unverified |
-| q247 | judgement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | - | restate | oldest-unverified |
-| q248 | section-practice | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | - | restate | oldest-unverified |
-| q249 | true-false | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | - | restate | oldest-unverified |
-| q250 | false-statement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | - | restate | oldest-unverified |
+| q201 | true-false | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 2703afc | ok | rolling-source-slice |
+| q202 | false-statement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 2703afc | ok | rolling-source-slice |
+| q203 | judgement | q015 | lib/content/derivedQuestions.ts -> data/questions.ts | ch02 | Sveriges demokratiska system | Hot mot demokratin | 11 | 2703afc | ok | rolling-source-slice |
+| q204 | section-practice | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q205 | true-false | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q206 | false-statement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | defect | queued-data-integrity-residual |
+| q207 | judgement | q016 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q208 | section-practice | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q209 | true-false | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q210 | false-statement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q211 | judgement | q017 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q212 | section-practice | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q213 | true-false | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q214 | false-statement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q215 | judgement | q018 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q216 | section-practice | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 2703afc | ok | rolling-source-slice |
+| q217 | true-false | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 2703afc | ok | rolling-source-slice |
+| q218 | false-statement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 2703afc | ok | rolling-source-slice |
+| q219 | judgement | q019 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Val och röstning | 14 | 2703afc | ok | rolling-source-slice |
+| q220 | section-practice | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 2703afc | ok | rolling-source-slice |
+| q221 | true-false | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 2703afc | ok | rolling-source-slice |
+| q222 | false-statement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 2703afc | ok | rolling-source-slice |
+| q223 | judgement | q020 | lib/content/derivedQuestions.ts -> data/questions.ts | ch04 | Politiska val och partier | Folkomröstningar | 14 | 2703afc | ok | rolling-source-slice |
+| q224 | section-practice | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 2703afc | ok | rolling-source-slice |
+| q225 | true-false | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 2703afc | ok | rolling-source-slice |
+| q226 | false-statement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 2703afc | ok | rolling-source-slice |
+| q227 | judgement | q021 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Landet styrs på olika nivåer | 12 | 2703afc | ok | rolling-source-slice |
+| q228 | section-practice | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q229 | true-false | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q230 | false-statement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q231 | judgement | q022 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q232 | section-practice | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q233 | true-false | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q234 | false-statement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q235 | judgement | q023 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | 2703afc | ok | rolling-source-slice |
+| q236 | section-practice | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 2703afc | ok | rolling-source-slice |
+| q237 | true-false | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 2703afc | defect | queued-data-integrity-residual |
+| q238 | false-statement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 2703afc | defect | queued-data-integrity-residual |
+| q239 | judgement | q024 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Myndigheter | 13 | 2703afc | ok | rolling-source-slice |
+| q240 | section-practice | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 2703afc | ok | rolling-source-slice |
+| q241 | true-false | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 2703afc | ok | rolling-source-slice |
+| q242 | false-statement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 2703afc | ok | rolling-source-slice |
+| q243 | judgement | q025 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Regioner och kommuner | 13 | 2703afc | ok | rolling-source-slice |
+| q244 | section-practice | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 2703afc | ok | rolling-source-slice |
+| q245 | true-false | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 2703afc | ok | rolling-source-slice |
+| q246 | false-statement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 2703afc | ok | rolling-source-slice |
+| q247 | judgement | q026 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Kommunernas ansvar | 13 | 2703afc | ok | rolling-source-slice |
+| q248 | section-practice | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 2703afc | ok | rolling-source-slice |
+| q249 | true-false | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 2703afc | ok | rolling-source-slice |
+| q250 | false-statement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | 2703afc | ok | rolling-source-slice |
 | q251 | judgement | q027 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Sveriges statsskick | 13 | - | restate | oldest-unverified |
 | q252 | section-practice | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
 | q253 | true-false | q028 | lib/content/derivedQuestions.ts -> data/questions.ts | ch03 | Så här styrs Sverige | Staten | 12 | - | restate | oldest-unverified |
