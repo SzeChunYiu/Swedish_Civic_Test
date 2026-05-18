@@ -22,11 +22,13 @@ type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error';
 type PremiumBannerCopy = {
   body: (price: string) => string;
   buyAccessibilityLabel: (price: string) => string;
+  buyHint: string;
   buyIdle: (price: string) => string;
   buying: string;
   eyebrowActive: string;
   eyebrowIdle: string;
   restoreAccessibilityLabel: string;
+  restoreHint: string;
   restoreIdle: string;
   restoring: string;
   statusAccessibilityLabel: (message: string) => string;
@@ -38,13 +40,15 @@ type PremiumBannerCopy = {
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
     body: (price) =>
-      `Gratisstudier visar AdMob-annonser. Betala ${price} en gång för att ta bort annonser från studieskärmar medan prov förblir annonsfria.`,
+      `Ta bort annonser för ${price} en gång. Ingen prenumeration, och provet är alltid annonsfritt.`,
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
+    buyHint: 'Startar ett engångsköp som tar bort annonser från studieskärmar.',
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
     eyebrowIdle: 'Ta bort annonser',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
+    restoreHint: 'Kontrollerar om Ta bort annonser redan har köpts.',
     restoreIdle: 'Återställ',
     restoring: 'Återställer...',
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
@@ -61,13 +65,15 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   },
   en: {
     body: (price) =>
-      `Free study keeps AdMob ads on. Pay ${price} once to remove ads from study screens while exams stay ad-free.`,
+      `Remove ads forever for ${price}, one time. No subscription, and exams stay ad-free.`,
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
+    buyHint: 'Starts a one-time purchase that removes ads from study screens.',
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
     eyebrowIdle: 'Remove Ads',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
+    restoreHint: 'Checks whether Remove Ads has already been purchased.',
     restoreIdle: 'Restore',
     restoring: 'Restoring...',
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
@@ -88,17 +94,23 @@ function getStatusMessage(status: PurchaseUiStatus, copy: PremiumBannerCopy): st
   return copy.statusMessages[status];
 }
 
+/**
+ * Defaults: Swedish copy, local purchase runtime derived from the current
+ * `adsDisabled` entitlement, and visible Buy/Restore actions.
+ */
+export interface PremiumBannerProps {
+  entitlements: PremiumEntitlements;
+  language?: AppLanguage;
+  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
+  runtimeOptions?: PurchaseRuntimeOptions;
+}
+
 export function PremiumBanner({
   entitlements,
   language = 'sv',
   onEntitlementsChange,
   runtimeOptions,
-}: {
-  entitlements: PremiumEntitlements;
-  language?: AppLanguage;
-  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
-  runtimeOptions?: PurchaseRuntimeOptions;
-}) {
+}: PremiumBannerProps) {
   const copy = premiumBannerCopy[language];
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(() => {
     if (runtimeOptions) return runtimeOptions;
@@ -149,6 +161,7 @@ export function PremiumBanner({
       <Text style={styles.meta}>{copy.body(REMOVE_ADS_PRICE_LABEL)}</Text>
       <View style={styles.actions}>
         <Button
+          accessibilityHint={copy.buyHint}
           accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
           accessibilityRole="button"
           accessibilityState={{ disabled: activeAction !== null || adsDisabled }}
@@ -159,6 +172,7 @@ export function PremiumBanner({
           {activeAction === 'buy' ? copy.buying : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
         </Button>
         <Button
+          accessibilityHint={copy.restoreHint}
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
           accessibilityState={{ disabled: activeAction !== null }}
@@ -211,7 +225,7 @@ const styles = StyleSheet.create({
     marginTop: space[0.5],
   },
   actionButton: {
-    minWidth: 128,
+    minWidth: space[15],
   },
   status: {
     color: colors.textMuted,
