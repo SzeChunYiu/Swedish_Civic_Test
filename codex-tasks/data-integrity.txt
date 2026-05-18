@@ -1,26 +1,30 @@
-MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:10+02:00
+MANAGER-build DATA-INTEGRITY queue - 2026-05-18T18:20+02:00
 
 Active DATA-INTEGRITY routes:
-- `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`: route the post-#438 residual
-  generated true/false naturalness defects as one fresh generator/static-mirror
-  atom, not a replay of accepted PR #438. Evidence is split across
-  CONTENT-VERIFY q151-q200 on current main (`65f6452`) and CONTENT Iteration
-  361 / PR #451 (`ae98060`): `q174` has English `are The Baltic Sea...`;
-  `q189`/`q190` splice answer fragments into `...har en röst var ingår...` /
-  `...may stand for election is part...`; `q193`/`q194` use imperative or
-  infinitive fragments as subjects; and the broader splice audit found
-  `q261`, `q262`, `q277`, `q278`, `q309`, `q310`, `q357`, `q358`, `q361`,
-  `q362`, `q369`, `q381`, and `q382` still publishing generated true/false
-  prompt-naturalness defects such as `gäller för` / `applies to` splices and
-  fragment subjects. Facts, citations, answer keys, and distractors remain
-  source-supported; the defect is learner-visible generated language in both
-  `content/question-bank.csv` and `site/questions.js`. Own generator templates,
+- `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`: keep the post-#438 residual
+  generated true/false naturalness route open as one fresh
+  generator/static-mirror atom, not a replay of accepted PR #438. PR #470 /
+  `204e522` landed a partial fix, but manager recheck on current `origin/main`
+  still found learner-visible generated language in both
+  `content/question-bank.csv` and `site/questions.js`: `q206` splices the
+  source question and wrong option into the stem; `q237` and `q238` splice
+  answer fragments into definition predicates; `q253`, `q254`, `q265`, and
+  `q266` embed capitalized full statements after `Det stämmer... att` / `It is
+  ... that`; `q270` still says `One reason is that so votes are counted
+  faster`; `q273` and `q274` retain awkward `gemensamt` / `in common` political
+  party splices; `q285` and `q286` keep awkward list-predicate wording; `q289`
+  and `q290` append source-topic phrases to the claim; and `q297` and `q298`
+  still publish awkward `innebär att den ger` / `means it gives` wording. The
+  same recheck confirmed `q174`, `q189`, `q190`, `q193`, `q194`, `q261`, and
+  `q262` are now fixed on current main. Facts, citations, answer keys, and
+  distractors remain source-supported; the defect is generated prompt
+  naturalness in canonical and static mirrors. Own generator templates,
   validator mirror coverage, focused negative guards, regenerated canonical
   CSV, regenerated static mirror, export/static parity, `npm run
   validate:content`, `npm run test:derived-content`, focused
   published-question/content gates, typecheck, ownership, Prettier/diff
-  checks, journal handoff, PR/merge evidence, and a recheck of the VERIFY
-  ledger defect rows `q174`, `q189`, `q190`, `q193`, and `q194`.
+  checks, journal handoff, PR/merge evidence, and a current-main recheck of the
+  remaining VERIFY ledger rows before acceptance.
 
 Current status:
 - `REVIEWER-GENERATED-TF-META-STEM-1` and
@@ -70,6 +74,19 @@ Current status:
 
 The active DATA-INTEGRITY implementation route is now
 `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`.
+
+MANAGER-build QA 2026-05-18T18:20+02:00
+PR #470 / `204e522` is merged but not accepted for
+`REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; it is a partial repair only. Clean
+manager recheck on current `origin/main` confirmed remaining residuals in both
+`content/question-bank.csv` and `site/questions.js` for `q206`, `q237`, `q238`,
+`q253`, `q254`, `q265`, `q266`, `q270`, `q273`, `q274`, `q285`, `q286`, `q289`,
+`q290`, `q297`, and `q298`. The same recheck confirmed `q174`, `q189`, `q190`,
+`q193`, `q194`, `q261`, and `q262` are fixed. Keep the route open for a
+follow-up DATA-INTEGRITY generator/template, validator-mirror, CSV/static
+mirror, focused-guard, export/static parity, `validate:content`,
+`test:derived-content`, typecheck, ownership, Prettier/diff, PR/merge, and
+current-main residual-row recheck pass.
 
 Next action:
 - Do not replay #198, #212, #228, #352, or #438. If REVIEWER files a new

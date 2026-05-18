@@ -620,3 +620,18 @@ MANAGER-build acceptance 2026-05-18T18:10+02:00
 
 REVIEWER-SITE-QUESTION-CITATION-DISCLAIMER-1 [product defect][2026-05-18 18:10 CEST][P0 SITE][source-citation]: The deployable static `site/` question flows carry source metadata but do not render the required source citation or not-a-real-exam disclaimer in Practice or Mock review. Static evidence: `site/questions.js` q001 includes `source: { title: "Sverige i fokus", chapter: "Landet Sverige", section: "Geografi, klimat och natur", page: 5 }`. Runtime evidence from `python3 -m http.server 8214 --bind 127.0.0.1 --directory site` plus system-Chrome Playwright: `#/practice?c=1` rendered q001 `Where is Sweden located?` and, after answering, showed feedback but `practiceAfterHasCitation:false` and `practiceAfterHasDisclaimer:false`; `#/mock?run=1` completed a 25-question run and rendered result review rows, but `mockReviewHasCitation:false` and `mockReviewHasDisclaimer:false`. Browser console/page errors were 0. Code inspection matches the runtime: `site/app.js` `smtQuizRender()` renders `q.chapter`, `q.q`, options, and `q.why` only; `site/practice.js` `renderMockResult()` renders question, selected/correct answers, and `q.why` only. Manager action: assign SETUP/site to render localized `Kalla/Source` citations from `q.source` and the independent/not-official-exam disclaimer on static Practice feedback and Mock review, then add a static browser guard proving citations/disclaimers are visible for both flows.
 REVIEWER-SITE-ANSWER-SHUFFLE-1 [product defect][2026-05-18 18:11 CEST][P0 SITE][answer-order]: The deployed static site bypasses the accepted app answer-shuffle pipeline and exposes a highly concentrated correct-answer position distribution. Evidence: a direct `site/questions.js` VM load counted 705 static questions with answer indexes `[533,160,12,0]`, so slot A is correct for 75.6% of the deployed static bank, far above the 35% P0 shuffle bar. Runtime/source evidence: `site/app.js` `smtQuizRender()` renders `q.opts.map(...)` in stored order and scores against `q.answer`; `site/practice.js` `renderMockExam()` also renders `q.opts.map(...)` in stored order after `pickMockQuestions()` only shuffles question order, not answer options. Duplicate scan found the app-side `SHUFFLE-FIX` evidence and tests, but no static-site shuffle guard or reviewer defect. Manager action: assign SETUP/site or DATA-INTEGRITY/site to add deterministic per-session answer-option shuffling for static Practice and Mock flows, remap scoring/review to the shuffled display order, keep true/false order stable if required, and add a static-site guard rejecting correct-position concentration above 35%.
+
+MANAGER-build QA 2026-05-18T18:20+02:00
+- Do not accept PR #470 / `204e522` for
+  `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; it is merged but partial.
+- Clean current-main spot-check in
+  `/tmp/sct-manager-build-accept-tfsplice-1779121093` confirms remaining
+  generated true/false residual rows in both `content/question-bank.csv` and
+  `site/questions.js`: `q206`, `q237`, `q238`, `q253`, `q254`, `q265`, `q266`,
+  `q270`, `q273`, `q274`, `q285`, `q286`, `q289`, `q290`, `q297`, and `q298`.
+  The same recheck confirms `q174`, `q189`, `q190`, `q193`, `q194`, `q261`,
+  and `q262` are fixed.
+- Keep the DATA-INTEGRITY route open for a follow-up generator/template,
+  validator-mirror, CSV/static mirror, focused-guard, export/static parity,
+  `validate:content`, `test:derived-content`, typecheck, ownership,
+  Prettier/diff, PR/merge, and current-main residual-row recheck pass.
