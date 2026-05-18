@@ -1,3 +1,36 @@
+MANAGER-build acceptance/current-route update - 2026-05-18T23:02+02:00
+
+`VERIFY-GENERATED-TF-Q501-Q550-CURRENT-1` is accepted on current
+`origin/main` via DATA-INTEGRITY PR #716 / `b441aed` plus handoff commit
+`557fe95`. Manager verification in
+`/tmp/sct-manager-q501-accept-1779137048` passed `npm run validate:content`,
+`npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 29/29, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier, `git diff --check b441aed^..b441aed`, serialized
+`npm run test:content -- --test-concurrency=1` 314/314, and direct
+CSV/static scans over q526/q527/q530/q531/q535/q542/q543 with zero residual
+offenders.
+
+Do not reopen q526/q527 missing religion referents, q530/q531 doubled-comma
+or common-to noun-fragment wording, q535 `brukar ... arrangerar`, or
+q542/q543 `spreadinging` / `welcominging` without fresh current-main
+regression evidence.
+
+Next DATA-INTEGRITY source route: `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1`
+for q563/q574/q598/q599 from current reviewer evidence. Start from clean
+current main and own generator and validator mirror coverage, regenerated
+canonical CSV and static output, export/static parity, `validate:content`,
+`test:derived-content`, focused content gates, typecheck, lint, ownership,
+Prettier/diff checks, PR/merge evidence, and direct current-main scans proving
+q563 uses "on a Saturday", q574 capitalizes Buddhist/Hindu naturally, q598
+has subject/verb agreement, and q599 is a standalone learner-facing
+true/false stem. q601-q650 stays behind q551-q600 unless VALIDATOR explicitly
+reorders; q651-q700 q698 stays behind q551-q600 and q601-q650.
+
 MANAGER-build current-route refresh - 2026-05-18T22:37+02:00
 
 Current `origin/main` `435b39f` still reproduces the q501-q550 generated
