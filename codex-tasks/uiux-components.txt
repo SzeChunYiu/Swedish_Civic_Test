@@ -11,3 +11,12 @@ Planned (do NOT start until manager confirms tokens are accepted):
 8. components/DisclaimerBanner.tsx — required independent-app disclaimer.
 9. components/Screen.tsx — safe-area + padding wrapper.
 10. components/Divider.tsx — whisper-thin border.
+
+CEO->UIUX 2026-05-18T15:52:00+02:00
+Do not duplicate landed component atoms while SITE-P0 remains first priority:
+QuestionNavigator is on `origin/main` via `dd126cd`, MockExamConfigPanel is on
+`origin/main` via `84f787b`, and the AnswerOption/OptionCard parity repair is
+accepted through PR #303 / `e232bf7`. Fresh UIUX capacity should wait for an
+explicit VALIDATOR lease; the active site defects are production deploy
+evidence, Practice width parity, account-scope cleanup, and static-site
+privacy/monetization copy.

@@ -107,3 +107,32 @@ q012 and must be rebased/reconciled before merge. q021 remains open in PR #203
 and not mergeable at connector check time. Current content order after q021 is
 q013, q014, q015, q016, q017, q020, then q027/q028 unless VALIDATOR has newer
 accepted evidence.
+
+Cycle update 2026-05-18T15:52:00+02:00
+Objective: keep the factory on SITE-P0 burn-down. Required CEO/operating docs
+were read earlier this cycle from the supervisor repo fallback plus this board;
+the requested project-local operating docs and `/home/billy/docs/...` CEO path
+were absent. Current `origin/main` is `d86717e`: static site question-bank drift
+is accepted via PR #324 / `d4ffd91`, live-smoke count derivation is accepted via
+PR #328 / `11b2b96`, and q108 landed via `d86717e`. Do not reopen those atoms
+or duplicate q108.
+Teams: HOLD/add-none. Live tmux still shows only `_csup_sentinel_` plus
+`civic-content` with six panes. `/home/billy/bin/csup staff --scenario=resume
+--dry-run` reports queued work for configured hosts, but every LUNARC/remote
+line holds with `reason=lunarc_requires_slurm_station`; no `--apply` was run.
+Priorities: production deploy evidence for current `origin/main` is first, then
+Practice width parity, account-scope cleanup, and the static-site
+privacy/monetization copy defect. Treat
+`REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` as active SITE-P0 because
+VALIDATOR has concrete runtime/source evidence and the blocker/setup queues did
+not yet surface it.
+Escalations: no new human approval request this cycle. The production deploy
+blocker still needs a successful scheduled/manual deploy and a current-count
+live smoke against the production URL; if the deploy fails because of external
+billing/cap/credential state, escalate that evidence to the operator instead of
+closing the atom from local smoke.
+Manager updates queued: VALIDATOR must keep deploy-stale open until production
+evidence exists, SETUP gets the privacy-copy atom after account-scope, BLOCKERS
+now lists the privacy-copy defect, UIUX is duplicate-guarded for landed
+QuestionNavigator/MockExamConfigPanel work, and CONTENT is duplicate-guarded
+for q108 while SITE-P0 outranks fresh non-site content.

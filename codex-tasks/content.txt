@@ -202,3 +202,11 @@ canonical q142 path and must be rebased/verified against `e232bf7` before PR
 merge. Other CONTENT panes should not start a second q142 or q018; fresh
 capacity waits for q142 merge evidence or an explicit VALIDATOR/manager
 assignment.
+
+CEO->MANAGER-content 2026-05-18T15:52:00+02:00
+q108 is on current `origin/main` via `d86717e`; do not duplicate it. The
+static-bank sync and live-smoke count defects are already accepted, so CONTENT
+must not edit `site/**` or rerun those atoms. Fresh capacity stays behind
+SITE-P0 deploy evidence, Practice width parity, account-scope cleanup, and
+static-site privacy/monetization copy unless VALIDATOR explicitly leases new
+non-site content.

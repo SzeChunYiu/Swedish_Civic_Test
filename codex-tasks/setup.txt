@@ -133,9 +133,24 @@ account-scope third.
    - Keep `REVIEWER-SEARCH-PLACEHOLDER-1` separate; do not expand this atom
      into Search implementation/removal.
 
+4. `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`
+   - Scope: `site/app.js` privacy and FAQ i18n copy plus focused stale-copy
+     assertions.
+   - Required behavior: static `site/` accurately says web ads use Google
+     AdSense, the mobile app uses Google Mobile Ads/AdMob with consent, Remove
+     Ads is a one-time 29 SEK purchase that removes ads, and ads never collect
+     study answers or progress. English and Swedish runtime copy must not
+     claim ad rendering is disabled, the service sells nothing, or premium may
+     be added later.
+   - Required gates: focused static or browser assertion rejecting stale
+     strings such as `real ad rendering is disabled`, `avstängd för v1.0`,
+     `If we ever add premium`, and `Om vi någonsin lägger till premium`;
+     relevant `node --check` for changed site JS; `npm run test:ownership`;
+     and `git diff --check`.
+
 Existing P0 SETUP atoms behind the live-site P0 queue:
 
-4. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+5. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -145,7 +160,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-5. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+6. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -155,7 +170,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-6. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+7. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or
