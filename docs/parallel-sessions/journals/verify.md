@@ -178,6 +178,16 @@ PR (number + merged?): pending
 Accepted by worker? yes
 Next suggested validator action: attach this post-#584 evidence to the accepted generated unknown-option route and keep DATA-INTEGRITY focused on the remaining residual naturalness rows `q666`, `q667`, `q699`, `q714`, and `q715` plus any older ledger slices still marked with stale unknown-option status.
 
+Lane: CONTENT-VERIFY / VERIFY
+Host/branch: local worktree `/tmp/sct-content-verify-pane3-1779129530`, branch `task/verify/pane3-current-1779129530`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-#600 current-output recheck for generated true/false meta/prefix/residual rows
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/generated-tf-post600-2026-05-18.md`, `codex-tasks/data-integrity.txt`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened for the cited sections/pages; focused 17-row CSV/static/ledger assertion passed with 3 positive-meta stems cleared but still prefix-defective, 11 false-explanation or negative-meta defects, and 3 residual grammar defects; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with static-site parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): #611 opened; merge pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: route `VERIFY-GENERATED-TF-POST600-CURRENT-1` with the existing generated true/false DATA-INTEGRITY cleanup, preserving the newer q151-q200 false-explanation/prefix evidence.
+
 Lane: CONTENT-VERIFY / CONTENT Pane 1
 Host/branch: local worktree `/tmp/sct-verify-q151-q200-post584-pane1`, branch `task/verify/q151-q200-post584-pane1-1779129342`
 Role type and manager: dynamic-worker; manager/escalation VALIDATOR
