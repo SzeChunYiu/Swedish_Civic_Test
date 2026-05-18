@@ -127,3 +127,13 @@ A11y props: default `accessibilityRole="summary"`; derived whole-card `accessibi
 Verification: `./node_modules/.bin/prettier --check components/ResultSummary.tsx components/index.ts` -> pass; token discipline grep on `components/ResultSummary.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/ResultSummary.tsx components/index.ts` -> pass.
 Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
 Next: SCREENS can use `ResultSummary` to replace bespoke mock-exam and practice result cards during the UI-OVERHAUL port.
+
+## Iteration 13 - 2026-05-18
+
+Component: AnswerOption shared option-row wrapper - `components/quiz/AnswerOption.tsx`
+Variants/states implemented: preserved the existing quiz wrapper API while routing idle, selected, correct, and incorrect visual states through the shared `OptionCard` atom; localized SV/EN state labels; existing practice and quiz callers keep their props unchanged.
+Tokens used: no new direct visual tokens; `OptionCard` owns the tokenized surface, border, marker, pressed, hit-slop, and text styling via `colors.*`, `motion.pressedScale`, `radius.*`, `space.*`, and `typography.*`.
+A11y props: `OptionCard` provides default `accessibilityRole="radio"`, checked/disabled state, token hit slop, and spoken labels; `AnswerOption` keeps localized explicit labels and passes selected/disabled state through.
+Verification: `./node_modules/.bin/prettier --check components/quiz/AnswerOption.tsx` -> pass; token discipline grep on `components/quiz/AnswerOption.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- components/quiz/AnswerOption.tsx` -> pass.
+Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
+Next: DESIGN-TOKENS needs to publish immutable `lib/theme/flag.ts` before COMPONENTS can complete the P0 Swedish-flag-constants atom for `SwedishFlagBand`.
