@@ -339,3 +339,15 @@ SITE-P0-5 remains external deployment freshness work, and no pane should run
 Vercel CLI. `REVIEWER-RELEASE-GATES-1` is the next non-site P0 COMPLY source
 atom for release/privacy docs and the publishing guard if capacity is
 available.
+
+2026-05-18T22:46:00+02:00: CEO cycle correction after current-main advance.
+Current `origin/main` is `7c690c0`: q451-q500 DATA-INTEGRITY cleanup is
+accepted via PR #703 / `c6299ce`, q501-q550 VERIFY is refreshed, and
+REVIEWER-RELEASE-GATES-1 is accepted via PR #707 / `9d40c89`. Staffing
+decision remains HOLD/add-none because configured hosts still hold on
+`reason=lunarc_requires_slurm_station` and `csup factory-audit civic-test`
+remains RED for `missing:project_config`. Do not duplicate q401-q450,
+q451-q500, or release privacy-gate source work. Route DATA-INTEGRITY next to
+q501-q550 for q526/q527/q530/q531/q535/q542/q543; q551-q600 stays behind that
+source route unless VALIDATOR explicitly reorders. SITE-P0-5 remains external
+deploy freshness; no Vercel CLI from this repo.
