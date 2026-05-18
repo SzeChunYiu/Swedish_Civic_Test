@@ -1,14 +1,15 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { Button } from '../../components/Button';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { getChapterQuizSessionId } from '../../lib/quiz/practiceFlow';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 import type { Chapter } from '../../types/content';
 
 type ChapterRouteCopy = {
@@ -53,6 +54,7 @@ const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy> = {
 
 export default function ChapterScreen() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
+  const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const copy = chapterRouteCopy[language];
   const chapter = chapters.find((item) => item.id === chapterId);
@@ -95,14 +97,19 @@ export default function ChapterScreen() {
       <Text style={styles.subtitle}>{copy.chapterSubtitle(chapter)}</Text>
       <Text style={styles.description}>{copy.chapterDescription(chapter)}</Text>
       {quizSessionId ? (
-        <Link
+        <Button
           accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}
-          accessibilityRole="link"
-          href={`/quiz/${quizSessionId}`}
-          style={styles.startQuizLink}
+          accessibilityRole="button"
+          onPress={() =>
+            router.push({
+              pathname: '/quiz/[sessionId]',
+              params: { sessionId: quizSessionId },
+            })
+          }
+          style={styles.startQuizButton}
         >
           {copy.startQuiz}
-        </Link>
+        </Button>
       ) : null}
       <QuestionDisclaimer />
 
@@ -181,15 +188,7 @@ const styles = StyleSheet.create({
     fontWeight: typography.navButton.fontWeight,
     textDecorationLine: 'none',
   },
-  startQuizLink: {
+  startQuizButton: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-    textDecorationLine: 'none',
   },
 });
