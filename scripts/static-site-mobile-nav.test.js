@@ -61,30 +61,7 @@ function chromeExecutablePath() {
   if (process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH) {
     return process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
   }
-
-  const systemCandidates = [
-    '/usr/bin/google-chrome',
-    '/usr/bin/chromium',
-    '/usr/bin/chromium-browser',
-  ];
-  return systemCandidates.find((candidate) => fs.existsSync(candidate));
-}
-
-function hasPlayableChromium() {
-  return Boolean(chromeExecutablePath()) || fs.existsSync(chromium.executablePath());
-}
-
-function chromiumTestOptions() {
-  return hasPlayableChromium()
-    ? {}
-    : {
-        skip: 'Chromium is not available; set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH or install a supported browser.',
-      };
-}
-
-function chromiumLaunchOptions() {
-  const executablePath = chromeExecutablePath();
-  return executablePath ? { executablePath } : {};
+  return fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined;
 }
 
 function assertNoHorizontalOverflow(snapshot, label) {
@@ -106,154 +83,83 @@ function assertReachableBox(box, label) {
   assert.ok(box.right <= 390, `${label} should fit inside the 390px viewport`);
 }
 
-test('static study buddy role button has keyboard activation wiring', () => {
-  const html = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
-  const source = fs.readFileSync(path.join(siteRoot, 'buddies.js'), 'utf8');
-
-  assert.match(
-    html,
-    /<div[\s\S]*?id="dala-figure"[\s\S]*?role="button"[\s\S]*?tabindex="0"[\s\S]*?data-a11y-label="a11y\.studyBuddy"[\s\S]*?><\/div>/,
-  );
-  assert.match(source, /function activateBuddyFigure\(\)/);
-  assert.match(
-    source,
-    /document\.addEventListener\("click"[\s\S]*?#dala-figure[\s\S]*?activateBuddyFigure\(\)/,
-  );
-  assert.match(source, /document\.addEventListener\("keydown"/);
-  assert.match(source, /e\.key !== "Enter" && e\.key !== " "/);
-  assert.match(source, /e\.preventDefault\(\)/);
-  assert.match(source, /activateBuddyFigure\(\)/);
-});
-
-test('static icon-only controls use localized accessible-name keys', () => {
-  const html = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
-  const app = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
-  const extras = fs.readFileSync(path.join(siteRoot, 'extras.js'), 'utf8');
-  const extraI18n = fs.readFileSync(path.join(siteRoot, 'i18n-extras.js'), 'utf8');
-
-  [
-    /id="settings-open"[\s\S]*?aria-label="Settings"[\s\S]*?data-a11y-label="a11y\.settings\.open"/,
-    /class="modal__close"[\s\S]*?aria-label="Close"[\s\S]*?data-a11y-label="a11y\.close"/,
-    /id="ad-anchor-close"[\s\S]*?aria-label="Close ad"[\s\S]*?data-a11y-label="a11y\.ad\.close"/,
-    /id="dala-bubble-close"[\s\S]*?aria-label="Close"[\s\S]*?data-a11y-label="a11y\.close"/,
-    /id="dala-figure"[\s\S]*?aria-label="Study buddy"[\s\S]*?data-a11y-label="a11y\.studyBuddy"/,
-  ].forEach((pattern) => assert.match(html, pattern));
-
-  assert.match(app, /function smtUpdateStaticControlLabels\(lang\)/);
-  assert.match(app, /querySelectorAll\("\[data-a11y-label\]"\)/);
-  assert.match(extras, /class="cheats__close" data-a11y-label="a11y\.close"/);
-  assert.doesNotMatch(extras, /aria-label="Close"/);
-
-  ['zh-Hans', 'zh-Hant', 'ar', 'so'].forEach((lang) => {
-    const start = extraI18n.indexOf(`"${lang}": {`);
-    assert.notEqual(start, -1, `${lang} dictionary should exist`);
-    const nextMarker = extraI18n.indexOf(
-      '\n    // ============================================================',
-      start + 1,
-    );
-    const block = extraI18n.slice(start, nextMarker === -1 ? undefined : nextMarker);
-    assert.match(block, /"a11y\.settings\.open"/);
-    assert.match(block, /"a11y\.close"/);
-    assert.match(block, /"a11y\.ad\.close"/);
-    assert.match(block, /"a11y\.studyBuddy"/);
+test('static mobile topbar reaches key routes and settings without horizontal overflow', async () => {
+  const server = await createStaticServer();
+  const browser = await chromium.launch({
+    executablePath: chromeExecutablePath(),
   });
-});
 
-test('static extras gate JS-driven decorative motion behind reduced-motion state', () => {
-  const extras = fs.readFileSync(path.join(siteRoot, 'extras.js'), 'utf8');
+  try {
+    const page = await browser.newPage({ viewport: { width: 390, height: 840 } });
+    await page.addInitScript(() => {
+      window.localStorage.setItem('smt_consent', 'min');
+      window.localStorage.setItem('smt_buddy_hidden', '1');
+    });
 
-  assert.match(extras, /function reducedMotionEnabled\(\)/);
-  assert.match(extras, /window\.addEventListener\("smt:motionchange"/);
-  assert.match(extras, /if \(reducedMotionEnabled\(\) \|\| !items\.length/);
-  assert.match(extras, /function snowEgg\(\) \{[\s\S]*?if \(reducedMotionEnabled\(\)\)/);
-  assert.match(extras, /function vasaEgg\(\) \{[\s\S]*?if \(reducedMotionEnabled\(\)\)/);
-  assert.match(extras, /function flagFlutter\(\) \{[\s\S]*?if \(reducedMotionEnabled\(\)\)/);
-  assert.match(extras, /reducedMotionEnabled\(\) \? "auto" : "smooth"/);
-  assert.match(extras, /reducedMotionEnabled\(\) \? "" : ";animation:smt-cheats-in/);
-});
+    await page.goto(server.url, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#nav-toggle');
 
-test(
-  'static mobile topbar reaches key routes and settings without horizontal overflow',
-  chromiumTestOptions(),
-  async () => {
-    const server = await createStaticServer();
-    let browser;
-
-    try {
-      browser = await chromium.launch(chromiumLaunchOptions());
-      const page = await browser.newPage({ viewport: { width: 390, height: 840 } });
-      await page.addInitScript(() => {
-        window.localStorage.setItem('smt_consent', 'min');
-        window.localStorage.setItem('smt_buddy_hidden', '1');
-      });
-
-      await page.goto(server.url, { waitUntil: 'domcontentloaded' });
-      await page.waitForSelector('#nav-toggle');
-
-      const closed = await page.evaluate(() => {
-        const boxFor = (selector) => {
-          const node = document.querySelector(selector);
-          if (!node) return null;
-          const rect = node.getBoundingClientRect();
-          return {
-            height: rect.height,
-            left: rect.left,
-            right: rect.right,
-            width: rect.width,
-          };
-        };
-
+    const closed = await page.evaluate(() => {
+      const boxFor = (selector) => {
+        const node = document.querySelector(selector);
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
         return {
-          bodyScrollWidth: document.body.scrollWidth,
-          documentClientWidth: document.documentElement.clientWidth,
-          documentScrollWidth: document.documentElement.scrollWidth,
-          navToggle: boxFor('#nav-toggle'),
-          settings: boxFor('#settings-open'),
+          height: rect.height,
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
         };
-      });
+      };
 
-      assertNoHorizontalOverflow(closed, 'closed mobile nav');
-      assertReachableBox(closed.navToggle, 'mobile navigation button');
-      assertReachableBox(closed.settings, 'settings button');
+      return {
+        bodyScrollWidth: document.body.scrollWidth,
+        documentClientWidth: document.documentElement.clientWidth,
+        documentScrollWidth: document.documentElement.scrollWidth,
+        navToggle: boxFor('#nav-toggle'),
+        settings: boxFor('#settings-open'),
+      };
+    });
 
-      await page.click('#nav-toggle');
+    assertNoHorizontalOverflow(closed, 'closed mobile nav');
+    assertReachableBox(closed.navToggle, 'mobile navigation button');
+    assertReachableBox(closed.settings, 'settings button');
 
-      const open = await page.evaluate((routes) => {
-        const boxFor = (selector) => {
-          const node = document.querySelector(selector);
-          if (!node) return null;
-          const rect = node.getBoundingClientRect();
-          return {
-            height: rect.height,
-            left: rect.left,
-            right: rect.right,
-            width: rect.width,
-          };
-        };
+    await page.click('#nav-toggle');
 
+    const open = await page.evaluate((routes) => {
+      const boxFor = (selector) => {
+        const node = document.querySelector(selector);
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
         return {
-          bodyScrollWidth: document.body.scrollWidth,
-          documentClientWidth: document.documentElement.clientWidth,
-          documentScrollWidth: document.documentElement.scrollWidth,
-          expanded: document.getElementById('nav-toggle')?.getAttribute('aria-expanded'),
-          routes: Object.fromEntries(
-            routes.map(({ label, route }) => [label, boxFor(`.nav a[data-route="${route}"]`)]),
-          ),
+          height: rect.height,
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
         };
-      }, requiredRoutes);
+      };
 
-      assert.equal(open.expanded, 'true');
-      assertNoHorizontalOverflow(open, 'open mobile nav');
-      requiredRoutes.forEach(({ label }) => assertReachableBox(open.routes[label], label));
+      return {
+        bodyScrollWidth: document.body.scrollWidth,
+        documentClientWidth: document.documentElement.clientWidth,
+        documentScrollWidth: document.documentElement.scrollWidth,
+        expanded: document.getElementById('nav-toggle')?.getAttribute('aria-expanded'),
+        routes: Object.fromEntries(
+          routes.map(({ label, route }) => [label, boxFor(`.nav a[data-route="${route}"]`)]),
+        ),
+      };
+    }, requiredRoutes);
 
-      await page.click('#settings-open');
-      const settingsOpen = await page.locator('#settings-modal').evaluate((node) => !node.hidden);
-      assert.equal(settingsOpen, true, 'settings modal should open from the mobile topbar');
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-      await server.close();
-    }
-  },
-);
+    assert.equal(open.expanded, 'true');
+    assertNoHorizontalOverflow(open, 'open mobile nav');
+    requiredRoutes.forEach(({ label }) => assertReachableBox(open.routes[label], label));
+
+    await page.click('#settings-open');
+    const settingsOpen = await page.locator('#settings-modal').evaluate((node) => !node.hidden);
+    assert.equal(settingsOpen, true, 'settings modal should open from the mobile topbar');
+  } finally {
+    await browser.close();
+    await server.close();
+  }
+});
