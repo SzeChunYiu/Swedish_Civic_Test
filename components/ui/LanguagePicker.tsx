@@ -2,9 +2,42 @@ import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { locales, type LocaleOption } from '../../lib/i18n/locales';
-import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { GlobeIcon } from './icons/GlobeIcon';
+
+type LanguagePickerCopy = {
+  triggerLabel: (currentLabel: string) => string;
+  closeLabel: string;
+  menuLabel: string;
+  title: string;
+  subtitle: string;
+  unavailableSuffix: string;
+  comingSoon: string;
+};
+
+const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
+  sv: {
+    triggerLabel: (currentLabel) => `Nuvarande språk ${currentLabel}. Öppna språkväljaren.`,
+    closeLabel: 'Stäng språkväljaren',
+    menuLabel: 'Språkväljare',
+    title: 'Välj språk',
+    subtitle:
+      'Gränssnittet översätts stegvis. Frågeinnehållet är svenska/engelska tills varje språk har granskats av mänskliga översättare.',
+    unavailableSuffix: ', kommer snart',
+    comingSoon: 'Kommer snart',
+  },
+  en: {
+    triggerLabel: (currentLabel) => `Current language ${currentLabel}. Open language picker.`,
+    closeLabel: 'Close language picker',
+    menuLabel: 'Language picker',
+    title: 'Choose language',
+    subtitle:
+      'UI translations land in waves. Question content stays Swedish/English until human translators review each language.',
+    unavailableSuffix: ', coming soon',
+    comingSoon: 'Coming soon',
+  },
+};
 
 export function LanguagePicker() {
   const language = useSettingsStore((state) => state.language);
@@ -13,6 +46,7 @@ export function LanguagePicker() {
 
   const currentCode = language === 'sv' ? 'sv' : 'en';
   const currentLabel = currentCode.toUpperCase();
+  const copy = languagePickerCopy[language];
 
   const handleSelect = (option: LocaleOption) => {
     if (option.available) {
@@ -25,7 +59,7 @@ export function LanguagePicker() {
     <>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Current language ${currentLabel}. Open language picker.`}
+        accessibilityLabel={copy.triggerLabel(currentLabel)}
         onPress={() => setOpen(true)}
         style={styles.trigger}
       >
@@ -33,29 +67,21 @@ export function LanguagePicker() {
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
       </Pressable>
 
-      <Modal
-        animationType="fade"
-        transparent
-        visible={open}
-        onRequestClose={() => setOpen(false)}
-      >
+      <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
         <Pressable
-          accessibilityLabel="Close language picker"
+          accessibilityLabel={copy.closeLabel}
           accessibilityRole="button"
           onPress={() => setOpen(false)}
           style={styles.backdrop}
         >
           <Pressable
-            accessibilityLabel="Language picker"
+            accessibilityLabel={copy.menuLabel}
             accessibilityRole="menu"
             style={styles.card}
             onPress={(e) => e.stopPropagation()}
           >
-            <Text style={styles.title}>Choose language</Text>
-            <Text style={styles.subtitle}>
-              UI translations land in waves. Question content stays Swedish/English until human
-              translators review each language.
-            </Text>
+            <Text style={styles.title}>{copy.title}</Text>
+            <Text style={styles.subtitle}>{copy.subtitle}</Text>
             <ScrollView style={styles.list}>
               {locales.map((opt) => {
                 const selected = opt.available && opt.fallback === language;
@@ -63,7 +89,7 @@ export function LanguagePicker() {
                   <Pressable
                     key={opt.code}
                     accessibilityRole="button"
-                    accessibilityLabel={`${opt.label}${opt.available ? '' : ', coming soon'}`}
+                    accessibilityLabel={`${opt.label}${opt.available ? '' : copy.unavailableSuffix}`}
                     accessibilityState={{ selected, disabled: !opt.available }}
                     onPress={() => handleSelect(opt)}
                     style={[styles.row, selected && styles.rowSelected]}
@@ -82,7 +108,7 @@ export function LanguagePicker() {
                       ) : null
                     ) : (
                       <View style={styles.comingSoonBadge}>
-                        <Text style={styles.comingSoonText}>Coming soon</Text>
+                        <Text style={styles.comingSoonText}>{copy.comingSoon}</Text>
                       </View>
                     )}
                   </Pressable>
