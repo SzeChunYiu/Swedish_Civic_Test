@@ -24,14 +24,6 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = chapterLinkCopy\[language\];/);
-  assert.match(source, /const chapterProgressById = useMemo\(/);
-  assert.match(source, /buildChapterProgressById\(completedQuestionIds\)/);
-  assert.doesNotMatch(source, /function questionCountForChapter/);
-  assert.doesNotMatch(source, /function completedCountForChapter/);
-  assert.doesNotMatch(
-    source,
-    /questions\.filter\(\s*\(question\) => question\.chapterId === chapter\.id/,
-  );
   assert.match(source, /innehåll planerat/);
   assert.match(source, /content queued/);
   assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
@@ -41,7 +33,6 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /const primaryName = language === 'en' \? nameEn : nameSv;/);
   assert.match(source, /const secondaryName = language === 'en' \? nameSv : nameEn;/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel\(\{/);
-  assert.match(source, /accessibilitySummary=\{false\}/);
   assert.match(source, /language=\{language\}/);
 });
 

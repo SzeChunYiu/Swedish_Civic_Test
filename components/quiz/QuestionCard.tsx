@@ -69,10 +69,7 @@ export function QuestionCard({
     .join('. ');
 
   return (
-    <Card>
-      <Text accessibilityLabel={questionAccessibilityLabel} style={styles.accessibilitySummary}>
-        {questionAccessibilityLabel}
-      </Text>
+    <Card accessibilityLabel={questionAccessibilityLabel}>
       <ProvenanceBadge question={question} language={language} />
       <Text style={styles.label}>{difficultyLabel}</Text>
       <Text accessibilityRole="header" style={styles.question}>
@@ -94,13 +91,6 @@ export function QuestionCard({
 }
 
 const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
   label: {
     color: colors.badgeBlueText,
     fontSize: typography.badge.fontSize,

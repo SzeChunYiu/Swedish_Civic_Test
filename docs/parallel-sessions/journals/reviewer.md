@@ -3831,24 +3831,3 @@ Evidence: current product source and monetization tests show Remove Ads purchase
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: keep product wiring closed unless fresh product evidence regresses; route VALIDATOR/RELEASE to replace this brittle GOAL step with a project guard or request an operator-owned GOAL correction.
-
-Lane: REVIEWER
-Host/branch: `/tmp/sct-review-origin-Zl9m6Q` / `task/reviewer/public-privacy-posture-1779155120` rebased on `origin/main` `cef401b`
-Role type and manager: fixed-quality / MANAGER
-Task / checklist item: Current-main public privacy URL posture check for ad-supported v1.0 COMPLY.
-Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
-Verification (commands + result):
-- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, active validator/setup/data-integrity queues, blockers, and reviewer history before queueing.
-- Used a temporary worktree rebased on current `origin/main` `cef401b`; the shared checkout is behind/ahead with unrelated dirty lane files and was not reset.
-- `git show origin/main:publishing/public-site/privacy/index.html | rg -n "no user data is collected|real ad rendering is disabled|Remove Ads|29 SEK|Google UMP|ATT" -S` - found the stale no-data sentence and no current ad/IAP consent disclosures.
-- `rg -n "no user data is collected|no user data is shared|real ad rendering is disabled|REAL_ADS_ENABLED_FOR_V1|Remove Ads|29 SEK|Google UMP|ATT" publishing/public-site/privacy/index.html publishing/public-support-and-privacy.md publishing/privacy-labels.md publishing/google-play-data-safety.md reports/release-gates.json scripts/publishing.test.js -S` - found stale public privacy copy alongside updated privacy-label/data-safety docs.
-- `NODE_OPTIONS='--v8-pool-size=1' timeout 120s npm run test:publishing` - exit 0, 7/7 passing while `scripts/publishing.test.js` still requires the stale public privacy `no user data is collected` string.
-- `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:release-preflight` - exit 0, 44/44 passing while the stale public privacy artifact remains.
-- `test -f reports/release-ads-iap-device-qa.md` - exit 1, confirming the separate device-QA template defect remains open but was not duplicated here.
-- `git diff --check` - exit 0 before queue edits.
-Workspace contract: pass - no product source edited; new public privacy release defect queued directly because the configured `review-to-queue.sh` helper is absent in this Linux checkout.
-Findings queued: `REVIEWER-PUBLIC-PRIVACY-ADS-IAP-POSTURE-1`.
-Evidence: the public Privacy Policy URL artifact still tells store reviewers/users that no data is collected and real ad rendering is disabled, while current v1.0 docs and goal require Google Mobile Ads, ATT/UMP consent, Remove Ads, and 29 SEK IAP disclosures.
-PR (number + merged?): pending at handoff commit time.
-Accepted by worker? yes
-Next suggested validator action: route RELEASE/COMPLY or SETUP/public-site to update the public privacy HTML/source copy and harden publishing/release guards against stale disabled-ads/no-data public privacy copy.

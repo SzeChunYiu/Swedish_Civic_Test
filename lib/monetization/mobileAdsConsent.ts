@@ -140,12 +140,10 @@ export async function collectMobileAdsConsentState({
   const platform = normalizeAdConsentPlatform(runtime.platform);
   const shouldCollectConsent =
     googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;
-  const trackingTransparencyStatus = await resolveTrackingTransparencyStatus(
-    runtime,
-    platform,
-    shouldCollectConsent,
-  );
-  const umpConsentStatus = await resolveUmpConsentStatus(runtime, shouldCollectConsent);
+  const [trackingTransparencyStatus, umpConsentStatus] = await Promise.all([
+    resolveTrackingTransparencyStatus(runtime, platform, shouldCollectConsent),
+    resolveUmpConsentStatus(runtime, shouldCollectConsent),
+  ]);
 
   return {
     entitlements,

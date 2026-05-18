@@ -39,7 +39,6 @@ export const architectureRouterShellRuntimeFiles = [
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
-  'app/dashboard.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -125,7 +124,6 @@ export const architectureSharedUiRuntimeFiles = [
 export const architectureThemeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
-  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',
@@ -329,12 +327,9 @@ export const architectureMonetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
-  'components/monetization/PracticeInterstitialAd.native.tsx',
-  'components/monetization/PracticeInterstitialAd.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
-  'app/(tabs)/practice.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/(tabs)/exam.tsx',
 ] as const;
@@ -347,10 +342,7 @@ export const architectureRemoveAdsRuntimeFiles = [
   'components/monetization/AdBanner.tsx',
   'components/monetization/AdBanner.native.tsx',
   'components/monetization/NativeAdCard.tsx',
-  'components/monetization/PracticeInterstitialAd.native.tsx',
-  'components/monetization/PracticeInterstitialAd.tsx',
   'app/(tabs)/home.tsx',
-  'app/(tabs)/practice.tsx',
   'app/(tabs)/profile.tsx',
 ] as const;
 
@@ -506,11 +498,6 @@ export const architectureScaffoldFiles = [
     file: 'components/monetization/AdBanner.tsx',
     area: 'components',
     purpose: 'Ad banner placement component',
-  },
-  {
-    file: 'components/monetization/PracticeInterstitialAd.tsx',
-    area: 'components',
-    purpose: 'Practice completion interstitial placement component',
   },
   {
     file: 'components/monetization/PremiumBanner.tsx',
