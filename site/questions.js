@@ -3266,8 +3266,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.",
-      "sv": "UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunen ansvarar för att gamla och sjuka kan få hjälp när de inte klarar vardagen på egen hand. Under äldreomsorg står det att svensk lag kräver att kommuner erbjuder äldre stöd och hjälp, till exempel vård och service i hemmet."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3447,8 +3447,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Sweden’s path to democracy says the Riksdag adopted a new constitution in 1809 that limited the king’s power. It was an important change, but democracy had not yet been introduced because voting rights were still limited.",
-      "sv": "UHR-avsnittet Sveriges väg till demokrati säger att riksdagen 1809 antog en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
+      "en": "In 1809, the Riksdag adopted a new constitution that limited the king’s power. This was an important change, but democracy had not yet been introduced because voting rights were still limited.",
+      "sv": "År 1809 antog riksdagen en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3492,8 +3492,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Popular movements describes popular movements as an important factor in the transition to real democracy. People organized for rights such as an eight-hour workday, suffrage, and freedom of religion, and the material mentions the labour movement, free church movement, women's movement, and temperance movement as four of the largest.",
-      "sv": "UHR-avsnittet Folkrörelserna beskriver folkrörelserna som en viktig faktor i övergången till verklig demokrati. Människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet, och materialet nämner arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen som fyra av de största."
+      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
+      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3537,8 +3537,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The UHR section The democratic breakthrough says almost all men gained suffrage in 1909 and the decision on universal suffrage came in 1918. The first Riksdag election in which both men and women could vote and women could become members of the Riksdag was held in 1921; by then Sweden had become a democracy.",
-      "sv": "UHR-avsnittet Demokratins genombrott säger att nästan alla män fick rösträtt 1909 och att beslutet om allmän rösträtt kom 1918. Det första riksdagsvalet där både män och kvinnor fick rösta och där kvinnor kunde bli riksdagsledamöter genomfördes 1921; därmed hade Sverige blivit en demokrati."
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.",
+      "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3582,8 +3582,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section The Swedish model says the Saltsjöbaden Agreement was made in 1938 between employers and trade unions. The agreement became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
-      "sv": "UHR-avsnittet Den svenska modellen säger att Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Avtalet blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om villkoren på arbetsmarknaden i kollektivavtal."
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18953,8 +18953,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.",
-      "sv": "UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunen ansvarar för att gamla och sjuka kan få hjälp när de inte klarar vardagen på egen hand. Under äldreomsorg står det att svensk lag kräver att kommuner erbjuder äldre stöd och hjälp, till exempel vård och service i hemmet."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18992,8 +18992,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.",
-      "sv": "UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunen ansvarar för att gamla och sjuka kan få hjälp när de inte klarar vardagen på egen hand. Under äldreomsorg står det att svensk lag kräver att kommuner erbjuder äldre stöd och hjälp, till exempel vård och service i hemmet."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19031,8 +19031,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.",
-      "sv": "UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunen ansvarar för att gamla och sjuka kan få hjälp när de inte klarar vardagen på egen hand. Under äldreomsorg står det att svensk lag kräver att kommuner erbjuder äldre stöd och hjälp, till exempel vård och service i hemmet."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19078,8 +19078,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Municipalities have a large responsibility says municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Under elderly care, it says Swedish law requires municipalities to offer older people support and help, such as care and services at home.",
-      "sv": "UHR-avsnittet Kommunerna har ett stort ansvar säger att kommunen ansvarar för att gamla och sjuka kan få hjälp när de inte klarar vardagen på egen hand. Under äldreomsorg står det att svensk lag kräver att kommuner erbjuder äldre stöd och hjälp, till exempel vård och service i hemmet."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19645,8 +19645,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Sweden’s path to democracy says the Riksdag adopted a new constitution in 1809 that limited the king’s power. It was an important change, but democracy had not yet been introduced because voting rights were still limited.",
-      "sv": "UHR-avsnittet Sveriges väg till demokrati säger att riksdagen 1809 antog en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
+      "en": "In 1809, the Riksdag adopted a new constitution that limited the king’s power. This was an important change, but democracy had not yet been introduced because voting rights were still limited.",
+      "sv": "År 1809 antog riksdagen en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19684,8 +19684,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Sweden’s path to democracy says the Riksdag adopted a new constitution in 1809 that limited the king’s power. It was an important change, but democracy had not yet been introduced because voting rights were still limited.",
-      "sv": "UHR-avsnittet Sveriges väg till demokrati säger att riksdagen 1809 antog en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
+      "en": "In 1809, the Riksdag adopted a new constitution that limited the king’s power. This was an important change, but democracy had not yet been introduced because voting rights were still limited.",
+      "sv": "År 1809 antog riksdagen en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19723,8 +19723,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The UHR section Sweden’s path to democracy says the Riksdag adopted a new constitution in 1809 that limited the king’s power. It was an important change, but democracy had not yet been introduced because voting rights were still limited.",
-      "sv": "UHR-avsnittet Sveriges väg till demokrati säger att riksdagen 1809 antog en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
+      "en": "In 1809, the Riksdag adopted a new constitution that limited the king’s power. This was an important change, but democracy had not yet been introduced because voting rights were still limited.",
+      "sv": "År 1809 antog riksdagen en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19770,8 +19770,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Sweden’s path to democracy says the Riksdag adopted a new constitution in 1809 that limited the king’s power. It was an important change, but democracy had not yet been introduced because voting rights were still limited.",
-      "sv": "UHR-avsnittet Sveriges väg till demokrati säger att riksdagen 1809 antog en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
+      "en": "In 1809, the Riksdag adopted a new constitution that limited the king’s power. This was an important change, but democracy had not yet been introduced because voting rights were still limited.",
+      "sv": "År 1809 antog riksdagen en ny grundlag som begränsade kungens makt. Det var en viktig förändring, men demokrati hade ännu inte införts eftersom rösträtten fortfarande var begränsad."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19817,8 +19817,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Popular movements describes popular movements as an important factor in the transition to real democracy. People organized for rights such as an eight-hour workday, suffrage, and freedom of religion, and the material mentions the labour movement, free church movement, women's movement, and temperance movement as four of the largest.",
-      "sv": "UHR-avsnittet Folkrörelserna beskriver folkrörelserna som en viktig faktor i övergången till verklig demokrati. Människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet, och materialet nämner arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen som fyra av de största."
+      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
+      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19856,8 +19856,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Popular movements describes popular movements as an important factor in the transition to real democracy. People organized for rights such as an eight-hour workday, suffrage, and freedom of religion, and the material mentions the labour movement, free church movement, women's movement, and temperance movement as four of the largest.",
-      "sv": "UHR-avsnittet Folkrörelserna beskriver folkrörelserna som en viktig faktor i övergången till verklig demokrati. Människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet, och materialet nämner arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen som fyra av de största."
+      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
+      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19895,8 +19895,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The UHR section Popular movements describes popular movements as an important factor in the transition to real democracy. People organized for rights such as an eight-hour workday, suffrage, and freedom of religion, and the material mentions the labour movement, free church movement, women's movement, and temperance movement as four of the largest.",
-      "sv": "UHR-avsnittet Folkrörelserna beskriver folkrörelserna som en viktig faktor i övergången till verklig demokrati. Människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet, och materialet nämner arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen som fyra av de största."
+      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
+      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19942,8 +19942,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section Popular movements describes popular movements as an important factor in the transition to real democracy. People organized for rights such as an eight-hour workday, suffrage, and freedom of religion, and the material mentions the labour movement, free church movement, women's movement, and temperance movement as four of the largest.",
-      "sv": "UHR-avsnittet Folkrörelserna beskriver folkrörelserna som en viktig faktor i övergången till verklig demokrati. Människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet, och materialet nämner arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen som fyra av de största."
+      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
+      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19989,8 +19989,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The UHR section The democratic breakthrough says almost all men gained suffrage in 1909 and the decision on universal suffrage came in 1918. The first Riksdag election in which both men and women could vote and women could become members of the Riksdag was held in 1921; by then Sweden had become a democracy.",
-      "sv": "UHR-avsnittet Demokratins genombrott säger att nästan alla män fick rösträtt 1909 och att beslutet om allmän rösträtt kom 1918. Det första riksdagsvalet där både män och kvinnor fick rösta och där kvinnor kunde bli riksdagsledamöter genomfördes 1921; därmed hade Sverige blivit en demokrati."
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.",
+      "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20028,8 +20028,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section The democratic breakthrough says almost all men gained suffrage in 1909 and the decision on universal suffrage came in 1918. The first Riksdag election in which both men and women could vote and women could become members of the Riksdag was held in 1921; by then Sweden had become a democracy.",
-      "sv": "UHR-avsnittet Demokratins genombrott säger att nästan alla män fick rösträtt 1909 och att beslutet om allmän rösträtt kom 1918. Det första riksdagsvalet där både män och kvinnor fick rösta och där kvinnor kunde bli riksdagsledamöter genomfördes 1921; därmed hade Sverige blivit en demokrati."
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.",
+      "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20067,8 +20067,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The UHR section The democratic breakthrough says almost all men gained suffrage in 1909 and the decision on universal suffrage came in 1918. The first Riksdag election in which both men and women could vote and women could become members of the Riksdag was held in 1921; by then Sweden had become a democracy.",
-      "sv": "UHR-avsnittet Demokratins genombrott säger att nästan alla män fick rösträtt 1909 och att beslutet om allmän rösträtt kom 1918. Det första riksdagsvalet där både män och kvinnor fick rösta och där kvinnor kunde bli riksdagsledamöter genomfördes 1921; därmed hade Sverige blivit en demokrati."
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.",
+      "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20114,8 +20114,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section The democratic breakthrough says almost all men gained suffrage in 1909 and the decision on universal suffrage came in 1918. The first Riksdag election in which both men and women could vote and women could become members of the Riksdag was held in 1921; by then Sweden had become a democracy.",
-      "sv": "UHR-avsnittet Demokratins genombrott säger att nästan alla män fick rösträtt 1909 och att beslutet om allmän rösträtt kom 1918. Det första riksdagsvalet där både män och kvinnor fick rösta och där kvinnor kunde bli riksdagsledamöter genomfördes 1921; därmed hade Sverige blivit en demokrati."
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.",
+      "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20161,8 +20161,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section The Swedish model says the Saltsjöbaden Agreement was made in 1938 between employers and trade unions. The agreement became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
-      "sv": "UHR-avsnittet Den svenska modellen säger att Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Avtalet blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om villkoren på arbetsmarknaden i kollektivavtal."
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20200,8 +20200,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section The Swedish model says the Saltsjöbaden Agreement was made in 1938 between employers and trade unions. The agreement became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
-      "sv": "UHR-avsnittet Den svenska modellen säger att Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Avtalet blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om villkoren på arbetsmarknaden i kollektivavtal."
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20239,8 +20239,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The UHR section The Swedish model says the Saltsjöbaden Agreement was made in 1938 between employers and trade unions. The agreement became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
-      "sv": "UHR-avsnittet Den svenska modellen säger att Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Avtalet blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om villkoren på arbetsmarknaden i kollektivavtal."
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20286,8 +20286,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UHR section The Swedish model says the Saltsjöbaden Agreement was made in 1938 between employers and trade unions. The agreement became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
-      "sv": "UHR-avsnittet Den svenska modellen säger att Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Avtalet blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om villkoren på arbetsmarknaden i kollektivavtal."
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
