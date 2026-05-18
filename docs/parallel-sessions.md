@@ -5,19 +5,26 @@ because that model produced mostly coordination churn: a 1-CPU-equivalent of
 real output spread across dozens of panes that spent their time reading 50 KB
 of boards, resetting to a moving `main`, and writing handoff records.
 
-**There are no roles anymore. Every pane — whatever label its `/goal` line
-gives it (MANAGER, CEO, REVIEWER, VALIDATOR, worker) — is an autonomous
-WORKER and runs the loop below. Ignore your role label.**
+**No hierarchy, no managers, no CEO. There are exactly TWO flat worker types.
+Look at your `/goal` role label and pick which loop you run:**
 
-The objective gate replaces the manager. A PR merges if and only if:
+- **SCRUTINIZER** — if your label contains REVIEW, CRITIC, VERIFY, QA,
+  RESEARCH, or AUDIT. You do **not** write product code. You study and
+  stress-test one aspect deeply and file concrete defects/improvements as new
+  tasks. Run the **Scrutinizer loop**.
+- **PRODUCER** — every other label (MANAGER, CEO, build, uiux, content,
+  delight, etc. all map here; ignore the hierarchy the old label implied).
+  You ship product. Run the **Worker loop**.
+
+Neither type accepts/rejects others' work or coordinates anyone — that
+bureaucracy is abolished. The merge decision is automatic. A PR merges iff:
 1. it changes a real product path (`app/ components/ lib/ types/ data/ tests/`), and
 2. the required GitHub check **`Validate release-safe candidate`** is green.
 
-That is enforced in GitHub (branch protection + required CI) and by an operator
-auto-close guard. No human-style acceptance step exists or is needed. Do not
-review other panes' work. Do not manage. Do not write status/handoff/audit
-files — the pre-commit hook and the guard auto-reject non-product commits and
-zero-product PRs.
+Enforced by GitHub (branch protection + required CI) + the operator auto-close
+guard. No human acceptance step exists. Producers do not review each other.
+Scrutinizers do not gatekeep — they feed the queue. Nobody writes
+status/handoff/audit files; the hook and guard auto-reject zero-product noise.
 
 ## Required reading each iteration — ONLY this file + the queue
 
@@ -26,21 +33,22 @@ Read **this file** and **`codex-tasks/open.txt`**. Nothing else is mandatory
 meeting_sheet.md, AI_FACTORY.md, or lane boards — that context tax is what made
 the old model slower than a single session.
 
-## The worker loop — THINK, then PLAN, then SHIP (autonomous)
+## The worker loop — SELECT, build, then PLAN-THE-NEXT (autonomous)
 
-You are autonomous. Nobody tells you what to do. Each iteration you decide the
-single highest-value next step yourself, plan it, build it, ship it.
+You are autonomous. The deep "what is most valuable next" thinking happens at
+the END of an iteration (step 10), when you have just done the work and have
+maximal context — and it is written into the queue so the next pane inherits
+it. At the START you only do a cheap SELECT off that already-well-reasoned
+queue. Expensive judgement where context is rich; cheap pickup where it isn't.
 
 ```
 1. cd <repo checkout>; git fetch origin -q
 
-2. THINK — decide the ONE most valuable next step (bounded: minutes, in your
-   head, NO written artifact). Consider, in priority order:
-     a. the first unclaimed concrete atom in codex-tasks/open.txt (esp. P0/ADS/IAP),
-     b. a real gap between GOAL.md's acceptance test and the current code,
-     c. a concrete bug/regression you can see.
-   Pick exactly ONE bounded, product-scoped unit. If torn between options,
-   pick the SMALLEST one that ships real value. Never expand scope.
+2. SELECT — cheap, no deep deliberation (you have little context yet): take the
+   FIRST unclaimed task in codex-tasks/open.txt (it was already reasoned out by
+   a prior iteration's step 10 or a Scrutinizer — trust it). Only if the queue
+   is empty or every item is stale/duplicated, do a quick GOAL.md-gap scan and
+   pick the one obvious highest-value unit. Exactly ONE bounded product unit.
 
 3. LEARN — acquire the skill to do THIS task excellently, not generically.
    Briefly research what "good" means for this specific unit before coding:
@@ -83,9 +91,22 @@ single highest-value next step yourself, plan it, build it, ship it.
 
 9. git add -A && git commit -m "<what changed + the why from your plan>"
 10. git push origin HEAD:task/<branch>;  gh pr create --base main --head task/<branch> --fill
-11. STOP. Do NOT self-merge, do NOT wait. The required CI check + operator guard
-    decide the merge. The supervisor respawns you for the next iteration — where
-    you THINK about the best next step again (this is how it plans the next).
+
+11. PLAN-THE-NEXT — the high-judgement step, done HERE because your context is
+    now maximal (you just built and validated this and understand the code and
+    what it still needs). Decide the single most valuable next unit toward
+    GOAL.md, and hand it to the next pane via the queue:
+      echo "<NEW-ID> <product/path>: <specific next change> | why: <what you just learned that makes this next> | verify: <criteria>" >> codex-tasks/open.txt
+      git add codex-tasks/open.txt && git commit -qm "next: +<NEW-ID> [allow-meta]"
+      # rebase-retry push to origin/main; races are fine, skip on fail
+    Exactly ONE concrete product-scoped next task. This is the ONLY place deep
+    "what next" thinking belongs — and it is proven by having just shipped, so
+    it cannot become analysis paralysis. Skip only if an equivalent task
+    already sits in the queue.
+
+12. STOP. Do NOT self-merge, do NOT wait. The required CI check + operator guard
+    decide the merge. The supervisor respawns you; the next pane does the cheap
+    SELECT (step 2) of the well-reasoned task you just queued.
 ```
 
 **The iron rule that keeps thinking/learning from becoming the disease:**
@@ -109,48 +130,75 @@ Notes:
 - One task = one branch = one PR. Parallel-safe because tasks are disjoint
   units, not shared boards.
 
+## The Scrutinizer loop — critical review & research (no code; files findings)
+
+If your role label is SCRUTINIZER-type (REVIEW/CRITIC/VERIFY/QA/RESEARCH/AUDIT)
+you are a hostile critic and domain researcher. You do **not** write product
+code. Your only deliverable each iteration is one to three CONCRETE, actionable
+defect/improvement tasks appended to `codex-tasks/open.txt` that a producer can
+directly pick up.
+
+```
+1. git fetch origin -q
+2. PICK ONE aspect to scrutinize (rotate; don't repeat recent scrutiny lines):
+   - Swedish correctness & naturalness of a question set or UI string (judge as
+     a native speaker — flag machine-ish wording / wrong register);
+   - factual accuracy of questions vs the UHR source;
+   - UX of one real flow walked as first-time / hurried / screen-reader /
+     non-native user;
+   - accessibility (contrast, labels, reduced-motion, font scaling);
+   - security/privacy of the ads + Remove-Ads IAP path (consent gating, no PII
+     leak, entitlement cannot be spoofed);
+   - performance / web-export health;
+   - RESEARCH: study how leading apps or native domain practice solve a thing
+     producers need, so the finding carries the *correct approach* (use web
+     search for ground truth, not memory).
+3. STUDY IT HARD: actually run the app/flow, read the data, test boundaries,
+   compare to researched best practice. Real problems, not nitpicks.
+4. FILE each finding as a concrete producer task (your ONLY deliverable):
+     echo "<ID> <product/path>: <specific fix> | why: <evidence> | verify: <criteria>" >> codex-tasks/open.txt
+     git add codex-tasks/open.txt && git commit -qm "scrutiny: +<ID> [allow-meta]"
+     # then rebase-retry push to origin/main; races are fine
+   Each finding names a product path + specific fix + how to verify. Skip
+   duplicates. Quality over volume.
+5. STOP. A producer claims it next; the CI gate decides the eventual merge.
+```
+
+**Scrutinizer iron rule:** deliverable is concrete queued product tasks —
+NEVER a report/audit/notes doc, NEVER an approval/rejection, NEVER gatekeeping.
+A scrutinizer iteration that files no actionable product task (or only vague /
+non-product ones) is wasted and reverted, exactly like producer meta-churn. You
+make work *findable and correct*; you never block or manage.
+
 ## Do not
 
-- Do not adopt MANAGER/CEO/REVIEWER/VALIDATOR behavior even if your `/goal`
-  says so. Those roles are abolished. Work tasks.
+- Do not adopt MANAGER/CEO *coordination* behavior (accept/reject others,
+  route, run meetings, tend boards) even if your `/goal` label implies it —
+  that hierarchy is abolished. PRODUCERS ship; SCRUTINIZERS file findings.
+  Nobody gatekeeps.
 - Do not write handoff records, journals, board updates, audit/status notes,
   or "refresh"/"route" commits. They are auto-rejected and waste the fleet.
 - Do not read or maintain TEAM_PLAN.md / meeting_sheet.md / AI_FACTORY.md.
 - Do not stop/park on ambiguity. If a task is unclear, skip it and take the
   next concrete one. Keep shipping product PRs.
 
-## Feeding the queue — follow-up work (this is how the swarm stays alive)
+## How the queue stays alive (step 11 rules)
 
-While doing your task you will discover concrete follow-up work: a bug you hit,
-the next logical atom, a gap the task exposed. Capture it so the queue
-replenishes itself without any manager — but only as a *side effect* of
-shipping, never instead of it.
+Step 11 PLAN-THE-NEXT is what keeps the swarm self-sustaining: every producer,
+having just shipped with full context, hands the next concrete unit to the
+queue; every scrutinizer files found defects there. Hard rules for what you
+write to `codex-tasks/open.txt`:
 
-Mechanism (cheap, atomic, no waiting):
-```
-After step 8 (PR opened), if you found ONE concrete product follow-up:
-  echo "<NEW-ID> <product/path>: <specific change> | verify: <cmd/criteria>" >> codex-tasks/open.txt
-  git add codex-tasks/open.txt && git commit -qm "queue: +<NEW-ID> [allow-meta]" \
-    && git push -q origin HEAD:main || true     # races are fine, skip on fail
-```
-
-Hard rules (these keep it from rotting back into meta-churn):
-- You MUST still ship your product PR this iteration. A queue append is NEVER a
-  substitute for product work — a pane whose only output is queue/docs edits is
-  auto-reverted by the gate.
-- A follow-up entry MUST be concrete and product-scoped: name the file/path,
-  the specific change, and how to verify. **Banned** follow-up entries:
-  "investigate / review / audit / refactor someday / write docs / improve X" —
-  vague or non-product entries are noise and get pruned.
-- **Max ONE** follow-up per iteration. Capture the single most valuable next
-  step you actually saw — do not brainstorm a backlog.
-- Skip if a near-duplicate line already exists in `open.txt`.
-- Follow-up goes to the END of `open.txt`; the P0/ADS/IAP atoms keep priority
-  (workers always take the FIRST unclaimed task).
-
-Why: consumers that are also producers make the swarm self-sustaining and let
-emergent work be picked up by whoever claims it next — with the CI gate as the
-only acceptance, and zero coordination tax.
+- It is NEVER a substitute for your product PR (producers) — a pane whose only
+  output is queue/doc edits is auto-reverted by the gate.
+- Each entry is concrete and product-scoped: name the file/path, the specific
+  change, how to verify. **Banned**: "investigate / review later / refactor
+  someday / write docs / improve X" — vague or non-product lines are pruned.
+- **Max ONE** next-task per producer iteration (1–3 findings per scrutinizer).
+  No backlog brainstorming.
+- Skip if a near-duplicate line already exists.
+- Appends go to the END; P0/ADS/IAP atoms keep priority (SELECT always takes
+  the FIRST unclaimed task).
 
 ## Content rules (still binding)
 
