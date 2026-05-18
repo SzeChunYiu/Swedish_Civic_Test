@@ -24,7 +24,7 @@
       "hero.h1a": "通过测试。",
       "hero.h1b": "拿到护照。",
       "hero.h1c": "在仲夏节炫耀。",
-      "hero.lede": "一个安静的、非官方的瑞典公民身份考试学习应用。十二个简短章节,智能练习模式,还有一份让考试日没那么吓人的模拟考。",
+      "hero.lede": "一个安静的、非官方的瑞典公民身份考试学习应用。简短章节,智能练习模式,还有一份让考试日没那么吓人的模拟考。",
       "hero.cta1": "开始一轮练习 →",
       "hero.cta2": "随便试一题",
 
@@ -36,7 +36,8 @@
       "chap.eyebrow": "里面有什么",
       "chap.h1": "从肉桂卷到",
       "chap.h2": "卡尔十四世·约翰。",
-      "chap.deck": "十二个章节,大小刚好。每章都将官方材料与你在咖啡桌旁会从瑞典朋友那里听到的背景相结合。",
+      "chap.deck": "章节大小刚好。每章都将官方材料与你在咖啡桌旁会从瑞典朋友那里听到的背景相结合。",
+      "chap.13.t": "传统、节日与日常文化",
 
       "faq.eyebrow": "诚实地问",
       "faq.h1": "你会在咖啡桌旁问的",
@@ -103,7 +104,7 @@
       "hero.h1a": "通過測試。",
       "hero.h1b": "拿到護照。",
       "hero.h1c": "在仲夏節炫耀。",
-      "hero.lede": "一個安靜的、非官方的瑞典公民身分考試學習應用。十二個簡短章節,智慧練習模式,還有一份讓考試日沒那麼嚇人的模擬考。",
+      "hero.lede": "一個安靜的、非官方的瑞典公民身分考試學習應用。簡短章節,智慧練習模式,還有一份讓考試日沒那麼嚇人的模擬考。",
       "hero.cta1": "開始一輪練習 →",
       "hero.cta2": "隨便試一題",
 
@@ -115,7 +116,8 @@
       "chap.eyebrow": "裡面有什麼",
       "chap.h1": "從肉桂捲到",
       "chap.h2": "卡爾十四世·約翰。",
-      "chap.deck": "十二個章節,大小剛好。每章都將官方材料與你在咖啡桌旁會從瑞典朋友那裡聽到的背景相結合。",
+      "chap.deck": "章節大小剛好。每章都將官方材料與你在咖啡桌旁會從瑞典朋友那裡聽到的背景相結合。",
+      "chap.13.t": "傳統、節日與日常文化",
 
       "faq.eyebrow": "誠實地問",
       "faq.h1": "你會在咖啡桌旁問的",
@@ -182,7 +184,7 @@
       "hero.h1a": "اجتز الاختبار.",
       "hero.h1b": "احصل على الجواز.",
       "hero.h1c": "تباهَ في عيد منتصف الصيف.",
-      "hero.lede": "تطبيق دراسة هادئ وغير رسمي لاختبار المواطنة السويدي. اثنا عشر فصلاً قصيراً، ووضع تدريب ذكي، واختبار وهمي يجعل يوم الامتحان أقل رعباً.",
+      "hero.lede": "تطبيق دراسة هادئ وغير رسمي لاختبار المواطنة السويدي. فصول قصيرة، ووضع تدريب ذكي، واختبار وهمي يجعل يوم الامتحان أقل رعباً.",
       "hero.cta1": "ابدأ جولة تدريب ←",
       "hero.cta2": "جرّب سؤالاً",
 
@@ -194,7 +196,8 @@
       "chap.eyebrow": "ما بداخل التطبيق",
       "chap.h1": "من لفائف القرفة إلى",
       "chap.h2": "كارل الرابع عشر يوهان.",
-      "chap.deck": "اثنا عشر فصلاً بحجم مناسب. كل فصل يمزج المواد الرسمية مع السياق الذي قد تحصل عليه من صديق سويدي عند فنجان قهوة.",
+      "chap.deck": "فصول بحجم مناسب. كل فصل يمزج المواد الرسمية مع السياق الذي قد تحصل عليه من صديق سويدي عند فنجان قهوة.",
+      "chap.13.t": "التقاليد والأعياد والثقافة اليومية",
 
       "faq.eyebrow": "أسئلة صادقة",
       "faq.h1": "أسئلة قد تطرحها",
@@ -261,7 +264,7 @@
       "hero.h1a": "Imtixaanka uga gud.",
       "hero.h1b": "Hel baasaboorka.",
       "hero.h1c": "Ku faan munaasabadda Midsommar.",
-      "hero.lede": "App barasho aamusan oo aan rasmi ahayn oo loogu talagalay imtixaanka muwaadinnimada Iswiidhan. Laba iyo toban cutub oo gaaban, qaab tababar caqli badan, iyo imtixaan tijaabo ah oo ka yaraan cabsida ka yaraan sheekooyinka deriskaaga.",
+      "hero.lede": "App barasho aamusan oo aan rasmi ahayn oo loogu talagalay imtixaanka muwaadinnimada Iswiidhan. Cutubyo gaaban, qaab tababar caqli badan, iyo imtixaan tijaabo ah oo ka yaraan cabsida ka yaraan sheekooyinka deriskaaga.",
       "hero.cta1": "Bilow wareeg tababar →",
       "hero.cta2": "Isku day su'aal",
 
@@ -273,7 +276,8 @@
       "chap.eyebrow": "Waxa ku jira",
       "chap.h1": "Laga bilaabo kanelbullar ilaa",
       "chap.h2": "Karl XIV Johan.",
-      "chap.deck": "Laba iyo toban cutub, lagu cabbiray si aad u dhammeyso mid ka mid ah inta lagu jiro saafarinta. Mid kastaa wuxuu isku darayaa qoraallada rasmiga ah iyo macnaha aad ka heli laheyd saaxiib Sweden ah oo kafee la qaadanaya.",
+      "chap.deck": "Cutubyo kooban, lagu cabbiray si aad u dhammeyso mid ka mid ah inta lagu jiro saafarinta. Mid kastaa wuxuu isku darayaa qoraallada rasmiga ah iyo macnaha aad ka heli laheyd saaxiib Sweden ah oo kafee la qaadanaya.",
+      "chap.13.t": "Caadooyin, fasaxyo iyo dhaqanka maalinlaha ah",
 
       "faq.eyebrow": "Si daacad ah loo waydiiyey",
       "faq.h1": "Su'aalo aad waydiin lahayd",
