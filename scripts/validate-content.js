@@ -137,8 +137,13 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bfrom (?:13|15) years\b/i,
   /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
   /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
+  /^En anledning är(?: att)? (?:skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)\b/i,
   /^It was presented in (?:1918|1948)\b/i,
   /^Den presenterades (?:1918|1948)\b/i,
+  /^One reason is (?:to (?:protect employees|decide who becomes head of state)|better farming methods|EU membership|eU membership)\b/i,
+  /^En myndighet som\b/i,
+  /^An authority that\b/i,
+  /\beU membership\b/,
   /\bOne reason is that so\b/i,
   /\bhave\s+[^.?!]*\bin common\b/i,
   /\bhar\s+[^.?!]*\bgemensamt\b/i,
@@ -3371,6 +3376,7 @@ function ensureSentence(value) {
   return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 function lowerFirst(value) {
+  if (/^EU\b/.test(value)) return value;
   return value ? `${value[0].toLowerCase()}${value.slice(1)}` : value;
 }
 function upperFirst(value) {
@@ -3566,6 +3572,16 @@ function decisionStatementEn(subject, context, answer) {
     return `In ${yearContext[2]}, ${upperFirst(subject)} was ${yearContext[1]} to decide that ${normalizedAnswer}`;
   }
   return `${upperFirst(subject)} decided as ${context} that ${normalizedAnswer}`;
+}
+function supportStatementSv(subject, answer) {
+  if (/^En\s+/i.test(answer)) return `${upperFirst(subject)} är ${lowerFirst(answer)}`;
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+function supportStatementEn(subject, answer) {
+  if (/^(?:A|An)\s+/i.test(answer)) {
+    return `${upperFirst(subject)} is ${lowerLeadingEnglishArticle(answer)}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
 }
 function stripTrueFalsePromptSv(value) {
   return stripFinalPunctuation(value.replace(/^Sant eller falskt:\s*/i, ''));
@@ -3834,6 +3850,11 @@ function civicStatementSv(source, option) {
   match = q.match(/^Varför bildades Förenta nationerna efter andra världskriget$/i);
   if (match)
     return `Förenta nationerna bildades efter andra världskriget för att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Varför finns lagar på arbetsmarknaden i Sverige$/i);
+  if (match)
+    return `Lagar på arbetsmarknaden i Sverige finns för att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Varför ökade Sveriges befolkning under 1800-talet$/i);
+  if (match) return `Sveriges befolkning ökade under 1800-talet på grund av ${lowerFirst(answer)}`;
   match = q.match(/^Varför (.+)$/i);
   if (match) return reasonStatementSv(answer);
   match = q.match(/^Vad har (.+?) gemensamt$/i);
@@ -3862,7 +3883,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Hur bestäms (.+) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} i Sverige bestäms ${lowerFirst(answer)}`;
   match = q.match(/^Vilket stöd kan (.+?) ge (.+)$/i);
-  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+  if (match) return supportStatementSv(match[1], answer);
   match = q.match(/^Hur hjälper (.+?) till med (.+)$/i);
   if (match) {
     if (/^Att\s+/i.test(answer)) {
@@ -4103,6 +4124,11 @@ function civicStatementEn(source, option) {
   match = q.match(/^Why was the United Nations created after the Second World War$/i);
   if (match)
     return `The United Nations was created after the Second World War to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^Why does Sweden have labour-market laws$/i);
+  if (match) return `Sweden has labour-market laws to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^Why did Sweden’s population grow during the 19th century$/i);
+  if (match)
+    return `Sweden’s population grew during the 19th century because of ${lowerFirst(answer)}`;
   match = q.match(/^Why (.+)$/i);
   if (match) return reasonStatementEn(answer);
   match = q.match(/^What do (.+?) have in common$/i);
@@ -4130,7 +4156,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^How are (.+) set in Sweden$/i);
   if (match) return `${upperFirst(match[1])} in Sweden are set ${lowerFirst(answer)}`;
   match = q.match(/^What support can (.+?) provide to (.+)$/i);
-  if (match) return replaceLeadingEnglishSubject(match[1], answer);
+  if (match) return supportStatementEn(match[1], answer);
   match = q.match(/^How does (.+?) help with (.+)$/i);
   if (match) {
     if (/^To\s+/i.test(answer)) {
