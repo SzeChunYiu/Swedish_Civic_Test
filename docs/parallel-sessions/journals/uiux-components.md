@@ -47,3 +47,13 @@ A11y props: default `accessibilityRole="radio"`; derives `accessibilityLabel` fr
 Verification: `/home/billy/Swedish_Civic_Test/node_modules/.bin/prettier --check components/OptionCard.tsx` -> pass; token discipline grep on `components/OptionCard.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review OptionCard and then queue PillBadge if accepted.
+
+## Iteration 5 - 2026-05-18
+
+Component: PillBadge reward/status atom - `components/PillBadge.tsx`
+Variants/states implemented: `neutral`, `accent`, `success`, and `warning` variants; pill-shaped non-interactive badge for XP, streak, status, and alert counters; caller style and label style passthrough.
+Tokens used: `colors.surfaceWarm`, `colors.border`, `colors.badgeBlueBg`, `colors.badgeBlueText`, `colors.correctBg`, `colors.success`, `colors.incorrectBg`, `colors.warning`, `colors.textSecondary`, `radius.pill`, `space[0.5]`, `space[1.5]`, `space[4]`, `space.hairline`, and `typography.badge`.
+A11y props: default `accessible=true`; default `accessibilityRole="text"`; derives `accessibilityLabel` from string/number children; caller can override all inherited View accessibility props.
+Verification: `/home/billy/Swedish_Civic_Test/node_modules/.bin/prettier --check components/PillBadge.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/PillBadge.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/PillBadge.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review PillBadge and then queue ProgressBar if accepted.
