@@ -2645,3 +2645,24 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: accept/review the SETUP live-smoke count fix, but keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until scheduled/manual production deploy succeeds from current main and the live production URL passes `npm run test:site-live` without overrides.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-now` / `task/reviewer/live-deploy-runlog-1779112439`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Recheck `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` at current `origin/main` and inspect the failed scheduled deploy run evidence.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, `codex-tasks/setup.txt`, `codex-tasks/blockers.txt`, and current reviewer/validator queues.
+- Used a clean temporary worktree at `origin/main` `9023506` because the shared checkout has unrelated dirty lane files.
+- GitHub Actions API: latest scheduled deploy runs remain `26037443794` for `11b2b96` (failure), `26037143042` for `d4ffd91` (failure), and `26036978641` for `3a323ff` (failure); no newer scheduled deploy run exists for current `9023506`.
+- GitHub deployment API: latest Production success remains deployment `4726822421`, SHA `3d921720`, created `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`.
+- Downloaded the run `26037443794` log archive; it contains only `Deploy static site to Vercel production/system.txt` and ends while waiting for a hosted runner before workflow steps start.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` - exit 0, 5/5 passing.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and live smoke gate' scripts/build-config.test.js` - exit 0, 1/1 passing.
+- Served current local `site/` at `http://127.0.0.1:4339`; `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js http://127.0.0.1:4339` - exit 0 with 715 questions, Practice, Mock, Ebook, and no placeholder copy.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app` - exit 1 because `/questions.js` returns HTTP 404.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app` - exit 1 with `expected 715, found 57`, missing current Ebook helper wiring, and stale Swedish placeholder copy.
+- Workspace contract: pass; no product source files were edited.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` first for SETUP/release infrastructure; rerun or repair the scheduled/manual Production deployment path until a deployment from current `origin/main` exists and `npm run test:site-live` passes against that URL without overrides.
