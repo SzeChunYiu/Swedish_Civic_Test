@@ -652,3 +652,20 @@ Do not reopen the static asset-reference guard without fresh current-main
 missing-asset evidence. SETUP remains source-held unless REVIEWER/VALIDATOR
 files a new P0 site or release source atom; SITE-P0-5 remains external deploy
 freshness only. No Vercel CLI from this repo.
+
+MANAGER-build recheck 2026-05-19T00:38+02:00
+Current `origin/main` `730487b` remains locally ready after the generated
+single-choice cleanup and the latest SETUP live-deploy handoff. Clean manager
+verification in `/tmp/sct-manager-build-live-VAiSfL/wt` passed
+`node scripts/export-site-question-bank.js --check` (720 questions, 13
+chapters), `node --test scripts/check-live-site.test.js` 7/7,
+`npm run validate:content`, `npm run typecheck -- --pretty false`,
+`npm run test:ownership`, and `git diff --check`.
+
+Production is still stale on both known URLs. `dist-3u8o5zl6a` serves
+715/hash `afb9eec56629` while current main expects 720/hash `f2c8313b289e`;
+`dist-jgsjooi52` serves 715/hash `5d2710bebf7e` against the same expected
+current hash. Practice hub, wide layout, Mock, Ebook, and placeholder-copy
+checks pass on both URLs. Keep SETUP source-held unless fresh P0 site or
+release source evidence appears; keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as
+external deploy freshness/operator evidence only. No Vercel CLI from this repo.
