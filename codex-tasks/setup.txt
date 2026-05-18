@@ -88,6 +88,15 @@ Accepted P0 SETUP atoms:
       scripts/check-live-site.test.js`; local `npm run test:site-live`; `npm run
       typecheck -- --pretty false`; `npm run test:ownership`; and `git diff
       --check 701a181^..701a181` all exit 0.
+11. `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` accepted via PR #368 /
+    `c118147`.
+    - Clean manager verification on current `origin/main`: `npm run
+      test:static-site-privacy-copy` passed 2/2; `node --check site/app.js` and
+      `node --check scripts/static-site-privacy-copy.test.js` passed; source
+      spot-checks confirm Google AdSense, Google Mobile Ads (AdMob), consent,
+      local-progress, and one-time 29 SEK Remove Ads copy in English and
+      Swedish; `npm run typecheck -- --pretty false`, `npm run test:ownership`,
+      targeted Prettier, and `git diff --check` all exit 0.
 
 Active P0 SETUP atoms from the SITE-P0-5 live audit:
 
@@ -137,6 +146,10 @@ MANAGER-build acceptance 2026-05-18T16:32+02:00:
 PR #361 closed the same-count live hash guard. The active order remains:
 production deploy evidence first, privacy copy second.
 
+MANAGER-build acceptance 2026-05-18T16:36+02:00:
+PR #368 / `c118147` closed the static privacy/monetization copy defect. The
+active SITE-P0 order is now production deploy evidence only.
+
 1. `REVIEWER-SITE-LIVE-DEPLOY-STALE-1`
    - Scope: deployment workflow/config, production deploy evidence, and a
      focused live-site smoke gate.
@@ -152,24 +165,9 @@ production deploy evidence first, privacy copy second.
      is not accepted as live-deploy closure until production serves current
      `origin/main` and live smoke passes with the hash guard.
 
-2. `REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1`
-   - Scope: `site/app.js` privacy and FAQ i18n copy plus focused stale-copy
-     assertions.
-   - Required behavior: static `site/` accurately says web ads use Google
-     AdSense, the mobile app uses Google Mobile Ads/AdMob with consent, Remove
-     Ads is a one-time 29 SEK purchase that removes ads, and ads never collect
-     study answers or progress. English and Swedish runtime copy must not
-     claim ad rendering is disabled, the service sells nothing, or premium may
-     be added later.
-   - Required gates: focused static or browser assertion rejecting stale
-     strings such as `real ad rendering is disabled`, `avstängd för v1.0`,
-     `If we ever add premium`, and `Om vi någonsin lägger till premium`;
-     relevant `node --check` for changed site JS; `npm run test:ownership`;
-     and `git diff --check`.
-
 Existing P0 SETUP atoms behind the live-site P0 queue:
 
-3. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
+2. `REVIEWER-RELEASE-VALIDATION-PR-TRIGGER-1`
    - Scope: release-config/tooling.
    - Required behavior: `.github/workflows/release-validation.yml` runs on
      `pull_request` targeting `main`, while preserving the existing manual/tag
@@ -179,7 +177,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest full release-validation gate, plus `git diff --check`.
 
-4. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
+3. `REVIEWER-PRODUCTION-SUBMIT-GUARD-ORDER-1`
    - Scope: release-config/tooling.
    - Required behavior: `submit-production-guard --check-only` reports
      placeholder Apple submit identifiers (`appleId`, `ascAppId`,
@@ -189,7 +187,7 @@ Existing P0 SETUP atoms behind the live-site P0 queue:
      then `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` or the
      nearest release validation gate, plus `git diff --check`.
 
-5. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
+4. `REVIEWER-VISUAL-SMOKE-LAUNCH-OVERLAY-1`
    - Scope: SETUP/QA visual-smoke tooling and launch-ad test behavior.
    - Required behavior: visual-smoke screenshots are route-specific,
      inspectable UI evidence; launch sponsor/app-open overlays are dismissed or

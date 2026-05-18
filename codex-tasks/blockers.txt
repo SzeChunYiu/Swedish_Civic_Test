@@ -48,6 +48,14 @@ RESOLVED 2026-05-18T16:32+02:00:
 The live question-bank hash guard is green after PR #361 / `701a181`. Keep it
 as part of live deploy closure so same-count content drift cannot pass.
 
+RESOLVED 2026-05-18T16:36+02:00:
+`REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1` is green after PR #368 /
+`c118147`. Clean manager verification passed `npm run
+test:static-site-privacy-copy` 2/2, site/test JS syntax checks, source
+spot-checks for AdSense/AdMob/consent/local-progress/29 SEK Remove Ads copy in
+English and Swedish, typecheck, ownership, targeted Prettier, and `git diff
+--check`.
+
 STANDING POLICY (operator, hard — read every cycle):
 1. A dirty worktree from OTHER lanes' in-scope work is NORMAL in this
    parallel factory and is NOT a blocker. Lanes have disjoint write scope.
@@ -70,4 +78,3 @@ STANDING POLICY (operator, hard — read every cycle):
 # PR #279 / 9def23a plus handoff PR #280 / 41a6bcb. SITE-P0-5 reviewer audit
 # is complete via PR #296 / 82291b1 and queued the concrete defects below.
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1: production deploy is stale; PR #321 added the harness, PR #328 fixed current-count smoke behavior, and PR #361 added the live hash guard, but closure still needs production deploy evidence from current `origin/main`. Latest scheduled deploy runs fail before job start because the account payment/spending limit blocks GitHub Actions runner execution; restore Actions capacity or provide an operator-verified production deployment before accepting SITE-P0-5.
-REVIEWER-SITE-PRIVACY-MONETIZATION-COPY-1: static `site/app.js` privacy/FAQ i18n still advertises disabled ads/no-sales/premium-placeholder copy while current product copy requires AdSense on web, AdMob/Google Mobile Ads in app, consent-aware ads, local progress privacy, and one-time 29 SEK Remove Ads wording
