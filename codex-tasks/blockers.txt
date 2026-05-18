@@ -162,3 +162,17 @@ for q406/q407/q411/q446/q447 from clean current main; do not reopen or
 duplicate q351-q400 without fresh current-main regression evidence. Pane 2 /
 SETUP is also usage-limited after the live-deploy recheck; SETUP has no
 unblocked local source atom while SITE-P0-5 remains external deploy capacity.
+
+MANAGER-build rate-limit note 2026-05-18T22:19+02:00:
+Supersedes the 22:01 DATA-INTEGRITY route. `REVIEWER-GENERATED-TF-STANDALONE-Q401-Q450-CURRENT-1`
+is accepted on `origin/main` via DATA-INTEGRITY PR #690 / `85fe297` and
+manager acceptance PR #693 / `e022455`; do not duplicate q401-q450 without
+fresh current-main regression evidence. The current DATA-INTEGRITY source route
+is `VERIFY-GENERATED-TF-STANDALONE-Q451-Q500-POST642-1` for
+q454/q466/q470/q471/q479/q495 after VERIFY PR #692 / `8e3aa16` added q479 to
+the defect set. Reviewer PR #694 / `99c0960` queued q501-q550 evidence, but
+q501-q550 stays behind q451-q500 until q451 lands, rejects, or is explicitly
+abandoned. Pane 4 / DATA-INTEGRITY and Pane 2 / SETUP are usage-limited until
+May 23, 2026 at 23:11; SETUP still has no unblocked local source atom while
+SITE-P0-5 remains external deploy capacity. Do not run Vercel CLI from this
+repo.
