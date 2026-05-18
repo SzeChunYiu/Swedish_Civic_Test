@@ -58,8 +58,7 @@ export const provenanceCopy: Record<
   editorial: {
     labelSv: 'Redaktionell',
     labelEn: 'Editorial',
-    descriptionSv:
-      'Skriven av oss för att ge sammanhang som inte täcks direkt av UHR-materialet.',
+    descriptionSv: 'Skriven av oss för att ge sammanhang som inte täcks direkt av UHR-materialet.',
     descriptionEn:
       'Hand-written by us to give context that the UHR material does not cover directly.',
   },
