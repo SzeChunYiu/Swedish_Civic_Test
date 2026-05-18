@@ -2534,6 +2534,6 @@ Verification (commands + result):
 - `for f in site/app.js site/signin.js site/ebook-tools.js; do node --check "$f" || exit 1; done` - exit 0.
 - Served `site/` with `python3 -m http.server 8206 --bind 127.0.0.1`.
 - System-Chrome static-site pass on `#/` - exit 2 by design because one Sign in button was reachable and opened a modal with `Sync your progress.`, `Continue with Google`, `Continue with Apple`, `Email`, `Send magic link`, and `Beta: accounts are rolling out gradually`; console/page errors were 0.
-PR (number + merged?): pending
+PR (number + merged?): #281 / merged yes via squash commit `b919f0c`
 Accepted by worker? yes
 Next suggested validator action: include `site/` in `REVIEWER-ACCOUNT-SCOPE-1`; remove or hide static Sign in/OAuth/magic-link/account-sync UI, make ebook highlights/notes local-only or defer them without account prompts, and add a static-site guard rejecting reachable account/auth copy.
