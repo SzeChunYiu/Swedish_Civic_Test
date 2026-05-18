@@ -77,3 +77,13 @@ A11y props: default `accessibilityRole="button"`; derives `accessibilityLabel` f
 Verification: `./node_modules/.bin/prettier --write components/ChapterRow.tsx` -> unchanged; token discipline grep on `components/ChapterRow.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; post-rebase `./node_modules/.bin/prettier --check components/ChapterRow.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; `git diff --check origin/main..HEAD -- components/ChapterRow.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review ChapterRow and then queue DisclaimerBanner if accepted.
+
+## Iteration 8 - 2026-05-18
+
+Component: DisclaimerBanner independent-app notice atom - `components/DisclaimerBanner.tsx`
+Variants/states implemented: English and Swedish default disclaimer copy; optional caller-provided title/message; tokenized warm banner with accent rail; caller style, title style, and message style passthrough.
+Tokens used: `colors.surfaceWarm`, `colors.border`, `colors.accent`, `colors.textSecondary`, `colors.textDisclaimer`, `radius.card`, `radius.pill`, `space[0.5]`, `space[1.25]`, `space[1.5]`, `space.hairline`, `typography.badge`, and `typography.disclaimer`.
+A11y props: default `accessibilityRole="summary"`; grouped `accessible` banner; derives `accessibilityLabel` from visible title and message; decorative accent rail hidden with `accessibilityElementsHidden` and `importantForAccessibility="no"`.
+Verification: `./node_modules/.bin/prettier --check components/DisclaimerBanner.tsx` -> pass; token discipline grep on `components/DisclaimerBanner.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/DisclaimerBanner.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass.
+Blocked? no - scoped to COMPONENTS writable files only.
+Next: Manager can review DisclaimerBanner and then queue Screen if accepted.
