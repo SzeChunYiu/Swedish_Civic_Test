@@ -207,3 +207,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF/text was op
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold `VERIFY-GENERATED-TF-Q201-Q250-POST609-1` into the active DATA-INTEGRITY generated true/false cleanup with `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` and the false-explanation guard, then continue rolling VERIFY with q251-q300 or the next changed slice.
+
+Lane: CONTENT-VERIFY / CONTENT Pane 1
+Host/branch: local worktree `/tmp/sct-verify-q251-q300-pane1-1779132600`, branch `task/verify/q251-q300-pane1-1779132600`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: post-#618 rolling current-output refresh for `verify:data/questions.ts q251-q300`
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q251-q300-2026-05-18.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): UHR official `Sverige i fokus` PDF was opened from the current UHR URL for cited printed pages 12-17; q251-q300 facts, citations, answer keys, and ordinary distractors remain supported. Current output at `origin/main` `b8e66f7` clears the older q253/q254, q261/q262, q265/q266, q270, q273/q274, q285/q286, q289/q290, and q297/q298 splice/grammar defects; the remaining current defects are all 25 true/false rows in the slice carrying the redundant `Sant eller falskt:` / `True or false:` prefix plus `q255` retaining the generated false-answer explanation mismatch. Focused CSV/static/ledger assertion passed with 50 CSV rows, 50 static rows, 25 CSV/static prefix rows, false-explanation defect `q255`, zero old residual hits, and ledger status 25 ok / 25 defect; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` passed with 720 questions; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` passed with 720 questions / 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with static-site parity true; after linking the shared dependency install into the clean temp worktree, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `git diff --check` passed.
+PR (number + merged?): pending at handoff edit time
+Accepted by worker? yes
+Next suggested validator action: fold q251-q300's stale residual route into the active DATA-INTEGRITY generated true/false cleanup with `REVIEWER-GENERATED-TF-PREFIX-SURFACE-1` and the false-explanation guard, then continue rolling VERIFY with q301-q350 or the next changed slice.
