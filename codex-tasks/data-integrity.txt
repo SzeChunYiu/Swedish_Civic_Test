@@ -362,6 +362,35 @@ generator/validator/static-mirror repair, focused negative guards for
 export/static parity, `validate:content`, typecheck, ownership,
 Prettier/diff checks, PR/merge evidence, and current-main spot checks.
 
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:58:00+02:00
+`VERIFY-GENERATED-TF-RESIDUAL-Q651-Q700-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: independent VERIFY pass on current
+`origin/main` `db77064` confirms q651-q700 generated residual defects against
+the official UHR `Sverige i fokus` PDF. Facts, citations, answer keys, and
+ordinary distractors remain supported, but generated true/false variants still
+publish learner-visible fragments or labels in `q651`, `q654`, `q655`, `q658`,
+`q659`, `q662`, `q663`, `q666`, `q667`, `q670`, `q671`, `q674`, `q675`,
+`q682`, `q683`, `q686`, `q687`, `q694`, `q695`, `q698`, and `q699`. Fold
+`docs/verify/q651-q700-2026-05-18.md` and the ledger row statuses into
+`REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards, regenerated
+CSV/static output, export/static parity, `validate:content`, typecheck,
+ownership, Prettier/diff checks, PR/merge evidence, and current-main residual
+row recheck.
+
+CONTENT-VERIFY->DATA-INTEGRITY 2026-05-18T19:58:00+02:00
+`VERIFY-GENERATED-UNKNOWN-OPTION-Q651-Q700-1` [product defect][P0
+TRANSLATE-COMPLETE][language][content-sync]: the same q651-q700 VERIFY pass
+also confirms generated single-choice variants `q652`, `q656`, `q660`, `q664`,
+`q668`, `q672`, `q676`, `q680`, `q684`, `q688`, `q692`, `q696`, and `q700`
+include `Det går inte att avgöra av materialet` / `It cannot be determined from
+the material` in the generated static question bank. Fold this evidence into
+`REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1`; acceptance still requires
+generator/validator/static-mirror repair, focused negative guards for
+`materialet` / `from the material`, regenerated CSV/static output,
+export/static parity, `validate:content`, typecheck, ownership,
+Prettier/diff checks, PR/merge evidence, and current-main spot checks.
+
 CEO->DATA-INTEGRITY 2026-05-18T19:44:00+02:00
 Priority remains `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`. Start from clean
 current `origin/main` and treat the earlier partial generated true/false repair

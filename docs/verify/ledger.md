@@ -671,56 +671,56 @@ Allowed statuses: `ok`, `defect`, `restate`.
 | q648 | judgement | q126 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Några traditionella högtider under året | 45 | f38907d | defect | queued-data-integrity-unknown-option |
 | q649 | section-practice | q127 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | f38907d | ok | rolling-source-slice |
 | q650 | true-false | q127 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | f38907d | defect | queued-data-integrity-residual |
-| q651 | false-statement | q127 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q652 | judgement | q127 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q653 | section-practice | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q654 | true-false | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q655 | false-statement | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q656 | judgement | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q657 | section-practice | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | - | restate | oldest-unverified |
-| q658 | true-false | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | - | restate | oldest-unverified |
-| q659 | false-statement | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | - | restate | oldest-unverified |
-| q660 | judgement | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | - | restate | oldest-unverified |
-| q661 | section-practice | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q662 | true-false | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q663 | false-statement | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q664 | judgement | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q665 | section-practice | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | - | restate | oldest-unverified |
-| q666 | true-false | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | - | restate | oldest-unverified |
-| q667 | false-statement | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | - | restate | oldest-unverified |
-| q668 | judgement | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | - | restate | oldest-unverified |
-| q669 | section-practice | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q670 | true-false | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q671 | false-statement | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q672 | judgement | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q673 | section-practice | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | - | restate | oldest-unverified |
-| q674 | true-false | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | - | restate | oldest-unverified |
-| q675 | false-statement | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | - | restate | oldest-unverified |
-| q676 | judgement | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | - | restate | oldest-unverified |
-| q677 | section-practice | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q678 | true-false | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q679 | false-statement | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q680 | judgement | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q681 | section-practice | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q682 | true-false | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q683 | false-statement | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q684 | judgement | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | - | restate | oldest-unverified |
-| q685 | section-practice | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q686 | true-false | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q687 | false-statement | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q688 | judgement | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | - | restate | oldest-unverified |
-| q689 | section-practice | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q690 | true-false | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q691 | false-statement | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q692 | judgement | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | - | restate | oldest-unverified |
-| q693 | section-practice | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q694 | true-false | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q695 | false-statement | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q696 | judgement | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q697 | section-practice | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q698 | true-false | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q699 | false-statement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
-| q700 | judgement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | - | restate | oldest-unverified |
+| q651 | false-statement | q127 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | defect | queued-data-integrity-residual |
+| q652 | judgement | q127 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q653 | section-practice | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | ok | rolling-source-slice |
+| q654 | true-false | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | defect | queued-data-integrity-residual |
+| q655 | false-statement | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | defect | queued-data-integrity-residual |
+| q656 | judgement | q128 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q657 | section-practice | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | db77064 | ok | rolling-source-slice |
+| q658 | true-false | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | db77064 | defect | queued-data-integrity-residual |
+| q659 | false-statement | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | db77064 | defect | queued-data-integrity-residual |
+| q660 | judgement | q129 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Lucia | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q661 | section-practice | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | ok | rolling-source-slice |
+| q662 | true-false | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-residual |
+| q663 | false-statement | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-residual |
+| q664 | judgement | q130 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q665 | section-practice | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | db77064 | ok | rolling-source-slice |
+| q666 | true-false | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | db77064 | defect | queued-data-integrity-residual |
+| q667 | false-statement | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | db77064 | defect | queued-data-integrity-residual |
+| q668 | judgement | q131 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Påsk | 45 | db77064 | defect | queued-data-integrity-unknown-option |
+| q669 | section-practice | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | ok | rolling-source-slice |
+| q670 | true-false | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | defect | queued-data-integrity-residual |
+| q671 | false-statement | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | defect | queued-data-integrity-residual |
+| q672 | judgement | q132 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q673 | section-practice | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | db77064 | ok | rolling-source-slice |
+| q674 | true-false | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | db77064 | defect | queued-data-integrity-residual |
+| q675 | false-statement | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | db77064 | defect | queued-data-integrity-residual |
+| q676 | judgement | q133 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Sveriges nationaldag | 46 | db77064 | defect | queued-data-integrity-unknown-option |
+| q677 | section-practice | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | ok | rolling-source-slice |
+| q678 | true-false | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | ok | rolling-source-slice |
+| q679 | false-statement | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | ok | rolling-source-slice |
+| q680 | judgement | q134 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | defect | queued-data-integrity-unknown-option |
+| q681 | section-practice | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | ok | rolling-source-slice |
+| q682 | true-false | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | defect | queued-data-integrity-residual |
+| q683 | false-statement | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | defect | queued-data-integrity-residual |
+| q684 | judgement | q135 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Advent | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q685 | section-practice | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | ok | rolling-source-slice |
+| q686 | true-false | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | defect | queued-data-integrity-residual |
+| q687 | false-statement | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | defect | queued-data-integrity-residual |
+| q688 | judgement | q136 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Alla helgons dag | 46 | db77064 | defect | queued-data-integrity-unknown-option |
+| q689 | section-practice | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | ok | rolling-source-slice |
+| q690 | true-false | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | ok | rolling-source-slice |
+| q691 | false-statement | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | ok | rolling-source-slice |
+| q692 | judgement | q137 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Nya traditioner | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q693 | section-practice | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | ok | rolling-source-slice |
+| q694 | true-false | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-residual |
+| q695 | false-statement | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-residual |
+| q696 | judgement | q138 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-unknown-option |
+| q697 | section-practice | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | ok | rolling-source-slice |
+| q698 | true-false | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-residual |
+| q699 | false-statement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-residual |
+| q700 | judgement | q139 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | db77064 | defect | queued-data-integrity-unknown-option |
 | q701 | section-practice | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
 | q702 | true-false | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
 | q703 | false-statement | q140 | lib/content/derivedQuestions.ts -> data/questions.ts | ch13 | Traditioner och högtider | Jul | 47 | 332bfc9 | ok | rolling-source-slice |
