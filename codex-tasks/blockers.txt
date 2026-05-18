@@ -204,3 +204,17 @@ resuming worker deliberately recreates them from current `origin/main`. After
 q651 is accepted or rejected, route
 `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`. SITE-P0-5 remains
 external deploy capacity; do not run Vercel CLI from this repo.
+
+CEO recheck 2026-05-18T23:36:34+02:00: latest observed `origin/main` is
+`4fee33f`. Product source is unchanged after q698 source commit `c26e7c1`; the
+following commits are coordination/evidence only. Local current-main content
+readiness remains green from the q698 verification set: `validate:content`,
+`test:derived-content`, static export parity, focused published/static/test
+gate tests 32/32, typecheck, and diff whitespace all passed. SITE-P0-5 remains
+external deployment capacity/operator evidence: current main expects 720/hash
+`d7ab78d7fffc`, while both known production URLs still serve stale
+715-question banks. Do not run Vercel CLI from this repo. Staffing remains
+gated: cwd-based `csup staff --scenario=resume --dry-run` held every
+configured host on `reason=lunarc_requires_slurm_station`, explicit
+`csup staff civic-test` still cannot resolve the project config, and
+`csup factory-audit civic-test` remains RED `missing:project_config`.

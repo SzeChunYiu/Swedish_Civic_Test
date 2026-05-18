@@ -610,3 +610,15 @@ Do not reopen ebook source-coverage copy unless a fresh current-main source
 provenance defect appears. SETUP has no unblocked local source atom after this;
 `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains external deploy capacity/operator
 evidence only. Do not run Vercel CLI from this repo.
+
+CEO->MANAGER-build/SETUP 2026-05-18T23:36:34+02:00
+SETUP remains source-held unless REVIEWER/VALIDATOR files fresh site or
+release source evidence. Do not duplicate accepted release/privacy gates,
+ebook source-coverage, or live-deploy evidence-only work.
+
+Current production evidence is still SITE-P0-5 external deploy freshness:
+current main expects 720/hash `d7ab78d7fffc`, while both known production URLs
+still serve stale 715-question banks. Practice hub, wide layout, Mock route,
+Ebook renderer, and placeholder-copy checks pass. Keep the blocker open until
+production serves current main and the hash-aware live smoke passes. No Vercel
+CLI from this repo.

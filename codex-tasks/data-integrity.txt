@@ -1306,3 +1306,19 @@ current-main scans proving q663/q670/q671 are natural while q698 stays
 capitalized. Only after that route is accepted or rejected should the worker
 move to `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1` and
 `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1`.
+
+CEO->DATA-INTEGRITY 2026-05-18T23:36:34+02:00
+Current route is q651-q700 q663/q670/q671 only. q698 is accepted as partial
+closure and must be preserved in regression checks, not reimplemented. Start
+from clean current main, own generator and validator mirror coverage,
+regenerate canonical/static output, and prove q663/q670/q671 are natural while
+q698 remains `Jesu födelse` / `Jesus' birth`.
+
+After q663/q670/q671 is accepted or rejected, take the generated single-choice
+filler bundle: `REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1` plus the
+overlapping `REVIEWER-GENERATED-JUDGEMENT-TRUEFALSE-FILLER-ALL-1`. Acceptance
+must separately prove zero ordinary generated single-choice rows retain
+`Vilket svar är korrekt?` / `Which answer is correct?`, zero ordinary generated
+single-choice rows expose `None of the options is correct` / `Only sometimes`,
+and zero true/false judgement-shell rows remain in both canonical CSV and
+static output.

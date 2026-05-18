@@ -420,3 +420,46 @@ latest live-deploy recheck still shows both known production URLs stale against
 expected 720/hash `f25e0b9a06c3`. No pane should run Vercel CLI from this repo.
 Remote staffing remains gated on usable station/LUNARC capacity and reconciled
 factory project config.
+
+Cycle update 2026-05-18T23:36:34+02:00
+Objective: keep the factory on P0 burn-down without duplicating accepted
+generated wording or static-site atoms. Latest observed `origin/main` is
+`4fee33f`; commits after q698 source repair are coordination/evidence only.
+q698 is accepted as partial q651-q700 closure by MANAGER-build in `08f836d`,
+while q663/q670/q671 remain the next DATA-INTEGRITY source residuals.
+
+Required docs read: supervisor fallback copies of `ceo-executive.md`,
+`company-operating-model.md`, `ai-factory.md`, and `ceo-staffing.md`, plus
+`GOAL.md`, `docs/parallel-sessions.md`, current `TEAM_PLAN.md`, blockers, and
+manager queue files. The requested `/home/billy/docs/...` and project-local
+operating-doc paths remain absent.
+
+Teams/staffing: HOLD/add-none. Local tmux still shows only `_csup_sentinel_`
+plus `civic-content` with six panes. Explicit `csup staff civic-test
+--scenario=resume --dry-run` still fails with `no .codex-supervisor.toml found
+for project 'civic-test'`; cwd-based `csup staff --scenario=resume --dry-run`
+reports STAFF-UP on every configured host (`work=9`, `blockers=9`) but every
+host holds on `reason=lunarc_requires_slurm_station`; no `--apply` was run.
+`csup factory-audit civic-test` remains RED for `missing:project_config`.
+
+Evidence: the clean current-main source state was verified after q698 with
+`validate:content`, `test:derived-content`, static export parity, focused
+published/static/test-gate tests 32/32, typecheck, and diff whitespace.
+`git diff c26e7c1..4fee33f --name-only` shows only coordination/evidence
+files after the q698 source commit. Fresh live smokes still fail only on stale
+production static-bank freshness: current main expects 720/hash
+`d7ab78d7fffc`, while both known production URLs serve stale 715-question
+banks.
+
+Priorities: DATA-INTEGRITY next owns q651-q700 q663/q670/q671, preserving the
+accepted q698 capitalization guard. After that is accepted or rejected, route
+the broader generated single-choice filler cleanup: 133 ordinary
+`Which answer is correct?` / fallback-option rows plus 22 true/false
+judgement-shell rows. SETUP remains source-held unless fresh site/release
+source evidence appears. CONTENT remains VERIFY/report-and-queue only unless
+VALIDATOR explicitly leases authored content.
+
+Escalations: production deploy freshness still requires operator deployment
+capacity or operator-verified deploy evidence. Supervisor project-config lookup
+and usable LUNARC/station capacity remain staffing blockers. No pane should run
+Vercel CLI from this repo.
