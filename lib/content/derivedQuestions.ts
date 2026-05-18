@@ -30,12 +30,29 @@ function wrongOption(question: PracticeQuestion): QuestionOption {
   );
 }
 
-function publishedCopy(question: PracticeQuestion): PracticeQuestion {
-  return { ...question, reviewStatus: 'published' };
-}
-
 function uniqueTags(tags: string[]): string[] {
   return [...new Set(tags)];
+}
+
+function normalizedQuestionText(
+  type: PracticeQuestion['type'],
+  questionSv: string,
+  questionEn: string,
+): Pick<PracticeQuestion, 'questionSv' | 'questionEn'> {
+  if (type !== 'true_false') return { questionSv, questionEn };
+
+  return {
+    questionSv: ensureSentence(stripTrueFalsePromptSv(questionSv)),
+    questionEn: ensureSentence(stripTrueFalsePromptEn(questionEn)),
+  };
+}
+
+function publishedCopy(question: PracticeQuestion): PracticeQuestion {
+  return {
+    ...question,
+    ...normalizedQuestionText(question.type, question.questionSv, question.questionEn),
+    reviewStatus: 'published',
+  };
 }
 
 function normalizeSingleChoiceOptions(
@@ -71,12 +88,14 @@ function withSharedFields(
       ? normalizeSingleChoiceOptions(options, correctOptionId)
       : { options, correctOptionId };
 
+  const normalizedText = normalizedQuestionText(type, questionSv, questionEn);
+
   return {
     id,
     chapterId: source.chapterId,
     type,
-    questionSv,
-    questionEn,
+    questionSv: normalizedText.questionSv,
+    questionEn: normalizedText.questionEn,
     options: normalized.options,
     correctOptionId: normalized.correctOptionId,
     explanationSv: source.explanationSv,
@@ -192,6 +211,17 @@ function englishGerundPhrase(value: string): string {
   if (/ie$/i.test(lower)) gerund = `${lower.slice(0, -2)}ying`;
   else if (/[^aeiou]e$/i.test(lower)) gerund = `${lower.slice(0, -1)}ing`;
   return [gerund, ...rest].join(' ');
+}
+
+function englishCommonActivity(value: string): string {
+  return stripLeadingPurposeEn(value)
+    .trim()
+    .replace(/^Eating\b/i, 'eat')
+    .replace(/^Lighting\b/i, 'light')
+    .replace(/^Opening\b/i, 'open')
+    .replace(/^Holding\b/i, 'hold')
+    .replace(/\band opening\b/gi, 'and open')
+    .replace(/\band children getting\b/gi, 'and for children to get');
 }
 
 function swedishPurposeClause(value: string): string {
@@ -875,7 +905,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `Vid ${match[2]} ${frontedManyActionSv(answer)}`;
 
   match = q.match(/^Vad firar (.+?) traditionellt inom (.+)$/i);
-  if (match) return `${upperFirst(match[1])} firar traditionellt ${answer} inom ${match[2]}`;
+  if (match)
+    return `${upperFirst(match[1])} firar traditionellt ${lowerFirst(answer)} inom ${match[2]}`;
 
   match = q.match(/^Vad brukar man bjuda på (.+?) i samband med (.+)$/i);
   if (match) return `${upperFirst(match[1])} brukar man bjuda på ${lowerFirst(answer)}`;
@@ -1243,7 +1274,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `The church service early on the morning of 25 December is called ${answer}`;
 
   match = q.match(/^What is common on (.+?) in Sweden$/i);
-  if (match) return `On ${match[1]}, it is common to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) return `On ${match[1]}, it is common to ${englishCommonActivity(answer)}`;
 
   match = q.match(/^What do children often do with (.+?) at home$/i);
   if (match)
@@ -1262,7 +1293,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `At ${match[2]}, ${manyPeopleActionEn(answer)}`;
 
   match = q.match(/^What does (.+?) traditionally celebrate in (.+)$/i);
-  if (match) return `${upperFirst(match[1])} traditionally celebrates ${answer} in ${match[2]}`;
+  if (match)
+    return `${upperFirst(match[1])} traditionally celebrates ${lowerFirst(answer)} in ${match[2]}`;
 
   match = q.match(/^What is commonly served on (.+?) in connection with (.+)$/i);
   if (match) return `On ${match[1]}, people commonly serve ${lowerFirst(answer)}`;
@@ -1295,8 +1327,8 @@ function buildTrueStatementVariant(source: PracticeQuestion, id: string): Practi
     source,
     id,
     'true_false',
-    `Sant eller falskt: ${ensureSentence(generatedTrueFalseStatementSv(source, option, true))}`,
-    `True or false: ${ensureSentence(generatedTrueFalseStatementEn(source, option, true))}`,
+    ensureSentence(generatedTrueFalseStatementSv(source, option, true)),
+    ensureSentence(generatedTrueFalseStatementEn(source, option, true)),
     trueFalseOptions(),
     'true',
     ['published-variant', 'true-false'],
@@ -1309,8 +1341,8 @@ function buildFalseStatementVariant(source: PracticeQuestion, id: string): Pract
     source,
     id,
     'true_false',
-    `Sant eller falskt: ${ensureSentence(generatedTrueFalseStatementSv(source, option, false))}`,
-    `True or false: ${ensureSentence(generatedTrueFalseStatementEn(source, option, false))}`,
+    ensureSentence(generatedTrueFalseStatementSv(source, option, false)),
+    ensureSentence(generatedTrueFalseStatementEn(source, option, false)),
     trueFalseOptions(),
     'false',
     ['published-variant', 'false-statement'],

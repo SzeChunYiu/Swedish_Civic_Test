@@ -109,40 +109,47 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
-  /\bSant eller falskt:\s*Det stämmer att\s+(?:Ungefär|Havet)\b/i,
-  /\bTrue or false:\s*It is true that\s+(?:The|In|Approximately)\b/i,
-  /\bTrue or false:.*\bbelongs to\s+[a-zåäö][^.,"]*/i,
-  /\bSant eller falskt:.*\bhör till\s+[a-zåäö][^.,"]*/i,
-  /\bSant eller falskt:\s*(?:Det är korrekt att\s+)?(?:Det att|Svaret är)\b/i,
-  /\bTrue or false:\s*(?:It is correct that\s+)?(?:the answer is)\b/i,
-  /\bTrue or false:.*\bdescribes that\b/i,
-  /\bTrue or false:.*\bis\s+(?:be|judge)\b/i,
-  /\bTrue or false:.*\bis an example of municipal responsibilities\b/i,
-  /\bTrue or false:.*\b(?:has one vote each|may stand for election)\s+is part of\b/i,
-  /\bSant eller falskt:.*\b(?:har en röst var|får ställa upp)\s+ingår i\b/i,
-  /\bTrue or false:.*\bis a way to\b/i,
-  /\bSant eller falskt:.*\bär ett sätt att\b/i,
-  /\bTrue or false:.*\bapplies to\b/i,
-  /\bSant eller falskt:.*\bgäller för\b/i,
-  /\bTrue or false:.*\bare The\b/,
-  /\bTrue or false:\s*That hitting children is prohibited\b/i,
-  /\bTrue or false:.*\bdescribes\s+(?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)\b/i,
-  /\bSant eller falskt:.*\bbeskriver\s+(?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)\b/i,
-  /\bTrue or false:.*\bis the list that contains\b/i,
-  /\bSant eller falskt:.*\bär listan som innehåller\b/i,
-  /\bTrue or false:.*\babout public power in Sweden\b/i,
-  /\bSant eller falskt:.*\bom offentlig makt i Sverige\b/i,
-  /\bTrue or false:.*\bmeans it gives\b/i,
-  /\bSant eller falskt:.*\binnebär att den ger\b/i,
-  /\bTrue or false:.*\bOne reason is that so\b/i,
-  /\bTrue or false:.*\bhave\s+[^.?!]*\bin common\b/i,
-  /\bSant eller falskt:.*\bhar\s+[^.?!]*\bgemensamt\b/i,
-  /\bTrue or false:\s*(?:By|Apply|Leave|Live)\b/i,
-  /\bSant eller falskt:\s*(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
-  /\bSant eller falskt:\s*Påståendet är sant:/i,
-  /\bTrue or false:\s*The statement is true:/i,
-  /\bSant eller falskt:\s*(?:Det är inte sant att|Det stämmer inte att|Det stämmer att)\b/i,
-  /\bTrue or false:\s*(?:It is not true that|It is true that)\b/i,
+  /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
+  /\bIt is true that\s+(?:The|In|Approximately)\b/i,
+  /\bbelongs to\s+[a-zåäö][^.,"]*/i,
+  /\bhör till\s+[a-zåäö][^.,"]*/i,
+  /\b(?:Det är korrekt att\s+)?(?:Det att|Svaret är)\b/i,
+  /\b(?:It is correct that\s+)?(?:the answer is)\b/i,
+  /\bdescribes that\b/i,
+  /\bis\s+(?:be|judge)\b/i,
+  /\bis an example of municipal responsibilities\b/i,
+  /\b(?:has one vote each|may stand for election)\s+is part of\b/i,
+  /\b(?:har en röst var|får ställa upp)\s+ingår i\b/i,
+  /\bis a way to\b/i,
+  /\bär ett sätt att\b/i,
+  /\bapplies to\b/i,
+  /\bgäller för\b/i,
+  /\bare The\b/,
+  /^That hitting children is prohibited\b/i,
+  /\bdescribes\s+(?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)\b/i,
+  /\bbeskriver\s+(?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)\b/i,
+  /\bis the list that contains\b/i,
+  /\bär listan som innehåller\b/i,
+  /\babout public power in Sweden\b/i,
+  /\bom offentlig makt i Sverige\b/i,
+  /\bmeans it gives\b/i,
+  /\binnebär att den ger\b/i,
+  /\bOne reason is that so\b/i,
+  /\bhave\s+[^.?!]*\bin common\b/i,
+  /\bhar\s+[^.?!]*\bgemensamt\b/i,
+  /\bcommon to\s+(?:eating|lighting|opening|holding)\b/i,
+  /\bcelebrates The\b/,
+  /\bfirar traditionellt [A-ZÅÄÖ]/,
+  /^(?:By|Apply|Leave|Live)\b/i,
+  /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
+  /\bPåståendet är sant:/i,
+  /\bThe statement is true:/i,
+  /\b(?:Det är inte sant att|Det stämmer inte att|Det stämmer att)\b/i,
+  /\b(?:It is not true that|It is true that)\b/i,
+];
+const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
+  /^\s*Sant eller falskt\s*:/i,
+  /^\s*True or false\s*:/i,
 ];
 const GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [/\bmaterialet\b/i, /\bfrom the material\b/i];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
@@ -3245,9 +3252,19 @@ function findQuestionJudgementMetaStem(question) {
 }
 
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
-  const text = [question.questionSv, question.questionEn].join(' ');
+  if (question.type !== 'true_false') return null;
 
-  return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+  return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
+    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  );
+}
+
+function findQuestionTrueFalseStemPrefix(question) {
+  if (question.type !== 'true_false') return null;
+
+  return QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS.find(
+    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  );
 }
 
 function findGeneratedOptionSourceMaterialIssue(question) {
@@ -3386,6 +3403,16 @@ function englishGerundPhrase(value) {
   if (/ie$/i.test(lower)) gerund = `${lower.slice(0, -2)}ying`;
   else if (/[^aeiou]e$/i.test(lower)) gerund = `${lower.slice(0, -1)}ing`;
   return [gerund, ...rest].join(' ');
+}
+function englishCommonActivity(value) {
+  return stripLeadingPurposeEn(value)
+    .trim()
+    .replace(/^Eating\b/i, 'eat')
+    .replace(/^Lighting\b/i, 'light')
+    .replace(/^Opening\b/i, 'open')
+    .replace(/^Holding\b/i, 'hold')
+    .replace(/\band opening\b/gi, 'and open')
+    .replace(/\band children getting\b/gi, 'and for children to get');
 }
 function swedishPurposeClause(value) {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
@@ -3890,7 +3917,8 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad gör många med (.+?) vid (.+?) i Sverige$/i);
   if (match) return `Vid ${match[2]} ${frontedManyActionSv(answer)}`;
   match = q.match(/^Vad firar (.+?) traditionellt inom (.+)$/i);
-  if (match) return `${upperFirst(match[1])} firar traditionellt ${answer} inom ${match[2]}`;
+  if (match)
+    return `${upperFirst(match[1])} firar traditionellt ${lowerFirst(answer)} inom ${match[2]}`;
   match = q.match(/^Vad brukar man bjuda på (.+?) i samband med (.+)$/i);
   if (match) return `${upperFirst(match[1])} brukar man bjuda på ${lowerFirst(answer)}`;
   match = q.match(/^Hur många landskap är Sverige indelat i$/i);
@@ -4142,7 +4170,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^What is the church service early on the morning of 25 December called$/i);
   if (match) return `The church service early on the morning of 25 December is called ${answer}`;
   match = q.match(/^What is common on (.+?) in Sweden$/i);
-  if (match) return `On ${match[1]}, it is common to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) return `On ${match[1]}, it is common to ${englishCommonActivity(answer)}`;
   match = q.match(/^What do children often do with (.+?) at home$/i);
   if (match)
     return `Children often ${lowerFirst(stripLeadingPurposeEn(answer))} with ${match[1]} at home`;
@@ -4155,7 +4183,8 @@ function civicStatementEn(source, option) {
   match = q.match(/^What do many people do with (.+?) at (.+?) in Sweden$/i);
   if (match) return `At ${match[2]}, ${manyPeopleActionEn(answer)}`;
   match = q.match(/^What does (.+?) traditionally celebrate in (.+)$/i);
-  if (match) return `${upperFirst(match[1])} traditionally celebrates ${answer} in ${match[2]}`;
+  if (match)
+    return `${upperFirst(match[1])} traditionally celebrates ${lowerFirst(answer)} in ${match[2]}`;
   match = q.match(/^What is commonly served on (.+?) in connection with (.+)$/i);
   if (match) return `On ${match[1]}, people commonly serve ${lowerFirst(answer)}`;
   match = q.match(/^How many historical provinces is Sweden divided into$/i);
@@ -4189,24 +4218,16 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   if (variantIndex === 1) {
     const option = correctOption(sourceQuestion);
     return {
-      questionSv: `Sant eller falskt: ${ensureSentence(
-        generatedTrueFalseStatementSv(sourceQuestion, option, true),
-      )}`,
-      questionEn: `True or false: ${ensureSentence(
-        generatedTrueFalseStatementEn(sourceQuestion, option, true),
-      )}`,
+      questionSv: ensureSentence(generatedTrueFalseStatementSv(sourceQuestion, option, true)),
+      questionEn: ensureSentence(generatedTrueFalseStatementEn(sourceQuestion, option, true)),
     };
   }
 
   if (variantIndex === 2) {
     const option = wrongOption(sourceQuestion);
     return {
-      questionSv: `Sant eller falskt: ${ensureSentence(
-        generatedTrueFalseStatementSv(sourceQuestion, option, false),
-      )}`,
-      questionEn: `True or false: ${ensureSentence(
-        generatedTrueFalseStatementEn(sourceQuestion, option, false),
-      )}`,
+      questionSv: ensureSentence(generatedTrueFalseStatementSv(sourceQuestion, option, false)),
+      questionEn: ensureSentence(generatedTrueFalseStatementEn(sourceQuestion, option, false)),
     };
   }
 
@@ -11546,6 +11567,16 @@ function validateAuthoredSourcePartition(questionsToValidate, label, startQuesti
   });
 }
 
+function expectedPublishedSourceField(question, field) {
+  if (question.type === 'true_false' && field === 'questionSv') {
+    return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
+  }
+  if (question.type === 'true_false' && field === 'questionEn') {
+    return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
+  }
+  return question[field];
+}
+
 function validateAuthoredSourceParity() {
   if (
     !Array.isArray(baseQuestions) ||
@@ -11615,7 +11646,8 @@ function validateAuthoredSourceParity() {
       fail(`${label} published source reviewStatus is ${publishedQuestion.reviewStatus}`);
     }
     for (const field of PUBLISHED_SOURCE_PARITY_FIELDS) {
-      if (JSON.stringify(publishedQuestion[field]) !== JSON.stringify(question[field])) {
+      const expectedValue = expectedPublishedSourceField(question, field);
+      if (JSON.stringify(publishedQuestion[field]) !== JSON.stringify(expectedValue)) {
         publicationParityIsValid = false;
         fail(`${label} published source ${field} does not match authored source`);
       }
@@ -12267,6 +12299,7 @@ if (Array.isArray(questions)) {
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+      const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
       } else if (stemSourceAuthorityReference) {
@@ -12288,6 +12321,9 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (trueFalseStemPrefix) {
+        fail(`${label} contains a redundant true/false prefix in the stem`);
       }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;

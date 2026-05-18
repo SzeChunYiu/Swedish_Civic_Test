@@ -192,7 +192,7 @@ test('practice flow answers a question, shows source feedback, and advances', as
 
   await expect(page.getByText('Question 2')).toBeVisible();
   await expect(
-    page.getByText("True or false: Sweden's northernmost part lies north of the Arctic Circle."),
+    page.getByText("Sweden's northernmost part lies north of the Arctic Circle."),
   ).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toHaveCount(0);
 
