@@ -2625,3 +2625,23 @@ Verification (commands + result):
 PR (number + merged?): pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: review/accept the DATA-INTEGRITY static-bank sync for `REVIEWER-SITE-Q142-QUESTION-BANK-DRIFT-1`, then return to `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` with live smoke using 715 or a derived canonical count.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-current-NnJEol` / `task/reviewer/live-deploy-current-1779111776`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Recheck `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after the live-smoke count derivation fix landed.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, and current blocker/setup/validator queues.
+- Used a clean temporary worktree rebased to `origin/main` `11b2b96` because the shared checkout has unrelated dirty lane files.
+- `node --test scripts/check-live-site.test.js` - exit 0, 5/5 passing, including local static-bank count derivation.
+- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and live smoke gate' scripts/build-config.test.js` - exit 0, 1/1 passing.
+- Local current `site/` served at `http://127.0.0.1:4331`: default `node scripts/check-live-site.js http://127.0.0.1:4331` - exit 0 with 715 questions, Practice, Mock, Ebook, and no placeholder copy.
+- GitHub Actions API: latest scheduled deploy runs now exist but all are failing; newest run `26037443794` for `11b2b96` completed `failure`, and prior runs `26037143042` for `d4ffd91` and `26036978641` for `3a323ff` also completed `failure`.
+- GitHub deployments API: latest Production success remains deployment `4726822421`, SHA `3d921720f8c4`, created `2026-05-18T10:26:13Z`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`.
+- `SITE_LIVE_TIMEOUT_MS=30000 node scripts/check-live-site.js https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app` - exit 1 because `/practice.js` returns HTTP 404.
+- Latest successful Preview remains `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`; the default live check exits 1 with 57 questions, missing Ebook helper wiring, and stale v1.1 placeholder copy.
+- `git diff --check` - exit 0 before queue/journal edits.
+PR (number + merged?): pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: accept/review the SETUP live-smoke count fix, but keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until scheduled/manual production deploy succeeds from current main and the live production URL passes `npm run test:site-live` without overrides.
