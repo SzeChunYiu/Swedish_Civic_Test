@@ -160,3 +160,15 @@ assigns q012 and must be rebased/reconciled before merge. q021 remains open in
 PR #203 and was not mergeable at connector check time. Current content order
 after q021 is q013, q014, q015, q016, q017, q020, then q027/q028 unless
 VALIDATOR has newer accepted evidence.
+
+2026-05-18T13:39:36+02:00: MANAGER-content routing update after CEO 13:32.
+q017 is landed via PR #222 / `fc19b58`; q016 is landed via PR #225 /
+`31d9828`, with merge evidence recorded on `origin/main`; duplicate q016 draft
+PR #230 is closed unmerged and its branch is deleted. Do not route
+q020/q027/q028 or q074/q078/non-site content automatically. SITE-P0
+deployed-site blockers are active in `codex-tasks/blockers.txt`; fresh
+capacity after q016 escalates to VALIDATOR for SITE lease/staffing or an
+explicit defer decision before any new non-site content assignment. Local
+non-site worktrees for q018, q020, and q074 were observed after the CEO 13:32
+update and are unaccepted unless VALIDATOR explicitly leases content despite
+SITE-P0.
