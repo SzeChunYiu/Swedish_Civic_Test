@@ -176,3 +176,17 @@ errors.
 Next worker task queued: SETUP - take
 `REVIEWER-SITE-PRACTICE-RESULT-I18N-1` next, then mobile nav reachability, then
 static question-count copy. Keep Settings language rerender duplicate-guarded.
+
+Iteration: 2026-05-18T19:37+02:00
+Rows moved to accepted: none.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence.
+Evidence: reviewer PR #542 / `ab9ee0b` filed
+`REVIEWER-SITE-FLAG-PALETTE-DRIFT-1` against the static `site/` flag surfaces.
+This is separate from the React Native flag-constants blocker because the
+deployed static site owns its own CSS variables and flag renderers.
+Next worker task queued: SETUP - keep the already-active
+`REVIEWER-SITE-PRACTICE-RESULT-I18N-1` first, then take
+`REVIEWER-SITE-FLAG-PALETTE-DRIFT-1`, then mobile nav reachability, then static
+question-count copy. The flag atom needs immutable static-site flag colors plus
+a browser guard across all palettes in light and dark mode.
