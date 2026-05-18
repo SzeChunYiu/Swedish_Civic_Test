@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AccountSection } from '../../components/auth/AccountSection';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
@@ -126,6 +127,8 @@ export default function Screen() {
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
+      <AccountSection />
+
       <View style={styles.statsRow}>
         <MetricCard label={copy.levelMetric} value={level} tone="blue" />
         <MetricCard label={copy.xpMetric} value={totalXp} />

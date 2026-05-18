@@ -1,8 +1,11 @@
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AccountHeader } from '../../components/auth/AccountHeader';
+import { WelcomeBanner } from '../../components/auth/WelcomeBanner';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
+import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
@@ -158,18 +161,29 @@ export default function Screen() {
       title={copy.title}
       subtitle={copy.subtitle}
       rightSlot={
-        <View style={styles.goalCard}>
-          <Text accessibilityRole="header" style={styles.goalLabel}>
-            {copy.dailyGoalTitle}
-          </Text>
-          <Text style={styles.goalMetric}>
-            {completedToday}/{dailyGoalAnswers}
-          </Text>
-          <ProgressBar language={language} progress={progress} />
-          <Text style={styles.goalHint}>{nextAction}</Text>
+        <View style={styles.rightStack}>
+          <AccountHeader />
+          <View style={styles.goalCard}>
+            <Text accessibilityRole="header" style={styles.goalLabel}>
+              {copy.dailyGoalTitle}
+            </Text>
+            <Text style={styles.goalMetric}>
+              {completedToday}/{dailyGoalAnswers}
+            </Text>
+            <ProgressBar language={language} progress={progress} />
+            <Text style={styles.goalHint}>{nextAction}</Text>
+          </View>
         </View>
       }
     >
+      <WelcomeBanner />
+      {!monetizationEntitlements.adsDisabled ? (
+        <PricingWedge
+          questionCount={questions.length}
+          chapterCount={chapters.length}
+          language={language}
+        />
+      ) : null}
       <View style={styles.actions}>
         <Link
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
@@ -253,6 +267,10 @@ export default function Screen() {
 }
 
 const styles = StyleSheet.create({
+  rightStack: {
+    alignItems: 'flex-end',
+    gap: space[1],
+  },
   goalCard: {
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,

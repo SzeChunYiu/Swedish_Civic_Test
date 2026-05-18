@@ -1,13 +1,16 @@
 import { Link } from 'expo-router';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radius, space, typography } from '../../lib/theme';
 import { useAuth } from '../../lib/auth/AuthContext';
+import { deriveDisplayInfo } from '../../lib/auth/displayName';
 import { useRemoteEntitlement } from '../../lib/auth/entitlements';
+import { colors, radius, space, typography } from '../../lib/theme';
+import { Avatar } from './Avatar';
 
 export function AccountSection() {
-  const { status, user, signOut } = useAuth();
+  const { status, user } = useAuth();
   const { entitlement } = useRemoteEntitlement();
+  const info = deriveDisplayInfo(user);
 
   if (status === 'loading') {
     return (
@@ -21,12 +24,13 @@ export function AccountSection() {
   if (status === 'anonymous' || !user) {
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
+        <Text style={styles.sectionTitle}>Sign in</Text>
         <Text style={styles.subtitle}>
-          Sign in to sync your progress across devices and tie Remove-Ads to your account.
+          Sync your progress across devices and tie Remove-Ads to your account. Optional — the app
+          works fully anonymous.
         </Text>
         <Link
-          accessibilityLabel="Sign in"
+          accessibilityLabel="Open sign-in"
           accessibilityRole="link"
           href="/(auth)/sign-in"
           style={styles.primaryButton}
@@ -37,74 +41,83 @@ export function AccountSection() {
     );
   }
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (err) {
-      Alert.alert('Sign-out failed', err instanceof Error ? err.message : String(err));
-    }
-  };
-
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Account</Text>
-      <Text style={styles.subtitle}>Signed in as {user.email ?? user.id}</Text>
-      <Text style={styles.subtitle}>
-        Remove-Ads: {entitlement.removeAds ? 'active' : 'not active'}
-      </Text>
-      <Pressable
-        accessibilityLabel="Sign out"
-        accessibilityRole="button"
-        onPress={handleSignOut}
-        style={styles.secondaryButton}
-      >
-        <Text style={styles.secondaryButtonText}>Sign out</Text>
-      </Pressable>
-    </View>
+    <Link
+      accessibilityLabel={`Open account for ${info.name ?? info.email ?? 'your account'}`}
+      accessibilityRole="link"
+      href="/account"
+      style={styles.linkSection}
+    >
+      <View style={styles.row}>
+        <Avatar uri={info.avatarUrl} name={info.name} email={info.email} size={48} />
+        <View style={styles.textColumn}>
+          <Text numberOfLines={1} style={styles.name}>
+            {info.name ?? info.email}
+          </Text>
+          <Text numberOfLines={1} style={styles.subtitle}>
+            {entitlement.removeAds ? 'Remove-Ads · active' : 'Manage account →'}
+          </Text>
+        </View>
+      </View>
+    </Link>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
+    backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
     gap: space[1.5],
     padding: space[2],
   },
+  linkSection: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space[2],
+    textDecorationLine: 'none',
+  },
+  row: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space[1.5],
+  },
+  textColumn: {
+    flex: 1,
+    gap: space[0.5],
+  },
   sectionTitle: {
     color: colors.text,
+    fontFamily: typography.sectionTitle.fontFamily,
     fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
+    fontWeight: typography.sectionTitle.fontWeight,
+  },
+  name: {
+    color: colors.text,
+    fontFamily: typography.bodySemibold.fontFamily,
+    fontSize: typography.bodySemibold.fontSize,
+    fontWeight: typography.bodySemibold.fontWeight,
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
+    fontFamily: typography.bodyTight.fontFamily,
+    fontSize: typography.bodyTight.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
   },
   primaryButton: {
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
     borderRadius: radius.micro,
     color: colors.surface,
+    fontFamily: typography.navButton.fontFamily,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     overflow: 'hidden',
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
-  },
-  secondaryButton: {
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-  },
-  secondaryButtonText: {
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
   },
 });
