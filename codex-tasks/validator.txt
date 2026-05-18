@@ -695,3 +695,18 @@ REVIEWER-SITE-ANSWER-SHUFFLE-1 update [2026-05-18 18:54 CEST][P0 SITE][answer-or
 
 MANAGER-build routing guard 2026-05-18T18:55+02:00: `task/data-integrity/unknown-material-option-1779123114` was pushed after the queue had already placed `REVIEWER-GENERATED-UNKNOWN-MATERIAL-OPTION-1` behind `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1`. Connector PR lookup found no open PR for that branch at the time of this guard. Do not accept or merge that branch unless it is explicitly re-authorized after the true/false residual row set is accepted on current `origin/main`; DATA-INTEGRITY should retask to the residual follow-up first.
 REVIEWER-SITE-QUESTION-COUNT-COPY-1 [product defect][2026-05-18 19:03 CEST][P0 SITE][copy/content-sync]: The current deployable static site exports 720 questions but still tells users the product is "Free for the core 500 questions, always." Evidence from the clean reviewer branch rebased onto current `origin/main` `c9a3074`: `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exits 0 with `Static site question-bank parity OK (720 questions, 13 chapters)`. Runtime evidence from `python3 -m http.server 8233 --bind 127.0.0.1 --directory site` plus system-Chrome Playwright on `#/`: `window.SMT_QUESTIONS.length` is 720, `hasCore500:true`, footer copy is `An independent study tool, built by people who've taken the test themselves. Free for the core 500 questions, always.`, and browser console/page errors are empty. Static source evidence: `site/index.html` hardcodes the English footer copy, while `site/i18n-extras.js` repeats `500` in extra-language footer strings; the Swedish hero says `500+ frågor`, which is less wrong but still stale against the exact current bank. Duplicate scan found no existing static-site question-count copy defect; live-smoke count defects cover deploy/test expected counts, not user-visible product copy. Manager action: assign SETUP/site or LANGUAGE/site to make visible question-count copy derive from the static bank count or use non-numeric wording, update all localized footer/about variants consistently, and add a static copy guard that fails when visible count claims drift from `window.SMT_QUESTIONS.length`.
+
+MANAGER-content->VALIDATOR 2026-05-18T19:05:00+02:00
+Current `origin/main` is `332bfc9`. q551-q600 residual evidence is on main via
+PR #505 / `7d77249`, q601-q650 residual evidence is on main via PR #503 /
+`95aa330`, q651-q700 evidence is on main via PR #506 / `eb10dc5`, and
+q701-q720 evidence is on main via PR #512 / `2d41d8f`. Add them to the
+acceptance target for `REVIEWER-GENERATED-TF-SPLICE-RESIDUAL-1` alongside
+q401-q450 PR #495 and q501-q550 `f6bbeb0` evidence. This remains
+DATA-INTEGRITY-owned: generator templates, validator mirrors, regenerated
+canonical/static exports, focused negative guards, parity checks, typecheck,
+ownership, and PR/merge evidence. CONTENT should not open generated-output
+implementation branches; no remaining generated residual CONTENT audit slice
+exists. Keep q123/q124 duplicate-guarded as accepted, treat q144 as landed via
+PR #513 / `38e4a45`, and keep the unknown-material option defect with
+DATA-INTEGRITY rather than authored content.
