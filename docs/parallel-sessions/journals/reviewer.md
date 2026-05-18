@@ -2574,3 +2574,18 @@ Verification (commands + result):
 PR (number + merged?): #306 / pending at handoff commit time
 Accepted by worker? yes
 Next suggested validator action: assign SETUP/site copy work to update `site/app.js` EN/SV privacy and FAQ monetization strings for AdSense, AdMob/Google Mobile Ads consent, and Remove Ads 29 SEK, then add a static/browser guard rejecting stale disabled-ads/future-premium strings.
+
+Lane: REVIEWER
+Host/branch: `/tmp/sct-reviewer-live-recheck-KRg3qX` / `task/reviewer/site-live-recheck-1779111600`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: Recheck `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` after current `origin/main` advanced.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `docs/parallel-sessions/site.md`, `GOAL.md`, `docs/architecture.md`, and current blocker/setup/data-integrity/validator queues.
+- Rebased clean temporary worktree to `origin/main` `4636321e1287` after concurrent UI/content merges.
+- GitHub workflows/deployments API: `Scheduled Vercel deploy` is active with `runCount:0`; latest Production is still deployment `4726822421` from `2026-05-18T10:26:13Z`, SHA `3d921720f8c4`, URL `https://dist-oyquhbnhz-billy10384-5430s-projects.vercel.app`; latest Preview `4728409781` remains blocked; latest successful Preview remains `https://dist-g1pghzqa5-billy10384-5430s-projects.vercel.app`.
+- Served current local `site/` with `python3 -m http.server 4321 --bind 127.0.0.1`.
+- System-Chrome smoke across current local, latest Production, and latest successful Preview - exit 0 as evidence collection. Current local had `qCount:705`, `hubCards:13`, `mockLinks:2`, `mockStageExists:true`, and no Swedish ebook placeholder. Latest Production still had `qCount:0`, `hubCards:0`, `mockLinks:0`, `mockActivePage:"/"`, `mockStageExists:false`, and the old Swedish ebook placeholder. Latest successful Preview still had only `qCount:57`, `hubCards:12`, and the old Swedish ebook placeholder.
+PR (number + merged?): #313 / pending at handoff commit time
+Accepted by worker? yes
+Next suggested validator action: keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` as the first site P0 follow-up until a production deploy from current `origin/main` is live and protected by a live smoke gate.
