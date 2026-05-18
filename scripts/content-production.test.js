@@ -147,7 +147,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.mockExamAccessTypeUnionsValidated, 1);
   assert.equal(summary.mockExamAccessTypeInterfacesValidated, 6);
   assert.equal(summary.mockExamAccessTypeSchemaParityValidated, true);
-  assert.equal(summary.themeColorTokensValidated, 29);
+  assert.equal(summary.themeColorTokensValidated, 37);
   assert.equal(summary.themeSpaceTokensValidated, 24);
   assert.equal(summary.themeRadiusTokensValidated, 7);
   assert.equal(summary.themeTypographyTokensValidated, 22);
@@ -212,7 +212,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(summary.masteryRulesValidated, 7);
   assert.equal(summary.masteryRulesParityValidated, true);
-  assert.equal(summary.sourceQuestions, 137);
+  assert.equal(summary.sourceQuestions, 141);
   assert.equal(summary.generatedPublishedQuestions, expectedGeneratedQuestions);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);

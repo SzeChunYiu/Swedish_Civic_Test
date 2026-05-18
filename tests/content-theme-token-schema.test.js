@@ -16,7 +16,7 @@ test('theme token schema validates the exported design-token catalog', () => {
   const summary = JSON.parse(match[0]);
   const themeIndex = fs.readFileSync(path.join(repoRoot, 'lib/theme/index.ts'), 'utf8');
 
-  assert.equal(summary.themeColorTokensValidated, 29);
+  assert.equal(summary.themeColorTokensValidated, 37);
   assert.equal(summary.themeSpaceTokensValidated, 24);
   assert.equal(summary.themeRadiusTokensValidated, 7);
   assert.equal(summary.themeTypographyTokensValidated, 22);
