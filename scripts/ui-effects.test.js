@@ -84,6 +84,8 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
+  assert.match(source, /android_ripple=\{android_ripple \?\? \{ color: colors\.focusSoft/);
+  assert.match(source, /hitSlop=\{hitSlop \?\? space\[0\.5\]\}/);
   assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
   assert.match(source, /pressed && !disabled \? styles\.pressed : null/);
   assert.match(
