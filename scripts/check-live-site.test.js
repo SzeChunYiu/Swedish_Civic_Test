@@ -2,7 +2,12 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const test = require('node:test');
 
-const { checkLiveSite, normalizeBaseUrl, readStaticQuestionCount } = require('./check-live-site');
+const {
+  checkLiveSite,
+  normalizeBaseUrl,
+  readStaticQuestionCount,
+  resolveRequiredQuestionCount,
+} = require('./check-live-site');
 
 function generatedQuestions(count) {
   const questions = Array.from({ length: count }, (_, index) => ({ id: `q${index + 1}` }));
@@ -76,9 +81,14 @@ test('reads the generated static question count', () => {
   assert.equal(readStaticQuestionCount(generatedQuestions(705)), 705);
 });
 
+test('derives the expected live count from the local generated site bank', () => {
+  const count = resolveRequiredQuestionCount();
+  assert.ok(count >= 715);
+});
+
 test('live site check passes current static assets', async () => {
   await withStaticServer(currentAssets(), async (baseUrl) => {
-    const result = await checkLiveSite(baseUrl);
+    const result = await checkLiveSite(baseUrl, { requiredQuestionCount: 705 });
     assert.equal(result.ok, true);
     assert.equal(
       result.checks.every((check) => check.ok),
@@ -89,7 +99,7 @@ test('live site check passes current static assets', async () => {
 
 test('live site check rejects stale deploy assets', async () => {
   await withStaticServer(staleAssets(), async (baseUrl) => {
-    const result = await checkLiveSite(baseUrl);
+    const result = await checkLiveSite(baseUrl, { requiredQuestionCount: 705 });
     assert.equal(result.ok, false);
     assert.deepEqual(
       result.checks.filter((check) => !check.ok).map((check) => check.name),

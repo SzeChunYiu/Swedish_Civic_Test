@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
 const vm = require('node:vm');
+const fs = require('node:fs');
+const path = require('node:path');
 
-const REQUIRED_QUESTION_COUNT = Number(process.env.SITE_LIVE_REQUIRED_QUESTION_COUNT || 705);
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
+const LOCAL_SITE_QUESTIONS_PATH = path.join(__dirname, '..', 'site', 'questions.js');
 
 function normalizeBaseUrl(input) {
   const raw = String(input || process.env.SITE_LIVE_URL || '').trim();
@@ -41,6 +43,28 @@ function readStaticQuestionCount(source) {
   return questions.length;
 }
 
+function resolveRequiredQuestionCount(options = {}) {
+  if (Number.isInteger(options.requiredQuestionCount)) return options.requiredQuestionCount;
+
+  if (process.env.SITE_LIVE_REQUIRED_QUESTION_COUNT) {
+    const fromEnv = Number(process.env.SITE_LIVE_REQUIRED_QUESTION_COUNT);
+    if (Number.isInteger(fromEnv) && fromEnv > 0) return fromEnv;
+    throw new Error('SITE_LIVE_REQUIRED_QUESTION_COUNT must be a positive integer');
+  }
+
+  if (!fs.existsSync(LOCAL_SITE_QUESTIONS_PATH)) {
+    throw new Error(
+      'Cannot derive expected live question count; set SITE_LIVE_REQUIRED_QUESTION_COUNT',
+    );
+  }
+
+  const fromLocalSite = readStaticQuestionCount(fs.readFileSync(LOCAL_SITE_QUESTIONS_PATH, 'utf8'));
+  if (fromLocalSite <= 0) {
+    throw new Error('Cannot derive expected live question count from site/questions.js');
+  }
+  return fromLocalSite;
+}
+
 function pass(name, details = '') {
   return { name, ok: true, details };
 }
@@ -53,8 +77,9 @@ function containsAll(source, needles) {
   return needles.every((needle) => source.includes(needle));
 }
 
-async function checkLiveSite(inputUrl) {
+async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
+  const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const [index, practice, ebook, questions] = await Promise.all([
     fetchText(baseUrl, 'index.html'),
     fetchText(baseUrl, 'practice.js'),
@@ -66,9 +91,9 @@ async function checkLiveSite(inputUrl) {
   const checks = [];
 
   checks.push(
-    questionCount === REQUIRED_QUESTION_COUNT
+    questionCount === requiredQuestionCount
       ? pass('static question bank', `${questionCount} questions`)
-      : fail('static question bank', `expected ${REQUIRED_QUESTION_COUNT}, found ${questionCount}`),
+      : fail('static question bank', `expected ${requiredQuestionCount}, found ${questionCount}`),
   );
 
   checks.push(
@@ -129,4 +154,5 @@ module.exports = {
   checkLiveSite,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  resolveRequiredQuestionCount,
 };
