@@ -194,6 +194,12 @@ const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*True or false\s*:/i,
 ];
 const GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [/\bmaterialet\b/i, /\bfrom the material\b/i];
+const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
+  'Inget av alternativen stämmer',
+  'None of the options is correct',
+  'Endast ibland',
+  'Only sometimes',
+]);
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
@@ -3341,6 +3347,18 @@ function findGeneratedOptionSourceMaterialIssue(question) {
   return null;
 }
 
+function findGeneratedSingleChoiceFillerOptionIssue(question) {
+  if (question.type !== 'single_choice' || !Array.isArray(question.options)) return null;
+
+  for (const [index, option] of question.options.entries()) {
+    const texts = [option?.textSv, option?.textEn].map(normalizeOptionText);
+    const matchedText = texts.find((text) => GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS.has(text));
+    if (matchedText) return { index, text: matchedText };
+  }
+
+  return null;
+}
+
 function isSlugTag(value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -3884,6 +3902,68 @@ function falseStatementExplanationEn(source) {
 
   return source.explanationEn;
 }
+
+function statementTopicSv(source) {
+  const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
+
+  if (/^År 2000 blev Svenska kyrkan\b/i.test(statement)) {
+    return 'Svenska kyrkan och staten år 2000';
+  }
+
+  const match = statement.match(
+    /^(.+?)\s+(?:ligger|bidrar|väljer|ska|måste|har rätt|omfattar|blev|brukar|är)\b/i,
+  );
+  return match
+    ? match[1]
+        .replace(/^Den\b/, 'den')
+        .replace(/^Det\b/, 'det')
+        .replace(/^Oppositionen\b/, 'oppositionen')
+        .replace(/^Politiker\b/, 'politiker')
+        .replace(/^Public service-företag\b/, 'public service-företag')
+    : source.uhrReference.section;
+}
+
+function statementTopicEn(source) {
+  const statement = stripFinalPunctuation(stripTrueFalsePromptEn(source.questionEn));
+
+  if (/^In 2000, the Church of Sweden became\b/i.test(statement)) {
+    return 'the Church of Sweden and the state in 2000';
+  }
+
+  const match = statement.match(
+    /^(.+?)\s+(?:lies|help make|helps make|chooses|should|must|has the right|includes|became|is usually divided|is)\b/i,
+  );
+  if (!match) return source.uhrReference.section;
+  return lowerLeadingEnglishArticle(match[1])
+    .replace(/^Politicians\b/, 'politicians')
+    .replace(/^Public service companies\b/, 'public service companies');
+}
+
+function trueFalseStatementOptions(source) {
+  return [
+    {
+      id: 'true-statement',
+      textSv: ensureSentence(trueFalseSourceStatementSv(source, true)),
+      textEn: ensureSentence(trueFalseSourceStatementEn(source, true)),
+    },
+    {
+      id: 'false-statement',
+      textSv: ensureSentence(trueFalseSourceStatementSv(source, false)),
+      textEn: ensureSentence(trueFalseSourceStatementEn(source, false)),
+    },
+    {
+      id: 'both-statements',
+      textSv: 'Båda påståendena är korrekta',
+      textEn: 'Both statements are correct',
+    },
+    {
+      id: 'neither-statement',
+      textSv: 'Inget av påståendena är korrekt',
+      textEn: 'Neither statement is correct',
+    },
+  ];
+}
+
 function generatedTrueFalseStatementSv(source, option, variantIsTrue) {
   if (isTrueFalseSource(source)) return trueFalseSourceStatementSv(source, variantIsTrue);
   return truthStatementSv(civicStatementSv(source, option));
@@ -3894,25 +3974,25 @@ function generatedTrueFalseStatementEn(source, option, variantIsTrue) {
 }
 function judgementPromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Vilket alternativ stämmer med påståendet? ${ensureSentence(stripTrueFalsePromptSv(source.questionSv))}`;
+    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
   return `Vilket svar är korrekt? ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `Which option matches the statement? ${ensureSentence(stripTrueFalsePromptEn(source.questionEn))}`;
+    return `Which statement best matches ${statementTopicEn(source)}?`;
   }
   return `Which answer is correct? ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Välj rätt alternativ för påståendet: ${ensureSentence(stripTrueFalsePromptSv(source.questionSv))}`;
+    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
   return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `Choose the correct option for the statement: ${ensureSentence(stripTrueFalsePromptEn(source.questionEn))}`;
+    return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
   return `Which answer best matches? ${source.questionEn}`;
 }
@@ -4549,7 +4629,7 @@ function singleChoiceOptions(sourceQuestion) {
     return sourceQuestion.options;
   }
   if (sourceQuestion.type === 'true_false') {
-    return [...sourceQuestion.options, UNKNOWN_OPTION, SOMETIMES_OPTION];
+    return trueFalseStatementOptions(sourceQuestion);
   }
   return sourceQuestion.options || [];
 }
@@ -4573,7 +4653,7 @@ function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
   if (variantIndex === 0) {
     return normalizeSingleChoiceOptions(
       singleChoiceOptions(sourceQuestion),
-      sourceQuestion.correctOptionId,
+      isTrueFalseSource(sourceQuestion) ? 'true-statement' : sourceQuestion.correctOptionId,
     );
   }
 
@@ -4592,15 +4672,14 @@ function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
   }
 
   const correct = correctOption(sourceQuestion);
-  const wrong = wrongOption(sourceQuestion);
-  const isTrueFalseSource =
+  const sourceIsTrueFalse =
     sourceQuestion.options?.length === 2 &&
     ['true', 'false'].includes(sourceQuestion.correctOptionId);
-  const options = isTrueFalseSource
-    ? [...sourceQuestion.options, UNKNOWN_OPTION, SOMETIMES_OPTION]
-    : [correct, wrong, UNKNOWN_OPTION, SOMETIMES_OPTION];
+  const options = sourceIsTrueFalse
+    ? trueFalseStatementOptions(sourceQuestion)
+    : singleChoiceOptions(sourceQuestion);
 
-  return normalizeSingleChoiceOptions(options, correct.id);
+  return normalizeSingleChoiceOptions(options, sourceIsTrueFalse ? 'true-statement' : correct.id);
 }
 
 function isIsoDate(value) {
@@ -5543,6 +5622,7 @@ let generatedExplanationTemplateParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
 let generatedOptionSourceMaterialWordingValidated = 0;
+let generatedSingleChoiceFillerOptionsValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
@@ -12254,6 +12334,15 @@ function validateGeneratedAnswerTemplateParity() {
       } else {
         generatedOptionSourceMaterialWordingValidated += 1;
       }
+
+      const fillerOptionIssue = findGeneratedSingleChoiceFillerOptionIssue(variant);
+      if (fillerOptionIssue) {
+        fail(
+          `${label} option[${fillerOptionIssue.index}] uses generated single-choice filler option "${fillerOptionIssue.text}"`,
+        );
+      } else {
+        generatedSingleChoiceFillerOptionsValidated += 1;
+      }
     });
   });
 }
@@ -13067,6 +13156,7 @@ console.log(
       generatedPromptTemplateParityValidated,
       generatedAnswerTemplateParityValidated,
       generatedOptionSourceMaterialWordingValidated,
+      generatedSingleChoiceFillerOptionsValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
       publishedQuestionTypesValidated,

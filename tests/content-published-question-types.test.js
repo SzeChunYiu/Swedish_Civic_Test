@@ -61,6 +61,47 @@ test('published true/false question banks omit UI-afforded prefixes', () => {
   assert.deepEqual(csvOffenders, []);
 });
 
+test('generated single-choice banks omit true-false and filler option shells', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fillerOptionPattern =
+    /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
+
+  function singleChoiceOptionTexts(question) {
+    return (question.opts || []).flatMap((option) => [option.sv, option.en]);
+  }
+
+  function fillerRows(questions) {
+    return Array.from(questions)
+      .filter((question) => question.type === 'single_choice')
+      .filter((question) =>
+        singleChoiceOptionTexts(question).some((text) => fillerOptionPattern.test(text)),
+      )
+      .map((question) => question.id);
+  }
+
+  function trueFalseShellRows(questions) {
+    return Array.from(questions)
+      .filter((question) => question.type === 'single_choice')
+      .filter((question) => {
+        const texts = new Set(singleChoiceOptionTexts(question));
+        return (
+          texts.has('Sant') &&
+          texts.has('Falskt') &&
+          texts.has('True') &&
+          texts.has('False') &&
+          singleChoiceOptionTexts(question).some((text) => fillerOptionPattern.test(text))
+        );
+      })
+      .map((question) => question.id);
+  }
+
+  assert.deepEqual(fillerRows(generatedSiteBank), []);
+  assert.deepEqual(fillerRows(actualSiteBank), []);
+  assert.deepEqual(trueFalseShellRows(generatedSiteBank), []);
+  assert.deepEqual(trueFalseShellRows(actualSiteBank), []);
+});
+
 test('published question type schema rejects non-answerable flashcards', () => {
   const result = spawnSync(
     process.execPath,
@@ -1057,10 +1098,27 @@ const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
-    return String(contents)
-      .replace('Inget av alternativen stämmer', 'Det går inte att avgöra av materialet')
-      .replace('None of the options is correct', 'It cannot be determined from the material');
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      [
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map((question) =>",
+        "  question.id === 'q145'",
+        "    ? {",
+        "        ...question,",
+        "        options: question.options.map((option, index) =>",
+        "          index === 2",
+        "            ? { ...option, textSv: 'Det går inte att avgöra av materialet', textEn: 'It cannot be determined from the material' }",
+        "            : option,",
+        "        ),",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
   }
   return contents;
 };
@@ -1074,6 +1132,54 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /generated variant\[0\] option\[2\] uses source-material fallback wording/,
+  );
+});
+
+test('published question schema rejects generated single-choice filler options', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      [
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map((question) =>",
+        "  question.id === 'q148'",
+        "    ? {",
+        "        ...question,",
+        "        options: question.options.map((option, index) =>",
+        "          index === 2",
+        "            ? { ...option, textSv: 'Inget av alternativen stämmer', textEn: 'None of the options is correct' }",
+        "            : option,",
+        "        ),",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[3\] option\[2\] uses generated single-choice filler option "(?:Inget av alternativen stämmer|None of the options is correct)"/,
   );
 });
 

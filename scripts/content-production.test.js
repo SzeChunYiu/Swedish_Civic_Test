@@ -226,6 +226,10 @@ test('full content production validates published UHR-referenced questions', () 
     summary.generatedOptionSourceMaterialWordingValidated,
     summary.generatedPublishedQuestions,
   );
+  assert.equal(
+    summary.generatedSingleChoiceFillerOptionsValidated,
+    summary.generatedPublishedQuestions,
+  );
   assert.equal(summary.generatedTagTemplateParityValidated, summary.generatedPublishedQuestions);
   assert.equal(summary.questionSchemasValidated, summary.publishedQuestions);
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);

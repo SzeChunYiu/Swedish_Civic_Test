@@ -118,7 +118,7 @@ function trueFalseOptions(): QuestionOption[] {
 
 function singleChoiceOptions(source: PracticeQuestion): QuestionOption[] {
   if (source.options.length === 4) return source.options;
-  if (source.type === 'true_false') return [...source.options, UNKNOWN_OPTION, SOMETIMES_OPTION];
+  if (source.type === 'true_false') return trueFalseStatementOptions(source);
   return source.options;
 }
 
@@ -722,6 +722,67 @@ function falseStatementExplanationEn(source: PracticeQuestion): string {
   return source.explanationEn;
 }
 
+function statementTopicSv(source: PracticeQuestion): string {
+  const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
+
+  if (/^År 2000 blev Svenska kyrkan\b/i.test(statement)) {
+    return 'Svenska kyrkan och staten år 2000';
+  }
+
+  const match = statement.match(
+    /^(.+?)\s+(?:ligger|bidrar|väljer|ska|måste|har rätt|omfattar|blev|brukar|är)\b/i,
+  );
+  return match
+    ? match[1]
+        .replace(/^Den\b/, 'den')
+        .replace(/^Det\b/, 'det')
+        .replace(/^Oppositionen\b/, 'oppositionen')
+        .replace(/^Politiker\b/, 'politiker')
+        .replace(/^Public service-företag\b/, 'public service-företag')
+    : source.uhrReference.section;
+}
+
+function statementTopicEn(source: PracticeQuestion): string {
+  const statement = stripFinalPunctuation(stripTrueFalsePromptEn(source.questionEn));
+
+  if (/^In 2000, the Church of Sweden became\b/i.test(statement)) {
+    return 'the Church of Sweden and the state in 2000';
+  }
+
+  const match = statement.match(
+    /^(.+?)\s+(?:lies|help make|helps make|chooses|should|must|has the right|includes|became|is usually divided|is)\b/i,
+  );
+  if (!match) return source.uhrReference.section;
+  return lowerLeadingEnglishArticle(match[1])
+    .replace(/^Politicians\b/, 'politicians')
+    .replace(/^Public service companies\b/, 'public service companies');
+}
+
+function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
+  return [
+    {
+      id: 'true-statement',
+      textSv: ensureSentence(trueFalseSourceStatementSv(source, true)),
+      textEn: ensureSentence(trueFalseSourceStatementEn(source, true)),
+    },
+    {
+      id: 'false-statement',
+      textSv: ensureSentence(trueFalseSourceStatementSv(source, false)),
+      textEn: ensureSentence(trueFalseSourceStatementEn(source, false)),
+    },
+    {
+      id: 'both-statements',
+      textSv: 'Båda påståendena är korrekta',
+      textEn: 'Both statements are correct',
+    },
+    {
+      id: 'neither-statement',
+      textSv: 'Inget av påståendena är korrekt',
+      textEn: 'Neither statement is correct',
+    },
+  ];
+}
+
 function generatedTrueFalseStatementSv(
   source: PracticeQuestion,
   option: QuestionOption,
@@ -742,36 +803,28 @@ function generatedTrueFalseStatementEn(
 
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Vilket alternativ stämmer med påståendet? ${ensureSentence(
-      stripTrueFalsePromptSv(source.questionSv),
-    )}`;
+    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
   return `Vilket svar är korrekt? ${source.questionSv}`;
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Which option matches the statement? ${ensureSentence(
-      stripTrueFalsePromptEn(source.questionEn),
-    )}`;
+    return `Which statement best matches ${statementTopicEn(source)}?`;
   }
   return `Which answer is correct? ${source.questionEn}`;
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Välj rätt alternativ för påståendet: ${ensureSentence(
-      stripTrueFalsePromptSv(source.questionSv),
-    )}`;
+    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
   return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Choose the correct option for the statement: ${ensureSentence(
-      stripTrueFalsePromptEn(source.questionEn),
-    )}`;
+    return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
   return `Which answer best matches? ${source.questionEn}`;
 }
@@ -1612,6 +1665,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 }
 
 function buildSingleChoiceVariant(source: PracticeQuestion, id: string): PracticeQuestion {
+  const sourceIsTrueFalse = isTrueFalseSource(source);
   return withSharedFields(
     source,
     id,
@@ -1619,7 +1673,7 @@ function buildSingleChoiceVariant(source: PracticeQuestion, id: string): Practic
     singleChoicePromptSv(source),
     singleChoicePromptEn(source),
     singleChoiceOptions(source),
-    source.correctOptionId,
+    sourceIsTrueFalse ? 'true-statement' : source.correctOptionId,
     ['published-variant', 'section-practice'],
   );
 }
@@ -1656,11 +1710,10 @@ function buildFalseStatementVariant(source: PracticeQuestion, id: string): Pract
 
 function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): PracticeQuestion {
   const correct = correctOption(source);
-  const wrong = wrongOption(source);
   const sourceIsTrueFalse = isTrueFalseSource(source);
   const options = sourceIsTrueFalse
-    ? [...source.options, UNKNOWN_OPTION, SOMETIMES_OPTION]
-    : [correct, wrong, UNKNOWN_OPTION, SOMETIMES_OPTION];
+    ? trueFalseStatementOptions(source)
+    : singleChoiceOptions(source);
 
   return withSharedFields(
     source,
@@ -1669,7 +1722,7 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
     judgementPromptSv(source),
     judgementPromptEn(source),
     options,
-    correct.id,
+    sourceIsTrueFalse ? 'true-statement' : correct.id,
     ['published-variant', 'judgement'],
   );
 }

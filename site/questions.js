@@ -6609,12 +6609,12 @@
         "sv": "I södra Europa"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "In western Asia",
+        "sv": "I västra Asien"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "In North America",
+        "sv": "I Nordamerika"
       }
     ],
     "answer": 0,
@@ -6643,25 +6643,25 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: Sweden's northernmost part lies north of the Arctic Circle.",
-      "sv": "Välj rätt alternativ för påståendet: Sveriges nordligaste del ligger norr om polcirkeln."
+      "en": "Which statement is correct about Sweden's northernmost part?",
+      "sv": "Vilket påstående är korrekt om Sveriges nordligaste del?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+        "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Sweden's northernmost part does not lie north of the Arctic Circle.",
+        "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -6767,25 +6767,25 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? Sweden's northernmost part lies north of the Arctic Circle.",
-      "sv": "Vilket alternativ stämmer med påståendet? Sveriges nordligaste del ligger norr om polcirkeln."
+      "en": "Which statement best matches Sweden's northernmost part?",
+      "sv": "Vilket påstående stämmer bäst om Sveriges nordligaste del?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+        "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Sweden's northernmost part does not lie north of the Arctic Circle.",
+        "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -6947,23 +6947,23 @@
     },
     "opts": [
       {
-        "en": "About 1,600 kilometres",
-        "sv": "Cirka 1 600 kilometer"
-      },
-      {
         "en": "About 160 kilometres",
         "sv": "Cirka 160 kilometer"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "About 1,600 kilometres",
+        "sv": "Cirka 1 600 kilometer"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "About 16,000 kilometres",
+        "sv": "Cirka 16 000 kilometer"
+      },
+      {
+        "en": "About 60 kilometres",
+        "sv": "Cirka 60 kilometer"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
       "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
@@ -7120,23 +7120,23 @@
     },
     "opts": [
       {
-        "en": "The Baltic Sea",
-        "sv": "Östersjön"
-      },
-      {
         "en": "The North Sea",
         "sv": "Nordsjön"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Mediterranean Sea",
+        "sv": "Medelhavet"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The Baltic Sea",
+        "sv": "Östersjön"
+      },
+      {
+        "en": "The Atlantic Ocean",
+        "sv": "Atlanten"
       }
     ],
-    "answer": 0,
+    "answer": 2,
     "why": {
       "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
       "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
@@ -7303,12 +7303,12 @@
         "sv": "Hisingen och Orust"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Värmdö and Tjörn",
+        "sv": "Värmdö och Tjörn"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Malmö and Gothenburg",
+        "sv": "Malmö och Göteborg"
       }
     ],
     "answer": 0,
@@ -7338,25 +7338,25 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
-      "sv": "Välj rätt alternativ för påståendet: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat."
+      "en": "Which statement is correct about the Gulf Stream and the North Atlantic Current?",
+      "sv": "Vilket påstående är korrekt om Golfströmmen och den Nordatlantiska strömmen?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden has a mild climate compared with many other areas at the same latitude.",
+        "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
+        "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -7462,25 +7462,25 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
-      "sv": "Vilket alternativ stämmer med påståendet? Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat."
+      "en": "Which statement best matches the Gulf Stream and the North Atlantic Current?",
+      "sv": "Vilket påstående stämmer bäst om Golfströmmen och den Nordatlantiska strömmen?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden has a mild climate compared with many other areas at the same latitude.",
+        "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
+        "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -7647,12 +7647,12 @@
         "sv": "Smygehuk"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Treriksröset",
+        "sv": "Treriksröset"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Mälaren",
+        "sv": "Mälaren"
       }
     ],
     "answer": 0,
@@ -7825,12 +7825,12 @@
         "sv": "Östersjön, Kattegatt och Skagerrak"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Gotland, Öland, and Orust",
+        "sv": "Gotland, Öland och Orust"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Stockholm, Gothenburg, and Malmö",
+        "sv": "Stockholm, Göteborg och Malmö"
       }
     ],
     "answer": 0,
@@ -7999,12 +7999,12 @@
         "sv": "Nästan 1 miljon"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "About 50 million",
+        "sv": "Cirka 50 miljoner"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "About 100 million",
+        "sv": "Cirka 100 miljoner"
       }
     ],
     "answer": 0,
@@ -8174,12 +8174,12 @@
         "sv": "Olja, naturgas, ökenmark och tropiskt regn"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Coal, diamond mines, volcanic soil, and palm trees",
+        "sv": "Kol, diamantgruvor, vulkanjord och palmer"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Rice fields, cotton plantations, coral reefs, and tides",
+        "sv": "Risfält, bomullsplantager, korallrev och tidvatten"
       }
     ],
     "answer": 0,
@@ -8347,12 +8347,12 @@
         "sv": "Militärstyre"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Autocracy",
+        "sv": "Envälde"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Rule by companies",
+        "sv": "Företagsstyre"
       }
     ],
     "answer": 0,
@@ -8519,12 +8519,12 @@
         "sv": "Bara ett parti får ställa upp"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Voters must publicly show how they vote",
+        "sv": "Väljare måste visa offentligt hur de röstar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The government decides how all votes must be used",
+        "sv": "Regeringen bestämmer hur alla röster ska användas"
       }
     ],
     "answer": 0,
@@ -8691,12 +8691,12 @@
         "sv": "Förbjuda andra från att rösta i politiska val"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Force journalists to write certain opinions",
+        "sv": "Tvinga journalister att skriva vissa åsikter"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Stop people from talking about politics",
+        "sv": "Stoppa människor från att prata om politik"
       }
     ],
     "answer": 0,
@@ -8863,12 +8863,12 @@
         "sv": "Censur"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Segregation",
+        "sv": "Segregation"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Monarchy",
+        "sv": "Monarki"
       }
     ],
     "answer": 0,
@@ -9035,12 +9035,12 @@
         "sv": "Alla väljare får två röster var i nästa val"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The courts take over the Riksdag's tasks",
+        "sv": "Domstolarna tar över riksdagens uppgifter"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Society automatically becomes more integrated",
+        "sv": "Samhället blir automatiskt mer integrerat"
       }
     ],
     "answer": 0,
@@ -9207,12 +9207,12 @@
         "sv": "Domstolarna väljer alla riksdagsledamöter"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The king alone decides over the Riksdag",
+        "sv": "Kungen bestämmer ensam över riksdagen"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Government agencies vote the government into office",
+        "sv": "Myndigheter röstar fram regeringen"
       }
     ],
     "answer": 0,
@@ -9371,23 +9371,23 @@
     },
     "opts": [
       {
-        "en": "349",
-        "sv": "349"
-      },
-      {
         "en": "21",
         "sv": "21"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "290",
+        "sv": "290"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "349",
+        "sv": "349"
+      },
+      {
+        "en": "1,600",
+        "sv": "1 600"
       }
     ],
-    "answer": 0,
+    "answer": 2,
     "why": {
       "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
       "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
@@ -9551,12 +9551,12 @@
         "sv": "Kungen ensam"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Swedish Police Authority",
+        "sv": "Polismyndigheten"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The regional council",
+        "sv": "Regionfullmäktige"
       }
     ],
     "answer": 0,
@@ -9715,23 +9715,23 @@
     },
     "opts": [
       {
-        "en": "18 years old",
-        "sv": "18 år"
-      },
-      {
         "en": "16 years old",
         "sv": "16 år"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "18 years old",
+        "sv": "18 år"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "20 years old",
+        "sv": "20 år"
+      },
+      {
+        "en": "25 years old",
+        "sv": "25 år"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.",
       "sv": "Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap."
@@ -9895,12 +9895,12 @@
         "sv": "Politikerna måste alltid följa resultatet"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Referendums may only be held nationally",
+        "sv": "Folkomröstningar får bara hållas på nationell nivå"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They replace regular Riksdag elections",
+        "sv": "De ersätter ordinarie val till riksdagen"
       }
     ],
     "answer": 0,
@@ -10067,12 +10067,12 @@
         "sv": "Kung, kyrka och adel"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Police, court, and prison",
+        "sv": "Polis, domstol och fängelse"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Banks, companies, and households",
+        "sv": "Banker, företag och hushåll"
       }
     ],
     "answer": 0,
@@ -10231,23 +10231,23 @@
     },
     "opts": [
       {
-        "en": "To decide laws and how the state's money should be used",
-        "sv": "Att besluta om lagar och hur statens pengar ska användas"
-      },
-      {
         "en": "To manage regional public transport",
         "sv": "Att sköta regionernas kollektivtrafik"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To be Sweden's head of state",
+        "sv": "Att vara Sveriges statschef"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To decide laws and how the state's money should be used",
+        "sv": "Att besluta om lagar och hur statens pengar ska användas"
+      },
+      {
+        "en": "To investigate crimes alone",
+        "sv": "Att ensam utreda brott"
       }
     ],
-    "answer": 0,
+    "answer": 2,
     "why": {
       "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
       "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
@@ -10273,25 +10273,25 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: The Riksdag chooses the prime minister.",
-      "sv": "Välj rätt alternativ för påståendet: Riksdagen väljer statsminister."
+      "en": "Which statement is correct about the Riksdag?",
+      "sv": "Vilket påstående är korrekt om Riksdagen?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "The Riksdag chooses the prime minister, who is given the task of forming a government.",
+        "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "The Riksdag does not choose the prime minister.",
+        "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -10398,25 +10398,25 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? The Riksdag chooses the prime minister.",
-      "sv": "Vilket alternativ stämmer med påståendet? Riksdagen väljer statsminister."
+      "en": "Which statement best matches the Riksdag?",
+      "sv": "Vilket påstående stämmer bäst om Riksdagen?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "The Riksdag chooses the prime minister, who is given the task of forming a government.",
+        "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "The Riksdag does not choose the prime minister.",
+        "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -10575,23 +10575,23 @@
     },
     "opts": [
       {
-        "en": "They implement decisions and must follow laws and government instructions",
-        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
-      },
-      {
         "en": "They replace courts in criminal cases",
         "sv": "De ersätter domstolarna i brottmål"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They implement decisions and must follow laws and government instructions",
+        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They decide who becomes king or queen",
+        "sv": "De beslutar vem som blir kung eller drottning"
+      },
+      {
+        "en": "They write parties’ election platforms",
+        "sv": "De skriver partiernas valprogram"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "The government governs the country with the help of government agencies. Agencies carry out decisions in practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
       "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
@@ -10755,12 +10755,12 @@
         "sv": "Att döma i brottmål"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To decide constitutional laws",
+        "sv": "Att besluta om grundlagar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To appoint the prime minister",
+        "sv": "Att utse statsminister"
       }
     ],
     "answer": 0,
@@ -10927,12 +10927,12 @@
         "sv": "Att skicka ambassadörer till andra länder"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Deciding EU laws",
+        "sv": "Att bestämma EU-lagar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Choosing the crown princess",
+        "sv": "Att välja kronprinsessa"
       }
     ],
     "answer": 0,
@@ -11091,23 +11091,23 @@
     },
     "opts": [
       {
-        "en": "That the head of state is a king or queen but lacks political power",
-        "sv": "Att statschefen är kung eller drottning men saknar politisk makt"
-      },
-      {
         "en": "That the monarch has all political power",
         "sv": "Att monarken har all politisk makt"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "That the head of state is a king or queen but lacks political power",
+        "sv": "Att statschefen är kung eller drottning men saknar politisk makt"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "That the government is chosen by the king",
+        "sv": "Att regeringen väljs av kungen"
+      },
+      {
+        "en": "That municipalities are governed by the royal house",
+        "sv": "Att kommunerna styrs av kungahuset"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
       "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
@@ -11133,25 +11133,25 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: The opposition should scrutinize the government’s work and propose alternative policies.",
-      "sv": "Välj rätt alternativ för påståendet: Oppositionen ska granska regeringens arbete och föreslå annan politik."
+      "en": "Which statement is correct about the opposition?",
+      "sv": "Vilket påstående är korrekt om oppositionen?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Parties that do not support the government are called the opposition.",
+        "sv": "Partier som inte stödjer regeringen kallas opposition."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "The opposition should not scrutinize the government’s work and propose alternative policies.",
+        "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -11258,25 +11258,25 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? The opposition should scrutinize the government’s work and propose alternative policies.",
-      "sv": "Vilket alternativ stämmer med påståendet? Oppositionen ska granska regeringens arbete och föreslå annan politik."
+      "en": "Which statement best matches the opposition?",
+      "sv": "Vilket påstående stämmer bäst om oppositionen?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Parties that do not support the government are called the opposition.",
+        "sv": "Partier som inte stödjer regeringen kallas opposition."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "The opposition should not scrutinize the government’s work and propose alternative policies.",
+        "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -11435,23 +11435,23 @@
     },
     "opts": [
       {
-        "en": "Every four years",
-        "sv": "Vart fjärde år"
-      },
-      {
         "en": "Every year",
         "sv": "Varje år"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Every four years",
+        "sv": "Vart fjärde år"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Every five years",
+        "sv": "Vart femte år"
+      },
+      {
+        "en": "Only when the government asks for it",
+        "sv": "Endast när regeringen ber om det"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
       "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
@@ -11615,12 +11615,12 @@
         "sv": "Man måste äga en bostad i Sverige"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "You must be a member of a party",
+        "sv": "Man måste vara medlem i ett parti"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "You must be at least 16 years old",
+        "sv": "Man måste ha fyllt 16 år"
       }
     ],
     "answer": 0,
@@ -11649,28 +11649,28 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: Politicians in Sweden must follow the result of a referendum.",
-      "sv": "Välj rätt alternativ för påståendet: Politiker i Sverige måste följa resultatet av en folkomröstning."
+      "en": "Which statement is correct about politicians in Sweden?",
+      "sv": "Vilket påstående är korrekt om politiker i Sverige?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Politicians in Sweden do not have to follow the result of a referendum.",
+        "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Politicians in Sweden are required to follow the result of a referendum.",
+        "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
-    "answer": 1,
+    "answer": 0,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
       "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
@@ -11774,28 +11774,28 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? Politicians in Sweden must follow the result of a referendum.",
-      "sv": "Vilket alternativ stämmer med påståendet? Politiker i Sverige måste följa resultatet av en folkomröstning."
+      "en": "Which statement best matches politicians in Sweden?",
+      "sv": "Vilket påstående stämmer bäst om politiker i Sverige?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Politicians in Sweden do not have to follow the result of a referendum.",
+        "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Politicians in Sweden are required to follow the result of a referendum.",
+        "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
-    "answer": 1,
+    "answer": 0,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
       "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
@@ -11959,12 +11959,12 @@
         "sv": "För att rösterna ska räknas snabbare"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "So parties can see the choice",
+        "sv": "För att partierna ska kunna se valet"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "So only some voters can vote",
+        "sv": "För att bara vissa väljare ska kunna rösta"
       }
     ],
     "answer": 0,
@@ -12131,12 +12131,12 @@
         "sv": "De ersätter domstolarna"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They handle passports and national ID cards",
+        "sv": "De ansvarar för pass och nationella id-kort"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They directly decide all wages",
+        "sv": "De bestämmer alla löner direkt"
       }
     ],
     "answer": 0,
@@ -12303,12 +12303,12 @@
         "sv": "Partiet får alla platser"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The party receives no seats regardless of vote share",
+        "sv": "Partiet får inga platser oavsett röstandel"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The party receives seats only if the government approves it",
+        "sv": "Partiet får platser först om regeringen godkänner det"
       }
     ],
     "answer": 0,
@@ -12475,12 +12475,12 @@
         "sv": "Minst 1 procent av rösterna"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "At least 20 percent of the votes",
+        "sv": "Minst 20 procent av rösterna"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "At least 50 percent of the votes",
+        "sv": "Minst 50 procent av rösterna"
       }
     ],
     "answer": 0,
@@ -12647,12 +12647,12 @@
         "sv": "Skollagen, socialtjänstlagen, miljöbalken och semesterlagen"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Code of Judicial Procedure, Penal Code, Land Code, and Companies Act",
+        "sv": "Rättegångsbalken, brottsbalken, jordabalken och aktiebolagslagen"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The EU treaty, NATO treaty, Local Government Act, and Elections Act",
+        "sv": "EU-fördraget, Natofördraget, kommunallagen och vallagen"
       }
     ],
     "answer": 0,
@@ -12819,12 +12819,12 @@
         "sv": "All offentlig makt utgår från domstolarna"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The king makes all laws",
+        "sv": "Kungen stiftar alla lagar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Municipalities govern the government",
+        "sv": "Kommunerna styr regeringen"
       }
     ],
     "answer": 0,
@@ -12991,12 +12991,12 @@
         "sv": "Hur kollektivavtal tecknas"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "When municipal schools should open",
+        "sv": "När kommunala skolor ska öppna"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Which goods have VAT",
+        "sv": "Vilka varor som har moms"
       }
     ],
     "answer": 0,
@@ -13163,12 +13163,12 @@
         "sv": "Den ger rätt att gå på åkrar och in i privata trädgårdar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "It lets landowners ban all access to woods and land",
+        "sv": "Den låter markägare förbjuda all vistelse i skog och mark"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "It applies only to people who own land",
+        "sv": "Den gäller bara personer som äger mark"
       }
     ],
     "answer": 0,
@@ -13335,12 +13335,12 @@
         "sv": "Riksdag, regering, regioner och kommuner"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "SR, SVT, UR, and newspapers",
+        "sv": "SR, SVT, UR och tidningar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Unions, banks, and companies",
+        "sv": "Fackförbund, banker och företag"
       }
     ],
     "answer": 0,
@@ -13507,12 +13507,12 @@
         "sv": "Regering eller riksdag kan bestämma hur domstolar ska döma"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "A person can be sentenced without evidence and facts being reviewed",
+        "sv": "En person kan dömas utan att bevis och fakta granskas"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Legal certainty means that some people are above the law",
+        "sv": "Rättssäkerhet betyder att vissa personer står över lagen"
       }
     ],
     "answer": 0,
@@ -13679,12 +13679,12 @@
         "sv": "Domstolarna avgör bara frågor mellan föräldrar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "A judgment can never be appealed to a higher court",
+        "sv": "En dom kan aldrig överklagas till en högre domstol"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The Supreme Court tries all cases directly",
+        "sv": "Högsta domstolen prövar alla mål direkt"
       }
     ],
     "answer": 0,
@@ -13851,12 +13851,12 @@
         "sv": "Att besluta statens budget"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To appoint lay judges",
+        "sv": "Att utse nämndemän"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To finance public service broadcasting",
+        "sv": "Att finansiera public service"
       }
     ],
     "answer": 0,
@@ -14015,23 +14015,23 @@
     },
     "opts": [
       {
-        "en": "15 years",
-        "sv": "15 år"
-      },
-      {
         "en": "13 years",
         "sv": "13 år"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "15 years",
+        "sv": "15 år"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "18 years",
+        "sv": "18 år"
+      },
+      {
+        "en": "21 years",
+        "sv": "21 år"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
       "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
@@ -14195,12 +14195,12 @@
         "sv": "De ska ersätta politiska val"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They should always be controlled by the state",
+        "sv": "De ska alltid styras av staten"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They should only publish entertainment",
+        "sv": "De ska bara publicera underhållning"
       }
     ],
     "answer": 0,
@@ -14367,12 +14367,12 @@
         "sv": "Genom att staten bestämmer vad medier får skriva"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "By allowing only politicians to read authority documents",
+        "sv": "Genom att bara politiker får läsa myndigheters handlingar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "By making all authority decisions secret",
+        "sv": "Genom att alla myndighetsbeslut blir hemliga"
       }
     ],
     "answer": 0,
@@ -14401,25 +14401,25 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: A person who gives information to newspapers, radio, and TV has the right to be anonymous.",
-      "sv": "Välj rätt alternativ för påståendet: Den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym."
+      "en": "Which statement is correct about a person who gives information to newspapers, radio, and TV?",
+      "sv": "Vilket påstående är korrekt om den som lämnar uppgifter till tidningar, radio och tv?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "A person may provide information to newspapers, radio, and TV without being punished.",
+        "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.",
+        "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -14526,25 +14526,25 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? A person who gives information to newspapers, radio, and TV has the right to be anonymous.",
-      "sv": "Vilket alternativ stämmer med påståendet? Den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym."
+      "en": "Which statement best matches a person who gives information to newspapers, radio, and TV?",
+      "sv": "Vilket påstående stämmer bäst om den som lämnar uppgifter till tidningar, radio och tv?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "A person may provide information to newspapers, radio, and TV without being punished.",
+        "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.",
+        "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -14714,12 +14714,12 @@
         "sv": "Polisen, Skatteverket och Migrationsverket"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Riksdag, government, and courts",
+        "sv": "Riksdagen, regeringen och domstolarna"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "LO, TCO, and Saco",
+        "sv": "LO, TCO och Saco"
       }
     ],
     "answer": 0,
@@ -14749,25 +14749,25 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: Public service companies should be independent of political and other interests.",
-      "sv": "Välj rätt alternativ för påståendet: Public service-företag ska vara oberoende av politiska och andra intressen."
+      "en": "Which statement is correct about public service companies?",
+      "sv": "Vilket påstående är korrekt om public service-företag?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides.",
+        "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Public service companies should not be independent of political and other interests.",
+        "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -14874,25 +14874,25 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? Public service companies should be independent of political and other interests.",
-      "sv": "Vilket alternativ stämmer med påståendet? Public service-företag ska vara oberoende av politiska och andra intressen."
+      "en": "Which statement best matches public service companies?",
+      "sv": "Vilket påstående stämmer bäst om public service-företag?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides.",
+        "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Public service companies should not be independent of political and other interests.",
+        "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -15059,12 +15059,12 @@
         "sv": "Att aldrig läsa nyheter"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only trusting social media",
+        "sv": "Att bara lita på sociala medier"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Spreading information before checking it",
+        "sv": "Att sprida uppgifter innan man kontrollerar dem"
       }
     ],
     "answer": 0,
@@ -15231,12 +15231,12 @@
         "sv": "För att bestämma svenska kommunalskatter"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To replace the EU",
+        "sv": "För att ersätta EU"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To control all newspapers",
+        "sv": "För att kontrollera alla tidningar"
       }
     ],
     "answer": 0,
@@ -15403,12 +15403,12 @@
         "sv": "Den presenterades 1918 och gäller bara Europa"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "It says that only citizens have rights",
+        "sv": "Den säger att bara medborgare har rättigheter"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "It is only about vacation from work",
+        "sv": "Den handlar bara om semester från arbetet"
       }
     ],
     "answer": 0,
@@ -15575,12 +15575,12 @@
         "sv": "Att jämställdhet bara handlar om hur många kvinnor som finns i politiken"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "That women and men should have different rights in working life",
+        "sv": "Att kvinnor och män ska ha olika rättigheter i arbetslivet"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "That parental leave should only be taken by women",
+        "sv": "Att föräldraledighet bara ska tas av kvinnor"
       }
     ],
     "answer": 0,
@@ -15750,12 +15750,12 @@
         "sv": "Det är alltid en privat familjefråga och inte ett brott"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Honour-related violence can affect only adult women",
+        "sv": "Hedersrelaterat våld kan bara drabba vuxna kvinnor"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Child marriage is allowed if the family agrees",
+        "sv": "Barnäktenskap är tillåtet om familjen samtycker"
       }
     ],
     "answer": 0,
@@ -15923,12 +15923,12 @@
         "sv": "Det är alltid lagligt att köpa sex"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Buyer and seller are always punished equally",
+        "sv": "Både köpare och säljare straffas alltid lika"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The law only applies to companies",
+        "sv": "Lagen gäller bara företag"
       }
     ],
     "answer": 0,
@@ -16087,23 +16087,23 @@
     },
     "opts": [
       {
-        "en": "2020",
-        "sv": "2020"
-      },
-      {
         "en": "1979",
         "sv": "1979"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "2000",
+        "sv": "2000"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "2020",
+        "sv": "2020"
+      },
+      {
+        "en": "2024",
+        "sv": "2024"
       }
     ],
-    "answer": 0,
+    "answer": 2,
     "why": {
       "en": "The Convention on the Rights of the Child protects every child’s human rights. In Sweden, the convention has been law since 2020, so 2020 is the correct year.",
       "sv": "Barnkonventionen ska skydda alla barns mänskliga rättigheter. I Sverige har barnkonventionen varit lag sedan 2020, därför är 2020 rätt år."
@@ -16267,12 +16267,12 @@
         "sv": "Att barnkonventionen blev svensk lag"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "That bans on violence apply only at school",
+        "sv": "Att förbud mot våld bara gäller i skolan"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "That children are not covered by Swedish law",
+        "sv": "Att barn inte omfattas av svensk lag"
       }
     ],
     "answer": 0,
@@ -16439,12 +16439,12 @@
         "sv": "Danskar, norrmän, islänningar, tyskar och fransmän"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Students, pensioners, entrepreneurs, teachers, and doctors",
+        "sv": "Studenter, pensionärer, företagare, lärare och läkare"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "People from Stockholm, Gothenburg, Malmö, Uppsala, and Umeå",
+        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umebor"
       }
     ],
     "answer": 0,
@@ -16611,12 +16611,12 @@
         "sv": "Att besluta statens budget"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To judge criminal cases in court",
+        "sv": "Att döma brottmål i domstol"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To coordinate the EU’s four freedoms",
+        "sv": "Att samordna EU:s fyra friheter"
       }
     ],
     "answer": 0,
@@ -16783,12 +16783,12 @@
         "sv": "Det är förbjudet att gifta sig med en person av samma kön"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "It is only permitted to live together, not to marry",
+        "sv": "Det är bara tillåtet att leva tillsammans, inte att gifta sig"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "It is permitted only if an agency grants an exemption",
+        "sv": "Det är tillåtet bara om en myndighet ger dispens"
       }
     ],
     "answer": 0,
@@ -16955,12 +16955,12 @@
         "sv": "Att se till att skulder blir betalda och besluta om skuldsanering"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To defend Sweden militarily",
+        "sv": "Att försvara Sverige militärt"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To coordinate government cooperation between the Nordic countries",
+        "sv": "Att samordna regeringssamarbete mellan de nordiska länderna"
       }
     ],
     "answer": 0,
@@ -17127,12 +17127,12 @@
         "sv": "Alla privatägda företag"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only banks and insurance companies",
+        "sv": "Endast banker och försäkringsbolag"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Only non-profit associations",
+        "sv": "Bara ideella föreningar"
       }
     ],
     "answer": 0,
@@ -17291,23 +17291,23 @@
     },
     "opts": [
       {
-        "en": "About 70 percent",
-        "sv": "Cirka 70 procent"
-      },
-      {
         "en": "About 30 percent",
         "sv": "Cirka 30 procent"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "About 50 percent",
+        "sv": "Cirka 50 procent"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "About 70 percent",
+        "sv": "Cirka 70 procent"
+      },
+      {
+        "en": "About 95 percent",
+        "sv": "Cirka 95 procent"
       }
     ],
-    "answer": 0,
+    "answer": 2,
     "why": {
       "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
       "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
@@ -17471,12 +17471,12 @@
         "sv": "De bestämmer vilka som får rösta i riksdagsval"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They appoint all judges",
+        "sv": "De utser alla domare"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They run Sweden’s embassies",
+        "sv": "De driver Sveriges ambassader"
       }
     ],
     "answer": 0,
@@ -17643,12 +17643,12 @@
         "sv": "Genom att staten bestämmer alla löner"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Through municipal elections every four years",
+        "sv": "Genom kommunala val vart fjärde år"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Through courts in each individual case",
+        "sv": "Genom domstolar i varje enskilt fall"
       }
     ],
     "answer": 0,
@@ -17815,12 +17815,12 @@
         "sv": "För att bestämma vem som blir statschef"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To regulate the EU’s four freedoms",
+        "sv": "För att styra EU:s fyra friheter"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To decide the date of National Day",
+        "sv": "För att bestämma datumet för nationaldagen"
       }
     ],
     "answer": 0,
@@ -17987,12 +17987,12 @@
         "sv": "En myndighet som dömer i arbetsmiljöbrott"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "It sets all wages in Sweden",
+        "sv": "Den bestämmer alla löner i Sverige"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "It reviews public-service programmes",
+        "sv": "Den granskar public service-program"
       }
     ],
     "answer": 0,
@@ -18162,12 +18162,12 @@
         "sv": "Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To pay child allowances and pensions",
+        "sv": "Att betala ut barnbidrag och pensioner"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To review public-service companies’ programmes",
+        "sv": "Att granska public service-företagens program"
       }
     ],
     "answer": 0,
@@ -18335,12 +18335,12 @@
         "sv": "De ersätter regionernas och kommunernas ansvar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They are used only for private mortgages",
+        "sv": "De används bara för privata bostadslån"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They are paid only by people who work",
+        "sv": "De betalas bara av personer som arbetar"
       }
     ],
     "answer": 0,
@@ -18507,12 +18507,12 @@
         "sv": "Bara personer som arbetar betalar skatt"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "VAT is a payroll tax paid only by employers",
+        "sv": "Moms är en skatt på lön som bara arbetsgivare betalar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Welfare is financed only by private fees",
+        "sv": "Välfärden finansieras bara av privata avgifter"
       }
     ],
     "answer": 0,
@@ -18682,12 +18682,12 @@
         "sv": "Sjukhus, vårdcentraler och regional sjukvård"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Compulsory schools, elderly care, and social services",
+        "sv": "Grundskolor, äldreomsorg och socialtjänst"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Private mortgages, credit cards, and car purchases",
+        "sv": "Privata bostadslån, kreditkort och bilköp"
       }
     ],
     "answer": 0,
@@ -18855,12 +18855,12 @@
         "sv": "Att betala pensioner och studiestöd"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To arrange compulsory schools, elderly care, and social services",
+        "sv": "Att ordna grundskolor, äldreomsorg och socialtjänst"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To judge criminal cases in court",
+        "sv": "Att döma i brottmål vid domstol"
       }
     ],
     "answer": 0,
@@ -19027,12 +19027,12 @@
         "sv": "Pensioner, sjukförsäkring, föräldraförsäkring och studiestöd"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Hospitals, health centres, and regional health care",
+        "sv": "Sjukhus, vårdcentraler och regional sjukvård"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Courts, prosecutors, police, and prisons",
+        "sv": "Domstolar, åklagare, polis och fängelser"
       }
     ],
     "answer": 0,
@@ -19061,25 +19061,25 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: Swedish municipalities must offer older people support and help.",
-      "sv": "Välj rätt alternativ för påståendet: Sveriges kommuner ska erbjuda äldre personer stöd och hjälp."
+      "en": "Which statement is correct about Swedish municipalities?",
+      "sv": "Vilket påstående är korrekt om Sveriges kommuner?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own.",
+        "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Swedish municipalities do not have to offer older people support and help.",
+        "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -19186,25 +19186,25 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? Swedish municipalities must offer older people support and help.",
-      "sv": "Vilket alternativ stämmer med påståendet? Sveriges kommuner ska erbjuda äldre personer stöd och hjälp."
+      "en": "Which statement best matches Swedish municipalities?",
+      "sv": "Vilket påstående stämmer bäst om Sveriges kommuner?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own.",
+        "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Swedish municipalities do not have to offer older people support and help.",
+        "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -19371,12 +19371,12 @@
         "sv": "Som ett högteknologiskt informationssamhälle"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "As a country without countryside",
+        "sv": "Som ett land utan landsbygd"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "As a country without cities",
+        "sv": "Som ett land utan städer"
       }
     ],
     "answer": 0,
@@ -19546,12 +19546,12 @@
         "sv": "EU-medlemskapet"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Internet and smartphones",
+        "sv": "Internet och smarta telefoner"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Reduced food production",
+        "sv": "Minskad matproduktion"
       }
     ],
     "answer": 0,
@@ -19719,12 +19719,12 @@
         "sv": "Cirka tio tusen"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Almost the whole population",
+        "sv": "Nästan hela befolkningen"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "No Swedes emigrated",
+        "sv": "Inga svenskar utvandrade"
       }
     ],
     "answer": 0,
@@ -19891,12 +19891,12 @@
         "sv": "Sverige gick med i EU"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Women received the right to vote immediately",
+        "sv": "Kvinnor fick rösträtt direkt"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The Riksdag was abolished",
+        "sv": "Riksdagen avskaffades"
       }
     ],
     "answer": 0,
@@ -20063,12 +20063,12 @@
         "sv": "Bankrörelsen, kungarörelsen, hovrörelsen och gruvrörelsen"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only sports associations",
+        "sv": "Endast idrottsföreningar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Only political parties in the EU",
+        "sv": "Endast politiska partier i EU"
       }
     ],
     "answer": 0,
@@ -20227,23 +20227,23 @@
     },
     "opts": [
       {
-        "en": "1921",
-        "sv": "1921"
-      },
-      {
         "en": "1809",
         "sv": "1809"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "1865",
+        "sv": "1865"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "1921",
+        "sv": "1921"
+      },
+      {
+        "en": "2005",
+        "sv": "2005"
       }
     ],
-    "answer": 0,
+    "answer": 2,
     "why": {
       "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.",
       "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
@@ -20407,12 +20407,12 @@
         "sv": "Sveriges inträde i EU"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Introducing monarchy",
+        "sv": "Att införa monarki"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Creating public service",
+        "sv": "Att skapa public service"
       }
     ],
     "answer": 0,
@@ -20579,12 +20579,12 @@
         "sv": "Sverige saknade nästan all industri"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "All welfare services were abolished",
+        "sv": "Alla välfärdstjänster avskaffades"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Unemployment was extremely high throughout the period",
+        "sv": "Arbetslösheten var extremt hög under hela perioden"
       }
     ],
     "answer": 0,
@@ -20751,12 +20751,12 @@
         "sv": "Att plantera en miljon träd"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To start one million companies",
+        "sv": "Att starta en miljon företag"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To reduce Sweden’s population by one million",
+        "sv": "Att minska Sveriges befolkning med en miljon"
       }
     ],
     "answer": 0,
@@ -20923,12 +20923,12 @@
         "sv": "Bara hur människor firar midsommar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only Sweden’s constitutional laws",
+        "sv": "Endast Sveriges grundlagar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Who is head of state",
+        "sv": "Vem som är statschef"
       }
     ],
     "answer": 0,
@@ -21095,12 +21095,12 @@
         "sv": "Riksdagen och kommunfullmäktige"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Sami Parliament and Enforcement Authority",
+        "sv": "Sametinget och Kronofogden"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The EU Court and the Parliamentary Ombudsmen",
+        "sv": "EU-domstolen och JO"
       }
     ],
     "answer": 0,
@@ -21259,23 +21259,23 @@
     },
     "opts": [
       {
-        "en": "1995",
-        "sv": "1995"
-      },
-      {
         "en": "1949",
         "sv": "1949"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "1995",
+        "sv": "1995"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "2005",
+        "sv": "2005"
+      },
+      {
+        "en": "2024",
+        "sv": "2024"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
       "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
@@ -21439,12 +21439,12 @@
         "sv": "Att Sverige kan bestämma andra EU-länders regeringar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "That the Council of Europe writes Swedish municipal budgets",
+        "sv": "Att Europarådet skriver svenska kommunbudgetar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "That the EU replaces all laws of the Riksdag",
+        "sv": "Att EU ersätter riksdagens alla lagar"
       }
     ],
     "answer": 0,
@@ -21611,12 +21611,12 @@
         "sv": "Endast jordbrukspolitik"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Sweden’s municipal budgets",
+        "sv": "Sveriges kommunala budgetar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Replacing the UN",
+        "sv": "Att ersätta FN"
       }
     ],
     "answer": 0,
@@ -21783,12 +21783,12 @@
         "sv": "Att döma brottmål i svenska domstolar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To decide who may vote in Riksdag elections",
+        "sv": "Att besluta vem som får rösta i riksdagsval"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To broadcast public-service programmes with advertising",
+        "sv": "Att sända public service-program med reklam"
       }
     ],
     "answer": 0,
@@ -21955,12 +21955,12 @@
         "sv": "Lämna EU:s europeiska samarbete"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Abolish total defence",
+        "sv": "Avskaffa totalförsvaret"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Stay outside all defence alliances permanently",
+        "sv": "Stå utanför alla försvarsallianser permanent"
       }
     ],
     "answer": 0,
@@ -21989,25 +21989,25 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: Swedish total defence includes both military defence and civil defence.",
-      "sv": "Välj rätt alternativ för påståendet: Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
+      "en": "Which statement is correct about Swedish total defence?",
+      "sv": "Vilket påstående är korrekt om det svenska totalförsvaret?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden is responsible for protecting the country and its residents.",
+        "sv": "Sverige ansvarar för att skydda landet och dess invånare."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Swedish total defence does not include both military defence and civil defence.",
+        "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -22114,25 +22114,25 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? Swedish total defence includes both military defence and civil defence.",
-      "sv": "Vilket alternativ stämmer med påståendet? Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
+      "en": "Which statement best matches Swedish total defence?",
+      "sv": "Vilket påstående stämmer bäst om det svenska totalförsvaret?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden is responsible for protecting the country and its residents.",
+        "sv": "Sverige ansvarar för att skydda landet och dess invånare."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Swedish total defence does not include both military defence and civil defence.",
+        "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -22299,12 +22299,12 @@
         "sv": "Alla måste tillhöra samma religion"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Religion is forbidden in the home",
+        "sv": "Religion är förbjuden i hemmet"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Municipalities decide each person’s faith",
+        "sv": "Kommuner bestämmer varje persons tro"
       }
     ],
     "answer": 0,
@@ -22471,12 +22471,12 @@
         "sv": "Tryckfrihetsförordningen"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Act of Succession",
+        "sv": "Successionsordningen"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The Annual Leave Act",
+        "sv": "Semesterlagen"
       }
     ],
     "answer": 0,
@@ -22505,25 +22505,25 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: In 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated.",
-      "sv": "Välj rätt alternativ för påståendet: År 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
+      "en": "Which statement is correct about the Church of Sweden and the state in 2000?",
+      "sv": "Vilket påstående är korrekt om Svenska kyrkan och staten år 2000?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "The state and the Church of Sweden separated in 2000.",
+        "sv": "Staten och Svenska kyrkan skildes åt år 2000."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.",
+        "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -22630,25 +22630,25 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? In 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated.",
-      "sv": "Vilket alternativ stämmer med påståendet? År 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
+      "en": "Which statement best matches the Church of Sweden and the state in 2000?",
+      "sv": "Vilket påstående stämmer bäst om Svenska kyrkan och staten år 2000?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "The state and the Church of Sweden separated in 2000.",
+        "sv": "Staten och Svenska kyrkan skildes åt år 2000."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.",
+        "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -22815,12 +22815,12 @@
         "sv": "Den buddhistiska traditionen"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Hindu tradition",
+        "sv": "Den hinduiska traditionen"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The Islamic tradition",
+        "sv": "Den islamiska traditionen"
       }
     ],
     "answer": 0,
@@ -22979,23 +22979,23 @@
     },
     "opts": [
       {
-        "en": "Islam",
-        "sv": "Islam"
-      },
-      {
         "en": "Judaism",
         "sv": "Judendom"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Islam",
+        "sv": "Islam"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Hinduism",
+        "sv": "Hinduism"
+      },
+      {
+        "en": "Buddhism",
+        "sv": "Buddhism"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
       "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
       "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
@@ -23159,12 +23159,12 @@
         "sv": "Stora brasor och vårsånger"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Demonstrations on workers’ day",
+        "sv": "Demonstrationer på arbetarnas dag"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Ceremonies for new citizens",
+        "sv": "Ceremonier för nya medborgare"
       }
     ],
     "answer": 0,
@@ -23334,12 +23334,12 @@
         "sv": "Arbetarrörelsen arrangerar demonstrationer"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The new year is celebrated at night with fireworks",
+        "sv": "Det nya året firas på natten med fyrverkerier"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The Lucia celebration spreads light at the darkest time of year",
+        "sv": "Luciafirandet sprider ljus när året är som mörkast"
       }
     ],
     "answer": 0,
@@ -23510,12 +23510,12 @@
         "sv": "På nyårsafton den 31 december"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "On Walpurgis Night, 30 April",
+        "sv": "På Valborgsmässoafton den 30 april"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "On Lucia Day, 13 December",
+        "sv": "På Luciadagen den 13 december"
       }
     ],
     "answer": 0,
@@ -23686,12 +23686,12 @@
         "sv": "Att välkomna våren med stora brasor"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Celebrating National Day with speeches",
+        "sv": "Att fira nationaldagen med tal"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Holding demonstrations on workers’ day",
+        "sv": "Att ordna demonstrationer på arbetarnas dag"
       }
     ],
     "answer": 0,
@@ -23859,12 +23859,12 @@
         "sv": "Advent"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "First of May",
+        "sv": "Första maj"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "All Saints’ Day",
+        "sv": "Alla helgons dag"
       }
     ],
     "answer": 0,
@@ -24034,12 +24034,12 @@
         "sv": "Fyrverkerier vid midnatt för att fira det nya året"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Demonstrations and speeches about social and political issues",
+        "sv": "Demonstrationer och tal om sociala och politiska frågor"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Lucia processions with a crown of lights and special songs",
+        "sv": "Luciatåg med ljuskrona och särskilda sånger"
       }
     ],
     "answer": 0,
@@ -24210,12 +24210,12 @@
         "sv": "Det nya året med fester och fyrverkerier"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Spring with bonfires and spring songs",
+        "sv": "Våren med brasor och vårsånger"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Lucia with a crown of lights and saffron buns",
+        "sv": "Lucia med ljuskrona och lussebullar"
       }
     ],
     "answer": 0,
@@ -24386,12 +24386,12 @@
         "sv": "Öppna en adventskalender varje dag fram till julafton"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Celebrate the new year at night with fireworks",
+        "sv": "Fira det nya året på natten med fyrverkerier"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Welcome spring with large bonfires",
+        "sv": "Välkomna våren med stora brasor"
       }
     ],
     "answer": 0,
@@ -24562,12 +24562,12 @@
         "sv": "En lördag i slutet av oktober eller början av november"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "On Walpurgis Night, 30 April",
+        "sv": "På valborgsmässoafton den 30 april"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "On Lucia Day, 13 December",
+        "sv": "På luciadagen den 13 december"
       }
     ],
     "answer": 0,
@@ -24738,12 +24738,12 @@
         "sv": "Tända stora brasor och sjunga vårsånger"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Take part in demonstrations about social and political issues",
+        "sv": "Delta i demonstrationer om sociala och politiska frågor"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Celebrate the new year with fireworks at midnight",
+        "sv": "Fira det nya året med fyrverkerier vid midnatt"
       }
     ],
     "answer": 0,
@@ -24914,12 +24914,12 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Sweden’s National Day and First of May",
+        "sv": "Sveriges nationaldag och första maj"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Walpurgis Night and All Saints’ Day",
+        "sv": "Valborgsmässoafton och alla helgons dag"
       }
     ],
     "answer": 0,
@@ -25090,12 +25090,12 @@
         "sv": "Statliga myndigheter som väljer religion"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Municipal courts for religious questions",
+        "sv": "Kommunala domstolar för religiösa frågor"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Only Church of Sweden congregations",
+        "sv": "Endast Svenska kyrkans församlingar"
       }
     ],
     "answer": 0,
@@ -25266,12 +25266,12 @@
         "sv": "Alla religiösa högtider har förbjudits i Sverige"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only one world religion is represented in Sweden",
+        "sv": "Bara en världsreligion är representerad i Sverige"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Church of Sweden membership is increasing",
+        "sv": "Svenska kyrkans medlemsantal ökar"
       }
     ],
     "answer": 0,
@@ -25442,12 +25442,12 @@
         "sv": "Judendom kom till Sverige först efter år 2000"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "There are no Jewish congregations or synagogues in Sweden today",
+        "sv": "Det finns inga judiska församlingar eller synagogor i dagens Sverige"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Judaism is the largest religion in Sweden",
+        "sv": "Judendom är den största religionen i Sverige"
       }
     ],
     "answer": 0,
@@ -25618,12 +25618,12 @@
         "sv": "Att bestämma vilken religion elever ska tillhöra"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "To forbid pupils from talking about worldviews",
+        "sv": "Att förbjuda elever att tala om livsåskådningar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "To teach only about one religion from Sweden",
+        "sv": "Att bara undervisa om en religion från Sverige"
       }
     ],
     "answer": 0,
@@ -25794,12 +25794,12 @@
         "sv": "I början av 1900-talet"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "In 2000",
+        "sv": "År 2000"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "During the Middle Ages",
+        "sv": "Under medeltiden"
       }
     ],
     "answer": 0,
@@ -25970,12 +25970,12 @@
         "sv": "Bara Svenska kyrkan och inga andra samfund"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only Buddhist and Hindu temples",
+        "sv": "Endast buddhistiska och hinduiska tempel"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Mosques and Muslim prayer rooms",
+        "sv": "Moskéer och muslimska bönelokaler"
       }
     ],
     "answer": 0,
@@ -26149,12 +26149,12 @@
         "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "That National Day became a public holiday through a Riksdag decision",
+        "sv": "Att nationaldagen blev helgdag genom riksdagsbeslut"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "That the Church of Sweden and the state separated in 2000",
+        "sv": "Att Svenska kyrkan och staten skildes åt år 2000"
       }
     ],
     "answer": 0,
@@ -26326,12 +26326,12 @@
         "sv": "Att helt fritt välja vilken religion som helst eller ingen religion alls"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "That the state and the Church of Sweden separated",
+        "sv": "Att staten och Svenska kyrkan skildes åt"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "That all old churches in Sweden became government agencies",
+        "sv": "Att alla gamla kyrkor i Sverige blev statliga myndigheter"
       }
     ],
     "answer": 0,
@@ -26502,12 +26502,12 @@
         "sv": "Att staten väljer religion åt varje invånare"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "That only members of the Church of Sweden may practice religion",
+        "sv": "Att bara medlemmar i Svenska kyrkan får utöva religion"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "That school religion studies replace all other subjects",
+        "sv": "Att skolans religionskunskap ersätter alla andra ämnen"
       }
     ],
     "answer": 0,
@@ -26681,12 +26681,12 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Sweden’s National Day and First of May",
+        "sv": "Sveriges nationaldag och första maj"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Walpurgis Night and Midsummer",
+        "sv": "Valborgsmässoafton och midsommar"
       }
     ],
     "answer": 0,
@@ -26864,12 +26864,12 @@
         "sv": "Endast statliga ceremonier utan religiösa inslag"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only holidays that came with immigrants",
+        "sv": "Bara högtider som kommit med invandrare"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Only church services on Christmas Day",
+        "sv": "Enbart gudstjänster på juldagen"
       }
     ],
     "answer": 0,
@@ -27042,12 +27042,12 @@
         "sv": "Ett buddhistiskt kungarike"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "A country without Christian churches",
+        "sv": "Ett land utan kristna kyrkor"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "A country where Islam was largest",
+        "sv": "Ett land där islam var störst"
       }
     ],
     "answer": 0,
@@ -27218,12 +27218,12 @@
         "sv": "Bli Sveriges största religiösa grupp"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Build Sweden’s first mosques",
+        "sv": "Bygga Sveriges första moskéer"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Leave the Church of Sweden without conditions",
+        "sv": "Lämna Svenska kyrkan utan villkor"
       }
     ],
     "answer": 0,
@@ -27394,12 +27394,12 @@
         "sv": "Katolska och ortodoxa kyrkor"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Hinduism and Buddhism",
+        "sv": "Hinduism och buddhism"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Lutheran and Protestant tradition",
+        "sv": "Lutheransk och protestantisk tradition"
       }
     ],
     "answer": 0,
@@ -27573,12 +27573,12 @@
         "sv": "Statliga beslut om vilken religion invånare ska ha"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Only medieval churches and Christian rituals",
+        "sv": "Bara medeltida kyrkor och kristna ritualer"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Ceremonies for Sweden's National Day",
+        "sv": "Ceremonier för Sveriges nationaldag"
       }
     ],
     "answer": 0,
@@ -27750,12 +27750,12 @@
         "sv": "De finns bara i Svenska kyrkans församlingar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They are Sweden’s second-largest religion",
+        "sv": "De är Sveriges näst största religion"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They first received full civil rights in 1870",
+        "sv": "De fick fullständiga medborgerliga rättigheter först 1870"
       }
     ],
     "answer": 0,
@@ -27926,12 +27926,12 @@
         "sv": "Sverige gick med i EU"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "The Church of Sweden and the state separated",
+        "sv": "Svenska kyrkan och staten skildes åt"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Midsummer Eve became Sweden’s National Day",
+        "sv": "Midsommarafton blev Sveriges nationaldag"
       }
     ],
     "answer": 0,
@@ -28105,12 +28105,12 @@
         "sv": "Fyrverkerier vid midnatt och nyårsmiddagar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Demonstrations and speeches about social and political issues",
+        "sv": "Demonstrationer och tal om sociala och politiska frågor"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Advent candles, an Advent calendar, and Christmas morning service",
+        "sv": "Adventsljus, adventskalender och julotta"
       }
     ],
     "answer": 0,
@@ -28282,12 +28282,12 @@
         "sv": "De skapades bara av moderna företag och reklam"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They are always connected to political elections",
+        "sv": "De är alltid kopplade till politiska val"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They never mean time off work",
+        "sv": "De innebär aldrig ledighet från arbetet"
       }
     ],
     "answer": 0,
@@ -28458,12 +28458,12 @@
         "sv": "Nouruz"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Newroz",
+        "sv": "Newroz"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "All Saints’ Day",
+        "sv": "Alla helgons dag"
       }
     ],
     "answer": 0,
@@ -28634,12 +28634,12 @@
         "sv": "På midsommarafton mellan 19 och 25 juni"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "On New Year's Eve on 31 December",
+        "sv": "På nyårsafton den 31 december"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "On Lucia Day on 13 December",
+        "sv": "På luciadagen den 13 december"
       }
     ],
     "answer": 0,
@@ -28810,12 +28810,12 @@
         "sv": "En blomsterkrans på huvudet"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "A graduation cap on their head",
+        "sv": "En studentmössa på huvudet"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "An Advent star in their hand",
+        "sv": "En adventsstjärna i handen"
       }
     ],
     "answer": 0,
@@ -28986,12 +28986,12 @@
         "sv": "Luciatåg"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Walpurgis bonfire",
+        "sv": "Valborgsbrasa"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Midsummer pole",
+        "sv": "Midsommarstång"
       }
     ],
     "answer": 0,
@@ -29165,12 +29165,12 @@
         "sv": "Att tända adventsljus och öppna adventskalendrar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Lighting candles on graves to remember people who have died",
+        "sv": "Att tända ljus på gravar för att minnas dem som har dött"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Holding demonstrations and speeches about social issues",
+        "sv": "Att ordna demonstrationer och tal om sociala frågor"
       }
     ],
     "answer": 0,
@@ -29342,12 +29342,12 @@
         "sv": "Tänder stora brasor på kvällen"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Wear a crown of lights in a Lucia procession",
+        "sv": "Bär ljuskrona i ett luciatåg"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Go to julotta early in the morning",
+        "sv": "Går till julotta tidigt på morgonen"
       }
     ],
     "answer": 0,
@@ -29521,12 +29521,12 @@
         "sv": "1523"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "1809",
+        "sv": "1809"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "1995",
+        "sv": "1995"
       }
     ],
     "answer": 0,
@@ -29698,12 +29698,12 @@
         "sv": "På en fredag mellan 19 och 25 juni"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "On 30 April every year",
+        "sv": "På den 30 april varje år"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "On the four Sundays before Christmas Day",
+        "sv": "På de fyra söndagarna före juldagen"
       }
     ],
     "answer": 0,
@@ -29874,12 +29874,12 @@
         "sv": "En midsommarstång i vardagsrummet och sill på bordet"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Fireworks every Sunday until Christmas Eve",
+        "sv": "Fyrverkerier varje söndag fram till julafton"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Demonstrations with speeches about social and political issues",
+        "sv": "Demonstrationer med tal om sociala och politiska frågor"
       }
     ],
     "answer": 0,
@@ -30053,12 +30053,12 @@
         "sv": "Dansar runt midsommarstången och binder blomsterkransar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Light large bonfires to welcome spring",
+        "sv": "Tänder stora brasor för att välkomna våren"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Open one Advent calendar door each day",
+        "sv": "Öppnar en lucka i adventskalendern varje dag"
       }
     ],
     "answer": 0,
@@ -30230,12 +30230,12 @@
         "sv": "De måste alltid försvinna helt"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "They automatically become Swedish laws",
+        "sv": "De blir automatiskt svenska lagar"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "They may only be celebrated on Sweden's National Day",
+        "sv": "De får bara firas på Sveriges nationaldag"
       }
     ],
     "answer": 0,
@@ -30406,12 +30406,12 @@
         "sv": "Planterar en gran på kyrkogården och tänder gravljus"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Dance around a tree outdoors to welcome summer",
+        "sv": "Dansar runt en gran utomhus för att välkomna sommaren"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Light a tree as a spring bonfire on Walpurgis Night",
+        "sv": "Tänder en gran som vårbrasa på valborgsmässoafton"
       }
     ],
     "answer": 0,
@@ -30582,12 +30582,12 @@
         "sv": "Vårens ankomst"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Workers' Day",
+        "sv": "Arbetarnas dag"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "The arrival of the new year",
+        "sv": "Det nya årets ankomst"
       }
     ],
     "answer": 0,
@@ -30758,12 +30758,12 @@
         "sv": "Jul firas alltid med demonstrationer om sociala frågor"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Christmas is mainly a holiday for welcoming spring with bonfires",
+        "sv": "Jul är främst en högtid för att välkomna våren med brasor"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Christmas is celebrated the same way as New Year's Eve with midnight fireworks",
+        "sv": "Jul firas på samma sätt som nyårsafton med fyrverkerier vid midnatt"
       }
     ],
     "answer": 0,
@@ -30934,12 +30934,12 @@
         "sv": "Sill, färskpotatis och jordgubbar"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Eggs, lamb, salmon, and herring",
+        "sv": "Ägg, lamm, lax och sill"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Candy in Easter eggs",
+        "sv": "Godis i påskägg"
       }
     ],
     "answer": 0,
@@ -31110,12 +31110,12 @@
         "sv": "Cirka 25 000"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "About 2,500",
+        "sv": "Cirka 2 500"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "About 250",
+        "sv": "Cirka 250"
       }
     ],
     "answer": 0,
@@ -31145,25 +31145,25 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option for the statement: Sweden is usually divided into Götaland, Svealand, and Norrland.",
-      "sv": "Välj rätt alternativ för påståendet: Sverige brukar delas in i Götaland, Svealand och Norrland."
+      "en": "Which statement is correct about Sweden?",
+      "sv": "Vilket påstående är korrekt om Sverige?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland.",
+        "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Sweden is not usually divided into Götaland, Svealand, and Norrland.",
+        "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -31276,25 +31276,25 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which option matches the statement? Sweden is usually divided into Götaland, Svealand, and Norrland.",
-      "sv": "Vilket alternativ stämmer med påståendet? Sverige brukar delas in i Götaland, Svealand och Norrland."
+      "en": "Which statement best matches Sweden?",
+      "sv": "Vilket påstående stämmer bäst om Sverige?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland.",
+        "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland."
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Sweden is not usually divided into Götaland, Svealand, and Norrland.",
+        "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
@@ -31466,12 +31466,12 @@
         "sv": "21 landskap"
       },
       {
-        "en": "None of the options is correct",
-        "sv": "Inget av alternativen stämmer"
+        "en": "290 historical provinces",
+        "sv": "290 landskap"
       },
       {
-        "en": "Only sometimes",
-        "sv": "Endast ibland"
+        "en": "3 historical provinces",
+        "sv": "3 landskap"
       }
     ],
     "answer": 0,

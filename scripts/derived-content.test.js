@@ -79,6 +79,10 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
   assert.equal(derived[3].questionSv, 'Vilket svar är korrekt? Var ligger Sverige?');
   assert.equal(derived[3].questionEn, 'Which answer is correct? Where is Sweden located?');
+  assert.deepEqual(
+    derived[3].options.map((option) => option.textEn),
+    ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
+  );
   assert.ok(
     derived
       .filter((question) => question.type === 'true_false')
@@ -123,22 +127,21 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
       ['a', 'b', 'c', 'd'],
     );
   });
-  assert.equal(derived[0].options[2].textSv, 'Inget av alternativen stämmer');
-  assert.equal(derived[0].options[2].textEn, 'None of the options is correct');
+  assert.equal(derived[0].options[0].textSv, 'Sverige ligger i Norden.');
+  assert.equal(derived[0].options[0].textEn, 'Sweden is in the Nordic region.');
+  assert.equal(derived[0].options[1].textSv, 'Sverige ligger inte i Norden.');
+  assert.equal(derived[0].options[1].textEn, 'Sweden is not in the Nordic region.');
   assert.ok(
     singleChoiceVariants.every(
-      (question) => !/materialet|from the material/i.test(JSON.stringify(question.options)),
+      (question) =>
+        !/materialet|from the material|None of the options is correct|Only sometimes|Inget av alternativen stämmer|Endast ibland/i.test(
+          JSON.stringify(question.options),
+        ),
     ),
   );
   assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
-  assert.equal(
-    derived[0].questionSv,
-    'Välj rätt alternativ för påståendet: Sverige ligger i Norden.',
-  );
-  assert.equal(
-    derived[0].questionEn,
-    'Choose the correct option for the statement: Sweden is in the Nordic region.',
-  );
+  assert.equal(derived[0].questionSv, 'Vilket påstående är korrekt om Sverige?');
+  assert.equal(derived[0].questionEn, 'Which statement is correct about Sweden?');
   assert.ok(
     singleChoiceVariants.every(
       (question) =>
@@ -157,14 +160,8 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     trueFalseVariants.map((question) => question.questionEn),
     ['Sweden is in the Nordic region.', 'Sweden is not in the Nordic region.'],
   );
-  assert.equal(
-    derived[3].questionSv,
-    'Vilket alternativ stämmer med påståendet? Sverige ligger i Norden.',
-  );
-  assert.equal(
-    derived[3].questionEn,
-    'Which option matches the statement? Sweden is in the Nordic region.',
-  );
+  assert.equal(derived[3].questionSv, 'Vilket påstående stämmer bäst om Sverige?');
+  assert.equal(derived[3].questionEn, 'Which statement best matches Sweden?');
   assert.ok(
     trueFalseVariants.every(
       (question) =>
