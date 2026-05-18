@@ -934,3 +934,30 @@ and `site/questions.js`, export/static parity, `validate:content`,
 `test:derived-content`, focused content gates, typecheck, lint, ownership,
 Prettier/diff checks, PR/merge evidence, and current-main spot checks for the
 five named rows.
+
+MANAGER-build acceptance 2026-05-18T22:20+02:00
+`REVIEWER-GENERATED-TF-STANDALONE-Q401-Q450-CURRENT-1` is accepted on current
+`origin/main` via PR #690 / `85fe297`. DATA-INTEGRITY repaired the generated
+q401-q450 true/false standalone/naturalness defects for q406, q407, q411,
+q446, and q447.
+
+Clean manager recheck in `/tmp/sct-manager-q401-accept.WQas0K` passed
+`npm run validate:content`, `npm run test:derived-content`, focused
+`tests/content-published-question-types.test.js`
+`tests/content-static-site-question-bank-parity.test.js`
+`tests/content-test-gate-parity.test.js` 27/27, canonical export parity,
+static-site export parity, `node --check site/questions.js`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier, `git diff --check 85fe297^..85fe297`, and a direct
+static-bank scan over q406/q407/q411/q446/q447 with zero residual
+`En anledning` / `One reason` / fragment / `eU membership` offenders.
+
+Do not reopen q406/q407 labour-market-law referent wording, q411 A-kassan
+fragment wording, q446/q447 population-growth referent wording, or q447 `EU`
+capitalization without fresh current-main regression evidence. The next
+DATA-INTEGRITY route is `VERIFY-GENERATED-TF-STANDALONE-Q451-Q500-POST642-1`
+for q454/q466/q470/q471/q495 from clean current main, with generator and
+validator mirror coverage, regenerated canonical/static output, export/static
+parity, `validate:content`, `test:derived-content`, focused content gates,
+typecheck, lint, ownership, Prettier/diff checks, PR/merge evidence, and
+direct spot checks.
