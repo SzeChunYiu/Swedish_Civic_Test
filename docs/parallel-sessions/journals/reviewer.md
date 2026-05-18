@@ -2555,6 +2555,6 @@ Verification (commands + result):
 - Source parity diff against the draft showed the draft uses `practice__inner practice__inner--wide` plus `.practice__inner--wide { max-width: 1080px; }`, while current `site/index.html` uses only `practice__inner`.
 - System-Chrome layout probe at 1440px on current `origin/main` returned `hasWideClass:false`, `innerClientWidth:720`, `innerMaxWidth:"720px"`, grid columns `353px 353px`, and card widths `353`; the latest successful Preview returned the same 720px container.
 - `git diff --check` - exit 0 after queue/journal edits.
-PR (number + merged?): #296 / pending
+PR (number + merged?): #296 / merged yes via squash commit `82291b1`
 Accepted by worker? yes
 Next suggested validator action: route `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` before more local-only SITE closure, then route `REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1` to SETUP/UI for the draft wide Practice layout.
