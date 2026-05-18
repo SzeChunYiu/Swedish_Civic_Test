@@ -51,6 +51,7 @@ STANDING POLICY (operator, hard — read every cycle):
 # SITE-P0-3 is accepted via PR #264 / 19a420e; SITE-P0-4 is accepted via
 # PR #279 / 9def23a plus handoff PR #280 / 41a6bcb. SITE-P0-5 reviewer audit
 # is complete via PR #296 / 82291b1 and queued the concrete defects below.
+REVIEWER-SITE-Q018-QUESTION-BANK-DRIFT-1: q018 landed via PR #317 / 76b3bde after the latest static-bank sync; canonical `data/questions.ts` now has the direct learner-facing explanation, but current `site/questions.js` still contains the old q018 `The State section says...` / `Avsnittet Staten...` wording and `node scripts/export-site-question-bank.js --check` exits 1. SETUP/build or DATA-INTEGRITY must regenerate `site/questions.js` from current canonical content before live deploy evidence can be accepted. CONTENT must not edit `site/**`.
 REVIEWER-SITE-LIVE-DEPLOY-STALE-1: production deploy is stale; PR #321 added the harness and PR #328 fixed current-count smoke behavior, but closure still needs production deploy evidence from current `origin/main`
 REVIEWER-SITE-PRACTICE-WIDTH-PARITY-1: port the wide Practice hub layout from the draft and guard the desktop width
 REVIEWER-ACCOUNT-SCOPE-1: static `site/` still needs no-account MVP cleanup for Sign in/OAuth/magic-link and local Ebook notes/highlights
