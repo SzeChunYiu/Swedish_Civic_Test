@@ -117,3 +117,13 @@ A11y props: no runtime UI; exported components retain their existing accessibili
 Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; token discipline grep on `components/index.ts` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1.
 Blocked? no - scoped to COMPONENTS writable files only.
 Next: Manager can review the barrel exports and mark the core component library ready for SCREENS dependency review.
+
+## Iteration 12 - 2026-05-18
+
+Component: ResultSummary draft result atom - `components/ResultSummary.tsx`
+Variants/states implemented: pass/review inferred status; localized label props; percentage score, passing-line metric, optional trailing metrics, progress fill, and optional CTA actions for mock-exam or practice results. Exported through `components/index.ts`.
+Tokens used: `colors.text`, `colors.surfaceWarm`, `colors.border`, `colors.success`, `colors.warning`, `radius.small`, `space[0.5]`, `space[1]`, `space[1.25]`, `space[1.5]`, `space[2.25]`, `space[12]`, `space.hairline`, and `typography.displayHero`; child `Surface`, `Text`, `PillBadge`, `ProgressBar`, and `Button` retain their token usage.
+A11y props: default `accessibilityRole="summary"`; derived whole-card `accessibilityLabel`; progress `accessibilityLabel`; metric text uses shared `Text`; optional actions pass explicit `accessibilityLabel`, `accessibilityRole="button"`, and disabled state through `Button`.
+Verification: `./node_modules/.bin/prettier --check components/ResultSummary.tsx components/index.ts` -> pass; token discipline grep on `components/ResultSummary.tsx` -> `tokens-only OK`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `git diff --check -- components/ResultSummary.tsx components/index.ts` -> pass.
+Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
+Next: SCREENS can use `ResultSummary` to replace bespoke mock-exam and practice result cards during the UI-OVERHAUL port.

@@ -5,6 +5,7 @@ export * from './Divider';
 export * from './OptionCard';
 export * from './PillBadge';
 export * from './ProgressBar';
+export * from './ResultSummary';
 export * from './Screen';
 export * from './Surface';
 export * from './Text';
