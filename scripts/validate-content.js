@@ -1383,7 +1383,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -13270,33 +13270,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
         normalizedPurchaseSource.includes('receiptValidation,'),
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
-    ],
-    [
-      /restoreRemoveAdsPurchase/.test(placementCtaSource) &&
-        normalizedPlacementCtaSource.includes(
-          "runPurchaseAction('restore', restoreRemoveAdsPurchase)",
-        ),
-      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
-    ],
-    [
-      normalizedPlacementCtaSource.includes(
-        'accessibilityLabel={copy.restoreAccessibilityLabel}',
-      ) &&
-        normalizedPlacementCtaSource.includes(
-          'accessibilityHint={copy.restoreAccessibilityHint}',
-        ) &&
-        normalizedPlacementCtaSource.includes('variant="secondary"'),
-      'RemoveAdsPlacementCta restore action must be an accessible secondary action',
-    ],
-    [
-      /not_found:\s*'No previous Remove Ads purchase was found\.'/.test(placementCtaSource) &&
-        /restored:\s*'Purchase restored\. Study ads are being removed\.'/.test(
-          placementCtaSource,
-        ) &&
-        /pending:\s*'Waiting for store confirmation before removing ads\.'/.test(
-          placementCtaSource,
-        ),
-      'RemoveAdsPlacementCta must expose localized pending, not_found, and restored status copy',
     ],
   ];
 

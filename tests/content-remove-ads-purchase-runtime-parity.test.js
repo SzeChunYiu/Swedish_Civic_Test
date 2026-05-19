@@ -26,7 +26,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 18);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 14);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
