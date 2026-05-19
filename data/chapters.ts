@@ -16,7 +16,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.',
     descriptionEn:
       'Democracy, rule by the people, ways to influence society, and threats to democracy.',
-    questionCount: 25,
+    questionCount: 50,
   },
   {
     id: 'ch03',
