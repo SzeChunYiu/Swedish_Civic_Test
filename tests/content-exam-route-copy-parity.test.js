@@ -54,20 +54,32 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /import \{ getQuestionDisplayText, getQuestionSourceCitation \} from '..\/..\/lib\/quiz\/questionText';/,
   );
-  assert.match(source, /import \{ ResultSummary \} from '..\/..\/components\/ResultSummary';/);
+  assert.match(
+    source,
+    /import \{ QuestionNavigator \} from '..\/..\/components\/QuestionNavigator';/,
+  );
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
-  assert.match(source, /<ResultSummary/);
-  assert.match(source, /correctCount=\{result\.correctCount\}/);
-  assert.match(source, /totalCount=\{result\.totalCount\}/);
-  assert.match(source, /languageOverride=\{language\}/);
+  assert.match(source, /const \[activeQuestionIndex, setActiveQuestionIndex\] = useState\(0\);/);
+  assert.match(source, /const answeredQuestionIndexes = useMemo\(/);
+  assert.match(source, /const handleQuestionNavigatorSelect = useCallback\(\(index: number\) =>/);
+  assert.match(source, /scrollViewRef\.current\?\.scrollTo\(\{/);
+  assert.match(source, /const scrollTargetY = Math\.max\(0, questionOffset - space\[2\]\);/);
   assert.match(
     source,
-    /metricLabel=\{copy\.correctCount\(result\.correctCount, result\.totalCount\)\}/,
+    /Platform\.OS === 'web' && typeof document !== 'undefined' && typeof window !== 'undefined'/,
   );
-  assert.match(source, /status=\{endedByTime \? 'review' : undefined\}/);
-  assert.match(source, /subtitle=\{copy\.resultNote\}/);
+  assert.match(source, /document\.querySelector<HTMLElement>/);
+  assert.match(source, /exam-question-card-\$\{index \+ 1\}/);
+  assert.match(source, /target\.scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/);
+  assert.match(source, /<QuestionNavigator/);
+  assert.match(source, /answeredIndexes=\{answeredQuestionIndexes\}/);
+  assert.match(source, /currentIndex=\{activeQuestionIndex\}/);
+  assert.match(source, /itemStyle=\{styles\.questionNavigatorItem\}/);
+  assert.match(source, /languageOverride=\{language\}/);
+  assert.match(source, /onSelect=\{handleQuestionNavigatorSelect\}/);
+  assert.match(source, /totalCount=\{examQuestions\.length\}/);
   assert.match(
     source,
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,

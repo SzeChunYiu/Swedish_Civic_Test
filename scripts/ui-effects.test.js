@@ -2094,6 +2094,58 @@ test('exam controls mirror selected and disabled state to web aria attributes', 
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('exam active flow wires question navigator to 48px tabs and question scroll targets', () => {
+  const source = read('app/(tabs)/exam.tsx');
+  const navigatorSource = read('components/QuestionNavigator.tsx');
+
+  assert.match(
+    source,
+    /import \{ QuestionNavigator \} from '..\/..\/components\/QuestionNavigator';/,
+  );
+  assert.match(source, /const \[activeQuestionIndex, setActiveQuestionIndex\] = useState\(0\);/);
+  assert.match(source, /const scrollViewRef = useRef<ScrollView \| null>\(null\);/);
+  assert.match(source, /const questionOffsetsRef = useRef<Record<number, number>>\(\{\}\);/);
+  assert.match(source, /const answeredQuestionIndexes = useMemo\(/);
+  assert.match(source, /answers\[question\.id\] \? index : null/);
+  assert.match(source, /const handleQuestionNavigatorSelect = useCallback\(\(index: number\) =>/);
+  assert.match(source, /setActiveQuestionIndex\(index\);/);
+  assert.match(source, /const scrollTargetY = Math\.max\(0, questionOffset - space\[2\]\);/);
+  assert.match(source, /scrollViewRef\.current\?\.scrollTo\(\{/);
+  assert.match(source, /y: scrollTargetY/);
+  assert.match(
+    source,
+    /Platform\.OS === 'web' && typeof document !== 'undefined' && typeof window !== 'undefined'/,
+  );
+  assert.match(source, /document\.querySelector<HTMLElement>/);
+  assert.match(source, /exam-question-card-\$\{index \+ 1\}/);
+  assert.match(source, /target\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(source, /target\.scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/);
+  assert.match(source, /window\.scrollTo\(\{ behavior: 'smooth', top: scrollTargetY \}\)/);
+  assert.match(source, /<ScrollView ref=\{scrollViewRef\}/);
+  assert.match(source, /<QuestionNavigator/);
+  assert.match(source, /answeredIndexes=\{answeredQuestionIndexes\}/);
+  assert.match(source, /currentIndex=\{activeQuestionIndex\}/);
+  assert.match(source, /itemStyle=\{styles\.questionNavigatorItem\}/);
+  assert.match(source, /languageOverride=\{language\}/);
+  assert.match(source, /onSelect=\{handleQuestionNavigatorSelect\}/);
+  assert.match(source, /totalCount=\{examQuestions\.length\}/);
+  assert.match(source, /questionOffsetsRef\.current\[index\] = event\.nativeEvent\.layout\.y;/);
+  assert.match(source, /testID=\{`exam-question-card-\$\{index \+ 1\}`\}/);
+  assert.match(source, /setActiveQuestionIndex\(index\);\s*setAnswers/);
+  assert.match(
+    source,
+    /questionNavigatorItem: \{\s*minHeight: space\[6\],\s*minWidth: space\[6\],\s*\}/,
+  );
+  assert.match(
+    source,
+    /questionCardActive: \{\s*backgroundColor: colors\.focusSoft,\s*borderColor: colors\.focus,/,
+  );
+  assert.match(navigatorSource, /aria-disabled=\{isDisabled\}/);
+  assert.match(navigatorSource, /aria-selected=\{selected\}/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(navigatorSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('exam results are final after submission', () => {
   const source = read('app/(tabs)/exam.tsx');
 
