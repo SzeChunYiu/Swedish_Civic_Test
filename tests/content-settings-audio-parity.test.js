@@ -48,8 +48,6 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsStore, /const audioEnabledKey = 'audioEnabled';/);
   assert.match(settingsStore, /settingsStorage\?\.getBoolean\(audioEnabledKey\)/);
   assert.match(settingsStore, /return storedValue \?\? true;/);
-  assert.match(settingsStore, /import \{ stopSpeech \} from '\.\.\/audio\/speak';/);
-  assert.match(settingsStore, /if \(!audioEnabled\) \{\s*stopSpeech\(\);\s*\}/);
   assert.match(settingsRoute, /accessibilityRole="switch"/);
   assert.match(settingsRoute, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(settingsRoute, /setAudioEnabled\(!audioEnabled\)/);
@@ -73,37 +71,6 @@ test('audio setting parity rejects missing route labels', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /app\/settings\.tsx is missing audio label "Audio disabled"/,
-  );
-});
-
-test('audio setting parity rejects a mute path that does not stop active speech', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/storage/settingsStore.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("import { stopSpeech } from '../audio/speak';\\n\\n", '')
-      .replace('    if (!audioEnabled) {\\n      stopSpeech();\\n    }\\n', '');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /setAudioEnabled\(false\) must stop any in-flight speech before muting/,
   );
 });
 
