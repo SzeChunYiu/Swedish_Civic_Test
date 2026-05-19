@@ -6456,12 +6456,59 @@ function validateAdPlacementRouteParity() {
     }
 
     if (spec.component === 'NativeAdCard') {
+      const consentAwareShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+      );
       const nativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
       );
+      const nativeAdCardNativeSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
+        'utf8',
+      );
       if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+        routeIsValid = false;
+      }
+      if (nativeAdCardSource.includes('react-native-google-mobile-ads')) {
+        reject('NativeAdCard web fallback must not import native-only ad SDK APIs');
+        routeIsValid = false;
+      }
+      if (!nativeAdCardNativeSource.includes('NativeAd.createForAdRequest')) {
+        reject('NativeAdCard native placement must load results_native through NativeAd');
+        routeIsValid = false;
+      }
+      if (!nativeAdCardNativeSource.includes('NativeAdView')) {
+        reject('NativeAdCard native placement must render NativeAdView');
+        routeIsValid = false;
+      }
+      if (!nativeAdCardNativeSource.includes('NativeAsset')) {
+        reject('NativeAdCard native placement must register visible native ad assets');
+        routeIsValid = false;
+      }
+      if (!nativeAdCardNativeSource.includes('NativeMediaView')) {
+        reject('NativeAdCard native placement must render NativeMediaView');
+        routeIsValid = false;
+      }
+      if (
+        !nativeAdCardNativeSource.includes(`getPlatformAdUnitId('${spec.placement}', Platform.OS)`)
+      ) {
+        reject(`NativeAdCard native placement must resolve the ${spec.placement} unit by platform`);
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(nativeAdCardNativeSource)) {
+        reject(
+          `NativeAdCard native placement must gate ${spec.placement} through consent-aware shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (!nativeAdCardNativeSource.includes('requestNonPersonalizedAdsOnly')) {
+        reject('NativeAdCard native placement must pass non-personalized ad request options');
+        routeIsValid = false;
+      }
+      if (!/\.destroy\(\)/.test(nativeAdCardNativeSource)) {
+        reject('NativeAdCard native placement must destroy loaded native ads on cleanup');
         routeIsValid = false;
       }
     }

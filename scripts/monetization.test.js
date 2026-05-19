@@ -181,6 +181,41 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   );
 });
 
+test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
+  const nativeAdCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
+    'utf8',
+  );
+  const webAdCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
+    'utf8',
+  );
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+
+  assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(nativeAdCardSource, /NativeAd\.createForAdRequest/);
+  assert.match(nativeAdCardSource, /NativeAdView/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.HEADLINE/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.BODY/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
+  assert.match(nativeAdCardSource, /NativeMediaView/);
+  assert.match(nativeAdCardSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
+  assert.match(nativeAdCardSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeAdCardSource, /\.destroy\(\)/);
+  assert.match(
+    nativeAdCardSource,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd|Sponsored study placement/);
+
+  assert.match(webAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(
+    webAdCardSource,
+    /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
+  );
+  assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
+});
+
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
     {
