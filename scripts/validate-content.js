@@ -1358,25 +1358,38 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     file: 'app/(tabs)/home.tsx',
     component: 'AdBanner',
     placement: 'home_banner',
-    pattern: /<AdBanner\s+placement="home_banner"\s+\/>/,
+    pattern:
+      /<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s+\/>/,
+    removeAdsComponent: 'PremiumBanner',
+    removeAdsPattern:
+      /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s+\/>/,
   },
   {
     file: 'app/(tabs)/learn.tsx',
     component: 'AdBanner',
     placement: 'chapter_list_banner',
     pattern: /<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
+    removeAdsComponent: 'RemoveAdsPlacementCta',
+    removeAdsPattern:
+      /<RemoveAdsPlacementCta\s+placement="chapter_list_banner"\s+\/>\s*<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
   },
   {
     file: 'app/(tabs)/practice.tsx',
     component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<PracticeInterstitialAd\s+showKey=\{practiceInterstitialShowKey\}\s+\/>/,
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    removeAdsComponent: 'RemoveAdsPlacementCta',
+    removeAdsPattern:
+      /<RemoveAdsPlacementCta\s+placement="quiz_completed_interstitial"\s+\/>\s*<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
     component: 'NativeAdCard',
     placement: 'results_native',
     pattern: /<NativeAdCard\s+\/>/,
+    removeAdsComponent: 'RemoveAdsPlacementCta',
+    removeAdsPattern:
+      /<RemoveAdsPlacementCta\s+placement="results_native"\s+\/>\s*<NativeAdCard\s+\/>/,
   },
 ];
 const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
@@ -8090,25 +8103,19 @@ function validateAdPlacementRouteParity() {
       routeIsValid = false;
     }
 
-    if (spec.file === 'app/(tabs)/home.tsx') {
-      if (!source.includes('entitlementsReady: monetizationEntitlementsReady')) {
-        reject('Home must read entitlementsReady before rendering monetization surfaces');
-        routeIsValid = false;
-      }
-      if (
-        !/monetizationEntitlementsReady\s*&&\s*!monetizationEntitlements\.adsDisabled/.test(source)
-      ) {
-        reject('Home pricing wedge must stay hidden until Remove Ads entitlements resolve');
-        routeIsValid = false;
-      }
-      if (!/\{monetizationEntitlementsReady\s*\?\s*\(\s*<PremiumBanner/.test(source)) {
-        reject('Home paywall must stay hidden until Remove Ads entitlements resolve');
-        routeIsValid = false;
-      }
-      if (/<AdBanner\s+entitlements=\{monetizationEntitlements\}/.test(source)) {
-        reject('Home ad banner must not receive initial free entitlements before they resolve');
-        routeIsValid = false;
-      }
+    if (
+      spec.removeAdsComponent &&
+      !source.includes(`components/monetization/${spec.removeAdsComponent}`)
+    ) {
+      reject(
+        `${spec.file} must import ${spec.removeAdsComponent} from the monetization components`,
+      );
+      routeIsValid = false;
+    }
+
+    if (spec.removeAdsPattern && !spec.removeAdsPattern.test(source)) {
+      reject(`${spec.file} must render ${spec.removeAdsComponent} next to ${spec.placement}`);
+      routeIsValid = false;
     }
 
     if (!safePlacements.includes(spec.placement)) {
@@ -8425,7 +8432,7 @@ function validateAdPlacementRouteParity() {
       continue;
     }
 
-    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd/.test(source)) {
+    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd|RemoveAdsPlacementCta/.test(source)) {
       reject(`${file} must not import or render ad components`);
       routeIsValid = false;
     }

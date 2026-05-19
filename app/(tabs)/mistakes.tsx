@@ -146,6 +146,7 @@ function renderListHeader(copy: MistakesCopy) {
       </View>
       <QuestionDisclaimer />
 
+      <RemoveAdsPlacementCta placement="results_native" />
       <NativeAdCard />
       <RemoveAdsPlacementCta placement="results_native" />
     </View>

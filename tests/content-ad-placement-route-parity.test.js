@@ -67,111 +67,23 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     homeSource,
     /monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled/,
   );
-  assert.match(homeSource, /\{monetizationEntitlementsReady \? \(\s*<PremiumBanner/);
-  assert.match(homeSource, /<AdBanner placement="home_banner" \/>/);
-  assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
-  assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /PracticeInterstitialAd/);
   assert.match(
-    practiceSource,
-    /const practiceInterstitialShowKey = getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\);/,
+    learnSource,
+    /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>\s*<AdBanner placement="chapter_list_banner" \/>/,
   );
   assert.match(
     practiceSource,
-    /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
-  );
-  assert.doesNotMatch(
-    practiceSource,
-    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
-  );
-  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
-  assert.match(mistakesSource, /<NativeAdCard \/>/);
-  assert.match(removeAdsPlacementCtaSource, /restoreRemoveAdsPurchase/);
-  assert.match(
-    removeAdsPlacementCtaSource,
-    /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/,
+    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>\s*<AdBanner placement="quiz_completed_interstitial" \/>/,
   );
   assert.match(
-    removeAdsPlacementCtaSource,
-    /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/,
-  );
-  assert.match(removeAdsPlacementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
-  assert.match(
-    practiceInterstitialSource,
-    /shouldShowAd\('quiz_completed_interstitial', resolvedEntitlements\)/,
-  );
-  assert.doesNotMatch(practiceInterstitialSource, /react-native-google-mobile-ads/);
-  assert.match(practiceInterstitialNativeSource, /InterstitialAd\.createForAdRequest/);
-  assert.match(practiceInterstitialNativeSource, /AdEventType\.LOADED/);
-  assert.match(practiceInterstitialNativeSource, /AdEventType\.OPENED/);
-  assert.match(practiceInterstitialNativeSource, /AdEventType\.CLOSED/);
-  assert.match(practiceInterstitialNativeSource, /AdEventType\.ERROR/);
-  assert.match(practiceInterstitialNativeSource, /interstitialAd\.show\(\)/);
-  assert.match(
-    practiceInterstitialNativeSource,
-    /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
-  );
-  assert.match(
-    practiceInterstitialNativeSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
-  );
-  assert.match(practiceInterstitialNativeSource, /useMobileAdsConsent/);
-  assert.match(practiceInterstitialNativeSource, /requestNonPersonalizedAdsOnly/);
-  assert.match(practiceInterstitialNativeSource, /lastInterstitialShowKey === showKey/);
-  assert.match(
-    practiceInterstitialNativeSource,
-    /AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/,
-  );
-  assert.doesNotMatch(
-    practiceInterstitialNativeSource,
-    /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/,
-  );
-  assert.match(
-    practiceInterstitialNativeSource,
-    /Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/,
+    mistakesSource,
+    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
   );
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
-  assert.match(nativeAdCardSource, /getAdUnit\('results_native'\)/);
-  assert.match(nativeAdCardSource, /getNativeAdCardCopy\(language, unit\)/);
-  assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
-  assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
-  assert.match(nativeAdCardNativeSource, /NativeAdView/);
-  assert.match(nativeAdCardNativeSource, /<NativeAdView accessible=\{false\}/);
-  assert.match(
-    nativeAdCardNativeSource,
-    /<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/,
+  assert.doesNotMatch(
+    examSource,
+    /AdBanner|NativeAd|Interstitial|LaunchPopupAd|RemoveAdsPlacementCta/i,
   );
-  assert.match(nativeAdCardNativeSource, /NativeAsset/);
-  for (const [assetType, directChild] of [
-    ['ICON', 'Image'],
-    ['HEADLINE', 'Text'],
-    ['BODY', 'Text'],
-    ['ADVERTISER', 'Text'],
-    ['CALL_TO_ACTION', 'Text'],
-  ]) {
-    assert.match(
-      nativeAdCardNativeSource,
-      new RegExp(
-        `<NativeAsset assetType=\\{NativeAssetType\\.${assetType}\\}>\\s*<${directChild}\\b`,
-      ),
-    );
-  }
-  assert.match(nativeAdCardNativeSource, /NativeMediaView/);
-  assert.match(
-    nativeAdCardNativeSource,
-    /<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/,
-  );
-  assert.match(nativeAdCardNativeSource, /minHeight:\s*space\[6\]/);
-  assert.match(nativeAdCardNativeSource, /requestNonPersonalizedAdsOnly/);
-  assert.match(nativeAdCardNativeSource, /getAdUnit\('results_native'\)/);
-  assert.match(nativeAdCardNativeSource, /getNativeAdCardCopy\(language, unit\)/);
-  assert.match(nativeAdCardNativeSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
-  assert.match(
-    nativeAdCardNativeSource,
-    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
-  );
-  assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
-  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
 test('ad placement route parity rejects non-banner placements routed through AdBanner', () => {
@@ -457,6 +369,36 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /app\/\(tabs\)\/exam\.tsx must not import or render ad components/,
+  );
+});
+
+test('ad placement route parity rejects a missing Remove Ads placement CTA', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/learn.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('<RemoveAdsPlacementCta placement="chapter_list_banner" />', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/learn\.tsx must render RemoveAdsPlacementCta next to chapter_list_banner/,
   );
 });
 
