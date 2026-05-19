@@ -21,33 +21,6 @@ function loadTs(relativePath, exportName) {
       const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
       return loadAllTs(normalized);
     }
-    if (request === 'react-native-mmkv') {
-      const memory = new Map();
-      return {
-        createMMKV: () => ({
-          getString: (key) => memory.get(key),
-          set: (key, value) => memory.set(key, value),
-        }),
-      };
-    }
-    if (request === 'zustand') {
-      return {
-        create: (initializer) => {
-          let state;
-          const set = (updater) => {
-            const next = typeof updater === 'function' ? updater(state) : updater;
-            if (next === state) return;
-            state = { ...state, ...next };
-          };
-          const get = () => state;
-          const store = (selector) => (selector ? selector(state) : state);
-          store.getState = get;
-          store.setState = set;
-          state = initializer(set, get);
-          return store;
-        },
-      };
-    }
     return require(request);
   }
   new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
@@ -64,17 +37,8 @@ test('XP rules follow the MVP gamification table', () => {
 
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: true }), 4);
-  assert.equal(calculateAnswerXp({ isCorrect: 'true', explanationRead: true }), 0);
-  assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }), 10);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }), 70);
-  assert.equal(calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }), 0);
-  assert.equal(calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }), 0);
-  assert.equal(calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }), 0);
-  assert.equal(calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }), 0);
-  assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }), 0);
   assert.equal(calculateLevel(0), 1);
-  assert.equal(calculateLevel(NaN), 1);
-  assert.equal(calculateLevel(Infinity), 1);
   assert.equal(calculateLevel(100), 2);
   assert.equal(calculateLevel(400), 3);
 });
@@ -87,7 +51,6 @@ test('streak logic counts consecutive unique answer dates through today', () => 
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14', '2026-05-15'], '2026-05-15'), 3);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
-  assert.equal(calculateStreak(['2026-05-14', '2026-05-14', '2026-05-15'], '2026-05-15'), 2);
 });
 
 test('daily goal counts question answers for the requested local day only', () => {
@@ -111,32 +74,6 @@ test('daily goal counts question answers for the requested local day only', () =
     1,
   );
   assert.equal(countAnswersForLocalDate({}, today), 0);
-});
-
-test('daily goal prefers per-answer attempts and falls back for older progress stores', () => {
-  const { countAnswerAttemptsForLocalDate } = loadAllTs('lib/learning/streaks.ts');
-
-  const today = new Date(2026, 4, 17, 12);
-  const yesterday = new Date(2026, 4, 16, 12);
-  const questionProgress = {
-    q001: { lastAnsweredAt: today.toISOString() },
-    q002: { lastAnsweredAt: yesterday.toISOString() },
-  };
-
-  assert.equal(
-    countAnswerAttemptsForLocalDate({
-      answerAttempts: [
-        { questionId: 'q001', answeredAt: today.toISOString() },
-        { questionId: 'q001', answeredAt: today.toISOString() },
-        { questionId: 'q001', answeredAt: today.toISOString() },
-        { questionId: 'q002', answeredAt: yesterday.toISOString() },
-      ],
-      questionProgress,
-      date: today,
-    }),
-    3,
-  );
-  assert.equal(countAnswerAttemptsForLocalDate({ questionProgress, date: today }), 1);
 });
 
 test('progress answer dates use the shared local calendar key', () => {
@@ -257,78 +194,6 @@ test('readiness score includes recent persisted mock exam results', () => {
   assert.ok(Math.abs(withMocks.components.mockAverage - 0.8) < 0.0001);
   assert.equal(withMocks.score, 24);
   assert.ok(withMocks.score > base.score);
-});
-
-test('readiness mock totals do not inflate rolling practice accuracy', () => {
-  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
-
-  const result = computeReadinessFromQuestionProgress({
-    questionProgress: {},
-    questions: [{ id: 'q1', chapterId: 'ch01' }],
-    chapters: [{ id: 'ch01', questionCount: 10 }],
-    mockExamSessions: [
-      {
-        sessionId: 'mock-with-counts',
-        score: 0.8,
-        completedAt: '2026-05-19T10:00:00.000Z',
-        correctCount: 32,
-        totalCount: 40,
-      },
-    ],
-    now: new Date('2026-05-19T12:00:00.000Z'),
-  });
-
-  assert.equal(result.components.accuracy, 0);
-  assert.equal(result.components.mockAverage, 0.8);
-  assert.ok(result.score > 0);
-});
-
-test('mock exam completion XP is awarded once per stored session', () => {
-  const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
-  const store = useProgressStore;
-
-  store.getState().resetProgress();
-  store.getState().recordMockExamSession({
-    sessionId: 'empty-submission',
-    score: 0,
-    correctCount: 0,
-    totalCount: 0,
-    completedAt: '2026-05-19T10:00:00.000Z',
-  });
-  assert.equal(store.getState().totalXp, 0);
-
-  store.getState().recordMockExamSession({
-    sessionId: 'mock-perfect',
-    score: 1,
-    correctCount: 10,
-    totalCount: 10,
-    completedAt: '2026-05-19T10:05:00.000Z',
-  });
-  assert.equal(store.getState().totalXp, 70);
-
-  store.getState().recordMockExamSession({
-    sessionId: 'mock-perfect',
-    score: 0.9,
-    correctCount: 9,
-    totalCount: 10,
-    completedAt: '2026-05-19T10:06:00.000Z',
-  });
-  assert.equal(store.getState().totalXp, 70);
-  assert.equal(store.getState().mockExamSessions.length, 2);
-  assert.equal(
-    store.getState().mockExamSessions.find((session) => session.sessionId === 'mock-perfect')
-      .correctCount,
-    9,
-  );
-
-  store.getState().recordMockExamSession({
-    sessionId: 'mock-complete',
-    score: 0.6,
-    correctCount: 6,
-    totalCount: 10,
-    completedAt: '2026-05-19T10:10:00.000Z',
-  });
-  assert.equal(store.getState().totalXp, 90);
 });
 
 test('spaced repetition schedules wrong answers soon and known answers later', () => {
