@@ -40,16 +40,6 @@ function answerAttemptsForProgress(progress: QuestionProgress): QuizAnswer[] {
   }));
 }
 
-function answerAttemptsForMockExam(session: MockExamProgress): QuizAnswer[] {
-  return (session.answers ?? []).map((answer) => ({
-    answeredAt: session.completedAt,
-    isCorrect: answer.isCorrect,
-    questionId: answer.questionId,
-    selectedOptionIds: [],
-    timeSpentSeconds: answer.timeSpentSeconds,
-  }));
-}
-
 /**
  * Build the dashboard selector shape from the local progress store without
  * adding a new persisted session log. Repeated historical attempts are placed
@@ -77,19 +67,15 @@ export function buildDashboardProgressSnapshot({
         }
       : null;
 
-  const examSessions: QuizSession[] = mockExamSessions.map((session) => {
-    const answers = answerAttemptsForMockExam(session);
-
-    return {
-      answers,
-      completedAt: session.completedAt,
-      id: session.sessionId,
-      mode: 'exam',
-      questionIds: [...new Set(answers.map((answer) => answer.questionId))],
-      score: session.score,
-      startedAt: session.completedAt,
-    };
-  });
+  const examSessions: QuizSession[] = mockExamSessions.map((session) => ({
+    answers: [],
+    completedAt: session.completedAt,
+    id: session.sessionId,
+    mode: 'exam',
+    questionIds: [],
+    score: session.score,
+    startedAt: session.completedAt,
+  }));
 
   return {
     currentStreak: answerDates.length,

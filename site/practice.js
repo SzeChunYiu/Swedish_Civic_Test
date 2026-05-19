@@ -11,9 +11,6 @@
   // ---------- helpers ----------
 
   function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
-  function staticFxPrefersReducedMotion(fx) {
-    return !!(fx && typeof fx.prefersReducedMotion === "function" && fx.prefersReducedMotion());
-  }
   function tr(map) { return (map && (map[lang()] || map.en)) || ""; }
   function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>"]/g, (c) => ({
@@ -39,46 +36,6 @@
     return lang() === "sv"
       ? "Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga."
       : "Independent study practice, not a real exam or an official UHR question.";
-  }
-  const provenanceCopy = {
-    uhr: {
-      en: { label: "UHR", description: "Directly from UHR's study material Sverige i fokus." },
-      sv: { label: "UHR", description: "Direkt från UHR:s utbildningsmaterial Sverige i fokus." },
-    },
-    derived: {
-      en: { label: "Supplementary", description: "Variant generated from a UHR question." },
-      sv: { label: "Tillägg", description: "Variant som genererats från en UHR-fråga." },
-    },
-    editorial: {
-      en: { label: "Editorial", description: "Hand-written editorial context." },
-      sv: { label: "Redaktionell", description: "Redaktionellt skrivet sammanhang." },
-    },
-  };
-  function questionProvenance(question) {
-    const direct = question && question.questionProvenance;
-    if (direct === "uhr" || direct === "derived" || direct === "editorial") return direct;
-    const tags = Array.isArray(question && question.tags) ? question.tags : [];
-    if (tags.includes("editorial")) return "editorial";
-    if (tags.includes("published-variant")) return "derived";
-    return "uhr";
-  }
-  function provenanceBadge(question) {
-    const sv = lang() === "sv";
-    const provenance = questionProvenance(question);
-    const copy = provenanceCopy[provenance][sv ? "sv" : "en"] || provenanceCopy[provenance].en;
-    const ariaPrefix = sv ? "Källtyp" : "Provenance";
-    const notePrefix = sv ? "Källanteckning" : "Source note";
-    const label = escapeHtml(copy.label);
-    const note = escapeHtml(`${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`);
-    return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
-  }
-  function questionSourceRow(question, citationClassName = "quiz__source") {
-    return `
-      <div class="quiz__source-row">
-        ${provenanceBadge(question)}
-        <p class="${citationClassName}">${escapeHtml(sourceCitation(question))}</p>
-      </div>
-    `;
   }
   function hashString(value) {
     let hash = 2166136261;
@@ -195,11 +152,11 @@
       return `
         <a class="hub__card" href="#/practice?c=${c.id}">
           <div class="hub__row">
-            <span class="hub__emoji" aria-hidden="true">${escapeHtml(c.emoji)}</span>
+            <span class="hub__emoji" aria-hidden="true">${c.emoji}</span>
             <span class="hub__num">CH ${String(c.id).padStart(2, "0")}</span>
             ${accuracy !== null ? `<span class="hub__acc">${accuracy}%</span>` : ""}
           </div>
-          <h3 class="hub__title">${escapeHtml(tr(c.title))}</h3>
+          <h3 class="hub__title">${tr(c.title)}</h3>
           <div class="hub__bar"><i style="width:${pct}%"></i></div>
           <div class="hub__meta">
             <span>${p.answered}/${total} ${lang() === "sv" ? "besvarade" : "answered"}</span>
@@ -318,9 +275,9 @@
     const chapterChips = meta.map((c) => {
       const on = selectedChapters.includes(c.id);
       return `<button class="mock-chip ${on ? "is-on" : ""}" data-chip="${c.id}">
-        <span class="mock-chip__emoji">${escapeHtml(c.emoji)}</span>
+        <span class="mock-chip__emoji">${c.emoji}</span>
         <span class="mock-chip__num">CH ${String(c.id).padStart(2, "0")}</span>
-        <span class="mock-chip__t">${escapeHtml(c.title[lang()] || c.title.en)}</span>
+        <span class="mock-chip__t">${(c.title[lang()] || c.title.en)}</span>
       </button>`;
     }).join("");
 
@@ -503,11 +460,10 @@
 
     const opts = displayOptions(q, `mock:${MOCK.startedAt || "preview"}:${i}`).map(({ option: o, originalIndex, displayIndex }) => {
       const cls = chosen === originalIndex ? "is-chosen" : "";
-      const optionText = escapeHtml(o[lang()] || o.en);
       return `
         <button class="mock-opt ${cls}" data-pick="${originalIndex}">
           <span class="key">${String.fromCharCode(65 + displayIndex)}</span>
-          <span>${optionText}</span>
+          <span>${o[lang()] || o.en}</span>
         </button>
       `;
     }).join("");
@@ -531,9 +487,9 @@
         <div class="mock-grid" aria-label="${sv ? "Frågenavigering" : "Question navigation"}">${dots}</div>
 
         <div class="mock-card">
-          <div class="quiz__crumb">Ch ${escapeHtml(q.chapterId)}</div>
-          <h2 class="quiz__q">${escapeHtml(q.q[lang()] || q.q.en)}</h2>
-          ${questionSourceRow(q)}
+          <div class="quiz__crumb">Ch ${q.chapterId}</div>
+          <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
+          <p class="quiz__source">${escapeHtml(sourceCitation(q))}</p>
           <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           <div class="quiz__opts">${opts}</div>
         </div>
@@ -588,8 +544,8 @@
       const cpct = Math.round((s.correct / s.total) * 100);
       return `
         <li>
-          <span class="result-ch__num">CH ${escapeHtml(String(id).padStart(2, "0"))}</span>
-          <span class="result-ch__title">${meta ? escapeHtml(tr(meta.title)) : ""}</span>
+          <span class="result-ch__num">CH ${String(id).padStart(2, "0")}</span>
+          <span class="result-ch__title">${meta ? tr(meta.title) : ""}</span>
           <span class="result-ch__score">${s.correct}/${s.total}</span>
           <span class="result-ch__bar"><i style="width:${cpct}%"></i></span>
         </li>
@@ -621,7 +577,7 @@
               </div>
             </dl>
             <p class="mock-review__why">${escapeHtml(tr(q.why))}</p>
-            ${questionSourceRow(q, "mock-review__source")}
+            <p class="mock-review__source">${escapeHtml(sourceCitation(q))}</p>
             <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           </div>
         </details>
@@ -652,10 +608,8 @@
 
     if (window.smtFx) {
       window.smtFx.countUp(document.getElementById("mock-score-num"), 0, correct, 1100);
-      if (strongPracticeScore && !staticFxPrefersReducedMotion(window.smtFx)) {
-        setTimeout(() => window.smtFx.rain({ colors: window.smtFx.PALETTES.big, count: 90 }), 300);
-      }
       if (strongPracticeScore) {
+        setTimeout(() => window.smtFx.rain({ colors: window.smtFx.PALETTES.big, count: 90 }), 300);
         if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
           `${pct}%. Strong practice round.`, `${pct}%. Stark övningsrunda.`
         );

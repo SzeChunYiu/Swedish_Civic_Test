@@ -16,7 +16,7 @@ type MockExamStatusBarCopy = {
 
 const mockExamStatusBarCopy: Record<AppLanguage, MockExamStatusBarCopy> = {
   sv: {
-    eyebrowLabel: 'Övningsprov',
+    eyebrowLabel: 'Skarp tentamen',
     submitLabel: 'Lämna in',
     timeLabel: 'Tid kvar',
   },
