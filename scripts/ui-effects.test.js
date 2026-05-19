@@ -325,6 +325,36 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
+test('practice header controls keep accessible targets and token feedback', () => {
+  const source = read('app/(tabs)/practice.tsx');
+  const hitSlopMatches = source.match(/hitSlop=\{space\[1\]\}/g) ?? [];
+
+  assert.match(source, /type PracticeHeaderControl = 'bookmark' \| 'supplementary' \| 'sources';/);
+  assert.match(
+    source,
+    /const \[focusedHeaderControl, setFocusedHeaderControl\] = useState<PracticeHeaderControl \| null>/,
+  );
+  assert.match(source, /<View style=\{styles\.headerControls\}>/);
+  assert.ok(hitSlopMatches.length >= 3);
+  assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
+  assert.match(
+    source,
+    /focusedHeaderControl === 'bookmark' \? styles\.headerControlFocused : null/,
+  );
+  assert.match(
+    source,
+    /focusedHeaderControl === 'supplementary' \? styles\.headerControlFocused : null/,
+  );
+  assert.match(source, /focusedHeaderControl === 'sources' \? styles\.headerControlFocused : null/);
+  assert.match(source, /pressed \? styles\.headerControlPressed : null/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /minWidth: space\[6\]/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /borderColor: colors\.focus/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('practice and routed quiz screens expose primary titles as headers', () => {
   const practiceSource = read('app/(tabs)/practice.tsx');
   const routedQuizSource = read('app/quiz/[sessionId].tsx');
