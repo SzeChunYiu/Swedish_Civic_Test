@@ -1219,3 +1219,12 @@ Verification: clean worktree from current `origin/main`; linked shared ignored `
 PR: pending from `task/scheduled-deploy-cadence-1779200400` at handoff commit time.
 Blocked? no for this release/deploy source guard; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: inspect the scheduled workflow cadence guard and rerun `npm run test:build-config` plus workflow source scan before acceptance.
+
+## Iteration 254 - 2026-05-19
+
+Task completed: APP-STORE-PRIVACY-DATA-CATEGORY-PARITY-1 - added an App Review privacy-data checklist to the App Store listing and guarded that it stays synchronized with the Apple App Privacy labels categories.
+Artifacts changed: `publishing/app-store-listing.md`, `scripts/publishing.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from claimed `origin/main` `0d2c4477`; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH npm run test:publishing` exit 0 with 10/10 passing; same shared dependency path `npm run validate:content` exit 0; `node --check scripts/publishing.test.js` exit 0; `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH npm run test:ownership` exit 0; `git diff --check` exit 0.
+PR: pending from `task/app-store-privacy-categories-pane2-3999748` at handoff commit time.
+Blocked? no for this release/privacy checklist parity atom.
+Next suggested validator action: inspect the App Store listing checklist and publishing parser, then rerun `npm run test:publishing` plus `npm run validate:content` before accepting `APP-STORE-PRIVACY-DATA-CATEGORY-PARITY-1`.

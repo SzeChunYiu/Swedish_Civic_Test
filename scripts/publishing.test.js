@@ -13,6 +13,30 @@ function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
 
+function markdownSection(source, heading) {
+  const headingWithNewline = `${heading}\n`;
+  const start = source.indexOf(headingWithNewline);
+  assert.notEqual(start, -1, `missing markdown section: ${heading}`);
+
+  const body = source.slice(start + headingWithNewline.length);
+  const nextHeading = body.search(/\n#{1,3} /);
+  return nextHeading === -1 ? body : body.slice(0, nextHeading);
+}
+
+function boldBulletLabels(section) {
+  return Array.from(section.matchAll(/^- \*\*([^*]+)\*\*/gm), (match) => match[1]);
+}
+
+function applePrivacyCategoryLabels(privacyLabels) {
+  return boldBulletLabels(
+    markdownSection(privacyLabels, '## Data types to review in App Store Connect'),
+  );
+}
+
+function appStoreReviewPrivacyChecklistLabels(appStoreListing) {
+  return boldBulletLabels(markdownSection(appStoreListing, '### App Review privacy-data checklist'));
+}
+
 function staleWords(...words) {
   return new RegExp(words.join('\\s+'), 'i');
 }
@@ -118,6 +142,25 @@ test('store publishing metadata is prepared', () => {
     appStoreListing,
     /unlock(?:s|ed)?\s+(?:study|question|content|exam)|paid\s+(?:study|question|content|exam)|purchase\s+unlock/i,
   );
+
+  const privacyLabels = read('publishing/privacy-labels.md');
+  const appStoreChecklist = markdownSection(
+    appStoreListing,
+    '### App Review privacy-data checklist',
+  );
+  const expectedPrivacyCategories = applePrivacyCategoryLabels(privacyLabels);
+  assert.deepEqual(appStoreReviewPrivacyChecklistLabels(appStoreListing), expectedPrivacyCategories);
+  assert.deepEqual(expectedPrivacyCategories, [
+    'Identifiers / Device ID',
+    'Usage Data / Product Interaction',
+    'Advertising Data',
+    'Diagnostics',
+    'Purchases',
+    'Location review',
+  ]);
+  assert.match(appStoreChecklist, /Google Mobile Ads/i);
+  assert.match(appStoreChecklist, /Remove Ads/i);
+  assert.match(appStoreChecklist, /Coarse Location/i);
 
   const googlePlayListing = read('publishing/google-play-listing.md');
   assert.match(googlePlayListing, /Almost Swedish/);

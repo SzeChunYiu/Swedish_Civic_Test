@@ -63,6 +63,17 @@ No user-generated content, no unrestricted web access, no gambling, no medical c
 
 The app is an independent education app. It includes clear disclaimer pages and does not claim to be official. The timed mock exam explicitly disables ad placements. The ad-supported study surfaces use Google Mobile Ads with ATT and Google UMP consent handling where required. Remove Ads is a one-time 29 SEK in-app purchase that removes ads only. The full question bank remains available without purchase.
 
+### App Review privacy-data checklist
+
+Before submission, reconcile these App Store Connect privacy categories with the generated binary, the Google Mobile Ads SDK privacy manifest, and the Apple App Privacy labels draft:
+
+- **Identifiers / Device ID** — Google Mobile Ads may use advertising or app/developer-bounded identifiers for ad delivery, measurement, and SDK performance.
+- **Usage Data / Product Interaction** — Google Mobile Ads may process app launches, taps, ad views, video views, and related interaction signals for ad delivery and measurement.
+- **Advertising Data** — Google Mobile Ads may process which ads were served or viewed for advertising and analytics.
+- **Diagnostics** — Google Mobile Ads may process crash, performance, hang-rate, energy-usage, and SDK reliability signals.
+- **Purchases** — App Store in-app purchase infrastructure and the app runtime process the Remove Ads non-consumable purchase/restore state for app functionality; the app stores only the local `adsDisabled` entitlement flag.
+- **Location review** — Confirm whether the final Xcode privacy report requires a Coarse Location disclosure because Google Mobile Ads may use IP address to estimate general location.
+
 ## Official platform guidance checked
 
 Apple App Privacy Details: https://developer.apple.com/app-store/app-privacy-details/
