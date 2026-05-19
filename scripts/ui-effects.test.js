@@ -10,10 +10,17 @@ function read(relativePath) {
 }
 
 test('progress bar uses tokenized animated motion and exposes progress to assistive tech', () => {
+  const foundationSource = read('components/ProgressBar.tsx');
   const source = read('components/ui/ProgressBar.tsx');
 
   assert.match(source, /Animated\.timing/);
   assert.match(source, /motion\.duration\.slow/);
+  assert.match(foundationSource, /import \{ useReducedMotion \}/);
+  assert.match(foundationSource, /const reducedMotionEnabled = useReducedMotion\(\);/);
+  assert.match(foundationSource, /const shouldAnimate = animated && !reducedMotionEnabled;/);
+  assert.match(source, /import \{ useReducedMotion \}/);
+  assert.match(source, /const reducedMotionEnabled = useReducedMotion\(\);/);
+  assert.match(source, /if \(reducedMotionEnabled\) \{/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
@@ -712,6 +719,9 @@ test('question disclaimer exposes the non-official warning as an accessible summ
 test('celebration burst keeps decorative particles out of the accessibility tree', () => {
   const source = read('components/quiz/CelebrationBurst.tsx');
 
+  assert.match(source, /import \{ useReducedMotion \}/);
+  assert.match(source, /const reducedMotionEnabled = useReducedMotion\(\);/);
+  assert.match(source, /if \(reducedMotionEnabled\) \{/);
   assert.match(source, /accessibilityElementsHidden/);
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /pointerEvents="none"/);

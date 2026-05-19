@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 
@@ -46,6 +47,7 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = celebrationBurstCopy[language];
+  const reducedMotionEnabled = useReducedMotion();
 
   useEffect(() => {
     if (!active) {
@@ -53,16 +55,38 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
       return;
     }
 
+    if (reducedMotionEnabled) {
+      progress.setValue(1);
+      return;
+    }
+
     progress.setValue(0);
-    Animated.timing(progress, {
+    const timing = Animated.timing(progress, {
       toValue: 1,
       duration: motion.duration.slow * 2,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
-    }).start();
-  }, [active, progress]);
+    });
+
+    timing.start();
+    return () => timing.stop();
+  }, [active, progress, reducedMotionEnabled]);
 
   if (!active) return null;
+  if (reducedMotionEnabled) {
+    return (
+      <View
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+        pointerEvents="none"
+        style={styles.container}
+      >
+        <View style={styles.pill}>
+          <Text style={styles.pillText}>{getCelebrationLabel(copy, streak)}</Text>
+        </View>
+      </View>
+    );
+  }
 
   const containerScale = progress.interpolate({
     inputRange: [0, 0.2, 1],
