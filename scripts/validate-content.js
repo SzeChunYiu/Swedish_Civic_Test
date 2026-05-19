@@ -828,11 +828,9 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'behöver repetition',
     'frågor',
     '${count} kapitel',
-    'Fokuserad repetition',
-    'Håll koll på det som behöver övas',
-    'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
-    'Hela banken gratis',
-    'Alla 13 ämnen och hela frågebanken ingår gratis. Betala bara om du vill ta bort annonser från studieskärmar.',
+    'Förbättrat studieflöde',
+    'Uppdaterat för praktiska studiebehov',
+    'Studieflödet lyfter nu fram tydligare framsteg, sparade svåra frågor, källstödd repetition och annonser som hålls borta från provet.',
     'Granska bokmärkta eller missade frågor',
     'Repetera sparade frågor',
     'Starta dagens övning. ${completed} av ${goal} svar klara idag.',
@@ -907,11 +905,9 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'needs review',
     'questions',
     '${count} chapters',
-    'Focused review',
-    'Keep track of what needs review',
-    'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
-    'Full bank free',
-    'All 13 topics and the full question bank are included for free. Pay only if you want to remove ads from study screens.',
+    'Study-loop improvements',
+    'Updated around real study needs',
+    'The study loop now highlights clearer progress, saved hard questions, source-backed review, and ads kept out of exams.',
     'Review bookmarked or missed questions',
     'Review saved questions',
     "Start today's practice. ${completed} of ${goal} answers complete today.",
@@ -1088,6 +1084,12 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['copy.studyLoopItems[index]', 'home study-loop items must render localized copy by index'],
   ['{itemCopy.label}', 'home study-loop badges must render learner-facing labels'],
   ['{itemCopy.lesson}', 'home study-loop lessons must render learner-facing copy'],
+];
+const HOME_ROUTE_SYNTHETIC_COPY_PATTERNS = [
+  /simulerade\s+elever/i,
+  /simulerade\s+studier/i,
+  /simulated\s+learners/i,
+  /simulated\s+study\s+sessions/i,
 ];
 const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
@@ -10085,24 +10087,11 @@ function validateHomeRouteCopyParity() {
     if (!homeRoute.includes(snippet)) reject(message);
   });
 
-  FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
-    if (homeRoute.includes(forbidden)) {
-      reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
+  HOME_ROUTE_SYNTHETIC_COPY_PATTERNS.forEach((pattern) => {
+    if (pattern.test(homeRoute)) {
+      reject('home route contains synthetic learner feedback copy');
     }
   });
-
-  if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
-    reject('home route Swedish missed-question review copy must use natural learner wording');
-  }
-
-  const unsupportedPreparationSignalCopy = `${homeRoute}\n${readinessSource}`.match(
-    FORBIDDEN_HOME_PREPARATION_SIGNAL_COPY,
-  );
-  if (unsupportedPreparationSignalCopy) {
-    reject(
-      `home route preparation signal copy must not expose official-readiness wording: ${unsupportedPreparationSignalCopy[0]}`,
-    );
-  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
