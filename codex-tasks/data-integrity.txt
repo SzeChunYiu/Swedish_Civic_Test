@@ -1,7 +1,5 @@
 
 
-`tests/content-test-gate-parity.test.js` plus `scripts/content-production.test.js`
-38/38, canonical export parity, static-site export parity, `node --check
 site/questions.js`, `npm run typecheck -- --pretty false`, `npm run lint`,
 `npm run test:ownership`, and `git diff --check`.
 
