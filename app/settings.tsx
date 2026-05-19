@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colors, radius, shadows, space, typography } from '../lib/theme';
+import { colors, motion, radius, shadows, space, typography } from '../lib/theme';
 
 type SettingsCopy = {
   audioDisabledLabel: string;
@@ -94,7 +94,11 @@ export default function Screen() {
         accessibilityState={{ selected: language === value }}
         hitSlop={space[1]}
         onPress={() => setLanguage(value)}
-        style={[styles.pill, language === value ? styles.pillActive : null]}
+        style={({ pressed }) => [
+          styles.pill,
+          language === value ? styles.pillActive : null,
+          pressed ? styles.controlPressed : null,
+        ]}
       >
         <Text style={[styles.pillText, language === value ? styles.pillTextActive : null]}>
           {label}
@@ -143,7 +147,10 @@ export default function Screen() {
           accessibilityState={{ checked: audioEnabled }}
           hitSlop={space[1]}
           onPress={() => setAudioEnabled(!audioEnabled)}
-          style={styles.secondaryButton}
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            pressed ? styles.secondaryButtonPressed : null,
+          ]}
         >
           <Text style={styles.secondaryButtonText}>
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
@@ -169,7 +176,12 @@ export default function Screen() {
                 accessibilityState={{ selected: dailyGoalAnswers === goal }}
                 hitSlop={space[1]}
                 onPress={() => setDailyGoalAnswers(goal)}
-                style={[styles.pill, styles.goalPill, selected ? styles.pillActive : null]}
+                style={({ pressed }) => [
+                  styles.pill,
+                  styles.goalPill,
+                  selected ? styles.pillActive : null,
+                  pressed ? styles.controlPressed : null,
+                ]}
               >
                 <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
                   {goal}
@@ -250,6 +262,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.badgeBlueBg,
     borderColor: colors.badgeBlueText,
   },
+  controlPressed: {
+    transform: [{ scale: motion.pressedScale }],
+  },
   pillText: {
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
@@ -284,6 +299,10 @@ const styles = StyleSheet.create({
     minHeight: space[5] + space[0.5],
     paddingHorizontal: space[2],
     paddingVertical: space[1.25],
+  },
+  secondaryButtonPressed: {
+    backgroundColor: colors.accentActive,
+    transform: [{ scale: motion.pressedScale }],
   },
   secondaryButtonText: {
     color: colors.surface,
