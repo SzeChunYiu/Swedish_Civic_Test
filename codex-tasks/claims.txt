@@ -578,3 +578,4 @@ CLAIMED SEARCH-QUERY-PARAM-HYDRATION-1 by billy-137801 2026-05-19T22:58:41Z
 CLAIMED ROUTED-QUIZ-INVALID-SESSION-FAIL-CLOSED-1 by pane0-manager-content-1779235200 2026-05-19T22:59:40Z
 CLAIMED SETTINGS-DAILY-GOAL-HYDRATION-GUARD-1 by billy-144452 2026-05-19T22:59:40Z
 CLAIMED DARK-MODE-FREE-ACCESSIBILITY-SURFACE-1 by billy-172755 2026-05-19T23:02:50Z
+CLAIMED STATIC-MOCK-EXAM-SV-LEGAL-COPY-1 by pane4-data-integrity-178901 2026-05-19T23:07:18Z (takeover: old claims have not reached main and current origin/main still renders Swedish static mock-flow `Skarp tentamen`/`Bygg din tentamen`/`Starta tentamen`)
