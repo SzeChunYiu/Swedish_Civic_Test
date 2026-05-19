@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -81,4 +82,12 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Juridik och källor/);
   assert.match(complianceLinks, /Legal and sources/);
   assert.match(complianceLinks, /Support/);
+});
+
+test('static learner-facing slogans avoid pass and passport outcome promises', () => {
+  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+  assert.match(read('site/app.js'), /"hero\.h1a": "Study the material\."/);
+  assert.match(read('site/app.js'), /"hero\.h1b": "Practice with sources\."/);
+  assert.match(read('site/app.js'), /"hero\.h1a": "Plugga materialet\."/);
+  assert.match(read('site/app.js'), /"hero\.h1b": "Öva med källor\."/);
 });
