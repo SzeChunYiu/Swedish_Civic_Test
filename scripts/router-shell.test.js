@@ -77,7 +77,21 @@ function readRouterShellManifest() {
       'expoRouterRootStackScreens',
       'file',
     ),
+    tabScreenNames: valuesForFieldInConstArray(manifest, 'expoRouterTabScreens', 'name'),
+    tabScreenFiles: valuesForFieldInConstArray(manifest, 'expoRouterTabScreens', 'file'),
+    dynamicRouteNames: valuesForFieldInConstArray(manifest, 'expoRouterDynamicRoutes', 'name'),
+    dynamicRouteFiles: valuesForFieldInConstArray(manifest, 'expoRouterDynamicRoutes', 'file'),
+    dynamicRouteHrefSamples: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterDynamicRoutes',
+      'hrefSample',
+    ),
     recoveryHrefs: valuesInConstArray(manifest, 'expoRouterShellRecoveryHrefs'),
+    standaloneRouteHrefs: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterStandaloneRoutes',
+      'href',
+    ),
     standaloneHeaderHiddenRoutes: valuesInConstArray(
       manifest,
       'expoRouterStandaloneHeaderHiddenRoutes',
@@ -94,6 +108,36 @@ function readRouterShellManifest() {
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
     appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
     nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
+    nativeIntentDynamicRouteRoutes: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'route',
+    ),
+    nativeIntentDynamicRouteFiles: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'routeFile',
+    ),
+    nativeIntentDynamicRoutePatternNames: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'patternName',
+    ),
+    nativeIntentDynamicRouteSamplePaths: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'samplePath',
+    ),
+    nativeIntentRuntimeSampleInputs: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentRuntimeSamples',
+      'input',
+    ),
+    nativeIntentRuntimeSampleExpectedPaths: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentRuntimeSamples',
+      'expectedPath',
+    ),
   };
 }
 
@@ -236,6 +280,15 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'app/search.tsx',
     'app/+not-found.tsx',
   ]);
+  assert.deepEqual(manifest.tabScreenNames, [
+    'home',
+    'learn',
+    'practice',
+    'exam',
+    'mistakes',
+    'profile',
+  ]);
+  assert.deepEqual(manifest.dynamicRouteNames, ['chapter/[chapterId]', 'quiz/[sessionId]']);
   assert.deepEqual(manifest.recoveryHrefs, ['/home']);
   assert.deepEqual(manifest.standaloneHeaderHiddenRoutes, [
     'disclaimer',
@@ -258,11 +311,24 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
   assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
-  assert.equal(
-    manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
-    true,
-    'native intent static route allowlist should include the about-the-test guide',
+  assert.deepEqual(
+    [...manifest.nativeIntentStaticRoutes].sort(),
+    [
+      '/',
+      ...manifest.tabScreenNames.map((name) => `/${name}`),
+      ...manifest.rootStackScreenNames
+        .filter((name) => !['index', '(tabs)', '+not-found'].includes(name))
+        .map((name) => `/${name}`),
+      ...manifest.standaloneRouteHrefs,
+    ].sort(),
+    'native intent static route allowlist should mirror manifest route declarations',
   );
+  assert.deepEqual(
+    manifest.nativeIntentDynamicRouteRoutes,
+    manifest.dynamicRouteNames.map((name) => `/${name}`),
+  );
+  assert.deepEqual(manifest.nativeIntentDynamicRouteFiles, manifest.dynamicRouteFiles);
+  assert.deepEqual(manifest.nativeIntentDynamicRouteSamplePaths, manifest.dynamicRouteHrefSamples);
 
   for (const file of manifest.files) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
@@ -286,6 +352,20 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
       fs.existsSync(path.join(repoRoot, `app/${routeName}.tsx`)),
       true,
       `${routeName} should stay covered by the hidden standalone header contract`,
+    );
+  }
+  for (const route of manifest.nativeIntentStaticRoutes) {
+    assertContains(
+      nativeIntent,
+      `'${route}'`,
+      `native intent runtime should include static route ${route}`,
+    );
+  }
+  for (const patternName of manifest.nativeIntentDynamicRoutePatternNames) {
+    assertMatches(
+      nativeIntent,
+      new RegExp(`const\\s+${escapeRegExp(patternName)}\\s*=`),
+      `native intent runtime should declare dynamic pattern ${patternName}`,
     );
   }
   assertMatches(
@@ -322,22 +402,24 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
 });
 
-test('native intent resolves about-the-test deep links before the Home fallback', () => {
+test('native intent resolves every manifest runtime sample before the Home fallback', () => {
+  const manifest = readRouterShellManifest();
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
   assert.equal(typeof redirectSystemPath, 'function');
-  assert.equal(redirectSystemPath({ initial: true, path: '/about-the-test' }), '/about-the-test');
   assert.equal(
-    redirectSystemPath({
-      initial: true,
-      path: 'almost-swedish://app/about-the-test',
-    }),
-    '/about-the-test',
+    manifest.nativeIntentRuntimeSampleInputs.length,
+    manifest.nativeIntentRuntimeSampleExpectedPaths.length,
+    'native intent runtime sample inputs and expectations should stay paired',
   );
-  assert.equal(
-    redirectSystemPath({ initial: true, path: 'almost-swedish://app/not-real' }),
-    '/home',
-  );
+
+  for (const [index, input] of manifest.nativeIntentRuntimeSampleInputs.entries()) {
+    assert.equal(
+      redirectSystemPath({ initial: true, path: input }),
+      manifest.nativeIntentRuntimeSampleExpectedPaths[index],
+      `native intent sample ${input} should resolve to its manifest expectation`,
+    );
+  }
 });
 
 test('router shell tooling guard is wired into package scripts', () => {
