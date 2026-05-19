@@ -458,6 +458,30 @@ test('custom pressed controls mirror false checked and expanded state to web ari
   assert.doesNotMatch(provenanceBadgeSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('settings controls use token pressed feedback on all direct controls', () => {
+  const source = read('app/settings.tsx');
+
+  assert.match(source, /colors, motion, radius, shadows, space, typography/);
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*language === value \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.secondaryButton,[\s\S]*pressed \? styles\.secondaryButtonPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*styles\.goalPill,[\s\S]*selected \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(source, /controlPressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(
+    source,
+    /secondaryButtonPressed: \{[\s\S]*backgroundColor: colors\.accentActive,[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings route remains scrollable on narrow mobile viewports', () => {
   const source = read('app/settings.tsx');
 
