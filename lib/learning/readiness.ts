@@ -116,18 +116,37 @@ export interface ReadinessInput {
   now?: Date;
 }
 
-export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
-  const now = input.now ?? new Date();
+type QuestionProgressSnapshot = {
+  seenCount?: number;
+  correctCount?: number;
+  lastAnsweredAt?: string;
+};
 
-  const accuracy = rollingAccuracy(input.progress, now);
-  const coverage = chapterCoverage(input.progress, input.chapters, input.questionChapterIndex);
-  const recency = recencyFromLastAnswer(input.progress, now);
-  const mockAvg = mockAverage(input.progress);
+type ReadinessQuestionLike = {
+  id: string;
+  chapterId: string;
+};
 
-  // Weights: accuracy is the strongest signal, coverage second, recency third,
-  // mocks substitute for accuracy once they exist (mocks ARE accuracy on the
-  // exam format). When no mocks, weight redistributes to accuracy.
-  const hasMocks = mockHistory(input.progress).length > 0;
+export interface QuestionProgressReadinessInput {
+  questionProgress: Record<string, QuestionProgressSnapshot | undefined>;
+  questions: ReadonlyArray<ReadinessQuestionLike>;
+  chapters: ReadonlyArray<{ id: string; questionCount: number }>;
+  now?: Date;
+}
+
+function scoreReadinessComponents({
+  accuracy,
+  coverage,
+  recency,
+  mockAvg,
+  hasMocks,
+}: {
+  accuracy: number;
+  coverage: number;
+  recency: number;
+  mockAvg: number;
+  hasMocks: boolean;
+}): number {
   const weights = hasMocks
     ? { accuracy: 0.35, coverage: 0.25, recency: 0.1, mock: 0.3 }
     : { accuracy: 0.55, coverage: 0.3, recency: 0.15, mock: 0 };
@@ -138,7 +157,19 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
     recency * weights.recency +
     mockAvg * weights.mock;
 
-  const score = Math.round(clamp01(blended) * 100);
+  return Math.round(clamp01(blended) * 100);
+}
+
+export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
+  const now = input.now ?? new Date();
+
+  const accuracy = rollingAccuracy(input.progress, now);
+  const coverage = chapterCoverage(input.progress, input.chapters, input.questionChapterIndex);
+  const recency = recencyFromLastAnswer(input.progress, now);
+  const mockAvg = mockAverage(input.progress);
+
+  const hasMocks = mockHistory(input.progress).length > 0;
+  const score = scoreReadinessComponents({ accuracy, coverage, recency, mockAvg, hasMocks });
 
   // Sparse: too little data to be meaningful.
   const totalAnswers = (input.progress.sessions ?? []).reduce((n, s) => n + s.answers.length, 0);
@@ -149,5 +180,57 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
     verdict: verdictForScore(score),
     components: { accuracy, coverage, recency, mockAverage: mockAvg },
     isSparse,
+  };
+}
+
+export function computeReadinessFromQuestionProgress(
+  input: QuestionProgressReadinessInput,
+): ReadinessScore {
+  const now = input.now ?? new Date();
+  const chapterIds = new Set(input.chapters.map((chapter) => chapter.id));
+  const touchedChapters = new Set<string>();
+  let totalAnswers = 0;
+  let correctAnswers = 0;
+  let mostRecentAnswerAt: number | null = null;
+
+  for (const question of input.questions) {
+    const progress = input.questionProgress[question.id];
+    const seenCount = Math.max(0, progress?.seenCount ?? 0);
+    if (seenCount <= 0) continue;
+
+    totalAnswers += seenCount;
+    correctAnswers += Math.max(0, Math.min(seenCount, progress?.correctCount ?? 0));
+    if (chapterIds.has(question.chapterId)) touchedChapters.add(question.chapterId);
+
+    if (progress?.lastAnsweredAt) {
+      const answeredAt = new Date(progress.lastAnsweredAt).getTime();
+      if (!Number.isNaN(answeredAt)) {
+        mostRecentAnswerAt =
+          mostRecentAnswerAt === null ? answeredAt : Math.max(mostRecentAnswerAt, answeredAt);
+      }
+    }
+  }
+
+  const accuracy = totalAnswers === 0 ? 0 : clamp01(correctAnswers / totalAnswers);
+  const coverage =
+    input.chapters.length === 0 ? 0 : clamp01(touchedChapters.size / input.chapters.length);
+  const recency =
+    mostRecentAnswerAt === null
+      ? 0
+      : clamp01(1 - (now.getTime() - mostRecentAnswerAt) / DAY_MS / 14);
+  const mockAvg = 0;
+  const score = scoreReadinessComponents({
+    accuracy,
+    coverage,
+    recency,
+    mockAvg,
+    hasMocks: false,
+  });
+
+  return {
+    score,
+    verdict: verdictForScore(score),
+    components: { accuracy, coverage, recency, mockAverage: mockAvg },
+    isSparse: totalAnswers < 30,
   };
 }
