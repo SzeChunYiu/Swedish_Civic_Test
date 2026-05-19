@@ -1531,6 +1531,38 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     ],
   },
 ];
+const LEGAL_SWEDISH_COPY_ALLOWED_ENGLISH_PATTERNS = [
+  /\bXP\b/g,
+  /\bUHR\b/g,
+  /\bGDPR\b/g,
+  /\bSEK\b/g,
+  /\biOS\b/g,
+  /\bID\b/g,
+  /\bAdMob\b/g,
+  /\bGoogle Mobile Ads\b/g,
+  /\bApp Tracking Transparency\b/g,
+  /\bGoogle UMP\b/g,
+  /\bRemove Ads\b/g,
+  /\badsDisabled=true\b/g,
+  /https?:\/\/[^\s']+/g,
+  /\bcontent\/[A-Za-z0-9_./-]+\b/g,
+  /\b[A-Za-z0-9_-]+\.(?:csv|json|txt)\b/g,
+];
+const LEGAL_SWEDISH_COPY_BANNED_ENGLISH_TOKENS = [
+  { label: 'account', pattern: /\baccount\b/i },
+  { label: 'audio', pattern: /\baudio\b/i },
+  { label: 'bookmarks', pattern: /\bbookmarks?\b/i },
+  { label: 'device', pattern: /\bdevices?\b/i },
+  { label: 'feedback', pattern: /\bfeedback\b/i },
+  { label: 'mistakes', pattern: /\bmistakes?\b/i },
+  { label: 'privacy', pattern: /\bprivacy\b/i },
+  { label: 'profile', pattern: /\bprofiles?\b/i },
+  { label: 'progress', pattern: /\bprogress\b/i },
+  { label: 'settings', pattern: /\bsettings?\b/i },
+  { label: 'source', pattern: /\bsources?\b/i },
+  { label: 'streaks', pattern: /\bstreaks?\b/i },
+  { label: 'terms', pattern: /\bterms\b/i },
+];
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
@@ -6093,6 +6125,8 @@ let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
+let legalSwedishEnglishTokenGuardValidated = 0;
+let legalSwedishEnglishTokenGuardParityValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -8252,6 +8286,70 @@ function countLegalTitleOccurrences(source, componentName, title) {
 function countPatternOccurrences(source, pattern) {
   const flags = pattern.flags.includes('g') ? pattern.flags : `${pattern.flags}g`;
   return (source.match(new RegExp(pattern.source, flags)) || []).length;
+}
+
+function extractSwedishLegalStringLiterals(source, file) {
+  const match = source.match(/\n\s*sv:\s*\{([\s\S]*?)\n\s*en:\s*\{/);
+  if (!match) {
+    fail(`${file} must keep Swedish legal copy in a sv block before en copy`);
+    return [];
+  }
+
+  const literals = [];
+  const literalPattern = /'((?:\\.|[^'\\])*)'/g;
+  let literalMatch = null;
+  while ((literalMatch = literalPattern.exec(match[1]))) {
+    literals.push(literalMatch[1].replace(/\\'/g, "'"));
+  }
+  return literals;
+}
+
+function stripAllowedEnglishLegalTokens(value) {
+  return LEGAL_SWEDISH_COPY_ALLOWED_ENGLISH_PATTERNS.reduce(
+    (cleaned, pattern) => cleaned.replace(pattern, ' '),
+    value,
+  );
+}
+
+function validateLegalSwedishEnglishTokenGuard() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
+    let routeSource = '';
+    try {
+      routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
+    } catch (error) {
+      reject(
+        `${expectedRoute.file} could not be read for Swedish legal copy guard: ${error.message}`,
+      );
+      continue;
+    }
+
+    const swedishLiterals = extractSwedishLegalStringLiterals(routeSource, expectedRoute.file);
+    for (const literal of swedishLiterals) {
+      const scannedLiteral = stripAllowedEnglishLegalTokens(literal);
+      let literalIsValid = true;
+      for (const bannedToken of LEGAL_SWEDISH_COPY_BANNED_ENGLISH_TOKENS) {
+        if (!bannedToken.pattern.test(scannedLiteral)) continue;
+        literalIsValid = false;
+        reject(
+          `${expectedRoute.file} Swedish legal copy contains English token "${bannedToken.label}" in ${JSON.stringify(
+            literal,
+          )}`,
+        );
+      }
+      if (literalIsValid) legalSwedishEnglishTokenGuardValidated += 1;
+    }
+  }
+
+  if (valid && legalSwedishEnglishTokenGuardValidated > 0) {
+    legalSwedishEnglishTokenGuardParityValidated = true;
+  }
 }
 
 function validateLegalRouteHeaderParity() {
@@ -13887,6 +13985,7 @@ validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateLegalRouteHeaderParity();
+validateLegalSwedishEnglishTokenGuard();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -14028,6 +14127,8 @@ console.log(
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
+      legalSwedishEnglishTokenGuardValidated,
+      legalSwedishEnglishTokenGuardParityValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,

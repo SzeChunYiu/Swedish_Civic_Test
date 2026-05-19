@@ -36,6 +36,10 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/privacy.tsx'), /29 SEK/i);
   assert.match(read('app/privacy.tsx'), /App Tracking Transparency/i);
   assert.match(read('app/privacy.tsx'), /Google UMP consent/i);
+  assert.match(read('app/privacy.tsx'), /XP, studiesviter och ljudinställningar/);
+  assert.match(read('app/privacy.tsx'), /Google UMP-samtyckesformuläret/);
+  assert.doesNotMatch(read('app/privacy.tsx'), /XP, streaks och ljudinställningar/);
+  assert.doesNotMatch(read('app/privacy.tsx'), /Google UMP consent-formuläret/);
   assert.match(read('app/terms.tsx'), /study/i);
   assert.match(read('app/terms.tsx'), /no guarantee/i);
   assert.match(read('app/terms.tsx'), /Användarvillkor/);
