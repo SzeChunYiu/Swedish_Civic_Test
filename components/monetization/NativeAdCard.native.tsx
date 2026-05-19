@@ -90,67 +90,59 @@ export function NativeAdCard({
   if (!nativeAd || !visible) return null;
 
   return (
-    <NativeAdView accessible={false} nativeAd={nativeAd} style={styles.card}>
-      <View
-        accessible
-        accessibilityHint={copy.hint}
-        accessibilityLabel={copy.accessibilityLabel}
-        accessibilityRole="summary"
-        style={styles.summary}
-      >
-        <View style={styles.header}>
-          {nativeAd.icon ? (
-            <NativeAsset assetType={NativeAssetType.ICON}>
-              <Image
-                accessibilityIgnoresInvertColors
-                source={{ uri: nativeAd.icon.url }}
-                style={styles.icon}
-              />
-            </NativeAsset>
-          ) : null}
-          <View style={styles.headerCopy}>
-            <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
-            <NativeAsset assetType={NativeAssetType.HEADLINE}>
-              <Text numberOfLines={2} style={styles.title}>
-                {nativeAd.headline}
-              </Text>
-            </NativeAsset>
-            {nativeAd.advertiser ? (
-              <NativeAsset assetType={NativeAssetType.ADVERTISER}>
-                <Text numberOfLines={1} style={styles.advertiser}>
-                  {nativeAd.advertiser}
-                </Text>
-              </NativeAsset>
-            ) : null}
-          </View>
-        </View>
-
-        {nativeAd.mediaContent ? <NativeMediaView resizeMode="cover" style={styles.media} /> : null}
-
-        {nativeAd.body ? (
-          <NativeAsset assetType={NativeAssetType.BODY}>
-            <Text numberOfLines={3} style={styles.meta}>
-              {nativeAd.body}
+    <NativeAdView
+      accessible
+      accessibilityHint={copy.hint}
+      accessibilityLabel={copy.accessibilityLabel}
+      nativeAd={nativeAd}
+      style={styles.card}
+    >
+      <View style={styles.header}>
+        {nativeAd.icon ? (
+          <NativeAsset assetType={NativeAssetType.ICON}>
+            <Image
+              accessibilityIgnoresInvertColors
+              source={{ uri: nativeAd.icon.url }}
+              style={styles.icon}
+            />
+          </NativeAsset>
+        ) : null}
+        <View style={styles.headerCopy}>
+          <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
+          <NativeAsset assetType={NativeAssetType.HEADLINE}>
+            <Text numberOfLines={2} style={styles.title}>
+              {nativeAd.headline}
             </Text>
           </NativeAsset>
-        ) : (
-          <Text numberOfLines={2} style={styles.meta}>
-            {copy.meta}
-          </Text>
-        )}
+          {nativeAd.advertiser ? (
+            <NativeAsset assetType={NativeAssetType.ADVERTISER}>
+              <Text numberOfLines={1} style={styles.advertiser}>
+                {nativeAd.advertiser}
+              </Text>
+            </NativeAsset>
+          ) : null}
+        </View>
       </View>
+
+      {nativeAd.mediaContent ? <NativeMediaView resizeMode="cover" style={styles.media} /> : null}
+
+      {nativeAd.body ? (
+        <NativeAsset assetType={NativeAssetType.BODY}>
+          <Text numberOfLines={3} style={styles.meta}>
+            {nativeAd.body}
+          </Text>
+        </NativeAsset>
+      ) : (
+        <Text numberOfLines={2} style={styles.meta}>
+          {copy.meta}
+        </Text>
+      )}
 
       {nativeAd.callToAction ? (
         <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
-          <Text
-            accessible
-            accessibilityHint={copy.ctaHint}
-            accessibilityLabel={copy.ctaAccessibilityLabel(nativeAd.callToAction)}
-            accessibilityRole="button"
-            style={styles.cta}
-          >
-            {nativeAd.callToAction}
-          </Text>
+          <View accessibilityRole="button" style={styles.cta}>
+            <Text style={styles.ctaText}>{nativeAd.callToAction}</Text>
+          </View>
         </NativeAsset>
       ) : null}
     </NativeAdView>
@@ -167,23 +159,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     gap: space[1],
     overflow: 'hidden',
     padding: space[2],
   },
   cta: {
+    alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
     borderRadius: radius.small,
+    minHeight: 44,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+  },
+  ctaText: {
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.75],
-    textAlign: 'center',
   },
   eyebrow: {
     color: colors.badgeBlueText,
@@ -201,21 +194,18 @@ const styles = StyleSheet.create({
   },
   icon: {
     borderRadius: radius.micro,
-    height: space[6],
-    width: space[6],
+    height: 48,
+    width: 48,
   },
   media: {
     borderRadius: radius.micro,
-    minHeight: space[15],
+    minHeight: 120,
     overflow: 'hidden',
   },
   meta: {
     color: colors.textMuted,
     fontSize: typography.finePrint.fontSize,
     lineHeight: typography.caption.lineHeight,
-  },
-  summary: {
-    gap: space[1],
   },
   title: {
     color: colors.text,

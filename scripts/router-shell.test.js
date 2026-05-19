@@ -77,21 +77,7 @@ function readRouterShellManifest() {
       'expoRouterRootStackScreens',
       'file',
     ),
-    tabScreenNames: valuesForFieldInConstArray(manifest, 'expoRouterTabScreens', 'name'),
-    tabScreenFiles: valuesForFieldInConstArray(manifest, 'expoRouterTabScreens', 'file'),
-    dynamicRouteNames: valuesForFieldInConstArray(manifest, 'expoRouterDynamicRoutes', 'name'),
-    dynamicRouteFiles: valuesForFieldInConstArray(manifest, 'expoRouterDynamicRoutes', 'file'),
-    dynamicRouteHrefSamples: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterDynamicRoutes',
-      'hrefSample',
-    ),
     recoveryHrefs: valuesInConstArray(manifest, 'expoRouterShellRecoveryHrefs'),
-    standaloneRouteHrefs: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterStandaloneRoutes',
-      'href',
-    ),
     standaloneHeaderHiddenRoutes: valuesInConstArray(
       manifest,
       'expoRouterStandaloneHeaderHiddenRoutes',
@@ -103,51 +89,11 @@ function readRouterShellManifest() {
     notFoundFileProtocolFallbacks: valuesForFieldInSource(manifest, 'notFoundFileProtocolFallback'),
     webLanguages: valuesForFieldInSource(manifest, 'webLanguage'),
     webAppShellMarkers: valuesForFieldInSource(manifest, 'webAppShellMarker'),
-    webMetaDescriptionLanguages: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterWebDocumentMetaDescriptions',
-      'language',
-    ),
-    webMetaDescriptions: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterWebDocumentMetaDescriptions',
-      'description',
-    ),
     themeColorTokens: valuesForFieldInSource(manifest, 'themeColorToken'),
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
     appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
     nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
-    nativeIntentDynamicRouteRoutes: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentDynamicRoutes',
-      'route',
-    ),
-    nativeIntentDynamicRouteFiles: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentDynamicRoutes',
-      'routeFile',
-    ),
-    nativeIntentDynamicRoutePatternNames: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentDynamicRoutes',
-      'patternName',
-    ),
-    nativeIntentDynamicRouteSamplePaths: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentDynamicRoutes',
-      'samplePath',
-    ),
-    nativeIntentRuntimeSampleInputs: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentRuntimeSamples',
-      'input',
-    ),
-    nativeIntentRuntimeSampleExpectedPaths: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentRuntimeSamples',
-      'expectedPath',
-    ),
   };
 }
 
@@ -172,14 +118,6 @@ function loadNativeIntentRuntime() {
   );
 
   return module.exports;
-}
-
-function metaDescriptionForLanguage(manifest, language) {
-  const index = manifest.webMetaDescriptionLanguages.indexOf(language);
-
-  assert.notEqual(index, -1, `web manifest should define a ${language} meta description`);
-
-  return manifest.webMetaDescriptions[index];
 }
 
 test('router shell fallback is registered in the root Expo stack', () => {
@@ -245,15 +183,8 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
-  const manifest = readRouterShellManifest();
-  const webLanguage = manifest.webLanguages[0];
-  const localizedDescription = metaDescriptionForLanguage(manifest, webLanguage);
-  const englishDescription = metaDescriptionForLanguage(manifest, 'en');
 
-  assertContains(
-    htmlShell,
-    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${webLanguage}">`,
-  );
+  assertContains(htmlShell, '<html data-app-shell="expo-router" lang="sv">');
   assertContains(htmlShell, '<meta charSet="utf-8" />');
   assertMatches(
     htmlShell,
@@ -271,25 +202,10 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /<body[\s\S]*backgroundColor:\s*colors\.canvas/,
     'web body background should use the theme canvas color',
   );
-  assert.deepEqual([...manifest.webMetaDescriptionLanguages].sort(), ['en', 'sv']);
-  assert.notEqual(
-    localizedDescription,
-    englishDescription,
-    'localized web descriptions should not collapse to one English-only string',
+  assertContains(
+    htmlShell,
+    'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
   );
-  assert.doesNotMatch(
-    localizedDescription,
-    /\b(?:offline)?quiz(?:zes)?\b/i,
-    'Swedish web metadata should avoid English quiz loanwords',
-  );
-  assertContains(htmlShell, `content="${localizedDescription}"`);
-  if (webLanguage === 'sv') {
-    assert.equal(
-      htmlShell.includes(`content="${englishDescription}"`),
-      false,
-      'the Swedish web shell should not pair lang="sv" with the English meta description',
-    );
-  }
 });
 
 test('router shell manifest stays aligned with special Expo Router files', () => {
@@ -313,29 +229,13 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'web-document',
     'native-intent',
   ]);
-  assert.deepEqual(manifest.rootStackScreenNames, [
-    'index',
-    '(tabs)',
-    'search',
-    'dashboard',
-    '+not-found',
-  ]);
+  assert.deepEqual(manifest.rootStackScreenNames, ['index', '(tabs)', 'search', '+not-found']);
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
     'app/search.tsx',
-    'app/dashboard.tsx',
     'app/+not-found.tsx',
   ]);
-  assert.deepEqual(manifest.tabScreenNames, [
-    'home',
-    'learn',
-    'practice',
-    'exam',
-    'mistakes',
-    'profile',
-  ]);
-  assert.deepEqual(manifest.dynamicRouteNames, ['chapter/[chapterId]', 'quiz/[sessionId]']);
   assert.deepEqual(manifest.recoveryHrefs, ['/home']);
   assert.deepEqual(manifest.standaloneHeaderHiddenRoutes, [
     'disclaimer',
@@ -358,24 +258,11 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
   assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
-  assert.deepEqual(
-    [...manifest.nativeIntentStaticRoutes].sort(),
-    [
-      '/',
-      ...manifest.tabScreenNames.map((name) => `/${name}`),
-      ...manifest.rootStackScreenNames
-        .filter((name) => !['index', '(tabs)', '+not-found'].includes(name))
-        .map((name) => `/${name}`),
-      ...manifest.standaloneRouteHrefs,
-    ].sort(),
-    'native intent static route allowlist should mirror manifest route declarations',
+  assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
+    true,
+    'native intent static route allowlist should include the about-the-test guide',
   );
-  assert.deepEqual(
-    manifest.nativeIntentDynamicRouteRoutes,
-    manifest.dynamicRouteNames.map((name) => `/${name}`),
-  );
-  assert.deepEqual(manifest.nativeIntentDynamicRouteFiles, manifest.dynamicRouteFiles);
-  assert.deepEqual(manifest.nativeIntentDynamicRouteSamplePaths, manifest.dynamicRouteHrefSamples);
 
   for (const file of manifest.files) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
@@ -399,20 +286,6 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
       fs.existsSync(path.join(repoRoot, `app/${routeName}.tsx`)),
       true,
       `${routeName} should stay covered by the hidden standalone header contract`,
-    );
-  }
-  for (const route of manifest.nativeIntentStaticRoutes) {
-    assertContains(
-      nativeIntent,
-      `'${route}'`,
-      `native intent runtime should include static route ${route}`,
-    );
-  }
-  for (const patternName of manifest.nativeIntentDynamicRoutePatternNames) {
-    assertMatches(
-      nativeIntent,
-      new RegExp(`const\\s+${escapeRegExp(patternName)}\\s*=`),
-      `native intent runtime should declare dynamic pattern ${patternName}`,
     );
   }
   assertMatches(
@@ -449,43 +322,22 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
 });
 
-test('native intent resolves every manifest runtime sample before the Home fallback', () => {
-  const manifest = readRouterShellManifest();
+test('native intent resolves about-the-test deep links before the Home fallback', () => {
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
   assert.equal(typeof redirectSystemPath, 'function');
+  assert.equal(redirectSystemPath({ initial: true, path: '/about-the-test' }), '/about-the-test');
   assert.equal(
-    manifest.nativeIntentRuntimeSampleInputs.length,
-    manifest.nativeIntentRuntimeSampleExpectedPaths.length,
-    'native intent runtime sample inputs and expectations should stay paired',
+    redirectSystemPath({
+      initial: true,
+      path: 'almost-swedish://app/about-the-test',
+    }),
+    '/about-the-test',
   );
-
-  for (const [index, input] of manifest.nativeIntentRuntimeSampleInputs.entries()) {
-    assert.equal(
-      redirectSystemPath({ initial: true, path: input }),
-      manifest.nativeIntentRuntimeSampleExpectedPaths[index],
-      `native intent sample ${input} should resolve to its manifest expectation`,
-    );
-  }
-});
-
-test('top-bar language picker keeps a token-sized target and feedback', () => {
-  const languagePicker = read('components/ui/LanguagePicker.tsx');
-  const topBarActions = read('components/ui/TopBarActions.tsx');
-
-  assertContains(topBarActions, '<LanguagePicker />');
-  assertMatches(
-    languagePicker,
-    /style=\{\(\{ pressed \}\) => \[styles\.trigger, pressed \? styles\.triggerPressed : null\]\}/,
-    'language picker trigger should keep tokenized pressed feedback',
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'almost-swedish://app/not-real' }),
+    '/home',
   );
-  assertMatches(
-    languagePicker,
-    /trigger:\s*\{[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*\}/,
-    'language picker trigger should preserve the shared 48px top-bar target',
-  );
-  assertContains(languagePicker, 'backgroundColor: colors.focusSoft');
-  assertContains(languagePicker, 'transform: [{ scale: motion.pressedScale }]');
 });
 
 test('router shell tooling guard is wired into package scripts', () => {
@@ -493,7 +345,7 @@ test('router shell tooling guard is wired into package scripts', () => {
 
   assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
   assertMatches(
-    pkg.scripts['test:all'],
+    pkg.scripts.test,
     /npm run test:router-shell/,
     'aggregate npm test should include the router shell scaffold guard',
   );

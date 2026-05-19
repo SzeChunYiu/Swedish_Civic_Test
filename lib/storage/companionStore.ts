@@ -10,15 +10,12 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import { DEFAULT_COMPANION_ID, isMascotId, type MascotId } from '../mascot/catalog';
-import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
 
 const SELECTED_ID_KEY = 'companion.selectedId.v1';
-const companionStorageId = 'companion';
 
 let companionStorage: MMKV | null = null;
 try {
-  companionStorage = createMMKV({ id: companionStorageId });
+  companionStorage = createMMKV({ id: 'companion' });
 } catch {
   companionStorage = null;
 }
@@ -30,35 +27,21 @@ function readSelected(): MascotId {
 
 type CompanionState = {
   selectedId: MascotId;
-  persistenceWarning: RecoverablePersistenceWarning | null;
   setSelected: (id: MascotId) => void;
   reset: () => void;
-  clearPersistenceWarning: () => void;
 };
 
 export const useCompanionStore = create<CompanionState>((set) => ({
   selectedId: readSelected(),
-  persistenceWarning: null,
   setSelected: (id) => {
     if (!isMascotId(id)) return;
-    const persistenceWarning = writeRecoverably(
-      companionStorage,
-      companionStorageId,
-      SELECTED_ID_KEY,
-      id,
-    );
-    set({ selectedId: id, persistenceWarning });
+    companionStorage?.set(SELECTED_ID_KEY, id);
+    set({ selectedId: id });
   },
   reset: () => {
-    const persistenceWarning = writeRecoverably(
-      companionStorage,
-      companionStorageId,
-      SELECTED_ID_KEY,
-      DEFAULT_COMPANION_ID,
-    );
-    set({ selectedId: DEFAULT_COMPANION_ID, persistenceWarning });
+    companionStorage?.set(SELECTED_ID_KEY, DEFAULT_COMPANION_ID);
+    set({ selectedId: DEFAULT_COMPANION_ID });
   },
-  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 /**
