@@ -26,11 +26,11 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Inget konto krävs',
       },
       localProgressStorage: {
-        body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, studiesviter och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus. Lokal export och import gäller bara studiedata på enheten.',
+        body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, streaks och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus.',
         title: 'Lokal lagring av framsteg',
       },
       gdprRights: {
-        body: 'Du kan begära export eller radering av supportmeddelanden du har skickat via Support-skärmen. Lokalt lagrade framsteg och inställningar kan exporteras, importeras eller rensas genom att avinstallera appen eller rensa appdata på enheten. Köpstatus återställs separat via appbutiken.',
+        body: 'Du kan begära export eller radering av supportmeddelanden du har skickat via Support-skärmen. Lokalt lagrade framsteg, inställningar och köpstatus kan rensas genom att avinstallera appen eller rensa appdata på enheten.',
         title: 'Dina rättigheter enligt GDPR',
       },
       adsAndPurchases: {
@@ -38,7 +38,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Annonser och köp',
       },
       adConsent: {
-        body: 'På iOS begärs App Tracking Transparency innan spårningsbaserad annonsering. Där det krävs visas Google UMP-samtyckesformuläret innan riktiga AdMob-annonser visas. Annonser kan blockeras eller begäras som icke-personanpassade annonser när samtyckesbeslutet inte tillåter personanpassad annonsering.',
+        body: 'På iOS begärs App Tracking Transparency innan spårningsbaserad annonsering. Där det krävs visas Google UMP consent-formuläret innan riktiga AdMob-annonser visas. Annonser kan blockeras eller begäras som icke-personanpassade annonser när samtyckesbeslutet inte tillåter personanpassad annonsering.',
         title: 'Annonssamtycke',
       },
       providerProcessing: {
@@ -55,11 +55,11 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'No account required',
       },
       localProgressStorage: {
-        body: 'Study progress, settings, bookmarks, mistakes, XP, streaks, and audio preferences are stored locally on the device so the app can remember your practice state. Local export and import only cover study data on the device.',
+        body: 'Study progress, settings, bookmarks, mistakes, XP, streaks, and audio preferences are stored locally on the device so the app can remember your practice state.',
         title: 'Local progress storage',
       },
       gdprRights: {
-        body: 'You may request export or deletion of support messages you have sent via the Support screen. Locally stored progress and settings can be exported, imported, or cleared by uninstalling the app or clearing app data on the device. Purchase status is restored separately through the app store.',
+        body: 'You may request export or deletion of support messages you have sent via the Support screen. Locally stored progress, settings, and purchase status can be cleared by uninstalling the app or clearing app data on the device.',
         title: 'Your rights under GDPR',
       },
       adsAndPurchases: {
