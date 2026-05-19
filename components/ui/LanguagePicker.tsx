@@ -68,8 +68,11 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   return (
     <>
       <Pressable
+        aria-expanded={open}
+        aria-haspopup="menu"
         accessibilityRole="button"
         accessibilityLabel={copy.triggerLabel(currentLabel)}
+        accessibilityState={{ expanded: open }}
         hitSlop={space[1]}
         onPress={() => setOpen(true)}
         style={({ pressed }) => [styles.trigger, pressed ? styles.triggerPressed : null]}
