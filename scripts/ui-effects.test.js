@@ -1327,7 +1327,7 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   assert.match(profile, /href="\/dashboard"/);
   assert.match(home, /Framstegsöversikt/);
   assert.match(home, /Progress dashboard/);
-  assert.match(profile, /Aktivitet, kapitelprogress och XP visas på en egen sida\./);
+  assert.match(profile, /Aktivitet, kapitelframsteg och XP visas på en egen sida\./);
   assert.match(profile, /Activity, chapter progress, and XP live on a dedicated page\./);
   assert.match(dashboard, /type DashboardCopy =/);
   assert.match(dashboard, /const dashboardCopy: Record<AppLanguage, DashboardCopy>/);
@@ -1348,6 +1348,8 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   assert.match(chapters, /copy\.emptyState/);
   assert.match(sparkline, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(sparkline, /copy\.emptyState/);
+  assert.doesNotMatch(profile, /Kapitelprogress|kapitelprogress|XP-linjen/);
+  assert.doesNotMatch(dashboard, /Kapitelprogress|kapitelprogress|XP-linjen/);
   assert.doesNotMatch(
     `${dashboard}\n${activity}\n${chapters}\n${sparkline}`,
     /#[0-9a-fA-F]{6}|rgba?\(/,
