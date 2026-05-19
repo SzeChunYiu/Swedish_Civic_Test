@@ -1165,3 +1165,12 @@ Verification: clean worktree from current `origin/main` `7455e0d`, then rebased 
 PR: pending from `task/setup/home-ui-effects-1779151283` at handoff commit time.
 Blocked? no for this SETUP UI-effects guard; full validation has a separate content-owned red outside this lane's write scope.
 Next suggested validator action: inspect the Home header guard update and rerun `npm run test:ui-effects` plus `npm run validate:content`; route the unrelated `test:derived-content` failure to CONTENT/DATA-INTEGRITY before using full `npm run validate` as a release gate.
+
+## Iteration 248 - 2026-05-19
+
+Task completed: REVIEWER-PUBLIC-PRIVACY-ADS-IAP-POSTURE-1 - updated the public privacy policy, public privacy copy mirror, and Google Play listing data-safety summary from the stale no-data/disabled-real-ads posture to the current ad-supported v1.0 posture with Google Mobile Ads, ATT/UMP consent, and 29 SEK Remove Ads.
+Artifacts changed: `publishing/public-site/privacy/index.html`, `publishing/public-support-and-privacy.md`, `publishing/google-play-listing.md`, `scripts/publishing.test.js`, `scripts/release-preflight.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `75b2dde`; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:publishing` exit 0 with 7/7 passing; `NODE_OPTIONS='--v8-pool-size=1' timeout 300s npm run test:release-preflight` exit 0 with 46/46 passing; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:ownership` exit 0; `node --check scripts/publishing.test.js` and `node --check scripts/release-preflight.js` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `rg -n "no user data|real ad rendering is disabled|real ads disabled|Data Not Collected" publishing/public-site/privacy/index.html publishing/public-support-and-privacy.md publishing/google-play-listing.md -S` exit 1 with no stale public privacy matches.
+PR: pending from `task/setup/public-privacy-posture-1779151853` at handoff commit time.
+Blocked? no for this public privacy posture atom - SITE-P0-5 remains external production deploy freshness, and no Vercel CLI was run.
+Next suggested validator action: inspect the public privacy copy and rerun `npm run test:publishing` plus `npm run test:release-preflight`; keep hosted production freshness separate until the scheduled hook makes production serve current main.
