@@ -1,5 +1,6 @@
+import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -190,6 +191,7 @@ function buildImportSummaryLines(
 }
 
 export default function Screen() {
+  const [focusedControl, setFocusedControl] = useState<string | null>(null);
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
@@ -240,25 +242,30 @@ export default function Screen() {
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
+    const focusKey = `language-${value}`;
+    const selected = language === value;
 
     return (
       <Pressable
         key={value}
-        aria-checked={language === value}
+        aria-selected={selected}
         accessibilityLabel={copy.languageAccessibilityLabel(label)}
-        accessibilityRole="radio"
-        accessibilityState={{ checked: language === value }}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+        android_ripple={{ color: colors.focusSoft, borderless: false }}
         hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setLanguage(value)}
         style={({ pressed }) => [
           styles.pill,
-          language === value ? styles.pillActive : null,
+          selected ? styles.pillActive : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
           pressed ? styles.controlPressed : null,
+          pressed ? styles.pillPressed : null,
         ]}
       >
-        <Text style={[styles.pillText, language === value ? styles.pillTextActive : null]}>
-          {label}
-        </Text>
+        <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
       </Pressable>
     );
   };
@@ -303,10 +310,15 @@ export default function Screen() {
           }
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
+          android_ripple={{ color: colors.focusSoft, borderless: false }}
           hitSlop={space[1]}
+          onBlur={() => setFocusedControl(null)}
+          onFocus={() => setFocusedControl('audio')}
           onPress={() => setAudioEnabled(!audioEnabled)}
           style={({ pressed }) => [
             styles.secondaryButton,
+            focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
+            pressed ? styles.controlPressed : null,
             pressed ? styles.secondaryButtonPressed : null,
           ]}
         >
@@ -329,21 +341,27 @@ export default function Screen() {
         >
           {[5, 10, 20, 40].map((goal) => {
             const selected = dailyGoalAnswers === goal;
+            const focusKey = `daily-goal-${goal}`;
 
             return (
               <Pressable
                 key={goal}
-                aria-checked={dailyGoalAnswers === goal}
+                aria-selected={selected}
                 accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: dailyGoalAnswers === goal }}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                android_ripple={{ color: colors.focusSoft, borderless: false }}
                 hitSlop={space[1]}
+                onBlur={() => setFocusedControl(null)}
+                onFocus={() => setFocusedControl(focusKey)}
                 onPress={() => setDailyGoalAnswers(goal)}
                 style={({ pressed }) => [
                   styles.pill,
                   styles.goalPill,
                   selected ? styles.pillActive : null,
+                  focusedControl === focusKey ? styles.controlFocused : null,
                   pressed ? styles.controlPressed : null,
+                  pressed ? styles.pillPressed : null,
                 ]}
               >
                 <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
@@ -498,8 +516,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.badgeBlueBg,
     borderColor: colors.badgeBlueText,
   },
-  controlPressed: {
-    transform: [{ scale: motion.pressedScale }],
+  pillPressed: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
   },
   pillText: {
     color: colors.textMuted,
@@ -530,91 +549,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
+    borderColor: colors.accent,
+    borderWidth: StyleSheet.hairlineWidth,
     borderRadius: radius.card,
     justifyContent: 'center',
     minHeight: space[5] + space[0.5],
     paddingHorizontal: space[2],
     paddingVertical: space[1.25],
   },
+  secondaryButtonFocused: {
+    borderColor: colors.focus,
+  },
   secondaryButtonPressed: {
     backgroundColor: colors.accentActive,
-    transform: [{ scale: motion.pressedScale }],
+    borderColor: colors.accentActive,
   },
   secondaryButtonText: {
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
   },
-  outlineButton: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surface,
-    borderColor: colors.accent,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    minHeight: space[5] + space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
+  controlFocused: {
+    borderColor: colors.focus,
   },
-  outlineButtonPressed: {
-    backgroundColor: colors.badgeBlueBg,
+  controlPressed: {
     transform: [{ scale: motion.pressedScale }],
-  },
-  outlineButtonText: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  importActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  importInput: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-    minHeight: space[15],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1.25],
-  },
-  disclaimerText: {
-    color: colors.textDisclaimer,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  importSummary: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[0.75],
-    padding: space[1.5],
-  },
-  summaryTitle: {
-    color: colors.text,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyBold.lineHeight,
-  },
-  summaryText: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  feedbackText: {
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  feedbackError: {
-    color: colors.warning,
-  },
-  feedbackSuccess: {
-    color: colors.success,
   },
 });

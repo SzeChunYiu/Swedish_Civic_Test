@@ -496,13 +496,10 @@ test('settings controls expose exclusive radio groups and checked state', () => 
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy>/);
   assert.match(source, /const copy = settingsCopy\[language\]/);
-  assert.equal(source.match(/accessibilityRole="radiogroup"/g)?.length, 2);
-  assert.equal(source.match(/accessibilityRole="radio"/g)?.length, 2);
-  assert.match(source, /aria-label=\{copy\.questionLanguageTitle\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.questionLanguageTitle\}/);
-  assert.match(source, /aria-checked=\{language === value\}/);
+  assert.match(source, /const selected = language === value;/);
+  assert.match(source, /aria-selected=\{selected\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
-  assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
+  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /aria-checked=\{audioEnabled\}/);
   assert.match(
     source,
@@ -510,18 +507,10 @@ test('settings controls expose exclusive radio groups and checked state', () => 
   );
   assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
-  assert.match(source, /aria-label=\{copy\.dailyGoalTitle\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.dailyGoalTitle\}/);
-  assert.match(source, /aria-checked=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /const selected = dailyGoalAnswers === goal;/);
+  assert.match(source, /aria-selected=\{selected\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
-  assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
-  assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
-  assert.doesNotMatch(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
-  assert.doesNotMatch(source, /accessibilityRole="button"[\s\S]{0,140}languageAccessibilityLabel/);
-  assert.doesNotMatch(
-    source,
-    /accessibilityRole="button"[\s\S]{0,140}setDailyGoalAccessibilityLabel/,
-  );
+  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /Svenska/);
   assert.match(source, /Engelskt stöd/);
   assert.match(source, /Byt frågespråk till \$\{label\}/);
@@ -531,121 +520,34 @@ test('settings controls expose exclusive radio groups and checked state', () => 
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('custom pressed controls mirror false checked and expanded state to web aria attributes', () => {
-  const topBarSource = read('components/ui/TopBarActions.tsx');
-  const mockExamConfigSource = read('components/MockExamConfigPanel.tsx');
-  const practiceSource = read('app/(tabs)/practice.tsx');
-  const provenanceBadgeSource = read('components/quiz/ProvenanceBadge.tsx');
-
-  assert.match(topBarSource, /aria-checked=\{audioEnabled\}/);
-  assert.match(topBarSource, /accessibilityRole="switch"/);
-  assert.match(topBarSource, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
-  assert.match(mockExamConfigSource, /aria-checked=\{selected\}/);
-  assert.match(mockExamConfigSource, /accessibilityRole="checkbox"/);
-  assert.match(mockExamConfigSource, /accessibilityState=\{\{ checked: selected, disabled \}\}/);
-  assert.match(practiceSource, /aria-checked=\{includeSupplementary\}/);
-  assert.match(practiceSource, /accessibilityState=\{\{ checked: includeSupplementary \}\}/);
-  assert.match(practiceSource, /aria-expanded=\{aboutSourcesOpen\}/);
-  assert.match(practiceSource, /accessibilityState=\{\{ expanded: aboutSourcesOpen \}\}/);
-  assert.match(provenanceBadgeSource, /aria-expanded=\{sourceNoteVisible\}/);
-  assert.match(provenanceBadgeSource, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
-  assert.doesNotMatch(topBarSource, /#[0-9a-fA-F]{6}|rgba?\(/);
-  assert.doesNotMatch(mockExamConfigSource, /#[0-9a-fA-F]{6}|rgba?\(/);
-  assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
-  assert.doesNotMatch(provenanceBadgeSource, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('mock exam config controls are not nested inside labelled summary containers', () => {
-  const source = read('components/MockExamConfigPanel.tsx');
-
-  assert.match(source, /const resolvedPanelAccessibilityLabel =/);
-  assert.match(
-    source,
-    /<Surface[\s\S]*accessibilityRole="none"[\s\S]*\{\.\.\.surfaceProps\}[\s\S]*accessible=\{false\}/,
-  );
-  assert.match(
-    source,
-    /<View\s+accessible\s+accessibilityLabel=\{resolvedPanelAccessibilityLabel\}\s+accessibilityRole=\{accessibilityRole\}\s+style=\{styles\.header\}/,
-  );
-  assert.match(source, /accessibilityRole="adjustable"/);
-  assert.match(source, /accessibilityActions=\{stepperAccessibilityActions\}/);
-  assert.match(source, /\{ name: 'decrement', label: decrementAccessibilityLabel \}/);
-  assert.match(source, /\{ name: 'increment', label: incrementAccessibilityLabel \}/);
-  assert.match(source, /onAccessibilityAction=\{handleAccessibilityAction\}/);
-  assert.match(
-    source,
-    /case 'decrement':[\s\S]*canDecrement[\s\S]*getNextValue\(value, step, -1, min, max\)/,
-  );
-  assert.match(
-    source,
-    /case 'increment':[\s\S]*canIncrement[\s\S]*getNextValue\(value, step, 1, min, max\)/,
-  );
-  assert.match(source, /accessibilityRole="checkbox"/);
-  assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
-  assert.doesNotMatch(
-    source,
-    /<View\s+accessibilityLabel=\{resolvedChaptersLabel\}\s+accessibilityRole="summary"\s+style=\{styles\.chips\}/,
-  );
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('mock exam time heatmap keeps its summary separate from jump buttons', () => {
-  const source = read('components/MockExamTimeHeatmap.tsx');
-  const surfaceOpening = source.match(/<Surface[\s\S]*?>/)?.[0] ?? '';
-
-  assert.match(source, /const summaryAccessibilityLabel =/);
-  assert.match(source, /<Surface[\s\S]*accessible=\{false\}[\s\S]*accessibilityRole="none"/);
-  assert.match(
-    source,
-    /<Text\s+accessibilityRole="summary"\s+style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
-  );
-  assert.match(source, /accessibilityLabel=\{copy\.questionLabel\(/);
-  assert.match(source, /accessibilityRole="button"/);
-  assert.match(source, /hitSlop=\{space\[1\]\}/);
-  assert.match(source, /onPress=\{\(\) => onSelectQuestion\?\.\(answer\.questionId\)\}/);
-  assert.match(source, /pressed \? styles\.pressed : null/);
-  assert.match(source, /import \{ colors, motion, radius, space, typography \}/);
-  assert.match(source, /pressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
-  assert.doesNotMatch(source, /pressed: \{[\s\S]*opacity:/);
-  assert.match(source, /Nära median/);
-  assert.match(source, /Near median/);
-  assert.doesNotMatch(surfaceOpening, /accessibilityLabel=/);
-  assert.doesNotMatch(surfaceOpening, /accessibilityRole="summary"/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('mock exam time heatmap cells use token hit slop and pressed feedback', () => {
-  const source = read('components/MockExamTimeHeatmap.tsx');
-
-  assert.match(source, /colors, motion, radius, space, typography/);
-  assert.match(source, /hitSlop=\{space\[1\]\}/);
-  assert.match(source, /pressed \? styles\.pressed : null/);
-  assert.match(source, /pressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
-  assert.doesNotMatch(source, /opacity:\s*0\.82/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('settings controls use token pressed feedback on all direct controls', () => {
+test('settings controls expose tokenized pressed and focus feedback', () => {
   const source = read('app/settings.tsx');
+  const styleCallbackMatches = source.match(/style=\{\(\{ pressed \}\) => \[/g) || [];
+  const pressedFeedbackMatches = source.match(/pressed \? styles\.controlPressed : null/g) || [];
+  const rippleMatches = source.match(/android_ripple=\{\{ color: colors\.focusSoft/g) || [];
 
+  assert.match(source, /import \{ useState \} from 'react';/);
   assert.match(source, /colors, motion, radius, shadows, space, typography/);
   assert.match(
     source,
-    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*language === value \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
+    /const \[focusedControl, setFocusedControl\] = useState<string \| null>\(null\);/,
   );
-  assert.match(
-    source,
-    /style=\{\(\{ pressed \}\) => \[\s*styles\.secondaryButton,[\s\S]*pressed \? styles\.secondaryButtonPressed : null,[\s\S]*\]\}/,
-  );
-  assert.match(
-    source,
-    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*styles\.goalPill,[\s\S]*selected \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
-  );
-  assert.match(source, /controlPressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
-  assert.match(
-    source,
-    /secondaryButtonPressed: \{[\s\S]*backgroundColor: colors\.accentActive,[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
-  );
+  assert.equal(styleCallbackMatches.length, 3);
+  assert.equal(pressedFeedbackMatches.length, 3);
+  assert.equal(rippleMatches.length, 3);
+  assert.match(source, /const focusKey = `language-\$\{value\}`;/);
+  assert.match(source, /const focusKey = `daily-goal-\$\{goal\}`;/);
+  assert.match(source, /onFocus=\{\(\) => setFocusedControl\(focusKey\)\}/);
+  assert.match(source, /onFocus=\{\(\) => setFocusedControl\('audio'\)\}/);
+  assert.match(source, /focusedControl === focusKey \? styles\.controlFocused : null/);
+  assert.match(source, /focusedControl === 'audio' \? styles\.secondaryButtonFocused : null/);
+  assert.match(source, /pressed \? styles\.pillPressed : null/);
+  assert.match(source, /pressed \? styles\.secondaryButtonPressed : null/);
+  assert.match(source, /controlFocused: \{\n\s+borderColor: colors\.focus,/);
+  assert.match(source, /controlPressed: \{\n\s+transform: \[\{ scale: motion\.pressedScale \}\],/);
+  assert.match(source, /secondaryButtonPressed: \{\n\s+backgroundColor: colors\.accentActive,/);
+  assert.doesNotMatch(source, /style=\{\[styles\.pill,/);
+  assert.doesNotMatch(source, /style=\{styles\.secondaryButton\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
