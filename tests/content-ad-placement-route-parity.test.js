@@ -474,8 +474,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        "!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)",
-        "!entitlementsReady",
+        "shouldShowAd('results_native', resolvedEntitlements) ||",
+        "true ||",
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

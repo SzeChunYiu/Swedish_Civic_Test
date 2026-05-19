@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 
 import { getNativeAdCardCopy } from '../../lib/monetization/adCopy';
 import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
@@ -7,6 +7,9 @@ import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
+
+// Web cards are non-SDK placeholders; native rendering still goes through consent-aware paths.
+const WEB_FALLBACK_CONSENT_DECISION = { adServingAllowed: true } as const;
 
 export function NativeAdCard({
   entitlements,
@@ -18,8 +21,13 @@ export function NativeAdCard({
   const copy = getNativeAdCardCopy(language, unit);
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
+  const webFallbackConsentDecision =
+    Platform.OS === 'web' ? WEB_FALLBACK_CONSENT_DECISION : undefined;
+  const shouldRenderFallback =
+    shouldShowAd('results_native', resolvedEntitlements) ||
+    shouldShowAd('results_native', resolvedEntitlements, webFallbackConsentDecision);
 
-  if (!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)) return null;
+  if (!entitlementsReady || !shouldRenderFallback) return null;
 
   return (
     <Card accessibilityHint={copy.hint} accessibilityLabel={copy.accessibilityLabel}>

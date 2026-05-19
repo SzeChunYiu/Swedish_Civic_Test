@@ -1,6 +1,5 @@
 import { existsSync } from 'node:fs';
-import { expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -37,22 +36,29 @@ export function getChromiumLaunchOptions(): ChromiumLaunchOptions | undefined {
   return executablePath ? { executablePath } : undefined;
 }
 
-export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
+export function collectConsoleAndPageErrors(page: Page): string[] {
+  const errors: string[] = [];
 
-  if (
-    await closeLaunchAd
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await closeLaunchAd.first().click();
-    await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
-    return true;
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  return errors;
+}
+
+export async function dismissBlockingModals(page: Page): Promise<void> {
+  const blockingActionName =
+    /Close launch sponsor ad|Stäng startannons|Skip guide|Hoppa över guiden/;
+
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    await page.waitForTimeout(200);
+    const blockingActions = page.getByRole('button', { name: blockingActionName });
+    const action = blockingActions.last();
+    const visible = await action.isVisible().catch(() => false);
+    if (!visible) continue;
+    await action.click({ force: true, timeout: 1_500 }).catch(() => undefined);
   }
 
   await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
-  return false;
 }

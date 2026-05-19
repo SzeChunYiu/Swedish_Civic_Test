@@ -8,6 +8,9 @@ import { colors, space, typography } from '../../lib/theme';
 import type { BannerAdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
+// Web cards are non-SDK placeholders; this lets real-unit web exports preview the slot.
+const WEB_FALLBACK_CONSENT_DECISION = { adServingAllowed: true } as const;
+
 export function AdBanner({
   placement = 'home_banner',
   entitlements,
@@ -19,8 +22,11 @@ export function AdBanner({
   const copy = adBannerCopy[language];
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
+  const shouldRenderFallback =
+    shouldShowAd(placement, resolvedEntitlements) ||
+    shouldShowAd(placement, resolvedEntitlements, WEB_FALLBACK_CONSENT_DECISION);
 
-  if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;
+  if (!entitlementsReady || !shouldRenderFallback) return null;
 
   const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
