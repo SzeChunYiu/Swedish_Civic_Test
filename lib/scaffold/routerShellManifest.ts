@@ -263,7 +263,8 @@ export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-inten
 export const expoRouterWebDocumentMetaDescriptions = [
   {
     language: 'sv',
-    description: 'Öva svensk samhällskunskap med offlinequiz, lokala framsteg och källreferenser.',
+    description:
+      'Öva svensk samhällskunskap med övningar utan uppkoppling, lokalt sparade framsteg och tydliga källhänvisningar.',
   },
   {
     language: 'en',
