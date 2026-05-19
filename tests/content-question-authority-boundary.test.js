@@ -2,6 +2,12 @@ const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
 const path = require('node:path');
 const test = require('node:test');
+const {
+  SOURCE_AUTHORITY_STEM_PATTERNS,
+  SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES,
+  findSourceAuthorityStemPattern,
+  hasSourceAuthorityStemPattern,
+} = require('../scripts/sourceAuthorityStemPatterns');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -14,6 +20,23 @@ test('published question text keeps the independent study boundary', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
+});
+
+test('question authority boundary helper fixtures cover every source-authority pattern', () => {
+  assert.equal(
+    SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES.length,
+    SOURCE_AUTHORITY_STEM_PATTERNS.length,
+  );
+
+  for (const fixture of SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES) {
+    assert.equal(hasSourceAuthorityStemPattern(fixture.text), true, fixture.label);
+    assert.equal(
+      SOURCE_AUTHORITY_STEM_PATTERNS[fixture.patternIndex].test(fixture.text),
+      true,
+      `${fixture.label} should exercise its paired shared pattern`,
+    );
+    assert.ok(findSourceAuthorityStemPattern(fixture.text), fixture.label);
+  }
 });
 
 test('question authority boundary rejects official exam overclaims', () => {

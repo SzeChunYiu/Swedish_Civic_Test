@@ -5,6 +5,96 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function readSourceAuthorityWiringSources() {
+  return {
+    helperSource: fs.readFileSync(
+      path.join(repoRoot, 'scripts', 'sourceAuthorityStemPatterns.js'),
+      'utf8',
+    ),
+    validateSource: fs.readFileSync(path.join(repoRoot, 'scripts', 'validate-content.js'), 'utf8'),
+    csvGateSource: fs.readFileSync(
+      path.join(repoRoot, 'tests', 'content-uhr-source-citation-stem.test.js'),
+      'utf8',
+    ),
+  };
+}
+
+function assertSourceAuthorityStemHelperWiring(sources) {
+  assert.match(
+    sources.helperSource,
+    /SOURCE_AUTHORITY_STEM_PATTERNS\s*=\s*Object\.freeze\(\[/,
+    'shared source-authority pattern list',
+  );
+  assert.match(
+    sources.helperSource,
+    /SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES\s*=\s*Object\.freeze\(\[/,
+    'direct source-authority pattern fixtures',
+  );
+  assert.match(
+    sources.validateSource,
+    /require\('\.\/sourceAuthorityStemPatterns'\)/,
+    'validate-content helper import',
+  );
+  assert.match(
+    sources.validateSource,
+    /return findSourceAuthorityStemPattern\(text\);/,
+    'validate-content helper call',
+  );
+  assert.match(
+    sources.csvGateSource,
+    /require\('\.\.\/scripts\/sourceAuthorityStemPatterns'\)/,
+    'CSV guard helper import',
+  );
+  assert.match(
+    sources.csvGateSource,
+    /hasSourceAuthorityStemPattern\(v\)/,
+    'CSV guard helper call',
+  );
+  assert.match(
+    sources.csvGateSource,
+    /SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES\.length,\s*SOURCE_AUTHORITY_STEM_PATTERNS\.length/s,
+    'CSV fixture count mirrors shared pattern count',
+  );
+  assert.doesNotMatch(
+    sources.validateSource,
+    /QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS\s*=/,
+    'validate-content should not keep a local source-authority list',
+  );
+  assert.doesNotMatch(
+    sources.csvGateSource,
+    /\bBANNED\s*=\s*\[/,
+    'CSV guard should not keep a local source-authority list',
+  );
+}
+
+test('source-authority stem checks use the shared pattern helper', () => {
+  assertSourceAuthorityStemHelperWiring(readSourceAuthorityWiringSources());
+});
+
+test('source-authority stem helper wiring rejects bypassed helper calls', () => {
+  const sources = readSourceAuthorityWiringSources();
+
+  assert.throws(
+    () =>
+      assertSourceAuthorityStemHelperWiring({
+        ...sources,
+        validateSource: sources.validateSource.replace(
+          'return findSourceAuthorityStemPattern(text);',
+          'return undefined;',
+        ),
+      }),
+    /validate-content helper call/,
+  );
+  assert.throws(
+    () =>
+      assertSourceAuthorityStemHelperWiring({
+        ...sources,
+        csvGateSource: sources.csvGateSource.replace('hasSourceAuthorityStemPattern(v)', 'false'),
+      }),
+    /CSV guard helper call/,
+  );
+});
+
 test('test:content script includes every content test file exactly once', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
   const testContentScript = packageJson.scripts?.['test:content'];

@@ -6,17 +6,7 @@ const {
   buildSiteQuestionBank,
   generateStaticSiteQuestionBankJs,
 } = require('./export-site-question-bank');
-const {
-  UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
-  extractStaticHeadMetaDescriptions,
-  findStaticHeadMetadataDescriptionIssues,
-  findUnsupportedStaticOutcomeSlogans,
-  formatUnsupportedStaticOutcomeSlogans,
-} = require('./static-outcome-copy-guard');
-const {
-  webDocumentMetaDescriptions,
-  webDocumentMetadata,
-} = require('../lib/scaffold/webDocumentMetadata');
+const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -270,46 +260,6 @@ const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\b(?:uhr|myndighets|regerings)[-\s]?godk[aä]nd(?:a|t)?\b/i,
   /\bkvalitets(?:granskad|granskade|granskat)\s+av\s+(?:uhr|myndighet|regeringen)\b/i,
   /\bgaranter(?:ar|ad|at)?\s+(?:godk[aä]nt|att\s+klara)\b/i,
-];
-const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
-  /\benligt\s+UHR\b/i,
-  /\bUHR[\s-]?(?:materialet|avsnittet)\b/i,
-  /\bUHR:s\s+material\b/i,
-  /\baccording to\s+(?:the\s+)?UHR\b/i,
-  /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
-  /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
-  /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
-  /\bn(?:ä|a)mns\s+som\s+exempel\b/i,
-  /\bmentioned\s+as\s+examples?\b/i,
-  /\bn(?:ä|a)mns\s+som\s+en\s+anledning\b/i,
-  /\bmentioned\s+as\s+a\s+reason\b/i,
-  /\bn(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l\b/i,
-  /\bmentioned\s+as\s+(?:historical\s+)?reasons\b/i,
-];
-const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
-];
-const SOURCE_PRIMARY_ANSWER_CONCEPT_PATTERNS = [
-  {
-    id: 'all-saints-day-grave-candles',
-    chapter: 'Traditioner och högtider',
-    section: 'Alla helgons dag',
-    label: 'All Saints Day grave-candle remembrance',
-    patterns: [
-      /\bt(?:ä|a)nd(?:a|er)?\s+ljus\s+p(?:å|a)\s+gravar\b/i,
-      /\bkyrkog(?:å|a)rd(?:en|ar)?[^.?!;]*\bt(?:ä|a)nd(?:a|er)?\s+ljus\b/i,
-      /\blight(?:ing)?\s+candles?\s+on\s+graves\b/i,
-      /\bcemeter(?:y|ies)[^.?!;]*\blight(?:ing)?\s+candles?\b/i,
-    ],
-  },
-];
-const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
-  /\bskatt och moms\b/i,
-  /\btax and VAT\b/i,
-  /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
-  /\bCompanies also pay tax,\s+and VAT is paid\b/i,
-  /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
-  /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -4489,7 +4439,7 @@ function findQuestionAuthorityOverclaim(question) {
 function findQuestionStemSourceAuthorityReference(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
-  return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
+  return findSourceAuthorityStemPattern(text);
 }
 
 function findQuestionStateWelfareEnglishNaturalnessIssue(question) {

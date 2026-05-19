@@ -11,24 +11,13 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const {
+  SOURCE_AUTHORITY_STEM_PATTERNS,
+  SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES,
+  hasSourceAuthorityStemPattern,
+} = require('../scripts/sourceAuthorityStemPatterns');
 
 const CSV = path.resolve(__dirname, '..', 'content', 'question-bank.csv');
-
-const BANNED = [
-  /enligt\s+UHR\b/i,
-  /UHR[\s-]?(?:materialet|avsnittet)/i,
-  /UHR:s\s+material/i,
-  /according to\s+(?:the\s+)?UHR\b/i,
-  /(?:the\s+)?UHR\s+(?:material|section)/i,
-  /st(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR/i,
-  /best matches (?:the\s+)?UHR section/i,
-  /n(?:ä|a)mns\s+som\s+exempel/i,
-  /mentioned\s+as\s+examples?/i,
-  /n(?:ä|a)mns\s+som\s+en\s+anledning/i,
-  /mentioned\s+as\s+a\s+reason/i,
-  /n(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l/i,
-  /mentioned\s+as\s+(?:historical\s+)?reasons/i,
-];
 
 function parseCsv(text) {
   // RFC4180-ish: every field quoted (QUOTE_ALL export).
@@ -78,12 +67,16 @@ function collectStemAuthorityConnectiveOffenders(text) {
     const id = rows[r][idIdx];
     for (const col of [svIdx, enIdx]) {
       const v = rows[r][col] || '';
-      if (BANNED.some((re) => re.test(v))) {
+      if (hasSourceAuthorityStemPattern(v)) {
         offenders.push(`${id} [${header[col]}]: ${v}`);
       }
     }
   }
   return offenders;
+}
+
+function csvField(value) {
+  return `"${String(value).replace(/"/g, '""')}"`;
 }
 
 test('question stems carry no UHR source-authority phrase', () => {
@@ -114,32 +107,35 @@ test('source-citation stem gate rejects source-authority phrase drift in exporte
   assert.match(offenders.join('\n'), /q001 \[questionEn\]/);
 });
 
-test('source-citation stem gate rejects plural source-recall reasons in exported CSV', () => {
-  const dirtyExport = fs
-    .readFileSync(CSV, 'utf8')
-    .replace(
-      '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
-      '"q001","ch01","single_choice","Vilka datum nämns som historiska skäl till nationaldagen?","Which dates are mentioned as historical reasons for National Day?",',
+test('source-citation stem gate rejects every shared source-authority fixture', () => {
+  assert.equal(
+    SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES.length,
+    SOURCE_AUTHORITY_STEM_PATTERNS.length,
+  );
+
+  const rows = SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES.map((fixture, index) => {
+    const row = {
+      id: `fixture-${index + 1}`,
+      questionSv: 'Neutral fråga utan källfras.',
+      questionEn: 'Neutral question without a source phrase.',
+    };
+    row[fixture.column] = fixture.text;
+    return [row.id, row.questionSv, row.questionEn].map(csvField).join(',');
+  });
+  const offenders = collectStemAuthorityConnectiveOffenders(
+    `"id","questionSv","questionEn"\n${rows.join('\n')}\n`,
+  );
+
+  assert.equal(offenders.length, SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES.length);
+  for (const fixture of SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES) {
+    assert.ok(
+      offenders.some((offender) => offender.includes(fixture.text)),
+      `${fixture.label} should be reported by the exported CSV gate`,
     );
-
-  const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);
-
-  assert.equal(offenders.length, 2);
-  assert.match(offenders.join('\n'), /q001 \[questionSv\]/);
-  assert.match(offenders.join('\n'), /q001 \[questionEn\]/);
-});
-
-test('source-citation stem gate rejects source-recall example wording in exported CSV', () => {
-  const dirtyExport = fs
-    .readFileSync(CSV, 'utf8')
-    .replace(
-      '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
-      '"q001","ch01","single_choice","Vilka öar nämns som exempel i Sverige?","Which islands are mentioned as examples in Sweden?",',
+    assert.equal(
+      SOURCE_AUTHORITY_STEM_PATTERNS[fixture.patternIndex].test(fixture.text),
+      true,
+      `${fixture.label} should exercise its paired shared pattern`,
     );
-
-  const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);
-
-  assert.equal(offenders.length, 2);
-  assert.match(offenders.join('\n'), /q001 \[questionSv\]/);
-  assert.match(offenders.join('\n'), /q001 \[questionEn\]/);
+  }
 });
