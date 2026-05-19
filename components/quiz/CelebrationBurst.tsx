@@ -75,7 +75,6 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
 
   return (
     <Animated.View
-      aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       pointerEvents="none"

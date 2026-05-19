@@ -1,10 +1,8 @@
-import { useMemo } from 'react';
 import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { ChapterCard } from '../../components/learning/ChapterCard';
 import { AdBanner } from '../../components/monetization/AdBanner';
-import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
@@ -32,11 +30,6 @@ type LearnRouteCopy = {
   sectionTitle: string;
   subtitle: string;
   title: string;
-};
-
-type ChapterProgressCounts = {
-  completedCount: number;
-  questionCount: number;
 };
 
 const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
@@ -74,29 +67,15 @@ const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
   },
 };
 
-function buildChapterProgressById(completedQuestionIds: readonly string[]) {
+function questionCountForChapter(chapterId: string) {
+  return questions.filter((question) => question.chapterId === chapterId).length;
+}
+
+function completedCountForChapter(chapterId: string, completedQuestionIds: string[]) {
   const completed = new Set(completedQuestionIds);
-  const progressById = Object.fromEntries(
-    chapters.map((chapter) => [
-      chapter.id,
-      {
-        completedCount: 0,
-        questionCount: 0,
-      },
-    ]),
-  ) as Record<string, ChapterProgressCounts>;
-
-  for (const question of questions) {
-    const progress = progressById[question.chapterId];
-    if (!progress) continue;
-
-    progress.questionCount += 1;
-    if (completed.has(question.id)) {
-      progress.completedCount += 1;
-    }
-  }
-
-  return progressById;
+  return questions.filter(
+    (question) => question.chapterId === chapterId && completed.has(question.id),
+  ).length;
 }
 
 function getChapterLinkAccessibilityLabel({
@@ -127,20 +106,14 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const routeCopy = learnRouteCopy[language];
   const copy = chapterLinkCopy[language];
-  const chapterProgressById = useMemo(
-    () => buildChapterProgressById(completedQuestionIds),
-    [completedQuestionIds],
-  );
 
   return (
     <ScreenShell eyebrow={routeCopy.eyebrow} title={routeCopy.title} subtitle={routeCopy.subtitle}>
       <SectionHeader title={routeCopy.sectionTitle} subtitle={routeCopy.sectionSubtitle} />
       <View style={styles.list}>
         {chapters.map((chapter) => {
-          const { completedCount, questionCount } = chapterProgressById[chapter.id] ?? {
-            completedCount: 0,
-            questionCount: 0,
-          };
+          const questionCount = questionCountForChapter(chapter.id);
+          const completedCount = completedCountForChapter(chapter.id, completedQuestionIds);
           return (
             <Link
               key={chapter.id}
@@ -157,11 +130,9 @@ export default function Screen() {
               style={styles.link}
             >
               <ChapterCard
-                accessibilitySummary={false}
                 chapter={chapter}
                 completedCount={completedCount}
                 language={language}
-                progressPresentationOnly
                 questionCount={questionCount}
               />
             </Link>
@@ -170,7 +141,6 @@ export default function Screen() {
       </View>
 
       <AdBanner placement="chapter_list_banner" />
-      <RemoveAdsPlacementCta placement="chapter_list_banner" />
     </ScreenShell>
   );
 }

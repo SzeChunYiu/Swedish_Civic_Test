@@ -175,7 +175,7 @@ function main() {
   process.env[envName] = secretValue;
 
   const artifactDir = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'almost-swedish-expo-token-bootstrap-'),
+    path.join(os.tmpdir(), 'swedish-civic-test-expo-token-bootstrap-'),
   );
   const plannedSteps = [
     {
