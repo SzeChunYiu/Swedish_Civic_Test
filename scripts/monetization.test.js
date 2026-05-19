@@ -195,9 +195,30 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.match(mistakesSource, /<NativeAdCard \/>/);
   assert.match(nativeAdCardSource, /NativeAd\.createForAdRequest/);
   assert.match(nativeAdCardSource, /NativeAdView/);
+  assert.match(nativeAdCardSource, /<NativeAdView accessible=\{false\}/);
+  assert.match(nativeAdCardSource, /accessibilityRole="summary"/);
   assert.match(nativeAdCardSource, /NativeAssetType\.HEADLINE/);
   assert.match(nativeAdCardSource, /NativeAssetType\.BODY/);
   assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
+  for (const [assetType, directChild] of [
+    ['ICON', 'Image'],
+    ['HEADLINE', 'Text'],
+    ['BODY', 'Text'],
+    ['ADVERTISER', 'Text'],
+    ['CALL_TO_ACTION', 'Text'],
+  ]) {
+    assert.match(
+      nativeAdCardSource,
+      new RegExp(
+        `<NativeAsset assetType=\\{NativeAssetType\\.${assetType}\\}>\\s*<${directChild}\\b`,
+      ),
+    );
+  }
+  assert.match(
+    nativeAdCardSource,
+    /accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}/,
+  );
+  assert.match(nativeAdCardSource, /minHeight:\s*space\[6\]/);
   assert.match(nativeAdCardSource, /NativeMediaView/);
   assert.match(nativeAdCardSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(nativeAdCardSource, /requestNonPersonalizedAdsOnly/);
@@ -404,19 +425,35 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.deepEqual(await getStoredMockExamAccess({ date: '2026-05-17T09:30:00.000Z', storage }), {
     completedMockExamsByDate: {},
+    completedMockExamSessionIdsByDate: {},
     completedMockExamsToday: 0,
     dateKey: '2026-05-17',
     rewardedExtraExamCredits: 0,
   });
 
-  await recordStoredMockExamCompletion({ date: '2026-05-17T10:00:00.000Z', storage });
+  await recordStoredMockExamCompletion({
+    date: '2026-05-17T10:00:00.000Z',
+    sessionId: 'mock-exam-1',
+    storage,
+  });
+  const duplicateSnapshot = await recordStoredMockExamCompletion({
+    date: '2026-05-17T10:05:00.000Z',
+    sessionId: 'mock-exam-1',
+    storage,
+  });
   const todaySnapshot = await recordStoredMockExamCompletion({
     date: '2026-05-17T11:00:00.000Z',
+    sessionId: 'mock-exam-2',
     storage,
   });
 
+  assert.equal(duplicateSnapshot.completedMockExamsToday, 1);
   assert.equal(todaySnapshot.completedMockExamsToday, 2);
   assert.equal(todaySnapshot.completedMockExamsByDate['2026-05-17'], 2);
+  assert.deepEqual(todaySnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-1',
+    'mock-exam-2',
+  ]);
 
   const tomorrowSnapshot = await getStoredMockExamAccess({
     date: '2026-05-18T08:00:00.000Z',
@@ -425,6 +462,10 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.equal(tomorrowSnapshot.completedMockExamsToday, 0);
   assert.equal(tomorrowSnapshot.completedMockExamsByDate['2026-05-17'], 2);
+  assert.deepEqual(tomorrowSnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-1',
+    'mock-exam-2',
+  ]);
 
   assert.equal(
     (
@@ -459,6 +500,10 @@ test('mock exam access persistence stores daily completions and rewarded credits
       '2026-05-17': 2.8,
       invalid: 9,
     },
+    completedMockExamSessionIdsByDate: {
+      '2026-05-17': [' mock-exam-legacy ', '', 'mock-exam-legacy', 'bad/session'],
+      invalid: ['mock-exam-invalid-date'],
+    },
     rewardedExtraExamCredits: 1.9,
   });
   const seededSnapshot = await getStoredMockExamAccess({
@@ -467,7 +512,41 @@ test('mock exam access persistence stores daily completions and rewarded credits
   });
 
   assert.deepEqual(seededSnapshot.completedMockExamsByDate, { '2026-05-17': 2 });
+  assert.deepEqual(seededSnapshot.completedMockExamSessionIdsByDate, {
+    '2026-05-17': ['mock-exam-legacy'],
+  });
   assert.equal(seededSnapshot.rewardedExtraExamCredits, 1);
+
+  const seededNewCompletionSnapshot = await recordStoredMockExamCompletion({
+    date: '2026-05-17T09:15:00.000Z',
+    sessionId: 'mock-exam-new',
+    storage: seededStorage,
+  });
+  assert.equal(seededNewCompletionSnapshot.completedMockExamsToday, 3);
+  assert.deepEqual(seededNewCompletionSnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-legacy',
+    'mock-exam-new',
+  ]);
+
+  const invalidSessionStorage = createMemoryMockExamAccessStorage();
+  await assert.rejects(
+    () =>
+      recordStoredMockExamCompletion({
+        date: '2026-05-17T09:00:00.000Z',
+        sessionId: '   ',
+        storage: invalidSessionStorage,
+      }),
+    /valid sessionId/,
+  );
+  assert.equal(
+    (
+      await getStoredMockExamAccess({
+        date: '2026-05-17T09:10:00.000Z',
+        storage: invalidSessionStorage,
+      })
+    ).completedMockExamsToday,
+    0,
+  );
 
   assert.equal(typeof createSecureStoreMockExamAccessStorage().getItemAsync, 'function');
 
@@ -494,6 +573,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
     await recordStoredMockExamCompletion({
       date: '2026-05-18T09:00:00.000Z',
+      sessionId: 'mock-exam-web-1',
       storage: webStorage,
     });
 
@@ -523,6 +603,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
     }),
     {
       completedMockExamsByDate: {},
+      completedMockExamSessionIdsByDate: {},
       completedMockExamsToday: 0,
       dateKey: '2026-05-17',
       rewardedExtraExamCredits: 0,
@@ -540,6 +621,17 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
   );
   const defaultResult = await showRewardedExtraExamAd();
+  const confirmedResult = await showRewardedExtraExamAd({
+    confirmReward: () => true,
+  });
+  const rejectedResult = await showRewardedExtraExamAd({
+    confirmReward: () => false,
+  });
+  const failedConfirmationResult = await showRewardedExtraExamAd({
+    confirmReward: () => {
+      throw new Error('preview did not complete');
+    },
+  });
   const removeAdsResult = await showRewardedExtraExamAd({
     entitlements: { adsDisabled: true },
   });
@@ -556,16 +648,24 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.deepEqual(defaultResult, {
+  assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
+  assert.deepEqual(confirmedResult, {
     reward: {
       amount: 1,
       type: 'extra_mock_exam',
     },
     status: 'earned_reward',
   });
+  assert.deepEqual(rejectedResult, { status: 'closed_without_reward' });
+  assert.deepEqual(failedConfirmationResult, { status: 'closed_without_reward' });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
   assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
   assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
+  assert.match(webRewardedAdSource, /confirmReward\?: RewardedExtraExamRewardConfirmation;/);
+  assert.match(
+    webRewardedAdSource,
+    /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};[\s\S]*\}/,
+  );
   assert.match(nativeRewardedAdSource, /initializeGoogleMobileAdsAfterConsent/);
   assert.match(nativeRewardedAdSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
   assert.match(
@@ -669,12 +769,18 @@ test('launch popup ad respects launch cap and adsDisabled entitlement', () => {
 });
 
 test('remove-ads entitlement is decoupled from premium feature bundle', () => {
-  const { REMOVE_ADS_ENTITLEMENTS, hasAdsDisabled, isPremiumUser } = loadTs(
-    'lib/monetization/premium.ts',
-  );
+  const {
+    PRO_LIFETIME_ENTITLEMENTS,
+    REMOVE_ADS_ENTITLEMENTS,
+    hasAdsDisabled,
+    hasProEntitlement,
+    isPremiumUser,
+  } = loadTs('lib/monetization/premium.ts');
 
   assert.equal(hasAdsDisabled(REMOVE_ADS_ENTITLEMENTS), true);
   assert.equal(isPremiumUser(REMOVE_ADS_ENTITLEMENTS), false);
+  assert.equal(hasAdsDisabled(PRO_LIFETIME_ENTITLEMENTS), false);
+  assert.equal(hasProEntitlement(PRO_LIFETIME_ENTITLEMENTS), true);
   assert.equal(
     isPremiumUser({
       adsDisabled: false,
@@ -978,7 +1084,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
+  assert.match(paywallSource, /Tidsatta övningsprov är redan annonsfria/);
   assert.match(paywallSource, /Provläget är redan annonsfritt/);
+  assert.doesNotMatch(paywallSource, /\bprov förblir annonsfria\b/i);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
@@ -986,11 +1094,22 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /samma butikskonto/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
+  assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
     homeSource,
-    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+    /monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled/,
   );
+  assert.match(
+    homeSource,
+    /\{monetizationEntitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>[\s\S]*\) : null\}[\s\S]*<AdBanner placement="home_banner" \/>/,
+  );
+  assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);
+  assert.match(profileSource, /entitlementsReady/);
+  assert.match(
+    profileSource,
+    /\{entitlementsReady \? \(\s*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}/,
+  );
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
@@ -1010,9 +1129,11 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
   assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
   assert.doesNotMatch(pricingWedgeSource, /29 kr/);
+  assert.doesNotMatch(pricingWedgeSource, /\bprovet är alltid annonsfritt\b/i);
   assert.doesNotMatch(paywallSource, /29 kr/);
 });
 
@@ -1390,10 +1511,12 @@ test('exam screen does not import ad components', () => {
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
   assert.match(examSource, /useMockExamAccess/);
   assert.match(examSource, /recordExamCompletion/);
+  assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
   assert.match(examSource, /Unlock extra exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion/);
+  assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ sessionId, storage \}\)/);
   assert.match(accessHookSource, /grantStoredRewardedExtraExamCredit/);
   assert.match(accessHookSource, /consumeStoredRewardedExtraExamCredit/);
   assert.match(accessHookSource, /createWebMockExamAccessStorage/);

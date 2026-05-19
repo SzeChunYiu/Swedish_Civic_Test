@@ -38,6 +38,97 @@ test('onboarding route title stays accessible as a header', () => {
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
 });
 
+test('about-the-test marks the first-run guide as seen after mount', () => {
+  const summary = parseValidationSummary();
+  const source = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
+  const seenEffectPattern =
+    /useEffect\(\(\) => \{\s*if \(!hasSeenAboutTheTest\) \{\s*markAboutTheTestSeen\(\);\s*\}\s*\}, \[hasSeenAboutTheTest, markAboutTheTestSeen\]\);/;
+
+  assert.equal(summary.aboutTheTestSeenEffectRulesValidated, 6);
+  assert.equal(summary.aboutTheTestSeenEffectParityValidated, true);
+  assert.match(source, /import \{ useEffect \} from 'react';/);
+  assert.match(
+    source,
+    /const hasSeenAboutTheTest = useSettingsStore\(\(state\) => state\.hasSeenAboutTheTest\);/,
+  );
+  assert.match(
+    source,
+    /const markAboutTheTestSeen = useSettingsStore\(\(state\) => state\.markAboutTheTestSeen\);/,
+  );
+  assert.match(source, seenEffectPattern);
+  assert.doesNotMatch(source, /useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/);
+  assert.doesNotMatch(source.replace(seenEffectPattern, ''), /markAboutTheTestSeen\(\);/);
+});
+
+test('about-the-test seen-effect parity rejects removing the mount effect', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const seenEffect = 'useEffect(() => {\\n    if (!hasSeenAboutTheTest) {\\n      markAboutTheTestSeen();\\n    }\\n  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(seenEffect, 'const seenEffectWasRemovedForTest = true;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route missing effect-scoped seen marker for first-run seen effect/,
+  );
+});
+
+test('about-the-test seen-effect parity rejects render-time settings writes', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const seenEffect = 'useEffect(() => {\\n    if (!hasSeenAboutTheTest) {\\n      markAboutTheTestSeen();\\n    }\\n  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        seenEffect,
+        'if (!useSettingsStore.getState().hasSeenAboutTheTest) {\\n    markAboutTheTestSeen();\\n  }',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore\.getState\(\) during render/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route must call markAboutTheTestSeen\(\) only inside useEffect/,
+  );
+});
+
 test('onboarding route header parity rejects a dropped title header role', () => {
   const result = spawnSync(
     process.execPath,

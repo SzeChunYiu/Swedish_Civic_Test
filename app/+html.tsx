@@ -12,7 +12,7 @@ export default function RootHtml({ children }: PropsWithChildren) {
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport" />
         <meta content={colors.canvas} name="theme-color" />
         <meta
-          content="Practice Swedish civic knowledge with offline quizzes, local progress, and source references."
+          content="Öva svensk samhällskunskap med övningar utan uppkoppling, lokalt sparade framsteg och tydliga källhänvisningar."
           name="description"
         />
         <ScrollViewStyleReset />
