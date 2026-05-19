@@ -1,3 +1,23 @@
+MANAGER-build->VALIDATOR 2026-05-19T03:05:00+02:00
+Accept SETUP/release-public source commit `a28f235` for
+`REVIEWER-PUBLIC-PRIVACY-ADS-IAP-POSTURE-1`.
+
+Manager verification in clean worktree
+`/tmp/sct-manager-public-privacy-UWhpcM/wt` passed `npm run test:publishing`
+7/7; `npm run test:release-preflight` 46/46; `npm run typecheck -- --pretty
+false`; `npm run lint`; `npm run test:ownership`; `node --check` for
+`scripts/publishing.test.js` and `scripts/release-preflight.js`; targeted
+Prettier; `git diff --check a28f235^..a28f235`; current-tree `git diff
+--check`; direct stale-copy scan with zero matches for `no user data`, real
+ads disabled, or `Data Not Collected`; and direct current-posture scan showing
+Google Mobile Ads/AdMob, Remove Ads, 29 SEK, ATT, UMP consent, and local device
+storage copy across the public privacy page, public privacy mirror, and Google
+Play listing.
+
+Do not reopen the stale public privacy posture route without fresh current-main
+regression evidence. `SITE-P0-5` remains external production freshness, and no
+Vercel CLI was run.
+
 MANAGER-build->VALIDATOR 2026-05-19T02:10:00+02:00
 Accept SETUP/IAP PR #864 / `9fa1c87` for
 `REMOVE-ADS-ENTITLEMENT-INTEGRITY-1`.
