@@ -17,6 +17,14 @@ export type QuestionProgress = {
   bookmarked?: boolean;
 };
 
+export type MockExamProgress = {
+  sessionId: string;
+  score: number;
+  completedAt: string;
+  correctCount: number;
+  totalCount: number;
+};
+
 const progressStateKey = 'progressState';
 
 let progressStorage: MMKV | null = null;
@@ -32,6 +40,7 @@ type PersistedProgress = {
   questionProgress: Record<string, QuestionProgress>;
   totalXp: number;
   answerDates: string[];
+  mockExamSessions: MockExamProgress[];
 };
 
 const emptyProgress: PersistedProgress = {
@@ -39,7 +48,21 @@ const emptyProgress: PersistedProgress = {
   questionProgress: {},
   totalXp: 0,
   answerDates: [],
+  mockExamSessions: [],
 };
+
+type MockExamProgressInput = {
+  sessionId: string;
+  score: number;
+  completedAt?: string;
+  correctCount?: number;
+  totalCount?: number;
+};
+
+function clampScore(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(1, value));
+}
 
 function normalizeProgress(value: unknown): PersistedProgress {
   if (!value || typeof value !== 'object') return emptyProgress;
@@ -51,6 +74,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
   const answerDates = Array.isArray(candidate.answerDates)
     ? [...new Set(candidate.answerDates.filter((day): day is string => typeof day === 'string'))]
     : [];
+  const mockExamSessions: MockExamProgress[] = [];
   const questionProgress: Record<string, QuestionProgress> = {};
 
   if (candidate.questionProgress && typeof candidate.questionProgress === 'object') {
@@ -70,11 +94,27 @@ function normalizeProgress(value: unknown): PersistedProgress {
     }
   }
 
+  if (Array.isArray(candidate.mockExamSessions)) {
+    for (const session of candidate.mockExamSessions) {
+      if (!session || typeof session !== 'object') continue;
+      const item = session as Partial<MockExamProgress>;
+      if (typeof item.sessionId !== 'string' || typeof item.completedAt !== 'string') continue;
+      mockExamSessions.push({
+        sessionId: item.sessionId,
+        score: clampScore(item.score ?? 0),
+        completedAt: item.completedAt,
+        correctCount: Math.max(0, item.correctCount ?? 0),
+        totalCount: Math.max(0, item.totalCount ?? 0),
+      });
+    }
+  }
+
   return {
     completedQuestionIds,
     questionProgress,
     totalXp: Math.max(0, candidate.totalXp ?? 0),
     answerDates,
+    mockExamSessions,
   };
 }
 
@@ -96,6 +136,7 @@ function writeProgress(progress: PersistedProgress): void {
 type ProgressState = PersistedProgress & {
   markQuestionCompleted: (questionId: string) => void;
   recordAnswer: (questionId: string, isCorrect: boolean) => void;
+  recordMockExamSession: (session: MockExamProgressInput) => void;
   toggleBookmark: (questionId: string) => void;
   resetProgress: () => void;
 };
@@ -113,6 +154,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
+        mockExamSessions: state.mockExamSessions,
       };
       writeProgress(nextProgress);
 
@@ -153,6 +195,31 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
         answerDates,
+        mockExamSessions: state.mockExamSessions,
+      };
+      writeProgress(nextProgress);
+
+      return nextProgress;
+    }),
+  recordMockExamSession: (session) =>
+    set((state) => {
+      const completedAt = session.completedAt ?? new Date().toISOString();
+      const nextSession: MockExamProgress = {
+        sessionId: session.sessionId,
+        score: clampScore(session.score),
+        completedAt,
+        correctCount: Math.max(0, session.correctCount ?? 0),
+        totalCount: Math.max(0, session.totalCount ?? 0),
+      };
+      const otherSessions = state.mockExamSessions.filter(
+        (item) => item.sessionId !== nextSession.sessionId,
+      );
+      const nextProgress = {
+        completedQuestionIds: state.completedQuestionIds,
+        questionProgress: state.questionProgress,
+        totalXp: state.totalXp,
+        answerDates: state.answerDates,
+        mockExamSessions: [...otherSessions, nextSession],
       };
       writeProgress(nextProgress);
 
@@ -175,6 +242,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp,
         answerDates: state.answerDates,
+        mockExamSessions: state.mockExamSessions,
       };
       writeProgress(nextProgress);
 
