@@ -6,9 +6,70 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const EXPECTED_FULL_TEST_SCRIPTS = [
+  'test:learning',
+  'test:practice',
+  'test:exam',
+  'test:answer-validation',
+  'test:question-text',
+  'test:answer-shuffle',
+  'test:audio',
+  'test:derived-content',
+  'test:content',
+  'test:compliance',
+  'test:monetization',
+  'test:ui-effects',
+  'test:ux-simulation',
+  'test:publishing',
+  'test:ownership',
+  'test:external-blockers',
+  'test:public-urls',
+  'test:static-site-account-scope',
+  'test:static-site-asset-references',
+  'test:native-account-scope',
+  'test:static-site-privacy-copy',
+  'test:static-site-question-feedback',
+  'test:static-site-settings-language',
+  'test:static-site-practice-result-i18n',
+  'test:static-site-answer-shuffle',
+  'test:static-site-flag-palette',
+  'test:static-site-mobile-nav',
+  'test:static-site-question-count-copy',
+  'test:static-site-chapter-count-copy',
+  'test:static-site-source-provenance-copy',
+  'test:build-config',
+  'test:app-assets',
+  'test:router-shell',
+  'test:architecture',
+  'test:screenshot-manifest',
+  'test:release-preflight',
+  'test:release-gates-writer',
+  'test:theme-discipline',
+  'test:a11y-labels',
+];
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
+}
+
+function writeNpmShim(tmpDir, logPath) {
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    ['#!/bin/sh', `echo "$@" >> "${logPath}"`, 'exit 0', ''].join('\n'),
+    { mode: 0o755 },
+  );
+}
+
+function runTestDispatcher(args, env = process.env) {
+  return spawnSync(process.execPath, ['scripts/test-dispatch.js', ...args], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env,
+  });
+}
+
+function readLoggedNpmRuns(logPath) {
+  return fs.readFileSync(logPath, 'utf8').trim().split('\n').filter(Boolean);
 }
 
 test('EAS build and submit profiles are configured for internal and production releases', () => {
@@ -42,6 +103,55 @@ test('release validation includes dependency security audit', () => {
   assert.equal(pkg.scripts['audit:release'], 'npm audit --audit-level=moderate');
   assert.match(pkg.scripts.validate, /npm run audit:release/);
   assert.equal(pkg.overrides.postcss, '8.5.10');
+});
+
+test('npm test is dispatched through a selector-aware script', () => {
+  const pkg = readJson('package.json');
+  const dispatcher = require(path.join(repoRoot, 'scripts/test-dispatch.js'));
+
+  assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
+  assert.deepEqual(dispatcher.FULL_TEST_SCRIPTS, EXPECTED_FULL_TEST_SCRIPTS);
+  assert.deepEqual([...dispatcher.TEST_FILTERS.keys()], ['monetization']);
+  assert.deepEqual(dispatcher.TEST_FILTERS.get('monetization'), ['test:monetization']);
+});
+
+test('npm test dispatcher runs the full suite with no selector', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-full-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  writeNpmShim(tmpDir, npmLog);
+
+  const result = runTestDispatcher([], {
+    ...process.env,
+    PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+  });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.deepEqual(
+    readLoggedNpmRuns(npmLog),
+    EXPECTED_FULL_TEST_SCRIPTS.map((scriptName) => `run ${scriptName}`),
+  );
+});
+
+test('npm test dispatcher maps monetization selector to the focused gate', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-monetization-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  writeNpmShim(tmpDir, npmLog);
+
+  const result = runTestDispatcher(['monetization'], {
+    ...process.env,
+    PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+  });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.deepEqual(readLoggedNpmRuns(npmLog), ['run test:monetization']);
+});
+
+test('npm test dispatcher rejects unknown selectors with supported filters', () => {
+  const result = runTestDispatcher(['bogus']);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Unsupported test selector "bogus"/);
+  assert.match(result.stderr, /Supported selectors: monetization/);
 });
 
 test('GitHub release secrets check reports whether EXPO_TOKEN is configured without leaking values', () => {

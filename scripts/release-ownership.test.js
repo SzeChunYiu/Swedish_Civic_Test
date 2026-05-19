@@ -9,6 +9,7 @@ const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const appRepo = 'SzeChunYiu/Swedish_Civic_Test';
 const publicSiteRepo = 'SzeChunYiu/Swedish_Civic_Test-public-site';
+const { FULL_TEST_SCRIPTS } = require(path.join(repoRoot, 'scripts/test-dispatch.js'));
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -30,7 +31,8 @@ test('release ownership target is SzeChunYiu and blocks legacy-owner drift', () 
     packageJson.scripts['test:ownership'],
     'node --test scripts/release-ownership.test.js',
   );
-  assert.match(packageJson.scripts.test, /test:ownership/);
+  assert.equal(packageJson.scripts.test, 'node scripts/test-dispatch.js');
+  assert.ok(FULL_TEST_SCRIPTS.includes('test:ownership'));
 
   const requiredFiles = [
     'scripts/release-preflight.js',
