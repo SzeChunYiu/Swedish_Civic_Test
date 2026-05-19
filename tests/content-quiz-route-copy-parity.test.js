@@ -26,11 +26,56 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /const copy = quizSessionCopy\[language\];/);
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Session \$\{currentSessionId\}/);
-  assert.match(source, /Försök igen med den här quizfrågan/);
+  assert.match(source, /Övningspass \$\{currentSessionId\}/);
+  assert.match(source, /Försök igen med den här övningsfrågan/);
   assert.match(source, /Try this quiz question again/);
   assert.match(source, /<QuestionDisclaimer language=\{language\} \/>/);
   assert.match(source, /<QuestionCard question=\{question\} language=\{language\} \/>/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
+});
+
+test('Swedish routed chapter and quiz copy avoid quiz loanword phrases', () => {
+  const forbiddenPhrases = [
+    ['Starta', 'quiz'].join(' '),
+    ['Quiz', 'pass'].join(''),
+    ['quiz', 'frågor'].join(''),
+    ['quiz', 'frågan'].join(''),
+  ];
+  const guardedFiles = [
+    'app/chapter/[chapterId].tsx',
+    'app/quiz/[sessionId].tsx',
+    'scripts/ui-effects.test.js',
+    'scripts/validate-content.js',
+  ];
+  const pendingDirectories = [path.join(repoRoot, 'tests')];
+
+  while (pendingDirectories.length > 0) {
+    const currentDirectory = pendingDirectories.pop();
+    fs.readdirSync(currentDirectory, { withFileTypes: true }).forEach((entry) => {
+      const entryPath = path.join(currentDirectory, entry.name);
+
+      if (entry.isDirectory()) {
+        pendingDirectories.push(entryPath);
+        return;
+      }
+
+      if (entry.isFile() && /\.(?:js|ts|tsx)$/.test(entry.name)) {
+        guardedFiles.push(path.relative(repoRoot, entryPath));
+      }
+    });
+  }
+
+  guardedFiles.forEach((relativePath) => {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+
+    forbiddenPhrases.forEach((phrase) => {
+      assert.equal(
+        source.includes(phrase),
+        false,
+        `${relativePath} should not contain Swedish learner-facing copy ${JSON.stringify(phrase)}`,
+      );
+    });
+  });
 });
 
 test('routed quiz copy parity rejects bypassing the settings language', () => {

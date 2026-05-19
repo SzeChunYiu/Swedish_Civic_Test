@@ -1161,13 +1161,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
     'Tillbaka till övning',
-    'Quizpass',
-    'Det finns inga quizfrågor ännu.',
+    'Övningspass',
+    'Det finns inga övningsfrågor ännu.',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    'Quizpass ${currentSessionId}',
+    'Övningspass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här quizfrågan',
+    'Försök igen med den här övningsfrågan',
   ],
   en: [
     'Back to Practice',
@@ -1237,8 +1237,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta quiz',
-    'Starta quiz för ${chapterTitle}',
+    'Starta kapitelövning',
+    'Starta kapitelövning för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',

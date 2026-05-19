@@ -37,13 +37,13 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   sv: {
     backToPractice: 'Tillbaka till övning',
     backToPracticeAccessibilityLabel: 'Tillbaka till övning',
-    badge: 'Quizpass',
-    emptyTitle: 'Det finns inga quizfrågor ännu.',
+    badge: 'Övningspass',
+    emptyTitle: 'Det finns inga övningsfrågor ännu.',
     scoreLabel: 'Poäng',
     sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    sessionTitle: (currentSessionId) => `Quizpass ${currentSessionId}`,
+    sessionTitle: (currentSessionId) => `Övningspass ${currentSessionId}`,
     tryAgain: 'Försök igen',
-    tryAgainAccessibilityLabel: 'Försök igen med den här quizfrågan',
+    tryAgainAccessibilityLabel: 'Försök igen med den här övningsfrågan',
   },
   en: {
     backToPractice: 'Back to Practice',
