@@ -2133,3 +2133,18 @@ test('exam chapter breakdown uses chapter names instead of raw ids only', () => 
   assert.match(source, /chapter\.chapterNameEn/);
   assert.match(source, /chapter\.chapterId/);
 });
+
+test('search route offers starter query chips with stable press targets', () => {
+  const source = read('app/search.tsx');
+
+  assert.match(source, /starterQueryChips: Record<AppLanguage, StarterQuery\[]>/);
+  assert.match(source, /chips\.map\(\(chip\) => \(/);
+  assert.match(source, /onPress=\{\(\) => setQuery\(chip\.query\)\}/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /pressed \? styles\.queryChipPressed : null/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(source, /const showSuggestions = !hasQuery \|\| results\.length === 0;/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
