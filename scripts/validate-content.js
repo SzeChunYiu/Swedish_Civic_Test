@@ -1026,7 +1026,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
-const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 6;
+const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -11312,6 +11312,7 @@ function validateRemoveAdsSvExamCopyNaturalness() {
   let valid = true;
   let premiumBannerSource = '';
   let pricingWedgeSource = '';
+  let placementCtaSource = '';
 
   function reject(message) {
     valid = false;
@@ -11327,12 +11328,16 @@ function validateRemoveAdsSvExamCopyNaturalness() {
       path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
       'utf8',
     );
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
   } catch (error) {
     reject(`Remove Ads Swedish copy source could not be read: ${error.message}`);
     return;
   }
 
-  const combinedSource = `${premiumBannerSource}\n${pricingWedgeSource}`;
+  const combinedSource = `${premiumBannerSource}\n${pricingWedgeSource}\n${placementCtaSource}`;
   const copyCases = [
     [
       /Tidsatta övningsprov är redan annonsfria/.test(premiumBannerSource),
@@ -11345,6 +11350,12 @@ function validateRemoveAdsSvExamCopyNaturalness() {
     [
       /tidsatta övningsprov är alltid annonsfria/.test(pricingWedgeSource),
       'PricingWedge Swedish Remove Ads pitch must name timed practice exams',
+    ],
+    [
+      /(?:Tidsatta övningsprov är redan annonsfria|Provläget är redan annonsfritt)/.test(
+        placementCtaSource,
+      ),
+      'RemoveAdsPlacementCta Swedish body must name ad-free timed practice exams or app exam mode',
     ],
     [
       !/\bprov förblir annonsfria\b/i.test(combinedSource),
