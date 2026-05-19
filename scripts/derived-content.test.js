@@ -689,11 +689,11 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
 
   assert.equal(
     byId.get('q151')?.explanationSv,
-    'Sveriges nordligaste del ligger norr om polcirkeln. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.',
+    'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
     byId.get('q151')?.explanationEn,
-    "Sweden's northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",
+    "Sweden's northernmost part lies north of the Arctic Circle.",
   );
   assert.equal(
     byId.get('q150')?.explanationSv,
@@ -712,7 +712,7 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
         question.tags.includes('false-statement'),
     )
     .filter((question) =>
-      /Därför\s+stämmer\s+alternativet\s+Sant|That makes True correct|True is correct/i.test(
+      /Påståendet är falskt|alternativet\s+Falskt|Falskt\s+stämmer|The statement is false|False is correct|Därför\s+stämmer\s+alternativet\s+Sant|That makes True correct|True is correct/i.test(
         `${question.explanationSv} ${question.explanationEn}`,
       ),
     )
@@ -727,7 +727,7 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
         question.tags.includes('published-variant'),
     )
     .filter((question) =>
-      /Påståendet är sant|(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)|alternativet\s+Sant|medan\s+Falskt|The statement is true|so the statement is true|that makes the statement true|That makes True correct|True is correct|while False/i.test(
+      /Påståendet är sant|Påståendet är falskt|(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)|alternativet\s+Sant|alternativet\s+Falskt|Falskt\s+stämmer|medan\s+Falskt|The statement is true|The statement is false|so the statement is true|that makes the statement true|That makes True correct|True is correct|False is correct|while False/i.test(
         `${question.explanationSv} ${question.explanationEn}`,
       ),
     )
