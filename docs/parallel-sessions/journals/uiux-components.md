@@ -667,3 +667,13 @@ A11y props: default `accessibilityRole="text"`; spoken label still derives from 
 Verification: required COMPONENTS docs re-read; `./node_modules/.bin/prettier --check components/ui/Badge.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; token discipline grep on `components/ui/Badge.tsx` -> `tokens-only OK`; `git diff --check -- components/ui/Badge.tsx docs/parallel-sessions/journals/uiux-components.md` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `NODE_OPTIONS='--v8-pool-size=1' npm run test:router-shell` -> pass 5/5.
 Blocked? no - scoped to COMPONENTS writable files plus append-only component journal only.
 Next: MANAGER-uiux/VALIDATOR can review this bounded Badge component-contract pass; SwedishFlagBand remains blocked until DESIGN-TOKENS publishes and exports `lib/theme/flag.ts`.
+
+## Iteration 67 - 2026-05-19
+
+Component: Badge style-override validator parity - `scripts/validate-content.js`, `tests/content-badge-accessibility-parity.test.js`
+Variants/states implemented: preserved the current shared Badge source contract while updating the content validator mirror to require the rendered style array to keep both tone styling and caller `style` overrides.
+Tokens used: no visual source changed; existing `Badge` token usage through `colors.*`, `radius.pill`, `space.*`, and `typography.badge` remains unchanged.
+A11y props: no runtime accessibility behavior changed; the parity test still verifies readable web/native labels and now adds a negative mutation for dropped style override paths.
+Verification: required COMPONENTS docs and `codex-tasks/P0.md` re-read; `./node_modules/.bin/prettier --check scripts/validate-content.js tests/content-badge-accessibility-parity.test.js` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` -> pass with `badgeAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-badge-accessibility-parity.test.js` -> pass 3/3; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` -> pass; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` -> pass 1/1; `git diff --check -- scripts/validate-content.js tests/content-badge-accessibility-parity.test.js` -> pass.
+Blocked? no - advances queued `BADGE-STYLE-OVERRIDE-PARITY-1`.
+Next: MANAGER-uiux/VALIDATOR can review the validator mirror repair; SwedishFlagBand remains blocked until DESIGN-TOKENS publishes and exports `lib/theme/flag.ts`.
