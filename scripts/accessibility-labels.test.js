@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
+const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -75,4 +76,27 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
+});
+
+test('TopBarActions route links keep token-sized web anchors with interaction feedback', () => {
+  const source = fs.readFileSync(TOP_BAR_ACTIONS_SOURCE, 'utf8');
+
+  assert.match(source, /const topBarTargetSize = space\[6\];/);
+  assert.match(source, /<Link[\s\S]*accessibilityRole="link"[\s\S]*href=\{href\}/);
+  assert.doesNotMatch(source, /<Link[\s\S]*asChild/);
+  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
+  assert.match(source, /onMouseEnter:\s*\(\) => setIsHovered\(true\)/);
+  assert.match(
+    source,
+    /onMouseLeave:\s*\(\) => \{\s*setIsHovered\(false\);\s*setIsPressed\(false\);\s*\}/,
+  );
+  assert.match(source, /isFocused \|\| isHovered \? styles\.iconLinkHover : null/);
+  assert.match(source, /isPressed \? styles\.iconLinkPressed : null/);
+  assert.match(source, /display:\s*'flex'/);
+  assert.match(source, /flexShrink:\s*0/);
+  assert.match(source, /height:\s*topBarTargetSize/);
+  assert.match(source, /width:\s*topBarTargetSize/);
+  assert.match(source, /minHeight:\s*topBarTargetSize/);
+  assert.match(source, /minWidth:\s*topBarTargetSize/);
 });

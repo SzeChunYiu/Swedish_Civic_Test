@@ -45,6 +45,7 @@ const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
 };
 
 const defaultIconSize = space[3];
+const topBarTargetSize = space[6];
 
 /**
  * Defaults: reads language and audio state from settings, renders token-sized
@@ -96,7 +97,10 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
           onBlur: () => setIsFocused(false),
           onFocus: () => setIsFocused(true),
           onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => setIsHovered(false),
+          onMouseLeave: () => {
+            setIsHovered(false);
+            setIsPressed(false);
+          },
         }
       : {};
 
@@ -130,8 +134,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: radius.pill,
     justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
+    minHeight: topBarTargetSize,
+    minWidth: topBarTargetSize,
   },
   iconButtonPressed: {
     backgroundColor: colors.focusSoft,
@@ -140,9 +144,13 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
+    display: 'flex',
+    flexShrink: 0,
+    height: topBarTargetSize,
     justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
+    minHeight: topBarTargetSize,
+    minWidth: topBarTargetSize,
+    width: topBarTargetSize,
   },
   iconLinkHover: {
     backgroundColor: colors.focusSoft,
