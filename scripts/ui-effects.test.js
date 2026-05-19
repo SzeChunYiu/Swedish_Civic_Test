@@ -185,11 +185,47 @@ test('shared buttons use token disabled styles without dimming child labels', ()
 test('language picker future-language rows are disabled instead of selectable', () => {
   const source = read('components/ui/LanguagePicker.tsx');
 
+  assert.match(source, /const availableLocaleOptions = useMemo\(/);
+  assert.match(source, /const focusAvailableOption = \(optionCode: string\) => \{/);
+  assert.match(source, /const handleMenuKeyDown = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /case 'Escape':/);
+  assert.match(source, /closePicker\(\{ restoreFocus: true \}\);/);
+  assert.match(source, /case 'ArrowDown':/);
+  assert.match(source, /moveFocusBy\(1\);/);
+  assert.match(source, /case 'ArrowUp':/);
+  assert.match(source, /moveFocusBy\(-1\);/);
+  assert.match(source, /case 'Home':/);
+  assert.match(source, /focusAvailableIndex\(0\);/);
+  assert.match(source, /case 'End':/);
+  assert.match(source, /focusAvailableIndex\(availableLocaleOptions\.length - 1\);/);
+  assert.match(source, /case 'Enter':/);
+  assert.match(source, /case ' ':/);
+  assert.match(source, /if \(!focusedOptionCode\) return;/);
+  assert.match(
+    source,
+    /availableLocaleOptions\.find\(\(option\) => option\.code === focusedOptionCode\)/,
+  );
+  assert.match(source, /\.\.\.menuKeyboardProps/);
+  assert.match(source, /const triggerKeyboardProps: WebKeyboardProps =/);
+  assert.match(
+    source,
+    /Platform\.OS === 'web' && open \? \{ onKeyDown: handleMenuKeyDown \} : \{\}/,
+  );
+  assert.match(source, /\.\.\.triggerKeyboardProps/);
+  assert.match(
+    source,
+    /onFocus=\{\(\) => \{\s*if \(opt\.available\) setFocusedOptionCode\(opt\.code\);/,
+  );
+  assert.match(source, /rowRefs\.current\[opt\.code\] = node;/);
+  assert.match(source, /tabIndex=\{\s*opt\.available/);
   assert.match(source, /aria-expanded=\{open\}/);
   assert.match(source, /aria-haspopup="menu"/);
   assert.match(source, /accessibilityState=\{\{ expanded: open \}\}/);
   assert.match(source, /if \(!option\.available\) return;/);
+  assert.match(source, /aria-disabled=\{!opt\.available\}/);
+  assert.match(source, /aria-selected=\{selected\}/);
   assert.match(source, /disabled=\{!opt\.available\}/);
+  assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
   assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
   assert.match(source, /accessible=\{false\}/);
@@ -205,6 +241,10 @@ test('language picker future-language rows are disabled instead of selectable', 
     source,
     /<Pressable[\s\S]*accessibilityLabel=\{copy\.closeLabel\}[\s\S]*styles\.backdrop/,
   );
+  assert.doesNotMatch(
+    source,
+    /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*selected, disabled: !opt\.available/,
+  );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -212,27 +252,39 @@ test('top bar route links keep web anchors large enough with token hover and pre
   const source = read('components/ui/TopBarActions.tsx');
 
   assert.match(source, /import \{ Platform, Pressable, StyleSheet, View \}/);
+  assert.match(source, /import \{ useEffect, useState \} from 'react';/);
   assert.match(source, /function TopBarActionLink/);
-  assert.match(source, /<Link\s+\{\.\.\.webInteractionHandlers\}/);
+  assert.match(source, /const topBarActionLinkClassName = 'top-bar-action-link';/);
+  assert.match(source, /const topBarActionLinkStyleElementId = 'top-bar-action-link-style';/);
+  assert.match(source, /function useTopBarActionLinkWebStyles\(\)/);
+  assert.match(source, /document\.getElementById\(topBarActionLinkStyleElementId\)/);
+  assert.match(source, /document\.createElement\('style'\)/);
+  assert.match(source, /styleElement\.id = topBarActionLinkStyleElementId;/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:hover,/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:focus-visible/);
+  assert.match(source, /background-color: \$\{colors\.focusSoft\};/);
+  assert.match(source, /transform: scale\(\$\{motion\.hoverScale\}\);/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:active/);
+  assert.match(source, /transform: scale\(\$\{motion\.pressedScale\}\);/);
+  assert.match(source, /document\.head\.appendChild\(styleElement\);/);
+  assert.match(source, /useTopBarActionLinkWebStyles\(\);/);
+  assert.match(source, /<Link[\s\S]*accessibilityRole="link"[\s\S]*href=\{href\}/);
   assert.doesNotMatch(source, /<Link[\s\S]*asChild/);
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
-  assert.match(source, /onPressOut=\{clearPressedState\}/);
-  assert.match(source, /onMouseEnter: \(\) => setIsHovered\(true\)/);
-  assert.match(source, /onMouseDown: \(\) => setIsPressed\(true\)/);
+  assert.match(source, /const linkInteractionHandlers = \{/);
   assert.match(
     source,
-    /onMouseLeave: \(\) => \{\n\s+setIsHovered\(false\);\n\s+clearPressedState\(\);/,
+    /Platform\.OS === 'web' \? \{ className: topBarActionLinkClassName \} : \{\};/,
   );
-  assert.match(source, /onMouseUp: clearPressedState/);
-  assert.match(source, /onTouchEnd: clearPressedState/);
-  assert.match(source, /onTouchStart: \(\) => setIsPressed\(true\)/);
-  assert.match(source, /onKeyDown: handleKeyboardPressStart/);
-  assert.match(source, /onKeyUp: handleKeyboardPressEnd/);
-  assert.match(source, /key === 'Enter' \|\| key === ' '/);
-  assert.match(source, /isFocused \|\| isHovered \? styles\.iconLinkHover : null/);
-  assert.match(source, /isPressed \? styles\.iconLinkPressed : null/);
+  assert.match(source, /\{\.\.\.webClassName\}/);
+  assert.match(source, /onPressIn: \(\) => setIsPressed\(true\)/);
+  assert.match(source, /onPressOut: clearPressedState/);
+  assert.match(
+    source,
+    /style=\{\[styles\.iconLink, isPressed \? styles\.iconLinkPressed : null\]\}/,
+  );
+  assert.match(source, /display: 'flex'/);
   assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /minWidth: space\[6\]/);
   assert.match(source, /backgroundColor: colors\.focusSoft/);
@@ -996,6 +1048,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
+  assert.match(copySource, /rewarded_extra_exam: 'Annons för extra övningsprov'/);
+  assert.doesNotMatch(copySource, /\bAnnons för extra prov\b|\bextra prov\b/i);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
   assert.match(copySource, /AdMob test unit active - web preview/);
@@ -1175,12 +1229,7 @@ test('search route turns the header search action into a searchable glossary ref
   assert.match(source, /TextInput/);
   assert.match(source, /type SearchRouteCopy =/);
   assert.match(source, /const searchRouteCopy: Record<AppLanguage, SearchRouteCopy>/);
-  assert.match(source, /useLocalSearchParams<SearchQueryParams>/);
-  assert.match(
-    source,
-    /const \[query, setQuery\] = useState\(\(\) =>\s+initialSearchQueryFromParams\(searchParams\.q, searchParams\.query\),\s+\);/,
-  );
-  assert.match(source, /function initialSearchQueryFromParams/);
+  assert.match(source, /const \[query, setQuery\] = useState\(''\);/);
   assert.match(source, /normalizeSearchText/);
   assert.match(source, /const filteredTerms = useMemo/);
   assert.match(source, /placeholderTextColor=\{colors\.textPlaceholder\}/);
@@ -1278,7 +1327,7 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   assert.match(profile, /href="\/dashboard"/);
   assert.match(home, /Framstegsöversikt/);
   assert.match(home, /Progress dashboard/);
-  assert.match(profile, /Aktivitet, kapitelprogress och XP visas på en egen sida\./);
+  assert.match(profile, /Aktivitet, kapitelframsteg och XP visas på en egen sida\./);
   assert.match(profile, /Activity, chapter progress, and XP live on a dedicated page\./);
   assert.match(dashboard, /type DashboardCopy =/);
   assert.match(dashboard, /const dashboardCopy: Record<AppLanguage, DashboardCopy>/);
@@ -1299,6 +1348,8 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   assert.match(chapters, /copy\.emptyState/);
   assert.match(sparkline, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(sparkline, /copy\.emptyState/);
+  assert.doesNotMatch(profile, /Kapitelprogress|kapitelprogress|XP-linjen/);
+  assert.doesNotMatch(dashboard, /Kapitelprogress|kapitelprogress|XP-linjen/);
   assert.doesNotMatch(
     `${dashboard}\n${activity}\n${chapters}\n${sparkline}`,
     /#[0-9a-fA-F]{6}|rgba?\(/,
@@ -1334,6 +1385,11 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(webSource, /\{unit\?\.testOnly \? copy\.testBody : copy\.liveBody\}/);
   assert.match(webSource, /accessibilityLabel=\{copy\.closeAccessibilityLabel\}/);
   assert.match(webSource, /\{copy\.closeLabel\}/);
+  const closedGuardIndex = webSource.indexOf('if (!visible) {');
+  const modalIndex = webSource.indexOf('<Modal');
+  assert.ok(closedGuardIndex >= 0, 'web launch ad must explicitly unmount when closed');
+  assert.ok(modalIndex > closedGuardIndex, 'closed-state guard must run before rendering Modal');
+  assert.match(webSource.slice(closedGuardIndex, modalIndex), /return null;/);
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /AppOpenAd/);
   assert.match(nativeSource, /launchPopupShownThisRuntime/);
@@ -1488,6 +1544,15 @@ test('exam auto-submits at timeout and explains unanswered scoring', () => {
   const source = read('app/(tabs)/exam.tsx');
 
   assert.match(source, /shouldAutoSubmitExam/);
+  assert.match(
+    source,
+    /if \(!examUnlocked \|\| submitted \|\| remainingSeconds <= 0\) return undefined;/,
+  );
+  assert.match(source, /examActive: examUnlocked/);
+  assert.doesNotMatch(
+    source,
+    /accessDecision\.canStartExam && accessDecision\.reason !== 'rewarded_exam_credit'/,
+  );
   assert.match(source, /setSubmitted\(true\)/);
   assert.match(source, /timeExpiredBadge: 'Tiden gick ut'/);
   assert.match(source, /timeExpiredBadge: 'Time expired'/);

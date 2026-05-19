@@ -763,6 +763,53 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated true/false English gerund fragments', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const gerundFragmentResiduals = {",
+        "  [generatedFixtureId('q147', 1)]: { questionEn: 'Many people voting, getting involved, and learning about social issues.' },",
+        "  [generatedFixtureId('q147', 2)]: { questionEn: 'Fewer people taking part in elections.' },",
+        "  [generatedFixtureId('q149', 1)]: { questionEn: 'People with different backgrounds and economic situations living closer to one another and feeling included.' },",
+        "  [generatedFixtureId('q149', 2)]: { questionEn: 'People living completely separated by income or ethnic background.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  gerundFragmentResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...gerundFragmentResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
+});
+
 test('published question schema rejects generated true/false statement-about-statement stems', () => {
   const result = spawnSync(
     process.execPath,

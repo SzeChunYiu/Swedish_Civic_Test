@@ -234,18 +234,19 @@ export default function Screen() {
   const accessLoading = !accessReady || !entitlementsReady;
 
   useEffect(() => {
-    if (submitted || remainingSeconds <= 0) return undefined;
+    if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;
 
     const interval = setInterval(() => {
       setRemainingSeconds((current) => Math.max(0, current - 1));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [remainingSeconds, submitted]);
+  }, [examUnlocked, remainingSeconds, submitted]);
 
   useEffect(() => {
     if (
       shouldAutoSubmitExam({
+        examActive: examUnlocked,
         remainingSeconds,
         submitted,
         questionCount: examQuestions.length,
@@ -253,14 +254,7 @@ export default function Screen() {
     ) {
       setSubmitted(true);
     }
-  }, [examQuestions.length, remainingSeconds, submitted]);
-
-  useEffect(() => {
-    if (examUnlocked || submitted || accessLoading) return;
-    if (accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit') {
-      setExamUnlocked(true);
-    }
-  }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
+  }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
   const resultCorrectCount = result?.correctCount ?? 0;

@@ -51,7 +51,7 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     completedMetric: 'klara',
     dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
     dashboardCta: 'Visa översikt',
-    dashboardSubtitle: 'Aktivitet, kapitelprogress och XP visas på en egen sida.',
+    dashboardSubtitle: 'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
     dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',

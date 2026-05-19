@@ -1210,3 +1210,21 @@ Verification: clean worktree from current `origin/main` `7a6e873d`; linked share
 PR: pending from `task/setup/audio-feedback-playback-1779210506` at handoff commit time.
 Blocked? no for the source audio-feedback atom; rendered static-route smoke remains blocked by the unrelated web export route-context issue, and no Vercel CLI was run.
 Next suggested validator action: inspect feedback audio on Practice and `/quiz/<id>`, rerun the focused audio/parity checks plus `npm run validate:content`; repeat rendered browser coverage after the export route-context blocker is fixed.
+
+## Iteration 253 - 2026-05-19
+
+Task completed: SCHEDULED-DEPLOY-THIRTY-MINUTE-CADENCE-GUARD-1 - aligned the scheduled Deploy Hook workflow to the repo's 30-minute cadence and added a build-config guard rejecting 15-minute drift while preserving the no-Vercel-CLI path.
+Artifacts changed: `.github/workflows/scheduled-deploy.yml`, `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main`; linked shared ignored `node_modules`; focused `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 43/43 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 770 questions and static parity true; first typecheck attempt failed before linking dependencies because the temp worktree had no `node_modules`, then `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0 after linking; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check and `git diff --check` exit 0; direct workflow scan shows `cron: '*/30 * * * *'` and no workflow `VERCEL_TOKEN`, `vercel@latest`, `vercel deploy`, `.vercel/project.json`, or `npx --yes vercel` deploy path.
+PR: pending from `task/scheduled-deploy-cadence-1779200400` at handoff commit time.
+Blocked? no for this release/deploy source guard; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
+Next suggested validator action: inspect the scheduled workflow cadence guard and rerun `npm run test:build-config` plus workflow source scan before acceptance.
+
+## Iteration 254 - 2026-05-19
+
+Task completed: AD-COPY-SV-REWARDED-OVNINGSPROV-LABEL-1 - changed the shared Swedish rewarded extra-exam ad label from bare `extra prov` wording to `Annons för extra övningsprov`, and added validator/source guards for web/native ad labels plus the adjacent Remove Ads CTA title path.
+Artifacts changed: `lib/monetization/adCopy.ts`, `scripts/validate-content.js`, `scripts/monetization.test.js`, `tests/content-ad-placement-route-parity.test.js`, `scripts/ui-effects.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `2086b964`; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/monetization.test.js tests/content-ad-placement-route-parity.test.js scripts/ui-effects.test.js` exit 0 with 100/100 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `adCopySvRewardedPracticeExamCasesValidated:7` and `adCopySvRewardedPracticeExamNaturalnessValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0; `node --check` for the changed JS test/validator files exit 0; `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0.
+PR: pending from `task/ad-copy-sv-rewarded-pane2-1779228086` at handoff commit time.
+Blocked? no for this ad-copy naturalness guard.
+Next suggested validator action: inspect the shared rewarded ad copy and rerun `npm run validate:content` plus the focused monetization/ad-placement/UI tests before accepting the route.
