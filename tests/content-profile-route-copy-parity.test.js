@@ -41,6 +41,33 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /Ändra mål, språk och ljud/);
+  assert.match(source, /Edit goal, language, and audio/);
+});
+
+test('profile study setup card owns the localized settings shortcut', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  const settingsLinks = source.match(/href="\/settings"/g) ?? [];
+  const studySetupStart = source.indexOf('<SectionHeader title={copy.studySetupTitle}');
+  const badgesStart = source.indexOf('<SectionHeader title={copy.badgesTitle}');
+  const studySetupCard = source.slice(studySetupStart, badgesStart);
+  const pillRowIndex = studySetupCard.indexOf('<View style={styles.pillRow}>');
+  const settingsLinkIndex = studySetupCard.indexOf('href="/settings"');
+  const premiumBannerIndex = source.indexOf('<PremiumBanner');
+
+  assert.equal(settingsLinks.length, 1);
+  assert.notEqual(studySetupStart, -1);
+  assert.notEqual(badgesStart, -1);
+  assert.ok(studySetupStart < badgesStart, 'study setup card should render before badges card');
+  assert.ok(pillRowIndex >= 0, 'study setup card should render daily-goal/language badges');
+  assert.ok(settingsLinkIndex > pillRowIndex, 'settings shortcut should render after setup badges');
+  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
+  assert.match(
+    studySetupCard,
+    /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.openSettings\}[\s\S]*<\/Button>/,
+  );
+  assert.doesNotMatch(source.slice(premiumBannerIndex), /href="\/settings"/);
+  assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
 });
 
 test('profile route copy parity rejects bypassing the settings language', () => {
