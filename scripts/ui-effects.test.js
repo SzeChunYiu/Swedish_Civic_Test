@@ -701,8 +701,7 @@ test('practice and routed quiz answer options expose selected state', () => {
 
   assert.match(answerOptionSource, /selected = false/);
   assert.match(answerOptionSource, /selected\?: boolean/);
-  assert.match(answerOptionSource, /const checked = selected;/);
-  assert.match(answerOptionSource, /accessibilityState=\{\{ checked, disabled, selected \}\}/);
+  assert.match(answerOptionSource, /accessibilityState=\{\{ disabled, selected \}\}/);
   assert.match(practiceSource, /selected=\{hasSelectedAnswer && selectedOptionId === option\.id\}/);
   assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
 });
@@ -1016,6 +1015,11 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
 test('native ads use Google Mobile Ads while web keeps a safe preview component', () => {
   const webSource = read('components/monetization/AdBanner.tsx');
   const nativeSource = read('components/monetization/AdBanner.native.tsx');
+  const webInterstitialSource = read('components/monetization/PracticeInterstitialAd.tsx');
+  const nativeInterstitialSource = read(
+    'components/monetization/PracticeInterstitialAd.native.tsx',
+  );
+  const practiceSource = read('app/(tabs)/practice.tsx');
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
@@ -1046,6 +1050,15 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
   assert.match(nativeSource, /<BannerAd/);
+  assert.match(practiceSource, /<PracticeInterstitialAd showKey=/);
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(webInterstitialSource, /shouldShowAd\('quiz_completed_interstitial'/);
+  assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
+  assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
+  assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);

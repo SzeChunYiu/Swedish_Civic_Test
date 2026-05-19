@@ -287,20 +287,25 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: Pro does not grant the v1.0 Remove Ads entitlement', () => {
+test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
 
   assert.equal(premium.REMOVE_ADS_ENTITLEMENTS.adsDisabled, true);
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
-  assert.equal(adsRow.flag, undefined);
+  assert.equal(
+    premium.hasProEntitlement({
+      adsDisabled: true,
+      fullMistakeReview: false,
+      unlimitedMockExams: false,
+      spacedRepetition: false,
+    }),
+    false,
+  );
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, true);
+  assert.equal(adsRow.flag, 'adsDisabled');
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, {
-    kind: 'text',
-    sv: 'vid sessionsskifte',
-    en: 'at session boundaries',
-  });
+  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
 });
 
 test('tierComparison: three columns in canonical order', () => {
