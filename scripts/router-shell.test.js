@@ -330,6 +330,51 @@ test('top-bar route links keep token-sized web anchors with pressed feedback', (
   );
 });
 
+test('top-bar audio switch keeps a token-sized interactive target with feedback', () => {
+  const topBarActions = read('components/ui/TopBarActions.tsx');
+
+  assertContains(
+    topBarActions,
+    'function TopBarAudioSwitch({',
+    'audio switch should use its own stateful header-control wrapper',
+  );
+  assertMatches(
+    topBarActions,
+    /<TopBarAudioSwitch[\s\S]*accessibilityLabel=\{audioEnabled \? copy\.audioEnabled : copy\.audioMuted\}[\s\S]*audioEnabled=\{audioEnabled\}[\s\S]*iconSize=\{iconSize\}[\s\S]*onToggle=\{\(\) => setAudioEnabled\(!audioEnabled\)\}[\s\S]*\/>/,
+    'top-bar should route audio toggle state through the shared header-control wrapper',
+  );
+  assertMatches(
+    topBarActions,
+    /<Pressable[\s\S]*aria-checked=\{audioEnabled\}[\s\S]*accessibilityRole=["']switch["'][\s\S]*accessibilityState=\{\{ checked: audioEnabled \}\}[\s\S]*hitSlop=\{space\[1\]\}/,
+    'audio switch should keep switch semantics, checked state, and token hit slop',
+  );
+  assertMatches(
+    topBarActions,
+    /onBlur=\{\(\) => \{[\s\S]*setIsFocused\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*\}\}[\s\S]*onFocus=\{\(\) => setIsFocused\(true\)\}[\s\S]*onHoverIn=\{\(\) => setIsHovered\(true\)\}[\s\S]*onHoverOut=\{\(\) => \{[\s\S]*setIsHovered\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*\}\}[\s\S]*onPressIn=\{\(\) => setIsPressed\(true\)\}[\s\S]*onPressOut=\{\(\) => setIsPressed\(false\)\}/,
+    'audio switch should expose hover, focus, and pressed-state handlers without leaving pressed state stuck',
+  );
+  assertMatches(
+    topBarActions,
+    /style=\{\[[\s\S]*styles\.iconButton,[\s\S]*isFocused \|\| isHovered \? styles\.iconButtonHover : null,[\s\S]*isPressed \? styles\.iconButtonPressed : null,[\s\S]*\]\}/,
+    'audio switch should use the same hover and pressed feedback pattern as the other header actions',
+  );
+  assertMatches(
+    topBarActions,
+    /iconButton:\s*\{[\s\S]*alignItems:\s*['"]center['"],[\s\S]*borderRadius:\s*radius\.pill,[\s\S]*display:\s*['"]flex['"],[\s\S]*flexShrink:\s*0,[\s\S]*height:\s*space\[6\],[\s\S]*justifyContent:\s*['"]center['"],[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*width:\s*space\[6\],[\s\S]*\}/,
+    'audio switch should keep a stable token-sized 48px square hit target',
+  );
+  assertMatches(
+    topBarActions,
+    /iconButtonHover:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.hoverScale \}\],[\s\S]*\}/,
+    'audio switch hover feedback should use theme interaction tokens',
+  );
+  assertMatches(
+    topBarActions,
+    /iconButtonPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\],[\s\S]*\}/,
+    'audio switch pressed feedback should use theme interaction tokens',
+  );
+});
+
 test('header language picker keeps a token-sized trigger target', () => {
   const languagePicker = read('components/ui/LanguagePicker.tsx');
 
