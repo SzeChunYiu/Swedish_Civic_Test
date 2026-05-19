@@ -44,11 +44,19 @@ queue. Expensive judgement where context is rich; cheap pickup where it isn't.
 ```
 1. cd <repo checkout>; git fetch origin -q
 
-2. SELECT — cheap, no deep deliberation (you have little context yet): take the
-   FIRST unclaimed task in codex-tasks/open.txt (it was already reasoned out by
-   a prior iteration's step 10 or a Scrutinizer — trust it). Only if the queue
-   is empty or every item is stale/duplicated, do a quick GOAL.md-gap scan and
-   pick the one obvious highest-value unit. Exactly ONE bounded product unit.
+2. SELECT — cheap, no deep deliberation (you have little context yet).
+   **GATE-FIRST RULE (overrides everything): a red required CI on `main`
+   blocks EVERY PR — so if it is red, the only valid work in the whole fleet
+   is making it green.** Check: `gh run list --workflow release-validation.yml
+   --branch main --limit 1` (or take any `P0-GATE-RED` task at the top of the
+   queue). If main's validate is failing, claim/fix THAT — reproduce the
+   failing `npm run <failing-step>`, fix the real cause (a stale test that
+   pins content the fleet legitimately improved → update the test to match
+   the improved content; never revert good content to satisfy a brittle
+   test), PR it, done. Do not pick any other task while the gate is red.
+   Otherwise: take the FIRST unclaimed task in codex-tasks/open.txt (already
+   reasoned out by a prior step 11 or a Scrutinizer — trust it). Only if the
+   queue is empty/stale, do a quick GOAL.md-gap scan. Exactly ONE bounded unit.
 
 3. LEARN — acquire the skill to do THIS task excellently, not generically.
    **If the task line references a doc/path (e.g. `FROM docs/research/...§X`),
