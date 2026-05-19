@@ -13125,11 +13125,8 @@ function validateThemeTokenSchema() {
         if (!['400', '500', '600', '700'].includes(style.fontWeight)) {
           rejectToken(`theme typography.${token}.fontWeight must use a supported weight`);
         }
-        if (
-          style.letterSpacing !== undefined &&
-          (!Number.isFinite(style.letterSpacing) || Math.abs(style.letterSpacing) > 4)
-        ) {
-          rejectToken(`theme typography.${token}.letterSpacing must be a bounded number`);
+        if (style.letterSpacing !== undefined && style.letterSpacing !== 0) {
+          rejectToken(`theme typography.${token}.letterSpacing must be 0 when defined`);
         }
       }
 
