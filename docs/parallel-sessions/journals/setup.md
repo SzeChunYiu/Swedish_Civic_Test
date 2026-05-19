@@ -1147,3 +1147,12 @@ Verification: product branch rebased onto current `origin/main` `051b376`; `npm 
 PR: #861 `ui: add home readiness indicator` - merged as `c399fd8`.
 Blocked? no for this readiness indicator atom.
 Next suggested validator action: inspect #861 and rerun the focused learning/home parity tests plus `npm run validate:content`; then continue the queued readiness/mock-score follow-up if it still matches current product priorities.
+
+## Iteration 246 - 2026-05-19
+
+Task completed: READINESS-MOCK-SCORES-1 - persisted completed mock-exam score history and fed recent mock scores into the Home readiness indicator.
+Artifacts changed: `lib/storage/progressStore.ts`, `app/(tabs)/exam.tsx`, `app/(tabs)/home.tsx`, `lib/learning/readiness.ts`, `scripts/learning.test.js`, `scripts/validate-content.js`, `tests/content-progress-schema-parity.test.js`, `tests/content-exam-route-copy-parity.test.js`, `tests/content-home-route-header-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `16b63dd`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/learning.test.js tests/content-progress-schema-parity.test.js tests/content-exam-route-copy-parity.test.js tests/content-home-route-header-parity.test.js` exit 0 with 21/21 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `progressStoreFieldsValidated:10`, `examSubmissionFinalityParityValidated:true`, and `homeRouteCopyParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run format:check` exit 0; `git diff --check` exit 0; `npm ci --prefer-offline --no-audit` exit 0 in the fresh worktree; `NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; Playwright/system-Chrome exported-web smoke completed a 20-question mock exam and confirmed Home readiness changed from `0` to `30` with browser errors 0.
+PR: pending from `task/setup/readiness-mock-scores-1779150000` at handoff commit time.
+Blocked? no for this readiness/mock-score atom.
+Next suggested validator action: inspect the progress-store mock exam history, rerun the focused readiness/progress/exam parity tests, and repeat the exported-web mock completion smoke if runtime evidence is needed.

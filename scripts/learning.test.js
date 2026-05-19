@@ -195,6 +195,34 @@ test('readiness score softens copy when there are too few stored answers', () =>
   assert.equal(result.verdict, 'not_ready_yet');
 });
 
+test('readiness score includes recent persisted mock exam results', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+
+  const base = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+  const withMocks = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
+      { sessionId: 'old', score: 0.1, completedAt: '2026-05-01T10:00:00.000Z' },
+      { sessionId: 'm1', score: 0.8, completedAt: '2026-05-17T10:00:00.000Z' },
+      { sessionId: 'm2', score: 0.7, completedAt: '2026-05-18T10:00:00.000Z' },
+      { sessionId: 'm3', score: 0.9, completedAt: '2026-05-19T10:00:00.000Z' },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(base.components.mockAverage, 0);
+  assert.ok(Math.abs(withMocks.components.mockAverage - 0.8) < 0.0001);
+  assert.equal(withMocks.score, 24);
+  assert.ok(withMocks.score > base.score);
+});
+
 test('spaced repetition schedules wrong answers soon and known answers later', () => {
   const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
 

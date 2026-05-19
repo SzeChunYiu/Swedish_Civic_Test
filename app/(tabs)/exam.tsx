@@ -227,11 +227,6 @@ export default function Screen() {
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
-  const examStartedAtMsRef = useRef<number | null>(null);
-  const lastQuestionAnsweredAtMsRef = useRef<number | null>(null);
-  const reviewCardRefs = useRef<Record<string, { focus?: () => void } | null>>({});
-  const reviewCardYByQuestionIdRef = useRef<Record<string, number>>({});
-  const scrollViewRef = useRef<ScrollView | null>(null);
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
@@ -442,19 +437,14 @@ export default function Screen() {
 
     let isMounted = true;
     recordMockExamSession({
-      answers: completedExamSession.answers.map((answer) => ({
-        questionId: answer.questionId,
-        isCorrect: answer.isCorrect,
-        timeSpentSeconds: answer.timeSpentSeconds,
-      })),
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: completedExamSession.completedAt,
+      completedAt: new Date().toISOString(),
       correctCount: resultCorrectCount,
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion(examSessionId)
+    void recordExamCompletion()
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -469,7 +459,6 @@ export default function Screen() {
     };
   }, [
     completionRecorded,
-    completedExamSession,
     copy.completionStoreFailure,
     examSessionId,
     recordExamCompletion,
