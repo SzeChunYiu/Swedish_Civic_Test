@@ -1,10 +1,11 @@
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
   CITIZENSHIP_RULES_EFFECTIVE_DATE,
-  CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
+  CITIZENSHIP_TIMELINE_SOURCE_URLS,
+  CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE,
   daysUntil,
   formatExamDate,
 } from '../../lib/learning/examDate';
@@ -21,17 +22,59 @@ type TimelineSourceLink = {
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (rulesDate: string, firstSittingDate: string) =>
-      `Nya medborgarskapsregler gäller från ${rulesDate}. Första samhällskunskapsprovet genomförs den ${firstSittingDate} i Stockholm. Förbered dig nu.`,
+    body: (rulesDate: string, testDeadline: string) =>
+      `Nya medborgarskapsregler gäller från ${rulesDate}. Samhällskunskapsprovet väntas starta i augusti 2026, senast ${testDeadline}. Förbered dig nu.`,
     untilLabel: 'tills nya reglerna',
+    sourcesLabel: 'Officiella källor',
+    sources: [
+      {
+        accessibilityLabel: 'Öppna Migrationsverkets tidslinje för nya medborgarskapsregler',
+        key: 'rulesEffectiveDate',
+        label: 'Migrationsverket',
+      },
+      {
+        accessibilityLabel: 'Öppna UHR:s sida om medborgarskapsprovet',
+        key: 'civicKnowledgeTestStart',
+        label: 'UHR',
+      },
+      {
+        accessibilityLabel: 'Öppna Regeringens uppdrag om medborgarskapsprovet',
+        key: 'civicKnowledgeTestDeadline',
+        label: 'Regeringen',
+      },
+    ],
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (rulesDate: string, firstSittingDate: string) =>
-      `New citizenship rules apply from ${rulesDate}. The first civic-knowledge test will be held on ${firstSittingDate} in Stockholm. Start preparing now.`,
+    body: (rulesDate: string, testDeadline: string) =>
+      `New citizenship rules apply from ${rulesDate}. The civic-knowledge test is expected in August 2026, no later than ${testDeadline}. Start preparing now.`,
     untilLabel: 'until new rules',
+    sourcesLabel: 'Official sources',
+    sources: [
+      {
+        accessibilityLabel: 'Open the Migration Agency timeline for new citizenship rules',
+        key: 'rulesEffectiveDate',
+        label: 'Migrationsverket',
+      },
+      {
+        accessibilityLabel: 'Open the UHR citizenship test page',
+        key: 'civicKnowledgeTestStart',
+        label: 'UHR',
+      },
+      {
+        accessibilityLabel: 'Open the government assignment for the citizenship test',
+        key: 'civicKnowledgeTestDeadline',
+        label: 'Regeringen',
+      },
+    ],
   },
 } as const;
+
+type TimelineSourceKey = keyof typeof CITIZENSHIP_TIMELINE_SOURCE_URLS;
+
+function openTimelineSource(sourceKey: TimelineSourceKey) {
+  void Linking.openURL(CITIZENSHIP_TIMELINE_SOURCE_URLS[sourceKey]);
+}
 
 /**
  * Defaults: localized countdown body, tokenized warning surface, and
@@ -58,10 +101,10 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
 
   const t = copy[language];
   const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
-  const firstSittingDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, language);
+  const testDeadlineString = formatExamDate(CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE, language);
   const resolvedAccessibilityLabel =
     accessibilityLabel ??
-    `${t.label(days)} ${t.untilLabel}. ${t.body(rulesDateString, firstSittingDateString)}`;
+    `${t.label(days)} ${t.untilLabel}. ${t.body(rulesDateString, testDeadlineString)}`;
 
   return (
     <View style={styles.banner}>
@@ -76,7 +119,25 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
         <Text style={styles.daysNumber}>{days}</Text>
         <Text style={styles.daysLabel}>{t.untilLabel}</Text>
       </View>
-      <Text style={styles.body}>{t.body(rulesDateString, firstSittingDateString)}</Text>
+      <View style={styles.content}>
+        <Text style={styles.body}>{t.body(rulesDateString, testDeadlineString)}</Text>
+        <View style={styles.sourceRow}>
+          <Text style={styles.sourceLabel}>{t.sourcesLabel}</Text>
+          <View style={styles.sourceLinks}>
+            {t.sources.map((source) => (
+              <Pressable
+                accessibilityLabel={source.accessibilityLabel}
+                accessibilityRole="link"
+                key={source.key}
+                onPress={() => openTimelineSource(source.key)}
+                style={({ pressed }) => [styles.sourceLink, pressed && styles.sourceLinkPressed]}
+              >
+                <Text style={styles.sourceLinkText}>{source.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
@@ -102,6 +163,10 @@ const styles = StyleSheet.create({
   daysBlock: {
     alignItems: 'center',
     gap: space[0.5],
+  },
+  content: {
+    flex: 1,
+    gap: space[1],
   },
   daysNumber: {
     color: colors.warning,
@@ -130,32 +195,38 @@ const styles = StyleSheet.create({
     lineHeight: typography.bodyTight.lineHeight,
   },
   sourceRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
+    gap: space[0.5],
   },
   sourceLabel: {
-    color: colors.textSecondary,
+    color: colors.textMuted,
     fontFamily: typography.micro.fontFamily,
     fontSize: typography.micro.fontSize,
+    letterSpacing: typography.micro.letterSpacing,
     lineHeight: typography.micro.lineHeight,
+    textTransform: 'uppercase',
+  },
+  sourceLinks: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
   },
   sourceLink: {
-    backgroundColor: colors.surface,
+    alignItems: 'center',
     borderColor: colors.warning,
     borderRadius: radius.pill,
     borderWidth: space.hairline,
-    color: colors.accent,
-    fontFamily: typography.navButton.fontFamily,
-    fontSize: typography.micro.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.micro.lineHeight,
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[1],
-    textAlign: 'center',
-    textDecorationLine: 'none',
+    justifyContent: 'center',
+    minHeight: 44,
+    paddingHorizontal: space[1.5],
+  },
+  sourceLinkPressed: {
+    backgroundColor: colors.surfaceWarm,
+  },
+  sourceLinkText: {
+    color: colors.warning,
+    fontFamily: typography.caption.fontFamily,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '700',
+    lineHeight: typography.caption.lineHeight,
   },
 });

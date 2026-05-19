@@ -195,6 +195,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 3);
   assert.equal(summary.citizenshipTimelineDateParityValidated, true);
   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
+  assert.equal(summary.citizenshipTimelineSourceAffordanceLinksValidated, 3);
+  assert.equal(summary.countdownBannerTimelineSourceAffordanceParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
   assert.equal(summary.practiceFlowCasesValidated, 12);
