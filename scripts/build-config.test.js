@@ -11,6 +11,42 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
+function createSubmitGuardFixture() {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'submit-production-guard-fixture-'));
+  const scriptsDir = path.join(tmpRoot, 'scripts');
+  const serviceAccountPath = path.join(tmpRoot, 'tmp/fake-google-play-service-account.json');
+  const eas = readJson('eas.json');
+
+  eas.submit.production.ios.appleId = 'release@example.com';
+  eas.submit.production.ios.ascAppId = '1234567890';
+  eas.submit.production.ios.appleTeamId = 'TEAM123456';
+  eas.submit.production.android.serviceAccountKeyPath =
+    './tmp/fake-google-play-service-account.json';
+
+  fs.mkdirSync(scriptsDir, { recursive: true });
+  fs.mkdirSync(path.dirname(serviceAccountPath), { recursive: true });
+  fs.copyFileSync(
+    path.join(repoRoot, 'scripts/submit-production-guard.js'),
+    path.join(scriptsDir, 'submit-production-guard.js'),
+  );
+  fs.writeFileSync(
+    path.join(scriptsDir, 'release-preflight.js'),
+    [
+      '#!/usr/bin/env node',
+      'console.log(JSON.stringify({',
+      '  readyForSubmission: false,',
+      '  gates: [{ id: "fixture-preflight", status: "BLOCKED", evidence: "fixture blocked" }]',
+      '}));',
+      'process.exit(1);',
+      '',
+    ].join('\n'),
+  );
+  fs.writeFileSync(path.join(tmpRoot, 'eas.json'), `${JSON.stringify(eas, null, 2)}\n`);
+  fs.writeFileSync(serviceAccountPath, '{"type":"service_account"}\n');
+
+  return tmpRoot;
+}
+
 test('EAS build and submit profiles are configured for internal and production releases', () => {
   const eas = readJson('eas.json');
   assert.equal(eas.cli.version, '>= 13.0.0');
@@ -29,6 +65,7 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['build:preview'], 'node scripts/build-preview-guard.js');
   assert.equal(pkg.scripts['build:production'], 'node scripts/build-production-guard.js');
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
+  assert.equal(pkg.scripts['test:build-config'], 'node --test scripts/build-config.test.js');
 });
 
 test('EAS access evidence command is wired for repeatable non-secret checks', () => {
@@ -1246,35 +1283,23 @@ test('production submit guard blocks placeholder Apple identifiers before releas
 test('production submit guard blocks while release preflight is not ready', () => {
   const easPath = path.join(repoRoot, 'eas.json');
   const originalEas = fs.readFileSync(easPath, 'utf8');
-  const fakeServiceAccount = path.join(repoRoot, 'tmp/fake-google-play-service-account.json');
+  const tmpRoot = createSubmitGuardFixture();
+  let result;
 
   try {
-    const eas = JSON.parse(originalEas);
-    eas.submit.production.ios.appleId = 'release@example.com';
-    eas.submit.production.ios.ascAppId = '1234567890';
-    eas.submit.production.ios.appleTeamId = 'TEAM123456';
-    eas.submit.production.android.serviceAccountKeyPath =
-      './tmp/fake-google-play-service-account.json';
-    fs.mkdirSync(path.dirname(fakeServiceAccount), { recursive: true });
-    fs.writeFileSync(fakeServiceAccount, '{"type":"service_account"}\n');
-    fs.writeFileSync(easPath, `${JSON.stringify(eas, null, 2)}\n`);
-
-    const result = spawnSync(
-      process.execPath,
-      ['scripts/submit-production-guard.js', '--check-only'],
-      {
-        cwd: repoRoot,
-        encoding: 'utf8',
-      },
-    );
-
-    assert.equal(result.status, 1);
-    assert.match(result.stdout, /Production submit blocked/i);
-    assert.match(result.stdout, /release preflight/i);
+    result = spawnSync(process.execPath, ['scripts/submit-production-guard.js', '--check-only'], {
+      cwd: tmpRoot,
+      encoding: 'utf8',
+    });
   } finally {
-    fs.writeFileSync(easPath, originalEas);
-    fs.rmSync(fakeServiceAccount, { force: true });
+    fs.rmSync(tmpRoot, { force: true, recursive: true });
   }
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /Production submit blocked/i);
+  assert.match(result.stdout, /release preflight/i);
+  assert.match(result.stdout, /fixture-preflight/);
+  assert.equal(fs.readFileSync(easPath, 'utf8'), originalEas);
 });
 
 test('web export script is available for local production bundle smoke', () => {
