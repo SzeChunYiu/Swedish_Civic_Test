@@ -6,6 +6,11 @@ const {
   buildSiteQuestionBank,
   generateStaticSiteQuestionBankJs,
 } = require('./export-site-question-bank');
+const {
+  UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
+  findUnsupportedStaticOutcomeSlogans,
+  formatUnsupportedStaticOutcomeSlogans,
+} = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -3564,6 +3569,20 @@ function validateStaticEbookOutcomeClaimPatterns() {
   return STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length - offenders.length;
 }
 
+function validateStaticOutcomeSloganPatterns() {
+  const offenders = findUnsupportedStaticOutcomeSlogans(repoRoot);
+
+  if (offenders.length > 0) {
+    fail(
+      `static learner-facing copy contains unsupported pass/passport outcome slogans:\n${formatUnsupportedStaticOutcomeSlogans(
+        offenders,
+      )}`,
+    );
+  }
+
+  return UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length - offenders.length;
+}
+
 function validateStaticEbookPracticalTestClaims() {
   const source = loadText('site/ebook.js');
   let unsupportedPracticalClaimsValidated = 0;
@@ -6214,6 +6233,8 @@ let questionBankCsvRowsValidated = 0;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
+let staticSiteOutcomeSloganPatternsValidated = 0;
+let staticSiteOutcomeSloganParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -6289,6 +6310,9 @@ staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatter
 staticEbookOutcomeClaimParityValidated =
   staticEbookOutcomeClaimPatternsValidated ===
   STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
+staticSiteOutcomeSloganPatternsValidated = validateStaticOutcomeSloganPatterns();
+staticSiteOutcomeSloganParityValidated =
+  staticSiteOutcomeSloganPatternsValidated === UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -14048,6 +14072,8 @@ console.log(
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
+      staticSiteOutcomeSloganPatternsValidated,
+      staticSiteOutcomeSloganParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookPracticalTestClaimPatternsValidated,

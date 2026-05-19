@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const test = require('node:test');
+const { assertNoUnsupportedStaticOutcomeSlogans } = require('../scripts/static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -169,6 +170,7 @@ function hasEbookCitationCoverage(value) {
 test('static ebook source contains no stale untranslated placeholder copy', () => {
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
+  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assertNoStaleEbookCopy(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
