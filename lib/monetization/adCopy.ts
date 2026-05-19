@@ -1,5 +1,5 @@
 import type { AppLanguage } from '../storage/settingsStore';
-import type { AdPlacement, AdUnitConfig } from '../../types/monetization';
+import type { AdPlacement } from '../../types/monetization';
 
 type AdBannerCopy = {
   accessibilityLabel: (placementLabel: string, statusLabel: string) => string;
@@ -10,25 +10,15 @@ type AdBannerCopy = {
   testStatus: string;
 };
 
-type NativeAdCardVariantCopy = {
+type NativeAdCardCopy = {
   accessibilityLabel: string;
+  ctaAccessibilityLabel: (callToAction: string) => string;
+  ctaHint: string;
   eyebrow: string;
   hint: string;
   meta: string;
   title: string;
 };
-
-type NativeAdCardSharedCopy = {
-  ctaAccessibilityLabel: (callToAction: string) => string;
-  ctaHint: string;
-};
-
-type NativeAdCardCopy = NativeAdCardSharedCopy & {
-  live: NativeAdCardVariantCopy;
-  test: NativeAdCardVariantCopy;
-};
-
-type NativeAdCardResolvedCopy = NativeAdCardSharedCopy & NativeAdCardVariantCopy;
 
 export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
   sv: {
@@ -41,7 +31,7 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
       home_banner: 'Annons på startsidan',
       quiz_completed_interstitial: 'Annons efter övning',
       results_native: 'Annons i resultat och misstag',
-      rewarded_extra_exam: 'Annons för extra övningsprov',
+      rewarded_extra_exam: 'Annons för extra prov',
     },
     previewHint: 'Sponsrad annonsförhandsvisning.',
     removeAdsHint: 'Döljs när Ta bort annonser är aktivt.',
@@ -67,57 +57,23 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
 
 export const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy> = {
   sv: {
+    accessibilityLabel:
+      'Inbyggd testannons: Sponsrad studieplacering. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
     ctaAccessibilityLabel: (callToAction) => `Annonsåtgärd: ${callToAction}`,
     ctaHint: 'Aktiverar annonsens åtgärd.',
-    live: {
-      accessibilityLabel:
-        'Annons: Google AdMob-placering. Visas inte i tidsatta övningsprov. Döljs när Ta bort annonser är aktivt.',
-      eyebrow: 'Annons',
-      hint: 'Annons från Google AdMob. Döljs när Ta bort annonser är aktivt.',
-      meta: 'Google AdMob-placering. Visas inte i tidsatta övningsprov.',
-      title: 'Annons från Google AdMob',
-    },
-    test: {
-      accessibilityLabel:
-        'Inbyggd testannons: AdMob-testplacering. Förhandsvisning som inte visas i tidsatta övningsprov. Döljs när Ta bort annonser är aktivt.',
-      eyebrow: 'Inbyggd testannons',
-      hint: 'Testannonsförhandsvisning. Döljs när Ta bort annonser är aktivt.',
-      meta: 'AdMob-testplacering. Visas inte i tidsatta övningsprov.',
-      title: 'AdMob-testannons',
-    },
+    eyebrow: 'Inbyggd testannons',
+    hint: 'Sponsrad annonsförhandsvisning. Döljs när Ta bort annonser är aktivt.',
+    meta: 'Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov.',
+    title: 'Sponsrad studieplacering',
   },
   en: {
+    accessibilityLabel:
+      'Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. Hidden after Remove Ads is active.',
     ctaAccessibilityLabel: (callToAction) => `Ad action: ${callToAction}`,
     ctaHint: 'Activates the ad action.',
-    live: {
-      accessibilityLabel:
-        'Ad: Google AdMob placement. Kept out of timed mock exams. Hidden after Remove Ads is active.',
-      eyebrow: 'Ad',
-      hint: 'Google AdMob ad. Hidden after Remove Ads is active.',
-      meta: 'Google AdMob placement. Kept out of timed mock exams.',
-      title: 'Google AdMob ad',
-    },
-    test: {
-      accessibilityLabel:
-        'Test native ad: AdMob test placement preview. Kept out of timed mock exams. Hidden after Remove Ads is active.',
-      eyebrow: 'Test native ad',
-      hint: 'Test ad preview. Hidden after Remove Ads is active.',
-      meta: 'AdMob test placement preview. Kept out of timed mock exams.',
-      title: 'AdMob test ad',
-    },
+    eyebrow: 'Test native ad',
+    hint: 'Sponsored ad preview. Hidden after Remove Ads is active.',
+    meta: 'AdMob test placement preview. Keep out of timed exams.',
+    title: 'Sponsored study placement',
   },
 };
-
-export function getNativeAdCardCopy(
-  language: AppLanguage,
-  unit: Pick<AdUnitConfig, 'testOnly'> | undefined,
-): NativeAdCardResolvedCopy {
-  const copy = nativeAdCardCopy[language];
-  const variant = unit?.testOnly ? copy.test : copy.live;
-
-  return {
-    ...variant,
-    ctaAccessibilityLabel: copy.ctaAccessibilityLabel,
-    ctaHint: copy.ctaHint,
-  };
-}

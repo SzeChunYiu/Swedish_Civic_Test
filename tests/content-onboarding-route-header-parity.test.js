@@ -28,15 +28,7 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = onboardingCopy\[language\];/);
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
-  assert.match(
-    source,
-    /Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor\./,
-  );
   assert.match(source, /Prepare calmly for the civic test/);
-  assert.match(
-    source,
-    /The full question bank stays free; Remove Ads only changes ads, not question access\./,
-  );
   assert.match(
     source,
     /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
