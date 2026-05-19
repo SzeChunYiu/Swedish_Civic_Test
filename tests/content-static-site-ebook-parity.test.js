@@ -226,11 +226,13 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.match(swedishHtml, /href="#\/mock"/);
     assert.match(englishHtml, /href="#\/sources"/);
     assert.match(swedishHtml, /href="#\/sources"/);
+    assert.doesNotMatch(swedishHtml, /provexempel/i);
 
     if (chapterId === 'intro') {
       assert.match(englishHtml, /What this book is/);
       assert.match(englishHtml, /Short, repeated sessions make it easier/);
       assert.match(swedishHtml, /Vad den h[aä]r boken [aä]r/);
+      assert.match(swedishHtml, /Avsluta veckan med ett [oö]vningsprov/);
     } else {
       assert.doesNotMatch(englishHtml, /<div class="ebook__crumb">How to read this book<\/div>/);
       assert.doesNotMatch(
@@ -240,6 +242,8 @@ test('static ebook renders every chapter with Swedish and English body parity', 
       if (chapterId === '12') {
         assert.match(englishHtml, /Current official status/);
         assert.match(swedishHtml, /Aktuell officiell status/);
+        assert.match(swedishHtml, /Kapitel 12 · [OÖ]vningsprov/);
+        assert.match(swedishHtml, /Starta [oö]vningsprov/);
       } else {
         assert.match(englishHtml, /Facts you'll see on the test/);
         assert.match(swedishHtml, /Det viktigaste/);
