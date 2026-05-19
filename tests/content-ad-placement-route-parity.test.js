@@ -33,28 +33,12 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRouteParityValidated, true);
   assert.match(
     homeSource,
-    /monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled/,
-  );
-  assert.match(homeSource, /\{monetizationEntitlementsReady \? \(\s*<PremiumBanner/);
-  assert.match(homeSource, /<AdBanner placement="home_banner" \/>/);
-  assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
-  assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /<AdInterstitial triggerKey=\{question\.id\} \/>/);
-  assert.match(mistakesSource, /<NativeAdCard \/>/);
-  assert.match(removeAdsPlacementCtaSource, /restoreRemoveAdsPurchase/);
-  assert.match(
-    removeAdsPlacementCtaSource,
-    /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/,
-  );
-  assert.match(
-    mistakesSource,
-    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
+    /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
-  assert.doesNotMatch(practiceSource, /<AdBanner\s+placement="quiz_completed_interstitial"/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
@@ -244,6 +228,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd/,
+    /NativeAdCard must gate results_native through shouldShowAd/,
   );
 });

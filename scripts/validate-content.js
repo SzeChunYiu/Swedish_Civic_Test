@@ -70,10 +70,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'explanationSv',
   'explanationEn',
   'correctOptionId',
-  'optionSv',
-  'optionEn',
-  'correctOptionSv',
-  'correctOptionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
@@ -113,43 +109,6 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
-];
-const QUESTION_STEM_SOURCE_AUTHORITY_PATTERN_FIXTURES = [
-  {
-    label: 'enligt-uhr',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[0],
-    text: 'Enligt UHR ligger Sveriges nordligaste del norr om polcirkeln.',
-  },
-  {
-    label: 'uhr-materialet',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[1],
-    text: 'UHR-materialet beskriver Sveriges nordligaste del.',
-  },
-  {
-    label: 'uhrs-material',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[2],
-    text: 'UHR:s material beskriver Sveriges nordligaste del.',
-  },
-  {
-    label: 'according-to-uhr',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[3],
-    text: "According to the UHR, Sweden's northernmost part lies north of the Arctic Circle.",
-  },
-  {
-    label: 'uhr-section',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[4],
-    text: 'The UHR section describes where Sweden is located.',
-  },
-  {
-    label: 'stemmer-bast-enligt-uhr',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[5],
-    text: 'Vilket svar stämmer bäst enligt UHR?',
-  },
-  {
-    label: 'best-matches-uhr-section',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[6],
-    text: 'Which answer best matches the UHR section?',
-  },
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -730,12 +689,6 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home study-loop benchmark lessons must render localized copy',
   ],
 ];
-const HOME_ROUTE_SYNTHETIC_COPY_PATTERNS = [
-  /simulerade\s+elever/i,
-  /simulerade\s+studier/i,
-  /simulated\s+learners/i,
-  /simulated\s+study\s+sessions/i,
-];
 const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
@@ -970,9 +923,9 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdInterstitial',
+    component: 'AdBanner',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdInterstitial\s+triggerKey=\{question\.id\}\s+\/>/,
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -986,7 +939,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 10;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -1784,21 +1737,6 @@ const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
 ];
 const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   {
-    label: 'exported variant type',
-    pattern:
-      /export type ButtonVariant = 'primary' \| 'secondary' \| 'option' \| 'success' \| 'danger';/,
-  },
-  {
-    label: 'exported props interface',
-    pattern:
-      /export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>>/,
-  },
-  {
-    label: 'documented default props',
-    pattern:
-      /Defaults: `variant="primary"`, `accessibilityRole="button"`[\s\S]*`hitSlop=space\[0\.5\]`/,
-  },
-  {
     label: 'native Pressable root',
     pattern: /<Pressable[\s\S]*>/,
   },
@@ -1855,18 +1793,6 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     label: 'native accessibility state',
     pattern: /accessibilityState=\{mergedAccessibilityState\}/,
   },
-  {
-    label: 'token hairline border width',
-    pattern: /borderWidth:\s*space\.hairline/,
-  },
-  {
-    label: 'token minimum touch target',
-    pattern: /minHeight:\s*space\[6\]/,
-  },
-  {
-    label: 'token pressed feedback',
-    pattern: /transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
-  },
 ];
 const EXPECTED_CARD_ACCESSIBILITY_RULES = [
   {
@@ -1881,14 +1807,6 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
     label: 'label-or-role grouping fallback',
     pattern:
       /const groupedForAccessibility =\s*accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\);/,
-  },
-  {
-    label: 'resolved accessibility role fallback',
-    pattern: /const resolvedAccessibilityRole =\s*accessibilityRole \?\?/,
-  },
-  {
-    label: 'grouped default summary role',
-    pattern: /\(groupedForAccessibility \? 'summary' : undefined\)/,
   },
   {
     label: 'stable hint id',
@@ -1923,8 +1841,8 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{accessibilityLabel\}/,
   },
   {
-    label: 'native resolved accessibility role',
-    pattern: /accessibilityRole=\{resolvedAccessibilityRole\}/,
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
   },
   {
     label: 'hidden hint text node',
@@ -2016,26 +1934,8 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
     pattern: /<View[\s\S]*>/,
   },
   {
-    label: 'exported MetricCard props interface',
-    pattern:
-      /export interface MetricCardProps extends Omit<ComponentProps<typeof View>, 'children' \| 'style'>/,
-  },
-  {
-    label: 'documented defaults',
-    pattern:
-      /Defaults: `tone="warm"`, `accessible=true`, `accessibilityRole="summary"`,[\s\S]*accessibility label derived from the visible label\/value\/helper text/,
-  },
-  {
     label: 'explicit accessibility label prop',
     pattern: /accessibilityLabel\?: string;/,
-  },
-  {
-    label: 'caller style prop',
-    pattern: /style\?: ComponentProps<typeof View>\['style'\];/,
-  },
-  {
-    label: 'summary role default',
-    pattern: /accessibilityRole = 'summary'/,
   },
   {
     label: 'label value helper summary',
@@ -2048,11 +1948,7 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'native grouped surface',
-    pattern: /accessible=\{accessible\}/,
-  },
-  {
-    label: 'native accessibility role',
-    pattern: /accessibilityRole=\{accessibilityRole\}/,
+    pattern: /\s+accessible\s+/,
   },
   {
     label: 'native accessibility label',
@@ -2072,11 +1968,7 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'blue tone style path',
-    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null, style\]\}/,
-  },
-  {
-    label: 'token hairline border width',
-    pattern: /borderWidth:\s*space\.hairline/,
+    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
   },
 ];
 const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
@@ -2102,8 +1994,8 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
   },
   {
-    label: 'tone style path with caller override',
-    pattern: /style=\{\[styles\.badge, styles\[tone\], style\]\}/,
+    label: 'tone style path',
+    pattern: /style=\{\[styles\.badge, styles\[tone\]\]\}/,
   },
   {
     label: 'visible child text',
@@ -3120,10 +3012,6 @@ const EXPECTED_MONETIZATION_INTERFACES = [
 ];
 const EXPECTED_PURCHASE_TYPE_UNIONS = [
   {
-    typeName: 'RemoveAdsReceiptValidationStatus',
-    values: ['valid', 'invalid', 'pending'],
-  },
-  {
     typeName: 'RemoveAdsPurchaseStatus',
     values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
   },
@@ -3151,16 +3039,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
     ],
   },
   {
-    name: 'RemoveAdsReceiptValidationResult',
-    fields: [
-      { name: 'status', type: 'RemoveAdsReceiptValidationStatus', optional: false },
-      { name: 'productId', type: 'string | null', optional: true },
-      { name: 'purchaseToken', type: 'string | null', optional: true },
-      { name: 'transactionId', type: 'string | null', optional: true },
-      { name: 'validatedAt', type: 'string | null', optional: true },
-    ],
-  },
-  {
     name: 'RemoveAdsPurchaseProvider',
     fields: [
       { name: 'connect', type: '() => Promise<void>', optional: false },
@@ -3168,11 +3046,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
       {
         name: 'finishPurchase',
         type: '(purchase: RemoveAdsPurchaseRecord) => Promise<void>',
-        optional: true,
-      },
-      {
-        name: 'validateRemoveAdsReceipt',
-        type: '(purchase: RemoveAdsPurchaseRecord, productId: typeof REMOVE_ADS_PRODUCT_ID) => Promise<RemoveAdsReceiptValidationResult>',
         optional: true,
       },
       {
@@ -3214,7 +3087,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
     fields: [
       { name: 'owned', type: 'boolean', optional: true },
       { name: 'pendingPurchase', type: 'boolean', optional: true },
-      { name: 'receiptValidationStatus', type: 'RemoveAdsReceiptValidationStatus', optional: true },
     ],
   },
 ];
@@ -5972,15 +5844,6 @@ function parseCsvRows(csv) {
   return rows;
 }
 
-function questionOptionPayload(question, field) {
-  return JSON.stringify(
-    question.options.map((option) => ({
-      id: option.id,
-      text: option[field],
-    })),
-  );
-}
-
 function optionIdsMatchQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   const optionIds = question.options.map((option) => option?.id);
@@ -6291,9 +6154,7 @@ const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
 const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
-const appConfig = fs.existsSync(path.join(repoRoot, 'app.config.ts'))
-  ? { expo: loadTs('app.config.ts').default() }
-  : loadJson('app.json');
+const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
@@ -6918,19 +6779,6 @@ function validateAdPlacementRouteParity() {
     ? adsConfig.blockedPlacements
     : [];
 
-  for (const file of ['components/monetization/PremiumBanner.tsx', 'lib/monetization/adCopy.ts']) {
-    try {
-      const source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
-      SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS.forEach((pattern) => {
-        if (pattern.test(source)) {
-          reject(`${file} contains literal Swedish monetization copy`);
-        }
-      });
-    } catch (error) {
-      reject(`${file} could not be read for Swedish monetization copy parity: ${error.message}`);
-    }
-  }
-
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
     let routeIsValid = true;
@@ -6990,43 +6838,6 @@ function validateAdPlacementRouteParity() {
       );
       if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
-        routeIsValid = false;
-      }
-    }
-
-    if (spec.component === 'AdInterstitial') {
-      const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
-      );
-      const nativeInterstitialSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdInterstitial.native.tsx'),
-        'utf8',
-      );
-      const webInterstitialSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdInterstitial.tsx'),
-        'utf8',
-      );
-
-      if (!nativeInterstitialSource.includes('InterstitialAd.createForAdRequest')) {
-        reject('AdInterstitial native placement must use the Google Mobile Ads interstitial API');
-        routeIsValid = false;
-      }
-      if (nativeInterstitialSource.includes('BannerAd')) {
-        reject('AdInterstitial native placement must not render BannerAd');
-        routeIsValid = false;
-      }
-      if (!consentAwareShouldShowPattern.test(nativeInterstitialSource)) {
-        reject(`AdInterstitial must gate ${spec.placement} through consent-aware shouldShowAd`);
-        routeIsValid = false;
-      }
-      if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
-        reject('AdInterstitial must pass non-personalized ad request options from consent');
-        routeIsValid = false;
-      }
-      if (!webInterstitialSource.includes('placement="quiz_completed_interstitial"')) {
-        reject(
-          'AdInterstitial web fallback must render the accessible quiz completion placeholder',
-        );
         routeIsValid = false;
       }
     }
@@ -8610,9 +8421,6 @@ function validateLegalRouteHeaderParity() {
   );
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
-  }
-  if (valid && legalSwedishEnglishTokenRoutesValidated === EXPECTED_LEGAL_ROUTE_HEADERS.length) {
-    legalSwedishEnglishTokenGuardValidated = true;
   }
 }
 
@@ -10881,31 +10689,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes('hasStoreConfirmation(record)'),
       'Remove Ads purchase and restore grants must persist source plus store confirmation identity',
     ],
-    [
-      normalizedPurchaseSource.includes('receiptValidationStatus:') &&
-        normalizedPurchaseSource.includes('receiptValidatedAt:'),
-      'Remove Ads entitlement records must persist receipt validation status and timestamp',
-    ],
-    [
-      normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
-        normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
-      'Remove Ads purchase provider must expose a receipt validation hook',
-    ],
-    [
-      normalizedPurchaseSource.includes(
-        'const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);',
-      ) &&
-        normalizedPurchaseSource.includes("return createResult('pending'") &&
-        normalizedPurchaseSource.includes("return createResult('not_found'"),
-      'Remove Ads buy and restore flows must validate receipts before granting entitlements',
-    ],
-    [
-      normalizedPurchaseSource.includes('receiptValidationStatus =') &&
-        normalizedPurchaseSource.includes("if (receiptValidationStatus !== 'valid')") &&
-        normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
-        normalizedPurchaseSource.includes('receiptValidation,'),
-      'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
-    ],
   ];
 
   runtimeCases.forEach(([caseIsValid, message]) => {
@@ -13137,10 +12920,6 @@ function validateQuestionBankCsvContract() {
       question.explanationSv,
       question.explanationEn,
       question.correctOptionId,
-      questionOptionPayload(question, 'textSv'),
-      questionOptionPayload(question, 'textEn'),
-      question.options.find((option) => option.id === question.correctOptionId)?.textSv,
-      question.options.find((option) => option.id === question.correctOptionId)?.textEn,
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),

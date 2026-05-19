@@ -114,7 +114,6 @@ export default function Screen() {
       </View>
       <QuestionDisclaimer />
 
-      <RemoveAdsPlacementCta placement="results_native" />
       <NativeAdCard />
 
       {bookmarkedQuestions.length > 0 ? (

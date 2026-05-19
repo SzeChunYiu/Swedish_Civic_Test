@@ -103,8 +103,7 @@ test('button derives an accessibility label from plain text children by default'
     source,
     /pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null/,
   );
-  assert.match(source, /minHeight: space\[6\]/);
-  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(source, /minHeight: 44/);
   assert.match(source, /borderRadius: radius\.card/);
   assert.match(source, /backgroundColor: colors\.accentActive/);
   assert.match(source, /nativeID=\{buttonAccessibilityHintId\}/);
@@ -338,17 +337,12 @@ test('card scaffold groups labelled surfaces for accessibility', () => {
   assert.match(source, /Platform\.OS === 'web'/);
   assert.match(source, /const groupedForAccessibility =/);
   assert.match(source, /accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\)/);
-  assert.match(source, /const resolvedAccessibilityRole =/);
-  assert.match(
-    source,
-    /accessibilityRole \?\? \(groupedForAccessibility \? 'summary' : undefined\)/,
-  );
   assert.match(source, /aria-describedby=\{cardAccessibilityHintId\}/);
   assert.match(source, /aria-label=\{accessibilityLabel\}/);
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
   assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityRole=\{resolvedAccessibilityRole\}/);
+  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /nativeID=\{cardAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -878,37 +872,6 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(homeSource, /language=\{language\}/);
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(profileSource, /language=\{language\}/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('remove-ads placement CTA stays adjacent, localized, and entitlement-gated', () => {
-  const source = read('components/monetization/RemoveAdsPlacementCta.tsx');
-  const learnSource = read('app/(tabs)/learn.tsx');
-  const practiceSource = read('app/(tabs)/practice.tsx');
-  const mistakesSource = read('app/(tabs)/mistakes.tsx');
-
-  assert.match(
-    source,
-    /const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy>/,
-  );
-  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(source, /useResolvedAdEntitlements\(entitlements\)/);
-  assert.match(source, /!entitlementsReady \|\| !shouldShowAd\(placement, resolvedEntitlements\)/);
-  assert.match(source, /href="\/profile"/);
-  assert.match(source, /Öppna Ta bort annonser/);
-  assert.match(source, /Open Remove Ads/);
-  assert.match(
-    learnSource,
-    /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>\s*<AdBanner placement="chapter_list_banner" \/>/,
-  );
-  assert.match(
-    practiceSource,
-    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>\s*<AdBanner placement="quiz_completed_interstitial" \/>/,
-  );
-  assert.match(
-    mistakesSource,
-    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
-  );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

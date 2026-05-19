@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const fs = require('node:fs');
 const { setTimeout: delay } = require('node:timers/promises');
 
 const TIMEOUT_MS = Number(process.env.PUBLIC_URL_CHECK_TIMEOUT_MS || 10000);

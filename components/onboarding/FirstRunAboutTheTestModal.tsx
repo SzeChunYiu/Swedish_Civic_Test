@@ -155,10 +155,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: space[3],
   },
-  backdropDismissTarget: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  backdropDismissTargetPressed: {
+  backdropPressed: {
     backgroundColor: colors.focusSoft,
   },
   card: {

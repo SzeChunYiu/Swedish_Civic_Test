@@ -15,7 +15,6 @@ export default function RootHtml({ children }: PropsWithChildren) {
           content="Practice Swedish civic knowledge with offline quizzes, local progress, and source references."
           name="description"
         />
-        <link href="favicon.svg" rel="icon" type="image/svg+xml" />
         <ScrollViewStyleReset />
       </head>
       <body style={{ backgroundColor: colors.canvas }}>{children}</body>

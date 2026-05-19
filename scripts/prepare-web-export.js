@@ -3,9 +3,6 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
-const FAVICON_SOURCE = path.resolve(__dirname, '../assets/favicon.svg');
-const FAVICON_FILE_NAME = 'favicon.svg';
-const FAVICON_LINK = `<link href="${FAVICON_FILE_NAME}" rel="icon" type="image/svg+xml" />`;
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -103,21 +100,12 @@ function createRuntimeLoader(bundlePath) {
   ].join('\n');
 }
 
-function ensureFaviconLink(html) {
-  if (new RegExp(`<link[^>]+href=["']${FAVICON_FILE_NAME}["'][^>]+rel=["']icon["']`).test(html)) {
+function rewriteHtml(html) {
+  if (html.includes(HTML_LOADER_MARKER)) {
     return html;
   }
 
-  return html.replace('</head>', `    ${FAVICON_LINK}\n  </head>`);
-}
-
-function rewriteHtml(html) {
-  const htmlWithFavicon = ensureFaviconLink(html);
-  if (htmlWithFavicon.includes(HTML_LOADER_MARKER)) {
-    return htmlWithFavicon;
-  }
-
-  return htmlWithFavicon.replace(
+  return html.replace(
     /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
     (_match, bundlePath) => createRuntimeLoader(bundlePath),
   );
@@ -170,9 +158,6 @@ function check(outputDir) {
   if (!index.includes(HTML_LOADER_MARKER)) {
     throw new Error('index.html is missing the web export runtime loader');
   }
-  if (!index.includes(FAVICON_LINK)) {
-    throw new Error('index.html is missing the local favicon link');
-  }
   if (/src="\/_expo\//.test(index) || /href="\/_expo\//.test(index)) {
     throw new Error('index.html still contains root-relative Expo bundle URLs');
   }
@@ -212,7 +197,6 @@ if (require.main === module) {
 module.exports = {
   check,
   prepare,
-  ensureFaviconLink,
   rewriteHtml,
   rewriteRootRelativeBundlePaths,
 };
