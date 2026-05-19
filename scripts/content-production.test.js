@@ -179,6 +179,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.progressTypeSchemaParityValidated, true);
   assert.equal(summary.progressStoreFieldsValidated, 12);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
+  assert.ok(summary.reviewStoreHydrationCasesValidated >= 15);
+  assert.equal(summary.reviewStoreHydrationParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.citizenshipRulesEffectiveDateValidated, '2026-06-06');
