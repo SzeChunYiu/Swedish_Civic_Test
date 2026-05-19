@@ -109,7 +109,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     provenanceSupplementaryLabel: 'Supplementary',
     provenanceEditorialLabel: 'Editorial',
     aboutSourcesShow: 'About the sources',
-    aboutSourcesHide: 'Close about-the-sources',
+    aboutSourcesHide: 'Close source details',
     aboutSourcesUhrTitle: 'UHR source',
     aboutSourcesUhrBody:
       "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
