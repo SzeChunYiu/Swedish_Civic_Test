@@ -43,6 +43,25 @@ true/false standalone wording from current VERIFY evidence, preserving the new
 generated single-choice guard coverage and rerunning generator/static/content/
 type/lint/ownership gates with PR/merge evidence.
 
+Iteration: 2026-05-19T03:22+02:00
+Rows moved to accepted: none in A1-A8; accepted DATA-INTEGRITY source commit
+`ccae92a` plus handoff `5fcf7a` for
+`QUESTION-BANK-CSV-EXPLANATION-PARITY-1`.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
+blocked on external production deploy capacity/operator evidence; no Vercel CLI
+was run.
+Evidence: current `origin/main` `761e91f` contains the CSV explanation source
+commit and handoff. Manager recheck in
+`/tmp/sct-manager-csv-explanation-green-dzoDVo/wt` passed export parity,
+`validate:content`, CSV contract/authored-source tests 9/9, typecheck, lint,
+ownership, targeted JS/test Prettier, commit-range and current-tree diff
+whitespace checks, plus a direct CSV scan showing 720 rows, explanation columns
+present, q002/q006 rows present, zero blank explanations, and zero
+answer-judgement boilerplate in exported explanations.
+Next worker task queued: none for CSV explanation parity; do not duplicate it
+without fresh current-main regression evidence. CSV option parity and
+correct-answer parity remain separate claimed routes.
+
 Iteration: 2026-05-19T02:10+02:00
 Rows moved to accepted: none in A1-A8; accepted SETUP/IAP PR #864 /
 `9fa1c87` for `REMOVE-ADS-ENTITLEMENT-INTEGRITY-1`.
