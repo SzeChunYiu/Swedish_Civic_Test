@@ -146,6 +146,7 @@ test('legal, source, and support routes stay on shared accessible header path', 
 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
+  assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 
@@ -171,6 +172,36 @@ test('legal, source, and support routes stay on shared accessible header path', 
       );
     }
   }
+});
+
+test('privacy route parity rejects English streaks in Swedish legal copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/privacy.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('XP, studiesviter och ljudinställningar', 'XP, streaks och ljudinställningar');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Swedish privacy copy must use natural Swedish streak wording, not "streaks"/,
+  );
 });
 
 test('legal route header parity rejects shared legal section header drift', () => {

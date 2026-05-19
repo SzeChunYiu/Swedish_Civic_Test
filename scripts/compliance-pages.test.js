@@ -25,6 +25,11 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/disclaimer.tsx'), /not real exam questions/i);
   assert.match(read('app/privacy.tsx'), /no account/i);
   assert.match(read('app/privacy.tsx'), /local/i);
+  assert.match(read('app/privacy.tsx'), /studiesviter/);
+  assert.doesNotMatch(
+    read('app/privacy.tsx').match(/sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy'/)?.[0] ?? '',
+    /\bstreaks\b/i,
+  );
   assert.match(read('app/privacy.tsx'), /ad-supported/i);
   assert.match(read('app/privacy.tsx'), /Remove Ads/i);
   assert.match(read('app/privacy.tsx'), /29 SEK/i);
