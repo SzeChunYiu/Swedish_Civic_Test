@@ -33,6 +33,56 @@ function privacyReviewReadyEvidence(extra = '') {
     .join(' ');
 }
 
+function readJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
+}
+
+test('checked-in local evidence stubs keep blocked current ad-supported shape', () => {
+  const storeRecords = readJson('reports/store-records/store-records.json');
+  const privacyReview = readJson('reports/privacy-review/privacy-review.json');
+  const storeRecordsSource = fs.readFileSync(
+    path.join(repoRoot, 'reports/store-records/store-records.json'),
+    'utf8',
+  );
+  const privacyReviewSource = fs.readFileSync(
+    path.join(repoRoot, 'reports/privacy-review/privacy-review.json'),
+    'utf8',
+  );
+
+  assert.equal(storeRecords.status, 'blocked');
+  assert.equal(storeRecords.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.packageName, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.supportUrl, supportUrl);
+  assert.equal(storeRecords.privacyUrl, privacyUrl);
+  assert.match(storeRecords.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.iosAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.androidAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.equal(storeRecords.adMob.realAdsEnabled, true);
+  assert.equal(storeRecords.adMob.appAdsTxtReviewed, false);
+  assert.match(storeRecords.adMob.appAdsTxtPublisherLine, /^google\.com, pub-\d+, DIRECT,/);
+
+  assert.equal(privacyReview.status, 'blocked');
+  assert.equal(privacyReview.reviewedBuild.version, '1.0.0');
+  assert.equal(privacyReview.googleMobileAds.sdkPresent, true);
+  assert.equal(privacyReview.googleMobileAds.realAdsEnabled, true);
+  assert.equal(privacyReview.googleMobileAds.removeAdsIapReviewed, false);
+  assert.equal(privacyReview.googleMobileAds.consentFlowReviewed, false);
+  assert.match(privacyReview.googleMobileAds.gate, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/);
+  assert.match(privacyReview.googleMobileAds.gate, /Google Mobile Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /Remove Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /29 SEK/);
+  assert.match(privacyReview.googleMobileAds.gate, /ATT and UMP consent/i);
+  assert.notEqual(privacyReview.disabledSdks.realAds, true);
+  assert.notEqual(privacyReview.disabledSdks.purchases, true);
+
+  for (const source of [storeRecordsSource, privacyReviewSource]) {
+    assert.doesNotMatch(source, /com\.billyyiu\.swedishcivictest(?!"?\.removeads)/);
+    assert.doesNotMatch(source, /REAL_ADS_ENABLED_FOR_V1/);
+    assert.doesNotMatch(source, /real ads? (?:is|are )?disabled/i);
+    assert.doesNotMatch(source, /deferred-real-ads-disabled/i);
+  }
+});
+
 function runPreflight(options = {}) {
   const result = spawnSync(
     process.execPath,

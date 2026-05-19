@@ -9,6 +9,10 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function readJson(relativePath) {
+  return JSON.parse(read(relativePath));
+}
+
 function staleWords(...words) {
   return new RegExp(words.join('\\s+'), 'i');
 }
@@ -132,6 +136,63 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.doesNotMatch(dataSafety, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
   assert.doesNotMatch(dataSafety, staleWords('real', 'ads', 'disabled'));
   assert.doesNotMatch(dataSafety, staleWords('test', 'app', 'IDs'));
+});
+
+test('blocked local release evidence stubs model current ads and IAP posture', () => {
+  const storeRecords = readJson('reports/store-records/store-records.json');
+  const privacyReview = readJson('reports/privacy-review/privacy-review.json');
+  const storeRecordsSource = read('reports/store-records/store-records.json');
+  const privacyReviewSource = read('reports/privacy-review/privacy-review.json');
+
+  assert.equal(storeRecords.status, 'blocked');
+  assert.equal(storeRecords.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.packageName, 'com.billyyiu.almostswedish');
+  assert.equal(
+    storeRecords.supportUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
+  );
+  assert.equal(
+    storeRecords.privacyUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
+  );
+  assert.equal(storeRecords.adMob.realAdsEnabled, true);
+  assert.match(storeRecords.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.iosAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.androidAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.equal(
+    storeRecords.adMob.appAdsTxtUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt',
+  );
+  assert.equal(
+    storeRecords.adMob.appAdsTxtPublisherLine,
+    'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0',
+  );
+  assert.equal(storeRecords.listingMetadata.appStoreListingPath, 'publishing/app-store-listing.md');
+  assert.equal(
+    storeRecords.listingMetadata.googlePlayListingPath,
+    'publishing/google-play-listing.md',
+  );
+
+  assert.equal(privacyReview.status, 'blocked');
+  assert.equal(privacyReview.reviewedBuild.version, '1.0.0');
+  assert.equal(privacyReview.applePrivacyLabels.path, 'publishing/privacy-labels.md');
+  assert.equal(privacyReview.googlePlayDataSafety.path, 'publishing/google-play-data-safety.md');
+  assert.equal(privacyReview.googleMobileAds.sdkPresent, true);
+  assert.equal(privacyReview.googleMobileAds.testAppIds, true);
+  assert.equal(privacyReview.googleMobileAds.realAdsEnabled, true);
+  assert.match(privacyReview.googleMobileAds.gate, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/);
+  assert.match(privacyReview.googleMobileAds.gate, /Remove Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /29 SEK/);
+  assert.match(privacyReview.googleMobileAds.gate, /ATT and UMP consent/i);
+  assert.notEqual(privacyReview.disabledSdks.realAds, true);
+  assert.notEqual(privacyReview.disabledSdks.purchases, true);
+
+  for (const source of [storeRecordsSource, privacyReviewSource]) {
+    assert.doesNotMatch(source, /com\.billyyiu\.swedishcivictest(?!"?\.removeads)/);
+    assert.doesNotMatch(source, /REAL_ADS_ENABLED_FOR_V1/);
+    assert.doesNotMatch(source, staleWords('real', 'ads', 'disabled'));
+    assert.doesNotMatch(source, /deferred-real-ads-disabled/i);
+  }
 });
 
 test('public support and privacy URL copy is ready for hosting', () => {
