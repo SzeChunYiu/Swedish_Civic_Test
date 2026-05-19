@@ -13817,12 +13817,6 @@ function validateQuestionBankCsvContract() {
     );
   }
 
-  if (dataRows.length !== questions.length) {
-    fail(
-      `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
-    );
-  }
-
   const sourceMetadataMismatches = [];
 
   function formatCsvMismatch(mismatch) {
@@ -13849,6 +13843,35 @@ function validateQuestionBankCsvContract() {
         : `${expectedValues.slice(0, 3).join(', ')}${expectedValues.length > 3 ? ', ...' : ''}`;
 
     return `content/question-bank.csv ${field} metadata drift: ${mismatches.length} rows disagree with content/uhr-section-map.json source.${sourceField}; saw ${actualSummary}, expected ${expectedSummary}`;
+  }
+
+  function formatCsvRowOrderDrift(actualIds, expectedIds) {
+    const maxLength = Math.max(actualIds.length, expectedIds.length);
+    let firstMismatchIndex = -1;
+    let mismatchCount = 0;
+    for (let index = 0; index < maxLength; index += 1) {
+      if (actualIds[index] !== expectedIds[index]) {
+        mismatchCount += 1;
+        if (firstMismatchIndex === -1) firstMismatchIndex = index;
+      }
+    }
+    const rowNumber = firstMismatchIndex + 2;
+    const actual = actualIds[firstMismatchIndex] ?? '<missing>';
+    const expected = expectedIds[firstMismatchIndex] ?? '<missing>';
+    return [
+      `content/question-bank.csv row-order/id drift: ${mismatchCount} row ids do not match exporter order`,
+      `first mismatch at row ${rowNumber}: saw ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
+      `CSV has ${actualIds.length} data rows, expected ${expectedIds.length}`,
+      'Regenerate with npm run content:export.',
+    ].join('; ');
+  }
+
+  const idIndex = QUESTION_BANK_CSV_HEADER.indexOf('id');
+  const csvQuestionIds = dataRows.map((row) => row[idIndex]);
+  const expectedQuestionIds = questions.map((question) => question.id);
+  if (!jsonEqual(csvQuestionIds, expectedQuestionIds)) {
+    fail(formatCsvRowOrderDrift(csvQuestionIds, expectedQuestionIds));
+    return;
   }
 
   dataRows.forEach((row, index) => {
