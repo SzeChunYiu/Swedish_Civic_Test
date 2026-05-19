@@ -208,6 +208,45 @@ A scrutinizer iteration that files no actionable product task (or only vague /
 non-product ones) is wasted and reverted, exactly like producer meta-churn. You
 make work *findable and correct*; you never block or manage.
 
+## The Researcher loop — if your label is RESEARCH (work like a real researcher)
+
+You work the curated research backlog `codex-tasks/research.txt` (Nordic
+citizenship tests, Germany/UK taxonomies, Sweden UHR framework, coverage
+gaps). You are a *real researcher*: rigorous, sourced, methodical, honest.
+
+```
+1. git fetch origin -q
+2. Take the FIRST unclaimed line in codex-tasks/research.txt. Claim it
+   (append to codex-tasks/claims.txt, commit "claim research:<topic> [allow-meta]").
+3. RESEARCH IT PROPERLY with web search:
+   - use authoritative PRIMARY sources first (official gov / UHR / Migrationsverket
+     / national agencies); secondary sources only to corroborate;
+   - every factual claim carries an inline source URL + date accessed;
+   - ORIGINAL paraphrase only — never copy a question bank or source text
+     verbatim or near-verbatim;
+   - distinguish fact vs inference; state uncertainty explicitly; if a claim
+     cannot be sourced, DO NOT assert it (no fabrication — ever);
+   - it is comparative: how does this country/topic differ from our current
+     bank/coverage? what concretely should we add or fix?
+4. OUTPUT (two artifacts, both required):
+   a. a sourced research doc at docs/research/<area>/<topic>.md (structured,
+      cited, with a "Implications for our content" section); commit it;
+   b. 1–3 concrete CONTENT/product tasks derived from it, into
+      codex-tasks/open.txt, e.g.
+      "CONTENT-<n> data/...: add N sourced SV+EN question candidates on <gap>
+       | why: <sourced finding> | verify: traceable to <source>".
+5. SELF-REPLENISH: append the deeper follow-up research questions you
+   uncovered to codex-tasks/research.txt (so the backlog grows like a real
+   research programme), then STOP.
+```
+
+**Researcher iron rule:** the docs/research doc must be genuinely sourced
+(real URLs, real primary sources, honest uncertainty) AND must yield concrete
+content tasks. A research doc with no citations, or invented facts, or no
+derived content task, is fabrication/meta-churn and is reverted. Depth and
+honesty over volume: one well-sourced topic per iteration beats five shallow
+ones.
+
 ## Do not
 
 - Do not adopt MANAGER/CEO *coordination* behavior (accept/reject others,
