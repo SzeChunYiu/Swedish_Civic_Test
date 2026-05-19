@@ -134,10 +134,21 @@ const v11ScopeSurfacePaths = [
   'lib/monetization/proLifetimePurchase.ts',
 ];
 
-const removeAdsDeviceQaPath = 'reports/release-ads-iap-device-qa.md';
+const removeAdsDeviceQaPath =
+  process.env.RELEASE_PREFLIGHT_DEVICE_QA_PATH || 'reports/release-ads-iap-device-qa.md';
 const removeAdsStep3Command =
   'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
 const releaseScopeOverrideId = 'release-scope-v11';
+const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
+const removeAdsDeviceQaRequiredChecks = [
+  'admob-test-ads-study-screens',
+  'remove-ads-purchase-hides-ads',
+  'entitlement-persists-after-relaunch',
+  'restore-purchase-restores-entitlement',
+  'att-status-documented',
+  'ump-consent-documented',
+  'mock-exam-shows-no-ads',
+];
 
 const expectedPublicUrlEvidenceRequirements = {
   'store-records': [
@@ -263,14 +274,11 @@ function removeAdsV1AcceptanceFindings() {
   if (!exists(removeAdsDeviceQaPath)) {
     findings.push(`Manual device-QA gate is red: ${removeAdsDeviceQaPath} is missing.`);
   } else {
-    const deviceQa = readFileIfExists(removeAdsDeviceQaPath);
-    const blockedTerms = blockedEvidencePatterns
-      .filter(([pattern]) => pattern.test(deviceQa))
-      .map(([, label]) => label);
-    if (blockedTerms.length > 0) {
+    const deviceQaErrors = validateRemoveAdsDeviceQaReport(removeAdsDeviceQaPath);
+    if (deviceQaErrors.length > 0) {
       findings.push(
-        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} still contains ${blockedTerms.join(
-          ', ',
+        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} is incomplete: ${deviceQaErrors.join(
+          '; ',
         )}.`,
       );
     }
@@ -562,6 +570,185 @@ function validateDeviceAudioEvidence(evidencePath, expectedPlatform) {
       errors.push(`${label} proof artifact url must be HTTPS`);
     }
   });
+
+  return errors;
+}
+
+function artifactPathExists(reference, baseDir) {
+  if (/^https:\/\//i.test(reference)) return true;
+  const artifactPath = path.isAbsolute(reference)
+    ? reference
+    : /^(?:reports|publishing|content|assets)\//.test(reference)
+      ? path.resolve(reference)
+      : path.resolve(baseDir, reference);
+  return exists(artifactPath);
+}
+
+function validateProofReferences(values, baseDir, label) {
+  const errors = [];
+  if (!Array.isArray(values) || values.length === 0) {
+    return [`proof.${label} must include at least one local path or HTTPS URL`];
+  }
+
+  values.forEach((value, index) => {
+    const reference = String(value || '').trim();
+    if (!reference) {
+      errors.push(`proof.${label}[${index}] is blank`);
+    } else if (!/^https:\/\//i.test(reference) && !/^[./\w-]/.test(reference)) {
+      errors.push(`proof.${label}[${index}] must be a local path or HTTPS URL`);
+    } else if (!artifactPathExists(reference, baseDir)) {
+      errors.push(`proof.${label}[${index}] does not exist: ${reference}`);
+    }
+  });
+
+  return errors;
+}
+
+function validateRemoveAdsDeviceQaArtifact(artifactPath, expectedPlatform) {
+  let artifact;
+  try {
+    artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${artifactPath}: ${error.message}`];
+  }
+
+  const errors = [];
+  const platform = String(artifact.platform || '').toLowerCase();
+  if (platform !== expectedPlatform) {
+    errors.push(`platform must be ${expectedPlatform}`);
+  }
+  if (artifact.status !== 'passed') {
+    errors.push('status must be passed');
+  }
+  if (!artifact.device || !String(artifact.device).trim()) {
+    errors.push('device is required');
+  }
+  if (!artifact.osVersion || !String(artifact.osVersion).trim()) {
+    errors.push('osVersion is required');
+  }
+  if (!artifact.reviewer || !String(artifact.reviewer).trim()) {
+    errors.push('reviewer is required');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(artifact.reviewedAt || '')) {
+    errors.push('reviewedAt must be an ISO UTC timestamp');
+  }
+
+  const build = artifact.build || {};
+  if (!build.id || !String(build.id).trim()) {
+    errors.push('build.id is required');
+  }
+  if (!/^https:\/\//i.test(build.url || '')) {
+    errors.push('build.url must be an HTTPS URL');
+  }
+  if (!build.version || !String(build.version).trim()) {
+    errors.push('build.version is required');
+  }
+
+  const checks = Array.isArray(artifact.checks) ? artifact.checks : [];
+  if (checks.length === 0) {
+    errors.push('checks array is required');
+  }
+  const passedChecks = new Set(
+    checks
+      .filter((check) => check && check.result === 'passed')
+      .map((check) => String(check.id || '')),
+  );
+  for (const checkId of removeAdsDeviceQaRequiredChecks) {
+    if (!passedChecks.has(checkId)) {
+      errors.push(`missing passed check ${checkId}`);
+    }
+  }
+  checks.forEach((check, index) => {
+    if (!check?.id || !String(check.id).trim()) {
+      errors.push(`checks[${index}].id is required`);
+    }
+    if (!/^(passed|failed|not_applicable)$/i.test(check?.result || '')) {
+      errors.push(`checks[${index}].result must be passed, failed, or not_applicable`);
+    }
+    if (check?.result !== 'passed') {
+      errors.push(`${check?.id || `checks[${index}]`} result must be passed`);
+    }
+  });
+
+  const proof = artifact.proof || {};
+  const baseDir = path.dirname(artifactPath);
+  errors.push(...validateProofReferences(proof.screenshots, baseDir, 'screenshots'));
+  errors.push(...validateProofReferences(proof.logs, baseDir, 'logs'));
+
+  return errors;
+}
+
+function extractRemoveAdsDeviceQaArtifactPaths(markdown) {
+  const matches = markdown.match(/\breports\/release-device-qa\/[^\s),;\]]+\.json\b/g) || [];
+  return [...new Set(matches.map((item) => item.replace(/[.)\]]+$/g, '')))];
+}
+
+function validateRemoveAdsDeviceQaReport(reportPath) {
+  let markdown;
+  try {
+    markdown = fs.readFileSync(reportPath, 'utf8');
+  } catch (error) {
+    return [`could not read ${reportPath}: ${error.message}`];
+  }
+
+  const errors = [];
+  const blockedTerms = [
+    ...blockedEvidencePatterns,
+    [/^\s*done\s*$/im, 'generic "done" evidence'],
+    [/- \[[ \t]\]/, 'unchecked manual checklist item'],
+  ]
+    .filter(([pattern]) => pattern.test(markdown))
+    .map(([, label]) => label);
+  if (blockedTerms.length > 0) {
+    errors.push(
+      `report still contains blocker, placeholder, or prose-only language: ${blockedTerms.join(
+        ', ',
+      )}`,
+    );
+  }
+
+  const artifactPaths = extractRemoveAdsDeviceQaArtifactPaths(markdown);
+  if (artifactPaths.length === 0) {
+    errors.push(
+      `report must link per-platform JSON artifacts under ${removeAdsDeviceQaArtifactRoot}`,
+    );
+  }
+
+  const linkedPlatforms = new Set();
+  for (const artifactPath of artifactPaths) {
+    if (!exists(artifactPath)) {
+      errors.push(`linked JSON artifact does not exist: ${artifactPath}`);
+      continue;
+    }
+
+    let parsedPlatform = '';
+    try {
+      parsedPlatform = String(JSON.parse(fs.readFileSync(artifactPath, 'utf8')).platform || '')
+        .toLowerCase()
+        .trim();
+    } catch {
+      parsedPlatform = /ios/i.test(artifactPath)
+        ? 'ios'
+        : /android/i.test(artifactPath)
+          ? 'android'
+          : '';
+    }
+    if (parsedPlatform) linkedPlatforms.add(parsedPlatform);
+    const expectedPlatform =
+      parsedPlatform === 'ios' || parsedPlatform === 'android'
+        ? parsedPlatform
+        : /ios/i.test(artifactPath)
+          ? 'ios'
+          : 'android';
+    const artifactErrors = validateRemoveAdsDeviceQaArtifact(artifactPath, expectedPlatform);
+    errors.push(...artifactErrors.map((error) => `${artifactPath}: ${error}`));
+  }
+
+  for (const platform of ['ios', 'android']) {
+    if (!linkedPlatforms.has(platform)) {
+      errors.push(`report must link a ${platform} JSON artifact`);
+    }
+  }
 
   return errors;
 }
