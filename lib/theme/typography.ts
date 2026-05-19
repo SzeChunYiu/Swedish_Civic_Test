@@ -13,21 +13,21 @@ export const typography = {
     fontSize: 36,
     fontWeight: '700',
     lineHeight: 42,
-    letterSpacing: 0,
+    letterSpacing: -0.8,
   } satisfies TextStyle,
   displaySecondary: {
     fontFamily,
     fontSize: 32,
     fontWeight: '700',
     lineHeight: 38,
-    letterSpacing: 0,
+    letterSpacing: -0.6,
   } satisfies TextStyle,
   sectionHeading: {
     fontFamily,
     fontSize: 26,
     fontWeight: '700',
     lineHeight: 32,
-    letterSpacing: 0,
+    letterSpacing: -0.4,
   } satisfies TextStyle,
   subHeadingLarge: {
     fontFamily,
@@ -40,21 +40,21 @@ export const typography = {
     fontSize: 21,
     fontWeight: '700',
     lineHeight: 28,
-    letterSpacing: 0,
+    letterSpacing: -0.3,
   } satisfies TextStyle,
   cardTitle: {
     fontFamily,
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 26,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
   } satisfies TextStyle,
   bodyLarge: {
     fontFamily,
     fontSize: 18,
     fontWeight: '600',
     lineHeight: 27,
-    letterSpacing: 0,
+    letterSpacing: -0.125,
   } satisfies TextStyle,
 
   heroMobile: {
@@ -62,7 +62,7 @@ export const typography = {
     fontSize: 32,
     fontWeight: '700',
     lineHeight: 38,
-    letterSpacing: 0,
+    letterSpacing: -0.4,
   } satisfies TextStyle,
   metric: { fontFamily, fontSize: 22, fontWeight: '700', lineHeight: 28 } satisfies TextStyle,
   sectionTitle: { fontFamily, fontSize: 18, fontWeight: '700', lineHeight: 25 } satisfies TextStyle,
@@ -81,47 +81,13 @@ export const typography = {
     fontSize: 12,
     fontWeight: '600',
     lineHeight: 16,
-    letterSpacing: 0,
+    letterSpacing: 0.125,
   } satisfies TextStyle,
   micro: {
     fontFamily,
     fontSize: 12,
     fontWeight: '400',
     lineHeight: 16,
-    letterSpacing: 0,
-  } satisfies TextStyle,
-} as const;
-
-/** DESIGN.md lines 36-39: Inter/system-ui hierarchy for common text variants. */
-export const text = {
-  h1: {
-    fontFamily,
-    fontSize: 36,
-    fontWeight: '700',
-    lineHeight: 42,
-  } satisfies TextStyle,
-  h2: {
-    fontFamily,
-    fontSize: 26,
-    fontWeight: '700',
-    lineHeight: 32,
-  } satisfies TextStyle,
-  body: {
-    fontFamily,
-    fontSize: 16,
-    fontWeight: '400',
-    lineHeight: 25,
-  } satisfies TextStyle,
-  caption: {
-    fontFamily,
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 20,
-  } satisfies TextStyle,
-  label: {
-    fontFamily,
-    fontSize: 15,
-    fontWeight: '600',
-    lineHeight: 20,
+    letterSpacing: 0.125,
   } satisfies TextStyle,
 } as const;

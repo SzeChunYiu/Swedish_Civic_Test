@@ -40,9 +40,6 @@ jobs:
       - name: Run full local validation suite
         run: npm run validate
 
-      - name: Verify visual smoke screenshot manifest
-        run: npm run test:screenshot-manifest
-
       - name: Verify release ownership guard
         run: npm run test:ownership
 

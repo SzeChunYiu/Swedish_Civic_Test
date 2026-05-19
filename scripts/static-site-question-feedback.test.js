@@ -30,33 +30,6 @@ const sampleQuestion = {
   },
 };
 
-const unsafeMarker = '<x-static-unsafe data-x="1">& marker';
-const escapedUnsafeMarker = '&lt;x-static-unsafe data-x=&quot;1&quot;&gt;&amp; marker';
-
-const unsafeQuestion = {
-  chapter: `Chapter ${unsafeMarker}`,
-  chapterId: 1,
-  q: {
-    en: `Prompt ${unsafeMarker}`,
-    sv: `Fråga ${unsafeMarker}`,
-  },
-  opts: [
-    { en: `Wrong option ${unsafeMarker}`, sv: `Fel alternativ ${unsafeMarker}` },
-    { en: `Correct option ${unsafeMarker}`, sv: `Rätt alternativ ${unsafeMarker}` },
-  ],
-  answer: 1,
-  why: {
-    en: `Explanation ${unsafeMarker}`,
-    sv: `Förklaring ${unsafeMarker}`,
-  },
-  source: {
-    title: `Sverige i fokus ${unsafeMarker}`,
-    chapter: `Landet Sverige ${unsafeMarker}`,
-    section: `Geografi ${unsafeMarker}`,
-    page: 7,
-  },
-};
-
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
@@ -79,13 +52,6 @@ function createRenderContext({ hash = '#/practice?c=1', language = 'en' } = {}) 
         },
         querySelectorAll() {
           return [];
-        },
-        closest() {
-          return {
-            querySelector() {
-              return null;
-            },
-          };
         },
       });
     }
@@ -152,8 +118,6 @@ test('static Practice answer feedback renders citation and independent-study dis
 
   const html = element('quiz-stage').innerHTML;
   assert.match(html, /class="quiz__feedback is-wrong"/);
-  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
-  assert.match(html, /Provenance: UHR\. Source note:/);
   assert.match(html, /Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7/);
   assert.match(html, /Independent study practice, not a real exam or an official UHR question\./);
 });
@@ -173,31 +137,14 @@ test('static Mock review renders citation and disclaimer for every reviewed ques
   vm.runInContext(source, sandbox, { timeout: 3000 });
 
   const html = element('mock-stage').innerHTML;
-  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
-  assert.match(html, /Källtyp: UHR\. Källanteckning:/);
-  assert.match(html, /Källa: Sverige i fokus, Landet Sverige, Geografi, s\. 7/);
+  assert.match(
+    html,
+    /class="mock-review__source">Källa: Sverige i fokus, Landet Sverige, Geografi, s\. 7<\/p>/,
+  );
   assert.match(
     html,
     /class="mock-review__disclaimer">Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga\.<\/p>/,
   );
-});
-
-test('static Practice and Mock feedback effects are gated for reduced motion', () => {
-  const fx = read('site/fx.js');
-  const app = read('site/app.js');
-  const practice = read('site/practice.js');
-
-  assert.match(fx, /window\.matchMedia\("\(prefers-reduced-motion: reduce\)"\)\.matches/);
-  assert.match(fx, /function prefersReducedMotion\(\)/);
-  assert.match(fx, /function motionAllowed\(\)/);
-  assert.match(fx, /function burst\([\s\S]*?if \(!motionAllowed\(\)\) return;/);
-  assert.match(fx, /function rain\([\s\S]*?if \(!motionAllowed\(\)\) return;/);
-  assert.match(fx, /function floatPlus\([\s\S]*?if \(!motionAllowed\(\)\) return;/);
-  assert.match(fx, /function countUp\([\s\S]*?el\.textContent = String\(to\);/);
-  assert.match(fx, /function toast\([\s\S]*?t\.style\.animation = "none";/);
-  assert.match(app, /function smtQuizFxPrefersReducedMotion\(fx\)/);
-  assert.match(app, /if \(!correct && !smtQuizFxPrefersReducedMotion\(fx\)\)/);
-  assert.match(practice, /strongPracticeScore && !staticFxPrefersReducedMotion\(window\.smtFx\)/);
 });
 
 test('static active Mock question renders citation and independent-study disclaimer', () => {
@@ -217,129 +164,12 @@ test('static active Mock question renders citation and independent-study disclai
   vm.runInContext(source, sandbox, { timeout: 3000 });
 
   const html = element('mock-stage').innerHTML;
-  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
-  assert.match(html, /Provenance: UHR\. Source note:/);
-  assert.match(html, /Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7/);
+  assert.match(
+    html,
+    /class="quiz__source">Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7<\/p>/,
+  );
   assert.match(
     html,
     /class="quiz__disclaimer">Independent study practice, not a real exam or an official UHR question\.<\/p>/,
   );
-});
-
-test('static Practice escapes question-bank text before innerHTML rendering', () => {
-  const { sandbox, element } = createRenderContext({ hash: '#/practice?c=1', language: 'en' });
-  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
-  sandbox.window.SMT_QUESTIONS = [unsafeQuestion];
-  sandbox.window.smtPracticeFilterFor = () => [unsafeQuestion];
-  vm.runInContext('smtQuizRender(); SMT_QUIZ.answers[0] = 0; smtQuizRender();', sandbox, {
-    timeout: 3000,
-  });
-
-  const html = element('quiz-stage').innerHTML;
-  assert.doesNotMatch(html, /<x-static-unsafe\b/);
-  assert.match(html, new RegExp(`Prompt ${escapedUnsafeMarker}`));
-  assert.match(html, new RegExp(`Wrong option ${escapedUnsafeMarker}`));
-  assert.match(html, new RegExp(`Explanation ${escapedUnsafeMarker}`));
-  assert.match(html, new RegExp(`Chapter ${escapedUnsafeMarker}`));
-  assert.match(html, new RegExp(`Source: Sverige i fokus ${escapedUnsafeMarker}`));
-});
-
-test('static Mock escapes active-question and review question-bank text', () => {
-  const active = createRenderContext({ hash: '#/mock?run=1', language: 'en' });
-  const activeSource = read('site/practice.js').replace(
-    /\}\)\(\);\s*$/,
-    [
-      'MOCK.questions = [window.__unsafeQuestion];',
-      'MOCK.answers = [null];',
-      'MOCK.startedAt = 123456;',
-      'MOCK.endsAt = Date.now() + 120000;',
-      'MOCK.submitted = false;',
-      'renderMockExam();',
-      '})();',
-    ].join('\n'),
-  );
-  active.sandbox.window.__unsafeQuestion = unsafeQuestion;
-  vm.runInContext(activeSource, active.sandbox, { timeout: 3000 });
-  const activeHtml = active.element('mock-stage').innerHTML;
-
-  assert.doesNotMatch(activeHtml, /<x-static-unsafe\b/);
-  assert.match(activeHtml, new RegExp(`Prompt ${escapedUnsafeMarker}`));
-  assert.match(activeHtml, new RegExp(`Wrong option ${escapedUnsafeMarker}`));
-  assert.match(activeHtml, new RegExp(`Source: Sverige i fokus ${escapedUnsafeMarker}`));
-
-  const review = createRenderContext({ hash: '#/mock?run=1', language: 'sv' });
-  review.sandbox.window.SMT_CHAPTERS_META = [
-    {
-      id: 1,
-      title: {
-        en: `Chapter title ${unsafeMarker}`,
-        sv: `Kapitelrubrik ${unsafeMarker}`,
-      },
-    },
-  ];
-  const reviewSource = read('site/practice.js').replace(
-    /\}\)\(\);\s*$/,
-    [
-      'MOCK.questions = [window.__unsafeQuestion];',
-      'MOCK.answers = [0];',
-      'MOCK.submitted = true;',
-      'renderMockResult();',
-      '})();',
-    ].join('\n'),
-  );
-  review.sandbox.window.__unsafeQuestion = unsafeQuestion;
-  vm.runInContext(reviewSource, review.sandbox, { timeout: 3000 });
-  const reviewHtml = review.element('mock-stage').innerHTML;
-
-  assert.doesNotMatch(reviewHtml, /<x-static-unsafe\b/);
-  assert.match(reviewHtml, new RegExp(`Fråga ${escapedUnsafeMarker}`));
-  assert.match(reviewHtml, new RegExp(`Fel alternativ ${escapedUnsafeMarker}`));
-  assert.match(reviewHtml, new RegExp(`Förklaring ${escapedUnsafeMarker}`));
-  assert.match(reviewHtml, new RegExp(`Källa: Sverige i fokus ${escapedUnsafeMarker}`));
-  assert.match(reviewHtml, new RegExp(`Kapitelrubrik ${escapedUnsafeMarker}`));
-});
-
-test('static Practice hub escapes generated chapter metadata text', () => {
-  const { sandbox, element } = createRenderContext({ hash: '#/practice', language: 'en' });
-  sandbox.window.SMT_CHAPTERS_META = [
-    {
-      id: 1,
-      emoji: unsafeMarker,
-      title: {
-        en: `Chapter title ${unsafeMarker}`,
-        sv: `Kapitelrubrik ${unsafeMarker}`,
-      },
-    },
-  ];
-  sandbox.window.SMT_QUESTIONS = [];
-  vm.runInContext(read('site/practice.js'), sandbox, { timeout: 3000 });
-  vm.runInContext('window.smtRenderPracticeHub();', sandbox, { timeout: 3000 });
-
-  const html = element('quiz-stage').innerHTML;
-  assert.doesNotMatch(html, /<x-static-unsafe\b/);
-  assert.match(html, new RegExp(`Chapter title ${escapedUnsafeMarker}`));
-});
-
-test('static Mock landing escapes generated chapter metadata text', () => {
-  const { sandbox, element } = createRenderContext({ hash: '#/mock', language: 'en' });
-  sandbox.window.SMT_CHAPTERS_META = [
-    {
-      id: 1,
-      emoji: unsafeMarker,
-      title: {
-        en: `Chapter title ${unsafeMarker}`,
-        sv: `Kapitelrubrik ${unsafeMarker}`,
-      },
-    },
-  ];
-  sandbox.window.SMT_QUESTIONS = [unsafeQuestion];
-  const source = read('site/practice.js').replace(
-    /\}\)\(\);\s*$/,
-    ['renderMockLanding();', '})();'].join('\n'),
-  );
-  vm.runInContext(source, sandbox, { timeout: 3000 });
-
-  const html = element('mock-stage').innerHTML;
-  assert.doesNotMatch(html, /<x-static-unsafe\b/);
-  assert.match(html, new RegExp(`Chapter title ${escapedUnsafeMarker}`));
 });

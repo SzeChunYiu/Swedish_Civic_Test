@@ -1,29 +1,29 @@
-import { Link } from 'expo-router';
-import { useState } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 type SocialProofLanguage = 'sv' | 'en';
 
 const copy = {
   sv: {
-    label: 'Källor och transparens',
-    body: 'Se vilka delar av Sverige i fokus som ligger bakom frågorna.',
+    rating: 'Utmärkt',
+    ratingAccessibilityLabel: 'Utmärkt betyg, 5 av 5 stjärnor',
+    body: 'Tusentals studenter förbereder sig redan med appen',
     summaryAccessibilityLabel:
-      'Öppna källor och transparens. Se vilka delar av Sverige i fokus som ligger bakom frågorna.',
+      'Utmärkt betyg, 5 av 5 stjärnor. Tusentals studenter förbereder sig redan med appen',
   },
   en: {
-    label: 'Sources and transparency',
-    body: 'See which parts of Sverige i fokus support the questions.',
+    rating: 'Excellent',
+    ratingAccessibilityLabel: 'Excellent rating, 5 of 5 stars',
+    body: 'Thousands of learners are already preparing with the app',
     summaryAccessibilityLabel:
-      'Open sources and transparency. See which parts of Sverige i fokus support the questions.',
+      'Excellent rating, 5 of 5 stars. Thousands of learners are already preparing with the app',
   },
 } as const;
 
 /**
- * Defaults: localized source-transparency label and body for the supplied app
- * language, linking the full row to `/sources` with token feedback.
+ * Defaults: localized social-proof body and rating speech for the supplied app
+ * language, with a summary accessibility label for the full row.
  */
 export interface SocialProofRowProps {
   accessibilityLabel?: string;
@@ -33,72 +33,38 @@ export interface SocialProofRowProps {
 export function SocialProofRow({ accessibilityLabel, language }: SocialProofRowProps) {
   const t = copy[language];
   const rowAccessibilityLabel = accessibilityLabel ?? t.summaryAccessibilityLabel;
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
-  const webInteractionHandlers =
-    Platform.OS === 'web'
-      ? {
-          onBlur: () => setIsFocused(false),
-          onFocus: () => setIsFocused(true),
-          onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => setIsHovered(false),
-        }
-      : {};
 
   return (
-    <Link
-      {...webInteractionHandlers}
+    <View
       aria-label={rowAccessibilityLabel}
+      accessible
       accessibilityLabel={rowAccessibilityLabel}
-      accessibilityRole="link"
-      href="/sources"
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
-      style={[
-        styles.link,
-        isFocused || isHovered ? styles.linkFocused : null,
-        isPressed ? styles.linkPressed : null,
-      ]}
+      accessibilityRole="summary"
+      style={styles.row}
     >
-      <View style={styles.row}>
-        <Text style={styles.label}>{t.label}</Text>
-        <Text style={styles.dot}>·</Text>
-        <Text style={styles.body}>{t.body}</Text>
-      </View>
-    </Link>
+      <Text style={styles.stars} accessibilityLabel={t.ratingAccessibilityLabel}>
+        ★★★★★
+      </Text>
+      <Text style={styles.rating}>{t.rating}</Text>
+      <Text style={styles.dot}>·</Text>
+      <Text style={styles.body}>{t.body}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  link: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  linkFocused: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.hoverScale }],
-  },
-  linkPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
   row: {
     alignItems: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[0.75],
   },
-  label: {
+  stars: {
+    color: colors.warning,
+    fontFamily: typography.bodySemibold.fontFamily,
+    fontSize: typography.bodySemibold.fontSize,
+  },
+  rating: {
     color: colors.text,
     fontFamily: typography.bodySemibold.fontFamily,
     fontSize: typography.bodySemibold.fontSize,

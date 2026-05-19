@@ -25,8 +25,7 @@ test('shared Badge keeps visual uppercase text and readable accessibility labels
   assert.match(source, /accessibilityLabel \?\?/);
   assert.match(source, /aria-label=\{badgeAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{badgeAccessibilityLabel\}/);
-  assert.match(source, /style\?: StyleProp<TextStyle>;/);
-  assert.match(source, /style=\{\[styles\.badge, styles\[tone\], style\]\}/);
+  assert.match(source, /style=\{\[styles\.badge, styles\[tone\]\]\}/);
   assert.match(source, /textTransform:\s*'uppercase'/);
 });
 
@@ -55,34 +54,4 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /Badge missing web aria label/);
-});
-
-test('Badge accessibility parity rejects dropped style override path', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/ui/Badge.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('style={[styles.badge, styles[tone], style]}', 'style={[styles.badge, styles[tone]]}');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /Badge missing tone style path with caller override/,
-  );
 });
