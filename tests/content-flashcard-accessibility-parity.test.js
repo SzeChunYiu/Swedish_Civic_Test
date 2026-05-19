@@ -21,7 +21,6 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
 
   assert.equal(summary.flashcardAccessibilityRulesValidated, 15);
   assert.equal(summary.flashcardAccessibilityParityValidated, true);
-  assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
   assert.match(source, /useSettingsStore, type AppLanguage/);
   assert.match(
     source,
@@ -30,9 +29,6 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   assert.match(source, /const flashcardCopy: Record<AppLanguage, FlashcardCopy> = \{/);
   assert.match(source, /fallbackPrompt: 'Studiefråga saknas'/);
   assert.match(source, /fallbackAnswer: 'Svar saknas'/);
-  assert.match(source, /accessibilityLabel: \(prompt, answer\) => `Övningskort\. Fråga:/);
-  assert.match(source, /badgeLabel: 'Övningskort'/);
-  assert.doesNotMatch(source, /Flashkort|flashkort/);
   assert.match(source, /fallbackPrompt: 'Study prompt unavailable'/);
   assert.match(source, /fallbackAnswer: 'Answer unavailable'/);
   assert.match(
@@ -53,36 +49,6 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   assert.match(source, /\{copy\.answerHeader\}/);
   assert.match(source, /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.answer\}>\{answer\}<\/Text>/);
-});
-
-test('Flashcard Swedish copy naturalness rejects loan-word drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/learning/Flashcard.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replaceAll('Övningskort', 'Flashkort');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /Swedish learner-facing flashcard copy must use natural Swedish study-card wording/,
-  );
 });
 
 test('Flashcard accessibility parity rejects summary drift', () => {

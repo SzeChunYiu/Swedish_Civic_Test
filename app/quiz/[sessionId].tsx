@@ -3,11 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
-import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
-import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
-import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -15,9 +12,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
-import { calculateStreak } from '../../lib/learning/streaks';
-import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
+import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -42,13 +37,13 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   sv: {
     backToPractice: 'Tillbaka till övning',
     backToPracticeAccessibilityLabel: 'Tillbaka till övning',
-    badge: 'Frågepass',
-    emptyTitle: 'Det finns inga övningsfrågor ännu.',
+    badge: 'Quizpass',
+    emptyTitle: 'Det finns inga quizfrågor ännu.',
     scoreLabel: 'Poäng',
     sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    sessionTitle: (currentSessionId) => `Frågepass ${currentSessionId}`,
+    sessionTitle: (currentSessionId) => `Quizpass ${currentSessionId}`,
     tryAgain: 'Försök igen',
-    tryAgainAccessibilityLabel: 'Försök igen med den här övningsfrågan',
+    tryAgainAccessibilityLabel: 'Försök igen med den här quizfrågan',
   },
   en: {
     backToPractice: 'Back to Practice',
@@ -96,9 +91,6 @@ export default function QuizSessionScreen() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
-  const questionProgress = useProgressStore((state) => state.questionProgress);
-  const totalXp = useProgressStore((state) => state.totalXp);
-  const answerDates = useProgressStore((state) => state.answerDates);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = quizSessionCopy[language];
@@ -128,15 +120,6 @@ export default function QuizSessionScreen() {
   const hasSelectedAnswer = Boolean(selectedOptionId);
   const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
-  const celebrationStreak = selectedIsCorrect
-    ? (questionProgress[question.id]?.correctStreak ?? 1)
-    : 0;
-  const answerXp = hasSelectedAnswer
-    ? calculateAnswerXp({ isCorrect: selectedIsCorrect, explanationRead: true })
-    : 0;
-  const streakDays = calculateStreak(answerDates);
-  const level = calculateLevel(totalXp);
-  const correctStreak = questionProgress[question.id]?.correctStreak ?? 0;
 
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
@@ -199,21 +182,6 @@ export default function QuizSessionScreen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
-          <CelebrationBurst
-            active={selectedIsCorrect}
-            languageOverride={language}
-            streak={celebrationStreak}
-          />
-          <PostAnswerRewardPanel
-            answerXp={answerXp}
-            correctStreak={correctStreak}
-            isCorrect={selectedIsCorrect}
-            language={language}
-            level={level}
-            question={question}
-            streakDays={streakDays}
-            totalXp={totalXp}
-          />
           {score ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {score.correct}/{score.total}
@@ -223,11 +191,6 @@ export default function QuizSessionScreen() {
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}
             language={language}
-          />
-          <FeedbackAudioButton
-            enabled={audioEnabled}
-            language={language}
-            text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
           <View style={styles.actions}>
