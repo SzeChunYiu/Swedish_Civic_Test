@@ -22,7 +22,7 @@ const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy> = {
     editorialLabel: 'Redaktionell',
     accessibilityPrefix: 'Källtyp',
     sourceNotePrefix: 'Källanteckning',
-    sourceNoteHint: 'Visar en kort källanteckning.',
+    sourceNoteHint: 'Visar eller döljer en kort källanteckning.',
   },
   en: {
     uhrLabel: 'UHR source',
@@ -30,15 +30,15 @@ const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy> = {
     editorialLabel: 'Editorial',
     accessibilityPrefix: 'Provenance',
     sourceNotePrefix: 'Source note',
-    sourceNoteHint: 'Shows a short source note.',
+    sourceNoteHint: 'Shows or hides a short source note.',
   },
 };
 
 /**
  * Defaults: `language="sv"`, localized provenance label and source note copy,
- * `accessibilityRole="button"`, collapsed source note, and token-sized hit
- * slop. Pass `language` when the surrounding question card is rendered in
- * English support mode.
+ * `accessibilityRole="button"`, collapsed toggleable source note, and
+ * token-sized hit slop. Pass `language` when the surrounding question card is
+ * rendered in English support mode.
  */
 export interface ProvenanceBadgeProps {
   question?: PracticeQuestion;
@@ -47,6 +47,8 @@ export interface ProvenanceBadgeProps {
 
 export function ProvenanceBadge({ question, language = 'sv' }: ProvenanceBadgeProps) {
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
+  const showSourceNote = () => setSourceNoteVisible(true);
+  const toggleSourceNote = () => setSourceNoteVisible((visible) => !visible);
 
   if (!question) return null;
 
@@ -70,14 +72,15 @@ export function ProvenanceBadge({ question, language = 'sv' }: ProvenanceBadgePr
   return (
     <View style={styles.container}>
       <Pressable
+        aria-expanded={sourceNoteVisible}
         accessibilityHint={copy.sourceNoteHint}
         accessibilityLabel={`${copy.accessibilityPrefix}: ${label}. ${noteLabel}`}
         accessibilityRole="button"
         accessibilityState={{ expanded: sourceNoteVisible }}
         hitSlop={space[1]}
         onBlur={() => setSourceNoteVisible(false)}
-        onFocus={() => setSourceNoteVisible(true)}
-        onPress={() => setSourceNoteVisible(true)}
+        onFocus={showSourceNote}
+        onPress={toggleSourceNote}
         style={({ pressed }) => [
           styles.badge,
           tone.badge,

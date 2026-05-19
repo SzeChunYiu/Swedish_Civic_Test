@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ChapterCard } from '../../components/learning/ChapterCard';
 import { AdBanner } from '../../components/monetization/AdBanner';
+import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
@@ -141,6 +142,7 @@ export default function Screen() {
       </View>
 
       <AdBanner placement="chapter_list_banner" />
+      <RemoveAdsPlacementCta placement="chapter_list_banner" />
     </ScreenShell>
   );
 }
