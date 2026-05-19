@@ -432,29 +432,24 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
     'Open settings',
-    'First practice',
-    'Level 2',
-    'Mistake reviewer',
-    'Three-day streak',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
-  ['deriveBadges, getBadgeTitle', 'profile route must import bilingual badge title helper'],
   ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
   [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
   [
+    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
+    'profile route must define localized badge-title overrides',
+  ],
+  [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
   ],
   ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
-  [
-    'getBadgeTitle(badge, language)',
-    'profile route must render badge titles from the bilingual badge catalog',
-  ],
   [
     '<ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>',
     'profile shell must render localized copy',
@@ -848,7 +843,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 8;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 10;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -2954,7 +2949,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
     name: 'MockPurchaseProviderOptions',
     fields: [
       { name: 'owned', type: 'boolean', optional: true },
-      { name: 'ownedProductIds', type: 'readonly string[]', optional: true },
       { name: 'pendingPurchase', type: 'boolean', optional: true },
     ],
   },
@@ -7492,7 +7486,6 @@ function validateProfileRouteHeaderParity() {
 function validateProfileRouteCopyParity() {
   let valid = true;
   let profileRoute = '';
-  let badgeCatalogSource = '';
 
   function reject(message) {
     valid = false;
@@ -7501,7 +7494,6 @@ function validateProfileRouteCopyParity() {
 
   try {
     profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
-    badgeCatalogSource = fs.readFileSync(path.join(repoRoot, 'lib/learning/badges.ts'), 'utf8');
   } catch (error) {
     reject(`profile route copy source could not be read: ${error.message}`);
     return;
@@ -7519,7 +7511,7 @@ function validateProfileRouteCopyParity() {
         labelIsValid = false;
         reject(`profile route ${language} copy ${JSON.stringify(label)} must be normalized`);
       }
-      if (!`${profileRoute}\n${badgeCatalogSource}`.includes(label)) {
+      if (!profileRoute.includes(label)) {
         labelIsValid = false;
         reject(`profile route is missing ${language} copy ${JSON.stringify(label)}`);
       }
@@ -10000,18 +9992,26 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     ],
     [
       normalizedPurchaseSource.includes(
-        'productIds.some((productId) => purchaseMatchesProductId(purchase, productId))',
-      ) &&
-        normalizedPurchaseSource.includes(
-          'normalizePurchases(purchase).find((candidate) => purchaseMatchesProductId(candidate, productId)',
-        ),
-      'shared native purchase provider must match the requested product id for buy and restore',
-    ],
-    [
-      normalizedPurchaseSource.includes(
-        'productIds.includes(REMOVE_ADS_PRODUCT_ID) && ownedProductIdsSet.has(REMOVE_ADS_PRODUCT_ID)',
+        'if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];',
       ) && normalizedPurchaseSource.includes("return [createMockPurchase('restore-remove-ads')];"),
       'mock Remove Ads restore must require the canonical product id',
+    ],
+    [
+      normalizedPurchaseSource.includes('export const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;') &&
+        normalizedPurchaseSource.includes('interface StoredRemoveAdsEntitlementRecord'),
+      'Remove Ads persistence must use a versioned structured entitlement record',
+    ],
+    [
+      normalizedPurchaseSource.includes('parseStoredRemoveAdsEntitlementRecord(storedValue)') &&
+        !normalizedPurchaseSource.includes('storedValue === STORED_TRUE') &&
+        !normalizedPurchaseSource.includes("const STORED_TRUE = 'true';"),
+      'Remove Ads entitlement loading must reject the legacy bare true value',
+    ],
+    [
+      normalizedPurchaseSource.includes("source: 'purchase'") &&
+        normalizedPurchaseSource.includes("source: 'restore'") &&
+        normalizedPurchaseSource.includes('hasStoreConfirmation(record)'),
+      'Remove Ads purchase and restore grants must persist source plus store confirmation identity',
     ],
   ];
 
@@ -10776,10 +10776,8 @@ function validateBadgeCatalog() {
     );
   }
 
-  const seenTitlesSv = new Set();
-  const seenTitlesEn = new Set();
-  const seenDescriptionsSv = new Set();
-  const seenDescriptionsEn = new Set();
+  const seenTitles = new Set();
+  const seenDescriptions = new Set();
 
   entries.forEach(([key, badge], index) => {
     const label = hasText(badge?.id) ? badge.id : `badge[${index}]`;
@@ -10799,7 +10797,7 @@ function validateBadgeCatalog() {
         reject(`${label} id must use lowercase snake_case`);
       }
 
-      for (const field of ['titleSv', 'titleEn', 'descriptionSv', 'descriptionEn']) {
+      for (const field of ['title', 'description']) {
         if (!hasText(badge[field])) {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
@@ -10807,30 +10805,17 @@ function validateBadgeCatalog() {
         }
       }
 
-      if (normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)) {
-        reject(`${label} titleSv and titleEn must be distinct bilingual text`);
+      const normalizedTitle = normalizeComparableText(badge.title);
+      if (normalizedTitle && seenTitles.has(normalizedTitle)) {
+        reject(`${label} duplicates badge title`);
       }
-      if (
-        normalizeComparableText(badge.descriptionSv) ===
-        normalizeComparableText(badge.descriptionEn)
-      ) {
-        reject(`${label} descriptionSv and descriptionEn must be distinct bilingual text`);
+      if (normalizedTitle) seenTitles.add(normalizedTitle);
+
+      const normalizedDescription = normalizeComparableText(badge.description);
+      if (normalizedDescription && seenDescriptions.has(normalizedDescription)) {
+        reject(`${label} duplicates badge description`);
       }
-
-      const duplicateChecks = [
-        ['titleSv', seenTitlesSv, 'Swedish badge title'],
-        ['titleEn', seenTitlesEn, 'English badge title'],
-        ['descriptionSv', seenDescriptionsSv, 'Swedish badge description'],
-        ['descriptionEn', seenDescriptionsEn, 'English badge description'],
-      ];
-
-      duplicateChecks.forEach(([field, seen, duplicateLabel]) => {
-        const normalized = normalizeComparableText(badge[field]);
-        if (normalized && seen.has(normalized)) {
-          reject(`${label} duplicates ${duplicateLabel}`);
-        }
-        if (normalized) seen.add(normalized);
-      });
+      if (normalizedDescription) seenDescriptions.add(normalizedDescription);
     }
 
     if (valid) badgesValidated += 1;
