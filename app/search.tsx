@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -11,8 +11,16 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { colors, radius, space, typography } from '../lib/theme';
 import type { GlossaryTerm } from '../types/content';
 
+type SearchQueryParams = {
+  q?: string | string[];
+  query?: string | string[];
+};
+
 export default function SearchScreen() {
-  const [query, setQuery] = useState('');
+  const searchParams = useLocalSearchParams<SearchQueryParams>();
+  const [query, setQuery] = useState(() =>
+    initialSearchQueryFromParams(searchParams.q, searchParams.query),
+  );
   const language = useSettingsStore((state) => state.language);
   const copy = searchRouteCopy[language];
   const termsWithChapters = useMemo(
@@ -230,6 +238,22 @@ function normalizeSearchText(value: string) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .trim();
+}
+
+type SearchParamValue = string | string[] | undefined;
+
+function initialSearchQueryFromParams(q: SearchParamValue, query: SearchParamValue) {
+  return firstSearchParamValue(q) || firstSearchParamValue(query);
+}
+
+function firstSearchParamValue(value: SearchParamValue) {
+  if (Array.isArray(value)) {
+    const firstTextValue = value.find((item) => item.trim().length > 0);
+
+    return firstTextValue?.trim() ?? '';
+  }
+
+  return value?.trim() ?? '';
 }
 
 function glossaryTermMatchesQuery(
