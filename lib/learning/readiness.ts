@@ -73,7 +73,6 @@ function rollingAccuracy(progress: UserProgress, now: Date, daysBack = 14): numb
   let total = 0;
   let correct = 0;
   for (const session of progress.sessions ?? []) {
-    if (session.mode === 'exam') continue;
     for (const answer of session.answers) {
       if (answer.answeredAt < cutoff) continue;
       total += 1;

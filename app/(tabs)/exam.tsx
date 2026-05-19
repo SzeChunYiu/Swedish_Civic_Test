@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
-import { ResultSummary } from '../../components/ResultSummary';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -76,58 +74,57 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   sv: {
     accessStatus: {
       ads_unavailable: 'Extra övningsprov är inte tillgängliga just nu.',
-      consent_required: 'Annonsmedgivande krävs innan ett extra övningsprov kan låsas upp.',
+      consent_required: 'Annonsmedgivande krävs innan ett extra prov kan låsas upp.',
       free_exam_available: 'Dagens kostnadsfria övningsprov är tillgängligt.',
       premium_unlimited_mock_exams: 'Obegränsade övningsprov är aktiva.',
       remove_ads_active: 'Dagens kostnadsfria övningsprov är använt. Belöningsannonser är dolda.',
       rewarded_ad_available:
-        'Dagens kostnadsfria övningsprov är använt. Extra övningsprov är tillgängligt.',
+        'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
       rewarded_exam_credit: 'Extra övningsprov är upplåst.',
     },
-    accessTitle: 'Åtkomst till övningsprov',
+    accessTitle: 'Provåtkomst',
     activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet`,
+      `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} besvarade`,
     chapterBreakdownTitle: 'Kapitelöversikt',
-    checkingAccess: 'Kontrollerar åtkomst till övningsprov.',
-    completionStoreFailure: 'Resultatet från övningsprovet kunde inte sparas på den här enheten.',
+    checkingAccess: 'Kontrollerar provåtkomst.',
+    completionStoreFailure: 'Provresultatet kunde inte sparas på den här enheten.',
     correctAnswerLabel: 'Rätt svar',
     correctBadge: 'Rätt',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
-    examResultTitle: 'Resultat från övningsprov',
+    examResultTitle: 'Provresultat',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
     heroSubtitle: (durationMinutes, questionCount) =>
-      `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet`,
+      `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     mockExamTitle: 'Övningsprov',
-    nextExamTitle: 'Nästa övningsprov',
+    nextExamTitle: 'Nästa prov',
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
     resultBadge: 'Övningsresultat',
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
-    resultSubtitle:
-      'Förklaringar och genomgång visas först efter att övningsprovet har skickats in.',
+    resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
     reviewBadge: 'Granska',
     rewardedAdStatus: {
       closed_without_reward: 'Det extra övningsprovet kräver att belöningsannonsen slutförs.',
       earned_reward: 'Extra övningsprov upplåst.',
       failed_to_load: 'Belöningsannonsen kunde inte laddas just nu.',
       show_failed: 'Belöningsannonsen kunde inte visas just nu.',
-      timed_out: 'Belöningsannonsen hann löpa ut innan det extra övningsprovet låstes upp.',
+      timed_out: 'Belöningsannonsen hann löpa ut innan det extra provet låstes upp.',
       unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
     },
     savedBadge: 'Sparat',
     savingBadge: 'Sparar',
     savingCompletion: 'Sparar dagens övningsprov.',
     selectedAnswerLabel: 'Valt svar',
-    startExtraExam: 'Lås upp extra övningsprov',
+    startExtraExam: 'Lås upp extra prov',
     startMockExam: 'Starta övningsprov',
-    startUnlockedExtraExam: 'Starta upplåst extra övningsprov',
-    submitAccessibilityLabel: 'Skicka in övningsprovet',
-    submitLabel: 'Skicka övningsprov',
+    startUnlockedExtraExam: 'Starta upplåst extra prov',
+    submitAccessibilityLabel: 'Skicka övningsprov',
+    submitLabel: 'Skicka prov',
     timedSimulationBadge: 'Tidsatt simulering',
     timeExpiredBadge: 'Tiden gick ut',
     timeExpiredResultNote: ' Obesvarade frågor räknas som fel och markeras som inte besvarade.',
@@ -136,16 +133,16 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   en: {
     accessStatus: {
       ads_unavailable: 'Extra mock exams are unavailable right now.',
-      consent_required: 'Ad consent is needed before an extra mock exam can be unlocked.',
+      consent_required: 'Ad consent is needed before an extra exam can be unlocked.',
       free_exam_available: 'Daily free mock exam available.',
       premium_unlimited_mock_exams: 'Unlimited mock exams active.',
       remove_ads_active: 'Daily free mock exam used. Rewarded ads are hidden.',
-      rewarded_ad_available: 'Daily free mock exam used. Extra mock exam available.',
+      rewarded_ad_available: 'Daily free mock exam used. Extra exam available.',
       rewarded_exam_credit: 'Extra mock exam unlocked.',
     },
-    accessTitle: 'Mock exam access',
+    accessTitle: 'Exam access',
     activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during mock exam`,
+      `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} answered`,
@@ -155,36 +152,36 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctAnswerLabel: 'Correct answer',
     correctBadge: 'Correct',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
-    examResultTitle: 'Mock exam result',
+    examResultTitle: 'Exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
     heroSubtitle: (durationMinutes, questionCount) =>
-      `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during mock exam`,
+      `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
     mockExamTitle: 'Mock exam',
-    nextExamTitle: 'Next mock exam',
+    nextExamTitle: 'Next exam',
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
-    resultBadge: 'Mock exam score',
+    resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
-    resultSubtitle: 'Explanations and review are shown only after the mock exam is submitted.',
+    resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
     reviewBadge: 'Review',
     rewardedAdStatus: {
       closed_without_reward: 'Extra mock exam unlock needs a completed rewarded ad.',
       earned_reward: 'Extra mock exam unlocked.',
       failed_to_load: 'Rewarded ad could not load right now.',
       show_failed: 'Rewarded ad could not be shown right now.',
-      timed_out: 'Rewarded ad timed out before the extra mock exam unlocked.',
+      timed_out: 'Rewarded ad timed out before the extra exam unlocked.',
       unavailable: 'Rewarded ad is unavailable on this device right now.',
     },
     savedBadge: 'Saved',
     savingBadge: 'Saving',
     savingCompletion: "Saving today's mock exam completion.",
     selectedAnswerLabel: 'Selected answer',
-    startExtraExam: 'Unlock extra mock exam',
+    startExtraExam: 'Unlock extra exam',
     startMockExam: 'Start mock exam',
-    startUnlockedExtraExam: 'Start unlocked extra mock exam',
-    submitAccessibilityLabel: 'Submit the mock exam',
-    submitLabel: 'Submit mock exam',
+    startUnlockedExtraExam: 'Start unlocked extra exam',
+    submitAccessibilityLabel: 'Submit mock exam',
+    submitLabel: 'Submit exam',
     timedSimulationBadge: 'Timed simulation',
     timeExpiredBadge: 'Time expired',
     timeExpiredResultNote: ' Unanswered questions count as incorrect and are marked Not answered.',
@@ -355,7 +352,7 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion(examSessionId)
+    void recordExamCompletion()
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -420,7 +417,7 @@ export default function Screen() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Badge tone={endedByTime ? 'orange' : 'blue'}>
+          <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
           </Badge>
           <Text accessibilityRole="header" style={styles.title}>
@@ -432,14 +429,13 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <ResultSummary
-          correctCount={result.correctCount}
-          languageOverride={language}
-          metricLabel={copy.correctCount(result.correctCount, result.totalCount)}
-          status={endedByTime ? 'review' : undefined}
-          subtitle={copy.resultNote}
-          totalCount={result.totalCount}
-        />
+        <View style={styles.resultCard}>
+          <Text style={styles.metric}>{result.percent}%</Text>
+          <Text style={styles.subtitle}>
+            {copy.correctCount(result.correctCount, result.totalCount)}
+          </Text>
+          <Text style={styles.resultNote}>{copy.resultNote}</Text>
+        </View>
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -573,20 +569,21 @@ export default function Screen() {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <OptionCard
+                <Pressable
                   key={option.id}
-                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isSelected, selected: isSelected }}
-                  label={optionText}
-                  languageOverride={language}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
                   onPress={() =>
                     setAnswers((current) => ({ ...current, [question.id]: option.id }))
                   }
-                  state={isSelected ? 'selected' : 'idle'}
-                />
+                  style={[styles.option, isSelected ? styles.optionSelected : null]}
+                >
+                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
+                    {optionText}
+                  </Text>
+                </Pressable>
               );
             })}
           </View>
@@ -686,8 +683,42 @@ const styles = StyleSheet.create({
   options: {
     gap: space[1],
   },
+  option: {
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space[1.5],
+  },
+  optionSelected: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueText,
+  },
+  optionText: {
+    color: colors.textSoft,
+    fontSize: typography.navButton.fontSize,
+  },
+  optionTextSelected: {
+    color: colors.badgeBlueText,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
   actionButton: {
     minHeight: space[5] + space[0.5],
+  },
+  resultCard: {
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    padding: space[2],
+  },
+  metric: {
+    color: colors.text,
+    fontSize: typography.subHeadingLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  resultNote: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+    marginTop: space[1],
   },
   breakdownRow: {
     alignItems: 'center',
