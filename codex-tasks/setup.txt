@@ -2,7 +2,6 @@
 
 
 
-   - Clean manager verification on current `origin/main` after `npm ci`:
      `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`,
      `node --check` for `site/app.js`, `site/practice.js`, `site/questions.js`,
      `site/i18n-extras.js`, and `site/ebook-tools.js`, targeted `git diff --check`,
