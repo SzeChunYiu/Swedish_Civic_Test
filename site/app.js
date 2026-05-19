@@ -1284,6 +1284,7 @@ function smtQuizRender() {
 
   const opts = smtQuizDisplayOptions(q, sessionId).map(({ option: o, originalIndex, displayIndex }) => {
     const letter = String.fromCharCode(65 + displayIndex);
+    const optionText = smtQuizEscapeHtml(o[lang] || o.en);
     let cls = "";
     if (answered) {
       if (originalIndex === q.answer) cls = "is-correct";
@@ -1292,7 +1293,7 @@ function smtQuizRender() {
     return `
       <button class="quiz__opt ${cls}" data-i="${originalIndex}" ${answered ? "disabled" : ""}>
         <span class="key">${letter}</span>
-        <span>${o[lang] || o.en}</span>
+        <span>${optionText}</span>
       </button>`;
   }).join("");
 
@@ -1300,9 +1301,10 @@ function smtQuizRender() {
   if (answered) {
     const right = ans === q.answer;
     const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
+    const explanation = smtQuizEscapeHtml(q.why[lang] || q.why.en);
     feedback = `
       <div class="quiz__feedback ${right ? "" : "is-wrong"}">
-        <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
+        <b>${right ? copy.correct : copy.wrong}</b> ${explanation}
         ${smtQuizSourceRow(q, lang, "quiz__feedback-source")}
         <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
@@ -1318,8 +1320,8 @@ function smtQuizRender() {
   stage.innerHTML = `
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
-      <div class="quiz__crumb">${q.chapter}</div>
-      <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
+      <div class="quiz__crumb">${smtQuizEscapeHtml(q.chapter)}</div>
+      <h2 class="quiz__q">${smtQuizEscapeHtml(q.q[lang] || q.q.en)}</h2>
       ${sourceRow}
       <div class="quiz__opts">${opts}</div>
       ${feedback}
