@@ -2908,6 +2908,11 @@ const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
     },
   },
 ];
+const EXPECTED_EFFECTIVE_ENTITLEMENT_EXPIRY_TEST_LABELS = [
+  'invalid time-bounded dates are ignored',
+  'mixed ISO offsets are ordered by timestamp',
+  'equal expiry timestamps keep the first active source string',
+];
 const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
   { route: '/onboarding', file: 'app/onboarding.tsx' },
   { route: '/practice', file: 'app/(tabs)/practice.tsx' },
@@ -6408,6 +6413,8 @@ const REMOVE_ADS_ENTITLEMENTS = premiumModule.REMOVE_ADS_ENTITLEMENTS;
 const hasAdsDisabled = premiumModule.hasAdsDisabled;
 const isPremiumUser = premiumModule.isPremiumUser;
 const premiumConfig = premiumModule.premiumConfig;
+const effectiveEntitlementModule = loadTs('lib/monetization/effectiveEntitlements.ts');
+const resolveEffectiveEntitlement = effectiveEntitlementModule.resolveEffectiveEntitlement;
 const purchaseModule = loadTs('lib/monetization/purchases.ts');
 const REMOVE_ADS_PRICE_LABEL = purchaseModule.REMOVE_ADS_PRICE_LABEL;
 const REMOVE_ADS_PRODUCT_ID = purchaseModule.REMOVE_ADS_PRODUCT_ID;
@@ -6437,6 +6444,8 @@ let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
 let premiumEntitlementParityValidated = false;
+let effectiveEntitlementExpiryOrderingCasesValidated = 0;
+let effectiveEntitlementExpiryOrderingParityValidated = false;
 let questionDisclaimerRoutesValidated = 0;
 let questionDisclaimerCopyValidated = false;
 let mockExamConfigTypeFieldsValidated = 0;
@@ -6844,6 +6853,9 @@ if (!isObjectRecord(REMOVE_ADS_ENTITLEMENTS)) {
 if (typeof hasAdsDisabled !== 'function') fail('hasAdsDisabled export is not a function');
 if (typeof isPremiumUser !== 'function') fail('isPremiumUser export is not a function');
 if (!isObjectRecord(premiumConfig)) fail('premiumConfig export is not an object');
+if (typeof resolveEffectiveEntitlement !== 'function') {
+  fail('resolveEffectiveEntitlement export is not a function');
+}
 if (!hasText(REMOVE_ADS_PRICE_LABEL)) fail('REMOVE_ADS_PRICE_LABEL export is missing');
 if (!hasText(REMOVE_ADS_PRODUCT_ID)) fail('REMOVE_ADS_PRODUCT_ID export is missing');
 if (!isObjectRecord(releaseMonetizationPolicy)) {
@@ -7697,6 +7709,127 @@ function validatePremiumEntitlementParity() {
 
   if (valid && premiumEntitlementStatesValidated === EXPECTED_PREMIUM_ENTITLEMENT_STATES.length) {
     premiumEntitlementParityValidated = true;
+  }
+}
+
+function validateEffectiveEntitlementExpiryOrderingParity() {
+  let valid = true;
+  let resolverSource = '';
+  let testSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    resolverSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/effectiveEntitlements.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/effectiveEntitlements.ts could not be read: ${error.message}`);
+  }
+
+  try {
+    testSource = fs.readFileSync(
+      path.join(repoRoot, 'tests/v1-1-effective-entitlements.test.js'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`tests/v1-1-effective-entitlements.test.js could not be read: ${error.message}`);
+  }
+
+  if (typeof resolveEffectiveEntitlement !== 'function') {
+    reject('resolveEffectiveEntitlement must be available for expiry ordering parity');
+  }
+
+  if (resolverSource) {
+    if (!/function\s+parseIsoTimestamp\(\s*iso:\s*string\s*\)/.test(resolverSource)) {
+      reject('effective entitlement expiry ordering must parse ISO timestamps before comparison');
+    }
+    if (
+      !/const\s+aTime\s*=\s*parseIsoTimestamp\(a\);/.test(resolverSource) ||
+      !/const\s+bTime\s*=\s*parseIsoTimestamp\(b\);/.test(resolverSource)
+    ) {
+      reject('effective entitlement expiry ordering must compare parsed aTime and bTime values');
+    }
+    if (/return\s+a\s*<\s*b\s*\?\s*a\s*:\s*b;/.test(resolverSource)) {
+      reject('effective entitlement expiry ordering must not use lexicographic ISO comparison');
+    }
+    if (!/return\s+bTime\s*<\s*aTime\s*\?\s*b\s*:\s*a;/.test(resolverSource)) {
+      reject(
+        'effective entitlement expiry ordering must preserve the original earliest expiry string',
+      );
+    }
+  }
+
+  if (testSource) {
+    EXPECTED_EFFECTIVE_ENTITLEMENT_EXPIRY_TEST_LABELS.forEach((label) => {
+      if (!testSource.includes(label)) {
+        reject(`effective entitlements tests must cover ${label}`);
+      }
+    });
+  }
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const runtimeCases = [
+    {
+      label: 'invalid dates are ignored in favor of valid active grants',
+      input: {
+        proTrial: { expiresAtIso: 'not-a-date' },
+        referralGrant: { expiresAtIso: '2026-05-22T12:00:00.000Z' },
+        now,
+      },
+      expectedNextExpiryIso: '2026-05-22T12:00:00.000Z',
+    },
+    {
+      label: 'mixed ISO offsets are ordered by absolute timestamp',
+      input: {
+        proTrial: { expiresAtIso: '2026-05-20T00:00:00-05:00' },
+        referralGrant: { expiresAtIso: '2026-05-20T03:00:00Z' },
+        now,
+      },
+      expectedNextExpiryIso: '2026-05-20T03:00:00Z',
+    },
+    {
+      label: 'equal timestamps preserve first active expiry string',
+      input: {
+        proTrial: { expiresAtIso: '2026-05-20T05:00:00Z' },
+        referralGrant: { expiresAtIso: '2026-05-20T00:00:00-05:00' },
+        now,
+      },
+      expectedNextExpiryIso: '2026-05-20T05:00:00Z',
+    },
+  ];
+
+  runtimeCases.forEach(({ label, input, expectedNextExpiryIso }) => {
+    let actual;
+    try {
+      actual = resolveEffectiveEntitlement(input);
+    } catch (error) {
+      reject(`effective entitlement expiry case ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actual?.nextExpiryIso !== expectedNextExpiryIso) {
+      reject(
+        `effective entitlement expiry case ${label} returned ${JSON.stringify(
+          actual?.nextExpiryIso,
+        )}, expected ${JSON.stringify(expectedNextExpiryIso)}`,
+      );
+      return;
+    }
+
+    effectiveEntitlementExpiryOrderingCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    effectiveEntitlementExpiryOrderingCasesValidated === runtimeCases.length &&
+    EXPECTED_EFFECTIVE_ENTITLEMENT_EXPIRY_TEST_LABELS.length === 3
+  ) {
+    effectiveEntitlementExpiryOrderingParityValidated = true;
   }
 }
 
@@ -15454,6 +15587,7 @@ validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
+validateEffectiveEntitlementExpiryOrderingParity();
 validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
@@ -15579,6 +15713,8 @@ console.log(
       removeAdsEntitlementHookParityValidated,
       premiumEntitlementStatesValidated,
       premiumEntitlementParityValidated,
+      effectiveEntitlementExpiryOrderingCasesValidated,
+      effectiveEntitlementExpiryOrderingParityValidated,
       questionDisclaimerRoutesValidated,
       questionDisclaimerCopyValidated,
       mockExamConfigTypeFieldsValidated,
