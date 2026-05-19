@@ -83,6 +83,57 @@ function assertReachableBox(box, label) {
   assert.ok(box.right <= 390, `${label} should fit inside the 390px viewport`);
 }
 
+test('production static page does not load the Tweaks design panel', async () => {
+  const indexHtml = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
+
+  assert.doesNotMatch(indexHtml, /type="text\/babel"/);
+  assert.doesNotMatch(indexHtml, /tweaks-panel\.jsx/);
+  assert.doesNotMatch(indexHtml, /tweaks\.jsx/);
+  assert.doesNotMatch(indexHtml, /react\.development\.js/);
+  assert.doesNotMatch(indexHtml, /react-dom\.development\.js/);
+  assert.doesNotMatch(indexHtml, /@babel\/standalone|babel\.min\.js/);
+
+  const server = await createStaticServer();
+  const browser = await chromium.launch({
+    executablePath: chromeExecutablePath(),
+  });
+  const requestedUrls = [];
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 390, height: 840 } });
+    page.on('request', (request) => requestedUrls.push(request.url()));
+    await page.addInitScript(() => {
+      window.localStorage.setItem('smt_consent', 'min');
+      window.localStorage.setItem('smt_buddy_hidden', '1');
+    });
+
+    await page.goto(server.url, { waitUntil: 'domcontentloaded' });
+
+    const publicSnapshot = await page.evaluate(() => ({
+      bodyText: document.body.innerText,
+      tweakPanelCount: document.querySelectorAll('.twk-panel').length,
+      tweakControlCount: document.querySelectorAll('[class^="twk-"], [class*=" twk-"]').length,
+    }));
+
+    assert.equal(publicSnapshot.tweakPanelCount, 0);
+    assert.equal(publicSnapshot.tweakControlCount, 0);
+    assert.doesNotMatch(publicSnapshot.bodyText, /\bTweaks\b/);
+    assert.doesNotMatch(publicSnapshot.bodyText, /Clear localStorage to re-test the banner/);
+    assert.doesNotMatch(publicSnapshot.bodyText, /\bNo ads\b/);
+    assert.deepEqual(
+      requestedUrls.filter((url) =>
+        /react\.development\.js|react-dom\.development\.js|babel\.min\.js|tweaks-panel\.jsx|tweaks\.jsx/.test(
+          url,
+        ),
+      ),
+      [],
+    );
+  } finally {
+    await browser.close();
+    await server.close();
+  }
+});
+
 test('static mobile topbar reaches key routes and settings without horizontal overflow', async () => {
   const server = await createStaticServer();
   const browser = await chromium.launch({
