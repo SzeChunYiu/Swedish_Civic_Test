@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
@@ -66,12 +67,15 @@ export function OptionCard({
   label,
   labelStyle,
   languageOverride,
+  onBlur,
+  onFocus,
   resultLabel,
   state = 'idle',
   stateLabel,
   style,
   ...pressableProps
 }: OptionCardProps) {
+  const [focused, setFocused] = useState(false);
   const settingsLanguage = useSettingsStore((settings) => settings.language);
   const language = languageOverride ?? settingsLanguage;
   const resolvedStateLabel = stateLabel ?? defaultStateLabels[language][state];
@@ -104,9 +108,18 @@ export function OptionCard({
       accessibilityState={resolvedAccessibilityState}
       disabled={isDisabled}
       hitSlop={hitSlop ?? space[1]}
+      onBlur={(event) => {
+        setFocused(false);
+        onBlur?.(event);
+      }}
+      onFocus={(event) => {
+        setFocused(true);
+        onFocus?.(event);
+      }}
       style={({ pressed }) => [
         styles.base,
         getCardStateStyle(state),
+        focused && !isDisabled ? styles.focused : null,
         pressed && !isDisabled ? styles.pressed : null,
         isDisabled ? styles.disabled : null,
         style,
@@ -220,6 +233,9 @@ const styles = StyleSheet.create({
   },
   pressed: {
     transform: [{ scale: motion.pressedScale }],
+  },
+  focused: {
+    borderColor: colors.focus,
   },
   disabled: {
     opacity: motion.pressedScale,

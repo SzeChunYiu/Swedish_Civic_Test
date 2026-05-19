@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -710,7 +709,9 @@ export default function Screen() {
                   accessibilityState={{ checked: isSelected, selected: isSelected }}
                   label={optionText}
                   languageOverride={language}
-                  onPress={() => handleSelectAnswer(question.id, option.id)}
+                  onPress={() =>
+                    setAnswers((current) => ({ ...current, [question.id]: option.id }))
+                  }
                   state={isSelected ? 'selected' : 'idle'}
                 />
               );

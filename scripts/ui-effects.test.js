@@ -2072,6 +2072,7 @@ test('exam route exposes page and review section headings as headers', () => {
 
 test('exam controls mirror selected and disabled state to web aria attributes', () => {
   const source = read('app/(tabs)/exam.tsx');
+  const optionCardSource = read('components/OptionCard.tsx');
 
   assert.match(source, /import \{ OptionCard \} from '..\/..\/components\/OptionCard';/);
   assert.match(source, /aria-disabled=\{!canStartAccessibleExam \|\| startingAccessibleExam\}/);
@@ -2079,19 +2080,30 @@ test('exam controls mirror selected and disabled state to web aria attributes', 
     source,
     /aria-disabled=\{!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam\}/,
   );
+  assert.match(source, /<OptionCard/);
   assert.match(source, /aria-checked=\{isSelected\}/);
   assert.match(source, /aria-selected=\{isSelected\}/);
+  assert.match(source, /accessibilityRole="radio"/);
   assert.match(source, /aria-disabled=\{!canSubmit\}/);
   assert.match(
     source,
     /<OptionCard[\s\S]*accessibilityLabel=\{copy\.answerAccessibilityLabel\(optionText, index \+ 1\)\}[\s\S]*accessibilityRole="radio"[\s\S]*accessibilityState=\{\{ checked: isSelected, selected: isSelected \}\}[\s\S]*state=\{isSelected \? 'selected' : 'idle'\}/,
   );
   assert.match(source, /accessibilityLabel=\{copy\.submitAccessibilityLabel\}/);
-  assert.match(source, /languageOverride=\{language\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: isSelected, selected: isSelected \}\}/);
   assert.match(source, /accessibilityState=\{\{ disabled: !canSubmit \}\}/);
+  assert.match(source, /languageOverride=\{language\}/);
+  assert.match(source, /state=\{isSelected \? 'selected' : 'idle'\}/);
   assert.doesNotMatch(source, /<Pressable[\s\S]*copy\.answerAccessibilityLabel/);
-  assert.doesNotMatch(source, /styles\.option(?:Selected|Text)?\b/);
+  assert.doesNotMatch(source, /style=\{\[styles\.option/);
+  assert.doesNotMatch(source, /optionSelected:/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.match(optionCardSource, /const \[focused, setFocused\] = useState\(false\);/);
+  assert.match(optionCardSource, /onFocus=\{\(event\) => \{/);
+  assert.match(optionCardSource, /onBlur=\{\(event\) => \{/);
+  assert.match(optionCardSource, /focused && !isDisabled \? styles\.focused : null/);
+  assert.match(optionCardSource, /pressed && !isDisabled \? styles\.pressed : null/);
+  assert.match(optionCardSource, /focused: \{\s*borderColor: colors\.focus,\s*\}/);
 });
 
 test('exam results are final after submission', () => {
