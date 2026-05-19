@@ -1,22 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-
-async function closeLaunchAdIfPresent(page: Page) {
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-
-  if (
-    await closeLaunchAd
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await closeLaunchAd.first().click();
-  }
-
-  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
-}
+import { dismissBlockingModals } from './browserLaunch';
 
 function homeBannerAd(page: Page) {
   return page.getByLabel(
@@ -45,7 +29,7 @@ test('Remove Ads purchase hides exported web ad stubs by entitlement', async ({ 
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/home', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
 
   await expect(homeBannerAd(page)).toBeVisible();
 
@@ -63,11 +47,11 @@ test('Remove Ads purchase hides exported web ad stubs by entitlement', async ({ 
   await expect(homeBannerAd(page)).toHaveCount(0);
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
   await expect(chapterListAd(page)).toHaveCount(0);
 
   await page.goto('/mistakes', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
   await expect(nativeStudyAd(page)).toHaveCount(0);
 
   await page.goto('/exam', { waitUntil: 'networkidle' });

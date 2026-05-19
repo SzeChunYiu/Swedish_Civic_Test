@@ -1,33 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-
-async function closeBlockingModalsIfPresent(page: Page) {
-  const closeLaunchSponsorAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (
-    await closeLaunchSponsorAd
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await closeLaunchSponsorAd.first().click();
-  }
-
-  const skipFirstRunGuide = page.getByRole('button', {
-    name: /Skip the guide|Hoppa över guiden/,
-  });
-  if (
-    await skipFirstRunGuide
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await skipFirstRunGuide.first().click();
-  }
-
-  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
-}
+import { dismissBlockingModals } from './browserLaunch';
 
 async function expectCompactTarget(locator: Locator, label: string) {
   const box = await locator.boundingBox();
@@ -39,12 +12,17 @@ async function expectCompactTarget(locator: Locator, label: string) {
 }
 
 async function openLanguagePicker(page: Page) {
-  await page
-    .getByRole('button', {
-      name: /Nuvarande språk SV\. Öppna språkväljaren\.|Current language SV\. Open language picker\./,
-    })
-    .click();
+  const trigger = page.getByRole('button', {
+    name: /Nuvarande språk SV\. Öppna språkväljaren\.|Current language SV\. Open language picker\./,
+  });
+
+  await expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.getByRole('menu', { name: 'Språkväljare' })).toBeVisible();
+
+  return trigger;
 }
 
 test('topbar language picker exposes one compact close target and keeps disabled rows open', async ({
@@ -58,9 +36,9 @@ test('topbar language picker exposes one compact close target and keeps disabled
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/home', { waitUntil: 'networkidle' });
-  await closeBlockingModalsIfPresent(page);
+  await dismissBlockingModals(page);
 
-  await openLanguagePicker(page);
+  const trigger = await openLanguagePicker(page);
 
   const menu = page.getByRole('menu', { name: 'Språkväljare' });
   const closeButtons = page.getByRole('button', { name: 'Stäng språkväljaren' });
@@ -77,10 +55,12 @@ test('topbar language picker exposes one compact close target and keeps disabled
   await page.mouse.click(8, 8);
   await expect(menu).toHaveCount(0);
   await expect(closeButtons).toHaveCount(0);
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
   await openLanguagePicker(page);
   await closeButtons.first().click();
   await expect(page.getByRole('menu', { name: 'Språkväljare' })).toHaveCount(0);
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
   expect(consoleErrors).toEqual([]);
 });

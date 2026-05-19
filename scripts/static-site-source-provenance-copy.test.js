@@ -16,12 +16,16 @@ function uniqueSorted(values) {
   return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
 
-function staticQuestionSourceTitles() {
+function staticQuestionBank() {
   const context = { window: {} };
   context.globalThis = context.window;
   vm.createContext(context);
   vm.runInContext(read('site/questions.js'), context, { timeout: 3000 });
-  return uniqueSorted(context.window.SMT_QUESTIONS.map((question) => question.source?.title));
+  return context.window.SMT_QUESTIONS;
+}
+
+function staticQuestionSourceTitles() {
+  return uniqueSorted(staticQuestionBank().map((question) => question.source?.title));
 }
 
 function sourceClaimTitles(indexHtml) {
@@ -103,6 +107,24 @@ test('static source claims match the shipped question-bank source titles', () =>
   assert.match(surface, /UHR/i);
   assert.match(surface, /current question bank|nuvarande fr[aå]gebanken/i);
   assert.match(surface, /Primary source\s+1|Prim[aä]r k[aä]lla\s+1/i);
+});
+
+test('static question bank exports visible question provenance', () => {
+  const questions = staticQuestionBank();
+  const supported = new Set(['uhr', 'derived', 'editorial']);
+  const counts = { uhr: 0, derived: 0, editorial: 0 };
+
+  for (const question of questions) {
+    assert.ok(
+      supported.has(question.questionProvenance),
+      `${question.id} should expose supported questionProvenance`,
+    );
+    counts[question.questionProvenance] += 1;
+  }
+
+  assert.equal(questions.find((question) => question.id === 'q001')?.questionProvenance, 'uhr');
+  assert.ok(counts.uhr > 0, 'static bank should include UHR provenance rows');
+  assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
 });
 
 test('static source provenance copy rejects unshipped external source families', () => {

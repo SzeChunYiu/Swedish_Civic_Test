@@ -1,23 +1,10 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-
-async function dismissBlockingUi(page: Page) {
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
-
-  const skipGuide = page.getByRole('button', { name: /Skip guide|Hoppa över guiden/ });
-  if (await skipGuide.isVisible()) {
-    await skipGuide.click();
-  }
-}
+import { dismissBlockingModals } from './browserLaunch';
 
 async function useEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingUi(page);
+  await dismissBlockingModals(page);
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
@@ -51,8 +38,6 @@ async function expectPlacementCta({
   await expectReachableButton(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' }));
   await expect(page.getByText('Buy 29 SEK')).toBeVisible();
 }
-
-import { dismissBlockingModals } from './browserLaunch';
 
 test('ad placements announce Remove Ads in web accessible names', async ({ page }) => {
   const consoleErrors: string[] = [];
@@ -112,7 +97,7 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
   await useEnglishSupport(page);
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  await dismissBlockingUi(page);
+  await dismissBlockingModals(page);
   const learnAd = page
     .getByLabel(/Google AdMob: Chapter list banner\..*Hidden after Remove Ads is active\./i)
     .first();
@@ -123,7 +108,7 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
   });
 
   await page.goto('/practice', { waitUntil: 'networkidle' });
-  await dismissBlockingUi(page);
+  await dismissBlockingModals(page);
   await page
     .getByLabel(/Select answer /)
     .first()
@@ -138,7 +123,7 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
   });
 
   await page.goto('/mistakes', { waitUntil: 'networkidle' });
-  await dismissBlockingUi(page);
+  await dismissBlockingModals(page);
   const mistakesAd = page
     .getByLabel(/Test native ad: Sponsored study placement\..*Hidden after Remove Ads is active\./i)
     .first();
