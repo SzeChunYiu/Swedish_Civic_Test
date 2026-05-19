@@ -8,7 +8,6 @@ import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent'
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let launchPopupShownThisRuntime = false;
-let launchPopupLoadInFlight = false;
 
 export function LaunchPopupAd({
   entitlements = FREE_ENTITLEMENTS,
@@ -19,7 +18,6 @@ export function LaunchPopupAd({
 
   useEffect(() => {
     if (
-      launchPopupLoadInFlight ||
       !mobileAdsConsent.initialized ||
       !shouldShowLaunchPopupAd({
         alreadyShownThisLaunch: launchPopupShownThisRuntime,
@@ -34,21 +32,13 @@ export function LaunchPopupAd({
     if (!unitId) return undefined;
 
     let unsubscribe: (() => void) | undefined;
-    let unsubscribeError: (() => void) | undefined;
-    let didReachShowPath = false;
 
     try {
       const appOpenAd = AppOpenAd.createForAdRequest(unitId, {
         requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
       });
 
-      launchPopupLoadInFlight = true;
-
       unsubscribe = appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
-        launchPopupShownThisRuntime = true;
-        launchPopupLoadInFlight = false;
-        didReachShowPath = true;
-
         try {
           void Promise.resolve(appOpenAd.show()).catch(() => undefined);
         } catch {
@@ -56,22 +46,11 @@ export function LaunchPopupAd({
         }
       });
 
-      unsubscribeError = appOpenAd.addAdEventListener(AdEventType.ERROR, () => {
-        launchPopupLoadInFlight = false;
-      });
-
       appOpenAd.load();
-      return () => {
-        unsubscribe?.();
-        unsubscribeError?.();
-        if (!didReachShowPath) {
-          launchPopupLoadInFlight = false;
-        }
-      };
+      launchPopupShownThisRuntime = true;
+      return unsubscribe;
     } catch {
       unsubscribe?.();
-      unsubscribeError?.();
-      launchPopupLoadInFlight = false;
       return undefined;
     }
   }, [entitlements, mobileAdsConsent]);

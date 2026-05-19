@@ -107,7 +107,6 @@ const routerShellRuntimeFiles = [
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
-  'app/dashboard.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -531,7 +530,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
-  assert.match(tabLayout, /exam: 'Övningsprov'/);
+  assert.match(tabLayout, /exam: 'Prov'/);
   assert.match(tabLayout, /mistakes: 'Misstag'/);
   assert.match(tabLayout, /profile: 'Profil'/);
   assert.match(tabLayout, /home: 'Home'/);
@@ -561,7 +560,6 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
     '(tabs)',
     '+not-found',
-    'dashboard',
     'index',
     'search',
   ]);

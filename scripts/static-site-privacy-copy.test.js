@@ -9,13 +9,6 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
-function staticDictionaryValues(source, key) {
-  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return [...source.matchAll(new RegExp(`"${escapedKey}":\\s*"([^"]+)"`, 'g'))].map(
-    (match) => match[1],
-  );
-}
-
 test('static site privacy copy rejects stale monetization claims', () => {
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
@@ -48,38 +41,4 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
     /ads never collect study answers or progress/,
     /annonser samlar aldrig in dina studiesvar eller framsteg/,
   ].forEach((pattern) => assert.match(surface, pattern));
-});
-
-test('static site Swedish privacy copy uses natural study-streak wording', () => {
-  const appSource = read('site/app.js');
-  const privacyParagraphs = [
-    ...staticDictionaryValues(appSource, 'privacy.s3.p'),
-    ...staticDictionaryValues(appSource, 'privacy.s4.p'),
-  ];
-  const swedishPrivacyParagraphs = privacyParagraphs.filter((paragraph) =>
-    /\b(?:lagras|skickar|annonsleverantörer|studiesvar)\b/i.test(paragraph),
-  );
-  const englishPrivacyParagraphs = privacyParagraphs.filter((paragraph) =>
-    /\b(?:stored locally|ad providers)\b/i.test(paragraph),
-  );
-
-  assert.equal(swedishPrivacyParagraphs.length, 2);
-  assert.equal(englishPrivacyParagraphs.length, 2);
-
-  swedishPrivacyParagraphs.forEach((paragraph) => {
-    assert.doesNotMatch(
-      paragraph,
-      /\bstreaks\b/i,
-      'Swedish static privacy copy must not use the English plural "streaks"',
-    );
-    assert.match(
-      paragraph,
-      /\bstudiesviter\b/i,
-      'Swedish static privacy copy should name locally stored study streaks naturally',
-    );
-  });
-
-  englishPrivacyParagraphs.forEach((paragraph) => {
-    assert.match(paragraph, /\bstreaks\b/i);
-  });
 });

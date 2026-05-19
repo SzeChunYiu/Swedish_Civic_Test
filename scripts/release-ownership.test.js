@@ -30,7 +30,7 @@ test('release ownership target is SzeChunYiu and blocks legacy-owner drift', () 
     packageJson.scripts['test:ownership'],
     'node --test scripts/release-ownership.test.js',
   );
-  assert.match(packageJson.scripts['test:all'], /test:ownership/);
+  assert.match(packageJson.scripts.test, /test:ownership/);
 
   const requiredFiles = [
     'scripts/release-preflight.js',

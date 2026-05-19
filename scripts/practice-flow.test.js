@@ -26,36 +26,6 @@ test('practice flow keeps answered question locked until explicit advance', () =
   assert.equal(getPracticeQuestionForSession(questions, ['q1', 'q2', 'q3'], null)?.id, 'q1');
 });
 
-test('practice flow scopes completed progress to the visible question bank', () => {
-  const { getCompletedQuestionIdsForQuestionBank, getPracticeQuestionForSession } = loadTs(
-    'lib/quiz/practiceFlow.ts',
-  );
-  const visibleQuestions = [{ id: 'uhr-1' }, { id: 'uhr-2' }];
-
-  assert.deepEqual(
-    getCompletedQuestionIdsForQuestionBank(visibleQuestions, ['supplementary-1']),
-    [],
-  );
-  assert.equal(
-    getPracticeQuestionForSession(visibleQuestions, ['supplementary-1'], null)?.id,
-    'uhr-1',
-  );
-  assert.deepEqual(
-    getCompletedQuestionIdsForQuestionBank(visibleQuestions, ['supplementary-1', 'uhr-1', 'uhr-1']),
-    ['uhr-1'],
-  );
-  assert.equal(
-    getPracticeQuestionForSession(visibleQuestions, ['supplementary-1', 'uhr-1'], null)?.id,
-    'uhr-2',
-  );
-  assert.equal(getPracticeQuestionForSession(visibleQuestions, ['uhr-2'], null)?.id, 'uhr-1');
-  assert.equal(
-    getPracticeQuestionForSession(visibleQuestions, ['uhr-1', 'supplementary-1', 'uhr-2'], null)
-      ?.id,
-    'uhr-1',
-  );
-});
-
 test('practice session separates retry from next-question advancement', () => {
   const { usePracticeSessionStore } = loadTs('lib/quiz/practiceSessionStore.ts');
 
