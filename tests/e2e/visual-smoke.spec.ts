@@ -1,11 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type TestInfo } from '@playwright/test';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
 import { dismissBlockingModals } from './browserLaunch';
 
-const screenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+const committedScreenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+const updateCommittedScreenshots = process.env.VISUAL_SMOKE_UPDATE_BASELINE === '1';
 type RouteCapture = {
   name: string;
   route: string;
@@ -47,6 +48,12 @@ function sha256File(filePath: string): string {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
+function screenshotDirFor(testInfo: TestInfo): string {
+  return updateCommittedScreenshots
+    ? committedScreenshotDir
+    : testInfo.outputPath('visual-smoke-screenshots');
+}
+
 function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[] {
   const namesByHash = new Map<string, string[]>();
 
@@ -67,7 +74,8 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
     .map(([hash, names]) => `${hash}: ${names.sort().join(', ')}`);
 }
 
-test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
+test('primary routes render and capture UI/UX screenshots', async ({ page }, testInfo) => {
+  const screenshotDir = screenshotDirFor(testInfo);
   fs.rmSync(screenshotDir, { force: true, recursive: true });
   fs.mkdirSync(screenshotDir, { recursive: true });
   const consoleErrors: string[] = [];
@@ -117,6 +125,10 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
         capturedAt: new Date().toISOString(),
         viewport: 'iPhone 12 via Playwright project config',
         source: 'dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs',
+        artifactDirectory: path.relative(process.cwd(), screenshotDir),
+        artifactPolicy: updateCommittedScreenshots
+          ? 'VISUAL_SMOKE_UPDATE_BASELINE=1 rewrites committed baseline screenshots intentionally.'
+          : 'Default visual-smoke screenshots are written under Playwright test-results so normal verification leaves committed reports unchanged.',
         launchOverlayPolicy:
           'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible overlays.',
         duplicatePolicy:
