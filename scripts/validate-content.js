@@ -81,6 +81,8 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
 ];
+const EXPORT_QUESTION_BANK_EXEC_PATTERN =
+  /execFileSync\(\s*process\.execPath\s*,\s*\[[\s\S]*?['"]scripts\/export-question-bank\.js['"][\s\S]*?\]\s*,\s*\{(?<options>[\s\S]*?)\}\s*\)/g;
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -6500,6 +6502,9 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let exportQuestionBankExecCallsValidated = 0;
+let exportQuestionBankExecCwdPinnedValidated = 0;
+let exportQuestionBankExecCwdParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
@@ -13111,6 +13116,44 @@ function validateQuestionBankCsvContract() {
   });
 }
 
+function validateExportQuestionBankExecCwdParity() {
+  const testPath = path.join(repoRoot, 'tests/content-export-parity.test.js');
+  let source = '';
+
+  try {
+    source = fs.readFileSync(testPath, 'utf8');
+  } catch (error) {
+    fail(
+      `tests/content-export-parity.test.js could not be read for export cwd parity: ${error.message}`,
+    );
+    return;
+  }
+
+  if (!/const repoRoot = path\.resolve\(__dirname, '\.\.'\);/.test(source)) {
+    fail('tests/content-export-parity.test.js missing repoRoot helper for export cwd parity');
+  }
+
+  const execMatches = [...source.matchAll(EXPORT_QUESTION_BANK_EXEC_PATTERN)];
+  exportQuestionBankExecCallsValidated = execMatches.length;
+  exportQuestionBankExecCwdPinnedValidated = execMatches.filter((match) =>
+    /\bcwd:\s*repoRoot\b/.test(match.groups?.options || ''),
+  ).length;
+
+  if (exportQuestionBankExecCallsValidated === 0) {
+    fail('tests/content-export-parity.test.js does not exec scripts/export-question-bank.js');
+    return;
+  }
+
+  if (exportQuestionBankExecCwdPinnedValidated !== exportQuestionBankExecCallsValidated) {
+    fail(
+      `tests/content-export-parity.test.js pins ${exportQuestionBankExecCwdPinnedValidated}/${exportQuestionBankExecCallsValidated} export-question-bank exec cwd values to repoRoot`,
+    );
+    return;
+  }
+
+  exportQuestionBankExecCwdParityValidated = true;
+}
+
 function validateStaticSiteQuestionBankParity() {
   if (failures.length > 0) return;
 
@@ -14237,6 +14280,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
+validateExportQuestionBankExecCwdParity();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
 
@@ -14507,6 +14551,9 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      exportQuestionBankExecCallsValidated,
+      exportQuestionBankExecCwdPinnedValidated,
+      exportQuestionBankExecCwdParityValidated,
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
