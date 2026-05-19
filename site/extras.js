@@ -7,38 +7,11 @@
 (function () {
   "use strict";
 
-  function reducedMotionEnabled() {
-    const fx = window.smtFx;
-    if (fx && typeof fx.prefersReducedMotion === "function") return fx.prefersReducedMotion();
-    try {
-      const root = document.documentElement;
-      return (
-        (root && root.getAttribute && root.getAttribute("data-motion") === "reduce") ||
-        localStorage.getItem("smt_motion") === "reduce" ||
-        (typeof matchMedia === "function" &&
-          matchMedia("(prefers-reduced-motion: reduce)").matches)
-      );
-    } catch {
-      return false;
-    }
-  }
-
-  function clearStandaloneMotionEffects() {
-    ["smt-snow", "smt-vasa"].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.remove();
-    });
-  }
-
-  window.addEventListener("smt:motionchange", (event) => {
-    if (event.detail && event.detail.reduced) clearStandaloneMotionEffects();
-  });
-
   // ---------- Reveal chapter rows on scroll ----------
 
   function setupReveal() {
     const items = document.querySelectorAll(".list-quiet li");
-    if (reducedMotionEnabled() || !items.length || !("IntersectionObserver" in window)) {
+    if (!items.length || !("IntersectionObserver" in window)) {
       items.forEach((el) => el.classList.add("is-in"));
       return;
     }
@@ -111,13 +84,11 @@
     const fx = window.smtFx;
     if (fx) {
       const cols = ["#ff3d8c", "#ff8c1a", "#fecc00", "#3eda9a", "#3aa7ff", "#b46cf4", "#fff"];
-      if (!reducedMotionEnabled()) {
-        for (let i = 0; i < 4; i++) {
-          setTimeout(() => {
-            fx.burst(innerWidth * (.2 + Math.random()*.6), 80 + Math.random()*100,
-              { colors: cols, count: 40, spread: 240 });
-          }, i * 220);
-        }
+      for (let i = 0; i < 4; i++) {
+        setTimeout(() => {
+          fx.burst(innerWidth * (.2 + Math.random()*.6), 80 + Math.random()*100,
+            { colors: cols, count: 40, spread: 240 });
+        }, i * 220);
       }
       fx.toast("💃 Take a chance on me.", { flavor: "win", duration: 2800 });
     }
@@ -127,13 +98,6 @@
   }
 
   function snowEgg() {
-    if (reducedMotionEnabled()) {
-      if (window.smtFx) window.smtFx.toast("❄ Snow.", { duration: 2200 });
-      if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-        "Vinter is here. Sip something hot.", "Vinter är här. Drick något varmt."
-      );
-      return;
-    }
     if (document.getElementById("smt-snow")) return; // already running
     const layer = document.createElement("div");
     layer.id = "smt-snow";
@@ -174,14 +138,6 @@
   }
 
   function vasaEgg() {
-    if (reducedMotionEnabled()) {
-      if (window.smtFx) window.smtFx.toast("⛵ Vasa, on its way.", { duration: 2200 });
-      if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-        "It sank in 1628. Don't get attached.",
-        "Det sjönk 1628. Knyt inte an för mycket."
-      );
-      return;
-    }
     if (document.getElementById("smt-vasa")) return;
     const ship = document.createElement("div");
     ship.id = "smt-vasa";
@@ -269,12 +225,6 @@
     }
   });
   function flagFlutter() {
-    if (reducedMotionEnabled()) {
-      if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-        "Sweden mode. Hej hej.", "Sverige-läge. Hej hej."
-      );
-      return;
-    }
     const flag = document.createElement("div");
     flag.style.cssText = `
       position: fixed; top: 40%; left: 50%;
@@ -314,9 +264,7 @@
     kbuf.push(e.key.toLowerCase());
     if (kbuf.length > SEQ.length) kbuf.shift();
     if (kbuf.join(",") === SEQ.join(",")) {
-      if (window.smtFx && !reducedMotionEnabled()) {
-        window.smtFx.rain({ colors: ["#006aa7", "#fecc00"], count: 160 });
-      }
+      if (window.smtFx) window.smtFx.rain({ colors: ["#006aa7", "#fecc00"], count: 160 });
       if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
         "Sweden mode activated.", "Sverige-läge aktiverat."
       );
@@ -360,7 +308,7 @@
     el.id = "smt-cheats";
     el.innerHTML = `
       <div class="cheats__panel">
-        <button class="cheats__close" data-a11y-label="a11y.close">✕</button>
+        <button class="cheats__close" aria-label="Close">✕</button>
         <h3>Hidden things</h3>
         <ul>
           <li><kbd>fika</kbd> — coffee break</li>
@@ -378,11 +326,8 @@
         <p class="cheats__foot">Hej hej.</p>
       </div>
     `;
-    el.style.cssText =
-      "position:fixed;inset:0;z-index:101;display:grid;place-items:center;background:rgba(11,31,51,.55);backdrop-filter:blur(4px)" +
-      (reducedMotionEnabled() ? "" : ";animation:smt-cheats-in .18s ease-out");
+    el.style.cssText = "position:fixed;inset:0;z-index:101;display:grid;place-items:center;background:rgba(11,31,51,.55);backdrop-filter:blur(4px);animation:smt-cheats-in .18s ease-out";
     document.body.appendChild(el);
-    if (window.smtUpdateStaticControlLabels) window.smtUpdateStaticControlLabels();
     el.addEventListener("click", (e) => {
       if (e.target === el || e.target.closest(".cheats__close")) el.remove();
     });
@@ -399,10 +344,7 @@
     const target = document.querySelector(h);
     if (!target) return;
     e.preventDefault();
-    target.scrollIntoView({
-      behavior: reducedMotionEnabled() ? "auto" : "smooth",
-      block: "start",
-    });
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   window.addEventListener("DOMContentLoaded", setupReveal);
