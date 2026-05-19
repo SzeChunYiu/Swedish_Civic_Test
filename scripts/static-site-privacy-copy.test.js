@@ -9,6 +9,10 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
+function staleRemoveAdsFlagPattern() {
+  return new RegExp(['adsDisabled', 'true'].join('='), 'i');
+}
+
 test('static site privacy copy rejects stale monetization claims', () => {
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
@@ -41,4 +45,18 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
     /ads never collect study answers or progress/,
     /annonser samlar aldrig in dina studiesvar eller framsteg/,
   ].forEach((pattern) => assert.match(surface, pattern));
+});
+
+test('hosted public privacy copy discloses validated Remove Ads receipt metadata', () => {
+  const privacy = read('publishing/public-site/privacy/index.html');
+
+  [/product ID/i, /transaction ID/i, /purchase token/i, /receipt-validation timestamp/i].forEach(
+    (pattern) => assert.match(privacy, pattern),
+  );
+
+  assert.doesNotMatch(privacy, staleRemoveAdsFlagPattern());
+  assert.doesNotMatch(
+    privacy,
+    new RegExp(['only the local', 'adsDisabled'].join('[\\s\\S]{0,40}'), 'i'),
+  );
 });

@@ -17,6 +17,26 @@ function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
 }
 
+function staleRemoveAdsFlagPattern() {
+  return new RegExp(['adsDisabled', 'true'].join('='), 'i');
+}
+
+function staleLocalEntitlementOnlyPattern() {
+  return new RegExp(['only the local', 'adsDisabled'].join('[\\s\\S]{0,40}'), 'i');
+}
+
+function assertNoStaleRemoveAdsReceiptDisclosure(source) {
+  assert.doesNotMatch(source, staleRemoveAdsFlagPattern());
+  assert.doesNotMatch(source, staleLocalEntitlementOnlyPattern());
+}
+
+function assertRemoveAdsReceiptMetadata(source) {
+  assert.match(source, /product ID|produkt-ID/i);
+  assert.match(source, /transaction ID|transaktions-ID/i);
+  assert.match(source, /purchase\s+token|köptoken/i);
+  assert.match(source, /receipt-validation[\s\S]{0,40}timestamp|kvittovalidering/i);
+}
+
 function assertNoStalePublicPrivacyPosture(source) {
   [
     staleWords('no', 'user', 'data', 'is', 'collected'),
@@ -104,6 +124,8 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.match(privacyLabels, /Diagnostics/i);
   assert.match(privacyLabels, /Purchases/i);
   assert.match(privacyLabels, /local device/i);
+  assertRemoveAdsReceiptMetadata(privacyLabels);
+  assertNoStaleRemoveAdsReceiptDisclosure(privacyLabels);
   assert.doesNotMatch(privacyLabels, staleWords('Data', 'Not', 'Collected'));
   assert.doesNotMatch(privacyLabels, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
   assert.doesNotMatch(privacyLabels, staleWords('real', 'ads', 'disabled'));
@@ -123,6 +145,8 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.match(dataSafety, /diagnostics/i);
   assert.match(dataSafety, /Device or other IDs/i);
   assert.match(dataSafety, /purchase history/i);
+  assertRemoveAdsReceiptMetadata(dataSafety);
+  assertNoStaleRemoveAdsReceiptDisclosure(dataSafety);
   assert.match(dataSafety, /Advertising or marketing/i);
   assert.match(dataSafety, /Analytics/i);
   assert.match(dataSafety, /Fraud prevention/i);
@@ -141,6 +165,8 @@ test('public support and privacy URL copy is ready for hosting', () => {
   assert.match(publicCopy, /no personal data/i);
   assert.match(publicCopy, /no account/i);
   assert.match(publicCopy, /not affiliated/i);
+  assertRemoveAdsReceiptMetadata(publicCopy);
+  assertNoStaleRemoveAdsReceiptDisclosure(publicCopy);
   assertCurrentPublicPrivacyPosture(publicCopy);
 });
 
@@ -157,6 +183,8 @@ test('hostable public support and privacy pages are prepared', () => {
   assert.match(privacy, /Sweden Citizenship Test Prep privacy policy/i);
   assert.match(privacy, /no account/i);
   assert.match(privacy, /stored locally on the device/i);
+  assertRemoveAdsReceiptMetadata(privacy);
+  assertNoStaleRemoveAdsReceiptDisclosure(privacy);
   assertCurrentPublicPrivacyPosture(privacy);
   assert.match(privacy, /<html lang="en">/i);
 });

@@ -9,6 +9,17 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function staleRemoveAdsFlagPattern() {
+  return new RegExp(['adsDisabled', 'true'].join('='), 'i');
+}
+
+function assertRemoveAdsReceiptMetadata(source) {
+  assert.match(source, /product ID|produkt-ID/i);
+  assert.match(source, /transaction ID|transaktions-ID/i);
+  assert.match(source, /purchase\s+token|köptoken/i);
+  assert.match(source, /receipt-validation[\s\S]{0,40}timestamp|kvittovalidering/i);
+}
+
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
@@ -30,6 +41,8 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/privacy.tsx'), /29 SEK/i);
   assert.match(read('app/privacy.tsx'), /App Tracking Transparency/i);
   assert.match(read('app/privacy.tsx'), /Google UMP consent/i);
+  assertRemoveAdsReceiptMetadata(read('app/privacy.tsx'));
+  assert.doesNotMatch(read('app/privacy.tsx'), staleRemoveAdsFlagPattern());
   assert.match(read('app/terms.tsx'), /study/i);
   assert.match(read('app/terms.tsx'), /no guarantee/i);
   assert.match(read('app/terms.tsx'), /Användarvillkor/);
