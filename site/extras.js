@@ -308,7 +308,7 @@
     el.id = "smt-cheats";
     el.innerHTML = `
       <div class="cheats__panel">
-        <button class="cheats__close" aria-label="Close">✕</button>
+        <button class="cheats__close" data-a11y-label="a11y.close">✕</button>
         <h3>Hidden things</h3>
         <ul>
           <li><kbd>fika</kbd> — coffee break</li>
@@ -328,6 +328,7 @@
     `;
     el.style.cssText = "position:fixed;inset:0;z-index:101;display:grid;place-items:center;background:rgba(11,31,51,.55);backdrop-filter:blur(4px);animation:smt-cheats-in .18s ease-out";
     document.body.appendChild(el);
+    if (window.smtUpdateStaticControlLabels) window.smtUpdateStaticControlLabels();
     el.addEventListener("click", (e) => {
       if (e.target === el || e.target.closest(".cheats__close")) el.remove();
     });
