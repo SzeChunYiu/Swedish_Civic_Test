@@ -1395,6 +1395,125 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
 ];
+const EXPECTED_SEARCH_ROUTE_COPY_LABELS = {
+  sv: [
+    '${count} samhällsbegrepp i referensen',
+    'Bläddra bland kapitel',
+    'Gå till alla kapitel',
+    'Rensa sökning',
+    'Rensa sökfältet',
+    'Prova ett annat ord, en myndighet eller ett kapitelnamn.',
+    'Inga begrepp matchar din sökning',
+    'Sökbar referens',
+    '${visibleCount} av ${totalCount} samhällsbegrepp visas',
+    'Öppna kapitlet ${chapterName}',
+    'Sök bland samhällsbegrepp och kapitelkopplingar',
+    'Sök samhällsbegrepp',
+    'Sök begrepp',
+    'Sök demokrati, kommun, välfärd ...',
+    'Slå upp centrala ord och öppna kapitlet där begreppet används i frågebanken.',
+    'Begreppsreferens',
+    'En snabb ordlista för centrala samhällsbegrepp, med svenska och engelska förklaringar.',
+    '${primaryTerm}. ${explanation}. Kopplat kapitel: ${chapterName}.',
+    'Sök begrepp, kapitel och förklaringar',
+  ],
+  en: [
+    '${count} civic reference terms',
+    'Browse chapters',
+    'Go to all chapters',
+    'Clear search',
+    'Clear the search field',
+    'Try another word, authority, or chapter name.',
+    'No terms match your search',
+    'Searchable reference',
+    '${visibleCount} of ${totalCount} civic reference terms shown',
+    'Open the chapter ${chapterName}',
+    'Search civic reference terms and chapter links',
+    'Search civic terms',
+    'Search terms',
+    'Search democracy, municipality, welfare ...',
+    'Look up central words and open the chapter where the term appears in the question bank.',
+    'Civic reference terms',
+    'A quick glossary for key civic terms, with Swedish and English explanations.',
+    '${primaryTerm}. ${explanation}. Linked chapter: ${chapterName}.',
+    'Search terms, chapters, and explanations',
+  ],
+};
+const EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'search route must import AppLanguage from settings'],
+  ['type SearchRouteCopy = {', 'search route must define a typed copy contract'],
+  [
+    'const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {',
+    'search route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'search route must read language from settings store',
+  ],
+  [
+    'const copy = searchRouteCopy[language];',
+    'search route must select copy from settings language',
+  ],
+  ["import { chapters } from '../data/chapters';", 'search route must import chapters'],
+  ["import { glossaryTerms } from '../data/glossary';", 'search route must import glossary terms'],
+  [
+    'copy.filteredSummary(filteredTerms.length, termsWithChapters.length)',
+    'search route filtered result count must render localized copy',
+  ],
+  [
+    'copy.allTermsSummary(termsWithChapters.length)',
+    'search route full result count must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.searchInputAccessibilityLabel}',
+    'search input must expose localized accessibility copy',
+  ],
+  ['placeholder={copy.searchPlaceholder}', 'search input placeholder must render localized copy'],
+  [
+    'accessibilityLabel={copy.clearSearchAccessibilityLabel}',
+    'clear action must expose localized accessibility copy',
+  ],
+  ['disabled={query.length === 0}', 'clear action must be disabled when search is empty'],
+  ["onPress={() => setQuery('')}", 'clear action must reset the search query'],
+  ['{copy.clearSearch}', 'clear action must render localized copy'],
+  [
+    "const primaryTerm = language === 'en' ? term.termEn : term.termSv;",
+    'search results must render primary glossary terms in the selected language',
+  ],
+  [
+    "const secondaryTerm = language === 'en' ? term.termSv : term.termEn;",
+    'search results must keep the opposite-language glossary term as secondary context',
+  ],
+  [
+    "const explanation = language === 'en' ? term.explanationEn : term.explanationSv;",
+    'search results must render explanations in the selected language',
+  ],
+  [
+    'const termSummary = copy.termAccessibilityLabel({',
+    'search results must build localized term accessibility summaries',
+  ],
+  [
+    'accessibilityLabel={copy.openChapterAccessibilityLabel(chapterName)}',
+    'chapter links must expose localized accessibility copy',
+  ],
+  [
+    'href={`/chapter/${term.chapterId}`}',
+    'chapter links must route to the matching glossary chapter',
+  ],
+  [
+    'accessibilityLabel={copy.browseChaptersAccessibilityLabel}',
+    'browse chapters link must expose localized accessibility copy',
+  ],
+  ['href="/(tabs)/learn"', 'browse chapters link must route to Learn'],
+  [
+    'glossaryTermMatchesQuery(term, chapter, normalizedQuery)',
+    'search route must use the glossary result matching contract',
+  ],
+  [
+    'function glossaryTermMatchesQuery(',
+    'search route must keep glossary result matching in a named contract',
+  ],
+];
 const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
     label: 'practice question title',
@@ -6464,6 +6583,8 @@ let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
 let quizRouteCopyParityValidated = false;
+let searchRouteCopyParityCasesValidated = 0;
+let searchRouteCopyParityValidated = false;
 let practiceRouteHeadersValidated = 0;
 let practiceRouteHeaderParityValidated = false;
 let chapterRouteHeadersValidated = 0;
@@ -8435,6 +8556,63 @@ function validateQuizRouteCopyParity() {
   );
   if (valid && quizRouteCopyLabelsValidated === expectedLabelCount) {
     quizRouteCopyParityValidated = true;
+  }
+}
+
+function validateSearchRouteCopyParity() {
+  let valid = true;
+  let searchRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!searchRoute.includes(snippet)) {
+      reject(message);
+      return;
+    }
+    searchRouteCopyParityCasesValidated += 1;
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_SEARCH_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`search route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!searchRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`search route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`search route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) searchRouteCopyParityCasesValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_SEARCH_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  const expectedCaseCount = EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS.length + expectedLabelCount;
+  if (valid && searchRouteCopyParityCasesValidated === expectedCaseCount) {
+    searchRouteCopyParityValidated = true;
   }
 }
 
@@ -15597,6 +15775,7 @@ validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
 validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
+validateSearchRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateChapterRouteHeaderParity();
@@ -15733,6 +15912,8 @@ console.log(
       quizRouteHeaderParityValidated,
       quizRouteCopyLabelsValidated,
       quizRouteCopyParityValidated,
+      searchRouteCopyParityCasesValidated,
+      searchRouteCopyParityValidated,
       practiceRouteHeadersValidated,
       practiceRouteHeaderParityValidated,
       practiceRouteCopyLabelsValidated,
