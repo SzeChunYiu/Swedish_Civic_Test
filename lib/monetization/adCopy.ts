@@ -31,7 +31,7 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
       home_banner: 'Annons på startsidan',
       quiz_completed_interstitial: 'Annons efter övning',
       results_native: 'Annons i resultat och misstag',
-      rewarded_extra_exam: 'Annons för extra prov',
+      rewarded_extra_exam: 'Annons för extra övningsprov',
     },
     previewHint: 'Sponsrad annonsförhandsvisning.',
     removeAdsHint: 'Döljs när Ta bort annonser är aktivt.',

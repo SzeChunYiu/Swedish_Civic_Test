@@ -1048,6 +1048,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
+  assert.match(copySource, /rewarded_extra_exam: 'Annons för extra övningsprov'/);
+  assert.doesNotMatch(copySource, /\bAnnons för extra prov\b|\bextra prov\b/i);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
   assert.match(copySource, /AdMob test unit active - web preview/);
