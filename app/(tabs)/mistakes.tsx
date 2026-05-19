@@ -1,8 +1,9 @@
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/Button';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -92,6 +93,7 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
 }
 
 export default function Screen() {
+  const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
@@ -201,14 +203,14 @@ export default function Screen() {
             {copy.emptyTitle}
           </Text>
           <Text style={styles.emptyText}>{copy.emptyText}</Text>
-          <Link
+          <Button
             accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
-            accessibilityRole="link"
-            href="/practice"
-            style={styles.practiceLink}
+            accessibilityRole="button"
+            onPress={() => router.push('/practice')}
+            style={styles.practiceButton}
           >
             {copy.emptyPracticeLink}
-          </Link>
+          </Button>
         </View>
       ) : null}
     </ScrollView>
@@ -312,16 +314,8 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
   },
-  practiceLink: {
+  practiceButton: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
     marginTop: space[1],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
 });
