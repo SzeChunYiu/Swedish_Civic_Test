@@ -30,7 +30,7 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
       'Följ framsteg lokalt på din enhet utan konto.',
     ],
     subtitle:
-      'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
+      'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du svarat fel på.',
     title: 'Förbered dig lugnt för samhällskunskapsprovet',
   },
   en: {

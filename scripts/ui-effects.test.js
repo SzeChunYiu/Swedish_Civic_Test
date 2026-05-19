@@ -298,11 +298,13 @@ test('onboarding route exposes its primary title as a header', () => {
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /\{copy\.title\}/);
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
+  assert.match(source, /genomgång av frågor du svarat fel på/);
   assert.match(source, /Prepare calmly for the civic test/);
   assert.match(source, /Börja studera/);
   assert.match(source, /Start studying/);
   assert.match(source, /Justera inställningar/);
   assert.match(source, /Adjust settings/);
+  assert.doesNotMatch(source, /repetition av misstag/i);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
