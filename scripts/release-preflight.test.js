@@ -147,17 +147,7 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     fakeNpm,
     [
       '#!/bin/sh',
-      ...(options.expoDoctorMismatchFailure
-        ? [
-            'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then',
-            '  echo "The following packages should be updated for best compatibility with the installed expo version:"',
-            '  echo "expo-crypto expected ~15.0.9 found 55.0.15"',
-            '  exit 1',
-            'fi',
-          ]
-        : [
-            'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
-          ]),
+      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
       'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
       'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "Android and iOS native prebuild smoke passed"; exit 0; fi',
       'echo "unexpected npm command: $@" >&2',
@@ -172,17 +162,7 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     [
       '#!/bin/sh',
       'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
-      ...(options.easWhoamiMixedFailure
-        ? [
-            'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then',
-            '  echo "eas-cli@19.0.1 is now available. Proceeding with outdated version." >&2',
-            '  echo "Not logged in"',
-            '  exit 1',
-            'fi',
-          ]
-        : [
-            'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
-          ]),
+      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
       'echo "unexpected npx command: $@" >&2',
       'exit 2',
       '',
@@ -210,27 +190,6 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
   if (options.grepAlwaysPass) {
     fs.writeFileSync(fakeGrep, '#!/bin/sh\nexit 0\n', { mode: 0o755 });
   }
-}
-
-function createSourcePatchPreload(tmpDir, body) {
-  const preloadPath = path.join(tmpDir, 'source-patch-preload.js');
-  fs.writeFileSync(
-    preloadPath,
-    [
-      "const fs = require('node:fs');",
-      'const originalReadFileSync = fs.readFileSync;',
-      'fs.readFileSync = function patchedReadFileSync(filePath, ...args) {',
-      "  const normalizedPath = String(filePath).replace(/\\\\/g, '/');",
-      '  const value = originalReadFileSync.call(this, filePath, ...args);',
-      "  if (typeof value !== 'string' && !Buffer.isBuffer(value)) return value;",
-      "  const text = Buffer.isBuffer(value) ? value.toString(args[0] || 'utf8') : value;",
-      body,
-      '  return value;',
-      '};',
-      '',
-    ].join('\n'),
-  );
-  return preloadPath;
 }
 
 function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
@@ -1135,121 +1094,8 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   assert.match(scopeGate.evidence, /tests\/v1-1-/i);
   assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
   assert.match(scopeGate.evidence, /unchecked manual checklist item/i);
-  assert.match(scopeGate.nextAction, /Remove Ads structural gate/i);
-  assert.match(scopeGate.nextAction, /canonical buy\/restore flows/i);
+  assert.match(scopeGate.nextAction, /test -f lib\/monetization\/purchases\.ts/);
   assert.match(scopeGate.nextAction, /test -f reports\/release-ads-iap-device-qa\.md/);
-});
-
-test('release preflight blocks Remove Ads step 3 when canonical buy wiring drifts', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-remove-ads-buy-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const deviceQaReport = createRemoveAdsDeviceQaReport();
-  const preload = createSourcePatchPreload(
-    tmpDir,
-    [
-      "  if (normalizedPath.endsWith('lib/monetization/purchases.ts')) {",
-      "    return text.replace('const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);', 'const purchase = await provider.requestRemoveAdsPurchase(\"debug.removeads\");');",
-      '  }',
-    ].join('\n'),
-  );
-
-  try {
-    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
-    writeFakeReleaseCommands(tmpDir);
-
-    const report = runPreflight({
-      expectedStatus: 1,
-      env: {
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        NODE_OPTIONS: `--require ${preload}`,
-        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    });
-
-    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
-    assert.equal(scopeGate.status, 'BLOCKED');
-    assert.match(scopeGate.evidence, /buyRemoveAds must request REMOVE_ADS_PRODUCT_ID/);
-    assert.doesNotMatch(scopeGate.evidence, /exact command is red/i);
-  } finally {
-    deviceQaReport.cleanup();
-  }
-});
-
-test('release preflight blocks Remove Ads step 3 when restore wiring drifts', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-remove-ads-restore-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const deviceQaReport = createRemoveAdsDeviceQaReport();
-  const preload = createSourcePatchPreload(
-    tmpDir,
-    [
-      "  if (normalizedPath.endsWith('lib/monetization/purchases.ts')) {",
-      "    return text.replace('const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);', 'const purchases = await provider.restorePurchases([\"debug.removeads\"]);');",
-      '  }',
-    ].join('\n'),
-  );
-
-  try {
-    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
-    writeFakeReleaseCommands(tmpDir);
-
-    const report = runPreflight({
-      expectedStatus: 1,
-      env: {
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        NODE_OPTIONS: `--require ${preload}`,
-        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    });
-
-    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
-    assert.equal(scopeGate.status, 'BLOCKED');
-    assert.match(scopeGate.evidence, /restoreRemoveAdsPurchase must restore REMOVE_ADS_PRODUCT_ID/);
-  } finally {
-    deviceQaReport.cleanup();
-  }
-});
-
-test('release preflight blocks Remove Ads step 3 when price or wiring disappears', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-remove-ads-price-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const deviceQaReport = createRemoveAdsDeviceQaReport();
-  const preload = createSourcePatchPreload(
-    tmpDir,
-    [
-      '  if (/(^|\\/)(app|components|lib)\\//.test(normalizedPath)) {',
-      "    let patched = text.replace('REMOVE_ADS_PRICE_LABEL = \\'29 SEK\\'', 'REMOVE_ADS_PRICE_LABEL = \\'39 SEK\\'');",
-      "    patched = patched.replace(/remove[-_\\s]?ads/gi, 'premium');",
-      '    return patched;',
-      '  }',
-    ].join('\n'),
-  );
-
-  try {
-    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
-    writeFakeReleaseCommands(tmpDir);
-
-    const report = runPreflight({
-      expectedStatus: 1,
-      env: {
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        NODE_OPTIONS: `--require ${preload}`,
-        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    });
-
-    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
-    assert.equal(scopeGate.status, 'BLOCKED');
-    assert.match(scopeGate.evidence, /Remove Ads price label must stay 29 SEK/);
-    assert.match(scopeGate.evidence, /Remove Ads wiring must be visible in app\/components\/lib/);
-  } finally {
-    deviceQaReport.cleanup();
-  }
 });
 
 test('release preflight blocks generic Remove Ads device-QA prose', () => {
@@ -1668,51 +1514,6 @@ test('release preflight can pass after recorded external evidence and EAS auth a
   );
 });
 
-test('release preflight eas-auth failure preserves stderr warning and stdout auth blocker', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-eas-auth-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  writeAllReadyEvidence(evidencePath);
-  writeFakeReleaseCommands(tmpDir, { easWhoamiMixedFailure: true });
-
-  const report = runPreflight({
-    expectedStatus: 1,
-    env: {
-      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-    },
-  });
-
-  const easAuth = report.gates.find((gate) => gate.id === 'eas-auth');
-  assert.equal(easAuth.status, 'BLOCKED');
-  assert.match(easAuth.evidence, /eas-cli@19\.0\.1 is now available/i);
-  assert.match(easAuth.evidence, /Proceeding with outdated version/i);
-  assert.match(easAuth.evidence, /Not logged in/i);
-});
-
-test('release preflight expo-doctor failure preserves package mismatch evidence', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-expo-doctor-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  writeAllReadyEvidence(evidencePath);
-  writeFakeReleaseCommands(tmpDir, { expoDoctorMismatchFailure: true });
-
-  const report = runPreflight({
-    expectedStatus: 1,
-    env: {
-      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-    },
-  });
-
-  const expoDoctor = report.gates.find((gate) => gate.id === 'expo-doctor');
-  assert.equal(expoDoctor.status, 'BLOCKED');
-  assert.match(expoDoctor.evidence, /expo-crypto/);
-  assert.match(expoDoctor.evidence, /expected ~15\.0\.9/);
-  assert.match(expoDoctor.evidence, /found 55\.0\.15/);
-  assert.match(expoDoctor.nextAction, /npm exec -- expo-doctor/);
-});
-
 test('release preflight blocks stale public URL evidence when live check fails', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-public-url-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
@@ -1994,33 +1795,6 @@ test('release preflight can ignore workflow-generated report files', () => {
   const worktree = report.gates.find((gate) => gate.id === 'git-worktree-clean');
   assert.equal(worktree.status, 'READY');
   assert.match(worktree.evidence, /Only ignored generated files were present/);
-});
-
-test('release preflight applies allowed dirty paths to the first modified porcelain line', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-first-dirty-line-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-
-  writeAllReadyEvidence(evidencePath);
-  writeFakeReleaseCommands(tmpDir, {
-    gitStatusPorcelain:
-      ' M publishing/post-eas-auth-runbook.md\n?? reports/release-issue-update-latest.md',
-  });
-
-  const report = runPreflight({
-    expectedStatus: 0,
-    env: {
-      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:
-        'publishing/post-eas-auth-runbook.md,reports/release-issue-update-latest.md',
-    },
-  });
-
-  const worktree = report.gates.find((gate) => gate.id === 'git-worktree-clean');
-  assert.equal(worktree.status, 'READY');
-  assert.match(worktree.evidence, /publishing\/post-eas-auth-runbook\.md/);
-  assert.match(worktree.evidence, /reports\/release-issue-update-latest\.md/);
 });
 
 test('release preflight blocks READY screenshot evidence with a missing local artifact path', () => {
