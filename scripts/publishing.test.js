@@ -17,6 +17,33 @@ function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
 }
 
+function assertNoStalePublicPrivacyPosture(source) {
+  [
+    staleWords('no', 'user', 'data', 'is', 'collected'),
+    staleWords('no', 'user', 'data', 'is', 'shared'),
+    staleWords('no', 'user', 'data', 'collected'),
+    staleWords('no', 'user', 'data', 'shared'),
+    staleWords('real', 'ad', 'rendering', 'is', 'disabled'),
+    staleWords('real', 'ads', 'disabled'),
+    staleWords('Data', 'Not', 'Collected'),
+    staleToken('REAL_ADS', 'ENABLED_FOR_V1'),
+  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
+}
+
+function assertCurrentPublicPrivacyPosture(source, options = {}) {
+  const requiresAtt = options.requiresAtt ?? true;
+
+  assert.match(source, /Google Mobile Ads|AdMob/i);
+  assert.match(source, /Remove Ads/i);
+  assert.match(source, /29 SEK/i);
+  if (requiresAtt) {
+    assert.match(source, /App Tracking Transparency|ATT/i);
+  }
+  assert.match(source, /Google UMP consent|UMP consent/i);
+  assert.match(source, /local[\s\S]{0,80}device|stored locally on the device/i);
+  assertNoStalePublicPrivacyPosture(source);
+}
+
 function parseExternalBlockerRows(markdown) {
   return markdown
     .split('\n')
@@ -57,6 +84,7 @@ test('store publishing metadata is prepared', () => {
   assert.match(googlePlayListing, /Sweden Citizenship Test Prep/);
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
+  assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
 });
 
 test('privacy labels and data safety answers match ad-supported release practices', () => {
@@ -113,6 +141,7 @@ test('public support and privacy URL copy is ready for hosting', () => {
   assert.match(publicCopy, /no personal data/i);
   assert.match(publicCopy, /no account/i);
   assert.match(publicCopy, /not affiliated/i);
+  assertCurrentPublicPrivacyPosture(publicCopy);
 });
 
 test('hostable public support and privacy pages are prepared', () => {
@@ -128,7 +157,7 @@ test('hostable public support and privacy pages are prepared', () => {
   assert.match(privacy, /Sweden Citizenship Test Prep privacy policy/i);
   assert.match(privacy, /no account/i);
   assert.match(privacy, /stored locally on the device/i);
-  assert.match(privacy, /no user data is collected/i);
+  assertCurrentPublicPrivacyPosture(privacy);
   assert.match(privacy, /<html lang="en">/i);
 });
 
