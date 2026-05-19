@@ -79,6 +79,14 @@ test('store publishing metadata is prepared', () => {
   assert.match(appStoreListing, /Almost Swedish/);
   assert.match(appStoreListing, /not official/i);
   assert.match(appStoreListing, /UHR/i);
+  assertCurrentPublicPrivacyPosture(appStoreListing);
+  assert.match(appStoreListing, /in-app purchase/i);
+  assert.match(appStoreListing, /removes ads only/i);
+  assert.match(appStoreListing, /full question bank remains available\s+without purchase/i);
+  assert.doesNotMatch(
+    appStoreListing,
+    /unlock(?:s|ed)?\s+(?:study|question|content|exam)|paid\s+(?:study|question|content|exam)|purchase\s+unlock/i,
+  );
 
   const googlePlayListing = read('publishing/google-play-listing.md');
   assert.match(googlePlayListing, /Almost Swedish/);
