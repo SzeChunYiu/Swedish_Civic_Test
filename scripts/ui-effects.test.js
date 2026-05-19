@@ -179,6 +179,39 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('top bar route links keep web anchors large enough with token hover and pressed feedback', () => {
+  const source = read('components/ui/TopBarActions.tsx');
+
+  assert.match(source, /import \{ Platform, Pressable, StyleSheet, View \}/);
+  assert.match(source, /function TopBarActionLink/);
+  assert.match(source, /<Link\s+\{\.\.\.webInteractionHandlers\}/);
+  assert.doesNotMatch(source, /<Link[\s\S]*asChild/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(source, /onPressOut=\{clearPressedState\}/);
+  assert.match(source, /onMouseEnter: \(\) => setIsHovered\(true\)/);
+  assert.match(source, /onMouseDown: \(\) => setIsPressed\(true\)/);
+  assert.match(
+    source,
+    /onMouseLeave: \(\) => \{\n\s+setIsHovered\(false\);\n\s+clearPressedState\(\);/,
+  );
+  assert.match(source, /onMouseUp: clearPressedState/);
+  assert.match(source, /onTouchEnd: clearPressedState/);
+  assert.match(source, /onTouchStart: \(\) => setIsPressed\(true\)/);
+  assert.match(source, /onKeyDown: handleKeyboardPressStart/);
+  assert.match(source, /onKeyUp: handleKeyboardPressEnd/);
+  assert.match(source, /key === 'Enter' \|\| key === ' '/);
+  assert.match(source, /isFocused \|\| isHovered \? styles\.iconLinkHover : null/);
+  assert.match(source, /isPressed \? styles\.iconLinkPressed : null/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /minWidth: space\[6\]/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('screen scaffold exposes page and section titles as headers', () => {
   const source = read('components/ui/ScreenShell.tsx');
 
