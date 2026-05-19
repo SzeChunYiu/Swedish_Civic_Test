@@ -1192,3 +1192,12 @@ Verification: clean worktree from current `origin/main` `89e28b3b`; source-relev
 PR: pending from `task/setup/live-deploy-recheck-1779154432` at handoff commit time.
 Blocked? yes - SITE-P0-5 remains external deploy capacity/operator production evidence; no SETUP-owned source drift or unblocked local P0 SETUP source atom was found, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held except for fresh current-main P0 site or release source evidence; keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes.
+
+## Iteration 251 - 2026-05-19
+
+Task completed: SETUP current-route audit - verified current `origin/main` after the Card parity mirror update, closed the obsolete local Card repair PR unmerged, and confirmed the apparent Mistakes review route is already implemented and guarded.
+Artifacts changed: `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `5ccf15d`; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `cardAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-card-accessibility-parity.test.js` exit 0 with 3/3 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-mistakes-route-copy-parity.test.js tests/content-mistakes-route-header-parity.test.js` exit 0 with 7/7 passing; focused `scripts/ui-effects.test.js` Mistakes answer-review guard exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node scripts/export-site-question-bank.js --check` exit 0 with 720 questions and 13 chapters; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/check-live-site.test.js` exit 0 with 7/7 passing; targeted `git diff --check 5ccf15d1^..5ccf15d1` and current-tree `git diff --check` exit 0.
+PR: pending from current SETUP audit branch at handoff commit time.
+Blocked? yes - no fresh unblocked local SETUP source atom was found; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
+Next suggested validator action: keep SETUP source-held unless fresh P0 site/release source evidence appears; keep production freshness separate until production serves current main and passes the hash-aware live smoke.
