@@ -1,18 +1,41 @@
 import { Tabs } from 'expo-router';
+import type { ComponentType } from 'react';
 
+import {
+  ExamTabIcon,
+  HomeTabIcon,
+  LearnTabIcon,
+  MistakesTabIcon,
+  PracticeTabIcon,
+  ProfileTabIcon,
+  type TabBarIconProps,
+} from '../../components/ui/icons/TabBarIcons';
 import { TopBarActions } from '../../components/ui/TopBarActions';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
+import { colors, space } from '../../lib/theme';
 
 type TabRouteName = 'home' | 'learn' | 'practice' | 'exam' | 'mistakes' | 'profile';
 type TabTitleCopy = Record<TabRouteName, string>;
+type TabIconComponent = ComponentType<TabBarIconProps>;
 
-const hiddenTabIcon = () => null;
+const tabIconByRoute: Record<TabRouteName, TabIconComponent> = {
+  home: HomeTabIcon,
+  learn: LearnTabIcon,
+  practice: PracticeTabIcon,
+  exam: ExamTabIcon,
+  mistakes: MistakesTabIcon,
+  profile: ProfileTabIcon,
+};
 
-function getTabOptions(title: string) {
+function getTabOptions(routeName: TabRouteName, title: string) {
+  const TabIcon = tabIconByRoute[routeName];
+
   return {
     title,
     tabBarAccessibilityLabel: title,
-    tabBarIcon: hiddenTabIcon,
+    tabBarIcon: ({ focused }: { focused: boolean }) => (
+      <TabIcon color={focused ? colors.accent : colors.textMuted} size={space[3]} />
+    ),
   };
 }
 
@@ -44,14 +67,16 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: true,
         headerRight: () => <TopBarActions />,
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.textMuted,
       }}
     >
-      <Tabs.Screen name="home" options={getTabOptions(copy.home)} />
-      <Tabs.Screen name="learn" options={getTabOptions(copy.learn)} />
-      <Tabs.Screen name="practice" options={getTabOptions(copy.practice)} />
-      <Tabs.Screen name="exam" options={getTabOptions(copy.exam)} />
-      <Tabs.Screen name="mistakes" options={getTabOptions(copy.mistakes)} />
-      <Tabs.Screen name="profile" options={getTabOptions(copy.profile)} />
+      <Tabs.Screen name="home" options={getTabOptions('home', copy.home)} />
+      <Tabs.Screen name="learn" options={getTabOptions('learn', copy.learn)} />
+      <Tabs.Screen name="practice" options={getTabOptions('practice', copy.practice)} />
+      <Tabs.Screen name="exam" options={getTabOptions('exam', copy.exam)} />
+      <Tabs.Screen name="mistakes" options={getTabOptions('mistakes', copy.mistakes)} />
+      <Tabs.Screen name="profile" options={getTabOptions('profile', copy.profile)} />
     </Tabs>
   );
 }

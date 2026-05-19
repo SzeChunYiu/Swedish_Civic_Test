@@ -888,18 +888,31 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/terms': 'app/terms.tsx',
 };
 const EXPECTED_TAB_NAVIGATION_ROUTES = [
-  { routeName: 'home', sv: 'Hem', en: 'Home' },
-  { routeName: 'learn', sv: 'Lär dig', en: 'Learn' },
-  { routeName: 'practice', sv: 'Öva', en: 'Practice' },
-  { routeName: 'exam', sv: 'Prov', en: 'Exam' },
-  { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes' },
-  { routeName: 'profile', sv: 'Profil', en: 'Profile' },
+  { routeName: 'home', sv: 'Hem', en: 'Home', icon: 'HomeTabIcon' },
+  { routeName: 'learn', sv: 'Lär dig', en: 'Learn', icon: 'LearnTabIcon' },
+  { routeName: 'practice', sv: 'Öva', en: 'Practice', icon: 'PracticeTabIcon' },
+  { routeName: 'exam', sv: 'Prov', en: 'Exam', icon: 'ExamTabIcon' },
+  { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes', icon: 'MistakesTabIcon' },
+  { routeName: 'profile', sv: 'Profil', en: 'Profile', icon: 'ProfileTabIcon' },
 ];
 const EXPECTED_TAB_NAVIGATION_RULES = [
+  {
+    label: 'react component type import',
+    pattern: /import type \{ ComponentType \} from 'react';/,
+  },
+  {
+    label: 'semantic tab icon imports',
+    pattern:
+      /ExamTabIcon,[\s\S]*HomeTabIcon,[\s\S]*LearnTabIcon,[\s\S]*MistakesTabIcon,[\s\S]*PracticeTabIcon,[\s\S]*ProfileTabIcon,[\s\S]*type TabBarIconProps,/,
+  },
   {
     label: 'settings language import',
     pattern:
       /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
+  },
+  {
+    label: 'tab token import',
+    pattern: /import \{ colors, space \} from '\.\.\/\.\.\/lib\/theme';/,
   },
   {
     label: 'tab route-name union',
@@ -911,16 +924,20 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /type TabTitleCopy = Record<TabRouteName, string>;/,
   },
   {
+    label: 'tab icon component contract',
+    pattern: /type TabIconComponent = ComponentType<TabBarIconProps>;/,
+  },
+  {
     label: 'localized tab copy map',
     pattern: /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/,
   },
   {
-    label: 'hidden icon helper',
-    pattern: /const hiddenTabIcon = \(\) => null;/,
+    label: 'semantic icon route map',
+    pattern: /const tabIconByRoute: Record<TabRouteName, TabIconComponent> = \{/,
   },
   {
     label: 'tab options helper',
-    pattern: /function getTabOptions\(title: string\)/,
+    pattern: /function getTabOptions\(routeName: TabRouteName, title: string\)/,
   },
   {
     label: 'plain tab title',
@@ -931,8 +948,24 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /tabBarAccessibilityLabel: title/,
   },
   {
-    label: 'placeholder glyph suppression',
-    pattern: /tabBarIcon: hiddenTabIcon/,
+    label: 'semantic icon renderer',
+    pattern: /tabBarIcon: \(\{ focused \}: \{ focused: boolean \}\) => \(/,
+  },
+  {
+    label: 'token-aware icon colors',
+    pattern: /color=\{focused \? colors\.accent : colors\.textMuted\}/,
+  },
+  {
+    label: 'stable token icon size',
+    pattern: /size=\{space\[3\]\}/,
+  },
+  {
+    label: 'tab active tint token',
+    pattern: /tabBarActiveTintColor: colors\.accent/,
+  },
+  {
+    label: 'tab inactive tint token',
+    pattern: /tabBarInactiveTintColor: colors\.textMuted/,
   },
   {
     label: 'settings language read',
@@ -6590,16 +6623,26 @@ function validateTabNavigationParity() {
   if (tabLayout.includes('⏷')) {
     reject('tab layout must not include visible placeholder tab glyphs');
   }
+  if (/hiddenTabIcon|tabBarIcon:\s*(?:undefined|null|\(\)\s*=>\s*null)/.test(tabLayout)) {
+    reject('tab layout must not use hidden, null, or placeholder tab icons');
+  }
 
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
-      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
+      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\('${route.routeName}', copy\\.${route.routeName}\\)\\}`,
     );
+    const iconPattern = new RegExp(`${route.routeName}: ${route.icon}`);
     const svPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.sv)}'`);
     const enPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.en)}'`);
 
     if (!routePattern.test(tabLayout)) {
-      reject(`${route.routeName} tab must use getTabOptions(copy.${route.routeName})`);
+      reject(
+        `${route.routeName} tab must use getTabOptions('${route.routeName}', copy.${route.routeName})`,
+      );
+      continue;
+    }
+    if (!iconPattern.test(tabLayout)) {
+      reject(`${route.routeName} tab must use semantic icon ${route.icon}`);
       continue;
     }
     if (!svPattern.test(tabLayout) || !enPattern.test(tabLayout)) {

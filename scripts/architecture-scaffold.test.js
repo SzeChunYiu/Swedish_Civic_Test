@@ -522,11 +522,21 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
     /type TabRouteName = 'home' \| 'learn' \| 'practice' \| 'exam' \| 'mistakes' \| 'profile';/,
   );
   assert.match(tabLayout, /type TabTitleCopy = Record<TabRouteName, string>;/);
+  assert.match(tabLayout, /type TabIconComponent = ComponentType<TabBarIconProps>;/);
   assert.match(tabLayout, /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/);
-  assert.match(tabLayout, /const hiddenTabIcon = \(\) => null;/);
-  assert.match(tabLayout, /function getTabOptions\(title: string\)/);
+  assert.match(tabLayout, /const tabIconByRoute: Record<TabRouteName, TabIconComponent> = \{/);
+  assert.match(tabLayout, /home: HomeTabIcon/);
+  assert.match(tabLayout, /learn: LearnTabIcon/);
+  assert.match(tabLayout, /practice: PracticeTabIcon/);
+  assert.match(tabLayout, /exam: ExamTabIcon/);
+  assert.match(tabLayout, /mistakes: MistakesTabIcon/);
+  assert.match(tabLayout, /profile: ProfileTabIcon/);
+  assert.match(tabLayout, /function getTabOptions\(routeName: TabRouteName, title: string\)/);
   assert.match(tabLayout, /tabBarAccessibilityLabel: title/);
-  assert.match(tabLayout, /tabBarIcon: hiddenTabIcon/);
+  assert.match(tabLayout, /color=\{focused \? colors\.accent : colors\.textMuted\}/);
+  assert.match(tabLayout, /size=\{space\[3\]\}/);
+  assert.match(tabLayout, /tabBarActiveTintColor: colors\.accent/);
+  assert.match(tabLayout, /tabBarInactiveTintColor: colors\.textMuted/);
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
@@ -546,7 +556,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
     assert.match(
       tabLayout,
       new RegExp(
-        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{getTabOptions\\(copy\\.${routeName}\\)\\}`,
+        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{getTabOptions\\('${routeName}', copy\\.${routeName}\\)\\}`,
       ),
     );
   }
