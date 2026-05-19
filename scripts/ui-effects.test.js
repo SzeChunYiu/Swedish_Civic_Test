@@ -667,7 +667,7 @@ test('answer option feedback remains available in the accessibility label', () =
   assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);
 });
 
-test('question card groups prompt and translation into an accessible summary', () => {
+test('question card exposes a standalone summary without grouping source controls', () => {
   const source = read('components/quiz/QuestionCard.tsx');
   const helperSource = read('lib/quiz/questionText.ts');
 
@@ -715,7 +715,12 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(helperSource, /stripSourceAuthorityPhrasing/);
   assert.match(helperSource, /Enligt UHR-materialet/);
   assert.match(helperSource, /According to the UHR material/);
-  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.doesNotMatch(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.match(
+    source,
+    /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
+  );
+  assert.match(source, /accessibilitySummary: \{/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -995,6 +1000,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 
 test('native ad preview card exposes a grouped accessibility summary', () => {
   const source = read('components/monetization/NativeAdCard.tsx');
+  const nativeSource = read('components/monetization/NativeAdCard.native.tsx');
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.match(source, /useSettingsStore/);
@@ -1014,6 +1020,14 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   assert.match(copySource, /Test native ad/);
   assert.match(copySource, /Sponsored study placement/);
   assert.match(copySource, /AdMob test placement preview/);
+  assert.match(nativeSource, /<NativeAdView accessible=\{false\}/);
+  assert.match(nativeSource, /accessibilityRole="summary"/);
+  assert.match(
+    nativeSource,
+    /<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/,
+  );
+  assert.match(nativeSource, /minHeight:\s*space\[6\]/);
+  assert.match(copySource, /ctaHint: 'Activates the ad action\.'/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(copySource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

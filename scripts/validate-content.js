@@ -591,6 +591,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile settings link must expose localized accessibility copy',
   ],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ['entitlementsReady,', 'profile premium banner must read Remove Ads entitlement readiness'],
+  ['{entitlementsReady ? (', 'profile premium banner must fail closed while entitlements load'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
@@ -922,7 +924,7 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
   { routeName: 'home', sv: 'Hem', en: 'Home' },
   { routeName: 'learn', sv: 'Lär dig', en: 'Learn' },
   { routeName: 'practice', sv: 'Öva', en: 'Practice' },
-  { routeName: 'exam', sv: 'Prov', en: 'Exam' },
+  { routeName: 'exam', sv: 'Övningsprov', en: 'Exam' },
   { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes' },
   { routeName: 'profile', sv: 'Profil', en: 'Profile' },
 ];
@@ -2488,8 +2490,14 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
-    label: 'Card receives accessibility summary',
-    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
+    label: 'standalone accessibility summary node',
+    pattern:
+      /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>[\s\S]*\{questionAccessibilityLabel\}[\s\S]*<\/Text>/,
+  },
+  {
+    label: 'visually hidden accessibility summary style',
+    pattern:
+      /accessibilitySummary: \{[\s\S]*height: 1,[\s\S]*left: -10000,[\s\S]*overflow: 'hidden',[\s\S]*position: 'absolute',[\s\S]*width: 1,/,
   },
   {
     label: 'visible difficulty label',
@@ -6756,6 +6764,12 @@ function validateTabNavigationParity() {
     reject('tab layout must not include visible placeholder tab glyphs');
   }
 
+  const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
+  const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
+  if (swedishExamTabTitle !== 'Övningsprov') {
+    reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
+  }
+
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
       `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
@@ -6883,8 +6897,46 @@ function validateAdPlacementRouteParity() {
         reject('NativeAdCard native placement must render NativeAdView');
         routeIsValid = false;
       }
+      const nativeAdViewOpeningTag = nativeAdCardNativeSource.match(/<NativeAdView[\s\S]*?>/)?.[0];
+      if (!nativeAdViewOpeningTag?.includes('accessible={false}')) {
+        reject(
+          'NativeAdCard native placement must not group the whole ad as one accessibility element',
+        );
+        routeIsValid = false;
+      }
+      if (
+        nativeAdViewOpeningTag &&
+        /accessibility(?:Hint|Label)=\{copy\.(?:hint|accessibilityLabel)\}/.test(
+          nativeAdViewOpeningTag,
+        )
+      ) {
+        reject('NativeAdCard native placement must expose ad summary on a child element');
+        routeIsValid = false;
+      }
       if (!nativeAdCardNativeSource.includes('NativeAsset')) {
         reject('NativeAdCard native placement must register visible native ad assets');
+        routeIsValid = false;
+      }
+      if (
+        !/<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/.test(
+          nativeAdCardNativeSource,
+        )
+      ) {
+        reject('NativeAdCard native placement must expose a separate ad summary element');
+        routeIsValid = false;
+      }
+      if (
+        !/<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/.test(
+          nativeAdCardNativeSource,
+        )
+      ) {
+        reject(
+          'NativeAdCard native placement must expose the call-to-action as a labelled native asset button',
+        );
+        routeIsValid = false;
+      }
+      if (!nativeAdCardNativeSource.includes('minHeight: space[6]')) {
+        reject('NativeAdCard native call-to-action must keep a token-sized touch target');
         routeIsValid = false;
       }
       if (!nativeAdCardNativeSource.includes('NativeMediaView')) {
@@ -9321,6 +9373,10 @@ function validateQuestionCardAccessibilityParity() {
     }
     questionCardAccessibilityRulesValidated += 1;
   });
+
+  if (/<Card accessibilityLabel=\{questionAccessibilityLabel\}>/.test(questionCardSource)) {
+    reject('QuestionCard parent Card must not group nested source controls');
+  }
 
   EXPECTED_QUESTION_SOURCE_CITATION_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(questionTextSource)) {

@@ -121,6 +121,7 @@ function formatBadges(
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -225,12 +226,14 @@ export default function Screen() {
         <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
+      {entitlementsReady ? (
+        <PremiumBanner
+          entitlements={monetizationEntitlements}
+          language={language}
+          onEntitlementsChange={setMonetizationEntitlements}
+          runtimeOptions={purchaseRuntime}
+        />
+      ) : null}
       <ComplianceLinks />
     </ScreenShell>
   );
