@@ -186,6 +186,25 @@ function hasStoreConfirmation(record: StoredRemoveAdsEntitlementRecord): boolean
   );
 }
 
+function purchaseMatchesStoredRecord(
+  purchase: RemoveAdsPurchaseRecord,
+  record: StoredRemoveAdsEntitlementRecord,
+): boolean {
+  if (!isRemoveAdsPurchase(purchase)) return false;
+  if (record.purchaseToken && purchase.purchaseToken === record.purchaseToken) return true;
+  if (record.transactionId && purchase.transactionId === record.transactionId) return true;
+  return false;
+}
+
+async function clearStoredRemoveAdsEntitlement(storage: PurchaseStorage): Promise<void> {
+  if (storage.deleteItemAsync) {
+    await storage.deleteItemAsync(REMOVE_ADS_STORAGE_KEY);
+    return;
+  }
+
+  await storage.setItemAsync(REMOVE_ADS_STORAGE_KEY, 'false');
+}
+
 function createReceiptValidationResult(
   purchase: RemoveAdsPurchaseRecord,
   validatedAt = new Date(),
@@ -279,6 +298,58 @@ function serializeStoredRemoveAdsEntitlementRecord(
   record: StoredRemoveAdsEntitlementRecord,
 ): string {
   return JSON.stringify(record);
+}
+
+async function revalidateStoredRemoveAdsEntitlementRecord({
+  provider,
+  record,
+  storage,
+}: {
+  provider: RemoveAdsPurchaseProvider;
+  record: StoredRemoveAdsEntitlementRecord;
+  storage: PurchaseStorage;
+}): Promise<boolean> {
+  let connected = false;
+
+  try {
+    await provider.connect();
+    connected = true;
+
+    const availablePurchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
+    const restoredPurchase =
+      availablePurchases.find((purchase) => purchaseMatchesStoredRecord(purchase, record)) ??
+      availablePurchases.find(isRemoveAdsPurchase);
+
+    if (!restoredPurchase) {
+      await clearStoredRemoveAdsEntitlement(storage);
+      return false;
+    }
+
+    const receiptValidation = await validateRemoveAdsReceipt(provider, restoredPurchase);
+    if (!receiptValidation) {
+      await clearStoredRemoveAdsEntitlement(storage);
+      return false;
+    }
+
+    await storage.setItemAsync(
+      REMOVE_ADS_STORAGE_KEY,
+      serializeStoredRemoveAdsEntitlementRecord(
+        createStoredRemoveAdsEntitlementRecord({
+          purchase: restoredPurchase,
+          receiptValidation,
+          source: 'restore',
+        }),
+      ),
+    );
+    return true;
+  } catch {
+    await clearStoredRemoveAdsEntitlement(storage);
+    return false;
+  } finally {
+    if (connected) {
+      await provider.disconnect?.();
+    }
+  }
 }
 
 function createResult(
@@ -452,10 +523,28 @@ export async function setRemoveAdsEntitlement(
 }
 
 export async function getPurchaseEntitlements({
+  provider,
   storage = createSecureStorePurchaseStorage(),
-}: Pick<PurchaseRuntimeOptions, 'storage'> = {}): Promise<PremiumEntitlements> {
+}: PurchaseRuntimeOptions = {}): Promise<PremiumEntitlements> {
   const storedValue = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
-  return removeAdsEntitlements(Boolean(parseStoredRemoveAdsEntitlementRecord(storedValue)));
+  const record = parseStoredRemoveAdsEntitlementRecord(storedValue);
+
+  if (!record) {
+    return removeAdsEntitlements(false);
+  }
+
+  if (!provider) {
+    await clearStoredRemoveAdsEntitlement(storage);
+    return removeAdsEntitlements(false);
+  }
+
+  return removeAdsEntitlements(
+    await revalidateStoredRemoveAdsEntitlementRecord({
+      provider,
+      record,
+      storage,
+    }),
+  );
 }
 
 async function getFailClosedPurchaseEntitlements(storage: PurchaseStorage) {

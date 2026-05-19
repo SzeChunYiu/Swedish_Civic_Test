@@ -1323,8 +1323,9 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     unlimitedMockExams: false,
   });
 
+  const purchaseProvider = createMockPurchaseProvider();
   const purchaseResult = await buyRemoveAds({
-    provider: createMockPurchaseProvider(),
+    provider: purchaseProvider,
     storage,
   });
 
@@ -1333,7 +1334,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(purchaseResult.entitlements.adsDisabled, true);
   assert.equal(purchaseResult.entitlements.fullMistakeReview, false);
   assert.equal(purchaseResult.entitlements.unlimitedMockExams, false);
-  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
   const storedPurchaseRecord = JSON.parse(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
   assert.deepEqual(
     {
@@ -1356,16 +1356,29 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(storedPurchaseRecord.grantedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(storedPurchaseRecord.receiptValidatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(Object.hasOwn(storedPurchaseRecord, 'raw'), false);
+  assert.equal(
+    (await getPurchaseEntitlements({ provider: purchaseProvider, storage })).adsDisabled,
+    true,
+  );
+  const refreshedPurchaseRecord = JSON.parse(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
+  assert.equal(refreshedPurchaseRecord.source, 'restore');
+  assert.equal(refreshedPurchaseRecord.transactionId, 'restore-remove-ads');
+  assert.equal(refreshedPurchaseRecord.purchaseToken, 'mock-token-restore-remove-ads');
 
   const restoredStorage = createMemoryPurchaseStorage();
+  const restoreProvider = createMockPurchaseProvider({ owned: true });
   const restoreResult = await restoreRemoveAdsPurchase({
-    provider: createMockPurchaseProvider({ owned: true }),
+    provider: restoreProvider,
     storage: restoredStorage,
   });
 
   assert.equal(restoreResult.status, 'restored');
   assert.equal(restoreResult.entitlements.adsDisabled, true);
-  assert.equal((await getPurchaseEntitlements({ storage: restoredStorage })).adsDisabled, true);
+  assert.equal(
+    (await getPurchaseEntitlements({ provider: restoreProvider, storage: restoredStorage }))
+      .adsDisabled,
+    true,
+  );
   const storedRestoreRecord = JSON.parse(
     await restoredStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
   );
@@ -1402,14 +1415,16 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
 
   try {
     const webStorage = createWebPurchaseStorage();
+    const webProvider = createMockPurchaseProvider();
     await buyRemoveAds({
-      provider: createMockPurchaseProvider(),
+      provider: webProvider,
       storage: webStorage,
     });
 
     const webStorageAfterReload = createWebPurchaseStorage();
     assert.equal(
-      (await getPurchaseEntitlements({ storage: webStorageAfterReload })).adsDisabled,
+      (await getPurchaseEntitlements({ provider: webProvider, storage: webStorageAfterReload }))
+        .adsDisabled,
       true,
     );
 
@@ -1572,6 +1587,65 @@ test('remove-ads entitlement storage rejects stale boolean and malformed records
     }),
   );
   assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, false);
+});
+
+test('stored remove-ads entitlement must revalidate through provider before suppressing ads', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    REMOVE_ADS_STORAGE_KEY,
+    createMemoryPurchaseStorage,
+    createMockPurchaseProvider,
+    getPurchaseEntitlements,
+  } = loadTs('lib/monetization/purchases.ts');
+  const fakeStoredRecord = JSON.stringify({
+    grantedAt: new Date().toISOString(),
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'fake-stored-token',
+    receiptValidatedAt: new Date().toISOString(),
+    receiptValidationStatus: 'valid',
+    schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    source: 'purchase',
+    transactionId: 'fake-stored-transaction',
+  });
+
+  const localOnlyStorage = createMemoryPurchaseStorage();
+  await localOnlyStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, fakeStoredRecord);
+
+  assert.equal((await getPurchaseEntitlements({ storage: localOnlyStorage })).adsDisabled, false);
+  assert.equal(await localOnlyStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const unownedStorage = createMemoryPurchaseStorage();
+  await unownedStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, fakeStoredRecord);
+
+  assert.equal(
+    (
+      await getPurchaseEntitlements({
+        provider: createMockPurchaseProvider(),
+        storage: unownedStorage,
+      })
+    ).adsDisabled,
+    false,
+  );
+  assert.equal(await unownedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const ownedStorage = createMemoryPurchaseStorage();
+  await ownedStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, fakeStoredRecord);
+
+  assert.equal(
+    (
+      await getPurchaseEntitlements({
+        provider: createMockPurchaseProvider({ owned: true }),
+        storage: ownedStorage,
+      })
+    ).adsDisabled,
+    true,
+  );
+
+  const refreshedRecord = JSON.parse(await ownedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
+  assert.equal(refreshedRecord.source, 'restore');
+  assert.equal(refreshedRecord.transactionId, 'restore-remove-ads');
+  assert.equal(refreshedRecord.purchaseToken, 'mock-token-restore-remove-ads');
 });
 
 test('pending remove-ads purchase does not grant adsDisabled until store confirmation', async () => {
