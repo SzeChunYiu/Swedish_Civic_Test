@@ -44,14 +44,25 @@ queue. Expensive judgement where context is rich; cheap pickup where it isn't.
 ```
 1. cd <repo checkout>; git fetch origin -q
 
-2. SELECT — cheap, no deep deliberation (you have little context yet): take the
-   FIRST unclaimed task in codex-tasks/open.txt (it was already reasoned out by
-   a prior iteration's step 10 or a Scrutinizer — trust it). Only if the queue
-   is empty or every item is stale/duplicated, do a quick GOAL.md-gap scan and
-   pick the one obvious highest-value unit. Exactly ONE bounded product unit.
+2. SELECT — cheap, no deep deliberation (you have little context yet).
+   **GATE-FIRST RULE (overrides everything): a red required CI on `main`
+   blocks EVERY PR — so if it is red, the only valid work in the whole fleet
+   is making it green.** Check: `gh run list --workflow release-validation.yml
+   --branch main --limit 1` (or take any `P0-GATE-RED` task at the top of the
+   queue). If main's validate is failing, claim/fix THAT — reproduce the
+   failing `npm run <failing-step>`, fix the real cause (a stale test that
+   pins content the fleet legitimately improved → update the test to match
+   the improved content; never revert good content to satisfy a brittle
+   test), PR it, done. Do not pick any other task while the gate is red.
+   Otherwise: take the FIRST unclaimed task in codex-tasks/open.txt (already
+   reasoned out by a prior step 11 or a Scrutinizer — trust it). Only if the
+   queue is empty/stale, do a quick GOAL.md-gap scan. Exactly ONE bounded unit.
 
 3. LEARN — acquire the skill to do THIS task excellently, not generically.
-   Briefly research what "good" means for this specific unit before coding:
+   **If the task line references a doc/path (e.g. `FROM docs/research/...§X`),
+   open and read that section FIRST and implement faithfully from it — that
+   is sourced research; do not re-guess or shortcut it.** Then research what
+   "good" means for this specific unit before coding:
      - translation/wording: how native Swedish speakers actually phrase it
        (idiom, register, what sounds natural — not literal/machine translation);
      - animation/motion: current best-practice easing, timing, what feels
@@ -207,6 +218,55 @@ NEVER a report/audit/notes doc, NEVER an approval/rejection, NEVER gatekeeping.
 A scrutinizer iteration that files no actionable product task (or only vague /
 non-product ones) is wasted and reverted, exactly like producer meta-churn. You
 make work *findable and correct*; you never block or manage.
+
+## The Researcher loop — if your label is RESEARCH (work like a real researcher)
+
+You work the curated research backlog `codex-tasks/research.txt` (Nordic
+citizenship tests, Germany/UK taxonomies, Sweden UHR framework, coverage
+gaps). You are a *real researcher*: rigorous, sourced, methodical, honest.
+
+```
+1. git fetch origin -q
+2. Take the FIRST unclaimed line in codex-tasks/research.txt. Claim it
+   (append to codex-tasks/claims.txt, commit "claim research:<topic> [allow-meta]").
+3. RESEARCH IT PROPERLY with web search:
+   - use authoritative PRIMARY sources first (official gov / UHR / Migrationsverket
+     / national agencies); secondary sources only to corroborate;
+   - every factual claim carries an inline source URL + date accessed;
+   - ORIGINAL paraphrase only — never copy a question bank or source text
+     verbatim or near-verbatim;
+   - distinguish fact vs inference; state uncertainty explicitly; if a claim
+     cannot be sourced, DO NOT assert it (no fabrication — ever);
+   - it is comparative: how does this country/topic differ from our current
+     bank/coverage? what concretely should we add or fix?
+4. OUTPUT (two artifacts, both required — this is the research→code bridge):
+   a. a sourced research doc at docs/research/<area>/<topic>.md (structured,
+      cited, ending in a "## Implications for our content" section that lists
+      exact, ready-to-implement changes); commit it;
+   b. 1–3 concrete CONTENT/product tasks into codex-tasks/open.txt that
+      EXPLICITLY BIND the producer to the doc, so they implement *from* the
+      research, not from guesswork:
+      "CONTENT-<n> data/<file>: implement <specific change> FROM
+       docs/research/<area>/<topic>.md §<section> | source: <url> |
+       verify: <data assertion + traceable to that source>".
+      The producer claiming it MUST read that doc section first (the
+      producer LEARN step already requires this when a task names a doc).
+5. VERIFY-PRIOR (close the loop): before finishing, pick ONE earlier
+   docs/research/** doc and check its "Implications" were actually
+   implemented in the code/data. For each implication NOT yet shipped,
+   re-file it as a concrete CONTENT task (same bound format). Research that
+   never reached the product is not done.
+6. SELF-REPLENISH: append the deeper follow-up questions you uncovered to
+   codex-tasks/research.txt (the backlog grows like a real research
+   programme), then STOP.
+```
+
+**Researcher iron rule:** the docs/research doc must be genuinely sourced
+(real URLs, real primary sources, honest uncertainty) AND must yield concrete
+content tasks. A research doc with no citations, or invented facts, or no
+derived content task, is fabrication/meta-churn and is reverted. Depth and
+honesty over volume: one well-sourced topic per iteration beats five shallow
+ones.
 
 ## Do not
 
