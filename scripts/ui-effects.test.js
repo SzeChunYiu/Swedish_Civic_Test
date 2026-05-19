@@ -802,6 +802,8 @@ test('practice header controls keep accessible targets and token feedback', () =
   );
   assert.match(source, /<View style=\{styles\.headerControls\}>/);
   assert.ok(hitSlopMatches.length >= 3);
+  assert.match(source, /aria-checked=\{includeSupplementary\}/);
+  assert.match(source, /aria-expanded=\{aboutSourcesOpen\}/);
   assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
   assert.match(
     source,

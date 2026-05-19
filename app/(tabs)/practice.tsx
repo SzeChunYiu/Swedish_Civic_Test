@@ -42,15 +42,6 @@ import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
-type ChapterPracticeSummary = {
-  accuracy: number;
-  answered: number;
-  description: string;
-  id: string;
-  title: string;
-  total: number;
-};
-
 type PracticeCopy = {
   badge: string;
   bookmark: string;
@@ -286,8 +277,6 @@ export default function Screen() {
   const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
     null,
   );
-  const [practiceScope, setPracticeScope] = useState<PracticeScope>({ type: 'all' });
-  const [practiceStarted, setPracticeStarted] = useState(() => Boolean(activeQuestionId));
   const copy = practiceCopy[language];
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
@@ -511,9 +500,7 @@ export default function Screen() {
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>
-          {copy.completedQuestions(scopedCompletedQuestionIds.length)}
-        </Text>
+        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
