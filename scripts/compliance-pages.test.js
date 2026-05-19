@@ -50,16 +50,30 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Källor/);
   assert.match(sourcesRoute, /Primärt studiematerial/);
   assert.match(sourcesRoute, /Varje övningsfråga visar en källrad med UHR:s kapitel/);
+  assert.match(sourcesRoute, /UHR står inte bakom dem/);
+  assert.match(sourcesRoute, /Källa hämtad 2026-05-19/);
   assert.match(sourcesRoute, /Sources/);
   assert.match(sourcesRoute, /Primary study material/);
   assert.match(sourcesRoute, /Every practice question shows a source line with the UHR chapter/);
+  assert.match(sourcesRoute, /quality is not checked by UHR or any other authority/);
+  assert.match(sourcesRoute, /Source accessed 2026-05-19/);
+  assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet/i);
   assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
   assert.match(
     sourcesRoute,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
   );
+  assert.match(
+    sourcesRoute,
+    /accessibilityLabel=\{copy\.openAuthorityBoundarySourceAccessibilityLabel\}/,
+  );
   assert.match(sourcesRoute, /Öppna UHR:s utbildningsmaterial/);
   assert.match(sourcesRoute, /Open UHR education material/);
+  assert.match(sourcesRoute, /Öppna UHR:s sida Om medborgarskapsprovet/);
+  assert.match(sourcesRoute, /Open UHR About the citizenship test page/);
+  assert.doesNotMatch(sourcesRoute, /UHR\s+varnar|UHR\s+warns/i);
+  assert.doesNotMatch(sourcesRoute, /kvalitetsgranskade\s+av\s+UHR|quality-controlled\s+by\s+UHR/i);
   assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
   assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
   assert.doesNotMatch(sourcesRoute, /spreadsheet-friendly|kalkylbladsvänliga/);
