@@ -1958,7 +1958,7 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
   },
   {
     label: 'tone style path',
-    pattern: /style=\{\[styles\.badge, styles\[tone\]\]\}/,
+    pattern: /style=\{\[styles\.badge, styles\[tone\], style\]\}/,
   },
   {
     label: 'visible child text',
