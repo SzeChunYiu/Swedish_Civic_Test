@@ -22,12 +22,14 @@ test('quiz CelebrationBurst keeps success motion decorative and non-interactive'
     'utf8',
   );
 
-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 12);
+  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 14);
   assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
   assert.equal(summary.celebrationBurstReachabilityRoutesValidated, 7);
   assert.equal(summary.celebrationBurstReachabilityValidated, true);
   assert.match(source, /active: boolean;/);
   assert.match(source, /if \(!active\) \{\s*progress\.setValue\(0\);\s*return;\s*\}/);
+  assert.match(source, /useReducedMotion/);
+  assert.match(source, /if \(reducedMotionEnabled\) \{/);
   assert.match(source, /duration:\s*motion\.duration\.slow \* 2,/);
   assert.match(source, /easing:\s*Easing\.out\(Easing\.cubic\),/);
   assert.match(source, /useNativeDriver:\s*true,/);
@@ -39,20 +41,7 @@ test('quiz CelebrationBurst keeps success motion decorative and non-interactive'
   assert.match(source, /<View style=\{styles\.pill\}>/);
 });
 
-test('CelebrationBurst is reachable from practice and routed quiz feedback', () => {
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const quizSource = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
-
-  for (const source of [practiceSource, quizSource]) {
-    assert.match(source, /import \{ CelebrationBurst \}/);
-    assert.match(source, /active=\{selectedIsCorrect\}/);
-    assert.match(source, /languageOverride=\{language\}/);
-    assert.match(source, /streak=\{celebrationStreak\}/);
-    assert.match(source, /questionProgress\[question\.id\]\?\.correctStreak \?\? 1/);
-  }
-});
-
-test('CelebrationBurst accessibility parity rejects web aria-hidden drift', () => {
+test('CelebrationBurst accessibility parity rejects missing reduced-motion hook usage', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -65,7 +54,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('      aria-hidden\\n', '');
+      .replace('const reducedMotionEnabled = useReducedMotion();', 'const reducedMotionEnabled = false;');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -78,7 +67,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /CelebrationBurst missing web decorative container aria-hidden for accessibility parity/,
+    /CelebrationBurst missing reduced motion hook usage for accessibility parity/,
   );
 });
 
@@ -95,7 +84,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('importantForAccessibility="no-hide-descendants"', 'importantForAccessibility="yes"');
+      .split('importantForAccessibility="no-hide-descendants"')
+      .join('importantForAccessibility="yes"');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

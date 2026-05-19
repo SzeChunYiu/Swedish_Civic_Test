@@ -2604,6 +2604,19 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
     label: 'visual fill uses percent interpolation bounds',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
   },
+  {
+    label: 'reduced motion hook import',
+    pattern: /import \{ useReducedMotion \} from '\.\.\/\.\.\/lib\/motion\/useReducedMotion';/,
+  },
+  {
+    label: 'reduced motion hook usage',
+    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
+  },
+  {
+    label: 'reduced motion skips animated timing',
+    pattern:
+      /if \(reducedMotionEnabled\) \{\s*animatedProgress\.setValue\(clampedProgress\);\s*return undefined;\s*\}/,
+  },
 ];
 const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   {
@@ -3207,7 +3220,20 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   },
   {
     label: 'active animation restarts from zero',
-    pattern: /progress\.setValue\(0\);\s*Animated\.timing\(progress,/,
+    pattern: /progress\.setValue\(0\);\s*const timing = Animated\.timing\(progress,/,
+  },
+  {
+    label: 'reduced motion hook import',
+    pattern: /import \{ useReducedMotion \} from '\.\.\/\.\.\/lib\/motion\/useReducedMotion';/,
+  },
+  {
+    label: 'reduced motion hook usage',
+    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
+  },
+  {
+    label: 'reduced motion static render',
+    pattern:
+      /if \(reducedMotionEnabled\) \{[\s\S]*<View[\s\S]*style=\{styles\.container\}[\s\S]*<View style=\{styles\.pill\}>/,
   },
   {
     label: 'tokenized animation duration',
@@ -10840,6 +10866,7 @@ function validateCardAccessibilityParity() {
 
 function validateProgressBarAccessibilityParity() {
   let valid = true;
+  let foundationProgressBarSource = '';
   let progressBarSource = '';
 
   function reject(message) {
@@ -10857,6 +10884,30 @@ function validateProgressBarAccessibilityParity() {
       `components/ui/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
     );
     return;
+  }
+
+  try {
+    foundationProgressBarSource = fs.readFileSync(
+      path.join(repoRoot, 'components/ProgressBar.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/ProgressBar.tsx could not be read for reduced-motion parity: ${error.message}`,
+    );
+    return;
+  }
+
+  for (const [file, source] of [
+    ['components/ProgressBar.tsx', foundationProgressBarSource],
+    ['components/ui/ProgressBar.tsx', progressBarSource],
+  ]) {
+    if (!source.includes('const reducedMotionEnabled = useReducedMotion();')) {
+      reject(`${file} must use the shared reduced-motion hook`);
+    }
+    if (!source.includes('animatedProgress.setValue(clampedProgress);')) {
+      reject(`${file} must jump progress instantly when reduced motion is enabled`);
+    }
   }
 
   EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {

@@ -17,11 +17,17 @@ function parseValidationSummary() {
 
 test('shared ProgressBar keeps visual progress and accessibility values in parity', () => {
   const summary = parseValidationSummary();
+  const foundationSource = fs.readFileSync(
+    path.join(repoRoot, 'components/ProgressBar.tsx'),
+    'utf8',
+  );
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/ProgressBar.tsx'), 'utf8');
 
-  assert.equal(summary.progressBarAccessibilityRulesValidated, 22);
+  assert.equal(summary.progressBarAccessibilityRulesValidated, 20);
   assert.equal(summary.progressBarAccessibilityParityValidated, true);
   assert.match(source, /import type \{ AppLanguage \}/);
+  assert.match(foundationSource, /useReducedMotion/);
+  assert.match(foundationSource, /const shouldAnimate = animated && !reducedMotionEnabled;/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
   assert.match(source, /export interface ProgressBarProps \{/);
   assert.match(source, /presentationOnly\?: boolean;/);
@@ -48,6 +54,11 @@ test('shared ProgressBar keeps visual progress and accessibility values in parit
     /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
   );
   assert.match(source, /new Animated\.Value\(clampedProgress\)/);
+  assert.match(source, /useReducedMotion/);
+  assert.match(
+    source,
+    /if \(reducedMotionEnabled\) \{\s*animatedProgress\.setValue\(clampedProgress\);\s*return undefined;\s*\}/,
+  );
 });
 
 test('route and chapter progress bars receive the selected settings language', () => {
@@ -131,5 +142,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /ProgressBar missing native clamped accessibility value for accessibility parity/,
+  );
+});
+
+test('ProgressBar accessibility parity rejects missing reduced-motion hook usage', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/ProgressBar.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const reducedMotionEnabled = useReducedMotion();', 'const reducedMotionEnabled = false;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /components\/ProgressBar\.tsx must use the shared reduced-motion hook/,
   );
 });

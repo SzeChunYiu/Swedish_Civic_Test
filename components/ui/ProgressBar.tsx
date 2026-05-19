@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { colors, motion, radius, space } from '../../lib/theme';
 
 type ProgressBarCopy = {
@@ -37,15 +38,24 @@ export function ProgressBar({
   const copy = progressBarCopy[language];
   const progressAccessibilityLabel = copy.progressLabel(progressPercent);
   const animatedProgress = useRef(new Animated.Value(clampedProgress)).current;
+  const reducedMotionEnabled = useReducedMotion();
 
   useEffect(() => {
-    Animated.timing(animatedProgress, {
+    if (reducedMotionEnabled) {
+      animatedProgress.setValue(clampedProgress);
+      return undefined;
+    }
+
+    const timing = Animated.timing(animatedProgress, {
       toValue: clampedProgress,
       duration: motion.duration.slow,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: false,
-    }).start();
-  }, [animatedProgress, clampedProgress]);
+    });
+
+    timing.start();
+    return () => timing.stop();
+  }, [animatedProgress, clampedProgress, reducedMotionEnabled]);
 
   const fillWidth = animatedProgress.interpolate({
     inputRange: [0, 1],

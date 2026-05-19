@@ -3,6 +3,7 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 import type { ComponentProps } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, space } from '../lib/theme';
 
@@ -55,9 +56,11 @@ export function ProgressBar({
   const defaultAccessibilityText = progressBarCopy[language].progressLabel(progressPercent);
   const resolvedAccessibilityLabel = accessibilityLabel ?? defaultAccessibilityText;
   const animatedProgress = useRef(new Animated.Value(clampedProgress)).current;
+  const reducedMotionEnabled = useReducedMotion();
+  const shouldAnimate = animated && !reducedMotionEnabled;
 
   useEffect(() => {
-    if (!animated) {
+    if (!shouldAnimate) {
       animatedProgress.setValue(clampedProgress);
       return undefined;
     }
@@ -71,7 +74,7 @@ export function ProgressBar({
 
     timing.start();
     return () => timing.stop();
-  }, [animated, animatedProgress, clampedProgress]);
+  }, [animatedProgress, clampedProgress, shouldAnimate]);
 
   const fillWidth = animatedProgress.interpolate({
     inputRange: [0, 1],
