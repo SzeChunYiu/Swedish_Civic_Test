@@ -377,7 +377,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Supplementary',
     'Editorial',
     'About the sources',
-    'Close about-the-sources',
+    'Close source details',
     "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
     'Variant generated from a UHR question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
     'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
@@ -433,6 +433,16 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     'try-again action must expose localized accessibility copy',
   ],
   ['{copy.tryAgain}', 'try-again action must render localized copy'],
+];
+const REJECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
+  [
+    'Close about-the-sources',
+    'practice route English source drawer close label must say "Close source details", not "Close about-the-sources"',
+  ],
+  [
+    'about-the-sources',
+    'practice route English source drawer copy must not contain hyphenated about-the-sources text',
+  ],
 ];
 const QUESTION_DISCLAIMER_USAGE_PATTERN = /<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/;
 const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
@@ -7834,6 +7844,10 @@ function validatePracticeRouteCopyParity() {
 
   EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!practiceRoute.includes(snippet)) reject(message);
+  });
+
+  REJECTED_PRACTICE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (practiceRoute.includes(snippet)) reject(message);
   });
 
   const seenLabels = new Set();
