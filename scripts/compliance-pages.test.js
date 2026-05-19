@@ -9,6 +9,10 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function readAppName() {
+  return JSON.parse(read('app.json')).expo.name;
+}
+
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
@@ -81,4 +85,34 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Juridik och källor/);
   assert.match(complianceLinks, /Legal and sources/);
   assert.match(complianceLinks, /Support/);
+});
+
+test('static site brand copy matches app identity', () => {
+  const appName = readAppName();
+  const staleBrand = /Sveriges Medborgartest|Sweden Citizenship Test Prep/;
+  const staticFiles = fs
+    .readdirSync(path.join(repoRoot, 'site'))
+    .filter((fileName) => /\.(?:html|js|jsx|css)$/.test(fileName));
+
+  for (const fileName of staticFiles) {
+    const body = read(path.join('site', fileName));
+    assert.doesNotMatch(body, staleBrand, `site/${fileName} should not use the old brand`);
+  }
+
+  for (const filePath of [
+    'site/index.html',
+    'site/app.js',
+    'site/ebook.js',
+    'site/practice.js',
+    'site/settings.js',
+    'site/questions.js',
+    'scripts/export-site-question-bank.js',
+  ]) {
+    assert.match(read(filePath), new RegExp(appName), `${filePath} should use ${appName}`);
+  }
+
+  assert.match(
+    read('site/questions.js'),
+    new RegExp(`^/\\* ${appName} - generated static question bank\\.`),
+  );
 });

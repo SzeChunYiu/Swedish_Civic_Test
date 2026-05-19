@@ -1,4 +1,4 @@
-/* Sveriges Medborgartest — Practice hub + mock exam
+/* Almost Swedish — Practice hub + mock exam
    - /practice           → chapter hub with per-chapter progress
    - /practice?c=N       → run a quiz for chapter N (handled by existing quiz)
    - /mock               → mock exam landing
