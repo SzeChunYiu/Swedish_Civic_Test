@@ -187,6 +187,27 @@ test('static ebook does not promise source-backed footnotes without citation cov
   );
 });
 
+test('static ebook source notes have dedicated compact readable styling', () => {
+  const styles = readSiteFile('site/styles.css');
+
+  assert.match(
+    styles,
+    /\.ebook__factbox \.ebook__source-note \{[^}]*margin: 12px 0 0;[^}]*padding-top: 10px;[^}]*border-top: 1px solid var\(--line\);[^}]*color: var\(--ink-soft\);[^}]*font-size: 12\.5px;[^}]*line-height: 1\.5;/s,
+  );
+  assert.match(
+    styles,
+    /\.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--blue-deep\);[^}]*text-decoration: underline;[^}]*text-underline-offset: 2px;/s,
+  );
+  assert.match(
+    styles,
+    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note \{[^}]*color: var\(--ink-soft\) !important;[^}]*border-top-color: var\(--line\);/s,
+  );
+  assert.match(
+    styles,
+    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--gold\) !important;/s,
+  );
+});
+
 test('static ebook navigation covers every shipped static chapter', () => {
   const expectedChapterIds = getExpectedChapterIds();
 
