@@ -683,6 +683,33 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('language picker modal keeps backdrop inert and close control inside the menu', () => {
+  const source = read('components/ui/LanguagePicker.tsx');
+  const backdropPressable = source.match(/<Pressable\s+accessible=\{false\}[\s\S]*?\/>/)?.[0];
+  const closeLabelMatches = source.match(/accessibilityLabel=\{copy\.closeLabel\}/g) ?? [];
+
+  assert.equal(closeLabelMatches.length, 1);
+  assert.ok(backdropPressable);
+  assert.match(source, /const closePicker = \(\) => setOpen\(false\);/);
+  assert.match(source, /<Modal[\s\S]*onRequestClose=\{closePicker\}/);
+  assert.match(backdropPressable, /importantForAccessibility="no"/);
+  assert.match(backdropPressable, /onPress=\{closePicker\}/);
+  assert.match(backdropPressable, /styles\.backdrop/);
+  assert.doesNotMatch(backdropPressable, /accessibilityLabel=/);
+  assert.doesNotMatch(backdropPressable, /accessibilityRole=/);
+  assert.match(source, /accessibilityLabel=\{copy\.menuLabel\}/);
+  assert.match(source, /accessibilityRole="menu"/);
+  assert.match(source, /accessibilityViewIsModal/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(
+    source,
+    /<Pressable[\s\S]*accessibilityLabel=\{copy\.closeLabel\}[\s\S]*accessibilityRole="button"[\s\S]*hitSlop=\{space\[1\]\}[\s\S]*onPress=\{closePicker\}[\s\S]*styles\.closeButton/,
+  );
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /minWidth: space\[6\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('onboarding route exposes its primary title as a header', () => {
   const source = read('app/onboarding.tsx');
 
