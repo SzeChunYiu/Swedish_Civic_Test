@@ -104,6 +104,12 @@ const QUESTION_BANK_CSV_HEADER = [
   'tags',
   'questionProvenance',
 ];
+const QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS = Object.freeze({
+  uhrSourceTitle: 'title',
+  uhrSourcePublisher: 'publisher',
+  uhrSourceUrl: 'url',
+  uhrSourceRetrievedAt: 'retrievedDate',
+});
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -13582,6 +13588,34 @@ function validateQuestionBankCsvContract() {
     );
   }
 
+  const sourceMetadataMismatches = [];
+
+  function formatCsvMismatch(mismatch) {
+    return `content/question-bank.csv row ${mismatch.rowNumber} ${mismatch.label} ${
+      mismatch.field
+    } is ${JSON.stringify(mismatch.actual)}, expected ${JSON.stringify(mismatch.expected)}`;
+  }
+
+  function formatCsvSourceMetadataDrift(field, mismatches) {
+    const sourceField = QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS[field];
+    const actualValues = Array.from(new Set(mismatches.map((mismatch) => mismatch.actual))).map(
+      (value) => JSON.stringify(value),
+    );
+    const expectedValues = Array.from(new Set(mismatches.map((mismatch) => mismatch.expected))).map(
+      (value) => JSON.stringify(value),
+    );
+    const actualSummary =
+      actualValues.length === 1
+        ? actualValues[0]
+        : `${actualValues.slice(0, 3).join(', ')}${actualValues.length > 3 ? ', ...' : ''}`;
+    const expectedSummary =
+      expectedValues.length === 1
+        ? expectedValues[0]
+        : `${expectedValues.slice(0, 3).join(', ')}${expectedValues.length > 3 ? ', ...' : ''}`;
+
+    return `content/question-bank.csv ${field} metadata drift: ${mismatches.length} rows disagree with content/uhr-section-map.json source.${sourceField}; saw ${actualSummary}, expected ${expectedSummary}`;
+  }
+
   dataRows.forEach((row, index) => {
     const question = questions[index];
     const rowNumber = index + 2;
@@ -13629,17 +13663,39 @@ function validateQuestionBankCsvContract() {
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
-        reject(
-          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
-            row[fieldIndex],
-          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
-        );
+        rowIsValid = false;
+        const mismatch = {
+          rowNumber,
+          label,
+          field,
+          actual: row[fieldIndex],
+          expected: expectedRow[fieldIndex],
+        };
+        if (QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS[field]) {
+          sourceMetadataMismatches.push(mismatch);
+        } else {
+          reject(formatCsvMismatch(mismatch));
+        }
       }
     });
 
     if (rowIsValid) {
       questionBankCsvRowsValidated += 1;
       questionBankCsvProvenanceCounts[getQuestionProvenance(question)] += 1;
+    }
+  });
+
+  const aggregatedSourceMetadataFields = new Set();
+  Object.keys(QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS).forEach((field) => {
+    const mismatches = sourceMetadataMismatches.filter((mismatch) => mismatch.field === field);
+    if (mismatches.length === dataRows.length && dataRows.length > 1) {
+      aggregatedSourceMetadataFields.add(field);
+      fail(formatCsvSourceMetadataDrift(field, mismatches));
+    }
+  });
+  sourceMetadataMismatches.forEach((mismatch) => {
+    if (!aggregatedSourceMetadataFields.has(mismatch.field)) {
+      fail(formatCsvMismatch(mismatch));
     }
   });
 }
