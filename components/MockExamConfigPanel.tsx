@@ -32,12 +32,12 @@ type MockExamConfigPanelCopy = {
   incrementDurationAccessibilityLabel: string;
   incrementQuestionAccessibilityLabel: string;
   localSaveLabel: string;
-  passingAccessibilityLabel: (label: string, percent: number) => string;
-  passingLabel: string;
   practiceLabel: string;
   questionCountLabel: string;
   resetLabel: string;
+  scoreModeLabel: string;
   selectedChaptersValueLabel: (count: number) => string;
+  sourceScopeLabel: string;
   startLabel: string;
 };
 
@@ -54,12 +54,12 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     incrementDurationAccessibilityLabel: 'Öka provtid',
     incrementQuestionAccessibilityLabel: 'Öka antal frågor',
     localSaveLabel: 'Sparas lokalt',
-    passingAccessibilityLabel: (label, percent) => `${label} ${percent} procent`,
-    passingLabel: 'Gräns för godkänt',
     practiceLabel: 'Öva först',
     questionCountLabel: 'Frågor',
     resetLabel: 'Återställ',
+    scoreModeLabel: 'Resultat är övning',
     selectedChaptersValueLabel: (count) => (count === 1 ? '1 valt' : `${count} valda`),
+    sourceScopeLabel: 'UHR-baserade frågor',
     startLabel: 'Starta provet',
   },
   en: {
@@ -74,12 +74,12 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     incrementDurationAccessibilityLabel: 'Increase exam duration',
     incrementQuestionAccessibilityLabel: 'Increase question count',
     localSaveLabel: 'Saved locally',
-    passingAccessibilityLabel: (label, percent) => `${label} ${percent} percent`,
-    passingLabel: 'Pass',
     practiceLabel: 'Practice first',
     questionCountLabel: 'Questions',
     resetLabel: 'Reset',
+    scoreModeLabel: 'Practice result',
     selectedChaptersValueLabel: (count) => `${count} selected`,
+    sourceScopeLabel: 'UHR-based questions',
     startLabel: 'Start exam',
   },
 };
@@ -87,8 +87,8 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
 /**
  * Defaults: localized labels from settings, `minQuestionCount=5`,
  * `questionStep=1`, `minDurationMinutes=2`, `maxDurationMinutes=90`,
- * `durationStep=1`, `passingPercent=75`, `accessibilityRole="summary"`,
- * and token-sized press targets. Pass localized labels and callbacks from
+ * `durationStep=1`, `accessibilityRole="summary"`, and token-sized press
+ * targets. Pass localized labels and callbacks from
  * the owning screen for screen-specific copy.
  */
 export interface MockExamConfigPanelProps extends Omit<SurfaceProps, 'children'> {
@@ -121,16 +121,16 @@ export interface MockExamConfigPanelProps extends Omit<SurfaceProps, 'children'>
   onSelectAllChapters?: () => void;
   onStart?: () => void;
   onToggleChapter?: (chapterId: ChapterId) => void;
-  passingLabel?: string;
-  passingPercent?: number;
   practiceLabel?: string;
   questionCount: number;
   questionCountHint?: string;
   questionCountLabel?: string;
   questionStep?: number;
   resetLabel?: string;
+  scoreModeLabel?: string;
   selectedChapterIds?: readonly ChapterId[];
   selectedChaptersValueLabel?: (count: number) => string;
+  sourceScopeLabel?: string;
   startAccessibilityLabel?: string;
   startDisabled?: boolean;
   startLabel?: string;
@@ -298,16 +298,16 @@ export function MockExamConfigPanel({
   onSelectAllChapters,
   onStart,
   onToggleChapter,
-  passingLabel,
-  passingPercent = 75,
   practiceLabel,
   questionCount,
   questionCountHint,
   questionCountLabel,
   questionStep = 1,
   resetLabel,
+  scoreModeLabel,
   selectedChapterIds = chapters.map((chapter) => chapter.id),
   selectedChaptersValueLabel,
+  sourceScopeLabel,
   startAccessibilityLabel,
   startDisabled = false,
   startLabel,
@@ -335,12 +335,13 @@ export function MockExamConfigPanel({
   const resolvedIncrementQuestionAccessibilityLabel =
     incrementQuestionAccessibilityLabel ?? copy.incrementQuestionAccessibilityLabel;
   const resolvedLocalSaveLabel = localSaveLabel ?? copy.localSaveLabel;
-  const resolvedPassingLabel = passingLabel ?? copy.passingLabel;
   const resolvedPracticeLabel = practiceLabel ?? copy.practiceLabel;
   const resolvedQuestionCountLabel = questionCountLabel ?? copy.questionCountLabel;
   const resolvedResetLabel = resetLabel ?? copy.resetLabel;
+  const resolvedScoreModeLabel = scoreModeLabel ?? copy.scoreModeLabel;
   const resolvedSelectedChaptersValueLabelGetter =
     selectedChaptersValueLabel ?? copy.selectedChaptersValueLabel;
+  const resolvedSourceScopeLabel = sourceScopeLabel ?? copy.sourceScopeLabel;
   const resolvedStartLabel = startLabel ?? copy.startLabel;
   const safeMinQuestionCount = Math.max(0, Math.round(minQuestionCount));
   const safeMaxQuestionCount = Math.max(safeMinQuestionCount, Math.round(maxQuestionCount));
@@ -384,12 +385,7 @@ export function MockExamConfigPanel({
             </Text>
           ) : null}
         </View>
-        <PillBadge
-          accessibilityLabel={copy.passingAccessibilityLabel(resolvedPassingLabel, passingPercent)}
-          variant="accent"
-        >
-          {passingPercent}%
-        </PillBadge>
+        <PillBadge variant="accent">{resolvedSourceScopeLabel}</PillBadge>
       </View>
 
       <View style={styles.controlsGrid}>
@@ -483,6 +479,7 @@ export function MockExamConfigPanel({
 
             return (
               <Pressable
+                aria-checked={selected}
                 accessibilityLabel={chapter.accessibilityLabel ?? chapter.title}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: selected, disabled }}
@@ -521,7 +518,7 @@ export function MockExamConfigPanel({
       </View>
 
       <View style={styles.metaRow}>
-        <PillBadge>{`${passingPercent}% ${resolvedPassingLabel}`}</PillBadge>
+        <PillBadge>{resolvedScoreModeLabel}</PillBadge>
         <PillBadge>{resolvedFeedbackLabel}</PillBadge>
         <PillBadge>{resolvedLocalSaveLabel}</PillBadge>
       </View>

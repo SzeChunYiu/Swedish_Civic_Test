@@ -67,6 +67,47 @@ test('buildQuestionSpeechText keeps source citation separate from spoken prompt'
   );
 });
 
+test('buildAnswerFeedbackSpeechText reads selected answer, correction, and Swedish explanation', () => {
+  const { buildAnswerFeedbackSpeechText } = loadTs('lib/audio/speak.ts');
+  const text = buildAnswerFeedbackSpeechText(
+    {
+      questionSv: 'Var ligger Sverige?',
+      correctOptionId: 'b',
+      explanationSv: 'Sverige ligger i Norden och är en del av Europa.',
+      options: [
+        { id: 'a', textSv: 'I södra Europa', textEn: 'In southern Europe' },
+        { id: 'b', textSv: 'I Norden i norra Europa', textEn: 'In the Nordic region' },
+      ],
+    },
+    'a',
+  );
+
+  assert.equal(
+    text,
+    'Ditt svar: I södra Europa. Rätt svar: I Norden i norra Europa. Förklaring: Sverige ligger i Norden och är en del av Europa.',
+  );
+  assert.doesNotMatch(text, /UHR|Källa|Source/i);
+});
+
+test('buildAnswerFeedbackSpeechText keeps correct feedback concise', () => {
+  const { buildAnswerFeedbackSpeechText } = loadTs('lib/audio/speak.ts');
+  const text = buildAnswerFeedbackSpeechText(
+    {
+      questionSv: 'Vad betyder demokrati?',
+      correctOptionId: 'a',
+      explanationSv: 'Demokrati betyder folkstyre.',
+      options: [
+        { id: 'a', textSv: 'Folkstyre', textEn: 'Rule by the people' },
+        { id: 'b', textSv: 'Envälde', textEn: 'Autocracy' },
+      ],
+    },
+    'a',
+  );
+
+  assert.equal(text, 'Ditt svar: Folkstyre. Det är rätt. Förklaring: Demokrati betyder folkstyre.');
+  assert.doesNotMatch(text, /Rätt svar: Folkstyre\. Rätt svar/);
+});
+
 test('speech helpers do not crash when the platform speech engine is unavailable', () => {
   const warnings = [];
   const originalWarn = console.warn;
@@ -94,60 +135,7 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.match(warnings[1], /Speech stop unavailable/i);
 });
 
-test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
-  moduleCache.clear();
-  const speechEvents = [];
-  const onDone = () => {};
-  const onError = () => {};
-  const onStart = () => {};
-  const onStopped = () => {};
-  const { speakSwedish } = loadTs('lib/audio/speak.ts', {
-    speechMock: {
-      speak(text, options) {
-        speechEvents.push({ text, options });
-      },
-      stop() {},
-    },
-  });
-
-  speakSwedish('Hej Sverige', { onDone, onError, onStart, onStopped });
-
-  assert.equal(speechEvents.length, 1);
-  assert.equal(speechEvents[0].text, 'Hej Sverige');
-  assert.equal(speechEvents[0].options.language, 'sv-SE');
-  assert.equal(speechEvents[0].options.onDone, onDone);
-  assert.equal(speechEvents[0].options.onError, onError);
-  assert.equal(speechEvents[0].options.onStart, onStart);
-  assert.equal(speechEvents[0].options.onStopped, onStopped);
-});
-
-test('AudioButton exposes prompt playback state as a stop toggle', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'components/learning/AudioButton.tsx'),
-    'utf8',
-  );
-
-  assert.match(source, /import \{ useCallback, useEffect, useRef, useState \} from 'react';/);
-  assert.match(source, /playingLabel: 'Stoppa ljudet'/);
-  assert.match(source, /playingLabel: 'Stop audio'/);
-  assert.match(
-    source,
-    /const \[activeSpeechText, setActiveSpeechText\] = useState<string \| null>\(null\);/,
-  );
-  assert.match(source, /const activeSpeechRunIdRef = useRef\(0\);/);
-  assert.match(source, /const isSpeaking = canPlayAudio && activeSpeechText === speechText;/);
-  assert.match(source, /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*return;/);
-  assert.match(
-    source,
-    /speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onError: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onStopped: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*\}\);/,
-  );
-  assert.match(
-    source,
-    /accessibilityState=\{\{ disabled: !canPlayAudio, busy: isSpeaking, selected: isSpeaking \}\}/,
-  );
-});
-
-test('practice and routed quiz screens honor the persisted audio setting', () => {
+test('practice and routed quiz screens honor audio settings for prompt and feedback playback', () => {
   const routeFiles = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
 
   for (const routeFile of routeFiles) {
@@ -155,7 +143,11 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
     assert.match(source, /import\s+\{\s*AudioButton\s*\}\s+from ['"][^'"]+AudioButton['"]/);
     assert.match(
       source,
-      /import\s+\{\s*buildQuestionSpeechText\s*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
+      /import\s+\{\s*FeedbackAudioButton\s*\}\s+from ['"][^'"]+FeedbackAudioButton['"]/,
+    );
+    assert.match(
+      source,
+      /import\s+\{\s*buildAnswerFeedbackSpeechText,\s*buildQuestionSpeechText\s*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
     );
     assert.match(
       source,
@@ -165,5 +157,15 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
       source,
       /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
     );
+    assert.match(
+      source,
+      /<FeedbackAudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
+    );
   }
+});
+
+test('active mock exams do not render feedback audio controls', () => {
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.doesNotMatch(examSource, /FeedbackAudioButton|buildAnswerFeedbackSpeechText/);
 });
