@@ -7,24 +7,24 @@ screenshot path, or reviewer note. Manual release gates are also represented in
 
 ## Candidate identity
 
-| Field | Evidence |
-|---|---|
-| Date | TBD |
-| Git commit | TBD |
-| EAS build profile | preview or production |
-| Android build ID / URL | TBD |
-| iOS build ID / URL | TBD |
-| Tester / device owner | TBD |
+| Field                  | Evidence              |
+| ---------------------- | --------------------- |
+| Date                   | TBD                   |
+| Git commit             | TBD                   |
+| EAS build profile      | preview or production |
+| Android build ID / URL | TBD                   |
+| iOS build ID / URL     | TBD                   |
+| Tester / device owner  | TBD                   |
 
 ## Build commands
 
-| Gate | Command or URL | Result |
-|---|---|---|
-| Local validation | `npm run validate` | TBD |
-| Release preflight | `npm run release:preflight` | TBD; also update `reports/release-gates.json` for manual gates |
-| Preview/internal build | `npm run build:preview` | TBD |
-| Production build | `npm run build:production` | TBD |
-| Production submit | `npm run submit:production` | TBD |
+| Gate                   | Command or URL              | Result                                                         |
+| ---------------------- | --------------------------- | -------------------------------------------------------------- |
+| Local validation       | `npm run validate`          | TBD                                                            |
+| Release preflight      | `npm run release:preflight` | TBD; also update `reports/release-gates.json` for manual gates |
+| Preview/internal build | `npm run build:preview`     | TBD                                                            |
+| Production build       | `npm run build:production`  | TBD                                                            |
+| Production submit      | `npm run submit:production` | TBD                                                            |
 
 ## EAS build artifact evidence
 
@@ -38,10 +38,10 @@ ready/complete/uploaded/installed status.
 
 ## Physical-device smoke tests
 
-| Platform | Device / OS | Installed build | Checks | Result | Evidence |
-|---|---|---|---|---|---|
-| Android | TBD | TBD | onboarding, practice, audio, mock exam no ads, progress restart, privacy pages | TBD | screenshot/video/log path |
-| iOS | TBD | TBD | onboarding, practice, audio, mock exam no ads, progress restart, privacy pages | TBD | screenshot/video/log path |
+| Platform | Device / OS | Installed build | Checks                                                                         | Result | Evidence                  |
+| -------- | ----------- | --------------- | ------------------------------------------------------------------------------ | ------ | ------------------------- |
+| Android  | TBD         | TBD             | onboarding, practice, audio, mock exam no ads, progress restart, privacy pages | TBD    | screenshot/video/log path |
+| iOS      | TBD         | TBD             | onboarding, practice, audio, mock exam no ads, progress restart, privacy pages | TBD    | screenshot/video/log path |
 
 ## Audio-specific checks
 
@@ -57,14 +57,14 @@ and `privacy-legal-pages`. The JSON must also include at least one proof
 artifact (`log`, `video`, `screenshot`, or `audio`) as either a local file next
 to the JSON evidence or an HTTPS URL.
 
-| Platform | Check | Result | Notes |
-|---|---|---|---|
-| Android | Swedish `sv-SE` question text speaks clearly | TBD |  |
-| Android | Audio button respects mute/disabled state | TBD |  |
-| Android | App remains usable if speech engine is unavailable | TBD |  |
-| iOS | Swedish `sv-SE` question text speaks clearly | TBD |  |
-| iOS | Audio button respects mute/disabled state | TBD |  |
-| iOS | App remains usable if speech engine is unavailable | TBD |  |
+| Platform | Check                                              | Result | Notes |
+| -------- | -------------------------------------------------- | ------ | ----- |
+| Android  | Swedish `sv-SE` question text speaks clearly       | TBD    |       |
+| Android  | Audio button respects mute/disabled state          | TBD    |       |
+| Android  | App remains usable if speech engine is unavailable | TBD    |       |
+| iOS      | Swedish `sv-SE` question text speaks clearly       | TBD    |       |
+| iOS      | Audio button respects mute/disabled state          | TBD    |       |
+| iOS      | App remains usable if speech engine is unavailable | TBD    |       |
 
 ## Store/account gates
 
@@ -72,23 +72,26 @@ If store/account evidence is recorded in local JSON, use a path such as
 `reports/store-records/store-records.json`. Local JSON referenced by the
 `store-records` gate is validated by `npm run release:preflight` and must
 include: `status: "ready"`, `bundleIdentifier:
-"com.billyyiu.swedishcivictest"`, App Store Connect URL, Google Play Console
-URL, exact hosted support/privacy URLs, concrete Apple Team ID / Google Play
-developer ID ownership review, and either a concrete AdMob app ID or a v1.0
-real-ads-disabled decision. It must also confirm App Store and Google Play
-listing metadata were reviewed against `publishing/app-store-listing.md` and
-`publishing/google-play-listing.md` and match the store records.
+"com.billyyiu.almostswedish"`, Google Play package
+`com.billyyiu.almostswedish`, App Store Connect URL, Google Play Console URL,
+exact hosted support/privacy URLs, concrete Apple Team ID / Google Play
+developer ID ownership review, concrete AdMob app ID evidence for the
+ad-supported release, `adMob.realAdsEnabled: true`, and
+`adMob.appAdsTxtReviewed: true` for the hosted app-ads.txt file. It must also
+confirm App Store and Google Play listing metadata were reviewed against
+`publishing/app-store-listing.md` and `publishing/google-play-listing.md` and
+match the store records.
 
-| Gate | Required evidence | Status |
-|---|---|---|
-| Apple Developer account | Team ID or App Store Connect access note | TBD |
-| App Store Connect app record | App record URL for `com.billyyiu.swedishcivictest` | TBD |
-| TestFlight upload | Build number, processing status, beta review status | TBD |
-| Google Play Console app record | App record URL for `com.billyyiu.swedishcivictest` | TBD |
-| Google Play internal release | Track URL, version code, tester group | TBD |
-| AdMob app record | AdMob app ID, or explicit decision to keep real ads disabled for this release | TBD |
-| Public support URL | URL visible in both store records | TBD |
-| Public privacy URL | URL visible in both store records | TBD |
+| Gate                           | Required evidence                                                                           | Status |
+| ------------------------------ | ------------------------------------------------------------------------------------------- | ------ |
+| Apple Developer account        | Team ID or App Store Connect access note                                                    | TBD    |
+| App Store Connect app record   | App record URL for `com.billyyiu.almostswedish`                                             | TBD    |
+| TestFlight upload              | Build number, processing status, beta review status                                         | TBD    |
+| Google Play Console app record | App record URL for `com.billyyiu.almostswedish`                                             | TBD    |
+| Google Play internal release   | Track URL, version code, tester group                                                       | TBD    |
+| AdMob app record               | AdMob app ID(s), `adMob.realAdsEnabled: true`, app-ads.txt review, and seller line evidence | TBD    |
+| Public support URL             | URL visible in both store records                                                           | TBD    |
+| Public privacy URL             | URL visible in both store records                                                           | TBD    |
 
 ## Store submit credential evidence
 
@@ -98,7 +101,7 @@ the `store-credentials` gate is validated by `npm run release:preflight` and
 must include: `status: "ready"`, iOS Apple ID email, App Store Connect app ID,
 Apple Team ID, credentials source and review timestamp, plus Android Google Play
 service-account email, SHA256 key fingerprint, package name
-`com.billyyiu.swedishcivictest`, credentials source, and review timestamp. Do
+`com.billyyiu.almostswedish`, credentials source, and review timestamp. Do
 not commit service-account private keys or passwords; record only non-secret
 identifiers and fingerprints.
 
@@ -130,7 +133,8 @@ privacy review, public URLs, and final screenshots.
 
 Do not mark `privacy-review` READY in `reports/release-gates.json` until this
 section names the generated binary/build reviewed for Apple privacy labels,
-Google Play Data safety, and the disabled Google Mobile Ads SDK posture.
+Google Play Data safety, the ad-supported Google Mobile Ads release posture,
+Remove Ads purchase handling, and ATT/UMP consent disclosures.
 
 If privacy evidence is recorded in local JSON, use a path such as
 `reports/privacy-review/privacy-review.json`. Local JSON referenced by the
@@ -139,19 +143,21 @@ include: `status: "reviewed"`, `reviewedAt`, `reviewer`, reviewed build
 ID/version/commit, App Store Connect and Google Play questionnaire review
 status, Apple privacy labels reviewed against `publishing/privacy-labels.md`,
 Google Play Data safety reviewed against
-`publishing/google-play-data-safety.md`, Google Mobile Ads SDK present with test
-app IDs, `realAdsEnabled: false`, a
-`REAL_ADS_ENABLED_FOR_V1=false` or real-ads-disabled gate note, and disabled
-analytics, crash reporting, purchase, and real-ad SDKs.
+`publishing/google-play-data-safety.md`, Google Mobile Ads SDK present,
+`googleMobileAds.realAdsEnabled: true`, real AdMob app/unit ID and app-ads.txt
+review, `googleMobileAds.removeAdsIapReviewed: true` for the 29 SEK
+non-consumable Remove Ads product, `googleMobileAds.consentFlowReviewed: true`
+for App Tracking Transparency and Google UMP consent, and disabled analytics
+plus crash reporting SDKs.
 
-| Question | Answer for this candidate | Evidence |
-|---|---|---|
-| Are real ads enabled? | TBD | SDK/config review |
-| Is any purchase SDK enabled? | TBD | SDK/config review |
-| Is analytics or crash reporting enabled? | TBD | SDK/config review |
-| Do Apple privacy labels still match the binary? | TBD | `publishing/privacy-labels.md` review |
-| Does Google Play Data safety still match the binary? | TBD | `publishing/google-play-data-safety.md` review |
-| Does the generated binary match the documented Google Mobile Ads SDK posture? | TBD | build ID plus `REAL_ADS_ENABLED_FOR_V1=false` / test app ID review |
+| Question                                                                      | Answer for this candidate                 | Evidence                                                                                              |
+| ----------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Are real ads enabled?                                                         | TBD; READY requires ad-supported real ads | generated binary, `EXPO_PUBLIC_REAL_ADS_ENABLED=true`, AdMob app/unit ID, and app-ads.txt review      |
+| Is any purchase SDK enabled?                                                  | TBD; READY requires Remove Ads IAP review | generated binary, 29 SEK non-consumable product, purchase/restore flow review                         |
+| Is analytics or crash reporting enabled?                                      | TBD                                       | SDK/config review                                                                                     |
+| Do Apple privacy labels still match the binary?                               | TBD                                       | `publishing/privacy-labels.md` review                                                                 |
+| Does Google Play Data safety still match the binary?                          | TBD                                       | `publishing/google-play-data-safety.md` review                                                        |
+| Does the generated binary match the documented Google Mobile Ads SDK posture? | TBD                                       | build ID plus ad-supported Google Mobile Ads, ATT/UMP consent, Remove Ads IAP, and app-ads.txt review |
 
 ## Final store screenshot evidence
 
