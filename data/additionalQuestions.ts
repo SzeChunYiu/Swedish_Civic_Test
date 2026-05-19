@@ -2866,4 +2866,34 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['geography', 'landskap', 'counties', 'municipalities'],
     'medium',
   ),
+  single(
+    'q145',
+    'ch01',
+    { chapter: 'Landet Sverige', section: 'Befolkning', pageApprox: 7 },
+    'Vilket påstående om Sveriges befolkning stämmer?',
+    "Which statement about Sweden's population is correct?",
+    [
+      [
+        'Ungefär 85 procent av befolkningen bor i städer',
+        'About 85 percent of the population lives in cities',
+      ],
+      [
+        'Ungefär hälften av befolkningen bor i städer',
+        'About half of the population lives in cities',
+      ],
+      [
+        'Ungefär en fjärdedel av befolkningen bor i städer',
+        'About one quarter of the population lives in cities',
+      ],
+      [
+        'Nästan alla invånare bor i de tre största städerna',
+        'Almost everyone lives in the three largest cities',
+      ],
+    ],
+    0,
+    'Ungefär 85 procent av Sveriges befolkning bor i städer. Befolkningen är inte jämnt fördelad i landet, och de flesta bor i södra Sverige och längs kusterna.',
+    "About 85 percent of Sweden's population lives in cities. The population is not evenly distributed across the country, and most people live in southern Sweden and along the coasts.",
+    ['population', 'cities', 'urbanization', 'demography'],
+    'easy',
+  ),
 ];
