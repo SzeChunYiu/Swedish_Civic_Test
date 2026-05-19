@@ -82,8 +82,10 @@ const expectedLegalRoutes = [
       'const copy = sourcesCopy[language];',
       'Källor',
       'Primärt studiematerial',
+      'Varje övningsfråga visar en källrad med UHR:s kapitel',
       'Sources',
       'Primary study material',
+      'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
