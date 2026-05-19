@@ -15,55 +15,7 @@
     big:    ["#006aa7", "#fecc00", "#bc1f2a", "#1e874b", "#ffffff", "#0b1f33"],
   };
 
-  function rootPrefersReducedMotion() {
-    const root = document.documentElement;
-    return !!(root && root.getAttribute && root.getAttribute("data-motion") === "reduce");
-  }
-
-  function savedMotionPrefersReduce() {
-    try {
-      return localStorage.getItem("smt_motion") === "reduce";
-    } catch {
-      return false;
-    }
-  }
-
-  function systemPrefersReducedMotion() {
-    try {
-      return (
-        typeof window.matchMedia === "function" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      );
-    } catch {
-      return false;
-    }
-  }
-
-  function prefersReducedMotion() {
-    return (
-      rootPrefersReducedMotion() ||
-      savedMotionPrefersReduce() ||
-      systemPrefersReducedMotion()
-    );
-  }
-
-  function motionAllowed() {
-    return !prefersReducedMotion();
-  }
-
-  function clearDecorativeEffects() {
-    const layer = document.getElementById("smt-fx-layer");
-    if (layer) layer.remove();
-  }
-
-  if (typeof window.addEventListener === "function") {
-    window.addEventListener("smt:motionchange", (event) => {
-      if (event.detail && event.detail.reduced) clearDecorativeEffects();
-    });
-  }
-
   function burst(x, y, opts = {}) {
-    if (!motionAllowed()) return;
     const colors = opts.colors || PALETTES.flag;
     const count = opts.count || 28;
     const spread = opts.spread || 140;
@@ -104,7 +56,6 @@
 
   function rain(opts = {}) {
     // full-screen confetti from top
-    if (!motionAllowed()) return;
     const colors = opts.colors || PALETTES.big;
     const count = opts.count || 90;
     const layer = ensureLayer();
@@ -151,7 +102,6 @@
   // ---------- SHAKE (element) ----------
 
   function shakeEl(el) {
-    if (!motionAllowed()) return;
     if (!el) return;
     el.classList.remove("smt-shake");
     void el.offsetWidth; // restart anim
@@ -162,14 +112,13 @@
   // ---------- FLOATING "+1" ----------
 
   function floatPlus(x, y, text = "+1", color = "#1e874b") {
-    if (!motionAllowed()) return;
     const layer = ensureLayer();
     const el = document.createElement("span");
     el.textContent = text;
     el.style.cssText = `
       position: absolute; left: ${x}px; top: ${y}px;
       transform: translate(-50%, -50%);
-      font-family: var(--display);
+      font-family: "Bricolage Grotesque", system-ui, sans-serif;
       font-weight: 700; font-size: 24px;
       color: ${color};
       pointer-events: none;
@@ -201,12 +150,6 @@
     t.innerHTML = msg;
     host.appendChild(t);
     const dur = opts.duration ?? 2400;
-    if (prefersReducedMotion()) {
-      t.style.animation = "none";
-      t.style.transition = "none";
-      setTimeout(() => t.remove(), dur);
-      return;
-    }
     setTimeout(() => {
       t.style.opacity = "0";
       t.style.transform = "translateY(-6px)";
@@ -218,12 +161,7 @@
 
   function countUp(el, from, to, duration = 800) {
     if (!el) return;
-    if (!motionAllowed() || duration <= 0) {
-      el.textContent = String(to);
-      return;
-    }
-    const start =
-      typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+    const start = performance.now();
     function step(now) {
       const p = Math.min(1, (now - start) / duration);
       const eased = 1 - Math.pow(1 - p, 3);
@@ -235,15 +173,5 @@
 
   // ---------- PUBLIC API ----------
 
-  window.smtFx = {
-    burst,
-    rain,
-    shakeEl,
-    floatPlus,
-    toast,
-    countUp,
-    prefersReducedMotion,
-    motionAllowed,
-    PALETTES,
-  };
+  window.smtFx = { burst, rain, shakeEl, floatPlus, toast, countUp, PALETTES };
 })();
