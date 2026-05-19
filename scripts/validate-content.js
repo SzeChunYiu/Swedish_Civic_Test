@@ -970,9 +970,9 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdBanner',
+    component: 'AdInterstitial',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern: /<AdInterstitial\s+triggerKey=\{question\.id\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -6975,6 +6975,43 @@ function validateAdPlacementRouteParity() {
       );
       if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+        routeIsValid = false;
+      }
+    }
+
+    if (spec.component === 'AdInterstitial') {
+      const consentAwareShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+      );
+      const nativeInterstitialSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdInterstitial.native.tsx'),
+        'utf8',
+      );
+      const webInterstitialSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdInterstitial.tsx'),
+        'utf8',
+      );
+
+      if (!nativeInterstitialSource.includes('InterstitialAd.createForAdRequest')) {
+        reject('AdInterstitial native placement must use the Google Mobile Ads interstitial API');
+        routeIsValid = false;
+      }
+      if (nativeInterstitialSource.includes('BannerAd')) {
+        reject('AdInterstitial native placement must not render BannerAd');
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(nativeInterstitialSource)) {
+        reject(`AdInterstitial must gate ${spec.placement} through consent-aware shouldShowAd`);
+        routeIsValid = false;
+      }
+      if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
+        reject('AdInterstitial must pass non-personalized ad request options from consent');
+        routeIsValid = false;
+      }
+      if (!webInterstitialSource.includes('placement="quiz_completed_interstitial"')) {
+        reject(
+          'AdInterstitial web fallback must render the accessible quiz completion placeholder',
+        );
         routeIsValid = false;
       }
     }
