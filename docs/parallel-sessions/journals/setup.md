@@ -1201,3 +1201,12 @@ Verification: clean worktree from current `origin/main` `5ccf15d`; `NODE_OPTIONS
 PR: pending from current SETUP audit branch at handoff commit time.
 Blocked? yes - no fresh unblocked local SETUP source atom was found; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held unless fresh P0 site/release source evidence appears; keep production freshness separate until production serves current main and passes the hash-aware live smoke.
+
+## Iteration 253 - 2026-05-19
+
+Task completed: EXPO-DOCTOR-CRYPTO-SDK54-1 - removed the unused `expo-crypto` dependency so Expo SDK 54 dependency validation no longer sees the incompatible `55.0.15` package.
+Artifacts changed: `package.json`, `package-lock.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: pre-fix `NODE_OPTIONS='--v8-pool-size=1' npm exec -- expo-doctor` exit 1 with `expo-crypto` expected `~15.0.9` but found `55.0.15`; `rg -n "expo-crypto|Crypto\\.|digestStringAsync|getRandomBytes" app components lib scripts tests package.json package-lock.json` found only package declarations before removal and no matches after removal; clean install `NODE_OPTIONS='--v8-pool-size=1' npm ci --prefer-offline --no-audit` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm exec -- expo-doctor` exit 0 with 17/17 checks passing; `NODE_OPTIONS='--v8-pool-size=1' npm ls expo expo-crypto --depth=0` exit 0 and listed only `expo@54.0.34`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 38/38 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run format:check` exit 0; `git diff --check` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `NODE_OPTIONS='--v8-pool-size=1' node scripts/prepare-web-export.js --check dist-web` exit 0.
+PR: pending from `task/expo-doctor-crypto-sdk54-1779160000` at handoff commit time.
+Blocked? no for this SDK dependency validation atom.
+Next suggested validator action: inspect the package dependency removal and rerun `npm exec -- expo-doctor`, `npm ls expo expo-crypto --depth=0`, and `npm run test:build-config` before accepting `EXPO-DOCTOR-CRYPTO-SDK54-1`.
