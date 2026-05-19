@@ -100,11 +100,7 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
           onFocus: () => setIsFocused(true),
           onMouseDown: () => setIsPressed(true),
           onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => {
-            setIsHovered(false);
-            setIsPressed(false);
-          },
-          onMouseUp: () => setIsPressed(false),
+          onMouseLeave: () => setIsHovered(false),
         }
       : {};
 
