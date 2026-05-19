@@ -129,3 +129,13 @@ test('static learner-facing slogans avoid pass and passport outcome promises', (
   assert.match(read('site/app.js'), /"hero\.h1a": "Plugga materialet\."/);
   assert.match(read('site/app.js'), /"hero\.h1b": "Öva med källor\."/);
 });
+
+test('static Swedish mock exam copy stays clearly unofficial practice wording', () => {
+  const practice = read('site/practice.js');
+
+  assert.match(practice, /['"]Övningsprov['"]/);
+  assert.match(practice, /['"]Bygg ditt övningsprov\.['"]/);
+  assert.match(practice, /['"]Starta övningsprov['"]/);
+  assert.doesNotMatch(practice, /Skarp tentamen|Bygg din tentamen|Starta tentamen|\btentamen\b/i);
+  assert.match(practice, /['"]Mock exam['"]/);
+});

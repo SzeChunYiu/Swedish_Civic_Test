@@ -185,6 +185,9 @@ test('shared buttons use token disabled styles without dimming child labels', ()
 test('language picker future-language rows are disabled instead of selectable', () => {
   const source = read('components/ui/LanguagePicker.tsx');
 
+  assert.match(source, /aria-expanded=\{open\}/);
+  assert.match(source, /aria-haspopup="menu"/);
+  assert.match(source, /accessibilityState=\{\{ expanded: open \}\}/);
   assert.match(source, /if \(!option\.available\) return;/);
   assert.match(source, /disabled=\{!opt\.available\}/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
@@ -1287,10 +1290,21 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /AppOpenAd/);
   assert.match(nativeSource, /launchPopupShownThisRuntime/);
+  assert.match(nativeSource, /launchPopupLoadInFlight/);
+  assert.match(nativeSource, /launchPopupLoadInFlight \|\|[\s\S]*!mobileAdsConsent\.initialized/);
   assert.match(
     nativeSource,
-    /try \{[\s\S]*AppOpenAd\.createForAdRequest[\s\S]*Promise\.resolve\(appOpenAd\.show\(\)\)\.catch\(\(\) => undefined\)[\s\S]*appOpenAd\.load\(\);[\s\S]*launchPopupShownThisRuntime = true;[\s\S]*\} catch \{[\s\S]*unsubscribe\?\.\(\);[\s\S]*return undefined;/,
+    /addAdEventListener\(AdEventType\.LOADED,[\s\S]*launchPopupShownThisRuntime = true;[\s\S]*launchPopupLoadInFlight = false;[\s\S]*Promise\.resolve\(appOpenAd\.show\(\)\)\.catch\(\(\) => undefined\)/,
   );
+  assert.match(
+    nativeSource,
+    /addAdEventListener\(AdEventType\.ERROR,[\s\S]*launchPopupLoadInFlight = false;/,
+  );
+  assert.match(
+    nativeSource,
+    /return \(\) => \{[\s\S]*unsubscribe\?\.\(\);[\s\S]*unsubscribeError\?\.\(\);[\s\S]*if \(!didReachShowPath\) \{[\s\S]*launchPopupLoadInFlight = false;[\s\S]*\}/,
+  );
+  assert.doesNotMatch(nativeSource, /appOpenAd\.load\(\);\s*launchPopupShownThisRuntime = true;/);
 });
 
 test('exam results include per-question explanations and UHR sources', () => {
