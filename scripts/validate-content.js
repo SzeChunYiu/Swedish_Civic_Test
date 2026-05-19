@@ -6386,6 +6386,8 @@ let progressTypeInterfacesValidated = 0;
 let progressTypeSchemaParityValidated = false;
 let progressStoreFieldsValidated = 0;
 let progressStoreSchemaParityValidated = false;
+let reviewStoreHydrationCasesValidated = 0;
+let reviewStoreHydrationParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -11084,6 +11086,153 @@ function validateProgressStoreSchemaParity() {
   }
 }
 
+function validateReviewStoreHydrationParity() {
+  let valid = true;
+  let reviewStoreSource = '';
+  let reviewStoreTestSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    reviewStoreSource = fs.readFileSync(path.join(repoRoot, 'lib/storage/reviewStore.ts'), 'utf8');
+    reviewStoreTestSource = fs.readFileSync(
+      path.join(repoRoot, 'tests/v1-1-review-store.test.js'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`review store hydration source could not be read: ${error.message}`);
+    return;
+  }
+
+  const normalizedReviewStore = reviewStoreSource.replace(/\s+/g, ' ');
+  const normalizedReviewStoreTest = reviewStoreTestSource.replace(/\s+/g, ' ');
+  const requiredSourceSnippets = [
+    [
+      'function isNonEmptyString(value: unknown): value is string',
+      'review store hydration must reject blank question ids',
+    ],
+    [
+      'function isIsoTimestamp(value: unknown): value is string',
+      'review store hydration must validate ISO timestamps',
+    ],
+    [
+      'date.toISOString() === value',
+      'review store hydration must require canonical ISO timestamp strings',
+    ],
+    [
+      'function isLocalDateKey(value: unknown): value is string',
+      'review store hydration must validate graded-day keys',
+    ],
+    [
+      'function isFiniteNumberInRange(value: unknown, min: number, max: number): value is number',
+      'review store hydration must range-check FSRS numeric fields',
+    ],
+    [
+      'function isNonNegativeInteger(value: unknown, max = Number.MAX_SAFE_INTEGER): value is number',
+      'review store hydration must integer-check counters',
+    ],
+    [
+      'function isReviewCard(id: string, value: unknown): value is ReviewCard',
+      'review store hydration must validate each persisted card against its map key',
+    ],
+    ['v.questionId === id', 'review store hydration must reject mismatched card ids'],
+    ['REVIEW_CARD_STATES.has(v.state)', 'review store hydration must reject invalid card states'],
+    [
+      'if (isReviewCard(id, card)) byId[id] = card;',
+      'review store hydration must keep only normalized cards',
+    ],
+    [
+      'if (isLocalDateKey(day) && isNonNegativeInteger(count, maxPersistedReviewCounter)) { gradedPerDay[day] = count; }',
+      'review store hydration must keep only normalized graded-day counters',
+    ],
+    [
+      'return normalize(JSON.parse(raw));',
+      'review store hydration must normalize parsed persisted JSON',
+    ],
+  ];
+
+  requiredSourceSnippets.forEach(([snippet, message]) => {
+    if (!normalizedReviewStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  const forbiddenSourceSnippets = [
+    ['return JSON.parse(raw);', 'raw persisted review JSON must not hydrate directly'],
+    ['byId: candidate.byId', 'raw persisted review cards must not hydrate directly'],
+    [
+      'gradedPerDay: candidate.gradedPerDay',
+      'raw persisted review-day counters must not hydrate directly',
+    ],
+    ['byId[id] = card as ReviewCard', 'persisted review cards must not be type-cast through'],
+  ];
+
+  forbiddenSourceSnippets.forEach(([snippet, message]) => {
+    if (normalizedReviewStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  const requiredFixtureSnippets = [
+    [
+      "test('review store: corrupt persisted cards and graded days are dropped on hydration'",
+      'review store corrupt-hydration fixture must exist',
+    ],
+    ["qMismatched: { ...validCard, questionId: 'other-id' }", 'mismatched id fixture'],
+    ["'': { ...validCard, questionId: '' }", 'blank id fixture'],
+    ["qBadState: { ...validCard, questionId: 'qBadState', state: 'banana' }", 'bad state fixture'],
+    [
+      "qBadDifficulty: { ...validCard, questionId: 'qBadDifficulty', difficulty: 999 }",
+      'out-of-range difficulty fixture',
+    ],
+    [
+      "qBadStability: { ...validCard, questionId: 'qBadStability', stability: -2 }",
+      'out-of-range stability fixture',
+    ],
+    ["qBadReps: { ...validCard, questionId: 'qBadReps', reps: 1.5 }", 'fractional reps fixture'],
+    [
+      "qBadLapses: { ...validCard, questionId: 'qBadLapses', lapses: -1 }",
+      'negative lapses fixture',
+    ],
+    ["lastReviewAt: 'not-a-date'", 'bad lastReviewAt fixture'],
+    ["dueAt: '2026-05-19'", 'non-canonical dueAt fixture'],
+    ["'not-a-day': 2", 'bad graded-day string fixture'],
+    ["'2026-02-29': 1", 'invalid calendar-day fixture'],
+    ["'2026-05-21': 1.5", 'fractional graded-day count fixture'],
+    ["'2026-05-22': -1", 'negative graded-day count fixture'],
+    ["'2026-05-23': 10001", 'oversized graded-day count fixture'],
+  ];
+
+  requiredFixtureSnippets.forEach(([snippet, message]) => {
+    if (!normalizedReviewStoreTest.includes(snippet)) {
+      reject(`review store corrupt-hydration fixture missing ${message}`);
+      return;
+    }
+    reviewStoreHydrationCasesValidated += 1;
+  });
+
+  const requiredAssertionSnippets = [
+    "assert.deepEqual(Object.keys(state.byId), ['qValid']);",
+    'assert.deepEqual(state.byId.qValid, validCard);',
+    "assert.deepEqual(state.gradedPerDay, { '2026-05-19': 2, '2026-05-20': 0, });",
+    "dueCards(state, { now: '2026-05-20T00:00:00.000Z' })",
+    'reviewStats(state)',
+  ];
+
+  requiredAssertionSnippets.forEach((snippet) => {
+    if (!normalizedReviewStoreTest.includes(snippet)) {
+      reject(`review store corrupt-hydration fixture must assert ${snippet}`);
+    }
+  });
+
+  if (valid && reviewStoreHydrationCasesValidated === requiredFixtureSnippets.length) {
+    reviewStoreHydrationParityValidated = true;
+  }
+}
+
 function validateContentTypeSchemaParity() {
   let valid = true;
   let contentTypesSource = '';
@@ -15073,6 +15222,7 @@ validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
+validateReviewStoreHydrationParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validatePracticeFlowParity();
@@ -15291,6 +15441,8 @@ console.log(
       progressTypeSchemaParityValidated,
       progressStoreFieldsValidated,
       progressStoreSchemaParityValidated,
+      reviewStoreHydrationCasesValidated,
+      reviewStoreHydrationParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
