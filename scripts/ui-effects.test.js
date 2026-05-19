@@ -1175,7 +1175,12 @@ test('search route turns the header search action into a searchable glossary ref
   assert.match(source, /TextInput/);
   assert.match(source, /type SearchRouteCopy =/);
   assert.match(source, /const searchRouteCopy: Record<AppLanguage, SearchRouteCopy>/);
-  assert.match(source, /const \[query, setQuery\] = useState\(''\);/);
+  assert.match(source, /useLocalSearchParams<SearchQueryParams>/);
+  assert.match(
+    source,
+    /const \[query, setQuery\] = useState\(\(\) =>\s+initialSearchQueryFromParams\(searchParams\.q, searchParams\.query\),\s+\);/,
+  );
+  assert.match(source, /function initialSearchQueryFromParams/);
   assert.match(source, /normalizeSearchText/);
   assert.match(source, /const filteredTerms = useMemo/);
   assert.match(source, /placeholderTextColor=\{colors\.textPlaceholder\}/);
