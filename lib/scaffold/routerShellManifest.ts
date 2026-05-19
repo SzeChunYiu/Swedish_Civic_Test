@@ -196,6 +196,7 @@ export const expoRouterRootLayoutGlobalPlacements = [
 
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
+  '/about-the-test',
   '/disclaimer',
   '/exam',
   '/home',
@@ -236,8 +237,16 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/practice?mode=review#question',
   },
   {
+    input: '/about-the-test',
+    expectedPath: '/about-the-test',
+  },
+  {
     input: 'swedish-civic-test://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
+  },
+  {
+    input: 'swedish-civic-test://app/about-the-test',
+    expectedPath: '/about-the-test',
   },
   {
     input: 'swedish-civic-test://quiz/q001',

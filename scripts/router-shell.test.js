@@ -2,6 +2,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -91,7 +93,31 @@ function readRouterShellManifest() {
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
     appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
+    nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
   };
+}
+
+function loadNativeIntentRuntime() {
+  const source = read('app/+native-intent.ts');
+  const module = { exports: {} };
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+
+  vm.runInNewContext(
+    transpiled,
+    {
+      module,
+      exports: module.exports,
+      URL,
+    },
+    { filename: 'app/+native-intent.ts' },
+  );
+
+  return module.exports;
 }
 
 test('router shell fallback is registered in the root Expo stack', () => {
@@ -232,6 +258,11 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
   assert.deepEqual(manifest.appSchemes, ['swedish-civic-test']);
+  assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
+    true,
+    'native intent static route allowlist should include the about-the-test guide',
+  );
 
   for (const file of manifest.files) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
@@ -288,6 +319,24 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     nativeIntent,
     new RegExp(`return ["']${escapeRegExp(manifest.nativeFallbackHrefs[0])}["']`, 'g'),
     'native intent should keep the safe fallback route from the manifest',
+  );
+});
+
+test('native intent resolves about-the-test deep links before the Home fallback', () => {
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(typeof redirectSystemPath, 'function');
+  assert.equal(redirectSystemPath({ initial: true, path: '/about-the-test' }), '/about-the-test');
+  assert.equal(
+    redirectSystemPath({
+      initial: true,
+      path: 'swedish-civic-test://app/about-the-test',
+    }),
+    '/about-the-test',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'swedish-civic-test://app/not-real' }),
+    '/home',
   );
 });
 
