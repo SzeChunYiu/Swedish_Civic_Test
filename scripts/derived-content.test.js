@@ -1068,11 +1068,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'En anledning till att väljare röstar bakom en skärm i vallokalen är att rösterna ska räknas snabbare.',
       'One reason voters vote behind a screen at the polling station is that votes are counted faster.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q044', 'trueStatement')]: [
+    q318: [
       'Från 15 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 15.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q044', 'falseStatement')]: [
+    q319: [
       'Från 13 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 13.',
     ],

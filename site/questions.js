@@ -15129,8 +15129,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule ...?",
-      "sv": "Från ... är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott."
+      "en": "Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {

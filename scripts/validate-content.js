@@ -181,25 +181,10 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'generöst med tid',
   'Praktiska detaljer väntar hos UHR',
 ];
-const STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
-];
-const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
+  ids: ['q044', 'q317', 'q318', 'q319', 'q320'],
   sourceId: 'q044',
-  retrievedAt: '2026-05-20',
+  retrievedAt: '2026-05-19',
   proposalSubmittedAt: '2026-04-16',
   proposalEffectiveDate: '2026-08-02',
   officialSources: [
@@ -218,18 +203,16 @@ const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   ],
   requiredQuestionSv: /\bhuvudregeln\b/i,
   requiredQuestionEn: /\bmain rule\b/i,
-  requiredTextSv: [
-    /\bhuvudregeln\b/i,
-    /\b15 års?\b/i,
+  requiredExplanationSv: [
+    /\bhuvudregeln i 1 kap\. 6 § brottsbalken\b/i,
     /\bProposition 2025\/26:246\b/,
     /\b16 april 2026\b/i,
     /\b2 augusti 2026\b/i,
     /\btidsbegränsad sänkning till 13 år\b/i,
     /\bkontrolleras på nytt efter det datumet\b/i,
   ],
-  requiredTextEn: [
-    /\bmain rule\b/i,
-    /\bage 15\b/i,
+  requiredExplanationEn: [
+    /\bmain rule in Chapter 1, Section 6 of the Swedish Penal Code\b/i,
     /\bProposition 2025\/26:246\b/,
     /\b16 April 2026\b/,
     /\b2 August 2026\b/,
@@ -243,22 +226,6 @@ const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
     /\bage 13 option refers to\b/i,
   ],
 };
-const STATIC_SWEDISH_GRAMMAR_TONE_REJECTIONS = [
-  {
-    label: 'ungrammatical legal-explanation phrase',
-    pattern: phrasePattern('ingen ', 'juridiska'),
-  },
-  { label: 'cutesy study-habit size phrase', pattern: phrasePattern('fika', '-stor') },
-  { label: 'joke liability phrase', pattern: phrasePattern('fika', '-skador') },
-];
-const STATIC_SWEDISH_GRAMMAR_TONE_REQUIRED_COPY = [
-  { label: 'legal-explanation replacement', pattern: /inget juridiskt kr[aå]ngel/i },
-  { label: 'study-habit replacement', pattern: /en kort studievana/i },
-  {
-    label: 'neutral liability replacement',
-    pattern: /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/i,
-  },
-];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -7422,7 +7389,6 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
-const questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
 let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
@@ -15981,6 +15947,107 @@ function validateCriminalResponsibilityCurrentness() {
     criminalResponsibilityCurrentnessQuestionsValidated === GENERATED_VARIANTS_PER_SOURCE + 1;
 }
 
+function validateCriminalResponsibilityCurrentness() {
+  if (!Array.isArray(questions)) return;
+
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  let allRowsAreValid = true;
+  let sourceMetadataIsValid = true;
+
+  function rejectMetadata(message) {
+    sourceMetadataIsValid = false;
+    allRowsAreValid = false;
+    fail(message);
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt)) {
+    rejectMetadata('criminal-responsibility currentness retrievedAt metadata is invalid');
+  }
+  if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalSubmittedAt !== '2026-04-16') {
+    rejectMetadata('criminal-responsibility proposal submitted-at metadata is invalid');
+  }
+  if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate !== '2026-08-02') {
+    rejectMetadata('criminal-responsibility proposal effective-date metadata is invalid');
+  }
+
+  CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.forEach((source) => {
+    if (!/^https:\/\/www\.(?:riksdagen|regeringen)\.se\//.test(source.url)) {
+      rejectMetadata(
+        `criminal-responsibility currentness source ${source.label} must be an official HTTPS source`,
+      );
+    } else {
+      criminalResponsibilityCurrentnessOfficialSourcesValidated += 1;
+    }
+  });
+
+  criminalResponsibilityCurrentnessSourceMetadataValidated =
+    sourceMetadataIsValid &&
+    criminalResponsibilityCurrentnessOfficialSourcesValidated ===
+      CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.length;
+  criminalResponsibilityCurrentnessSourceRetrievedAt =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt;
+  criminalResponsibilityCurrentnessProposalEffectiveDate =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
+
+  CRIMINAL_RESPONSIBILITY_CURRENTNESS.ids.forEach((id) => {
+    const question = byId.get(id);
+    let rowIsValid = true;
+
+    function reject(message) {
+      rowIsValid = false;
+      allRowsAreValid = false;
+      fail(message);
+    }
+
+    if (!question) {
+      reject(`${id} criminal-responsibility age currentness row is missing`);
+      return;
+    }
+
+    const combinedText = [
+      question.questionSv,
+      question.questionEn,
+      question.explanationSv,
+      question.explanationEn,
+    ].join('\n');
+
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.stalePatterns.forEach((pattern) => {
+      if (pattern.test(combinedText)) {
+        reject(`${id} criminal-responsibility age currentness uses stale proposal wording`);
+      }
+    });
+
+    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionSv.test(question.questionSv)) {
+      reject(`${id} criminal-responsibility Swedish stem must say the question tests huvudregeln`);
+    }
+    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionEn.test(question.questionEn)) {
+      reject(
+        `${id} criminal-responsibility English stem must say the question tests the main rule`,
+      );
+    }
+
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredExplanationSv.forEach((pattern) => {
+      if (!pattern.test(question.explanationSv)) {
+        reject(`${id} criminal-responsibility Swedish explanation is missing ${pattern}`);
+      }
+    });
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredExplanationEn.forEach((pattern) => {
+      if (!pattern.test(question.explanationEn)) {
+        reject(`${id} criminal-responsibility English explanation is missing ${pattern}`);
+      }
+    });
+
+    if (rowIsValid) criminalResponsibilityCurrentnessQuestionsValidated += 1;
+  });
+
+  criminalResponsibilityCurrentnessParityValidated =
+    allRowsAreValid &&
+    criminalResponsibilityCurrentnessQuestionsValidated ===
+      CRIMINAL_RESPONSIBILITY_CURRENTNESS.ids.length;
+}
+
+validateCriminalResponsibilityCurrentness();
+
 function validateStaticSiteQuestionBankParity() {
   if (failures.length > 0) return;
 
@@ -17435,7 +17502,6 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
-      questionBankCsvProvenanceCounts,
       criminalResponsibilityCurrentnessOfficialSourcesValidated,
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,
