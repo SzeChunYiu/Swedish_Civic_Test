@@ -1174,3 +1174,12 @@ Verification: clean worktree rebased onto current `origin/main` `75b2dde`; `NODE
 PR: pending from `task/setup/public-privacy-posture-1779151853` at handoff commit time.
 Blocked? no for this public privacy posture atom - SITE-P0-5 remains external production deploy freshness, and no Vercel CLI was run.
 Next suggested validator action: inspect the public privacy copy and rerun `npm run test:publishing` plus `npm run test:release-preflight`; keep hosted production freshness separate until the scheduled hook makes production serve current main.
+
+## Iteration 249 - 2026-05-19
+
+Task completed: REMOVE-ADS-RECEIPT-VALIDATION-1 - added provider-level Remove Ads receipt validation before purchase/restore grants persist `adsDisabled`.
+Artifacts changed: `lib/monetization/purchases.ts`, `scripts/monetization.test.js`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-purchase-schema-parity.test.js`, `tests/content-remove-ads-purchase-runtime-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `1f7cf1fe`; linked shared `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:monetization` exit 0 with 23/23 passing; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s npm run validate:content` exit 0 with `purchaseTypeUnionsValidated:2`, `purchaseTypeInterfacesValidated:8`, `removeAdsPurchaseRuntimeCasesValidated:14`, and `badgeAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s node --test scripts/content-production.test.js tests/content-purchase-schema-parity.test.js tests/content-remove-ads-purchase-runtime-parity.test.js tests/content-badge-accessibility-parity.test.js` exit 0 with 9/9 passing; `NODE_OPTIONS='--v8-pool-size=1' timeout 420s npm run test:content -- --test-concurrency=1` exit 0 with 331/331 passing; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:ownership` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0.
+PR: pending from `task/setup/remove-ads-receipt-validation-1779152568` after rebase and amend.
+Blocked? no for this receipt-validation atom.
+Next suggested validator action: inspect the provider validation hook and rerun `npm run test:monetization`, `npm run validate:content`, and the purchase-runtime parity tests before accepting `REMOVE-ADS-RECEIPT-VALIDATION-1`.
