@@ -102,8 +102,10 @@ test('ad rendering is enabled by default with test units and env-driven real swi
     },
     () => {
       const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
-      const { TEST_AD_UNITS, adsConfig, getPlatformAdUnitId, shouldShowAd } =
+      const { TEST_AD_UNITS, adsConfig, getAdUnit, getPlatformAdUnitId, shouldShowAd } =
         loadTs('lib/monetization/ads.ts');
+      const { getNativeAdCardCopy } = loadTs('lib/monetization/adCopy.ts');
+      const nativeTestCopy = getNativeAdCardCopy('en', getAdUnit('results_native'));
 
       assert.match(adsSource, /REAL_ADS_ENABLED/);
       assert.doesNotMatch(adsSource, /REAL_ADS_ENABLED_FOR_V1\s*=\s*false/);
@@ -126,6 +128,8 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       assert.match(getPlatformAdUnitId('app_open_launch', 'ios'), /5575463023$/);
       assert.match(getPlatformAdUnitId('rewarded_extra_exam', 'android'), /5224354917$/);
       assert.match(getPlatformAdUnitId('rewarded_extra_exam', 'ios'), /1712485313$/);
+      assert.match(nativeTestCopy.accessibilityLabel, /^Test native ad:/);
+      assert.match(nativeTestCopy.meta, /AdMob test placement preview/);
     },
   );
 });
@@ -189,6 +193,7 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   withEnv(
     {
       EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/1111111111',
+      EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: 'ca-app-pub-1234567890123456/5555555555',
       EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
         'ca-app-pub-1234567890123456/3333333333',
       EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/2222222222',
@@ -199,11 +204,17 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
     () => {
       const { adsConfig, getAdUnit, getPlatformAdUnitId, shouldShowAd } =
         loadTs('lib/monetization/ads.ts');
+      const { getNativeAdCardCopy } = loadTs('lib/monetization/adCopy.ts');
       const homeBanner = getAdUnit('home_banner');
+      const resultsNative = getAdUnit('results_native');
+      const liveNativeCopyEn = getNativeAdCardCopy('en', resultsNative);
+      const liveNativeCopySv = getNativeAdCardCopy('sv', resultsNative);
 
       assert.equal(adsConfig.realAdsEnabled, true);
       assert.equal(homeBanner.testOnly, false);
+      assert.equal(resultsNative.testOnly, false);
       assert.equal(homeBanner.enabled, true);
+      assert.equal(resultsNative.enabled, true);
       assert.equal(
         getPlatformAdUnitId('home_banner', 'android'),
         'ca-app-pub-1234567890123456/1111111111',
@@ -230,10 +241,36 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
         'ca-app-pub-1234567890123456/4444444444',
       );
       assert.equal(
+        getPlatformAdUnitId('results_native', 'android'),
+        'ca-app-pub-1234567890123456/5555555555',
+      );
+      assert.equal(
         shouldShowAd('rewarded_extra_exam', { adsDisabled: false }, { adServingAllowed: true }),
         true,
       );
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
+      assert.equal(
+        shouldShowAd('results_native', { adsDisabled: false }, { adServingAllowed: true }),
+        true,
+      );
+      assert.match(liveNativeCopyEn.accessibilityLabel, /^Ad:/);
+      assert.match(liveNativeCopyEn.meta, /Google AdMob placement/);
+      assert.doesNotMatch(
+        [liveNativeCopyEn.accessibilityLabel, liveNativeCopyEn.meta, liveNativeCopyEn.title].join(
+          ' ',
+        ),
+        /Test native ad|AdMob test placement preview/i,
+      );
+      assert.match(liveNativeCopySv.accessibilityLabel, /^Annons:/);
+      assert.doesNotMatch(
+        [liveNativeCopySv.accessibilityLabel, liveNativeCopySv.meta, liveNativeCopySv.title].join(
+          ' ',
+        ),
+        new RegExp(
+          `Inbyggd testannons|AdMob-testplacering|${['Sponsrad', 'studieplacering'].join('\\s+')}`,
+          'i',
+        ),
+      );
     },
   );
 });
@@ -247,6 +284,7 @@ test('results native placement uses the native Google Mobile Ads surface on nati
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
+  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
 
   assert.match(mistakesSource, /<NativeAdCard \/>/);
@@ -277,6 +315,8 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   );
   assert.match(nativeAdCardSource, /minHeight:\s*space\[6\]/);
   assert.match(nativeAdCardSource, /NativeMediaView/);
+  assert.match(nativeAdCardSource, /getAdUnit\('results_native'\)/);
+  assert.match(nativeAdCardSource, /getNativeAdCardCopy\(language, unit\)/);
   assert.match(nativeAdCardSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(nativeAdCardSource, /requestNonPersonalizedAdsOnly/);
   assert.match(nativeAdCardSource, /\.destroy\(\)/);
@@ -284,14 +324,19 @@ test('results native placement uses the native Google Mobile Ads surface on nati
     nativeAdCardSource,
     /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
-  assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd|Sponsored study placement/);
+  assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd/);
 
   assert.match(webAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(webAdCardSource, /getAdUnit\('results_native'\)/);
+  assert.match(webAdCardSource, /getNativeAdCardCopy\(language, unit\)/);
   assert.match(
     webAdCardSource,
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
   );
   assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
+  assert.match(adCopySource, /live:\s*\{/);
+  assert.match(adCopySource, /test:\s*\{/);
+  assert.doesNotMatch(adCopySource, new RegExp(['Sponsrad', 'studieplacering'].join('\\s+'), 'i'));
 });
 
 test('practice completion placement uses a native interstitial and web preview', () => {

@@ -136,4 +136,8 @@ test('NativeAdCard native summary and CTA are separate accessibility elements', 
     copySource,
     /ctaAccessibilityLabel: \(callToAction\) => `Ad action: \$\{callToAction\}`/,
   );
+  assert.match(copySource, /getNativeAdCardCopy/);
+  assert.match(copySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
+  assert.match(copySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);
+  assert.doesNotMatch(copySource, new RegExp(['Sponsrad', 'studieplacering'].join('\\s+'), 'i'));
 });

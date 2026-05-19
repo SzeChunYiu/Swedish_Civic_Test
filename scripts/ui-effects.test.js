@@ -1087,7 +1087,8 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.match(source, /useSettingsStore/);
-  assert.match(source, /const copy = nativeAdCardCopy\[language\]/);
+  assert.match(source, /const unit = getAdUnit\('results_native'\);/);
+  assert.match(source, /const copy = getNativeAdCardCopy\(language, unit\);/);
   assert.match(
     source,
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
@@ -1096,13 +1097,17 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   assert.match(source, /\{copy\.title\}/);
   assert.match(source, /\{copy\.meta\}/);
   assert.match(copySource, /const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy>/);
+  assert.match(copySource, /getNativeAdCardCopy/);
   assert.match(copySource, /Inbyggd testannons/);
-  assert.match(copySource, /Sponsrad studieplacering/);
-  assert.match(copySource, /Förhandsvisning av AdMob-testplacering/);
+  assert.match(copySource, /AdMob-testannons/);
+  assert.match(copySource, /Annons från Google AdMob/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /Test native ad/);
-  assert.match(copySource, /Sponsored study placement/);
+  assert.match(copySource, /Google AdMob ad/);
   assert.match(copySource, /AdMob test placement preview/);
+  assert.doesNotMatch(copySource, new RegExp(['Sponsrad', 'studieplacering'].join('\\s+'), 'i'));
+  assert.match(nativeSource, /const unit = getAdUnit\('results_native'\);/);
+  assert.match(nativeSource, /const copy = getNativeAdCardCopy\(language, unit\);/);
   assert.match(nativeSource, /<NativeAdView accessible=\{false\}/);
   assert.match(nativeSource, /accessibilityRole="summary"/);
   assert.match(
@@ -1239,7 +1244,7 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   assert.doesNotMatch(read('components/learning/Flashcard.tsx'), /front\s*=\s*['"]Front/);
   assert.doesNotMatch(read('components/learning/Flashcard.tsx'), /back\s*=\s*['"]Back/);
   assert.match(read('lib/monetization/adCopy.ts'), /AdMob test placement preview/);
-  assert.match(read('lib/monetization/adCopy.ts'), /Förhandsvisning av AdMob-testplacering/);
+  assert.match(read('lib/monetization/adCopy.ts'), /Förhandsvisning som inte visas/);
   assert.match(read('components/quiz/ExplanationPanel.tsx'), /Explanation unavailable/);
   assert.match(read('lib/quiz/questionText.ts'), /Fråga saknas/);
   assert.match(read('lib/quiz/questionText.ts'), /Question unavailable/);
