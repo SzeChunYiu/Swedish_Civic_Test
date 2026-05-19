@@ -102,6 +102,17 @@ test('metric card groups value, label, and helper into one accessible summary', 
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('language picker keeps unavailable roadmap rows disabled and non-closing', () => {
+  const source = read('components/ui/LanguagePicker.tsx');
+
+  assert.match(source, /if \(!option\.available\) \{\s*return;\s*\}/);
+  assert.match(source, /setLanguage\(option\.fallback\);\s*setOpen\(false\);/);
+  assert.match(source, /disabled=\{!opt\.available\}/);
+  assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
+  assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('badge preserves a readable accessibility label when visual text is uppercased', () => {
   const source = read('components/ui/Badge.tsx');
 
