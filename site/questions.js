@@ -45,6 +45,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -82,6 +83,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -127,6 +129,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -173,6 +176,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -218,6 +222,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -256,6 +261,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -301,6 +307,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -346,6 +353,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -393,6 +401,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -438,6 +447,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -484,6 +494,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -529,6 +540,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -574,6 +586,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -619,6 +632,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -664,6 +678,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -709,6 +724,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -754,6 +770,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -799,6 +816,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -844,6 +862,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -889,6 +908,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -934,6 +954,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -979,6 +1000,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1016,6 +1038,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1061,6 +1084,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -1106,6 +1130,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -1151,6 +1176,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -1196,6 +1222,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -1233,6 +1260,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -1278,6 +1306,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -1323,6 +1352,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -1360,6 +1390,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -1405,6 +1436,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -1450,6 +1482,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -1495,6 +1528,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -1540,6 +1574,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1585,6 +1620,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -1630,6 +1666,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -1675,6 +1712,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -1720,6 +1758,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -1765,6 +1804,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -1810,6 +1850,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -1855,6 +1896,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -1900,6 +1942,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -1945,6 +1988,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -1990,6 +2034,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -2035,6 +2080,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -2072,6 +2118,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -2117,6 +2164,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -2155,6 +2203,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -2200,6 +2249,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -2245,6 +2295,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -2290,6 +2341,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -2335,6 +2387,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -2380,6 +2433,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -2426,6 +2480,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -2471,6 +2526,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -2516,6 +2572,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -2561,6 +2618,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -2606,6 +2664,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -2651,6 +2710,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -2696,6 +2756,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -2741,6 +2802,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -2786,6 +2848,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -2831,6 +2894,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -2876,6 +2940,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -2921,6 +2986,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -2966,6 +3032,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -3011,6 +3078,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -3057,6 +3125,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -3102,6 +3171,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -3147,6 +3217,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -3193,6 +3264,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -3238,6 +3310,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -3275,6 +3348,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -3320,6 +3394,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -3365,6 +3440,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -3411,6 +3487,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -3456,6 +3533,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -3501,6 +3579,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -3546,6 +3625,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -3591,6 +3671,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -3636,6 +3717,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -3681,6 +3763,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -3726,6 +3809,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -3771,6 +3855,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -3816,6 +3901,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -3861,6 +3947,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -3906,6 +3993,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -3951,6 +4039,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -3996,6 +4085,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -4033,6 +4123,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -4078,6 +4169,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -4123,6 +4215,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -4160,6 +4253,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -4205,6 +4299,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -4250,6 +4345,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -4295,6 +4391,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -4340,6 +4437,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -4386,6 +4484,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -4432,6 +4531,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -4478,6 +4578,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -4523,6 +4624,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -4569,6 +4671,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -4615,6 +4718,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -4661,6 +4765,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -4707,6 +4812,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -4753,6 +4859,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -4799,6 +4906,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -4845,6 +4953,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -4891,6 +5000,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -4937,6 +5047,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -4983,6 +5094,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -5029,6 +5141,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5075,6 +5188,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -5122,6 +5236,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -5168,6 +5283,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -5214,6 +5330,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5261,6 +5378,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5309,6 +5427,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -5355,6 +5474,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -5401,6 +5521,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -5447,6 +5568,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -5494,6 +5616,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -5540,6 +5663,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -5586,6 +5710,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -5633,6 +5758,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -5679,6 +5805,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -5725,6 +5852,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -5771,6 +5899,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -5817,6 +5946,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -5863,6 +5993,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -5910,6 +6041,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -5956,6 +6088,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -6003,6 +6136,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -6049,6 +6183,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -6095,6 +6230,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -6142,6 +6278,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -6188,6 +6325,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6234,6 +6372,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6280,6 +6419,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6326,6 +6466,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -6372,6 +6513,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6410,6 +6552,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6457,6 +6600,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -6503,6 +6647,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6548,6 +6693,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6593,6 +6739,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6638,6 +6785,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -6684,6 +6832,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -6924,473 +7073,6 @@
   },
   {
     "id": "q155",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue?",
-      "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
-    },
-    "opts": [
-      {
-        "en": "A private company can provide the service while tax revenue funds it",
-        "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
-      },
-      {
-        "en": "The service must always be paid for entirely with private loans",
-        "sv": "Tjänsten måste alltid betalas helt med privata lån"
-      },
-      {
-        "en": "Private providers take over the responsibilities of the state, regions, and municipalities",
-        "sv": "Privata utförare tar över statens, regionernas och kommunernas ansvar"
-      },
-      {
-        "en": "Tax revenue may be used only if the service is run by the state",
-        "sv": "Skattepengar får bara användas om tjänsten drivs av staten"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
-      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Stat, regioner och kommuner har olika ansvar",
-      "page": 30
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "medium",
-    "tags": [
-      "welfare",
-      "tax-funding",
-      "private-providers",
-      "responsibility-split"
-    ]
-  },
-  {
-    "id": "q156",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
-      "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
-    },
-    "opts": [
-      {
-        "en": "Sickness insurance, parental insurance, and unemployment insurance",
-        "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring"
-      },
-      {
-        "en": "Health centres, hospitals, and regional public transport",
-        "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik"
-      },
-      {
-        "en": "Preschools, after-school centres, and municipal adult education",
-        "sv": "Förskolor, fritidshem och kommunal vuxenutbildning"
-      },
-      {
-        "en": "Private credit cards, car loans, and mortgages",
-        "sv": "Privata kreditkort, billån och bostadslån"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
-      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Statligt finansierad välfärd",
-      "page": 30
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "medium",
-    "tags": [
-      "state-welfare",
-      "social-insurance",
-      "sickness-insurance",
-      "parental-insurance"
-    ]
-  },
-  {
-    "id": "q157",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "What is included in primary care?",
-      "sv": "Vad ingår i primärvården?"
-    },
-    "opts": [
-      {
-        "en": "Health centres, child health centres, and maternity clinics",
-        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
-      },
-      {
-        "en": "Courts, prosecutors, and prison and probation services",
-        "sv": "Domstolar, åklagare och kriminalvård"
-      },
-      {
-        "en": "Pensions, child allowance, and study support",
-        "sv": "Pensioner, barnbidrag och studiestöd"
-      },
-      {
-        "en": "Daily newspapers, public service broadcasting, and social media",
-        "sv": "Dagstidningar, public service och sociala medier"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
-      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "easy",
-    "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
-      "maternity-care"
-    ]
-  },
-  {
-    "id": "q158",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "What responsibility does the municipality have for children’s everyday life and education?",
-      "sv": "Vilket ansvar har kommunen för barns vardag och utbildning?"
-    },
-    "opts": [
-      {
-        "en": "To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools",
-        "sv": "Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor"
-      },
-      {
-        "en": "To pay sickness insurance and state pensions",
-        "sv": "Att betala sjukförsäkring och statliga pensioner"
-      },
-      {
-        "en": "To run regional hospitals and health centres",
-        "sv": "Att driva regionernas sjukhus och vårdcentraler"
-      },
-      {
-        "en": "To decide court sentences in criminal cases",
-        "sv": "Att bestämma domstolarnas straff i brottmål"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
-      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "medium",
-    "tags": [
-      "municipal-welfare",
-      "childcare",
-      "education",
-      "schools"
-    ]
-  },
-  {
-    "id": "q159",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "What help can older people receive from the municipality to manage everyday life?",
-      "sv": "Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?"
-    },
-    "opts": [
-      {
-        "en": "Care and services at home or housing adapted for older people",
-        "sv": "Vård och service hemma eller boende som är anpassat för äldre personer"
-      },
-      {
-        "en": "Automatic study support and a university place",
-        "sv": "Automatiskt studiestöd och plats på universitet"
-      },
-      {
-        "en": "Decisions about which news media may publish",
-        "sv": "Beslut om vilka nyheter medier får publicera"
-      },
-      {
-        "en": "Private loans that replace all municipal help",
-        "sv": "Privata lån som ersätter all kommunal hjälp"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
-      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "easy",
-    "tags": [
-      "elderly-care",
-      "municipal-welfare",
-      "home-care",
-      "adapted-housing"
-    ]
-  },
-  {
-    "id": "q160",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "What does the Freedom of the Press Act protect?",
-      "sv": "Vad skyddar tryckfrihetsförordningen?"
-    },
-    "opts": [
-      {
-        "en": "The right to spread thoughts and opinions in printed texts",
-        "sv": "Rätten att sprida tankar och åsikter i tryckta texter"
-      },
-      {
-        "en": "The right to decide succession to the throne",
-        "sv": "Rätten att bestämma tronföljden"
-      },
-      {
-        "en": "The right to judge criminal cases",
-        "sv": "Rätten att döma i brottmål"
-      },
-      {
-        "en": "The right to collect municipal tax",
-        "sv": "Rätten att ta ut kommunalskatt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
-      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Tryckfrihetsförordningen",
-      "page": 16
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-press",
-      "constitutional-laws",
-      "printed-texts"
-    ]
-  },
-  {
-    "id": "q161",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "What does the Fundamental Law on Freedom of Expression protect?",
-      "sv": "Vad skyddar yttrandefrihetsgrundlagen?"
-    },
-    "opts": [
-      {
-        "en": "The right to express thoughts and opinions in media such as radio and television",
-        "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv"
-      },
-      {
-        "en": "The right to inherit the throne",
-        "sv": "Rätten att ärva tronen"
-      },
-      {
-        "en": "The right to appoint all lay judges",
-        "sv": "Rätten att utse alla nämndemän"
-      },
-      {
-        "en": "The right to decide school curricula",
-        "sv": "Rätten att besluta skolans kursplaner"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
-      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Yttrandefrihetsgrundlagen",
-      "page": 16
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-expression",
-      "constitutional-laws",
-      "media"
-    ]
-  },
-  {
-    "id": "q162",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Which statement describes the preliminary investigation in a criminal investigation?",
-      "sv": "Vilket påstående beskriver förundersökningen i en brottsutredning?"
-    },
-    "opts": [
-      {
-        "en": "The police collect evidence and speak with witnesses",
-        "sv": "Polisen samlar in bevis och pratar med vittnen"
-      },
-      {
-        "en": "The court decides a penalty before anyone is suspected",
-        "sv": "Domstolen bestämmer straff innan någon är misstänkt"
-      },
-      {
-        "en": "The Riksdag decides whether the suspect is guilty",
-        "sv": "Riksdagen avgör om den misstänkte är skyldig"
-      },
-      {
-        "en": "The lawyer writes new laws for the police",
-        "sv": "Advokaten skriver nya lagar åt polisen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
-      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Brottsutredning",
-      "page": 18
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "medium",
-    "tags": [
-      "criminal-investigation",
-      "preliminary-investigation",
-      "police"
-    ]
-  },
-  {
-    "id": "q163",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "What happens during a trial in a criminal case?",
-      "sv": "Vad händer under en rättegång i ett brottmål?"
-    },
-    "opts": [
-      {
-        "en": "The prosecutor tries to show that the defendant committed the crime",
-        "sv": "Åklagaren försöker visa att den åtalade har begått brottet"
-      },
-      {
-        "en": "The police alone decide the defendant’s penalty",
-        "sv": "Polisen bestämmer ensam vilket straff den åtalade får"
-      },
-      {
-        "en": "The government decides whether the evidence is enough",
-        "sv": "Regeringen avgör om bevisningen räcker"
-      },
-      {
-        "en": "Witnesses vote on the judgment",
-        "sv": "Vittnen röstar om domen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
-      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Rättegång",
-      "page": 19
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "medium",
-    "tags": [
-      "trial",
-      "criminal-case",
-      "prosecutor",
-      "court"
-    ]
-  },
-  {
-    "id": "q164",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Which are the general courts in Sweden?",
-      "sv": "Vilka är de allmänna domstolarna i Sverige?"
-    },
-    "opts": [
-      {
-        "en": "District court, court of appeal, and Supreme Court",
-        "sv": "Tingsrätt, hovrätt och Högsta domstolen"
-      },
-      {
-        "en": "Municipality, region, and government",
-        "sv": "Kommun, region och regering"
-      },
-      {
-        "en": "The Police, Tax Agency, and Social Insurance Agency",
-        "sv": "Polisen, Skatteverket och Försäkringskassan"
-      },
-      {
-        "en": "Riksdag, committee, and ministry",
-        "sv": "Riksdag, utskott och departement"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
-      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Domstolar",
-      "page": 18
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "easy",
-    "tags": [
-      "courts",
-      "district-court",
-      "court-of-appeal",
-      "supreme-court"
-    ]
-  },
-  {
-    "id": "q165",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7427,6 +7109,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7437,7 +7120,7 @@
     ]
   },
   {
-    "id": "q166",
+    "id": "q156",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7466,6 +7149,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7476,7 +7160,7 @@
     ]
   },
   {
-    "id": "q167",
+    "id": "q157",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7505,6 +7189,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7515,7 +7200,7 @@
     ]
   },
   {
-    "id": "q168",
+    "id": "q158",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7552,6 +7237,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7562,7 +7248,7 @@
     ]
   },
   {
-    "id": "q169",
+    "id": "q159",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7599,6 +7285,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7609,7 +7296,7 @@
     ]
   },
   {
-    "id": "q170",
+    "id": "q160",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7638,6 +7325,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7647,7 +7335,7 @@
     ]
   },
   {
-    "id": "q171",
+    "id": "q161",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7676,6 +7364,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7686,7 +7375,7 @@
     ]
   },
   {
-    "id": "q172",
+    "id": "q162",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7723,6 +7412,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7733,7 +7423,7 @@
     ]
   },
   {
-    "id": "q173",
+    "id": "q163",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7770,6 +7460,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7781,7 +7472,7 @@
     ]
   },
   {
-    "id": "q174",
+    "id": "q164",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7810,6 +7501,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7821,7 +7513,7 @@
     ]
   },
   {
-    "id": "q175",
+    "id": "q165",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7850,6 +7542,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7861,7 +7554,7 @@
     ]
   },
   {
-    "id": "q176",
+    "id": "q166",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7898,6 +7591,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7909,7 +7603,7 @@
     ]
   },
   {
-    "id": "q177",
+    "id": "q167",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7946,6 +7640,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7956,7 +7651,7 @@
     ]
   },
   {
-    "id": "q178",
+    "id": "q168",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7985,6 +7680,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7995,7 +7691,7 @@
     ]
   },
   {
-    "id": "q179",
+    "id": "q169",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8024,6 +7720,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8034,7 +7731,7 @@
     ]
   },
   {
-    "id": "q180",
+    "id": "q170",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8071,6 +7768,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8081,7 +7779,7 @@
     ]
   },
   {
-    "id": "q181",
+    "id": "q171",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8118,6 +7816,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8129,7 +7828,7 @@
     ]
   },
   {
-    "id": "q182",
+    "id": "q172",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8158,6 +7857,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8169,7 +7869,7 @@
     ]
   },
   {
-    "id": "q183",
+    "id": "q173",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8198,6 +7898,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8209,7 +7910,7 @@
     ]
   },
   {
-    "id": "q184",
+    "id": "q174",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8246,6 +7947,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8257,7 +7959,7 @@
     ]
   },
   {
-    "id": "q185",
+    "id": "q175",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8294,6 +7996,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8304,7 +8007,7 @@
     ]
   },
   {
-    "id": "q186",
+    "id": "q176",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8333,6 +8036,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8342,7 +8046,7 @@
     ]
   },
   {
-    "id": "q187",
+    "id": "q177",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8371,6 +8075,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8381,7 +8086,7 @@
     ]
   },
   {
-    "id": "q188",
+    "id": "q178",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8418,6 +8123,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8428,7 +8134,7 @@
     ]
   },
   {
-    "id": "q189",
+    "id": "q179",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8465,6 +8171,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8475,7 +8182,7 @@
     ]
   },
   {
-    "id": "q190",
+    "id": "q180",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8504,6 +8211,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8514,7 +8222,7 @@
     ]
   },
   {
-    "id": "q191",
+    "id": "q181",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8543,6 +8251,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8553,7 +8262,7 @@
     ]
   },
   {
-    "id": "q192",
+    "id": "q182",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8590,6 +8299,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8600,7 +8310,7 @@
     ]
   },
   {
-    "id": "q193",
+    "id": "q183",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8637,6 +8347,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8649,7 +8360,7 @@
     ]
   },
   {
-    "id": "q194",
+    "id": "q184",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8678,6 +8389,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8690,7 +8402,7 @@
     ]
   },
   {
-    "id": "q195",
+    "id": "q185",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8719,6 +8431,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8731,7 +8444,7 @@
     ]
   },
   {
-    "id": "q196",
+    "id": "q186",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8768,6 +8481,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8780,7 +8494,7 @@
     ]
   },
   {
-    "id": "q197",
+    "id": "q187",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8817,6 +8531,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8827,7 +8542,7 @@
     ]
   },
   {
-    "id": "q198",
+    "id": "q188",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8856,6 +8571,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8866,7 +8582,7 @@
     ]
   },
   {
-    "id": "q199",
+    "id": "q189",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8895,6 +8611,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8905,7 +8622,7 @@
     ]
   },
   {
-    "id": "q200",
+    "id": "q190",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8942,6 +8659,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8952,7 +8670,7 @@
     ]
   },
   {
-    "id": "q201",
+    "id": "q191",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8989,6 +8707,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -9000,7 +8719,7 @@
     ]
   },
   {
-    "id": "q202",
+    "id": "q192",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -9029,6 +8748,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -9040,7 +8760,7 @@
     ]
   },
   {
-    "id": "q203",
+    "id": "q193",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -9069,6 +8789,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -9080,7 +8801,7 @@
     ]
   },
   {
-    "id": "q204",
+    "id": "q194",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -9117,6 +8838,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -9128,7 +8850,7 @@
     ]
   },
   {
-    "id": "q205",
+    "id": "q195",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9165,6 +8887,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9175,7 +8898,7 @@
     ]
   },
   {
-    "id": "q206",
+    "id": "q196",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9204,6 +8927,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9214,7 +8938,7 @@
     ]
   },
   {
-    "id": "q207",
+    "id": "q197",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9243,6 +8967,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9253,7 +8978,7 @@
     ]
   },
   {
-    "id": "q208",
+    "id": "q198",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9290,6 +9015,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9300,7 +9026,7 @@
     ]
   },
   {
-    "id": "q209",
+    "id": "q199",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9337,6 +9063,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9347,7 +9074,7 @@
     ]
   },
   {
-    "id": "q210",
+    "id": "q200",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9376,6 +9103,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9386,7 +9114,7 @@
     ]
   },
   {
-    "id": "q211",
+    "id": "q201",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9415,6 +9143,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9425,7 +9154,7 @@
     ]
   },
   {
-    "id": "q212",
+    "id": "q202",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9462,6 +9191,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9472,7 +9202,7 @@
     ]
   },
   {
-    "id": "q213",
+    "id": "q203",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9509,6 +9239,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9519,7 +9250,7 @@
     ]
   },
   {
-    "id": "q214",
+    "id": "q204",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9548,6 +9279,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9558,7 +9290,7 @@
     ]
   },
   {
-    "id": "q215",
+    "id": "q205",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9587,6 +9319,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9597,7 +9330,7 @@
     ]
   },
   {
-    "id": "q216",
+    "id": "q206",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9634,6 +9367,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9644,7 +9378,7 @@
     ]
   },
   {
-    "id": "q217",
+    "id": "q207",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9681,6 +9415,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9691,7 +9426,7 @@
     ]
   },
   {
-    "id": "q218",
+    "id": "q208",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9720,6 +9455,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9730,7 +9466,7 @@
     ]
   },
   {
-    "id": "q219",
+    "id": "q209",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9759,6 +9495,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9769,7 +9506,7 @@
     ]
   },
   {
-    "id": "q220",
+    "id": "q210",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9806,6 +9543,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9816,7 +9554,7 @@
     ]
   },
   {
-    "id": "q221",
+    "id": "q211",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9853,6 +9591,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9863,7 +9602,7 @@
     ]
   },
   {
-    "id": "q222",
+    "id": "q212",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9892,6 +9631,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9902,7 +9642,7 @@
     ]
   },
   {
-    "id": "q223",
+    "id": "q213",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9931,6 +9671,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9941,7 +9682,7 @@
     ]
   },
   {
-    "id": "q224",
+    "id": "q214",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9978,6 +9719,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9988,7 +9730,7 @@
     ]
   },
   {
-    "id": "q225",
+    "id": "q215",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10025,6 +9767,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -10035,7 +9778,7 @@
     ]
   },
   {
-    "id": "q226",
+    "id": "q216",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10064,6 +9807,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -10074,7 +9818,7 @@
     ]
   },
   {
-    "id": "q227",
+    "id": "q217",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10103,6 +9847,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -10113,7 +9858,7 @@
     ]
   },
   {
-    "id": "q228",
+    "id": "q218",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10150,6 +9895,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -10160,7 +9906,7 @@
     ]
   },
   {
-    "id": "q229",
+    "id": "q219",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10197,6 +9943,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10207,7 +9954,7 @@
     ]
   },
   {
-    "id": "q230",
+    "id": "q220",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10236,6 +9983,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10246,7 +9994,7 @@
     ]
   },
   {
-    "id": "q231",
+    "id": "q221",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10275,6 +10023,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10285,7 +10034,7 @@
     ]
   },
   {
-    "id": "q232",
+    "id": "q222",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10322,6 +10071,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10332,7 +10082,7 @@
     ]
   },
   {
-    "id": "q233",
+    "id": "q223",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10369,6 +10119,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10379,7 +10130,7 @@
     ]
   },
   {
-    "id": "q234",
+    "id": "q224",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10408,6 +10159,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10418,7 +10170,7 @@
     ]
   },
   {
-    "id": "q235",
+    "id": "q225",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10447,6 +10199,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10457,7 +10210,7 @@
     ]
   },
   {
-    "id": "q236",
+    "id": "q226",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10494,6 +10247,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10504,7 +10258,7 @@
     ]
   },
   {
-    "id": "q237",
+    "id": "q227",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10541,6 +10295,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10551,7 +10306,7 @@
     ]
   },
   {
-    "id": "q238",
+    "id": "q228",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10580,6 +10335,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10590,7 +10346,7 @@
     ]
   },
   {
-    "id": "q239",
+    "id": "q229",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10619,6 +10375,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10629,7 +10386,7 @@
     ]
   },
   {
-    "id": "q240",
+    "id": "q230",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10666,6 +10423,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10676,7 +10434,7 @@
     ]
   },
   {
-    "id": "q241",
+    "id": "q231",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10713,6 +10471,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10723,7 +10482,7 @@
     ]
   },
   {
-    "id": "q242",
+    "id": "q232",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10752,6 +10511,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10762,7 +10522,7 @@
     ]
   },
   {
-    "id": "q243",
+    "id": "q233",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10791,6 +10551,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10801,7 +10562,7 @@
     ]
   },
   {
-    "id": "q244",
+    "id": "q234",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10838,6 +10599,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10848,7 +10610,7 @@
     ]
   },
   {
-    "id": "q245",
+    "id": "q235",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10885,6 +10647,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10895,7 +10658,7 @@
     ]
   },
   {
-    "id": "q246",
+    "id": "q236",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10924,6 +10687,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10934,7 +10698,7 @@
     ]
   },
   {
-    "id": "q247",
+    "id": "q237",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10963,6 +10727,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10973,7 +10738,7 @@
     ]
   },
   {
-    "id": "q248",
+    "id": "q238",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11010,6 +10775,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -11020,7 +10786,7 @@
     ]
   },
   {
-    "id": "q249",
+    "id": "q239",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11057,6 +10823,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11067,7 +10834,7 @@
     ]
   },
   {
-    "id": "q250",
+    "id": "q240",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11096,6 +10863,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11106,7 +10874,7 @@
     ]
   },
   {
-    "id": "q251",
+    "id": "q241",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11135,6 +10903,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11145,7 +10914,7 @@
     ]
   },
   {
-    "id": "q252",
+    "id": "q242",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11182,6 +10951,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11192,7 +10962,7 @@
     ]
   },
   {
-    "id": "q253",
+    "id": "q243",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11229,6 +10999,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11239,7 +11010,7 @@
     ]
   },
   {
-    "id": "q254",
+    "id": "q244",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11268,6 +11039,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11278,7 +11050,7 @@
     ]
   },
   {
-    "id": "q255",
+    "id": "q245",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11307,6 +11079,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11317,7 +11090,7 @@
     ]
   },
   {
-    "id": "q256",
+    "id": "q246",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11354,6 +11127,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11364,7 +11138,7 @@
     ]
   },
   {
-    "id": "q257",
+    "id": "q247",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11401,6 +11175,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11411,7 +11186,7 @@
     ]
   },
   {
-    "id": "q258",
+    "id": "q248",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11440,6 +11215,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11450,7 +11226,7 @@
     ]
   },
   {
-    "id": "q259",
+    "id": "q249",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11479,6 +11255,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11489,7 +11266,7 @@
     ]
   },
   {
-    "id": "q260",
+    "id": "q250",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11526,6 +11303,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11536,7 +11314,7 @@
     ]
   },
   {
-    "id": "q261",
+    "id": "q251",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11573,6 +11351,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11583,7 +11362,7 @@
     ]
   },
   {
-    "id": "q262",
+    "id": "q252",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11612,6 +11391,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11622,7 +11402,7 @@
     ]
   },
   {
-    "id": "q263",
+    "id": "q253",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11651,6 +11431,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11661,7 +11442,7 @@
     ]
   },
   {
-    "id": "q264",
+    "id": "q254",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11698,6 +11479,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11708,7 +11490,7 @@
     ]
   },
   {
-    "id": "q265",
+    "id": "q255",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11745,6 +11527,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11755,7 +11538,7 @@
     ]
   },
   {
-    "id": "q266",
+    "id": "q256",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11784,6 +11567,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11794,7 +11578,7 @@
     ]
   },
   {
-    "id": "q267",
+    "id": "q257",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11823,6 +11607,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11833,7 +11618,7 @@
     ]
   },
   {
-    "id": "q268",
+    "id": "q258",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11870,6 +11655,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11880,7 +11666,7 @@
     ]
   },
   {
-    "id": "q269",
+    "id": "q259",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11917,6 +11703,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11927,7 +11714,7 @@
     ]
   },
   {
-    "id": "q270",
+    "id": "q260",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11956,6 +11743,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11966,7 +11754,7 @@
     ]
   },
   {
-    "id": "q271",
+    "id": "q261",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11995,6 +11783,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -12005,7 +11794,7 @@
     ]
   },
   {
-    "id": "q272",
+    "id": "q262",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -12042,6 +11831,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -12052,7 +11842,7 @@
     ]
   },
   {
-    "id": "q273",
+    "id": "q263",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -12089,6 +11879,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -12099,7 +11890,7 @@
     ]
   },
   {
-    "id": "q274",
+    "id": "q264",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -12128,6 +11919,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -12138,7 +11930,7 @@
     ]
   },
   {
-    "id": "q275",
+    "id": "q265",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -12167,6 +11959,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -12177,7 +11970,7 @@
     ]
   },
   {
-    "id": "q276",
+    "id": "q266",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -12214,6 +12007,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -12224,7 +12018,7 @@
     ]
   },
   {
-    "id": "q277",
+    "id": "q267",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12261,6 +12055,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12271,7 +12066,7 @@
     ]
   },
   {
-    "id": "q278",
+    "id": "q268",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12300,6 +12095,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12310,7 +12106,7 @@
     ]
   },
   {
-    "id": "q279",
+    "id": "q269",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12339,6 +12135,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12349,7 +12146,7 @@
     ]
   },
   {
-    "id": "q280",
+    "id": "q270",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12386,6 +12183,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12396,7 +12194,7 @@
     ]
   },
   {
-    "id": "q281",
+    "id": "q271",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12433,6 +12231,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12443,7 +12242,7 @@
     ]
   },
   {
-    "id": "q282",
+    "id": "q272",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12472,6 +12271,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12482,7 +12282,7 @@
     ]
   },
   {
-    "id": "q283",
+    "id": "q273",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12511,6 +12311,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12521,7 +12322,7 @@
     ]
   },
   {
-    "id": "q284",
+    "id": "q274",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12558,6 +12359,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12568,7 +12370,7 @@
     ]
   },
   {
-    "id": "q285",
+    "id": "q275",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12605,6 +12407,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12615,7 +12418,7 @@
     ]
   },
   {
-    "id": "q286",
+    "id": "q276",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12644,6 +12447,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12654,7 +12458,7 @@
     ]
   },
   {
-    "id": "q287",
+    "id": "q277",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12683,6 +12487,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12693,7 +12498,7 @@
     ]
   },
   {
-    "id": "q288",
+    "id": "q278",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12730,6 +12535,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12740,7 +12546,7 @@
     ]
   },
   {
-    "id": "q289",
+    "id": "q279",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12777,6 +12583,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12787,7 +12594,7 @@
     ]
   },
   {
-    "id": "q290",
+    "id": "q280",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12816,6 +12623,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12826,7 +12634,7 @@
     ]
   },
   {
-    "id": "q291",
+    "id": "q281",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12855,6 +12663,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12865,7 +12674,7 @@
     ]
   },
   {
-    "id": "q292",
+    "id": "q282",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12902,6 +12711,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12912,7 +12722,7 @@
     ]
   },
   {
-    "id": "q293",
+    "id": "q283",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12949,6 +12759,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12959,7 +12770,7 @@
     ]
   },
   {
-    "id": "q294",
+    "id": "q284",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12988,6 +12799,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12998,7 +12810,7 @@
     ]
   },
   {
-    "id": "q295",
+    "id": "q285",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13027,6 +12839,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -13037,7 +12850,7 @@
     ]
   },
   {
-    "id": "q296",
+    "id": "q286",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13074,6 +12887,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -13084,7 +12898,7 @@
     ]
   },
   {
-    "id": "q297",
+    "id": "q287",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13121,6 +12935,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -13131,7 +12946,7 @@
     ]
   },
   {
-    "id": "q298",
+    "id": "q288",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13160,6 +12975,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -13170,7 +12986,7 @@
     ]
   },
   {
-    "id": "q299",
+    "id": "q289",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13199,6 +13015,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -13209,7 +13026,7 @@
     ]
   },
   {
-    "id": "q300",
+    "id": "q290",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13246,6 +13063,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -13256,7 +13074,7 @@
     ]
   },
   {
-    "id": "q301",
+    "id": "q291",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13293,6 +13111,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13303,7 +13122,7 @@
     ]
   },
   {
-    "id": "q302",
+    "id": "q292",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13332,6 +13151,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13342,7 +13162,7 @@
     ]
   },
   {
-    "id": "q303",
+    "id": "q293",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13371,6 +13191,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13381,7 +13202,7 @@
     ]
   },
   {
-    "id": "q304",
+    "id": "q294",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13418,6 +13239,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13428,7 +13250,7 @@
     ]
   },
   {
-    "id": "q305",
+    "id": "q295",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13465,6 +13287,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13475,7 +13298,7 @@
     ]
   },
   {
-    "id": "q306",
+    "id": "q296",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13504,6 +13327,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13514,7 +13338,7 @@
     ]
   },
   {
-    "id": "q307",
+    "id": "q297",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13543,6 +13367,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13553,7 +13378,7 @@
     ]
   },
   {
-    "id": "q308",
+    "id": "q298",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13590,6 +13415,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13600,7 +13426,7 @@
     ]
   },
   {
-    "id": "q309",
+    "id": "q299",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13637,6 +13463,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13647,7 +13474,7 @@
     ]
   },
   {
-    "id": "q310",
+    "id": "q300",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13676,6 +13503,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13686,7 +13514,7 @@
     ]
   },
   {
-    "id": "q311",
+    "id": "q301",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13715,6 +13543,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13725,7 +13554,7 @@
     ]
   },
   {
-    "id": "q312",
+    "id": "q302",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13762,6 +13591,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13772,7 +13602,7 @@
     ]
   },
   {
-    "id": "q313",
+    "id": "q303",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13809,6 +13639,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13819,7 +13650,7 @@
     ]
   },
   {
-    "id": "q314",
+    "id": "q304",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13848,6 +13679,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13858,7 +13690,7 @@
     ]
   },
   {
-    "id": "q315",
+    "id": "q305",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13887,6 +13719,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13897,7 +13730,7 @@
     ]
   },
   {
-    "id": "q316",
+    "id": "q306",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13934,6 +13767,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13944,7 +13778,7 @@
     ]
   },
   {
-    "id": "q317",
+    "id": "q307",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13981,6 +13815,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13991,7 +13826,7 @@
     ]
   },
   {
-    "id": "q318",
+    "id": "q308",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14020,6 +13855,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -14030,7 +13866,7 @@
     ]
   },
   {
-    "id": "q319",
+    "id": "q309",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14059,6 +13895,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -14069,7 +13906,7 @@
     ]
   },
   {
-    "id": "q320",
+    "id": "q310",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14106,6 +13943,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -14116,7 +13954,7 @@
     ]
   },
   {
-    "id": "q321",
+    "id": "q311",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14153,6 +13991,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14163,7 +14002,7 @@
     ]
   },
   {
-    "id": "q322",
+    "id": "q312",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14192,6 +14031,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14202,7 +14042,7 @@
     ]
   },
   {
-    "id": "q323",
+    "id": "q313",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14231,6 +14071,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14241,7 +14082,7 @@
     ]
   },
   {
-    "id": "q324",
+    "id": "q314",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14278,6 +14119,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14288,7 +14130,7 @@
     ]
   },
   {
-    "id": "q325",
+    "id": "q315",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14325,6 +14167,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14335,7 +14178,7 @@
     ]
   },
   {
-    "id": "q326",
+    "id": "q316",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14364,6 +14207,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14374,7 +14218,7 @@
     ]
   },
   {
-    "id": "q327",
+    "id": "q317",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14403,6 +14247,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14413,7 +14258,7 @@
     ]
   },
   {
-    "id": "q328",
+    "id": "q318",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14450,6 +14295,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14460,7 +14306,7 @@
     ]
   },
   {
-    "id": "q329",
+    "id": "q319",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14497,6 +14343,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14507,7 +14354,7 @@
     ]
   },
   {
-    "id": "q330",
+    "id": "q320",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14536,6 +14383,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14546,7 +14394,7 @@
     ]
   },
   {
-    "id": "q331",
+    "id": "q321",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14575,6 +14423,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14585,7 +14434,7 @@
     ]
   },
   {
-    "id": "q332",
+    "id": "q322",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14622,6 +14471,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14632,7 +14482,7 @@
     ]
   },
   {
-    "id": "q333",
+    "id": "q323",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14669,6 +14519,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14679,7 +14530,7 @@
     ]
   },
   {
-    "id": "q334",
+    "id": "q324",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14708,6 +14559,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14718,7 +14570,7 @@
     ]
   },
   {
-    "id": "q335",
+    "id": "q325",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14747,6 +14599,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14757,7 +14610,7 @@
     ]
   },
   {
-    "id": "q336",
+    "id": "q326",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14794,6 +14647,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14804,7 +14658,7 @@
     ]
   },
   {
-    "id": "q337",
+    "id": "q327",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14841,6 +14695,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14851,7 +14706,7 @@
     ]
   },
   {
-    "id": "q338",
+    "id": "q328",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14880,6 +14735,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14890,7 +14746,7 @@
     ]
   },
   {
-    "id": "q339",
+    "id": "q329",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14919,6 +14775,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14929,7 +14786,7 @@
     ]
   },
   {
-    "id": "q340",
+    "id": "q330",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14966,6 +14823,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14976,7 +14834,7 @@
     ]
   },
   {
-    "id": "q341",
+    "id": "q331",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15013,6 +14871,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -15023,7 +14882,7 @@
     ]
   },
   {
-    "id": "q342",
+    "id": "q332",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15052,6 +14911,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -15062,7 +14922,7 @@
     ]
   },
   {
-    "id": "q343",
+    "id": "q333",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15091,6 +14951,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -15101,7 +14962,7 @@
     ]
   },
   {
-    "id": "q344",
+    "id": "q334",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15138,6 +14999,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -15148,7 +15010,7 @@
     ]
   },
   {
-    "id": "q345",
+    "id": "q335",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15185,6 +15047,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15195,7 +15058,7 @@
     ]
   },
   {
-    "id": "q346",
+    "id": "q336",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15224,6 +15087,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15234,7 +15098,7 @@
     ]
   },
   {
-    "id": "q347",
+    "id": "q337",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15263,6 +15127,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15273,7 +15138,7 @@
     ]
   },
   {
-    "id": "q348",
+    "id": "q338",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15310,6 +15175,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15320,7 +15186,7 @@
     ]
   },
   {
-    "id": "q349",
+    "id": "q339",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15357,6 +15223,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15367,7 +15234,7 @@
     ]
   },
   {
-    "id": "q350",
+    "id": "q340",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15396,6 +15263,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15406,7 +15274,7 @@
     ]
   },
   {
-    "id": "q351",
+    "id": "q341",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15435,6 +15303,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15445,7 +15314,7 @@
     ]
   },
   {
-    "id": "q352",
+    "id": "q342",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15482,6 +15351,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15492,7 +15362,7 @@
     ]
   },
   {
-    "id": "q353",
+    "id": "q343",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15529,6 +15399,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15540,7 +15411,7 @@
     ]
   },
   {
-    "id": "q354",
+    "id": "q344",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15569,6 +15440,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15580,7 +15452,7 @@
     ]
   },
   {
-    "id": "q355",
+    "id": "q345",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15609,6 +15481,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15620,7 +15493,7 @@
     ]
   },
   {
-    "id": "q356",
+    "id": "q346",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15657,6 +15530,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15668,7 +15542,7 @@
     ]
   },
   {
-    "id": "q357",
+    "id": "q347",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15705,6 +15579,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15715,7 +15590,7 @@
     ]
   },
   {
-    "id": "q358",
+    "id": "q348",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15744,6 +15619,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15754,7 +15630,7 @@
     ]
   },
   {
-    "id": "q359",
+    "id": "q349",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15783,6 +15659,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15793,7 +15670,7 @@
     ]
   },
   {
-    "id": "q360",
+    "id": "q350",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15830,6 +15707,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15840,7 +15718,7 @@
     ]
   },
   {
-    "id": "q361",
+    "id": "q351",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15877,6 +15755,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15887,7 +15766,7 @@
     ]
   },
   {
-    "id": "q362",
+    "id": "q352",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15916,6 +15795,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15926,7 +15806,7 @@
     ]
   },
   {
-    "id": "q363",
+    "id": "q353",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15955,6 +15835,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15965,7 +15846,7 @@
     ]
   },
   {
-    "id": "q364",
+    "id": "q354",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -16002,6 +15883,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -16012,7 +15894,7 @@
     ]
   },
   {
-    "id": "q365",
+    "id": "q355",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16049,6 +15931,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -16059,7 +15942,7 @@
     ]
   },
   {
-    "id": "q366",
+    "id": "q356",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16088,6 +15971,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -16098,7 +15982,7 @@
     ]
   },
   {
-    "id": "q367",
+    "id": "q357",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16127,6 +16011,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -16137,7 +16022,7 @@
     ]
   },
   {
-    "id": "q368",
+    "id": "q358",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16174,6 +16059,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -16184,7 +16070,7 @@
     ]
   },
   {
-    "id": "q369",
+    "id": "q359",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16221,6 +16107,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16231,7 +16118,7 @@
     ]
   },
   {
-    "id": "q370",
+    "id": "q360",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16260,6 +16147,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16270,7 +16158,7 @@
     ]
   },
   {
-    "id": "q371",
+    "id": "q361",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16299,6 +16187,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16309,7 +16198,7 @@
     ]
   },
   {
-    "id": "q372",
+    "id": "q362",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16346,6 +16235,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16356,7 +16246,7 @@
     ]
   },
   {
-    "id": "q373",
+    "id": "q363",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16393,6 +16283,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16403,7 +16294,7 @@
     ]
   },
   {
-    "id": "q374",
+    "id": "q364",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16432,6 +16323,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16442,7 +16334,7 @@
     ]
   },
   {
-    "id": "q375",
+    "id": "q365",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16471,6 +16363,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16481,7 +16374,7 @@
     ]
   },
   {
-    "id": "q376",
+    "id": "q366",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16518,6 +16411,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16528,7 +16422,7 @@
     ]
   },
   {
-    "id": "q377",
+    "id": "q367",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16565,6 +16459,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16576,7 +16471,7 @@
     ]
   },
   {
-    "id": "q378",
+    "id": "q368",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16605,6 +16500,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16616,7 +16512,7 @@
     ]
   },
   {
-    "id": "q379",
+    "id": "q369",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16645,6 +16541,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16656,7 +16553,7 @@
     ]
   },
   {
-    "id": "q380",
+    "id": "q370",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16693,6 +16590,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16704,7 +16602,7 @@
     ]
   },
   {
-    "id": "q381",
+    "id": "q371",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16741,6 +16639,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16751,7 +16650,7 @@
     ]
   },
   {
-    "id": "q382",
+    "id": "q372",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16780,6 +16679,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16790,7 +16690,7 @@
     ]
   },
   {
-    "id": "q383",
+    "id": "q373",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16819,6 +16719,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16829,7 +16730,7 @@
     ]
   },
   {
-    "id": "q384",
+    "id": "q374",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16866,6 +16767,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16876,7 +16778,7 @@
     ]
   },
   {
-    "id": "q385",
+    "id": "q375",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16913,6 +16815,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16923,7 +16826,7 @@
     ]
   },
   {
-    "id": "q386",
+    "id": "q376",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16952,6 +16855,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16962,7 +16866,7 @@
     ]
   },
   {
-    "id": "q387",
+    "id": "q377",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16991,6 +16895,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17001,7 +16906,7 @@
     ]
   },
   {
-    "id": "q388",
+    "id": "q378",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17038,6 +16943,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17048,7 +16954,7 @@
     ]
   },
   {
-    "id": "q389",
+    "id": "q379",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17085,6 +16991,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17095,7 +17002,7 @@
     ]
   },
   {
-    "id": "q390",
+    "id": "q380",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17124,6 +17031,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17134,7 +17042,7 @@
     ]
   },
   {
-    "id": "q391",
+    "id": "q381",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17163,6 +17071,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17173,7 +17082,7 @@
     ]
   },
   {
-    "id": "q392",
+    "id": "q382",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17210,6 +17119,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17220,7 +17130,7 @@
     ]
   },
   {
-    "id": "q393",
+    "id": "q383",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17257,6 +17167,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17267,7 +17178,7 @@
     ]
   },
   {
-    "id": "q394",
+    "id": "q384",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17296,6 +17207,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17306,7 +17218,7 @@
     ]
   },
   {
-    "id": "q395",
+    "id": "q385",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17335,6 +17247,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17345,7 +17258,7 @@
     ]
   },
   {
-    "id": "q396",
+    "id": "q386",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17382,6 +17295,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17392,7 +17306,7 @@
     ]
   },
   {
-    "id": "q397",
+    "id": "q387",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17429,6 +17343,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17439,7 +17354,7 @@
     ]
   },
   {
-    "id": "q398",
+    "id": "q388",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17468,6 +17383,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17478,7 +17394,7 @@
     ]
   },
   {
-    "id": "q399",
+    "id": "q389",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17507,6 +17423,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17517,7 +17434,7 @@
     ]
   },
   {
-    "id": "q400",
+    "id": "q390",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17554,6 +17471,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17564,7 +17482,7 @@
     ]
   },
   {
-    "id": "q401",
+    "id": "q391",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17601,6 +17519,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17611,7 +17530,7 @@
     ]
   },
   {
-    "id": "q402",
+    "id": "q392",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17640,6 +17559,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17650,7 +17570,7 @@
     ]
   },
   {
-    "id": "q403",
+    "id": "q393",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17679,6 +17599,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17689,7 +17610,7 @@
     ]
   },
   {
-    "id": "q404",
+    "id": "q394",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17726,6 +17647,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17736,7 +17658,7 @@
     ]
   },
   {
-    "id": "q405",
+    "id": "q395",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17773,6 +17695,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17783,7 +17706,7 @@
     ]
   },
   {
-    "id": "q406",
+    "id": "q396",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17812,6 +17735,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17822,7 +17746,7 @@
     ]
   },
   {
-    "id": "q407",
+    "id": "q397",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17851,6 +17775,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17861,7 +17786,7 @@
     ]
   },
   {
-    "id": "q408",
+    "id": "q398",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17898,6 +17823,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17908,7 +17834,7 @@
     ]
   },
   {
-    "id": "q409",
+    "id": "q399",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17945,6 +17871,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17955,7 +17882,7 @@
     ]
   },
   {
-    "id": "q410",
+    "id": "q400",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17984,6 +17911,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17994,7 +17922,7 @@
     ]
   },
   {
-    "id": "q411",
+    "id": "q401",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18023,6 +17951,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -18033,7 +17962,7 @@
     ]
   },
   {
-    "id": "q412",
+    "id": "q402",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18070,6 +17999,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -18080,7 +18010,7 @@
     ]
   },
   {
-    "id": "q413",
+    "id": "q403",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18117,6 +18047,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18127,7 +18058,7 @@
     ]
   },
   {
-    "id": "q414",
+    "id": "q404",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18156,6 +18087,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18166,7 +18098,7 @@
     ]
   },
   {
-    "id": "q415",
+    "id": "q405",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18195,6 +18127,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18205,7 +18138,7 @@
     ]
   },
   {
-    "id": "q416",
+    "id": "q406",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18242,6 +18175,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18252,7 +18186,7 @@
     ]
   },
   {
-    "id": "q417",
+    "id": "q407",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18289,6 +18223,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18299,7 +18234,7 @@
     ]
   },
   {
-    "id": "q418",
+    "id": "q408",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18328,6 +18263,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18338,7 +18274,7 @@
     ]
   },
   {
-    "id": "q419",
+    "id": "q409",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18367,6 +18303,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18377,7 +18314,7 @@
     ]
   },
   {
-    "id": "q420",
+    "id": "q410",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18414,6 +18351,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18424,7 +18362,7 @@
     ]
   },
   {
-    "id": "q421",
+    "id": "q411",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18461,6 +18399,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18471,7 +18410,7 @@
     ]
   },
   {
-    "id": "q422",
+    "id": "q412",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18500,6 +18439,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18510,7 +18450,7 @@
     ]
   },
   {
-    "id": "q423",
+    "id": "q413",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18539,6 +18479,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18549,7 +18490,7 @@
     ]
   },
   {
-    "id": "q424",
+    "id": "q414",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18586,6 +18527,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18596,7 +18538,7 @@
     ]
   },
   {
-    "id": "q425",
+    "id": "q415",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18633,6 +18575,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18643,7 +18586,7 @@
     ]
   },
   {
-    "id": "q426",
+    "id": "q416",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18672,6 +18615,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18682,7 +18626,7 @@
     ]
   },
   {
-    "id": "q427",
+    "id": "q417",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18711,6 +18655,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18721,7 +18666,7 @@
     ]
   },
   {
-    "id": "q428",
+    "id": "q418",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18758,6 +18703,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18768,7 +18714,7 @@
     ]
   },
   {
-    "id": "q429",
+    "id": "q419",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18805,6 +18751,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18815,7 +18762,7 @@
     ]
   },
   {
-    "id": "q430",
+    "id": "q420",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18844,6 +18791,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18854,7 +18802,7 @@
     ]
   },
   {
-    "id": "q431",
+    "id": "q421",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18883,6 +18831,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18893,7 +18842,7 @@
     ]
   },
   {
-    "id": "q432",
+    "id": "q422",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18930,6 +18879,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18940,7 +18890,7 @@
     ]
   },
   {
-    "id": "q433",
+    "id": "q423",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18977,6 +18927,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -18988,7 +18939,7 @@
     ]
   },
   {
-    "id": "q434",
+    "id": "q424",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -19017,6 +18968,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -19028,7 +18980,7 @@
     ]
   },
   {
-    "id": "q435",
+    "id": "q425",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -19057,6 +19009,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -19068,7 +19021,7 @@
     ]
   },
   {
-    "id": "q436",
+    "id": "q426",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -19105,6 +19058,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -19116,7 +19070,7 @@
     ]
   },
   {
-    "id": "q437",
+    "id": "q427",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19153,6 +19107,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19163,7 +19118,7 @@
     ]
   },
   {
-    "id": "q438",
+    "id": "q428",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19192,6 +19147,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19202,7 +19158,7 @@
     ]
   },
   {
-    "id": "q439",
+    "id": "q429",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19231,6 +19187,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19241,7 +19198,7 @@
     ]
   },
   {
-    "id": "q440",
+    "id": "q430",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19278,6 +19235,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19288,7 +19246,7 @@
     ]
   },
   {
-    "id": "q441",
+    "id": "q431",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19325,6 +19283,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19335,7 +19294,7 @@
     ]
   },
   {
-    "id": "q442",
+    "id": "q432",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19364,6 +19323,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19374,7 +19334,7 @@
     ]
   },
   {
-    "id": "q443",
+    "id": "q433",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19403,6 +19363,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19413,7 +19374,7 @@
     ]
   },
   {
-    "id": "q444",
+    "id": "q434",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19450,6 +19411,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19460,7 +19422,7 @@
     ]
   },
   {
-    "id": "q445",
+    "id": "q435",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19497,6 +19459,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19508,7 +19471,7 @@
     ]
   },
   {
-    "id": "q446",
+    "id": "q436",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19537,6 +19500,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19548,7 +19512,7 @@
     ]
   },
   {
-    "id": "q447",
+    "id": "q437",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19577,6 +19541,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19588,7 +19553,7 @@
     ]
   },
   {
-    "id": "q448",
+    "id": "q438",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19625,6 +19590,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19636,7 +19602,7 @@
     ]
   },
   {
-    "id": "q449",
+    "id": "q439",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19673,6 +19639,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19683,7 +19650,7 @@
     ]
   },
   {
-    "id": "q450",
+    "id": "q440",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19712,6 +19679,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19722,7 +19690,7 @@
     ]
   },
   {
-    "id": "q451",
+    "id": "q441",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19751,6 +19719,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19761,7 +19730,7 @@
     ]
   },
   {
-    "id": "q452",
+    "id": "q442",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19798,6 +19767,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19808,7 +19778,7 @@
     ]
   },
   {
-    "id": "q453",
+    "id": "q443",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19845,6 +19815,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19855,7 +19826,7 @@
     ]
   },
   {
-    "id": "q454",
+    "id": "q444",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19884,6 +19855,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19894,7 +19866,7 @@
     ]
   },
   {
-    "id": "q455",
+    "id": "q445",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19923,6 +19895,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19933,7 +19906,7 @@
     ]
   },
   {
-    "id": "q456",
+    "id": "q446",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19970,6 +19943,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19980,7 +19954,7 @@
     ]
   },
   {
-    "id": "q457",
+    "id": "q447",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -20017,6 +19991,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20027,7 +20002,7 @@
     ]
   },
   {
-    "id": "q458",
+    "id": "q448",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -20056,6 +20031,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20066,7 +20042,7 @@
     ]
   },
   {
-    "id": "q459",
+    "id": "q449",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -20095,6 +20071,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20105,7 +20082,7 @@
     ]
   },
   {
-    "id": "q460",
+    "id": "q450",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -20142,6 +20119,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20152,7 +20130,7 @@
     ]
   },
   {
-    "id": "q461",
+    "id": "q451",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20189,6 +20167,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20199,7 +20178,7 @@
     ]
   },
   {
-    "id": "q462",
+    "id": "q452",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20228,6 +20207,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20238,7 +20218,7 @@
     ]
   },
   {
-    "id": "q463",
+    "id": "q453",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20267,6 +20247,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20277,7 +20258,7 @@
     ]
   },
   {
-    "id": "q464",
+    "id": "q454",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20314,6 +20295,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20324,7 +20306,7 @@
     ]
   },
   {
-    "id": "q465",
+    "id": "q455",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20361,6 +20343,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20372,7 +20355,7 @@
     ]
   },
   {
-    "id": "q466",
+    "id": "q456",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20401,6 +20384,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20412,7 +20396,7 @@
     ]
   },
   {
-    "id": "q467",
+    "id": "q457",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20441,6 +20425,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20452,7 +20437,7 @@
     ]
   },
   {
-    "id": "q468",
+    "id": "q458",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20489,6 +20474,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20500,7 +20486,7 @@
     ]
   },
   {
-    "id": "q469",
+    "id": "q459",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20537,6 +20523,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20547,7 +20534,7 @@
     ]
   },
   {
-    "id": "q470",
+    "id": "q460",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20576,6 +20563,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20586,7 +20574,7 @@
     ]
   },
   {
-    "id": "q471",
+    "id": "q461",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20615,6 +20603,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20625,7 +20614,7 @@
     ]
   },
   {
-    "id": "q472",
+    "id": "q462",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20662,6 +20651,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20672,7 +20662,7 @@
     ]
   },
   {
-    "id": "q473",
+    "id": "q463",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20709,6 +20699,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20719,7 +20710,7 @@
     ]
   },
   {
-    "id": "q474",
+    "id": "q464",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20748,6 +20739,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20758,7 +20750,7 @@
     ]
   },
   {
-    "id": "q475",
+    "id": "q465",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20787,6 +20779,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20797,7 +20790,7 @@
     ]
   },
   {
-    "id": "q476",
+    "id": "q466",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20834,6 +20827,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20844,7 +20838,7 @@
     ]
   },
   {
-    "id": "q477",
+    "id": "q467",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20881,6 +20875,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20891,7 +20886,7 @@
     ]
   },
   {
-    "id": "q478",
+    "id": "q468",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20920,6 +20915,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20930,7 +20926,7 @@
     ]
   },
   {
-    "id": "q479",
+    "id": "q469",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20959,6 +20955,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20969,7 +20966,7 @@
     ]
   },
   {
-    "id": "q480",
+    "id": "q470",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21006,6 +21003,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -21016,7 +21014,7 @@
     ]
   },
   {
-    "id": "q481",
+    "id": "q471",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21053,6 +21051,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21063,7 +21062,7 @@
     ]
   },
   {
-    "id": "q482",
+    "id": "q472",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21092,6 +21091,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21102,7 +21102,7 @@
     ]
   },
   {
-    "id": "q483",
+    "id": "q473",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21131,6 +21131,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21141,7 +21142,7 @@
     ]
   },
   {
-    "id": "q484",
+    "id": "q474",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21178,6 +21179,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21188,7 +21190,7 @@
     ]
   },
   {
-    "id": "q485",
+    "id": "q475",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21225,6 +21227,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21235,7 +21238,7 @@
     ]
   },
   {
-    "id": "q486",
+    "id": "q476",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21264,6 +21267,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21274,7 +21278,7 @@
     ]
   },
   {
-    "id": "q487",
+    "id": "q477",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21303,6 +21307,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21313,7 +21318,7 @@
     ]
   },
   {
-    "id": "q488",
+    "id": "q478",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21350,6 +21355,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21360,7 +21366,7 @@
     ]
   },
   {
-    "id": "q489",
+    "id": "q479",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21397,6 +21403,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21407,7 +21414,7 @@
     ]
   },
   {
-    "id": "q490",
+    "id": "q480",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21436,6 +21443,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21446,7 +21454,7 @@
     ]
   },
   {
-    "id": "q491",
+    "id": "q481",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21475,6 +21483,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21485,7 +21494,7 @@
     ]
   },
   {
-    "id": "q492",
+    "id": "q482",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21522,6 +21531,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21532,7 +21542,7 @@
     ]
   },
   {
-    "id": "q493",
+    "id": "q483",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21569,6 +21579,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21579,7 +21590,7 @@
     ]
   },
   {
-    "id": "q494",
+    "id": "q484",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21608,6 +21619,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21618,7 +21630,7 @@
     ]
   },
   {
-    "id": "q495",
+    "id": "q485",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21647,6 +21659,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21657,7 +21670,7 @@
     ]
   },
   {
-    "id": "q496",
+    "id": "q486",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21694,6 +21707,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21704,7 +21718,7 @@
     ]
   },
   {
-    "id": "q497",
+    "id": "q487",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21741,6 +21755,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21751,7 +21766,7 @@
     ]
   },
   {
-    "id": "q498",
+    "id": "q488",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21780,6 +21795,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21790,7 +21806,7 @@
     ]
   },
   {
-    "id": "q499",
+    "id": "q489",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21819,6 +21835,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21829,7 +21846,7 @@
     ]
   },
   {
-    "id": "q500",
+    "id": "q490",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21866,6 +21883,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21876,7 +21894,7 @@
     ]
   },
   {
-    "id": "q501",
+    "id": "q491",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21913,6 +21931,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -21923,7 +21942,7 @@
     ]
   },
   {
-    "id": "q502",
+    "id": "q492",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21952,6 +21971,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -21962,7 +21982,7 @@
     ]
   },
   {
-    "id": "q503",
+    "id": "q493",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21991,6 +22011,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -22001,7 +22022,7 @@
     ]
   },
   {
-    "id": "q504",
+    "id": "q494",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22038,6 +22059,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -22048,7 +22070,7 @@
     ]
   },
   {
-    "id": "q505",
+    "id": "q495",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22085,6 +22107,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22095,7 +22118,7 @@
     ]
   },
   {
-    "id": "q506",
+    "id": "q496",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22124,6 +22147,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22134,7 +22158,7 @@
     ]
   },
   {
-    "id": "q507",
+    "id": "q497",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22163,6 +22187,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22173,7 +22198,7 @@
     ]
   },
   {
-    "id": "q508",
+    "id": "q498",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22210,6 +22235,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22220,7 +22246,7 @@
     ]
   },
   {
-    "id": "q509",
+    "id": "q499",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22257,6 +22283,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22267,7 +22294,7 @@
     ]
   },
   {
-    "id": "q510",
+    "id": "q500",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22296,6 +22323,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22306,7 +22334,7 @@
     ]
   },
   {
-    "id": "q511",
+    "id": "q501",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22335,6 +22363,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22345,7 +22374,7 @@
     ]
   },
   {
-    "id": "q512",
+    "id": "q502",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22382,6 +22411,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22392,7 +22422,7 @@
     ]
   },
   {
-    "id": "q513",
+    "id": "q503",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22429,6 +22459,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22439,7 +22470,7 @@
     ]
   },
   {
-    "id": "q514",
+    "id": "q504",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22468,6 +22499,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22478,7 +22510,7 @@
     ]
   },
   {
-    "id": "q515",
+    "id": "q505",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22507,6 +22539,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22517,7 +22550,7 @@
     ]
   },
   {
-    "id": "q516",
+    "id": "q506",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22554,6 +22587,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22564,7 +22598,7 @@
     ]
   },
   {
-    "id": "q517",
+    "id": "q507",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22601,6 +22635,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22611,7 +22646,7 @@
     ]
   },
   {
-    "id": "q518",
+    "id": "q508",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22640,6 +22675,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22650,7 +22686,7 @@
     ]
   },
   {
-    "id": "q519",
+    "id": "q509",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22679,6 +22715,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22689,7 +22726,7 @@
     ]
   },
   {
-    "id": "q520",
+    "id": "q510",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22726,6 +22763,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22736,7 +22774,7 @@
     ]
   },
   {
-    "id": "q521",
+    "id": "q511",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22773,6 +22811,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22783,7 +22822,7 @@
     ]
   },
   {
-    "id": "q522",
+    "id": "q512",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22812,6 +22851,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22822,7 +22862,7 @@
     ]
   },
   {
-    "id": "q523",
+    "id": "q513",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22851,6 +22891,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22861,7 +22902,7 @@
     ]
   },
   {
-    "id": "q524",
+    "id": "q514",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22898,6 +22939,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22908,7 +22950,7 @@
     ]
   },
   {
-    "id": "q525",
+    "id": "q515",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22945,6 +22987,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -22955,7 +22998,7 @@
     ]
   },
   {
-    "id": "q526",
+    "id": "q516",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22984,6 +23027,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -22994,7 +23038,7 @@
     ]
   },
   {
-    "id": "q527",
+    "id": "q517",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -23023,6 +23067,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -23033,7 +23078,7 @@
     ]
   },
   {
-    "id": "q528",
+    "id": "q518",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -23070,6 +23115,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -23080,7 +23126,7 @@
     ]
   },
   {
-    "id": "q529",
+    "id": "q519",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23117,6 +23163,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23127,7 +23174,7 @@
     ]
   },
   {
-    "id": "q530",
+    "id": "q520",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23156,6 +23203,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23166,7 +23214,7 @@
     ]
   },
   {
-    "id": "q531",
+    "id": "q521",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23195,6 +23243,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23205,7 +23254,7 @@
     ]
   },
   {
-    "id": "q532",
+    "id": "q522",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23242,6 +23291,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23252,7 +23302,7 @@
     ]
   },
   {
-    "id": "q533",
+    "id": "q523",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23289,6 +23339,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23299,7 +23350,7 @@
     ]
   },
   {
-    "id": "q534",
+    "id": "q524",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23328,6 +23379,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23338,7 +23390,7 @@
     ]
   },
   {
-    "id": "q535",
+    "id": "q525",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23367,6 +23419,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23377,7 +23430,7 @@
     ]
   },
   {
-    "id": "q536",
+    "id": "q526",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23414,6 +23467,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23424,7 +23478,7 @@
     ]
   },
   {
-    "id": "q537",
+    "id": "q527",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23461,6 +23515,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23471,7 +23526,7 @@
     ]
   },
   {
-    "id": "q538",
+    "id": "q528",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23500,6 +23555,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23510,7 +23566,7 @@
     ]
   },
   {
-    "id": "q539",
+    "id": "q529",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23539,6 +23595,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23549,7 +23606,7 @@
     ]
   },
   {
-    "id": "q540",
+    "id": "q530",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23586,6 +23643,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23596,7 +23654,7 @@
     ]
   },
   {
-    "id": "q541",
+    "id": "q531",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23633,6 +23691,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23643,7 +23702,7 @@
     ]
   },
   {
-    "id": "q542",
+    "id": "q532",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23672,6 +23731,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23682,7 +23742,7 @@
     ]
   },
   {
-    "id": "q543",
+    "id": "q533",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23711,6 +23771,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23721,7 +23782,7 @@
     ]
   },
   {
-    "id": "q544",
+    "id": "q534",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23758,6 +23819,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23768,7 +23830,7 @@
     ]
   },
   {
-    "id": "q545",
+    "id": "q535",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23805,6 +23867,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23815,7 +23878,7 @@
     ]
   },
   {
-    "id": "q546",
+    "id": "q536",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23844,6 +23907,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23854,7 +23918,7 @@
     ]
   },
   {
-    "id": "q547",
+    "id": "q537",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23883,6 +23947,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23893,7 +23958,7 @@
     ]
   },
   {
-    "id": "q548",
+    "id": "q538",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23930,6 +23995,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23940,7 +24006,7 @@
     ]
   },
   {
-    "id": "q549",
+    "id": "q539",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23977,6 +24043,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -23987,7 +24054,7 @@
     ]
   },
   {
-    "id": "q550",
+    "id": "q540",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24016,6 +24083,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -24026,7 +24094,7 @@
     ]
   },
   {
-    "id": "q551",
+    "id": "q541",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24055,6 +24123,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -24065,7 +24134,7 @@
     ]
   },
   {
-    "id": "q552",
+    "id": "q542",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24102,6 +24171,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -24112,7 +24182,7 @@
     ]
   },
   {
-    "id": "q553",
+    "id": "q543",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24149,6 +24219,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24160,7 +24231,7 @@
     ]
   },
   {
-    "id": "q554",
+    "id": "q544",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24189,6 +24260,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24200,7 +24272,7 @@
     ]
   },
   {
-    "id": "q555",
+    "id": "q545",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24229,6 +24301,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24240,7 +24313,7 @@
     ]
   },
   {
-    "id": "q556",
+    "id": "q546",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24277,6 +24350,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24288,7 +24362,7 @@
     ]
   },
   {
-    "id": "q557",
+    "id": "q547",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24325,6 +24399,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24336,7 +24411,7 @@
     ]
   },
   {
-    "id": "q558",
+    "id": "q548",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24365,6 +24440,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24376,7 +24452,7 @@
     ]
   },
   {
-    "id": "q559",
+    "id": "q549",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24405,6 +24481,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24416,7 +24493,7 @@
     ]
   },
   {
-    "id": "q560",
+    "id": "q550",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24453,6 +24530,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24464,7 +24542,7 @@
     ]
   },
   {
-    "id": "q561",
+    "id": "q551",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24501,6 +24579,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24512,7 +24591,7 @@
     ]
   },
   {
-    "id": "q562",
+    "id": "q552",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24541,6 +24620,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24552,7 +24632,7 @@
     ]
   },
   {
-    "id": "q563",
+    "id": "q553",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24581,6 +24661,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24592,7 +24673,7 @@
     ]
   },
   {
-    "id": "q564",
+    "id": "q554",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24629,6 +24710,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24640,7 +24722,7 @@
     ]
   },
   {
-    "id": "q565",
+    "id": "q555",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24677,6 +24759,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24687,7 +24770,7 @@
     ]
   },
   {
-    "id": "q566",
+    "id": "q556",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24716,6 +24799,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24726,7 +24810,7 @@
     ]
   },
   {
-    "id": "q567",
+    "id": "q557",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24755,6 +24839,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24765,7 +24850,7 @@
     ]
   },
   {
-    "id": "q568",
+    "id": "q558",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24802,6 +24887,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24812,7 +24898,7 @@
     ]
   },
   {
-    "id": "q569",
+    "id": "q559",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24849,6 +24935,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24860,7 +24947,7 @@
     ]
   },
   {
-    "id": "q570",
+    "id": "q560",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24889,6 +24976,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24900,7 +24988,7 @@
     ]
   },
   {
-    "id": "q571",
+    "id": "q561",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24929,6 +25017,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24940,7 +25029,7 @@
     ]
   },
   {
-    "id": "q572",
+    "id": "q562",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24977,6 +25066,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24988,7 +25078,7 @@
     ]
   },
   {
-    "id": "q573",
+    "id": "q563",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25025,6 +25115,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25036,7 +25127,7 @@
     ]
   },
   {
-    "id": "q574",
+    "id": "q564",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25065,6 +25156,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25076,7 +25168,7 @@
     ]
   },
   {
-    "id": "q575",
+    "id": "q565",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25105,6 +25197,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25116,7 +25209,7 @@
     ]
   },
   {
-    "id": "q576",
+    "id": "q566",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25153,6 +25246,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25164,7 +25258,7 @@
     ]
   },
   {
-    "id": "q577",
+    "id": "q567",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25201,6 +25295,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25212,7 +25307,7 @@
     ]
   },
   {
-    "id": "q578",
+    "id": "q568",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25241,6 +25336,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25252,7 +25348,7 @@
     ]
   },
   {
-    "id": "q579",
+    "id": "q569",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25281,6 +25377,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25292,7 +25389,7 @@
     ]
   },
   {
-    "id": "q580",
+    "id": "q570",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25329,6 +25426,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25340,7 +25438,7 @@
     ]
   },
   {
-    "id": "q581",
+    "id": "q571",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25377,6 +25475,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25388,7 +25487,7 @@
     ]
   },
   {
-    "id": "q582",
+    "id": "q572",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25417,6 +25516,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25428,7 +25528,7 @@
     ]
   },
   {
-    "id": "q583",
+    "id": "q573",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25457,6 +25557,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25468,7 +25569,7 @@
     ]
   },
   {
-    "id": "q584",
+    "id": "q574",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25505,6 +25606,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25516,7 +25618,7 @@
     ]
   },
   {
-    "id": "q585",
+    "id": "q575",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25553,6 +25655,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25564,7 +25667,7 @@
     ]
   },
   {
-    "id": "q586",
+    "id": "q576",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25593,6 +25696,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25604,7 +25708,7 @@
     ]
   },
   {
-    "id": "q587",
+    "id": "q577",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25633,6 +25737,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25644,7 +25749,7 @@
     ]
   },
   {
-    "id": "q588",
+    "id": "q578",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25681,6 +25786,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25692,7 +25798,7 @@
     ]
   },
   {
-    "id": "q589",
+    "id": "q579",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25729,6 +25835,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25740,7 +25847,7 @@
     ]
   },
   {
-    "id": "q590",
+    "id": "q580",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25769,6 +25876,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25780,7 +25888,7 @@
     ]
   },
   {
-    "id": "q591",
+    "id": "q581",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25809,6 +25917,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25820,7 +25929,7 @@
     ]
   },
   {
-    "id": "q592",
+    "id": "q582",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25857,6 +25966,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25868,7 +25978,7 @@
     ]
   },
   {
-    "id": "q593",
+    "id": "q583",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25905,6 +26015,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -25916,7 +26027,7 @@
     ]
   },
   {
-    "id": "q594",
+    "id": "q584",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25945,6 +26056,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -25956,7 +26068,7 @@
     ]
   },
   {
-    "id": "q595",
+    "id": "q585",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25985,6 +26097,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -25996,7 +26109,7 @@
     ]
   },
   {
-    "id": "q596",
+    "id": "q586",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26033,6 +26146,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -26044,7 +26158,7 @@
     ]
   },
   {
-    "id": "q597",
+    "id": "q587",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26081,6 +26195,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26092,7 +26207,7 @@
     ]
   },
   {
-    "id": "q598",
+    "id": "q588",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26121,6 +26236,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26132,7 +26248,7 @@
     ]
   },
   {
-    "id": "q599",
+    "id": "q589",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26161,6 +26277,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26172,7 +26289,7 @@
     ]
   },
   {
-    "id": "q600",
+    "id": "q590",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26209,6 +26326,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26220,7 +26338,7 @@
     ]
   },
   {
-    "id": "q601",
+    "id": "q591",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26257,6 +26375,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26268,7 +26387,7 @@
     ]
   },
   {
-    "id": "q602",
+    "id": "q592",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26297,6 +26416,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26308,7 +26428,7 @@
     ]
   },
   {
-    "id": "q603",
+    "id": "q593",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26337,6 +26457,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26348,7 +26469,7 @@
     ]
   },
   {
-    "id": "q604",
+    "id": "q594",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26385,6 +26506,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26396,7 +26518,7 @@
     ]
   },
   {
-    "id": "q605",
+    "id": "q595",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26433,6 +26555,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26444,7 +26567,7 @@
     ]
   },
   {
-    "id": "q606",
+    "id": "q596",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26473,6 +26596,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26484,7 +26608,7 @@
     ]
   },
   {
-    "id": "q607",
+    "id": "q597",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26513,6 +26637,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26524,7 +26649,7 @@
     ]
   },
   {
-    "id": "q608",
+    "id": "q598",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26561,6 +26686,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26572,7 +26698,7 @@
     ]
   },
   {
-    "id": "q609",
+    "id": "q599",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26609,6 +26735,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26620,7 +26747,7 @@
     ]
   },
   {
-    "id": "q610",
+    "id": "q600",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26649,6 +26776,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26660,7 +26788,7 @@
     ]
   },
   {
-    "id": "q611",
+    "id": "q601",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26689,6 +26817,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26700,7 +26829,7 @@
     ]
   },
   {
-    "id": "q612",
+    "id": "q602",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26737,6 +26866,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26748,7 +26878,7 @@
     ]
   },
   {
-    "id": "q613",
+    "id": "q603",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26785,6 +26915,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26796,7 +26927,7 @@
     ]
   },
   {
-    "id": "q614",
+    "id": "q604",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26825,6 +26956,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26836,7 +26968,7 @@
     ]
   },
   {
-    "id": "q615",
+    "id": "q605",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26865,6 +26997,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26876,7 +27009,7 @@
     ]
   },
   {
-    "id": "q616",
+    "id": "q606",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26913,6 +27046,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26924,7 +27058,7 @@
     ]
   },
   {
-    "id": "q617",
+    "id": "q607",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26961,6 +27095,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -26973,7 +27108,7 @@
     ]
   },
   {
-    "id": "q618",
+    "id": "q608",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27002,6 +27137,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -27014,7 +27150,7 @@
     ]
   },
   {
-    "id": "q619",
+    "id": "q609",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27043,6 +27179,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -27055,7 +27192,7 @@
     ]
   },
   {
-    "id": "q620",
+    "id": "q610",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27092,6 +27229,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -27104,7 +27242,7 @@
     ]
   },
   {
-    "id": "q621",
+    "id": "q611",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27141,6 +27279,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27152,7 +27291,7 @@
     ]
   },
   {
-    "id": "q622",
+    "id": "q612",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27181,6 +27320,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27192,7 +27332,7 @@
     ]
   },
   {
-    "id": "q623",
+    "id": "q613",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27221,6 +27361,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27232,7 +27373,7 @@
     ]
   },
   {
-    "id": "q624",
+    "id": "q614",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27269,6 +27410,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27280,7 +27422,7 @@
     ]
   },
   {
-    "id": "q625",
+    "id": "q615",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27317,6 +27459,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27328,7 +27471,7 @@
     ]
   },
   {
-    "id": "q626",
+    "id": "q616",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27357,6 +27500,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27368,7 +27512,7 @@
     ]
   },
   {
-    "id": "q627",
+    "id": "q617",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27397,6 +27541,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27408,7 +27553,7 @@
     ]
   },
   {
-    "id": "q628",
+    "id": "q618",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27445,6 +27590,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27456,7 +27602,7 @@
     ]
   },
   {
-    "id": "q629",
+    "id": "q619",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27493,6 +27639,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27505,7 +27652,7 @@
     ]
   },
   {
-    "id": "q630",
+    "id": "q620",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27534,6 +27681,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27546,7 +27694,7 @@
     ]
   },
   {
-    "id": "q631",
+    "id": "q621",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27575,6 +27723,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27587,7 +27736,7 @@
     ]
   },
   {
-    "id": "q632",
+    "id": "q622",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27624,6 +27773,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27636,7 +27786,7 @@
     ]
   },
   {
-    "id": "q633",
+    "id": "q623",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27673,6 +27823,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27686,7 +27837,7 @@
     ]
   },
   {
-    "id": "q634",
+    "id": "q624",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27715,6 +27866,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27728,7 +27880,7 @@
     ]
   },
   {
-    "id": "q635",
+    "id": "q625",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27757,6 +27909,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27770,7 +27923,7 @@
     ]
   },
   {
-    "id": "q636",
+    "id": "q626",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27807,6 +27960,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27820,7 +27974,7 @@
     ]
   },
   {
-    "id": "q637",
+    "id": "q627",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27857,6 +28011,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27868,7 +28023,7 @@
     ]
   },
   {
-    "id": "q638",
+    "id": "q628",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27897,6 +28052,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27908,7 +28064,7 @@
     ]
   },
   {
-    "id": "q639",
+    "id": "q629",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27937,6 +28093,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27948,7 +28105,7 @@
     ]
   },
   {
-    "id": "q640",
+    "id": "q630",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27985,6 +28142,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27996,7 +28154,7 @@
     ]
   },
   {
-    "id": "q641",
+    "id": "q631",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28033,6 +28191,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28044,7 +28203,7 @@
     ]
   },
   {
-    "id": "q642",
+    "id": "q632",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28073,6 +28232,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28084,7 +28244,7 @@
     ]
   },
   {
-    "id": "q643",
+    "id": "q633",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28113,6 +28273,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28124,7 +28285,7 @@
     ]
   },
   {
-    "id": "q644",
+    "id": "q634",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28161,6 +28322,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28172,7 +28334,7 @@
     ]
   },
   {
-    "id": "q645",
+    "id": "q635",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28209,6 +28371,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28220,7 +28383,7 @@
     ]
   },
   {
-    "id": "q646",
+    "id": "q636",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28249,6 +28412,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28260,7 +28424,7 @@
     ]
   },
   {
-    "id": "q647",
+    "id": "q637",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28289,6 +28453,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28300,7 +28465,7 @@
     ]
   },
   {
-    "id": "q648",
+    "id": "q638",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28337,6 +28502,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28348,7 +28514,7 @@
     ]
   },
   {
-    "id": "q649",
+    "id": "q639",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28385,6 +28551,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28397,7 +28564,7 @@
     ]
   },
   {
-    "id": "q650",
+    "id": "q640",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28426,6 +28593,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28438,7 +28606,7 @@
     ]
   },
   {
-    "id": "q651",
+    "id": "q641",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28467,6 +28635,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28479,7 +28648,7 @@
     ]
   },
   {
-    "id": "q652",
+    "id": "q642",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28516,6 +28685,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28528,7 +28698,7 @@
     ]
   },
   {
-    "id": "q653",
+    "id": "q643",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28565,6 +28735,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28576,7 +28747,7 @@
     ]
   },
   {
-    "id": "q654",
+    "id": "q644",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28605,6 +28776,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28616,7 +28788,7 @@
     ]
   },
   {
-    "id": "q655",
+    "id": "q645",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28645,6 +28817,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28656,7 +28829,7 @@
     ]
   },
   {
-    "id": "q656",
+    "id": "q646",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28693,6 +28866,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28704,7 +28878,7 @@
     ]
   },
   {
-    "id": "q657",
+    "id": "q647",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28741,6 +28915,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28752,7 +28927,7 @@
     ]
   },
   {
-    "id": "q658",
+    "id": "q648",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28781,6 +28956,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28792,7 +28968,7 @@
     ]
   },
   {
-    "id": "q659",
+    "id": "q649",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28821,6 +28997,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28832,7 +29009,7 @@
     ]
   },
   {
-    "id": "q660",
+    "id": "q650",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28869,6 +29046,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28880,7 +29058,7 @@
     ]
   },
   {
-    "id": "q661",
+    "id": "q651",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28917,6 +29095,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -28929,7 +29108,7 @@
     ]
   },
   {
-    "id": "q662",
+    "id": "q652",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28958,6 +29137,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -28970,7 +29150,7 @@
     ]
   },
   {
-    "id": "q663",
+    "id": "q653",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28999,6 +29179,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -29011,7 +29192,7 @@
     ]
   },
   {
-    "id": "q664",
+    "id": "q654",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29048,6 +29229,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -29060,7 +29242,7 @@
     ]
   },
   {
-    "id": "q665",
+    "id": "q655",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29097,6 +29279,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29108,7 +29291,7 @@
     ]
   },
   {
-    "id": "q666",
+    "id": "q656",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29137,6 +29320,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29148,7 +29332,7 @@
     ]
   },
   {
-    "id": "q667",
+    "id": "q657",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29177,6 +29361,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29188,7 +29373,7 @@
     ]
   },
   {
-    "id": "q668",
+    "id": "q658",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29225,6 +29410,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29236,7 +29422,7 @@
     ]
   },
   {
-    "id": "q669",
+    "id": "q659",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29273,6 +29459,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29284,7 +29471,7 @@
     ]
   },
   {
-    "id": "q670",
+    "id": "q660",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29313,6 +29500,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29324,7 +29512,7 @@
     ]
   },
   {
-    "id": "q671",
+    "id": "q661",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29353,6 +29541,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29364,7 +29553,7 @@
     ]
   },
   {
-    "id": "q672",
+    "id": "q662",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29401,6 +29590,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29412,7 +29602,7 @@
     ]
   },
   {
-    "id": "q673",
+    "id": "q663",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29449,6 +29639,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29460,7 +29651,7 @@
     ]
   },
   {
-    "id": "q674",
+    "id": "q664",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29489,6 +29680,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29500,7 +29692,7 @@
     ]
   },
   {
-    "id": "q675",
+    "id": "q665",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29529,6 +29721,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29540,7 +29733,7 @@
     ]
   },
   {
-    "id": "q676",
+    "id": "q666",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29577,6 +29770,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29588,7 +29782,7 @@
     ]
   },
   {
-    "id": "q677",
+    "id": "q667",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29625,6 +29819,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29636,7 +29831,7 @@
     ]
   },
   {
-    "id": "q678",
+    "id": "q668",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29665,6 +29860,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29676,7 +29872,7 @@
     ]
   },
   {
-    "id": "q679",
+    "id": "q669",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29705,6 +29901,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29716,7 +29913,7 @@
     ]
   },
   {
-    "id": "q680",
+    "id": "q670",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29753,6 +29950,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29764,7 +29962,7 @@
     ]
   },
   {
-    "id": "q681",
+    "id": "q671",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29801,6 +29999,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29812,7 +30011,7 @@
     ]
   },
   {
-    "id": "q682",
+    "id": "q672",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29841,6 +30040,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29852,7 +30052,7 @@
     ]
   },
   {
-    "id": "q683",
+    "id": "q673",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29881,6 +30081,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29892,7 +30093,7 @@
     ]
   },
   {
-    "id": "q684",
+    "id": "q674",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29929,6 +30130,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29940,7 +30142,7 @@
     ]
   },
   {
-    "id": "q685",
+    "id": "q675",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29977,6 +30179,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -29989,7 +30192,7 @@
     ]
   },
   {
-    "id": "q686",
+    "id": "q676",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30018,6 +30221,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -30030,7 +30234,7 @@
     ]
   },
   {
-    "id": "q687",
+    "id": "q677",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30059,6 +30263,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -30071,7 +30276,7 @@
     ]
   },
   {
-    "id": "q688",
+    "id": "q678",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30108,6 +30313,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -30120,7 +30326,7 @@
     ]
   },
   {
-    "id": "q689",
+    "id": "q679",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30157,6 +30363,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30168,7 +30375,7 @@
     ]
   },
   {
-    "id": "q690",
+    "id": "q680",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30197,6 +30404,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30208,7 +30416,7 @@
     ]
   },
   {
-    "id": "q691",
+    "id": "q681",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30237,6 +30445,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30248,7 +30457,7 @@
     ]
   },
   {
-    "id": "q692",
+    "id": "q682",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30285,6 +30494,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30296,7 +30506,7 @@
     ]
   },
   {
-    "id": "q693",
+    "id": "q683",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30333,6 +30543,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30345,7 +30556,7 @@
     ]
   },
   {
-    "id": "q694",
+    "id": "q684",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30374,6 +30585,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30386,7 +30598,7 @@
     ]
   },
   {
-    "id": "q695",
+    "id": "q685",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30415,6 +30627,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30427,7 +30640,7 @@
     ]
   },
   {
-    "id": "q696",
+    "id": "q686",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30464,6 +30677,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30476,7 +30690,7 @@
     ]
   },
   {
-    "id": "q697",
+    "id": "q687",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30513,6 +30727,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30524,7 +30739,7 @@
     ]
   },
   {
-    "id": "q698",
+    "id": "q688",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30553,6 +30768,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30564,7 +30780,7 @@
     ]
   },
   {
-    "id": "q699",
+    "id": "q689",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30593,6 +30809,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30604,7 +30821,7 @@
     ]
   },
   {
-    "id": "q700",
+    "id": "q690",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30641,6 +30858,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30652,7 +30870,7 @@
     ]
   },
   {
-    "id": "q701",
+    "id": "q691",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30689,6 +30907,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30700,7 +30919,7 @@
     ]
   },
   {
-    "id": "q702",
+    "id": "q692",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30729,6 +30948,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30740,7 +30960,7 @@
     ]
   },
   {
-    "id": "q703",
+    "id": "q693",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30769,6 +30989,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30780,7 +31001,7 @@
     ]
   },
   {
-    "id": "q704",
+    "id": "q694",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30817,6 +31038,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30828,7 +31050,7 @@
     ]
   },
   {
-    "id": "q705",
+    "id": "q695",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30865,6 +31087,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30877,7 +31100,7 @@
     ]
   },
   {
-    "id": "q706",
+    "id": "q696",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30906,6 +31129,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30918,7 +31142,7 @@
     ]
   },
   {
-    "id": "q707",
+    "id": "q697",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30947,6 +31171,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30959,7 +31184,7 @@
     ]
   },
   {
-    "id": "q708",
+    "id": "q698",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30996,6 +31221,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -31008,7 +31234,7 @@
     ]
   },
   {
-    "id": "q709",
+    "id": "q699",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31045,6 +31271,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31056,7 +31283,7 @@
     ]
   },
   {
-    "id": "q710",
+    "id": "q700",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31085,6 +31312,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31096,7 +31324,7 @@
     ]
   },
   {
-    "id": "q711",
+    "id": "q701",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31125,6 +31353,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31136,7 +31365,7 @@
     ]
   },
   {
-    "id": "q712",
+    "id": "q702",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31173,6 +31402,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31184,7 +31414,7 @@
     ]
   },
   {
-    "id": "q713",
+    "id": "q703",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31221,6 +31451,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31232,7 +31463,7 @@
     ]
   },
   {
-    "id": "q714",
+    "id": "q704",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31261,6 +31492,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31272,7 +31504,7 @@
     ]
   },
   {
-    "id": "q715",
+    "id": "q705",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31301,6 +31533,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31312,7 +31545,7 @@
     ]
   },
   {
-    "id": "q716",
+    "id": "q706",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31349,6 +31582,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31360,7 +31594,7 @@
     ]
   },
   {
-    "id": "q717",
+    "id": "q707",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31397,6 +31631,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31408,7 +31643,7 @@
     ]
   },
   {
-    "id": "q718",
+    "id": "q708",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31437,6 +31672,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31448,7 +31684,7 @@
     ]
   },
   {
-    "id": "q719",
+    "id": "q709",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31477,6 +31713,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31488,7 +31725,7 @@
     ]
   },
   {
-    "id": "q720",
+    "id": "q710",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31525,6 +31762,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31536,7 +31774,7 @@
     ]
   },
   {
-    "id": "q721",
+    "id": "q711",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31573,6 +31811,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31584,7 +31823,7 @@
     ]
   },
   {
-    "id": "q722",
+    "id": "q712",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31613,6 +31852,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31624,7 +31864,7 @@
     ]
   },
   {
-    "id": "q723",
+    "id": "q713",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31653,6 +31893,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31664,7 +31905,7 @@
     ]
   },
   {
-    "id": "q724",
+    "id": "q714",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31701,6 +31942,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31712,7 +31954,7 @@
     ]
   },
   {
-    "id": "q725",
+    "id": "q715",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31749,6 +31991,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31760,7 +32003,7 @@
     ]
   },
   {
-    "id": "q726",
+    "id": "q716",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31789,6 +32032,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31800,7 +32044,7 @@
     ]
   },
   {
-    "id": "q727",
+    "id": "q717",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31829,6 +32073,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31840,7 +32085,7 @@
     ]
   },
   {
-    "id": "q728",
+    "id": "q718",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31877,6 +32122,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31888,7 +32134,7 @@
     ]
   },
   {
-    "id": "q729",
+    "id": "q719",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31925,6 +32171,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31936,7 +32183,7 @@
     ]
   },
   {
-    "id": "q730",
+    "id": "q720",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31965,6 +32212,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31976,7 +32224,7 @@
     ]
   },
   {
-    "id": "q731",
+    "id": "q721",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32005,6 +32253,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32016,7 +32265,7 @@
     ]
   },
   {
-    "id": "q732",
+    "id": "q722",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32053,6 +32302,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32064,7 +32314,7 @@
     ]
   },
   {
-    "id": "q733",
+    "id": "q723",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32101,6 +32351,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32113,7 +32364,7 @@
     ]
   },
   {
-    "id": "q734",
+    "id": "q724",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32142,6 +32393,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32154,7 +32406,7 @@
     ]
   },
   {
-    "id": "q735",
+    "id": "q725",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32183,6 +32435,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32195,7 +32448,7 @@
     ]
   },
   {
-    "id": "q736",
+    "id": "q726",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32232,6 +32485,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32244,7 +32498,7 @@
     ]
   },
   {
-    "id": "q737",
+    "id": "q727",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32281,6 +32535,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32292,7 +32547,7 @@
     ]
   },
   {
-    "id": "q738",
+    "id": "q728",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32321,6 +32576,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32332,7 +32588,7 @@
     ]
   },
   {
-    "id": "q739",
+    "id": "q729",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32361,6 +32617,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32372,7 +32629,7 @@
     ]
   },
   {
-    "id": "q740",
+    "id": "q730",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32409,6 +32666,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32420,7 +32678,7 @@
     ]
   },
   {
-    "id": "q741",
+    "id": "q731",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32457,6 +32715,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32467,7 +32726,7 @@
     ]
   },
   {
-    "id": "q742",
+    "id": "q732",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32496,6 +32755,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32506,7 +32766,7 @@
     ]
   },
   {
-    "id": "q743",
+    "id": "q733",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32535,6 +32795,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32545,7 +32806,7 @@
     ]
   },
   {
-    "id": "q744",
+    "id": "q734",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32582,6 +32843,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32592,7 +32854,7 @@
     ]
   },
   {
-    "id": "q745",
+    "id": "q735",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32629,6 +32891,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32639,7 +32902,7 @@
     ]
   },
   {
-    "id": "q746",
+    "id": "q736",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32668,6 +32931,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32678,7 +32942,7 @@
     ]
   },
   {
-    "id": "q747",
+    "id": "q737",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32707,6 +32971,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32717,7 +32982,7 @@
     ]
   },
   {
-    "id": "q748",
+    "id": "q738",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32754,6 +33019,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32764,7 +33030,7 @@
     ]
   },
   {
-    "id": "q749",
+    "id": "q739",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32801,6 +33067,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32811,7 +33078,7 @@
     ]
   },
   {
-    "id": "q750",
+    "id": "q740",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32840,6 +33107,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32850,7 +33118,7 @@
     ]
   },
   {
-    "id": "q751",
+    "id": "q741",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32879,6 +33147,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32889,7 +33158,7 @@
     ]
   },
   {
-    "id": "q752",
+    "id": "q742",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32926,6 +33195,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32936,7 +33206,7 @@
     ]
   },
   {
-    "id": "q753",
+    "id": "q743",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32973,6 +33243,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -32984,7 +33255,7 @@
     ]
   },
   {
-    "id": "q754",
+    "id": "q744",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33013,6 +33284,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -33024,7 +33296,7 @@
     ]
   },
   {
-    "id": "q755",
+    "id": "q745",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33053,6 +33325,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -33064,7 +33337,7 @@
     ]
   },
   {
-    "id": "q756",
+    "id": "q746",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33101,6 +33374,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -33112,7 +33386,7 @@
     ]
   },
   {
-    "id": "q757",
+    "id": "q747",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33149,6 +33423,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33160,7 +33435,7 @@
     ]
   },
   {
-    "id": "q758",
+    "id": "q748",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33189,6 +33464,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33200,7 +33476,7 @@
     ]
   },
   {
-    "id": "q759",
+    "id": "q749",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33229,6 +33505,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33240,7 +33517,7 @@
     ]
   },
   {
-    "id": "q760",
+    "id": "q750",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33277,6 +33554,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33288,13 +33566,13 @@
     ]
   },
   {
-    "id": "q761",
+    "id": "q751",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "How can commercial radio and TV channels earn income ...?",
-      "sv": "Hur kan kommersiella radio- och tv-kanaler få inkomster ...?"
+      "en": "Which answer best matches? How can commercial radio and TV channels earn income?",
+      "sv": "Vilket svar stämmer bäst? Hur kan kommersiella radio- och tv-kanaler få inkomster?"
     },
     "opts": [
       {
@@ -33336,7 +33614,7 @@
     ]
   },
   {
-    "id": "q762",
+    "id": "q752",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33376,7 +33654,7 @@
     ]
   },
   {
-    "id": "q763",
+    "id": "q753",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33416,7 +33694,7 @@
     ]
   },
   {
-    "id": "q764",
+    "id": "q754",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -33464,13 +33742,13 @@
     ]
   },
   {
-    "id": "q765",
+    "id": "q755",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What characterizes media financed by advertising ...?",
-      "sv": "Vad kännetecknar medier som finansieras med reklam ...?"
+      "en": "Which answer best matches? What characterizes media financed by advertising?",
+      "sv": "Vilket svar stämmer bäst? Vad kännetecknar medier som finansieras med reklam?"
     },
     "opts": [
       {
@@ -33512,7 +33790,7 @@
     ]
   },
   {
-    "id": "q766",
+    "id": "q756",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33552,7 +33830,7 @@
     ]
   },
   {
-    "id": "q767",
+    "id": "q757",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33592,7 +33870,7 @@
     ]
   },
   {
-    "id": "q768",
+    "id": "q758",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -33640,13 +33918,13 @@
     ]
   },
   {
-    "id": "q769",
+    "id": "q759",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "How are many newspapers published today ...?",
-      "sv": "Hur publiceras många tidningar i dag ...?"
+      "en": "Which answer best matches? How are many newspapers published today?",
+      "sv": "Vilket svar stämmer bäst? Hur publiceras många tidningar i dag?"
     },
     "opts": [
       {
@@ -33688,7 +33966,7 @@
     ]
   },
   {
-    "id": "q770",
+    "id": "q760",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33728,7 +34006,7 @@
     ]
   },
   {
-    "id": "q771",
+    "id": "q761",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33768,7 +34046,7 @@
     ]
   },
   {
-    "id": "q772",
+    "id": "q762",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -33816,13 +34094,13 @@
     ]
   },
   {
-    "id": "q773",
+    "id": "q763",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is important to remember about the web and social media ...?",
-      "sv": "Vad är viktigt att komma ihåg om webben och sociala medier ...?"
+      "en": "Which answer best matches? What is important to remember about the web and social media?",
+      "sv": "Vilket svar stämmer bäst? Vad är viktigt att komma ihåg om webben och sociala medier?"
     },
     "opts": [
       {
@@ -33864,13 +34142,13 @@
     ]
   },
   {
-    "id": "q774",
+    "id": "q764",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media.",
-      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier."
+      "en": "Anyone can create content there, and it is not always checked the same way as in other media.",
+      "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier."
     },
     "opts": [
       {
@@ -33904,13 +34182,13 @@
     ]
   },
   {
-    "id": "q775",
+    "id": "q765",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "On the web and in social media, only responsible publishers may write posts.",
-      "sv": "På webben och i sociala medier får bara ansvariga utgivare skriva inlägg."
+      "en": "Only responsible publishers may write posts there.",
+      "sv": "Bara ansvariga utgivare får skriva inlägg där."
     },
     "opts": [
       {
@@ -33944,7 +34222,7 @@
     ]
   },
   {
-    "id": "q776",
+    "id": "q766",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -33992,13 +34270,13 @@
     ]
   },
   {
-    "id": "q777",
+    "id": "q767",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "One reason source criticism is needed when using media is ...",
-      "sv": "En anledning till att källkritik behövs när man använder medier är ..."
+      "en": "Which answer best matches? Why is source criticism needed when using media?",
+      "sv": "Vilket svar stämmer bäst? Varför behövs källkritik när man använder medier?"
     },
     "opts": [
       {
@@ -34040,13 +34318,13 @@
     ]
   },
   {
-    "id": "q778",
+    "id": "q768",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason source criticism is needed when using media is that false information can spread quickly and affect people's opinions.",
-      "sv": "En anledning till att källkritik behövs när man använder medier är att falska uppgifter kan spridas snabbt och påverka människors åsikter."
+      "en": "One reason is that False information can spread quickly and affect people's opinions.",
+      "sv": "En anledning är att Falska uppgifter kan spridas snabbt och påverka människors åsikter."
     },
     "opts": [
       {
@@ -34080,13 +34358,13 @@
     ]
   },
   {
-    "id": "q779",
+    "id": "q769",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason source criticism is needed when using media is that everything that is published is always correct.",
-      "sv": "En anledning till att källkritik behövs när man använder medier är att allt som publiceras alltid är korrekt."
+      "en": "One reason is that Everything that is published is always correct.",
+      "sv": "En anledning är allt som publiceras är alltid korrekt."
     },
     "opts": [
       {
@@ -34120,7 +34398,7 @@
     ]
   },
   {
-    "id": "q780",
+    "id": "q770",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34163,1794 +34441,6 @@
       "source-criticism",
       "false-information",
       "media-literacy",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q781",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue ...?",
-      "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad ...?"
-    },
-    "opts": [
-      {
-        "en": "A private company can provide the service while tax revenue funds it",
-        "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
-      },
-      {
-        "en": "The service must always be paid for entirely with private loans",
-        "sv": "Tjänsten måste alltid betalas helt med privata lån"
-      },
-      {
-        "en": "Private providers take over the responsibilities of the state, regions, and municipalities",
-        "sv": "Privata utförare tar över statens, regionernas och kommunernas ansvar"
-      },
-      {
-        "en": "Tax revenue may be used only if the service is run by the state",
-        "sv": "Skattepengar får bara användas om tjänsten drivs av staten"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
-      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Stat, regioner och kommuner har olika ansvar",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "welfare",
-      "tax-funding",
-      "private-providers",
-      "responsibility-split",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q782",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "A private company can provide the service while tax revenue funds it.",
-      "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
-      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Stat, regioner och kommuner har olika ansvar",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "welfare",
-      "tax-funding",
-      "private-providers",
-      "responsibility-split",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q783",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "The service must always be paid for entirely with private loans.",
-      "sv": "Tjänsten måste alltid betalas helt med privata lån."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
-      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Stat, regioner och kommuner har olika ansvar",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "welfare",
-      "tax-funding",
-      "private-providers",
-      "responsibility-split",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q784",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: How can a welfare service be provided by a private company but still be funded by tax revenue?",
-      "sv": "Välj rätt alternativ: Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
-    },
-    "opts": [
-      {
-        "en": "A private company can provide the service while tax revenue funds it",
-        "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
-      },
-      {
-        "en": "The service must always be paid for entirely with private loans",
-        "sv": "Tjänsten måste alltid betalas helt med privata lån"
-      },
-      {
-        "en": "Private providers take over the responsibilities of the state, regions, and municipalities",
-        "sv": "Privata utförare tar över statens, regionernas och kommunernas ansvar"
-      },
-      {
-        "en": "Tax revenue may be used only if the service is run by the state",
-        "sv": "Skattepengar får bara användas om tjänsten drivs av staten"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
-      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Stat, regioner och kommuner har olika ansvar",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "welfare",
-      "tax-funding",
-      "private-providers",
-      "responsibility-split",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q785",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment ...?",
-      "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet ...?"
-    },
-    "opts": [
-      {
-        "en": "Sickness insurance, parental insurance, and unemployment insurance",
-        "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring"
-      },
-      {
-        "en": "Health centres, hospitals, and regional public transport",
-        "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik"
-      },
-      {
-        "en": "Preschools, after-school centres, and municipal adult education",
-        "sv": "Förskolor, fritidshem och kommunal vuxenutbildning"
-      },
-      {
-        "en": "Private credit cards, car loans, and mortgages",
-        "sv": "Privata kreditkort, billån och bostadslån"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
-      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Statligt finansierad välfärd",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "state-welfare",
-      "social-insurance",
-      "sickness-insurance",
-      "parental-insurance",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q786",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "Sickness insurance, parental insurance, and unemployment insurance.",
-      "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
-      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Statligt finansierad välfärd",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "state-welfare",
-      "social-insurance",
-      "sickness-insurance",
-      "parental-insurance",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q787",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "Health centres, hospitals, and regional public transport.",
-      "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
-      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Statligt finansierad välfärd",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "state-welfare",
-      "social-insurance",
-      "sickness-insurance",
-      "parental-insurance",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q788",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
-      "sv": "Välj rätt alternativ: Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
-    },
-    "opts": [
-      {
-        "en": "Sickness insurance, parental insurance, and unemployment insurance",
-        "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring"
-      },
-      {
-        "en": "Health centres, hospitals, and regional public transport",
-        "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik"
-      },
-      {
-        "en": "Preschools, after-school centres, and municipal adult education",
-        "sv": "Förskolor, fritidshem och kommunal vuxenutbildning"
-      },
-      {
-        "en": "Private credit cards, car loans, and mortgages",
-        "sv": "Privata kreditkort, billån och bostadslån"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
-      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Statligt finansierad välfärd",
-      "page": 30
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "state-welfare",
-      "social-insurance",
-      "sickness-insurance",
-      "parental-insurance",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q789",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Primary care includes ...",
-      "sv": "Primärvården omfattar ..."
-    },
-    "opts": [
-      {
-        "en": "Health centres, child health centres, and maternity clinics",
-        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
-      },
-      {
-        "en": "Courts, prosecutors, and prison and probation services",
-        "sv": "Domstolar, åklagare och kriminalvård"
-      },
-      {
-        "en": "Pensions, child allowance, and study support",
-        "sv": "Pensioner, barnbidrag och studiestöd"
-      },
-      {
-        "en": "Daily newspapers, public service broadcasting, and social media",
-        "sv": "Dagstidningar, public service och sociala medier"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
-      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
-      "maternity-care",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q790",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "Primary care includes health centres, child health centres, and maternity clinics.",
-      "sv": "Primärvården omfattar vårdcentraler, barnavårdscentraler och mödravårdscentraler."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
-      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
-      "maternity-care",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q791",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "Primary care includes courts, prosecutors, and prison and probation services.",
-      "sv": "Primärvården omfattar domstolar, åklagare och kriminalvård."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
-      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
-      "maternity-care",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q792",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What is included in primary care?",
-      "sv": "Välj rätt alternativ: Vad ingår i primärvården?"
-    },
-    "opts": [
-      {
-        "en": "Health centres, child health centres, and maternity clinics",
-        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
-      },
-      {
-        "en": "Courts, prosecutors, and prison and probation services",
-        "sv": "Domstolar, åklagare och kriminalvård"
-      },
-      {
-        "en": "Pensions, child allowance, and study support",
-        "sv": "Pensioner, barnbidrag och studiestöd"
-      },
-      {
-        "en": "Daily newspapers, public service broadcasting, and social media",
-        "sv": "Dagstidningar, public service och sociala medier"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
-      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
-      "maternity-care",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q793",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "The municipality is responsible for ...",
-      "sv": "Kommunen ansvarar för ..."
-    },
-    "opts": [
-      {
-        "en": "To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools",
-        "sv": "Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor"
-      },
-      {
-        "en": "To pay sickness insurance and state pensions",
-        "sv": "Att betala sjukförsäkring och statliga pensioner"
-      },
-      {
-        "en": "To run regional hospitals and health centres",
-        "sv": "Att driva regionernas sjukhus och vårdcentraler"
-      },
-      {
-        "en": "To decide court sentences in criminal cases",
-        "sv": "Att bestämma domstolarnas straff i brottmål"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
-      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "municipal-welfare",
-      "childcare",
-      "education",
-      "schools",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q794",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "The municipality is responsible for arranging preschools, after-school centres, compulsory schools, and upper-secondary schools.",
-      "sv": "Kommunen ansvarar för att ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
-      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "municipal-welfare",
-      "childcare",
-      "education",
-      "schools",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q795",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "The municipality is responsible for paying sickness insurance and state pensions.",
-      "sv": "Kommunen ansvarar för att betala sjukförsäkring och statliga pensioner."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
-      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "municipal-welfare",
-      "childcare",
-      "education",
-      "schools",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q796",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What responsibility does the municipality have for children’s everyday life and education?",
-      "sv": "Välj rätt alternativ: Vilket ansvar har kommunen för barns vardag och utbildning?"
-    },
-    "opts": [
-      {
-        "en": "To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools",
-        "sv": "Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor"
-      },
-      {
-        "en": "To pay sickness insurance and state pensions",
-        "sv": "Att betala sjukförsäkring och statliga pensioner"
-      },
-      {
-        "en": "To run regional hospitals and health centres",
-        "sv": "Att driva regionernas sjukhus och vårdcentraler"
-      },
-      {
-        "en": "To decide court sentences in criminal cases",
-        "sv": "Att bestämma domstolarnas straff i brottmål"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
-      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "municipal-welfare",
-      "childcare",
-      "education",
-      "schools",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q797",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "The municipality can offer older people ... to manage everyday life.",
-      "sv": "Kommunen kan erbjuda äldre personer ... för att klara vardagen."
-    },
-    "opts": [
-      {
-        "en": "Care and services at home or housing adapted for older people",
-        "sv": "Vård och service hemma eller boende som är anpassat för äldre personer"
-      },
-      {
-        "en": "Automatic study support and a university place",
-        "sv": "Automatiskt studiestöd och plats på universitet"
-      },
-      {
-        "en": "Decisions about which news media may publish",
-        "sv": "Beslut om vilka nyheter medier får publicera"
-      },
-      {
-        "en": "Private loans that replace all municipal help",
-        "sv": "Privata lån som ersätter all kommunal hjälp"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
-      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "elderly-care",
-      "municipal-welfare",
-      "home-care",
-      "adapted-housing",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q798",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "The municipality can offer older people care and services at home or housing adapted for older people to manage everyday life.",
-      "sv": "Kommunen kan erbjuda äldre personer vård och service hemma eller boende som är anpassat för äldre personer för att klara vardagen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
-      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "elderly-care",
-      "municipal-welfare",
-      "home-care",
-      "adapted-housing",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q799",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "The municipality can offer older people automatic study support and a university place to manage everyday life.",
-      "sv": "Kommunen kan erbjuda äldre personer automatiskt studiestöd och plats på universitet för att klara vardagen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
-      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "elderly-care",
-      "municipal-welfare",
-      "home-care",
-      "adapted-housing",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q800",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What help can older people receive from the municipality to manage everyday life?",
-      "sv": "Välj rätt alternativ: Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?"
-    },
-    "opts": [
-      {
-        "en": "Care and services at home or housing adapted for older people",
-        "sv": "Vård och service hemma eller boende som är anpassat för äldre personer"
-      },
-      {
-        "en": "Automatic study support and a university place",
-        "sv": "Automatiskt studiestöd och plats på universitet"
-      },
-      {
-        "en": "Decisions about which news media may publish",
-        "sv": "Beslut om vilka nyheter medier får publicera"
-      },
-      {
-        "en": "Private loans that replace all municipal help",
-        "sv": "Privata lån som ersätter all kommunal hjälp"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
-      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "elderly-care",
-      "municipal-welfare",
-      "home-care",
-      "adapted-housing",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q801",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "What does the Freedom of the Press Act protect ...?",
-      "sv": "Vad skyddar tryckfrihetsförordningen ...?"
-    },
-    "opts": [
-      {
-        "en": "The right to spread thoughts and opinions in printed texts",
-        "sv": "Rätten att sprida tankar och åsikter i tryckta texter"
-      },
-      {
-        "en": "The right to decide succession to the throne",
-        "sv": "Rätten att bestämma tronföljden"
-      },
-      {
-        "en": "The right to judge criminal cases",
-        "sv": "Rätten att döma i brottmål"
-      },
-      {
-        "en": "The right to collect municipal tax",
-        "sv": "Rätten att ta ut kommunalskatt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
-      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Tryckfrihetsförordningen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-press",
-      "constitutional-laws",
-      "printed-texts",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q802",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The right to spread thoughts and opinions in printed texts.",
-      "sv": "Rätten att sprida tankar och åsikter i tryckta texter."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
-      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Tryckfrihetsförordningen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-press",
-      "constitutional-laws",
-      "printed-texts",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q803",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The right to decide succession to the throne.",
-      "sv": "Rätten att bestämma tronföljden."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
-      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Tryckfrihetsförordningen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-press",
-      "constitutional-laws",
-      "printed-texts",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q804",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What does the Freedom of the Press Act protect?",
-      "sv": "Välj rätt alternativ: Vad skyddar tryckfrihetsförordningen?"
-    },
-    "opts": [
-      {
-        "en": "The right to spread thoughts and opinions in printed texts",
-        "sv": "Rätten att sprida tankar och åsikter i tryckta texter"
-      },
-      {
-        "en": "The right to decide succession to the throne",
-        "sv": "Rätten att bestämma tronföljden"
-      },
-      {
-        "en": "The right to judge criminal cases",
-        "sv": "Rätten att döma i brottmål"
-      },
-      {
-        "en": "The right to collect municipal tax",
-        "sv": "Rätten att ta ut kommunalskatt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
-      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Tryckfrihetsförordningen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-press",
-      "constitutional-laws",
-      "printed-texts",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q805",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "What does the Fundamental Law on Freedom of Expression protect ...?",
-      "sv": "Vad skyddar yttrandefrihetsgrundlagen ...?"
-    },
-    "opts": [
-      {
-        "en": "The right to express thoughts and opinions in media such as radio and television",
-        "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv"
-      },
-      {
-        "en": "The right to inherit the throne",
-        "sv": "Rätten att ärva tronen"
-      },
-      {
-        "en": "The right to appoint all lay judges",
-        "sv": "Rätten att utse alla nämndemän"
-      },
-      {
-        "en": "The right to decide school curricula",
-        "sv": "Rätten att besluta skolans kursplaner"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
-      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Yttrandefrihetsgrundlagen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-expression",
-      "constitutional-laws",
-      "media",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q806",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The right to express thoughts and opinions in media such as radio and television.",
-      "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
-      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Yttrandefrihetsgrundlagen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-expression",
-      "constitutional-laws",
-      "media",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q807",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The right to inherit the throne.",
-      "sv": "Rätten att ärva tronen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
-      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Yttrandefrihetsgrundlagen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-expression",
-      "constitutional-laws",
-      "media",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q808",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What does the Fundamental Law on Freedom of Expression protect?",
-      "sv": "Välj rätt alternativ: Vad skyddar yttrandefrihetsgrundlagen?"
-    },
-    "opts": [
-      {
-        "en": "The right to express thoughts and opinions in media such as radio and television",
-        "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv"
-      },
-      {
-        "en": "The right to inherit the throne",
-        "sv": "Rätten att ärva tronen"
-      },
-      {
-        "en": "The right to appoint all lay judges",
-        "sv": "Rätten att utse alla nämndemän"
-      },
-      {
-        "en": "The right to decide school curricula",
-        "sv": "Rätten att besluta skolans kursplaner"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
-      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Yttrandefrihetsgrundlagen",
-      "page": 16
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "freedom-of-expression",
-      "constitutional-laws",
-      "media",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q809",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Which statement describes the preliminary investigation in a criminal investigation ...?",
-      "sv": "Vilket påstående beskriver förundersökningen i en brottsutredning ...?"
-    },
-    "opts": [
-      {
-        "en": "The police collect evidence and speak with witnesses",
-        "sv": "Polisen samlar in bevis och pratar med vittnen"
-      },
-      {
-        "en": "The court decides a penalty before anyone is suspected",
-        "sv": "Domstolen bestämmer straff innan någon är misstänkt"
-      },
-      {
-        "en": "The Riksdag decides whether the suspect is guilty",
-        "sv": "Riksdagen avgör om den misstänkte är skyldig"
-      },
-      {
-        "en": "The lawyer writes new laws for the police",
-        "sv": "Advokaten skriver nya lagar åt polisen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
-      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Brottsutredning",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "criminal-investigation",
-      "preliminary-investigation",
-      "police",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q810",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The police collect evidence and speak with witnesses.",
-      "sv": "Polisen samlar in bevis och pratar med vittnen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
-      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Brottsutredning",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "criminal-investigation",
-      "preliminary-investigation",
-      "police",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q811",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The court decides a penalty before anyone is suspected.",
-      "sv": "Domstolen bestämmer straff innan någon är misstänkt."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
-      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Brottsutredning",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "criminal-investigation",
-      "preliminary-investigation",
-      "police",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q812",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: Which statement describes the preliminary investigation in a criminal investigation?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver förundersökningen i en brottsutredning?"
-    },
-    "opts": [
-      {
-        "en": "The police collect evidence and speak with witnesses",
-        "sv": "Polisen samlar in bevis och pratar med vittnen"
-      },
-      {
-        "en": "The court decides a penalty before anyone is suspected",
-        "sv": "Domstolen bestämmer straff innan någon är misstänkt"
-      },
-      {
-        "en": "The Riksdag decides whether the suspect is guilty",
-        "sv": "Riksdagen avgör om den misstänkte är skyldig"
-      },
-      {
-        "en": "The lawyer writes new laws for the police",
-        "sv": "Advokaten skriver nya lagar åt polisen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
-      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Brottsutredning",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "criminal-investigation",
-      "preliminary-investigation",
-      "police",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q813",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "What happens during a trial in a criminal case ...?",
-      "sv": "Vad händer under en rättegång i ett brottmål ...?"
-    },
-    "opts": [
-      {
-        "en": "The prosecutor tries to show that the defendant committed the crime",
-        "sv": "Åklagaren försöker visa att den åtalade har begått brottet"
-      },
-      {
-        "en": "The police alone decide the defendant’s penalty",
-        "sv": "Polisen bestämmer ensam vilket straff den åtalade får"
-      },
-      {
-        "en": "The government decides whether the evidence is enough",
-        "sv": "Regeringen avgör om bevisningen räcker"
-      },
-      {
-        "en": "Witnesses vote on the judgment",
-        "sv": "Vittnen röstar om domen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
-      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Rättegång",
-      "page": 19
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "trial",
-      "criminal-case",
-      "prosecutor",
-      "court",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q814",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The prosecutor tries to show that the defendant committed the crime.",
-      "sv": "Åklagaren försöker visa att den åtalade har begått brottet."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
-      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Rättegång",
-      "page": 19
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "trial",
-      "criminal-case",
-      "prosecutor",
-      "court",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q815",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The police alone decide the defendant’s penalty.",
-      "sv": "Polisen bestämmer ensam vilket straff den åtalade får."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
-      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Rättegång",
-      "page": 19
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "trial",
-      "criminal-case",
-      "prosecutor",
-      "court",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q816",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What happens during a trial in a criminal case?",
-      "sv": "Välj rätt alternativ: Vad händer under en rättegång i ett brottmål?"
-    },
-    "opts": [
-      {
-        "en": "The prosecutor tries to show that the defendant committed the crime",
-        "sv": "Åklagaren försöker visa att den åtalade har begått brottet"
-      },
-      {
-        "en": "The police alone decide the defendant’s penalty",
-        "sv": "Polisen bestämmer ensam vilket straff den åtalade får"
-      },
-      {
-        "en": "The government decides whether the evidence is enough",
-        "sv": "Regeringen avgör om bevisningen räcker"
-      },
-      {
-        "en": "Witnesses vote on the judgment",
-        "sv": "Vittnen röstar om domen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
-      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Rättegång",
-      "page": 19
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "trial",
-      "criminal-case",
-      "prosecutor",
-      "court",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q817",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "The general courts in Sweden are ...",
-      "sv": "De allmänna domstolarna i Sverige är ..."
-    },
-    "opts": [
-      {
-        "en": "District court, court of appeal, and Supreme Court",
-        "sv": "Tingsrätt, hovrätt och Högsta domstolen"
-      },
-      {
-        "en": "Municipality, region, and government",
-        "sv": "Kommun, region och regering"
-      },
-      {
-        "en": "The Police, Tax Agency, and Social Insurance Agency",
-        "sv": "Polisen, Skatteverket och Försäkringskassan"
-      },
-      {
-        "en": "Riksdag, committee, and ministry",
-        "sv": "Riksdag, utskott och departement"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
-      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Domstolar",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "courts",
-      "district-court",
-      "court-of-appeal",
-      "supreme-court",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q818",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The general courts in Sweden are District court, court of appeal, and Supreme Court.",
-      "sv": "De allmänna domstolarna i Sverige är Tingsrätt, hovrätt och Högsta domstolen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
-      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Domstolar",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "courts",
-      "district-court",
-      "court-of-appeal",
-      "supreme-court",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q819",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The general courts in Sweden are Municipality, region, and government.",
-      "sv": "De allmänna domstolarna i Sverige är Kommun, region och regering."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
-      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Domstolar",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "courts",
-      "district-court",
-      "court-of-appeal",
-      "supreme-court",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q820",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: Which are the general courts in Sweden?",
-      "sv": "Välj rätt alternativ: Vilka är de allmänna domstolarna i Sverige?"
-    },
-    "opts": [
-      {
-        "en": "District court, court of appeal, and Supreme Court",
-        "sv": "Tingsrätt, hovrätt och Högsta domstolen"
-      },
-      {
-        "en": "Municipality, region, and government",
-        "sv": "Kommun, region och regering"
-      },
-      {
-        "en": "The Police, Tax Agency, and Social Insurance Agency",
-        "sv": "Polisen, Skatteverket och Försäkringskassan"
-      },
-      {
-        "en": "Riksdag, committee, and ministry",
-        "sv": "Riksdag, utskott och departement"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
-      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Domstolar",
-      "page": 18
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "courts",
-      "district-court",
-      "court-of-appeal",
-      "supreme-court",
       "published-variant",
       "judgement"
     ]
@@ -36021,7 +34511,7 @@
       "en": "The fundamental laws, the justice system, rule of law, and the right of public access.",
       "sv": "Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten."
     },
-    "questionCount": 70
+    "questionCount": 45
   },
   {
     "id": 6,
@@ -36034,7 +34524,7 @@
       "en": "Free media, different types of media, public service broadcasting, and source criticism.",
       "sv": "Fria medier, olika slags medier, public service och källkritik."
     },
-    "questionCount": 30
+    "questionCount": 55
   },
   {
     "id": 7,
