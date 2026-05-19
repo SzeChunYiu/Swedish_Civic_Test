@@ -1348,9 +1348,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
-const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
-const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -12967,6 +12965,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
         /^[a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads$/.test(REMOVE_ADS_PRODUCT_ID),
       'Remove Ads product id must stay a reverse-DNS removeads identifier',
+    ],
+    [
+      REMOVE_ADS_PRODUCT_ID === `${EXPECTED_APP_NATIVE_IDENTIFIER}.removeads`,
+      'Remove Ads product id must use the current native app identifier plus .removeads',
     ],
     [
       /return\s+\{[\s\S]*priceLabel:\s*REMOVE_ADS_PRICE_LABEL,[\s\S]*productId:\s*REMOVE_ADS_PRODUCT_ID,[\s\S]*\};/.test(
