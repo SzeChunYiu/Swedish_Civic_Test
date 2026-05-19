@@ -31,6 +31,27 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
+test('Metro web export enables Expo Router route context discovery', () => {
+  const configPath = path.join(repoRoot, 'metro.config.js');
+  assert.equal(fs.existsSync(configPath), true);
+
+  const config = require(configPath);
+  assert.equal(config.transformer.unstable_allowRequireContext, true);
+
+  const resolution = config.resolver.resolveRequest(
+    {
+      resolveRequest() {
+        return { type: 'empty' };
+      },
+    },
+    'expo-router/_ctx',
+    'web',
+  );
+  assert.equal(resolution.type, 'sourceFile');
+  assert.equal(resolution.filePath, path.join(repoRoot, 'lib/router/expoRouterWebContext.js'));
+  assert.equal(fs.existsSync(resolution.filePath), true);
+});
+
 test('EAS access evidence command is wired for repeatable non-secret checks', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.scripts['release:eas-access-check'], 'node scripts/check-eas-access.js');
