@@ -1044,6 +1044,10 @@ function smtQuizCurrentLang() {
   try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
 }
 
+function smtQuizFxPrefersReducedMotion(fx) {
+  return !!(fx && typeof fx.prefersReducedMotion === "function" && fx.prefersReducedMotion());
+}
+
 function smtQuizEscapeHtml(value) {
   return String(value ?? "").replace(/[&<>"]/g, (c) => ({
     "&": "&amp;",
@@ -1293,13 +1297,17 @@ function smtQuizRender() {
     if (fx) {
       fx.countUp(document.getElementById("score-num"), 0, correct, 1100);
       if (pct === 100) {
-        setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
+        if (!smtQuizFxPrefersReducedMotion(fx)) {
+          setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
+        }
         if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
           "Lysande! 10/10. Tell people I helped.",
           "Lysande! 10/10. Berätta att jag hjälpte."
         );
       } else if (pct >= 70) {
-        setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
+        if (!smtQuizFxPrefersReducedMotion(fx)) {
+          setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
+        }
       }
     }
     return;
@@ -1427,7 +1435,7 @@ document.addEventListener("click", (e) => {
     smtQuizRender();
 
     // pulse correct option subtly after re-render
-    if (!correct) {
+    if (!correct && !smtQuizFxPrefersReducedMotion(fx)) {
       requestAnimationFrame(() => {
         const right = document.querySelector("#quiz-stage .quiz__opt.is-correct");
         if (right) right.classList.add("is-pulse");

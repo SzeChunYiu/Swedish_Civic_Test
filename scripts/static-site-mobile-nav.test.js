@@ -159,6 +159,19 @@ test('static icon-only controls use localized accessible-name keys', () => {
   });
 });
 
+test('static extras gate JS-driven decorative motion behind reduced-motion state', () => {
+  const extras = fs.readFileSync(path.join(siteRoot, 'extras.js'), 'utf8');
+
+  assert.match(extras, /function reducedMotionEnabled\(\)/);
+  assert.match(extras, /window\.addEventListener\("smt:motionchange"/);
+  assert.match(extras, /if \(reducedMotionEnabled\(\) \|\| !items\.length/);
+  assert.match(extras, /function snowEgg\(\) \{[\s\S]*?if \(reducedMotionEnabled\(\)\)/);
+  assert.match(extras, /function vasaEgg\(\) \{[\s\S]*?if \(reducedMotionEnabled\(\)\)/);
+  assert.match(extras, /function flagFlutter\(\) \{[\s\S]*?if \(reducedMotionEnabled\(\)\)/);
+  assert.match(extras, /reducedMotionEnabled\(\) \? "auto" : "smooth"/);
+  assert.match(extras, /reducedMotionEnabled\(\) \? "" : ";animation:smt-cheats-in/);
+});
+
 test(
   'static mobile topbar reaches key routes and settings without horizontal overflow',
   chromiumTestOptions(),
