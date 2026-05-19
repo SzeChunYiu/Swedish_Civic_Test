@@ -219,27 +219,39 @@ test('top bar route links keep web anchors large enough with token hover and pre
   const source = read('components/ui/TopBarActions.tsx');
 
   assert.match(source, /import \{ Platform, Pressable, StyleSheet, View \}/);
+  assert.match(source, /import \{ useEffect, useState \} from 'react';/);
   assert.match(source, /function TopBarActionLink/);
-  assert.match(source, /<Link\s+\{\.\.\.webInteractionHandlers\}/);
+  assert.match(source, /const topBarActionLinkClassName = 'top-bar-action-link';/);
+  assert.match(source, /const topBarActionLinkStyleElementId = 'top-bar-action-link-style';/);
+  assert.match(source, /function useTopBarActionLinkWebStyles\(\)/);
+  assert.match(source, /document\.getElementById\(topBarActionLinkStyleElementId\)/);
+  assert.match(source, /document\.createElement\('style'\)/);
+  assert.match(source, /styleElement\.id = topBarActionLinkStyleElementId;/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:hover,/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:focus-visible/);
+  assert.match(source, /background-color: \$\{colors\.focusSoft\};/);
+  assert.match(source, /transform: scale\(\$\{motion\.hoverScale\}\);/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:active/);
+  assert.match(source, /transform: scale\(\$\{motion\.pressedScale\}\);/);
+  assert.match(source, /document\.head\.appendChild\(styleElement\);/);
+  assert.match(source, /useTopBarActionLinkWebStyles\(\);/);
+  assert.match(source, /<Link[\s\S]*accessibilityRole="link"[\s\S]*href=\{href\}/);
   assert.doesNotMatch(source, /<Link[\s\S]*asChild/);
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
-  assert.match(source, /onPressOut=\{clearPressedState\}/);
-  assert.match(source, /onMouseEnter: \(\) => setIsHovered\(true\)/);
-  assert.match(source, /onMouseDown: \(\) => setIsPressed\(true\)/);
+  assert.match(source, /const linkInteractionHandlers = \{/);
   assert.match(
     source,
-    /onMouseLeave: \(\) => \{\n\s+setIsHovered\(false\);\n\s+clearPressedState\(\);/,
+    /Platform\.OS === 'web' \? \{ className: topBarActionLinkClassName \} : \{\};/,
   );
-  assert.match(source, /onMouseUp: clearPressedState/);
-  assert.match(source, /onTouchEnd: clearPressedState/);
-  assert.match(source, /onTouchStart: \(\) => setIsPressed\(true\)/);
-  assert.match(source, /onKeyDown: handleKeyboardPressStart/);
-  assert.match(source, /onKeyUp: handleKeyboardPressEnd/);
-  assert.match(source, /key === 'Enter' \|\| key === ' '/);
-  assert.match(source, /isFocused \|\| isHovered \? styles\.iconLinkHover : null/);
-  assert.match(source, /isPressed \? styles\.iconLinkPressed : null/);
+  assert.match(source, /\{\.\.\.webClassName\}/);
+  assert.match(source, /onPressIn: \(\) => setIsPressed\(true\)/);
+  assert.match(source, /onPressOut: clearPressedState/);
+  assert.match(
+    source,
+    /style=\{\[styles\.iconLink, isPressed \? styles\.iconLinkPressed : null\]\}/,
+  );
+  assert.match(source, /display: 'flex'/);
   assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /minWidth: space\[6\]/);
   assert.match(source, /backgroundColor: colors\.focusSoft/);
