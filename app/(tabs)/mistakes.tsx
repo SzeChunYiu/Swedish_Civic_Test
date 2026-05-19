@@ -1,9 +1,9 @@
-import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { Badge } from '../../components/ui/Badge';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -203,14 +203,14 @@ export default function Screen() {
             {copy.emptyTitle}
           </Text>
           <Text style={styles.emptyText}>{copy.emptyText}</Text>
-          <Link
+          <RouteLink
             accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
-            accessibilityRole="link"
             href="/practice"
             style={styles.practiceLink}
+            variant="primary"
           >
             {copy.emptyPracticeLink}
-          </Link>
+          </RouteLink>
         </View>
       ) : null}
     </ScrollView>

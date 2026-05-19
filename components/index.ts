@@ -13,5 +13,6 @@ export * from './ResultSummary';
 export * from './Screen';
 export * from './Surface';
 export * from './Text';
+export * from './ui/RouteLink';
 export * from './quiz/QuestionSourceCitation';
 export * from './quiz/SourceCitation';

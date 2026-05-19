@@ -5,16 +5,7 @@ const test = require('node:test');
 
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
-const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
-
-function isIntentionallyHiddenInteractive(tag) {
-  return (
-    tag.includes('accessible={false}') &&
-    (tag.includes('accessibilityElementsHidden') ||
-      tag.includes('importantForAccessibility="no"') ||
-      tag.includes('aria-hidden'))
-  );
-}
+const INTERACTIVE_TAG = /<(Pressable|Link|Button|RouteLink)\b/;
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -49,14 +40,21 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         if (!INTERACTIVE_TAG.test(line)) return;
         const tag = collectOpeningTag(lines, index);
         const isButtonImplementation = relPath === 'components/ui/Button.tsx';
-        const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
+        const isRouteLinkImplementation = relPath === 'components/ui/RouteLink.tsx';
+        const tagName = (tag.match(/<(Pressable|Link|Button|RouteLink)\b/) || [])[1];
         if (!isButtonImplementation && !tag.includes('accessibilityLabel=')) {
-          offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
+          if (!isRouteLinkImplementation) {
+            offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
+          }
         }
-        if (!tag.includes('accessibilityRole=')) {
+        if (tagName !== 'RouteLink' && !tag.includes('accessibilityRole=')) {
           offenders.push(`${relPath}:${index + 1}: missing accessibilityRole: ${line.trim()}`);
         }
-        if (tagName === 'Link' && !tag.includes('accessibilityRole="link"')) {
+        if (
+          tagName === 'Link' &&
+          !isRouteLinkImplementation &&
+          !tag.includes('accessibilityRole="link"')
+        ) {
           offenders.push(
             `${relPath}:${index + 1}: Link should use accessibilityRole="link": ${line.trim()}`,
           );
@@ -72,4 +70,33 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
   }
 
   assert.deepEqual(offenders, []);
+});
+
+test('internal route links use the shared tokenized RouteLink target', () => {
+  const routeLinkSource = read('components/ui/RouteLink.tsx');
+  const migratedFiles = [
+    'app/(tabs)/home.tsx',
+    'app/(tabs)/learn.tsx',
+    'app/(tabs)/mistakes.tsx',
+    'app/about-the-test.tsx',
+    'app/chapter/[chapterId].tsx',
+    'app/onboarding.tsx',
+    'app/quiz/[sessionId].tsx',
+    'app/search.tsx',
+    'app/settings.tsx',
+    'components/compliance/ComplianceLinks.tsx',
+    'components/compliance/LegalPage.tsx',
+  ];
+
+  assert.match(routeLinkSource, /accessibilityRole = 'link'/);
+  assert.match(routeLinkSource, /minHeight: space\[6\]/);
+  assert.match(routeLinkSource, /motion\.hoverScale/);
+  assert.match(routeLinkSource, /motion\.pressedScale/);
+  assert.match(routeLinkSource, /textDecorationLine: 'none'/);
+
+  for (const relativePath of migratedFiles) {
+    const source = read(relativePath);
+    assert.match(source, /<RouteLink\b/, `${relativePath} should use RouteLink`);
+    assert.doesNotMatch(source, /<Link\b/, `${relativePath} should not style Link directly`);
+  }
 });

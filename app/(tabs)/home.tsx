@@ -1,4 +1,3 @@
-import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
@@ -8,6 +7,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { SocialProofRow } from '../../components/ui/SocialProofRow';
 import { StatCallout } from '../../components/ui/StatCallout';
@@ -267,14 +267,14 @@ export default function Screen() {
         {readiness.isSparse ? (
           <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
         ) : null}
-        <Link
+        <RouteLink
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
-          accessibilityRole="link"
           href="/exam"
           style={styles.readinessLink}
+          variant="secondary"
         >
           {copy.readinessCta}
-        </Link>
+        </RouteLink>
       </Card>
       <SocialProofRow language={language} />
       {!monetizationEntitlements.adsDisabled ? (
@@ -285,22 +285,22 @@ export default function Screen() {
         />
       ) : null}
       <View style={styles.actions}>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
           style={styles.primaryLink}
+          variant="primary"
         >
           {copy.startPractice}
-        </Link>
-        <Link
+        </RouteLink>
+        <RouteLink
           accessibilityLabel={copy.browseChaptersAccessibilityLabel}
-          accessibilityRole="link"
           href="/learn"
           style={styles.secondaryLink}
+          variant="secondary"
         >
           {copy.browseChapters}
-        </Link>
+        </RouteLink>
       </View>
 
       <View style={styles.statsRow}>
@@ -335,14 +335,14 @@ export default function Screen() {
           {copy.feedbackTitle}
         </Text>
         <Text style={styles.feedbackText}>{copy.feedbackText}</Text>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
-          accessibilityRole="link"
           href="/mistakes"
           style={styles.feedbackLink}
+          variant="secondary"
         >
           {copy.feedbackLink}
-        </Link>
+        </RouteLink>
       </Card>
 
       <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
