@@ -98,6 +98,63 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
   );
 }
 
+function writeBlockingReleaseCommands(tmpDir) {
+  const callsLog = path.join(tmpDir, 'release-command-calls.log');
+  const quotedCallsLog = callsLog.replace(/'/g, "'\\''");
+  const recordCall = `printf '%s %s\\n' "$0" "$*" >> '${quotedCallsLog}'`;
+  const fakeNpm = path.join(tmpDir, 'npm');
+  const fakeNpx = path.join(tmpDir, 'npx');
+  const fakeGit = path.join(tmpDir, 'git');
+
+  fs.writeFileSync(
+    fakeNpm,
+    [
+      '#!/bin/sh',
+      recordCall,
+      'if [ "$1 $2" = "run validate" ]; then echo "fake validate blocker" >&2; exit 1; fi',
+      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "fake expo doctor blocker" >&2; exit 1; fi',
+      'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "fake web export blocker" >&2; exit 1; fi',
+      'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "fake native prebuild blocker" >&2; exit 1; fi',
+      'echo "unexpected npm command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  fs.writeFileSync(
+    fakeNpx,
+    [
+      '#!/bin/sh',
+      recordCall,
+      'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "fake eas version blocker" >&2; exit 1; fi',
+      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "fake eas auth blocker" >&2; exit 1; fi',
+      'echo "unexpected npx command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  fs.writeFileSync(
+    fakeGit,
+    [
+      '#!/bin/sh',
+      recordCall,
+      'if [ "$1 $2" = "status --porcelain" ]; then',
+      "  printf '%s\\n' ' M release-preflight-fixture.txt'",
+      '  exit 0',
+      'fi',
+      'echo "unexpected git command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  return callsLog;
+}
+
 function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
   const releaseScopeOverride =
     options.includeReleaseScopeOverride === false
@@ -885,34 +942,53 @@ function createPrivacyReviewEvidence(options = {}) {
 }
 
 test('release preflight fails closed on external launch blockers', () => {
-  const report = runPreflight({ expectedStatus: 1 });
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-fail-closed-fast-'));
+  const callsLog = writeBlockingReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    args: ['--run-validate'],
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: path.join(tmpDir, 'missing-release-gates.json'),
+      RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS: '0',
+    },
+  });
   assert.equal(report.status, 'BLOCKED');
   assert.equal(report.readyForSubmission, false);
 
-  const gateIds = new Set(report.gates.map((gate) => gate.id));
-  for (const id of [
-    'local-validation',
-    'expo-doctor',
-    'web-export',
-    'native-prebuild',
-    'eas-auth',
-    'eas-build-artifacts',
-    'android-device-audio',
-    'ios-device-audio',
-    'store-records',
-    'store-credentials',
-    'store-policy-questionnaires',
-    'privacy-review',
-    'release-owner-approval',
-    'public-urls',
-    'device-screenshots',
-  ]) {
-    assert.ok(gateIds.has(id), `${id} should be represented`);
+  const gates = new Map(report.gates.map((gate) => [gate.id, gate]));
+  const expectedBlockedGates = {
+    'local-validation': /fake validate blocker/,
+    'git-worktree-clean': /release-preflight-fixture\.txt/,
+    'expo-doctor': /fake expo doctor blocker/,
+    'web-export': /fake web export blocker/,
+    'native-prebuild': /fake native prebuild blocker/,
+    'eas-cli': /fake eas version blocker/,
+    'eas-auth': /fake eas auth blocker/,
+    'eas-build-artifacts': /No EAS Android\/iOS build artifact evidence/,
+    submission: /No TestFlight, Google Play internal test, production submission/,
+  };
+
+  for (const [id, evidencePattern] of Object.entries(expectedBlockedGates)) {
+    const gate = gates.get(id);
+    assert.ok(gate, `${id} should be represented`);
+    assert.equal(gate.status, 'BLOCKED', `${id} should fail closed`);
+    assert.match(gate.evidence, evidencePattern, `${id} should expose deterministic evidence`);
   }
 
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
   assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
+
+  const calls = fs.readFileSync(callsLog, 'utf8');
+  assert.match(calls, /npm run validate/);
+  assert.match(calls, /npm exec -- expo-doctor/);
+  assert.match(calls, /npm run release:web-export-smoke/);
+  assert.match(calls, /npm run release:native-prebuild-smoke/);
+  assert.match(calls, /npx --yes eas-cli@18\.13\.0 --version/);
+  assert.match(calls, /npx --yes eas-cli@18\.13\.0 whoami/);
+  assert.match(calls, /git status --porcelain/);
 });
 
 test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is red', () => {
