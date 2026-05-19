@@ -4,10 +4,56 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const REQUIRED_UI_CONTRAST_PAIRS = [
+  ['badgeBlueText', 'badgeBlueBg'],
+  ['success', 'successSoft'],
+  ['warning', 'warningSoft'],
+  ['textDisclaimer', 'surface'],
+  ['textPlaceholder', 'surface'],
+];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
+
+function readThemeColors() {
+  const source = read('lib/theme/colors.ts');
+  const colors = {};
+  for (const match of source.matchAll(/const\s+(\w+)\s*=\s*'([^']+)'/g)) {
+    colors[match[1]] = match[2];
+  }
+  return colors;
+}
+
+function relativeLuminance(color) {
+  const match = /^#([0-9a-fA-F]{6})$/.exec(color || '');
+  assert.ok(match, `${color} must be a 6-digit hex token for UI contrast checks`);
+  const channels = [0, 2, 4].map((index) => parseInt(match[1].slice(index, index + 2), 16) / 255);
+  const [red, green, blue] = channels.map((channel) =>
+    channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(foreground, background) {
+  const foregroundLuminance = relativeLuminance(foreground);
+  const backgroundLuminance = relativeLuminance(background);
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+test('shared UI status and helper-text pairs stay WCAG AA readable', () => {
+  const colors = readThemeColors();
+
+  for (const [foreground, background] of REQUIRED_UI_CONTRAST_PAIRS) {
+    const ratio = contrastRatio(colors[foreground], colors[background]);
+    assert.ok(
+      ratio >= 4.5,
+      `${foreground} on ${background} contrast ${ratio.toFixed(2)}:1 is below 4.5:1`,
+    );
+  }
+});
 
 test('progress bar uses tokenized animated motion and exposes progress to assistive tech', () => {
   const source = read('components/ui/ProgressBar.tsx');

@@ -154,6 +154,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.themeTypographyTokensValidated, 22);
   assert.equal(summary.themeShadowTokensValidated, 2);
   assert.equal(summary.themeMotionTokensValidated, 7);
+  assert.equal(summary.themeContrastPairsValidated, 20);
+  assert.equal(summary.themeContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.glossaryTermExactSchemaKeysValidated, summary.glossaryTerms);
