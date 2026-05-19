@@ -44,6 +44,34 @@ test('default mock exam config stays UHR-based and ad-free during exams', () => 
   assert.ok(config.durationMinutes > 0);
 });
 
+test('mock exam config panel uses unofficial practice-result copy', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'components/MockExamConfigPanel.tsx'), 'utf8');
+  const unsupportedFragments = [
+    ['pass', 'ing', 'Percent'].join(''),
+    ['pass', 'ing', 'Label'].join(''),
+    ['Gräns för ', 'godkänt'].join(''),
+    ['Pass', 'ing line'].join(''),
+    '75' + '%',
+  ];
+
+  assert.match(source, /scoreModeLabel: 'Övningsresultat'/);
+  assert.match(source, /scoreModeLabel: 'Practice result'/);
+  assert.match(source, /sourceScopeLabel: 'UHR-baserade frågor'/);
+  assert.match(source, /sourceScopeLabel: 'UHR-based questions'/);
+  assert.match(source, /<PillBadge variant="accent">\{resolvedSourceScopeLabel\}<\/PillBadge>/);
+  assert.match(source, /<PillBadge>\{resolvedScoreModeLabel\}<\/PillBadge>/);
+
+  for (const fragment of unsupportedFragments) {
+    assert.doesNotMatch(
+      source,
+      new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+      `MockExamConfigPanel should not expose unsupported score-source copy: ${fragment}`,
+    );
+  }
+
+  assert.doesNotMatch(source, /Resultat är övning/);
+});
+
 test('mock exam config TypeScript schema parity rejects optional field drift', () => {
   const result = spawnSync(
     process.execPath,
