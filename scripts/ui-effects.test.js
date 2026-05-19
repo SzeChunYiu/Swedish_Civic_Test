@@ -919,11 +919,13 @@ test('audio button disables playback when speech text is unavailable', () => {
   assert.doesNotMatch(source, /speakSwedish\(text\)/);
 });
 
-test('home screen surfaces the 10000-learner feedback loop and review action', () => {
+test('home screen surfaces focused review copy and review action', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /10,000-learner feedback pass/);
-  assert.match(source, /10 000 elevers återkoppling/);
+  assert.match(source, /Focused review/);
+  assert.match(source, /Fokuserad repetition/);
+  assert.match(source, /Keep track of what needs review/);
+  assert.match(source, /Håll koll på det som behöver övas/);
   assert.match(source, /Review saved questions/);
   assert.match(source, /Repetera sparade frågor/);
   assert.match(source, /href="\/mistakes"/);
@@ -943,14 +945,16 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
-  assert.match(source, /\{copy\.benchmarkLessons\[item\.product\]\}/);
+  assert.match(source, /copy\.studyLoopItems\[index\]/);
+  assert.match(source, /\{itemCopy\.label\}/);
+  assert.match(source, /\{itemCopy\.lesson\}/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
-  assert.match(source, /Optimerat studieflöde/);
+  assert.match(source, /Smarta studievanor/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
-  assert.match(source, /Optimized study loop/);
+  assert.match(source, /Smart study habits/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

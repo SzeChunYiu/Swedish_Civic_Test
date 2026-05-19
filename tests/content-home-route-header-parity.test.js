@@ -22,8 +22,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 80);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 88);
   assert.equal(summary.homeRouteCopyParityValidated, true);
+  assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
@@ -38,6 +39,8 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Study dashboard/);
   assert.match(source, /Redoindikator/);
   assert.match(source, /Readiness indicator/);
+  assert.match(source, /Smarta studievanor/);
+  assert.match(source, /Smart study habits/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
@@ -52,6 +55,38 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+});
+
+test('home route copy parity rejects internal benchmark phrases in learner copy', () => {
+  const forbiddenPhrase = ['Optimized', ' study loop'].join('');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const forbiddenPhrase = ${JSON.stringify(forbiddenPhrase)};
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("'Smart study habits'", JSON.stringify(forbiddenPhrase));
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home route learner copy must not expose internal benchmark phrase/,
+  );
 });
 
 test('home route header parity rejects unheadered dashboard card titles', () => {
