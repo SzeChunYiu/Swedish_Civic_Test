@@ -188,16 +188,21 @@ function normalizeProgress(value: unknown): PersistedProgress {
         normalizeNonNegativeInteger(item.correctStreak, 0, maxHydratedQuestionAnswerCount),
         correctCount,
       );
-      questionProgress[questionId] = {
+      const normalizedQuestionProgress: QuestionProgress = {
         questionId,
         seenCount,
         correctCount,
         wrongCount,
         correctStreak,
-        lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),
-        nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),
-        bookmarked: item.bookmarked,
       };
+      const lastAnsweredAt = normalizeIsoTimestamp(item.lastAnsweredAt);
+      const nextReviewAt = normalizeIsoTimestamp(item.nextReviewAt);
+      if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;
+      if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;
+      if (typeof item.bookmarked === 'boolean') {
+        normalizedQuestionProgress.bookmarked = item.bookmarked;
+      }
+      questionProgress[questionId] = normalizedQuestionProgress;
     }
   }
 
@@ -247,8 +252,10 @@ function readProgress(): PersistedProgress {
   }
 }
 
-function writeProgress(progress: PersistedProgress): void {
-  progressStorage?.set(progressStateKey, JSON.stringify(progress));
+function writeProgress(progress: PersistedProgress): PersistedProgress {
+  const serializedProgress = JSON.stringify(progress);
+  progressStorage?.set(progressStateKey, serializedProgress);
+  return normalizeProgress(JSON.parse(serializedProgress));
 }
 
 type ProgressState = PersistedProgress & {
@@ -276,9 +283,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
-
-      return nextProgress;
+      const persistedProgress = writeProgress(nextProgress);
+      return persistedProgress;
     }),
   recordAnswer: (questionId, isCorrect) =>
     set((state) => {
@@ -318,9 +324,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
-
-      return nextProgress;
+      const persistedProgress = writeProgress(nextProgress);
+      return persistedProgress;
     }),
   recordMockExamSession: (session) =>
     set((state) => {
@@ -352,9 +357,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: [...otherSessions, nextSession],
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
-
-      return nextProgress;
+      const persistedProgress = writeProgress(nextProgress);
+      return persistedProgress;
     }),
   setStreakFreezeState: (streakFreezeState) =>
     set((state) => {
@@ -368,9 +372,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState,
       };
-      writeProgress(nextProgress);
-
-      return nextProgress;
+      const persistedProgress = writeProgress(nextProgress);
+      return persistedProgress;
     }),
   toggleBookmark: (questionId) =>
     set((state) => {
@@ -392,12 +395,11 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
-
-      return nextProgress;
+      const persistedProgress = writeProgress(nextProgress);
+      return persistedProgress;
     }),
   resetProgress: () => {
-    writeProgress(emptyProgress);
-    set(emptyProgress);
+    const persistedProgress = writeProgress(emptyProgress);
+    set(persistedProgress);
   },
 }));

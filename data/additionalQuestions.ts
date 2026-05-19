@@ -132,7 +132,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     1,
     'Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt.',
-    "The government governs the country with the help of government agencies. Agencies carry out decisions in practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
+    "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
     ['agencies', 'government', 'law'],
   ),
   single(
