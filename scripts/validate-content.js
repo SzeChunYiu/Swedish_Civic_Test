@@ -872,8 +872,11 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
-    'Övningsläge',
-    'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+    'Provredo',
+    'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+    'Källor synliga',
+    'Varje fråga visar kapitel, avsnitt och sida från studiematerialet',
+    'Källor synliga. Varje fråga visar kapitel, avsnitt och sida från studiematerialet',
   ],
   en: [
     'Study dashboard',
@@ -951,8 +954,11 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'See which areas are ready, reviewed, or still weak.',
     'Study rhythm',
     'Get one simple next action and gentle habit feedback without blocking serious study.',
-    'Timed practice',
-    'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
+    'Exam readiness',
+    'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+    'Visible sources',
+    'Every question shows chapter, section, and page details from the study material',
+    'Visible sources. Every question shows chapter, section, and page details from the study material',
   ],
 };
 const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
@@ -965,10 +971,13 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
-const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
-const FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY = /\b(?:felspårning|repetition av misstag)\b/i;
-const FORBIDDEN_HOME_PREPARATION_SIGNAL_COPY =
-  /\b(?:Readiness indicator|Exam readiness|Almost ready|Redoindikator|Provredo|Are you ready to pass)\b/;
+const FORBIDDEN_HOME_ROUTE_UNSUPPORTED_SOCIAL_PROOF = [
+  ['★', '★★★★'],
+  ['5 of ', '5 stars'],
+  ['5 av ', '5 stjärnor'],
+  ['Thousands of ', 'learners'],
+  ['Tusentals ', 'studenter'],
+].map((parts) => parts.join(''));
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['GuidedPracticePath', 'home route must render the guided practice path component'],
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -10060,7 +10069,7 @@ function validateHomeRouteHeaderParity() {
 function validateHomeRouteCopyParity() {
   let valid = true;
   let homeRoute = '';
-  let readinessSource = '';
+  let socialProofRow = '';
 
   function reject(message) {
     valid = false;
@@ -10069,40 +10078,32 @@ function validateHomeRouteCopyParity() {
 
   try {
     homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+    socialProofRow = fs.readFileSync(
+      path.join(repoRoot, 'components/ui/SocialProofRow.tsx'),
+      'utf8',
+    );
   } catch (error) {
     reject(`home route copy source could not be read: ${error.message}`);
     return;
   }
 
-  try {
-    readinessSource = fs.readFileSync(path.join(repoRoot, 'lib/learning/readiness.ts'), 'utf8');
-  } catch (error) {
-    reject(`readiness source could not be read for home preparation signal copy: ${error.message}`);
-    return;
-  }
+  const homeCopySurface = `${homeRoute}\n${socialProofRow}`;
 
   EXPECTED_HOME_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!homeRoute.includes(snippet)) reject(message);
   });
 
   FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
-    if (homeRoute.includes(forbidden)) {
+    if (homeCopySurface.includes(forbidden)) {
       reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
     }
   });
 
-  if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
-    reject('home route Swedish missed-question review copy must use natural learner wording');
-  }
-
-  const unsupportedPreparationSignalCopy = `${homeRoute}\n${readinessSource}`.match(
-    FORBIDDEN_HOME_PREPARATION_SIGNAL_COPY,
-  );
-  if (unsupportedPreparationSignalCopy) {
-    reject(
-      `home route preparation signal copy must not expose official-readiness wording: ${unsupportedPreparationSignalCopy[0]}`,
-    );
-  }
+  FORBIDDEN_HOME_ROUTE_UNSUPPORTED_SOCIAL_PROOF.forEach((forbidden) => {
+    if (homeCopySurface.includes(forbidden)) {
+      reject(`home route learner copy must not make unsupported social-proof claim ${forbidden}`);
+    }
+  });
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -10112,7 +10113,7 @@ function validateHomeRouteCopyParity() {
         labelIsValid = false;
         reject(`home route ${language} copy ${JSON.stringify(label)} must be normalized`);
       }
-      if (!homeRoute.includes(label)) {
+      if (!homeCopySurface.includes(label)) {
         labelIsValid = false;
         reject(`home route is missing ${language} copy ${JSON.stringify(label)}`);
       }

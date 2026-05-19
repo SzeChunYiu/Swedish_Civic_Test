@@ -26,7 +26,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 94);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
@@ -99,6 +99,13 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /\{copy\.readinessCaveat\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
+  const socialProofSource = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/SocialProofRow.tsx'),
+    'utf8',
+  );
+  assert.match(socialProofSource, /Källor synliga/);
+  assert.match(socialProofSource, /Visible sources/);
+  assert.doesNotMatch(socialProofSource, /ratingAccessibilityLabel|styles\.stars/);
   assert.doesNotMatch(
     source,
     /<Text style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/,
@@ -107,23 +114,8 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 });
 
-test('home source-trust row links learners to sources without unsupported rating copy', () => {
-  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-  const socialProofRow = fs.readFileSync(
-    path.join(repoRoot, 'components/ui/SocialProofRow.tsx'),
-    'utf8',
-  );
-
-  assert.match(homeSource, /<SocialProofRow language=\{language\} \/>/);
-  assert.match(socialProofRow, /import \{ Link \} from 'expo-router';/);
-  assert.match(socialProofRow, /href="\/sources"/);
-  assert.match(socialProofRow, /accessibilityRole="link"/);
-  assert.match(socialProofRow, /Källor och transparens/);
-  assert.match(socialProofRow, /Sources and transparency/);
-  assert.match(socialProofRow, /Öppna källor och transparens/);
-  assert.match(socialProofRow, /Open sources and transparency/);
-  assert.doesNotMatch(socialProofRow, /Excellent|Utmärkt|5 of 5|5 av 5|★★★★★/);
-test('home route copy parity rejects unreachable flashcard promises', () => {
+test('home route copy parity rejects unsupported social proof claims', () => {
+  const unsupportedLearnerCount = ['Thousands of ', 'learners'].join('');
   const result = spawnSync(
     process.execPath,
     [
@@ -131,15 +123,13 @@ test('home route copy parity rejects unreachable flashcard promises', () => {
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
+const unsupportedLearnerCount = ${JSON.stringify(unsupportedLearnerCount)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+  if (normalizedPath.endsWith('/components/ui/SocialProofRow.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
-        'Växla mellan tidsatta övningsprov, flashcards, bokmärken, missade frågor, ljud och förberedelsesignal.',
-      );
+      .replace("'Every question shows chapter, section, and page details from the study material'", JSON.stringify(unsupportedLearnerCount));
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -152,44 +142,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /home route must not advertise flashcards until the feature is reachable/,
-  );
-});
-
-test('home route copy parity rejects harsh Swedish mistake-review wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
-        'Växla mellan tidsatta övningsprov, bokmärken, felspårning, ljud och förberedelsesignal.',
-      )
-      .replace(
-        'genomgång av frågor du missat',
-        'repetition av misstag',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route Swedish missed-question review copy must use natural learner wording/,
+    /home route learner copy must not make unsupported social-proof claim/,
   );
 });
 

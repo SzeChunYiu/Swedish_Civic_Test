@@ -8,22 +8,22 @@ type SocialProofLanguage = 'sv' | 'en';
 
 const copy = {
   sv: {
-    label: 'Källor och transparens',
-    body: 'Se vilka delar av Sverige i fokus som ligger bakom frågorna.',
+    label: 'Källor synliga',
+    body: 'Varje fråga visar kapitel, avsnitt och sida från studiematerialet',
     summaryAccessibilityLabel:
-      'Öppna källor och transparens. Se vilka delar av Sverige i fokus som ligger bakom frågorna.',
+      'Källor synliga. Varje fråga visar kapitel, avsnitt och sida från studiematerialet',
   },
   en: {
-    label: 'Sources and transparency',
-    body: 'See which parts of Sverige i fokus support the questions.',
+    label: 'Visible sources',
+    body: 'Every question shows chapter, section, and page details from the study material',
     summaryAccessibilityLabel:
-      'Open sources and transparency. See which parts of Sverige i fokus support the questions.',
+      'Visible sources. Every question shows chapter, section, and page details from the study material',
   },
 } as const;
 
 /**
- * Defaults: localized source-transparency label and body for the supplied app
- * language, linking the full row to `/sources` with token feedback.
+ * Defaults: localized launch-safe trust copy for the supplied app language,
+ * with a summary accessibility label for the full row.
  */
 export interface SocialProofRowProps {
   accessibilityLabel?: string;
@@ -61,12 +61,10 @@ export function SocialProofRow({ accessibilityLabel, language }: SocialProofRowP
         isPressed ? styles.linkPressed : null,
       ]}
     >
-      <View style={styles.row}>
-        <Text style={styles.label}>{t.label}</Text>
-        <Text style={styles.dot}>·</Text>
-        <Text style={styles.body}>{t.body}</Text>
-      </View>
-    </Link>
+      <Text style={styles.label}>{t.label}</Text>
+      <Text style={styles.dot}>·</Text>
+      <Text style={styles.body}>{t.body}</Text>
+    </View>
   );
 }
 
