@@ -7,6 +7,7 @@ import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
+import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -182,6 +183,9 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const celebrationStreak = selectedIsCorrect
+    ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
   const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
@@ -324,6 +328,11 @@ export default function Screen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
+          <CelebrationBurst
+            active={selectedIsCorrect}
+            languageOverride={language}
+            streak={celebrationStreak}
+          />
           {currentScore ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}

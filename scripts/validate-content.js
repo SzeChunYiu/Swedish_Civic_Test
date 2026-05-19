@@ -6229,6 +6229,8 @@ let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
 let celebrationBurstAccessibilityRulesValidated = 0;
 let celebrationBurstAccessibilityParityValidated = false;
+let celebrationBurstReachabilityRoutesValidated = 0;
+let celebrationBurstReachabilityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -9478,6 +9480,91 @@ function validateCelebrationBurstAccessibilityParity() {
       EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES.length
   ) {
     celebrationBurstAccessibilityParityValidated = true;
+  }
+}
+
+function validateCelebrationBurstReachability() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const routeExpectations = [
+    {
+      label: 'Practice',
+      path: 'app/(tabs)/practice.tsx',
+      rules: [
+        {
+          label: 'imports CelebrationBurst',
+          pattern:
+            /import \{ CelebrationBurst \} from '\.\.\/\.\.\/components\/quiz\/CelebrationBurst';/,
+        },
+        {
+          label: 'derives streak from persisted question progress',
+          pattern:
+            /const celebrationStreak = selectedIsCorrect\s*\?\s*\(questionProgress\[question\.id\]\?\.correctStreak \?\? 1\)\s*:\s*0;/,
+        },
+        {
+          label: 'renders burst only for correct feedback with localized copy',
+          pattern:
+            /<CelebrationBurst\s+active=\{selectedIsCorrect\}\s+languageOverride=\{language\}\s+streak=\{celebrationStreak\}\s+\/>/,
+        },
+      ],
+    },
+    {
+      label: 'Routed quiz',
+      path: 'app/quiz/[sessionId].tsx',
+      rules: [
+        {
+          label: 'imports CelebrationBurst',
+          pattern:
+            /import \{ CelebrationBurst \} from '\.\.\/\.\.\/components\/quiz\/CelebrationBurst';/,
+        },
+        {
+          label: 'reads persisted question progress',
+          pattern:
+            /const questionProgress = useProgressStore\(\(state\) => state\.questionProgress\);/,
+        },
+        {
+          label: 'derives streak from persisted question progress',
+          pattern:
+            /const celebrationStreak = selectedIsCorrect\s*\?\s*\(questionProgress\[question\.id\]\?\.correctStreak \?\? 1\)\s*:\s*0;/,
+        },
+        {
+          label: 'renders burst only for correct feedback with localized copy',
+          pattern:
+            /<CelebrationBurst\s+active=\{selectedIsCorrect\}\s+languageOverride=\{language\}\s+streak=\{celebrationStreak\}\s+\/>/,
+        },
+      ],
+    },
+  ];
+
+  routeExpectations.forEach((route) => {
+    let source = '';
+    try {
+      source = fs.readFileSync(path.join(repoRoot, route.path), 'utf8');
+    } catch (error) {
+      reject(`${route.path} could not be read for CelebrationBurst reachability: ${error.message}`);
+      return;
+    }
+
+    route.rules.forEach((rule) => {
+      if (!rule.pattern.test(source)) {
+        reject(`${route.label} route ${rule.label} for CelebrationBurst reachability`);
+        return;
+      }
+      celebrationBurstReachabilityRoutesValidated += 1;
+    });
+  });
+
+  if (
+    valid &&
+    celebrationBurstReachabilityRoutesValidated ===
+      routeExpectations.reduce((total, route) => total + route.rules.length, 0)
+  ) {
+    celebrationBurstReachabilityValidated = true;
   }
 }
 
@@ -14407,6 +14494,7 @@ validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
 validateCelebrationBurstAccessibilityParity();
+validateCelebrationBurstReachability();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -14575,6 +14663,8 @@ console.log(
       uhrReferenceCardAccessibilityParityValidated,
       celebrationBurstAccessibilityRulesValidated,
       celebrationBurstAccessibilityParityValidated,
+      celebrationBurstReachabilityRoutesValidated,
+      celebrationBurstReachabilityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
