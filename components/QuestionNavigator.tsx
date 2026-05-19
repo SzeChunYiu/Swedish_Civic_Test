@@ -183,9 +183,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.small,
     borderWidth: space.hairline,
     justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[0.75],
+    minHeight: space[4],
+    minWidth: space[4],
+    paddingHorizontal: space[0.5],
   },
   unanswered: {
     backgroundColor: colors.surfaceWarm,
