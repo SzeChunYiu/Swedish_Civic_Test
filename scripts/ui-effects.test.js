@@ -321,6 +321,25 @@ test('onboarding route remains scrollable on narrow mobile viewports', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('about-the-test marks the first-run guide as seen after mount', () => {
+  const source = read('app/about-the-test.tsx');
+  const seenEffectPattern =
+    /useEffect\(\(\) => \{\s*if \(!hasSeenAboutTheTest\) \{\s*markAboutTheTestSeen\(\);\s*\}\s*\}, \[hasSeenAboutTheTest, markAboutTheTestSeen\]\);/;
+
+  assert.match(source, /import \{ useEffect \} from 'react';/);
+  assert.match(
+    source,
+    /const hasSeenAboutTheTest = useSettingsStore\(\(state\) => state\.hasSeenAboutTheTest\);/,
+  );
+  assert.match(
+    source,
+    /const markAboutTheTestSeen = useSettingsStore\(\(state\) => state\.markAboutTheTestSeen\);/,
+  );
+  assert.match(source, seenEffectPattern);
+  assert.doesNotMatch(source, /useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/);
+  assert.doesNotMatch(source.replace(seenEffectPattern, ''), /markAboutTheTestSeen\(\);/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 

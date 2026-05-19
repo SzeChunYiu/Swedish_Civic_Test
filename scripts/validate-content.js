@@ -1696,6 +1696,27 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
 ];
+const EXPECTED_ABOUT_THE_TEST_SEEN_EFFECT_RULES = [
+  {
+    label: 'React effect import',
+    pattern: /import \{ useEffect \} from 'react';/,
+  },
+  {
+    label: 'seen-state subscription',
+    pattern:
+      /const hasSeenAboutTheTest = useSettingsStore\(\(state\) => state\.hasSeenAboutTheTest\);/,
+  },
+  {
+    label: 'seen-marker subscription',
+    pattern:
+      /const markAboutTheTestSeen = useSettingsStore\(\(state\) => state\.markAboutTheTestSeen\);/,
+  },
+  {
+    label: 'effect-scoped seen marker',
+    pattern:
+      /useEffect\(\(\) => \{\s*if \(!hasSeenAboutTheTest\) \{\s*markAboutTheTestSeen\(\);\s*\}\s*\}, \[hasSeenAboutTheTest, markAboutTheTestSeen\]\);/,
+  },
+];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
     label: 'ScrollView import',
@@ -6051,6 +6072,8 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let aboutTheTestSeenEffectRulesValidated = 0;
+let aboutTheTestSeenEffectParityValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -8466,6 +8489,96 @@ function validateOnboardingRouteCopyParity() {
   );
   if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
     onboardingRouteCopyParityValidated = true;
+  }
+}
+
+function validateAboutTheTestSeenEffectParity() {
+  let valid = true;
+  let aboutRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    aboutRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/about-the-test.tsx could not be read for seen-effect parity: ${error.message}`);
+    return;
+  }
+
+  const effectScopedSeenMarkerPattern = EXPECTED_ABOUT_THE_TEST_SEEN_EFFECT_RULES.find(
+    (rule) => rule.label === 'effect-scoped seen marker',
+  ).pattern;
+
+  EXPECTED_ABOUT_THE_TEST_SEEN_EFFECT_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(aboutRoute)) {
+      reject(`about-the-test route missing ${expectedRule.label} for first-run seen effect`);
+      return;
+    }
+    aboutTheTestSeenEffectRulesValidated += 1;
+  });
+
+  if (/useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/.test(aboutRoute)) {
+    reject(
+      '/about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    );
+  } else {
+    aboutTheTestSeenEffectRulesValidated += 1;
+  }
+
+  const aboutRouteWithoutSeenEffect = aboutRoute.replace(effectScopedSeenMarkerPattern, '');
+  if (/markAboutTheTestSeen\(\);/.test(aboutRouteWithoutSeenEffect)) {
+    reject('/about-the-test route must call markAboutTheTestSeen() only inside useEffect');
+  } else {
+    aboutTheTestSeenEffectRulesValidated += 1;
+  }
+
+  const appDir = path.join(repoRoot, 'app');
+  const routeSources = [];
+
+  function collectRouteSources(directory) {
+    const entries = fs.readdirSync(directory, { withFileTypes: true });
+    entries.forEach((entry) => {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        collectRouteSources(fullPath);
+        return;
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.tsx')) return;
+      routeSources.push({
+        relativePath: path.relative(repoRoot, fullPath).replace(/\\/g, '/'),
+        source: fs.readFileSync(fullPath, 'utf8'),
+      });
+    });
+  }
+
+  try {
+    collectRouteSources(appDir);
+  } catch (error) {
+    reject(
+      `app route components could not be scanned for render-time settings writes: ${error.message}`,
+    );
+    return;
+  }
+
+  routeSources.forEach(({ relativePath, source }) => {
+    if (/useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/.test(source)) {
+      reject(`${relativePath} must not read hasSeenAboutTheTest with useSettingsStore.getState()`);
+    }
+
+    const sourceWithoutSeenEffect = source.replace(effectScopedSeenMarkerPattern, '');
+    if (/markAboutTheTestSeen\(\);/.test(sourceWithoutSeenEffect)) {
+      reject(`${relativePath} must not call markAboutTheTestSeen() during render`);
+    }
+  });
+
+  if (
+    valid &&
+    aboutTheTestSeenEffectRulesValidated === EXPECTED_ABOUT_THE_TEST_SEEN_EFFECT_RULES.length + 2
+  ) {
+    aboutTheTestSeenEffectParityValidated = true;
   }
 }
 
@@ -13708,6 +13821,7 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
+validateAboutTheTestSeenEffectParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -13853,6 +13967,8 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      aboutTheTestSeenEffectRulesValidated,
+      aboutTheTestSeenEffectParityValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
