@@ -519,7 +519,7 @@ test('answer option feedback remains available in the accessibility label', () =
   assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);
 });
 
-test('question card groups prompt and translation into an accessible summary', () => {
+test('question card exposes a standalone summary without grouping source controls', () => {
   const source = read('components/quiz/QuestionCard.tsx');
   const helperSource = read('lib/quiz/questionText.ts');
 
@@ -567,7 +567,12 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(helperSource, /stripSourceAuthorityPhrasing/);
   assert.match(helperSource, /Enligt UHR-materialet/);
   assert.match(helperSource, /According to the UHR material/);
-  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.doesNotMatch(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.match(
+    source,
+    /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
+  );
+  assert.match(source, /accessibilitySummary: \{/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
