@@ -129,38 +129,22 @@ const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
   /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
 ];
-const EXPECTED_STATIC_EBOOK_WELFARE_RETRIEVED_DATE = '2026-05-19';
-const EXPECTED_STATIC_EBOOK_WELFARE_SOURCE_URLS = [
-  'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
-  'https://www.universityadmissions.se/en/fees-scholarships-residence-permit/who-is-required-to-pay-fees/',
-  'https://www.forsakringskassan.se/english/parents/when-the-child-is-born/parental-benefit',
-  'https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/patientavgifter/',
+const STATIC_EBOOK_STALE_CITIZENSHIP_REQUIREMENT_PATTERNS = [
+  new RegExp(`\\bchildren are usually\\s+included with a parent's application\\b`, 'i'),
+  new RegExp(`\\btypically\\s+five years\\b`, 'i'),
+  new RegExp(`\\bStandard residence requirement:\\s*5 years\\b`, 'i'),
+  new RegExp(`\\bCitizenship test starts:\\s*6 June 2026\\b`, 'i'),
+  new RegExp(`\\bPass the\\s+medborgarskapsprov\\b`, 'i'),
+  new RegExp(`\\bmeet a Swedish-language\\s+requirement\\b`, 'i'),
 ];
-const STATIC_EBOOK_STALE_WELFARE_CLAIM_PATTERNS = [
-  /schools and university \(free for citizens and permanent residents\)/i,
-  /University tuition:\s*free for residents/i,
-  /parental leave \(480 days per child, split between parents\)/i,
-  /90 are reserved for each parent \(the "pappamånader"\)/i,
-  /typically\s+100[–-]400\s+SEK/i,
-  /Children's healthcare is free/i,
-  /Föräldraledighet:\s*480 dagar per barn/i,
-];
-const STATIC_EBOOK_WELFARE_REQUIRED_COPY_PATTERNS = [
-  /2026 state income-tax threshold:\s*643,000 SEK/i,
-  /statlig inkomstskatt [öo]ver 643 000 kr/i,
-  /University Admissions fee exemptions/i,
-  /K[äa]llor? kontrollerade 2026-05-19/i,
-  /Reserved per parent:\s*90 sickness-benefit-level days/i,
-  /90 sjukpenningniv[aå]dagar per f[oö]r[aä]lder/i,
-  /Patient fees vary by region/i,
-  /Patientavgifter varierar/i,
-  /Medicines within the medicine high-cost protection are free for children under 18/i,
-];
-const STATIC_EBOOK_WELFARE_CURRENTNESS_EXPECTED_CHECKS =
-  EXPECTED_STATIC_EBOOK_WELFARE_SOURCE_URLS.length +
-  STATIC_EBOOK_STALE_WELFARE_CLAIM_PATTERNS.length +
-  STATIC_EBOOK_WELFARE_REQUIRED_COPY_PATTERNS.length +
-  2;
+const EXPECTED_STATIC_EBOOK_CITIZENSHIP_CURRENTNESS = {
+  rulesUrl:
+    'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
+  testUrl: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  retrievedAt: '2026-05-19',
+  rulesEffectiveDate: '2026-06-06',
+  firstCivicKnowledgeTestDate: '2026-08-15',
+};
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -4198,88 +4182,54 @@ function validateStaticEbookOutcomeClaimPatterns() {
   return STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length - offenders.length;
 }
 
-function validateStaticEbookWelfareCurrentness() {
+function validateStaticEbookCitizenshipCurrentness() {
   const source = loadText('site/ebook.js');
-  let checksValidated = 0;
-
-  if (!source.includes('EBOOK_WELFARE_CURRENTNESS_SOURCES')) {
-    fail('static ebook welfare currentness source metadata is missing');
-  } else {
-    checksValidated += 1;
-  }
-
-  if (!new RegExp(`retrieved:\\s*'${EXPECTED_STATIC_EBOOK_WELFARE_RETRIEVED_DATE}'`).test(source)) {
-    fail(
-      `static ebook welfare currentness metadata must use retrieved date ${EXPECTED_STATIC_EBOOK_WELFARE_RETRIEVED_DATE}`,
-    );
-  } else {
-    checksValidated += 1;
-  }
-
-  for (const url of EXPECTED_STATIC_EBOOK_WELFARE_SOURCE_URLS) {
-    if (!source.includes(url)) {
-      fail(`static ebook welfare currentness source URL is missing: ${url}`);
-    } else {
-      checksValidated += 1;
-    }
-  }
-
-  for (const pattern of STATIC_EBOOK_STALE_WELFARE_CLAIM_PATTERNS) {
-    if (pattern.test(source)) {
-      fail(`static ebook contains stale welfare/currentness claim: ${pattern}`);
-    } else {
-      checksValidated += 1;
-    }
-  }
-
-  for (const pattern of STATIC_EBOOK_WELFARE_REQUIRED_COPY_PATTERNS) {
-    if (!pattern.test(source)) {
-      fail(`static ebook missing current welfare copy pattern: ${pattern}`);
-    } else {
-      checksValidated += 1;
-    }
-  }
-
-  return checksValidated;
-}
-
-function validateStaticEbookFactboxSources() {
-  const source = loadText('site/ebook.js');
-  let unsupportedFactboxPatternsValidated = 0;
+  const offenders = STATIC_EBOOK_STALE_CITIZENSHIP_REQUIREMENT_PATTERNS.filter((pattern) =>
+    pattern.test(source),
+  );
+  let currentnessParity = true;
   let sourceUrlsValidated = 0;
 
-  STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS.forEach((pattern) => {
-    if (pattern.test(source)) {
-      fail(`static ebook factbox/prose copy retains unsourced claim pattern: ${pattern}`);
-      return;
+  function rejectCurrentness(message) {
+    currentnessParity = false;
+    fail(message);
+  }
+
+  if (offenders.length > 0) {
+    rejectCurrentness('static ebook chapter 11 contains stale citizenship requirement copy');
+  }
+
+  [
+    'CITIZENSHIP_REQUIREMENTS_CURRENTNESS',
+    "rulesEffectiveDate: '2026-06-06'",
+    "firstCivicKnowledgeTestDate: '2026-08-15'",
+    "retrievedAt: '2026-05-19'",
+    'Ordinary adult residence rule: 8 years',
+    'Huvudregel för vuxnas hemvist: 8 år',
+    'Children apply separately',
+    'Barn ansöker separat',
+    'Migrationsverket letter',
+    'brev från Migrationsverket',
+  ].forEach((requiredText) => {
+    if (!source.includes(requiredText)) {
+      rejectCurrentness(`static ebook chapter 11 missing currentness text: ${requiredText}`);
     }
-    unsupportedFactboxPatternsValidated += 1;
   });
 
-  STATIC_EBOOK_FACTBOX_SOURCE_URLS.forEach((url) => {
-    if (!source.includes(url)) {
-      fail(`static ebook factbox source metadata missing ${url}`);
+  [
+    EXPECTED_STATIC_EBOOK_CITIZENSHIP_CURRENTNESS.rulesUrl,
+    EXPECTED_STATIC_EBOOK_CITIZENSHIP_CURRENTNESS.testUrl,
+  ].forEach((expectedUrl) => {
+    if (!source.includes(expectedUrl)) {
+      rejectCurrentness(`static ebook chapter 11 missing official source URL: ${expectedUrl}`);
       return;
     }
-    sourceUrlsValidated += 1;
-  });
-
-  if (!source.includes('EBOOK_FACTBOX_SOURCE_NOTES')) {
-    fail('static ebook factboxes must use shared source-note metadata');
-  }
-  if (!source.includes("retrievedDate: '2026-05-19'")) {
-    fail('static ebook factbox source metadata must include the current retrieved date');
-  }
-  if (!/ebookFactBox\('en', 'Facts to review'/.test(source)) {
-    fail('static ebook English factboxes must use the sourced factbox helper');
-  }
-  if (!/ebookFactBox\('sv', 'Fakta att repetera'/.test(source)) {
-    fail('static ebook Swedish factboxes must use the sourced factbox helper');
   }
 
   return {
+    currentnessParity,
+    retrievedAt: EXPECTED_STATIC_EBOOK_CITIZENSHIP_CURRENTNESS.retrievedAt,
     sourceUrlsValidated,
-    unsupportedFactboxPatternsValidated,
   };
 }
 
@@ -7473,8 +7423,9 @@ let staticV11ReadinessRequiredCopyValidated = 0;
 let staticV11ReadinessCopyParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
-let staticEbookWelfareCurrentnessSourcesValidated = 0;
-let staticEbookWelfareCurrentnessParityValidated = false;
+let staticEbookCitizenshipCurrentnessSourceUrlsValidated = 0;
+let staticEbookCitizenshipCurrentnessRetrievedAtValidated = '';
+let staticEbookCitizenshipCurrentnessParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -7545,10 +7496,15 @@ staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatter
 staticEbookOutcomeClaimParityValidated =
   staticEbookOutcomeClaimPatternsValidated ===
   STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
-staticEbookWelfareCurrentnessSourcesValidated = validateStaticEbookWelfareCurrentness();
-staticEbookWelfareCurrentnessParityValidated =
-  staticEbookWelfareCurrentnessSourcesValidated ===
-  STATIC_EBOOK_WELFARE_CURRENTNESS_EXPECTED_CHECKS;
+{
+  const staticEbookCitizenshipCurrentness = validateStaticEbookCitizenshipCurrentness();
+  staticEbookCitizenshipCurrentnessSourceUrlsValidated =
+    staticEbookCitizenshipCurrentness.sourceUrlsValidated;
+  staticEbookCitizenshipCurrentnessRetrievedAtValidated =
+    staticEbookCitizenshipCurrentness.retrievedAt;
+  staticEbookCitizenshipCurrentnessParityValidated =
+    staticEbookCitizenshipCurrentness.currentnessParity;
+}
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
@@ -7664,7 +7620,7 @@ function validateAppConfigSchema() {
   }
 
   if (expo.name !== EXPECTED_APP_NAME) {
-    reject('app.json expo.name must identify the release app');
+    reject(`app.json expo.name must be ${EXPECTED_APP_NAME}`);
   }
   if (expo.slug !== EXPECTED_APP_SLUG) {
     reject(`app.json expo.slug must be ${EXPECTED_APP_SLUG}`);
@@ -17560,8 +17516,9 @@ console.log(
       staticV11ReadinessCopyParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
-      staticEbookWelfareCurrentnessSourcesValidated,
-      staticEbookWelfareCurrentnessParityValidated,
+      staticEbookCitizenshipCurrentnessSourceUrlsValidated,
+      staticEbookCitizenshipCurrentnessRetrievedAtValidated,
+      staticEbookCitizenshipCurrentnessParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,

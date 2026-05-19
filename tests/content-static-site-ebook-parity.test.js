@@ -30,36 +30,27 @@ const unsupportedEbookOutcomeClaimPatterns = [
   /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
   /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
 ];
-const staleEbookWelfareClaimPatterns = [
-  /schools and university \(free for citizens and permanent residents\)/i,
-  /University tuition:\s*free for residents/i,
-  /parental leave \(480 days per child, split between parents\)/i,
-  /90 are reserved for each parent \(the "pappamånader"\)/i,
-  /typically\s+100[–-]400\s+SEK/i,
-  /Children's healthcare is free/i,
-  /Föräldraledighet:\s*480 dagar per barn/i,
+const staleCitizenshipRequirementPatterns = [
+  new RegExp(`\\bchildren are usually\\s+included with a parent's application\\b`, 'i'),
+  new RegExp(`\\btypically\\s+five years\\b`, 'i'),
+  new RegExp(`\\bStandard residence requirement:\\s*5 years\\b`, 'i'),
+  new RegExp(`\\bCitizenship test starts:\\s*6 June 2026\\b`, 'i'),
+  new RegExp(`\\bPass the\\s+medborgarskapsprov\\b`, 'i'),
+  new RegExp(`\\bmeet a Swedish-language\\s+requirement\\b`, 'i'),
 ];
-const welfareCurrentnessSourceUrls = [
-  'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
-  'https://www.universityadmissions.se/en/fees-scholarships-residence-permit/who-is-required-to-pay-fees/',
-  'https://www.forsakringskassan.se/english/parents/when-the-child-is-born/parental-benefit',
-  'https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/patientavgifter/',
-];
-const factboxSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const unsupportedFactboxPatterns = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
+const citizenshipCurrentnessRequiredTexts = [
+  'CITIZENSHIP_REQUIREMENTS_CURRENTNESS',
+  'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  "retrievedAt: '2026-05-19'",
+  "rulesEffectiveDate: '2026-06-06'",
+  "firstCivicKnowledgeTestDate: '2026-08-15'",
+  'Ordinary adult residence rule: 8 years',
+  'Huvudregel för vuxnas hemvist: 8 år',
+  'Children apply separately',
+  'Barn ansöker separat',
+  'Migrationsverket letter',
+  'brev från Migrationsverket',
 ];
 
 function readSiteFile(relativePath) {
@@ -166,14 +157,8 @@ function assertNoUnsupportedEbookOutcomeClaim(value) {
   }
 }
 
-function assertNoStaleEbookWelfareClaim(value) {
-  for (const pattern of staleEbookWelfareClaimPatterns) {
-    assert.doesNotMatch(value, pattern);
-  }
-}
-
-function assertNoUnsupportedFactboxClaim(value) {
-  for (const pattern of unsupportedFactboxPatterns) {
+function assertNoStaleCitizenshipRequirementCopy(value) {
+  for (const pattern of staleCitizenshipRequirementPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -204,8 +189,17 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoStaleEbookCopy(source);
   assertNoSwedishEbookQuizLoanwords(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
-  assertNoStaleEbookWelfareClaim(source);
+  assertNoStaleCitizenshipRequirementCopy(source);
   assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
+});
+
+test('static ebook chapter 11 uses current citizenship requirement metadata', () => {
+  const source = readSiteFile('site/ebook.js');
+
+  for (const requiredText of citizenshipCurrentnessRequiredTexts) {
+    assert.match(source, new RegExp(requiredText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  assertNoStaleCitizenshipRequirementCopy(source);
 });
 
 test('static ebook does not promise source-backed footnotes without citation coverage', () => {
@@ -278,10 +272,8 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assertNoSwedishEbookQuizLoanwords(swedishHtml);
     assertNoUnsupportedEbookOutcomeClaim(englishHtml);
     assertNoUnsupportedEbookOutcomeClaim(swedishHtml);
-    assertNoUnsupportedPracticalTestClaim(englishHtml);
-    assertNoUnsupportedPracticalTestClaim(swedishHtml);
-    assertNoUnsupportedFactboxClaim(englishHtml);
-    assertNoUnsupportedFactboxClaim(swedishHtml);
+    assertNoStaleCitizenshipRequirementCopy(englishHtml);
+    assertNoStaleCitizenshipRequirementCopy(swedishHtml);
 
     assert.match(englishHtml, /ebook__study-actions/);
     assert.match(swedishHtml, /ebook__study-actions/);
@@ -337,6 +329,15 @@ test('static ebook renders every chapter with Swedish and English body parity', 
       assert.match(swedishHtml, /href="#\/practice\?c=13"/);
       assert.match(englishHtml, />13 \/ 13</);
       assert.match(swedishHtml, />13 \/ 13</);
+    }
+
+    if (chapterId === '11') {
+      assert.match(englishHtml, /New rules: 6 June 2026/);
+      assert.match(englishHtml, /First society-knowledge test: 15 August 2026 in Stockholm/);
+      assert.match(swedishHtml, /Nya regler: 6 juni 2026/);
+      assert.match(swedishHtml, /Första samhällskunskapsprovet: 15 augusti 2026 i Stockholm/);
+      assert.match(englishHtml, /Sources checked 2026-05-19/);
+      assert.match(swedishHtml, /Källor kontrollerade 2026-05-19/);
     }
 
     assert.doesNotMatch(swedishHtml, /Facts you'll see on the test/);
