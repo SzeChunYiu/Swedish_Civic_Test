@@ -168,4 +168,26 @@ test('active mock exams do not render feedback audio controls', () => {
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
   assert.doesNotMatch(examSource, /FeedbackAudioButton|buildAnswerFeedbackSpeechText/);
+test('muting audio through settings stops in-flight speech without double-stopping in controls', () => {
+  const settingsStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/settingsStore.ts'),
+    'utf8',
+  );
+  const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const topBarActions = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/TopBarActions.tsx'),
+    'utf8',
+  );
+
+  assert.match(settingsStore, /import \{ stopSpeech \} from '\.\.\/audio\/speak';/);
+  assert.match(
+    settingsStore,
+    /setAudioEnabled: \(audioEnabled\) => \{\s*if \(!audioEnabled\) \{\s*stopSpeech\(\);\s*\}\s*settingsStorage\?\.set\(audioEnabledKey, audioEnabled\);/,
+  );
+  assert.doesNotMatch(settingsStore, /if \(audioEnabled\) \{\s*stopSpeech\(\);/);
+  assert.equal((settingsStore.match(/stopSpeech\(\);/g) || []).length, 1);
+  assert.match(settingsRoute, /onPress=\{\(\) => setAudioEnabled\(!audioEnabled\)\}/);
+  assert.match(topBarActions, /onPress=\{\(\) => setAudioEnabled\(!audioEnabled\)\}/);
+  assert.doesNotMatch(settingsRoute, /stopSpeech\(/);
+  assert.doesNotMatch(topBarActions, /stopSpeech\(/);
 });
