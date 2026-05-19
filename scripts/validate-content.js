@@ -10818,6 +10818,10 @@ function validateProgressStoreSchemaParity() {
       'question progress hydration must normalize seenCount',
     ],
     [
+      "...(typeof item.bookmarked === 'boolean' ? { bookmarked: item.bookmarked } : {}),",
+      'question progress hydration must preserve only boolean bookmark values',
+    ],
+    [
       'totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp)',
       'progress hydration must normalize totalXp',
     ],
@@ -10899,11 +10903,17 @@ function validateProgressStoreSchemaParity() {
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
+    'bookmarked: item.bookmarked,',
+    'bookmarked: Boolean(item.bookmarked)',
+    'bookmarked: !!item.bookmarked',
   ];
 
   forbiddenHydrationSnippets.forEach((snippet) => {
     if (normalizedProgressStore.includes(snippet)) {
-      reject(`progress hydration must not use raw numeric expression ${snippet}`);
+      const label = snippet.startsWith('bookmarked:')
+        ? 'raw bookmark expression'
+        : 'raw numeric expression';
+      reject(`progress hydration must not use ${label} ${snippet}`);
     }
   });
 
