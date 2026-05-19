@@ -1007,16 +1007,23 @@ test('audio button disables playback when speech text is unavailable', () => {
   assert.match(source, /const speechText = text\.trim\(\);/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
+  assert.match(source, /const isSpeaking = canPlayAudio && activeSpeechText === speechText;/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /Lyssna på den svenska frågan och svaren/);
   assert.match(source, /Listen to the Swedish question and answers/);
+  assert.match(source, /Stoppa ljudet/);
+  assert.match(source, /Stop audio/);
   assert.match(source, /Audio is unavailable/);
   assert.match(source, /const accessibilityLabel = label;/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/);
+  assert.match(
+    source,
+    /accessibilityState=\{\{ disabled: !canPlayAudio, busy: isSpeaking, selected: isSpeaking \}\}/,
+  );
   assert.match(source, /disabled=\{!canPlayAudio\}/);
   assert.match(source, /if \(!canPlayAudio\) return;/);
-  assert.match(source, /speakSwedish\(speechText\)/);
+  assert.match(source, /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*return;/);
+  assert.match(source, /speakSwedish\(speechText, \{/);
   assert.doesNotMatch(source, /speakSwedish\(text\)/);
 });
 
