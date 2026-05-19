@@ -10141,6 +10141,14 @@ function validateSettingsStoreSchemaParity() {
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
     [
+      'function normalizeDailyGoalAnswers(answerCount: number | undefined): number',
+      'settings store must normalize persisted daily goal values through a shared helper',
+    ],
+    [
+      'return normalizeDailyGoalAnswers(storedValue);',
+      'readDailyGoalAnswers must normalize persisted MMKV values before hydration',
+    ],
+    [
       'settingsStorage?.set(languageKey, language);',
       'setLanguage must persist through languageKey',
     ],
@@ -10188,13 +10196,38 @@ function validateSettingsDailyGoalParity() {
     reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
   }
 
-  if (!settingsStore.includes(`: ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
-    reject(`readDailyGoalAnswers must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  if (!settingsStore.includes(`const defaultDailyGoalAnswers = ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
+    reject(`daily goal normalization must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
+  }
+  if (!normalizedSettingsStore.includes('function normalizeDailyGoalAnswers(')) {
+    reject('settings store must expose normalizeDailyGoalAnswers for daily-goal hydration');
+  }
+  if (!normalizedSettingsStore.includes("typeof answerCount !== 'number'")) {
+    reject('normalizeDailyGoalAnswers must reject missing/non-number stored values');
+  }
+  if (!normalizedSettingsStore.includes('!Number.isFinite(answerCount)')) {
+    reject('normalizeDailyGoalAnswers must reject non-finite stored values');
+  }
+  if (!normalizedSettingsStore.includes('!Number.isInteger(answerCount)')) {
+    reject('normalizeDailyGoalAnswers must reject fractional stored values');
+  }
+  if (
+    !normalizedSettingsStore.includes(
+      'answerCount < minDailyGoalAnswers || answerCount > maxDailyGoalAnswers',
+    )
+  ) {
+    reject('normalizeDailyGoalAnswers must reject out-of-range stored values');
+  }
+  if (!normalizedSettingsStore.includes('return normalizeDailyGoalAnswers(storedValue);')) {
+    reject('readDailyGoalAnswers must normalize the raw persisted value');
+  }
+  if (normalizedSettingsStore.includes('storedValue && storedValue > 0 ? storedValue : 10')) {
+    reject('readDailyGoalAnswers must not hydrate raw positive persisted values');
   }
 
-  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
-  const expectedClamp = `Math.max(${EXPECTED_DAILY_GOAL_MIN}, Math.min(${EXPECTED_DAILY_GOAL_MAX}, Math.round(dailyGoalAnswers)))`;
-  if (!normalizedSettingsStore.includes(expectedClamp)) {
+  const expectedSetNormalization = `const safeGoal = normalizeDailyGoalAnswers( Math.max(minDailyGoalAnswers, Math.min(maxDailyGoalAnswers, Math.round(dailyGoalAnswers))), );`;
+  if (!normalizedSettingsStore.includes(expectedSetNormalization)) {
     reject(
       `setDailyGoalAnswers must clamp between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
     );
