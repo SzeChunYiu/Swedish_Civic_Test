@@ -4,10 +4,6 @@ import type { AdConsentDecision } from './consent';
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
-type AdUnitEnvValues = Record<
-  AdPlacement,
-  { android: string | undefined; ios: string | undefined }
->;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
@@ -29,42 +25,8 @@ function readBooleanFlag(value: string | undefined, defaultValue: boolean): bool
   return defaultValue;
 }
 
-function readEnvString(value: string | undefined): string | undefined {
-  const normalizedValue = value?.trim();
-  return normalizedValue ? normalizedValue : undefined;
-}
-
-export const REAL_AD_UNIT_ENV_VALUES: AdUnitEnvValues = {
-  app_open_launch: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID),
-  },
-  chapter_list_banner: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID),
-  },
-  home_banner: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID),
-  },
-  quiz_completed_interstitial: {
-    android: readEnvString(
-      process.env.EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID,
-    ),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID),
-  },
-  results_native: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID),
-  },
-  rewarded_extra_exam: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID),
-  },
-};
-
-function getRealAdUnitEnvValue(placement: AdPlacement, platform: 'android' | 'ios') {
-  const value = REAL_AD_UNIT_ENV_VALUES[placement][platform];
+function readEnvString(key: string): string | undefined {
+  const value = process.env[key]?.trim();
   return value ? value : undefined;
 }
 
@@ -145,8 +107,9 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 ];
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
-  const androidUnitId = getRealAdUnitEnvValue(unit.placement, 'android');
-  const iosUnitId = getRealAdUnitEnvValue(unit.placement, 'ios');
+  const envKeys = REAL_AD_UNIT_ENV_KEYS[unit.placement];
+  const androidUnitId = readEnvString(envKeys.android);
+  const iosUnitId = readEnvString(envKeys.ios);
 
   return {
     ...unit,
@@ -215,7 +178,6 @@ export const adsConfig = {
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
-  realUnitEnvValues: REAL_AD_UNIT_ENV_VALUES,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
   units: getConfiguredAdUnits(),
