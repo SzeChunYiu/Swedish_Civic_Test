@@ -843,7 +843,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 7;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 10;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -9995,6 +9995,23 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         'if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];',
       ) && normalizedPurchaseSource.includes("return [createMockPurchase('restore-remove-ads')];"),
       'mock Remove Ads restore must require the canonical product id',
+    ],
+    [
+      normalizedPurchaseSource.includes('export const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;') &&
+        normalizedPurchaseSource.includes('interface StoredRemoveAdsEntitlementRecord'),
+      'Remove Ads persistence must use a versioned structured entitlement record',
+    ],
+    [
+      normalizedPurchaseSource.includes('parseStoredRemoveAdsEntitlementRecord(storedValue)') &&
+        !normalizedPurchaseSource.includes('storedValue === STORED_TRUE') &&
+        !normalizedPurchaseSource.includes("const STORED_TRUE = 'true';"),
+      'Remove Ads entitlement loading must reject the legacy bare true value',
+    ],
+    [
+      normalizedPurchaseSource.includes("source: 'purchase'") &&
+        normalizedPurchaseSource.includes("source: 'restore'") &&
+        normalizedPurchaseSource.includes('hasStoreConfirmation(record)'),
+      'Remove Ads purchase and restore grants must persist source plus store confirmation identity',
     ],
   ];
 
