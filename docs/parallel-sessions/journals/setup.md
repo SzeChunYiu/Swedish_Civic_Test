@@ -1138,3 +1138,12 @@ Verification: product branch rebased onto current `origin/main` `3267571`; `npm 
 PR: #864 `iap: validate remove ads entitlement record` - merged as `9fa1c87`.
 Blocked? no for this entitlement-integrity atom; `REMOVE-ADS-RECEIPT-VALIDATION-1` was queued as the next hardening step for provider-level receipt/token validation.
 Next suggested validator action: inspect #864 and rerun `npm run test:monetization` plus `npm run validate:content`; then route the queued receipt-validation atom if stronger anti-spoofing is needed before v1.0 Remove Ads acceptance.
+
+## Iteration 245 - 2026-05-19
+
+Task completed: READINESS-SCORE-1 - added a Home readiness indicator derived from persisted per-question progress, with localized Swedish/English copy and parity coverage.
+Artifacts changed: `app/(tabs)/home.tsx`, `lib/learning/readiness.ts`, `scripts/learning.test.js`, `scripts/validate-content.js`, `tests/content-home-route-header-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: product branch rebased onto current `origin/main` `051b376`; `npm ci --prefer-offline --no-audit` exit 0 in the fresh worktree; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/learning.test.js tests/content-home-route-header-parity.test.js` exit 0 with 13/13 passing; `npm run validate:content` exit 0 with `homeRouteHeadersValidated:5` and `homeRouteCopyLabelsValidated:80`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:theme-discipline` exit 0; `npm run test:ownership` exit 0; `npm run format:check` exit 0; `git diff --check origin/main..HEAD` exit 0; `npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; browser smoke with Playwright and system Chrome against exported web build confirmed `/home` renders `Redoindikator`, the empty-state `0%` readiness score, the `Gör ett mockprov` CTA, and zero page errors or failed requests.
+PR: #861 `ui: add home readiness indicator` - merged as `c399fd8`.
+Blocked? no for this readiness indicator atom.
+Next suggested validator action: inspect #861 and rerun the focused learning/home parity tests plus `npm run validate:content`; then continue the queued readiness/mock-score follow-up if it still matches current product priorities.
