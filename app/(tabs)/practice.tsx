@@ -241,6 +241,7 @@ export default function Screen() {
           </Pressable>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
+            aria-checked={includeSupplementary}
             accessibilityRole="switch"
             accessibilityState={{ checked: includeSupplementary }}
             accessibilityLabel={
@@ -265,6 +266,7 @@ export default function Screen() {
           </Pressable>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
+            aria-expanded={aboutSourcesOpen}
             accessibilityRole="button"
             accessibilityState={{ expanded: aboutSourcesOpen }}
             accessibilityLabel={aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}

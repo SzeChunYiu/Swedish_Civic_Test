@@ -479,6 +479,7 @@ export function MockExamConfigPanel({
 
             return (
               <Pressable
+                aria-checked={selected}
                 accessibilityLabel={chapter.accessibilityLabel ?? chapter.title}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: selected, disabled }}

@@ -370,6 +370,30 @@ test('settings controls mirror selected and checked state to web aria attributes
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('custom pressed controls mirror false checked and expanded state to web aria attributes', () => {
+  const topBarSource = read('components/ui/TopBarActions.tsx');
+  const mockExamConfigSource = read('components/MockExamConfigPanel.tsx');
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const provenanceBadgeSource = read('components/quiz/ProvenanceBadge.tsx');
+
+  assert.match(topBarSource, /aria-checked=\{audioEnabled\}/);
+  assert.match(topBarSource, /accessibilityRole="switch"/);
+  assert.match(topBarSource, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
+  assert.match(mockExamConfigSource, /aria-checked=\{selected\}/);
+  assert.match(mockExamConfigSource, /accessibilityRole="checkbox"/);
+  assert.match(mockExamConfigSource, /accessibilityState=\{\{ checked: selected, disabled \}\}/);
+  assert.match(practiceSource, /aria-checked=\{includeSupplementary\}/);
+  assert.match(practiceSource, /accessibilityState=\{\{ checked: includeSupplementary \}\}/);
+  assert.match(practiceSource, /aria-expanded=\{aboutSourcesOpen\}/);
+  assert.match(practiceSource, /accessibilityState=\{\{ expanded: aboutSourcesOpen \}\}/);
+  assert.match(provenanceBadgeSource, /aria-expanded=\{sourceNoteVisible\}/);
+  assert.match(provenanceBadgeSource, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
+  assert.doesNotMatch(topBarSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(mockExamConfigSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(provenanceBadgeSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings route remains scrollable on narrow mobile viewports', () => {
   const source = read('app/settings.tsx');
 
