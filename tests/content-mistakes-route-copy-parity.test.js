@@ -68,6 +68,12 @@ test('mistakes route shell copy follows the persisted settings language', () => 
     source,
     /\{copy\.wrongAnswers\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\)\}/,
   );
+  assert.match(source, /import \{ Button \} from '\.\.\/\.\.\/components\/ui\/Button';/);
+  assert.match(source, /const router = useRouter\(\);/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /onPress=\{\(\) => router\.push\('\/practice'\)\}/);
+  assert.match(source, /style=\{styles\.practiceButton\}/);
+  assert.doesNotMatch(source, /style=\{styles\.practiceLink\}/);
 });
 
 test('mistakes route copy parity rejects bypassing the settings language', () => {

@@ -1,12 +1,10 @@
-import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import type { ListRenderItemInfo } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/Button';
+import { Button } from '../../components/ui/Button';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -107,11 +105,18 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
   return language === 'en' ? option.textEn : option.textSv;
 }
 
-type AnswerReviewBlockProps = {
-  copy: MistakesCopy;
-  correctAnswer: string;
-  selectedWrongAnswer?: string;
-};
+export default function Screen() {
+  const router = useRouter();
+  const language = useSettingsStore((state) => state.language);
+  const copy = mistakesCopy[language];
+  const questionProgress = useProgressStore((state) => state.questionProgress);
+  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
+  const mistakenQuestions = questions.filter(
+    (question) => questionProgress[question.id]?.wrongCount > 0,
+  );
+  const bookmarkedQuestions = questions.filter(
+    (question) => questionProgress[question.id]?.bookmarked,
+  );
 
 function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
   return (
@@ -212,6 +217,15 @@ export default function Screen() {
           <Text accessibilityRole="header" style={styles.sectionTitle}>
             {copy.bookmarkedTitle}
           </Text>
+          <Text style={styles.emptyText}>{copy.emptyText}</Text>
+          <Button
+            accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
+            accessibilityRole="button"
+            onPress={() => router.push('/practice')}
+            style={styles.practiceButton}
+          >
+            {copy.emptyPracticeLink}
+          </Button>
         </View>
       ) : (
         <View style={styles.sectionHeading}>
