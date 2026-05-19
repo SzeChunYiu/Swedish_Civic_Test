@@ -7993,7 +7993,7 @@ function validateAppConfigSchema() {
   }
 
   if (expo.name !== EXPECTED_APP_NAME) {
-    reject(`app.json expo.name must be ${EXPECTED_APP_NAME}`);
+    reject('app.json expo.name must identify the release app');
   }
   if (expo.slug !== EXPECTED_APP_SLUG) {
     reject(`app.json expo.slug must be ${EXPECTED_APP_SLUG}`);
