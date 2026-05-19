@@ -1040,9 +1040,10 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdBanner',
+    component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern:
+      /<PracticeInterstitialAd\s+showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -7120,6 +7121,93 @@ function validateAdPlacementRouteParity() {
       }
       if (!/\.destroy\(\)/.test(nativeAdCardNativeSource)) {
         reject('NativeAdCard native placement must destroy loaded native ads on cleanup');
+        routeIsValid = false;
+      }
+    }
+
+    if (spec.component === 'PracticeInterstitialAd') {
+      const consentAwareShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+      );
+      const practiceInterstitialSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+        'utf8',
+      );
+      const practiceInterstitialNativeSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+        'utf8',
+      );
+
+      if (/<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/.test(source)) {
+        reject('Practice completion interstitial must not flow through AdBanner');
+        routeIsValid = false;
+      }
+      if (
+        !practiceInterstitialSource.includes(
+          `shouldShowAd('${spec.placement}', resolvedEntitlements)`,
+        )
+      ) {
+        reject(
+          `PracticeInterstitialAd web fallback must gate ${spec.placement} through shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (practiceInterstitialSource.includes('react-native-google-mobile-ads')) {
+        reject('PracticeInterstitialAd web fallback must not import native-only ad SDK APIs');
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('InterstitialAd.createForAdRequest')) {
+        reject(
+          'PracticeInterstitialAd native placement must load quiz_completed_interstitial through InterstitialAd',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.LOADED')) {
+        reject(
+          'PracticeInterstitialAd native placement must wait for the interstitial loaded event',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('interstitialAd.show()')) {
+        reject('PracticeInterstitialAd native placement must show the loaded interstitial');
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.ERROR')) {
+        reject('PracticeInterstitialAd native placement must clear load state on ad errors');
+        routeIsValid = false;
+      }
+      if (
+        !practiceInterstitialNativeSource.includes(
+          `getPlatformAdUnitId('${spec.placement}', Platform.OS)`,
+        )
+      ) {
+        reject(
+          `PracticeInterstitialAd native placement must resolve the ${spec.placement} unit by platform`,
+        );
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(practiceInterstitialNativeSource)) {
+        reject(
+          `PracticeInterstitialAd native placement must gate ${spec.placement} through consent-aware shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('useMobileAdsConsent')) {
+        reject(
+          'PracticeInterstitialAd native placement must initialize only through the consent hook',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('requestNonPersonalizedAdsOnly')) {
+        reject(
+          'PracticeInterstitialAd native placement must pass non-personalized ad request options',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('lastInterstitialShowKey === showKey')) {
+        reject(
+          'PracticeInterstitialAd native placement must show at most once per answer feedback key',
+        );
         routeIsValid = false;
       }
     }

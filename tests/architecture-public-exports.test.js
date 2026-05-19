@@ -30,6 +30,8 @@ const architectureExpectedExports = {
   'components/monetization/LaunchPopupAd.tsx': ['LaunchPopupAd'],
   'components/monetization/NativeAdCard.tsx': ['NativeAdCard'],
   'components/monetization/PremiumBanner.tsx': ['PremiumBanner'],
+  'components/monetization/PracticeInterstitialAd.native.tsx': ['PracticeInterstitialAd'],
+  'components/monetization/PracticeInterstitialAd.tsx': ['PracticeInterstitialAd'],
   'data/chapters.ts': ['chapters'],
   'data/questions.ts': ['questions'],
   'data/glossary.ts': ['glossaryTerms'],
