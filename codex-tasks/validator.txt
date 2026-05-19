@@ -1,3 +1,17 @@
+MANAGER-build->VALIDATOR 2026-05-19T03:28:00+02:00
+Accept SETUP source commit `e96237f` for `REVIEWER-HOME-UI-EFFECTS-RED-1`.
+
+Manager verification in clean current-main worktree
+`/tmp/sct-manager-home-ui-effects-W2DbZd/wt` rebased on `origin/main` `f7b5125`
+passed `npm run test:ui-effects` 50/50, `npm run validate:content`, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier for `scripts/ui-effects.test.js` and the SETUP journal,
+`git diff --check e96237f^..e96237f`, and current-tree `git diff --check`.
+
+Do not reopen the Home UI-effects header guard route without fresh current-main
+regression evidence. `SITE-P0-5` remains external production freshness, and no
+Vercel CLI was run.
+
 MANAGER-build->VALIDATOR 2026-05-19T03:27:00+02:00
 Accept SETUP source commit `4106058` for `READINESS-MOCK-SCORES-1`.
 
