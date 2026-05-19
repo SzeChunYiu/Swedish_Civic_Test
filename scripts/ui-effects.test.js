@@ -458,6 +458,30 @@ test('custom pressed controls mirror false checked and expanded state to web ari
   assert.doesNotMatch(provenanceBadgeSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('settings controls use token pressed feedback on all direct controls', () => {
+  const source = read('app/settings.tsx');
+
+  assert.match(source, /colors, motion, radius, shadows, space, typography/);
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*language === value \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.secondaryButton,[\s\S]*pressed \? styles\.secondaryButtonPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*styles\.goalPill,[\s\S]*selected \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(source, /controlPressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(
+    source,
+    /secondaryButtonPressed: \{[\s\S]*backgroundColor: colors\.accentActive,[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings route remains scrollable on narrow mobile viewports', () => {
   const source = read('app/settings.tsx');
 
@@ -701,8 +725,7 @@ test('practice and routed quiz answer options expose selected state', () => {
 
   assert.match(answerOptionSource, /selected = false/);
   assert.match(answerOptionSource, /selected\?: boolean/);
-  assert.match(answerOptionSource, /const checked = selected;/);
-  assert.match(answerOptionSource, /accessibilityState=\{\{ checked, disabled, selected \}\}/);
+  assert.match(answerOptionSource, /accessibilityState=\{\{ disabled, selected \}\}/);
   assert.match(practiceSource, /selected=\{hasSelectedAnswer && selectedOptionId === option\.id\}/);
   assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
 });
@@ -833,6 +856,18 @@ test('learn route chapter links announce chapter progress', () => {
   assert.match(source, /subtitle=\{routeCopy\.sectionSubtitle\}/);
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy>/);
   assert.match(source, /const copy = chapterLinkCopy\[language\]/);
+  assert.match(
+    source,
+    /function buildChapterProgressById\(completedQuestionIds: readonly string\[\]\)/,
+  );
+  assert.match(source, /const chapterProgressById = useMemo\(/);
+  assert.match(source, /buildChapterProgressById\(completedQuestionIds\)/);
+  assert.doesNotMatch(source, /function questionCountForChapter/);
+  assert.doesNotMatch(source, /function completedCountForChapter/);
+  assert.doesNotMatch(
+    source,
+    /questions\.filter\(\s*\(question\) => question\.chapterId === chapter\.id/,
+  );
   assert.match(source, /function getChapterLinkAccessibilityLabel/);
   assert.match(source, /Öppna kapitel \$\{primaryName\}/);
   assert.match(source, /Engelskt namn: \$\{secondaryName\}/);
@@ -1016,6 +1051,11 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
 test('native ads use Google Mobile Ads while web keeps a safe preview component', () => {
   const webSource = read('components/monetization/AdBanner.tsx');
   const nativeSource = read('components/monetization/AdBanner.native.tsx');
+  const webInterstitialSource = read('components/monetization/PracticeInterstitialAd.tsx');
+  const nativeInterstitialSource = read(
+    'components/monetization/PracticeInterstitialAd.native.tsx',
+  );
+  const practiceSource = read('app/(tabs)/practice.tsx');
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
@@ -1046,6 +1086,15 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
   assert.match(nativeSource, /<BannerAd/);
+  assert.match(practiceSource, /<PracticeInterstitialAd showKey=/);
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(webInterstitialSource, /shouldShowAd\('quiz_completed_interstitial'/);
+  assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
+  assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
+  assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
@@ -1062,7 +1111,8 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.match(source, /useSettingsStore/);
-  assert.match(source, /const copy = nativeAdCardCopy\[language\]/);
+  assert.match(source, /const unit = getAdUnit\('results_native'\);/);
+  assert.match(source, /const copy = getNativeAdCardCopy\(language, unit\);/);
   assert.match(
     source,
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
@@ -1071,13 +1121,17 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   assert.match(source, /\{copy\.title\}/);
   assert.match(source, /\{copy\.meta\}/);
   assert.match(copySource, /const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy>/);
+  assert.match(copySource, /getNativeAdCardCopy/);
   assert.match(copySource, /Inbyggd testannons/);
-  assert.match(copySource, /Sponsrad studieplacering/);
-  assert.match(copySource, /Förhandsvisning av AdMob-testplacering/);
+  assert.match(copySource, /AdMob-testannons/);
+  assert.match(copySource, /Annons från Google AdMob/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /Test native ad/);
-  assert.match(copySource, /Sponsored study placement/);
+  assert.match(copySource, /Google AdMob ad/);
   assert.match(copySource, /AdMob test placement preview/);
+  assert.doesNotMatch(copySource, new RegExp(['Sponsrad', 'studieplacering'].join('\\s+'), 'i'));
+  assert.match(nativeSource, /const unit = getAdUnit\('results_native'\);/);
+  assert.match(nativeSource, /const copy = getNativeAdCardCopy\(language, unit\);/);
   assert.match(nativeSource, /<NativeAdView accessible=\{false\}/);
   assert.match(nativeSource, /accessibilityRole="summary"/);
   assert.match(
@@ -1214,7 +1268,7 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   assert.doesNotMatch(read('components/learning/Flashcard.tsx'), /front\s*=\s*['"]Front/);
   assert.doesNotMatch(read('components/learning/Flashcard.tsx'), /back\s*=\s*['"]Back/);
   assert.match(read('lib/monetization/adCopy.ts'), /AdMob test placement preview/);
-  assert.match(read('lib/monetization/adCopy.ts'), /Förhandsvisning av AdMob-testplacering/);
+  assert.match(read('lib/monetization/adCopy.ts'), /Förhandsvisning som inte visas/);
   assert.match(read('components/quiz/ExplanationPanel.tsx'), /Explanation unavailable/);
   assert.match(read('lib/quiz/questionText.ts'), /Fråga saknas/);
   assert.match(read('lib/quiz/questionText.ts'), /Question unavailable/);
@@ -1275,6 +1329,29 @@ test('home screen surfaces focused review copy and review action', () => {
   assert.match(source, /href="\/mistakes"/);
 });
 
+test('home screen surfaces a guided civic readiness path', () => {
+  const source = read('app/(tabs)/home.tsx');
+  const componentSource = read('components/learning/GuidedPracticePath.tsx');
+
+  assert.match(source, /GuidedPracticePath/);
+  assert.match(source, /Väg från grund till provträning/);
+  assert.match(source, /Guided path from basics to exam practice/);
+  assert.match(source, /Daglig övning/);
+  assert.match(source, /Daily practice/);
+  assert.match(source, /Fortsätt på nästa kapitel/);
+  assert.match(source, /Continue the next chapter/);
+  assert.match(source, /\['ch01', 'ch02', 'ch03', 'ch04'\]/);
+  assert.match(source, /\['ch05', 'ch06', 'ch07', 'ch08', 'ch09'\]/);
+  assert.match(source, /\['ch10', 'ch11', 'ch12', 'ch13'\]/);
+  assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
+  assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
+  assert.match(source, /dailyProgress=\{progress\}/);
+  assert.match(componentSource, /href="\/practice"/);
+  assert.match(componentSource, /ProgressBar language=\{language\} progress=\{stage\.progress\}/);
+  assert.match(componentSource, /minHeight: space\[6\]/);
+  assert.doesNotMatch(`${source}\n${componentSource}`, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('home shell copy follows Swedish and English settings language', () => {
   const source = read('app/(tabs)/home.tsx');
 
@@ -1288,6 +1365,8 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
+  assert.match(source, /<GuidedPracticePath/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /copy\.studyLoopItems\[index\]/);
   assert.match(source, /\{itemCopy\.label\}/);
