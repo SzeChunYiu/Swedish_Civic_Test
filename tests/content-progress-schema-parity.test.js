@@ -42,6 +42,10 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /mockExamSessions: MockExamProgress\[\];/);
   assert.match(progressStore, /streakFreezeState: StreakFreezeState;/);
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
+  assert.match(progressStore, /calculateAnswerXp, calculateQuizCompletionXp/);
+  assert.match(progressStore, /const existingSession = state\.mockExamSessions\.find/);
+  assert.match(progressStore, /const completionXp = existingSession/);
+  assert.match(progressStore, /totalXp: state\.totalXp \+ completionXp,/);
   assert.match(
     progressStore,
     /setStreakFreezeState: \(streakFreezeState: StreakFreezeState\) => void;/,

@@ -10232,7 +10232,23 @@ function validateProgressStoreSchemaParity() {
       'streakFreezeState: createInitialFreezeState(),',
       'empty progress must initialize streak-freeze state',
     ],
+    [
+      "import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';",
+      'progress store must import quiz completion XP rules',
+    ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
+    [
+      'const existingSession = state.mockExamSessions.find(',
+      'mock exam completion XP must key idempotency by existing session id',
+    ],
+    [
+      'const completionXp = existingSession ? 0 : calculateQuizCompletionXp({',
+      'new mock exam sessions must receive quiz completion XP exactly once',
+    ],
+    [
+      'totalXp: state.totalXp + completionXp,',
+      'mock exam completion XP must update persisted total XP',
+    ],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
     ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
     ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
