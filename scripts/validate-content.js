@@ -10397,6 +10397,10 @@ function validateSettingsStoreSchemaParity() {
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   const requiredSnippets = [
     ["createMMKV({ id: 'settings' })", 'settings storage must use the stable settings MMKV id'],
+    [
+      'language = settingsStorage?.getString(languageKey);',
+      'readLanguage must read the persisted language inside a guarded MMKV read',
+    ],
     ['language: readLanguage()', 'SettingsState must initialize language from persisted storage'],
     [
       'audioEnabled: readAudioEnabled()',
@@ -10405,6 +10409,14 @@ function validateSettingsStoreSchemaParity() {
     [
       'dailyGoalAnswers: readDailyGoalAnswers()',
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
+    ],
+    [
+      'storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
+      'readAudioEnabled must read the persisted audioEnabled boolean inside a guarded MMKV read',
+    ],
+    [
+      'storedValue = settingsStorage?.getNumber(dailyGoalKey);',
+      'readDailyGoalAnswers must read the persisted daily goal inside a guarded MMKV read',
     ],
     [
       'function normalizeDailyGoalAnswers(answerCount: number | undefined): number',
@@ -10597,9 +10609,7 @@ function validateSettingsAudioParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (
-    !normalizedSettingsStore.includes(
-      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
-    )
+    !normalizedSettingsStore.includes('storedValue = settingsStorage?.getBoolean(audioEnabledKey);')
   ) {
     reject('readAudioEnabled must read the persisted audioEnabled boolean');
   }
@@ -10943,8 +10953,12 @@ function validateProgressStoreSchemaParity() {
   const requiredSnippets = [
     ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
     [
-      'const rawProgress = progressStorage?.getString(progressStateKey);',
-      'readProgress must read persisted JSON through progressStateKey',
+      'rawProgress = progressStorage?.getString(progressStateKey);',
+      'readProgress must read persisted JSON through progressStateKey inside a guarded MMKV read',
+    ],
+    [
+      'catch { return emptyProgress; }',
+      'readProgress must fall back to empty progress when persisted MMKV reads throw',
     ],
     [
       'return normalizeProgress(JSON.parse(rawProgress));',
