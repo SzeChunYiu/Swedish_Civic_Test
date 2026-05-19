@@ -843,7 +843,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
-const EXPECTED_SPEECH_RUNTIME_CASES = 4;
+const EXPECTED_SPEECH_RUNTIME_CASES = 5;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
@@ -2288,6 +2288,10 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
 ];
 const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
+    label: 'React playback state imports',
+    pattern: /import \{ useCallback, useEffect, useRef, useState \} from 'react';/,
+  },
+  {
     label: 'shared Button import',
     pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
   },
@@ -2315,7 +2319,12 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'localized state-specific visible labels',
     pattern:
-      /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = \{[\s\S]*disabledLabel: 'Ljud är avstängt'[\s\S]*enabledLabel: 'Lyssna på den svenska frågan och svaren'[\s\S]*unavailableLabel: 'Ljud saknas för den här frågan'[\s\S]*disabledLabel: 'Audio is disabled'[\s\S]*enabledLabel: 'Listen to the Swedish question and answers'[\s\S]*unavailableLabel: 'Audio is unavailable for this question'/,
+      /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = \{[\s\S]*disabledLabel: 'Ljud är avstängt'[\s\S]*enabledLabel: 'Lyssna på den svenska frågan och svaren'[\s\S]*playingLabel: 'Stoppa ljudet'[\s\S]*unavailableLabel: 'Ljud saknas för den här frågan'[\s\S]*disabledLabel: 'Audio is disabled'[\s\S]*enabledLabel: 'Listen to the Swedish question and answers'[\s\S]*playingLabel: 'Stop audio'[\s\S]*unavailableLabel: 'Audio is unavailable for this question'/,
+  },
+  {
+    label: 'active prompt playback tracking',
+    pattern:
+      /const \[activeSpeechText, setActiveSpeechText\] = useState<string \| null>\(null\);[\s\S]*const activeSpeechRunIdRef = useRef\(0\);[\s\S]*const isSpeaking = canPlayAudio && activeSpeechText === speechText;/,
   },
   {
     label: 'accessibility label follows localized visible label',
@@ -2324,7 +2333,7 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'localized state-specific accessibility hint',
     pattern:
-      /disabledHint: 'Aktivera ljud i Inställningar för att höra svensk text\.'[\s\S]*enabledHint: 'Spelar upp den svenska frågan och svarsalternativen\.'[\s\S]*unavailableHint: 'Ljud behöver svensk frågetext före uppspelning\.'[\s\S]*disabledHint: 'Enable audio in Settings to hear Swedish text\.'[\s\S]*enabledHint: 'Plays the Swedish question and answer options aloud\.'[\s\S]*unavailableHint: 'Audio needs Swedish question text before playback\.'/,
+      /disabledHint: 'Aktivera ljud i Inställningar för att höra svensk text\.'[\s\S]*enabledHint: 'Spelar upp den svenska frågan och svarsalternativen\.'[\s\S]*playingHint: 'Stoppar uppspelningen av den svenska frågan och svaren\.'[\s\S]*unavailableHint: 'Ljud behöver svensk frågetext före uppspelning\.'[\s\S]*disabledHint: 'Enable audio in Settings to hear Swedish text\.'[\s\S]*enabledHint: 'Plays the Swedish question and answer options aloud\.'[\s\S]*playingHint: 'Stops playback of the Swedish question and answers\.'[\s\S]*unavailableHint: 'Audio needs Swedish question text before playback\.'/,
   },
   {
     label: 'native button accessibility wiring',
@@ -2332,16 +2341,32 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
       /<Button[\s\S]*accessibilityHint=\{accessibilityHint\}[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*accessibilityRole="button"/,
   },
   {
-    label: 'disabled accessibility state follows playback guard',
-    pattern: /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/,
+    label: 'disabled and active playback accessibility state follows playback guard',
+    pattern:
+      /accessibilityState=\{\{ disabled: !canPlayAudio, busy: isSpeaking, selected: isSpeaking \}\}/,
   },
   {
     label: 'disabled interaction follows playback guard',
     pattern: /disabled=\{!canPlayAudio\}/,
   },
   {
+    label: 'active playback stop action',
+    pattern:
+      /if \(isSpeaking\) \{[\s\S]*activeSpeechRunIdRef\.current \+= 1;[\s\S]*setActiveSpeechText\(null\);[\s\S]*stopSpeech\(\);[\s\S]*return;/,
+  },
+  {
+    label: 'new playback run state',
+    pattern:
+      /const speechRunId = activeSpeechRunIdRef\.current \+ 1;[\s\S]*activeSpeechRunIdRef\.current = speechRunId;[\s\S]*setActiveSpeechText\(speechText\);[\s\S]*stopSpeech\(\);/,
+  },
+  {
+    label: 'speech lifecycle callbacks reset active state',
+    pattern:
+      /speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onError: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onStopped: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*\}\);/,
+  },
+  {
     label: 'trimmed speech playback',
-    pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
+    pattern: /if \(!canPlayAudio\) return;[\s\S]*speakSwedish\(speechText, \{/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -12215,6 +12240,26 @@ function validateSpeechRuntimeParity() {
     reject(
       `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
     );
+  }
+
+  const onDone = () => {};
+  const onError = () => {};
+  const onStopped = () => {};
+  resetSpeechEvents();
+  speakSwedish('Hej igen', { onDone, onError, onStopped });
+  const callbackSpeakEvent = speechEvents[0];
+  if (
+    speechEvents.length === 1 &&
+    callbackSpeakEvent &&
+    callbackSpeakEvent.type === 'speak' &&
+    callbackSpeakEvent.options &&
+    callbackSpeakEvent.options.onDone === onDone &&
+    callbackSpeakEvent.options.onError === onError &&
+    callbackSpeakEvent.options.onStopped === onStopped
+  ) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must forward speech lifecycle callbacks to Expo Speech');
   }
 
   resetSpeechEvents();
