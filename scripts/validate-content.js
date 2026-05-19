@@ -8260,25 +8260,38 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
-  let adBannerSource = '';
-  let nativeAdCardSource = '';
+  let nativeAdBannerSource = '';
 
   try {
-    adBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    nativeAdBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
       'utf8',
     );
   } catch (error) {
-    reject(`AdBanner could not be read for web fallback parity: ${error.message}`);
+    reject(`components/monetization/AdBanner.native.tsx could not be read: ${error.message}`);
   }
 
-  try {
-    nativeAdCardSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`NativeAdCard could not be read for web fallback parity: ${error.message}`);
+  if (nativeAdBannerSource) {
+    if (!nativeAdBannerSource.includes('const unit = getAdUnit(placement);')) {
+      reject('AdBanner native placement must inspect the configured ad unit');
+    }
+    if (
+      !/const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/.test(
+        nativeAdBannerSource,
+      )
+    ) {
+      reject('AdBanner native placement must derive the status label from unit.testOnly');
+    }
+    if (
+      /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel,\s*copy\.liveStatus\)\}/.test(
+        nativeAdBannerSource,
+      )
+    ) {
+      reject('AdBanner native accessibility label must not hardcode live ad status');
+    }
+    if (!/accessibilityLabel=\{accessibilityLabel\}/.test(nativeAdBannerSource)) {
+      reject('AdBanner native placement must pass the derived accessibility label');
+    }
   }
 
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];

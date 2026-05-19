@@ -31,8 +31,12 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
-  const premiumBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+  const nativeAdCardNativeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
+    'utf8',
+  );
+  const nativeAdBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
     'utf8',
   );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
@@ -69,8 +73,48 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(premiumBannerSource, /Den kostnadsfria versionen visar annonser från AdMob/);
   assert.match(adCopySource, /Annons i studieflödet/);
   assert.doesNotMatch(
-    `${premiumBannerSource}\n${adCopySource}`,
-    /Gratisstudier\s+visar|Sponsrad\s+studieplacering/i,
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
+  );
+  assert.match(nativeAdCardNativeSource, /NativeAsset/);
+  for (const [assetType, directChild] of [
+    ['ICON', 'Image'],
+    ['HEADLINE', 'Text'],
+    ['BODY', 'Text'],
+    ['ADVERTISER', 'Text'],
+    ['CALL_TO_ACTION', 'Text'],
+  ]) {
+    assert.match(
+      nativeAdCardNativeSource,
+      new RegExp(
+        `<NativeAsset assetType=\\{NativeAssetType\\.${assetType}\\}>\\s*<${directChild}\\b`,
+      ),
+    );
+  }
+  assert.match(nativeAdCardNativeSource, /NativeMediaView/);
+  assert.match(
+    nativeAdCardNativeSource,
+    /<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/,
+  );
+  assert.match(nativeAdCardNativeSource, /minHeight:\s*space\[6\]/);
+  assert.match(nativeAdCardNativeSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeAdCardNativeSource, /getAdUnit\('results_native'\)/);
+  assert.match(nativeAdCardNativeSource, /getNativeAdCardCopy\(language, unit\)/);
+  assert.match(nativeAdCardNativeSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
+  assert.match(
+    nativeAdCardNativeSource,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
+  assert.match(nativeAdBannerSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(
+    nativeAdBannerSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
+  assert.match(nativeAdBannerSource, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.doesNotMatch(
+    nativeAdBannerSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
@@ -454,7 +498,40 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('ad placement route parity rejects literal Swedish monetization copy', () => {
+test('ad placement route parity rejects hardcoded native banner live status', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+        'const adStatusLabel = copy.liveStatus;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner native placement must derive the status label from unit\.testOnly/,
+  );
+});
+
+test('ad placement route parity rejects placeholder-only native results ads', () => {
   const result = spawnSync(
     process.execPath,
     [
