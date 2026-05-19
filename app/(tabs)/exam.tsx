@@ -353,7 +353,7 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion()
+    void recordExamCompletion(examSessionId)
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })

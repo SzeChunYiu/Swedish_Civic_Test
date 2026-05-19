@@ -50,6 +50,7 @@ test('exam route shell and review copy follows the persisted settings language',
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,
   );
   assert.match(source, /recordMockExamSession\(\{/);
+  assert.match(source, /recordExamCompletion\(examSessionId\)/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
   assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
 });
