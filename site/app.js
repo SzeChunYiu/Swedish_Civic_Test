@@ -97,9 +97,9 @@ const i18n = window.i18n = {
     "nav.cta": "Get the app ↗",
 
     "hero.eyebrow": "Unofficial · Free MVP · Source-backed questions",
-    "hero.h1a": "Pass the test.",
-    "hero.h1b": "Earn the passport.",
-    "hero.h1c": "Brag at midsommar.",
+    "hero.h1a": "Study the material.",
+    "hero.h1b": "Practice with sources.",
+    "hero.h1c": "Feel calmer on exam day.",
     "hero.lede": "A friendly, unofficial study app for Sweden's medborgarskapsprov. Bite-sized chapters, smart practice, and a mock exam that feels less scary than small talk with your neighbour.",
     "hero.cta1": "Start studying — it's free",
     "hero.cta2": "Try a question",
@@ -201,7 +201,7 @@ const i18n = window.i18n = {
 
     "how.eyebrow": "How it works",
     "how.h1": "Study lagom.",
-    "how.h2": "Pass big.",
+    "how.h2": "Study smart.",
     "how.deck": "Three modes, one app. Use them in any order — most people end up cycling through all three the week before the exam.",
     "how.s1.t": "Learn — short chapters",
     "how.s1.p": "Read a 5-minute explainer, then a tiny quiz. Like having a patient Swedish friend who actually finishes their sentences.",
@@ -346,7 +346,7 @@ const i18n = window.i18n = {
     "sources.s5.p2": "See a question that disagrees with its cited source? <a href=\"#/support\">Tell us</a> — corrections are usually live within a week.",
 
     "footer.brag1": "Study lagom.",
-    "footer.brag2": "Pass big.",
+    "footer.brag2": "Study smart.",
     "footer.h.app": "The app",
     "footer.app.1": "Why it exists",
     "footer.app.2": "Try a question",
@@ -391,9 +391,9 @@ const i18n = window.i18n = {
     "nav.cta": "Hämta appen ↗",
 
     "hero.eyebrow": "Inofficiell · Gratis MVP · Källstödda frågor",
-    "hero.h1a": "Klara provet.",
-    "hero.h1b": "Få passet.",
-    "hero.h1c": "Skryt på midsommar.",
+    "hero.h1a": "Plugga materialet.",
+    "hero.h1b": "Öva med källor.",
+    "hero.h1c": "Känn dig lugnare på provdagen.",
     "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett provexempel som känns mindre läskigt än småprat med grannen.",
     "hero.cta1": "Börja plugga — det är gratis",
     "hero.cta2": "Testa en fråga",
@@ -495,7 +495,7 @@ const i18n = window.i18n = {
 
     "how.eyebrow": "Så funkar det",
     "how.h1": "Plugga lagom.",
-    "how.h2": "Klara stort.",
+    "how.h2": "Plugga smart.",
     "how.deck": "Tre lägen, en app. Använd i valfri ordning — de flesta cyklar genom alla tre veckan innan provet.",
     "how.s1.t": "Lär — korta kapitel",
     "how.s1.p": "Läs en 5-minuters förklaring, gör sedan ett litet quiz. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
@@ -538,11 +538,11 @@ const i18n = window.i18n = {
     "privacy.s2.t": "Inget konto krävs",
     "privacy.s2.p": "MVP:n kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.",
     "privacy.s3.t": "Lokala studieframsteg",
-    "privacy.s3.p": "Framsteg, inställningar, misstag, XP, streaks, märken, bokmärken och ljudpreferenser lagras lokalt på din enhet. De lämnar den aldrig. Avinstallerar du appen är de borta — bra att veta.",
+    "privacy.s3.p": "Framsteg, inställningar, misstag, XP, studiesviter, märken, bokmärken och ljudpreferenser lagras lokalt på din enhet. De lämnar den aldrig. Avinstallerar du appen är de borta — bra att veta.",
     "privacy.s4.t": "Nuvarande datahantering",
     "privacy.s4.callout.b": "På klarspråk:",
     "privacy.s4.callout.p": "studieframsteg och svar stannar lokalt; annonssystem får inte dem.",
-    "privacy.s4.p": "Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, streaks, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.",
+    "privacy.s4.p": "Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, studiesviter, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.",
     "privacy.s5.t": "Annonser och köp",
     "privacy.s5.p": "Den här webbplatsen använder Google AdSense. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.",
     "privacy.s6.t": "Ändringar & kontakt",
@@ -640,7 +640,7 @@ const i18n = window.i18n = {
     "sources.s5.p2": "Ser du en fråga som inte stämmer med sin källa? <a href=\"#/support\">Berätta för oss</a> — rättelser är oftast live inom en vecka.",
 
     "footer.brag1": "Plugga lagom.",
-    "footer.brag2": "Klara stort.",
+    "footer.brag2": "Plugga smart.",
     "footer.h.app": "Appen",
     "footer.app.1": "Varför den finns",
     "footer.app.2": "Testa en fråga",
@@ -1041,6 +1041,50 @@ function smtQuizQuestionDisclaimer(lang) {
     : "Independent study practice, not a real exam or an official UHR question.";
 }
 
+const SMT_QUIZ_PROVENANCE_COPY = {
+  uhr: {
+    en: { label: "UHR", description: "Directly from UHR's study material Sverige i fokus." },
+    sv: { label: "UHR", description: "Direkt från UHR:s utbildningsmaterial Sverige i fokus." },
+  },
+  derived: {
+    en: { label: "Supplementary", description: "Variant generated from a UHR question." },
+    sv: { label: "Tillägg", description: "Variant som genererats från en UHR-fråga." },
+  },
+  editorial: {
+    en: { label: "Editorial", description: "Hand-written editorial context." },
+    sv: { label: "Redaktionell", description: "Redaktionellt skrivet sammanhang." },
+  },
+};
+
+function smtQuizQuestionProvenance(question) {
+  const direct = question && question.questionProvenance;
+  if (direct === "uhr" || direct === "derived" || direct === "editorial") return direct;
+  const tags = Array.isArray(question && question.tags) ? question.tags : [];
+  if (tags.includes("editorial")) return "editorial";
+  if (tags.includes("published-variant")) return "derived";
+  return "uhr";
+}
+
+function smtQuizProvenanceBadge(question, lang) {
+  const provenance = smtQuizQuestionProvenance(question);
+  const copy = SMT_QUIZ_PROVENANCE_COPY[provenance][lang] || SMT_QUIZ_PROVENANCE_COPY[provenance].en;
+  const ariaPrefix = lang === "sv" ? "Källtyp" : "Provenance";
+  const notePrefix = lang === "sv" ? "Källanteckning" : "Source note";
+  const label = smtQuizEscapeHtml(copy.label);
+  const note = smtQuizEscapeHtml(`${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`);
+  return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
+}
+
+function smtQuizSourceRow(question, lang, citationClassName = "quiz__source") {
+  const citation = smtQuizEscapeHtml(smtQuizSourceCitation(question, lang));
+  return `
+    <div class="quiz__source-row">
+      ${smtQuizProvenanceBadge(question, lang)}
+      <p class="${citationClassName}">${citation}</p>
+    </div>
+  `;
+}
+
 const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE = 0.35;
 
 function smtQuizHashString(value) {
@@ -1235,7 +1279,7 @@ function smtQuizRender() {
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
   const sessionId = `practice:${scope}`;
-  const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
+  const sourceRow = smtQuizSourceRow(q, lang);
   const dots = Array.from({ length: n }, (_, k) => {
     let cls = "";
     if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === questions[k].answer ? "is-right" : "is-wrong";
@@ -1260,12 +1304,11 @@ function smtQuizRender() {
   let feedback = "";
   if (answered) {
     const right = ans === q.answer;
-    const feedbackSource = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
     const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
     feedback = `
       <div class="quiz__feedback ${right ? "" : "is-wrong"}">
         <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
-        <p class="quiz__feedback-source">${feedbackSource}</p>
+        ${smtQuizSourceRow(q, lang, "quiz__feedback-source")}
         <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
     `;
@@ -1282,7 +1325,7 @@ function smtQuizRender() {
     <div class="quiz__card">
       <div class="quiz__crumb">${q.chapter}</div>
       <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
-      <p class="quiz__source">${sourceCitation}</p>
+      ${sourceRow}
       <div class="quiz__opts">${opts}</div>
       ${feedback}
       <div class="quiz__actions">
