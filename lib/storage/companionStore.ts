@@ -10,65 +10,38 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import { DEFAULT_COMPANION_ID, isMascotId, type MascotId } from '../mascot/catalog';
-import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 const SELECTED_ID_KEY = 'companion.selectedId.v1';
-const companionStorageId = 'companion';
 
 let companionStorage: MMKV | null = null;
 try {
-  companionStorage = createMMKV({ id: companionStorageId });
+  companionStorage = createMMKV({ id: 'companion' });
 } catch {
   companionStorage = null;
 }
 
-function readSelected(): {
-  selectedId: MascotId;
-  persistenceWarning: RecoverablePersistenceWarning | null;
-} {
-  const result = readRecoverably(companionStorage, companionStorageId, SELECTED_ID_KEY, () =>
-    companionStorage?.getString(SELECTED_ID_KEY),
-  );
-  return {
-    selectedId: resolveCompanionId(result.value),
-    persistenceWarning: result.warning,
-  };
+function readSelected(): MascotId {
+  const raw = companionStorage?.getString(SELECTED_ID_KEY);
+  return isMascotId(raw) ? raw : DEFAULT_COMPANION_ID;
 }
 
 type CompanionState = {
   selectedId: MascotId;
-  persistenceWarning: RecoverablePersistenceWarning | null;
   setSelected: (id: MascotId) => void;
   reset: () => void;
-  clearPersistenceWarning: () => void;
 };
 
-const initial = readSelected();
-
 export const useCompanionStore = create<CompanionState>((set) => ({
-  selectedId: initial.selectedId,
-  persistenceWarning: initial.persistenceWarning,
+  selectedId: readSelected(),
   setSelected: (id) => {
     if (!isMascotId(id)) return;
-    const persistenceWarning = writeRecoverably(
-      companionStorage,
-      companionStorageId,
-      SELECTED_ID_KEY,
-      id,
-    );
-    set({ selectedId: id, persistenceWarning });
+    companionStorage?.set(SELECTED_ID_KEY, id);
+    set({ selectedId: id });
   },
   reset: () => {
-    const persistenceWarning = writeRecoverably(
-      companionStorage,
-      companionStorageId,
-      SELECTED_ID_KEY,
-      DEFAULT_COMPANION_ID,
-    );
-    set({ selectedId: DEFAULT_COMPANION_ID, persistenceWarning });
+    companionStorage?.set(SELECTED_ID_KEY, DEFAULT_COMPANION_ID);
+    set({ selectedId: DEFAULT_COMPANION_ID });
   },
-  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 /**

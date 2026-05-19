@@ -589,35 +589,13 @@ async function validateRemoveAdsReceipt(
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
 }
 
-async function runWithPurchaseProviderCleanup<T>(
-  provider: RemoveAdsPurchaseProvider,
-  operation: () => Promise<T>,
-): Promise<T> {
-  try {
-    const result = await operation();
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // A successful or pending purchase outcome must not be replaced by cleanup failure.
-    }
-    return result;
-  } catch (error) {
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // Preserve the original purchase, restore, or validation error for the caller.
-    }
-    throw error;
-  }
-}
-
 export async function buyRemoveAds({
   provider = createNativePurchaseProvider(),
   storage = createSecureStorePurchaseStorage(),
 }: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
   await provider.connect();
 
-  return runWithPurchaseProviderCleanup(provider, async () => {
+  try {
     const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);
     if (!purchase || !isRemoveAdsPurchase(purchase)) {
       return createResult('pending', await getPurchaseEntitlements({ storage }));
@@ -636,7 +614,9 @@ export async function buyRemoveAds({
       storage,
     });
     return createResult('purchased', entitlements, purchase);
-  });
+  } finally {
+    await provider.disconnect?.();
+  }
 }
 
 export async function restoreRemoveAdsPurchase({
@@ -645,7 +625,7 @@ export async function restoreRemoveAdsPurchase({
 }: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
   await provider.connect();
 
-  return runWithPurchaseProviderCleanup(provider, async () => {
+  try {
     const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
     const purchase = purchases.find(isRemoveAdsPurchase);
     if (!purchase) {
@@ -664,5 +644,7 @@ export async function restoreRemoveAdsPurchase({
       storage,
     });
     return createResult('restored', entitlements, purchase);
-  });
+  } finally {
+    await provider.disconnect?.();
+  }
 }

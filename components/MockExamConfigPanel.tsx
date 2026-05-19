@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import type { AccessibilityActionEvent, StyleProp, ViewStyle } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
@@ -32,12 +32,12 @@ type MockExamConfigPanelCopy = {
   incrementDurationAccessibilityLabel: string;
   incrementQuestionAccessibilityLabel: string;
   localSaveLabel: string;
+  passingAccessibilityLabel: (label: string, percent: number) => string;
+  passingLabel: string;
   practiceLabel: string;
   questionCountLabel: string;
   resetLabel: string;
-  scoreModeLabel: string;
   selectedChaptersValueLabel: (count: number) => string;
-  sourceScopeLabel: string;
   startLabel: string;
 };
 
@@ -54,12 +54,12 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     incrementDurationAccessibilityLabel: 'Öka provtid',
     incrementQuestionAccessibilityLabel: 'Öka antal frågor',
     localSaveLabel: 'Sparas lokalt',
+    passingAccessibilityLabel: (label, percent) => `${label} ${percent} procent`,
+    passingLabel: 'Gräns för godkänt',
     practiceLabel: 'Öva först',
     questionCountLabel: 'Frågor',
     resetLabel: 'Återställ',
-    scoreModeLabel: 'Övningsresultat',
     selectedChaptersValueLabel: (count) => (count === 1 ? '1 valt' : `${count} valda`),
-    sourceScopeLabel: 'UHR-baserade frågor',
     startLabel: 'Starta provet',
   },
   en: {
@@ -74,12 +74,12 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     incrementDurationAccessibilityLabel: 'Increase exam duration',
     incrementQuestionAccessibilityLabel: 'Increase question count',
     localSaveLabel: 'Saved locally',
+    passingAccessibilityLabel: (label, percent) => `${label} ${percent} percent`,
+    passingLabel: 'Pass',
     practiceLabel: 'Practice first',
     questionCountLabel: 'Questions',
     resetLabel: 'Reset',
-    scoreModeLabel: 'Practice result',
     selectedChaptersValueLabel: (count) => `${count} selected`,
-    sourceScopeLabel: 'UHR-based questions',
     startLabel: 'Start exam',
   },
 };
@@ -87,9 +87,9 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
 /**
  * Defaults: localized labels from settings, `minQuestionCount=5`,
  * `questionStep=1`, `minDurationMinutes=2`, `maxDurationMinutes=90`,
- * `durationStep=1`, a non-interactive summary header with
- * `accessibilityRole="summary"`, and token-sized press targets. Pass localized
- * labels and callbacks from the owning screen for screen-specific copy.
+ * `durationStep=1`, `passingPercent=75`, `accessibilityRole="summary"`,
+ * and token-sized press targets. Pass localized labels and callbacks from
+ * the owning screen for screen-specific copy.
  */
 export interface MockExamConfigPanelProps extends Omit<SurfaceProps, 'children'> {
   allChaptersLabel?: string;
@@ -121,16 +121,16 @@ export interface MockExamConfigPanelProps extends Omit<SurfaceProps, 'children'>
   onSelectAllChapters?: () => void;
   onStart?: () => void;
   onToggleChapter?: (chapterId: ChapterId) => void;
+  passingLabel?: string;
+  passingPercent?: number;
   practiceLabel?: string;
   questionCount: number;
   questionCountHint?: string;
   questionCountLabel?: string;
   questionStep?: number;
   resetLabel?: string;
-  scoreModeLabel?: string;
   selectedChapterIds?: readonly ChapterId[];
   selectedChaptersValueLabel?: (count: number) => string;
-  sourceScopeLabel?: string;
   startAccessibilityLabel?: string;
   startDisabled?: boolean;
   startLabel?: string;
@@ -209,30 +209,12 @@ function Stepper({
 }: StepperProps) {
   const canDecrement = value > min && !disabled && Boolean(onChange);
   const canIncrement = value < max && !disabled && Boolean(onChange);
-  const stepperAccessibilityActions = [
-    { name: 'decrement', label: decrementAccessibilityLabel },
-    { name: 'increment', label: incrementAccessibilityLabel },
-  ];
-  const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
-    switch (event.nativeEvent.actionName) {
-      case 'decrement':
-        if (canDecrement) onChange?.(getNextValue(value, step, -1, min, max));
-        break;
-      case 'increment':
-        if (canIncrement) onChange?.(getNextValue(value, step, 1, min, max));
-        break;
-      default:
-        break;
-    }
-  };
 
   return (
     <View
-      accessibilityActions={stepperAccessibilityActions}
       accessibilityLabel={label}
       accessibilityRole="adjustable"
       accessibilityValue={{ max, min, now: value, text: valueLabel }}
-      onAccessibilityAction={handleAccessibilityAction}
       style={styles.stepper}
     >
       <View style={styles.stepperCopy}>
@@ -316,16 +298,16 @@ export function MockExamConfigPanel({
   onSelectAllChapters,
   onStart,
   onToggleChapter,
+  passingLabel,
+  passingPercent = 75,
   practiceLabel,
   questionCount,
   questionCountHint,
   questionCountLabel,
   questionStep = 1,
   resetLabel,
-  scoreModeLabel,
   selectedChapterIds = chapters.map((chapter) => chapter.id),
   selectedChaptersValueLabel,
-  sourceScopeLabel,
   startAccessibilityLabel,
   startDisabled = false,
   startLabel,
@@ -353,13 +335,12 @@ export function MockExamConfigPanel({
   const resolvedIncrementQuestionAccessibilityLabel =
     incrementQuestionAccessibilityLabel ?? copy.incrementQuestionAccessibilityLabel;
   const resolvedLocalSaveLabel = localSaveLabel ?? copy.localSaveLabel;
+  const resolvedPassingLabel = passingLabel ?? copy.passingLabel;
   const resolvedPracticeLabel = practiceLabel ?? copy.practiceLabel;
   const resolvedQuestionCountLabel = questionCountLabel ?? copy.questionCountLabel;
   const resolvedResetLabel = resetLabel ?? copy.resetLabel;
-  const resolvedScoreModeLabel = scoreModeLabel ?? copy.scoreModeLabel;
   const resolvedSelectedChaptersValueLabelGetter =
     selectedChaptersValueLabel ?? copy.selectedChaptersValueLabel;
-  const resolvedSourceScopeLabel = sourceScopeLabel ?? copy.sourceScopeLabel;
   const resolvedStartLabel = startLabel ?? copy.startLabel;
   const safeMinQuestionCount = Math.max(0, Math.round(minQuestionCount));
   const safeMaxQuestionCount = Math.max(safeMinQuestionCount, Math.round(maxQuestionCount));
@@ -373,33 +354,28 @@ export function MockExamConfigPanel({
   const resolvedDurationValueLabel = resolvedDurationValueLabelGetter(safeDuration);
   const resolvedSelectedChaptersValueLabel =
     resolvedSelectedChaptersValueLabelGetter(selectedChapterCount);
-  const resolvedPanelAccessibilityLabel =
-    accessibilityLabel ??
-    getPanelAccessibilityLabel({
-      chaptersLabel: resolvedChaptersLabel,
-      durationLabel: resolvedDurationLabel,
-      durationValueLabel: resolvedDurationValueLabel,
-      questionCount: safeQuestionCount,
-      questionCountLabel: resolvedQuestionCountLabel,
-      selectedChaptersValueLabel: resolvedSelectedChaptersValueLabel,
-      title,
-    });
 
   return (
     <Surface
-      accessibilityRole="none"
+      accessibilityLabel={
+        accessibilityLabel ??
+        getPanelAccessibilityLabel({
+          chaptersLabel: resolvedChaptersLabel,
+          durationLabel: resolvedDurationLabel,
+          durationValueLabel: resolvedDurationValueLabel,
+          questionCount: safeQuestionCount,
+          questionCountLabel: resolvedQuestionCountLabel,
+          selectedChaptersValueLabel: resolvedSelectedChaptersValueLabel,
+          title,
+        })
+      }
+      accessibilityRole={accessibilityRole}
       elevation={elevation}
       style={[styles.panel, style]}
       tone={tone}
       {...surfaceProps}
-      accessible={false}
     >
-      <View
-        accessible
-        accessibilityLabel={resolvedPanelAccessibilityLabel}
-        accessibilityRole={accessibilityRole}
-        style={styles.header}
-      >
+      <View style={styles.header}>
         <View style={styles.headerCopy}>
           <Text variant="h2">{title}</Text>
           {subtitle ? (
@@ -408,7 +384,12 @@ export function MockExamConfigPanel({
             </Text>
           ) : null}
         </View>
-        <PillBadge variant="accent">{resolvedSourceScopeLabel}</PillBadge>
+        <PillBadge
+          accessibilityLabel={copy.passingAccessibilityLabel(resolvedPassingLabel, passingPercent)}
+          variant="accent"
+        >
+          {passingPercent}%
+        </PillBadge>
       </View>
 
       <View style={styles.controlsGrid}>
@@ -489,7 +470,11 @@ export function MockExamConfigPanel({
           </View>
         </View>
 
-        <View style={styles.chips}>
+        <View
+          accessibilityLabel={resolvedChaptersLabel}
+          accessibilityRole="summary"
+          style={styles.chips}
+        >
           {chapters.map((chapter) => {
             const selected = selectedChapterIds.some((selectedId) =>
               idsMatch(selectedId, chapter.id),
@@ -498,7 +483,6 @@ export function MockExamConfigPanel({
 
             return (
               <Pressable
-                aria-checked={selected}
                 accessibilityLabel={chapter.accessibilityLabel ?? chapter.title}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: selected, disabled }}
@@ -537,7 +521,7 @@ export function MockExamConfigPanel({
       </View>
 
       <View style={styles.metaRow}>
-        <PillBadge>{resolvedScoreModeLabel}</PillBadge>
+        <PillBadge>{`${passingPercent}% ${resolvedPassingLabel}`}</PillBadge>
         <PillBadge>{resolvedFeedbackLabel}</PillBadge>
         <PillBadge>{resolvedLocalSaveLabel}</PillBadge>
       </View>

@@ -17,18 +17,3 @@ Verification (commands + result):
 PR (number + merged?): #658 merged
 Accepted by worker? blocked on typecheck environment, research artifact complete
 Next suggested validator action: Review the Norway research note for source adequacy; do not route content import until CONTENT is cleared from current UHR-only P0 constraints.
-Lane: RESEARCH
-Host/branch: LUNARC / task/research/norway-structure-1779131638
-Role type and manager: dynamic-worker research lane; escalates to CEO/VALIDATOR
-Task / checklist item: `nordic:denmark indfoedsretsproeven - structure, topics, recent reforms, sources`
-Changed artifacts:
-- docs/research/nordic/denmark-citizenship-test.md
-- docs/parallel-sessions/journals/research.md
-Verification (commands + result):
-- Official sources opened through web tool: Dansk og Proever `Om Indfoedsretsproeven`, `Forberedelse til Indfoedsretsproeven`, `Om Medborgerskabsproeven`; SIRI winter 2025 PDF.
-- `curl -L -I --max-time 20` for all four cited official URLs: HTTP 200.
-- No project TypeScript touched; `npm run typecheck` not required for the artifact itself.
-- `git diff --check`: exit 0.
-PR (number + merged?): #1430 merged as squash commit `3e43e2322b75a8c8454abee939e0d8bb76815d9e`
-Accepted by worker? yes
-Next suggested validator action: Review the Denmark research note for source adequacy; no CONTENT import is queued while UHR-only Phase A remains the operator policy.
