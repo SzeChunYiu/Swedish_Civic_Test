@@ -7,7 +7,7 @@ export const chapters: Chapter[] = [
     nameEn: 'The country of Sweden',
     descriptionSv: 'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
     descriptionEn: 'Geography, climate, nature, population, natural resources, and climate change.',
-    questionCount: 65,
+    questionCount: 70,
   },
   {
     id: 'ch02',
