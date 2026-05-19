@@ -509,6 +509,7 @@ export default function Screen() {
     questionProgress,
     questions,
     chapters,
+    mockExamSessions,
   });
   const readinessVerdict = copy.readinessVerdicts[readiness.verdict];
   const readinessDetails = copy.readinessDetails(
