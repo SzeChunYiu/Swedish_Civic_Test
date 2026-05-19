@@ -6,75 +6,88 @@
 */
 
 (function () {
-  "use strict";
+  'use strict';
 
-  function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
-  function uid() { return "h_" + Math.random().toString(36).slice(2, 9) + Date.now().toString(36); }
+  function lang() {
+    try {
+      return localStorage.getItem('smt_lang') || 'en';
+    } catch {
+      return 'en';
+    }
+  }
+  function uid() {
+    return 'h_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+  }
   const COPY = Object.freeze({
     en: Object.freeze({
-      addNote: "Add note",
-      close: "Close",
-      delete: "Delete",
-      edit: "Edit",
-      find: "Find highlight",
-      highlight: "Highlight",
-      highlighted: "Highlighted",
-      noHighlights: "No highlights yet. Select text to mark it.",
-      note: "Note",
-      noteSaved: "Note saved",
-      noteText: "Note text",
-      remove: "Remove highlight",
-      save: "Save",
-      writeNote: "Write your note...",
+      addNote: 'Add note',
+      close: 'Close',
+      delete: 'Delete',
+      edit: 'Edit',
+      find: 'Find highlight',
+      highlight: 'Highlight',
+      highlighted: 'Highlighted',
+      noHighlights: 'No highlights yet. Select text to mark it.',
+      note: 'Note',
+      noteSaved: 'Note saved',
+      noteText: 'Note text',
+      remove: 'Remove highlight',
+      save: 'Save',
+      writeNote: 'Write your note...',
     }),
     sv: Object.freeze({
-      addNote: "Lägg till anteckning",
-      close: "Stäng",
-      delete: "Radera",
-      edit: "Redigera",
-      find: "Hitta markering",
-      highlight: "Markera",
-      highlighted: "Markerat",
-      noHighlights: "Inga markeringar än. Välj text för att markera.",
-      note: "Anteckna",
-      noteSaved: "Anteckning sparad",
-      noteText: "Anteckningstext",
-      remove: "Ta bort markering",
-      save: "Spara",
-      writeNote: "Skriv din anteckning...",
+      addNote: 'Lägg till anteckning',
+      close: 'Stäng',
+      delete: 'Radera',
+      edit: 'Redigera',
+      find: 'Hitta markering',
+      highlight: 'Markera',
+      highlighted: 'Markerat',
+      noHighlights: 'Inga markeringar än. Välj text för att markera.',
+      note: 'Anteckna',
+      noteSaved: 'Anteckning sparad',
+      noteText: 'Anteckningstext',
+      remove: 'Ta bort markering',
+      save: 'Spara',
+      writeNote: 'Skriv din anteckning...',
     }),
   });
 
   function copy() {
-    return lang() === "sv" ? COPY.sv : COPY.en;
+    return lang() === 'sv' ? COPY.sv : COPY.en;
   }
 
   function localizeButton(button, label, text) {
     if (!button) return;
     button.title = label;
-    button.setAttribute("aria-label", label);
-    if (typeof text === "string") {
+    button.setAttribute('aria-label', label);
+    if (typeof text === 'string') {
       button.textContent = text;
     }
   }
 
   function activeChapter() {
-    const hash = (location.hash || "#/").replace(/^#/, "");
+    const hash = (location.hash || '#/').replace(/^#/, '');
     const m = hash.match(/[?&]c=([^&]+)/);
-    return m ? m[1] : "intro";
+    return m ? m[1] : 'intro';
   }
   function isOnEbook() {
-    return (location.hash || "#/").replace(/^#/, "").split("?")[0] === "/ebook";
+    return (location.hash || '#/').replace(/^#/, '').split('?')[0] === '/ebook';
   }
 
   /* ---------- storage ---------- */
 
   function loadHighlights(chId) {
-    try { return JSON.parse(localStorage.getItem("smt_hl_" + chId) || "[]"); }
-    catch { return []; }
+    try {
+      return JSON.parse(localStorage.getItem('smt_hl_' + chId) || '[]');
+    } catch {
+      return [];
+    }
   }
   function saveHighlights(chId, arr) {
-    try { localStorage.setItem("smt_hl_" + chId, JSON.stringify(arr)); } catch {}
+    try {
+      localStorage.setItem('smt_hl_' + chId, JSON.stringify(arr));
+    } catch {}
   }
 
   /* ---------- highlight serialization ----------
@@ -87,7 +100,7 @@
   function captureSelection() {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) return null;
-    const reader = document.getElementById("ebook-reader");
+    const reader = document.getElementById('ebook-reader');
     if (!reader || !reader.contains(sel.anchorNode)) return null;
     const text = sel.toString().trim();
     if (text.length < 3) return null;
@@ -98,14 +111,14 @@
     const idx = plain.indexOf(text);
     if (idx < 0) return null;
     const before = plain.slice(Math.max(0, idx - 25), idx);
-    const after  = plain.slice(idx + text.length, idx + text.length + 25);
+    const after = plain.slice(idx + text.length, idx + text.length + 25);
     return { text, before, after };
   }
 
   /* ---------- apply (restore) highlights to rendered chapter ---------- */
 
   function applyHighlights() {
-    const reader = document.getElementById("ebook-reader");
+    const reader = document.getElementById('ebook-reader');
     if (!reader) return;
     const hls = loadHighlights(activeChapter());
     if (!hls.length) return;
@@ -120,7 +133,7 @@
   function wrapMatch(root, hl) {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: (n) =>
-        n.parentElement.closest("mark, h1, h2, h3, h4, h5") || !n.nodeValue.trim()
+        n.parentElement.closest('mark, h1, h2, h3, h4, h5') || !n.nodeValue.trim()
           ? NodeFilter.FILTER_REJECT
           : NodeFilter.FILTER_ACCEPT,
     });
@@ -139,10 +152,10 @@
       const before = rangeText.slice(0, i);
       const matched = rangeText.slice(i, i + hl.text.length);
       const after = rangeText.slice(i + hl.text.length);
-      const mark = document.createElement("mark");
-      mark.className = "eb-hl";
+      const mark = document.createElement('mark');
+      mark.className = 'eb-hl';
       mark.dataset.hlId = hl.id;
-      if (hl.note) mark.dataset.hasNote = "1";
+      if (hl.note) mark.dataset.hasNote = '1';
       mark.textContent = matched;
       const parent = node.parentNode;
       parent.insertBefore(document.createTextNode(before), node);
@@ -158,8 +171,8 @@
   let popEl = null;
   function ensurePop() {
     if (popEl) return popEl;
-    popEl = document.createElement("div");
-    popEl.className = "eb-pop";
+    popEl = document.createElement('div');
+    popEl.className = 'eb-pop';
     popEl.hidden = true;
     popEl.innerHTML = `
       <button class="eb-pop__btn" data-act="hl" type="button">
@@ -179,13 +192,21 @@
     return popEl;
   }
 
-  function hidePop() { if (popEl) popEl.hidden = true; }
+  function hidePop() {
+    if (popEl) popEl.hidden = true;
+  }
 
   function showPopForSelection() {
     const sel = window.getSelection();
-    if (!sel || sel.isCollapsed) { hidePop(); return; }
-    const reader = document.getElementById("ebook-reader");
-    if (!reader || !reader.contains(sel.anchorNode)) { hidePop(); return; }
+    if (!sel || sel.isCollapsed) {
+      hidePop();
+      return;
+    }
+    const reader = document.getElementById('ebook-reader');
+    if (!reader || !reader.contains(sel.anchorNode)) {
+      hidePop();
+      return;
+    }
     const range = sel.getRangeAt(0);
     const r = range.getBoundingClientRect();
     const p = ensurePop();
@@ -194,16 +215,19 @@
     const noteButton = p.querySelector('[data-act="note"]');
     localizeButton(highlightButton, c.highlight);
     localizeButton(noteButton, c.addNote);
-    p.querySelector(".eb-pop__lbl").textContent = c.highlight;
-    p.querySelector(".eb-pop__lbl-note").textContent = c.note;
-    p.dataset.mode = "create";
+    p.querySelector('.eb-pop__lbl').textContent = c.highlight;
+    p.querySelector('.eb-pop__lbl-note').textContent = c.note;
+    p.dataset.mode = 'create';
     p.hidden = false;
-    const popW = 220, popH = 38;
+    const popW = 220,
+      popH = 38;
     const top = r.top + window.scrollY - popH - 10;
-    const left = Math.max(8, Math.min(window.innerWidth - popW - 8,
-      r.left + window.scrollX + r.width / 2 - popW / 2));
-    p.style.top = top + "px";
-    p.style.left = left + "px";
+    const left = Math.max(
+      8,
+      Math.min(window.innerWidth - popW - 8, r.left + window.scrollX + r.width / 2 - popW / 2),
+    );
+    p.style.top = top + 'px';
+    p.style.left = left + 'px';
   }
 
   /* ---------- create / edit ---------- */
@@ -213,7 +237,7 @@
     if (!cap) return;
     const chId = activeChapter();
     const hls = loadHighlights(chId);
-    const hl = { id: uid(), text: cap.text, before: cap.before, after: cap.after, note: "" };
+    const hl = { id: uid(), text: cap.text, before: cap.before, after: cap.after, note: '' };
     hls.push(hl);
     saveHighlights(chId, hls);
     // re-render chapter to apply (cleaner than DOM splicing)
@@ -224,10 +248,7 @@
     if (withNote) {
       setTimeout(() => openNoteEditor(hl.id), 50);
     }
-    if (window.smtFx) window.smtFx.toast(
-      copy().highlighted,
-      { duration: 1200 }
-    );
+    if (window.smtFx) window.smtFx.toast(copy().highlighted, { duration: 1200 });
   }
 
   function openNoteEditor(hlId) {
@@ -238,11 +259,11 @@
     const mark = document.querySelector(`mark.eb-hl[data-hl-id="${hlId}"]`);
     if (!mark) return;
     const r = mark.getBoundingClientRect();
-    let panel = document.getElementById("eb-note");
+    let panel = document.getElementById('eb-note');
     if (!panel) {
-      panel = document.createElement("div");
-      panel.id = "eb-note";
-      panel.className = "eb-note";
+      panel = document.createElement('div');
+      panel.id = 'eb-note';
+      panel.className = 'eb-note';
       panel.innerHTML = `
         <div class="eb-note__head">
           <span class="eb-note__quote"></span>
@@ -258,50 +279,48 @@
     }
     const c = copy();
     panel.dataset.hlId = hlId;
-    panel.querySelector(".eb-note__quote").textContent = "“" + hl.text.slice(0, 80) + (hl.text.length > 80 ? "…" : "") + "”";
-    localizeButton(panel.querySelector(".eb-note__close"), c.close);
-    const ta = panel.querySelector(".eb-note__ta");
-    ta.value = hl.note || "";
+    panel.querySelector('.eb-note__quote').textContent =
+      '“' + hl.text.slice(0, 80) + (hl.text.length > 80 ? '…' : '') + '”';
+    localizeButton(panel.querySelector('.eb-note__close'), c.close);
+    const ta = panel.querySelector('.eb-note__ta');
+    ta.value = hl.note || '';
     ta.placeholder = c.writeNote;
-    ta.setAttribute("aria-label", c.noteText);
-    localizeButton(panel.querySelector(".eb-note__del"), c.delete, c.delete);
-    localizeButton(panel.querySelector(".eb-note__save"), c.save, c.save);
+    ta.setAttribute('aria-label', c.noteText);
+    localizeButton(panel.querySelector('.eb-note__del'), c.delete, c.delete);
+    localizeButton(panel.querySelector('.eb-note__save'), c.save, c.save);
     panel.hidden = false;
     // Position near the highlight
     const w = 340;
     let top = r.bottom + window.scrollY + 8;
     let left = Math.max(12, Math.min(window.innerWidth - w - 12, r.left + window.scrollX));
-    panel.style.top = top + "px";
-    panel.style.left = left + "px";
+    panel.style.top = top + 'px';
+    panel.style.left = left + 'px';
     setTimeout(() => ta.focus(), 50);
   }
 
   function closeNote() {
-    const p = document.getElementById("eb-note");
+    const p = document.getElementById('eb-note');
     if (p) p.hidden = true;
   }
 
   function saveNote() {
-    const p = document.getElementById("eb-note");
+    const p = document.getElementById('eb-note');
     if (!p) return;
     const hlId = p.dataset.hlId;
     const chId = activeChapter();
     const hls = loadHighlights(chId);
     const hl = hls.find((h) => h.id === hlId);
     if (!hl) return;
-    hl.note = p.querySelector(".eb-note__ta").value.trim();
+    hl.note = p.querySelector('.eb-note__ta').value.trim();
     saveHighlights(chId, hls);
     if (window.smtEbookRender) window.smtEbookRender();
     else applyHighlights();
     closeNote();
-    if (window.smtFx) window.smtFx.toast(
-      copy().noteSaved,
-      { duration: 1400 }
-    );
+    if (window.smtFx) window.smtFx.toast(copy().noteSaved, { duration: 1400 });
   }
 
   function deleteHighlight() {
-    const p = document.getElementById("eb-note");
+    const p = document.getElementById('eb-note');
     if (!p) return;
     const hlId = p.dataset.hlId;
     const chId = activeChapter();
@@ -315,7 +334,7 @@
   /* ---------- notes panel: list all highlights for current chapter ---------- */
 
   function renderNotesList() {
-    const host = document.getElementById("eb-notes-list");
+    const host = document.getElementById('eb-notes-list');
     if (!host) return;
     const hls = loadHighlights(activeChapter());
     const c = copy();
@@ -323,69 +342,88 @@
       host.innerHTML = `<p class="eb-notes-empty">${c.noHighlights}</p>`;
       return;
     }
-    host.innerHTML = hls.map((h) => `
-      <div class="eb-notes-item ${h.note ? "has-note" : ""}" data-hl-id="${h.id}">
+    host.innerHTML = hls
+      .map(
+        (h) => `
+      <div class="eb-notes-item ${h.note ? 'has-note' : ''}" data-hl-id="${h.id}">
         <div class="eb-notes-item__text">${escapeHtml(h.text)}</div>
-        ${h.note ? `<div class="eb-notes-item__note">${escapeHtml(h.note)}</div>` : ""}
+        ${h.note ? `<div class="eb-notes-item__note">${escapeHtml(h.note)}</div>` : ''}
         <div class="eb-notes-item__actions">
           <button data-act="edit" type="button" title="${escapeHtml(c.edit)}" aria-label="${escapeHtml(c.edit)}">${escapeHtml(c.edit)}</button>
           <button data-act="goto" type="button" title="${escapeHtml(c.find)}" aria-label="${escapeHtml(c.find)}">${escapeHtml(c.find)}</button>
           <button data-act="del" type="button" title="${escapeHtml(c.remove)}" aria-label="${escapeHtml(c.remove)}">${escapeHtml(c.remove)}</button>
         </div>
       </div>
-    `).join("");
+    `,
+      )
+      .join('');
   }
 
   function escapeHtml(s) {
-    return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    return String(s).replace(
+      /[&<>"]/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c],
+    );
   }
 
   /* ---------- listeners ---------- */
 
-  document.addEventListener("mouseup", (e) => {
+  document.addEventListener('mouseup', (e) => {
     if (!isOnEbook()) return;
-    if (e.target.closest(".eb-pop, .eb-note")) return;
+    if (e.target.closest('.eb-pop, .eb-note')) return;
     setTimeout(showPopForSelection, 10);
   });
-  document.addEventListener("selectionchange", () => {
+  document.addEventListener('selectionchange', () => {
     const sel = window.getSelection();
-    if (!sel || sel.isCollapsed) { hidePop(); }
+    if (!sel || sel.isCollapsed) {
+      hidePop();
+    }
   });
 
-  document.addEventListener("click", (e) => {
+  document.addEventListener('click', (e) => {
     // pop actions
-    const popBtn = e.target.closest(".eb-pop__btn");
+    const popBtn = e.target.closest('.eb-pop__btn');
     if (popBtn) {
       const act = popBtn.dataset.act;
-      if (act === "hl") createHighlightFromSelection(false);
-      else if (act === "note") createHighlightFromSelection(true);
+      if (act === 'hl') createHighlightFromSelection(false);
+      else if (act === 'note') createHighlightFromSelection(true);
       return;
     }
     // clicking a highlight: open its note
-    const mark = e.target.closest("mark.eb-hl");
+    const mark = e.target.closest('mark.eb-hl');
     if (mark && isOnEbook()) {
       openNoteEditor(mark.dataset.hlId);
       return;
     }
     // close note panel
-    if (e.target.closest(".eb-note__close")) { closeNote(); return; }
-    if (e.target.closest(".eb-note__save")) { saveNote(); return; }
-    if (e.target.closest(".eb-note__del")) { deleteHighlight(); return; }
+    if (e.target.closest('.eb-note__close')) {
+      closeNote();
+      return;
+    }
+    if (e.target.closest('.eb-note__save')) {
+      saveNote();
+      return;
+    }
+    if (e.target.closest('.eb-note__del')) {
+      deleteHighlight();
+      return;
+    }
 
     // notes list buttons
-    const item = e.target.closest(".eb-notes-item");
+    const item = e.target.closest('.eb-notes-item');
     if (item) {
-      const act = e.target.closest("button")?.dataset.act;
+      const act = e.target.closest('button')?.dataset.act;
       const hlId = item.dataset.hlId;
-      if (act === "edit") { openNoteEditor(hlId); }
-      else if (act === "goto") {
+      if (act === 'edit') {
+        openNoteEditor(hlId);
+      } else if (act === 'goto') {
         const mark = document.querySelector(`mark.eb-hl[data-hl-id="${hlId}"]`);
         if (mark) {
-          mark.scrollIntoView({ behavior: "smooth", block: "center" });
-          mark.classList.add("is-flash");
-          setTimeout(() => mark.classList.remove("is-flash"), 1400);
+          mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          mark.classList.add('is-flash');
+          setTimeout(() => mark.classList.remove('is-flash'), 1400);
         }
-      } else if (act === "del") {
+      } else if (act === 'del') {
         const chId = activeChapter();
         const hls = loadHighlights(chId).filter((h) => h.id !== hlId);
         saveHighlights(chId, hls);
@@ -395,7 +433,7 @@
     }
 
     // outside everything → hide pop
-    if (!e.target.closest(".eb-pop")) hidePop();
+    if (!e.target.closest('.eb-pop')) hidePop();
   });
 
   // Public: called by ebook.js after rendering a chapter
@@ -405,7 +443,7 @@
   };
 
   // Re-render notes list when chapter changes
-  window.addEventListener("hashchange", () => {
+  window.addEventListener('hashchange', () => {
     if (isOnEbook()) renderNotesList();
   });
 })();
