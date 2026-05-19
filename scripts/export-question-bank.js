@@ -6,7 +6,6 @@ const ts = require('typescript');
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
 const checkMode = process.argv.includes('--check');
-const QUESTION_PROVENANCE_VALUES = ['uhr', 'derived', 'editorial'];
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -55,10 +54,6 @@ function optionPayload(question, field) {
 }
 
 const questions = loadTs('data/questions.ts', 'questions');
-const uhrSectionMap = JSON.parse(
-  fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
-);
-const uhrSourcePublisher = uhrSectionMap.source?.publisher ?? '';
 const rows = [
   [
     'id',
@@ -76,14 +71,9 @@ const rows = [
     'uhrChapter',
     'uhrSection',
     'uhrPageApprox',
-    'uhrSourceTitle',
-    'uhrSourcePublisher',
-    'uhrSourceUrl',
-    'uhrSourceRetrievedAt',
     'difficulty',
     'reviewStatus',
     'tags',
-    'questionProvenance',
   ],
   ...questions.map((question) => [
     question.id,
@@ -101,23 +91,17 @@ const rows = [
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,
-    uhrSourcePublisher,
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),
-    getQuestionProvenance(question),
   ]),
 ];
 
 const outPath = path.join(repoRoot, 'content', 'question-bank.csv');
 const csv = `${rows.map((row) => row.map(csvCell).join(',')).join('\n')}\n`;
-validateQuestionProvenanceComposition(rows, 'generated question-bank export');
 
 if (checkMode) {
   const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
-  if (existing) {
-    validateQuestionProvenanceComposition(parseCsvRows(existing), 'content/question-bank.csv');
-  }
   if (existing !== csv) {
     console.error('content/question-bank.csv is out of sync; run npm run content:export');
     process.exit(1);

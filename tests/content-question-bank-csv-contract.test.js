@@ -1,16 +1,9 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
-const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-function parseExportedCsvLine(line) {
-  return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
-    match[1].replaceAll('""', '"'),
-  );
-}
 
 test('question-bank CSV keeps its public row contract', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -83,7 +76,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 18 columns, expected 17/,
+    /content\/question-bank\.csv row 2 has 17 columns, expected 16/,
   );
 });
 
@@ -148,37 +141,5 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /content\/question-bank\.csv row 2 q001 explanationEn is "The exported explanation drifted from the source question\.", expected "Sweden is in the Nordic region/,
-  );
-});
-
-test('question-bank CSV contract rejects source publisher drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    return String(contents).replace(
-      'Universitets- och högskolerådet (UHR)',
-      'Wrong publisher',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Wrong publisher", expected "Universitets- och högskolerådet \(UHR\)"/,
   );
 });

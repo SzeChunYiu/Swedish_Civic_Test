@@ -1,9 +1,6 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
-const path = require('node:path');
 const test = require('node:test');
-
-const repoRoot = path.resolve(__dirname, '..');
 
 function validateContentSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -43,7 +40,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);

@@ -1201,12 +1201,3 @@ Verification: clean worktree from current `origin/main` `5ccf15d`; `NODE_OPTIONS
 PR: pending from current SETUP audit branch at handoff commit time.
 Blocked? yes - no fresh unblocked local SETUP source atom was found; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held unless fresh P0 site/release source evidence appears; keep production freshness separate until production serves current main and passes the hash-aware live smoke.
-
-## Iteration 252 - 2026-05-19
-
-Task completed: PROFILE-STUDY-SETUP-CTA-1 - turned the Profile Study setup card into an actionable Settings shortcut with localized daily-goal, language, and audio copy.
-Artifacts changed: `app/(tabs)/profile.tsx`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `scripts/ui-effects.test.js`, `tests/content-profile-route-copy-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
-Verification: clean temporary worktree rebased onto current `origin/main` before push; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `profileRouteCopyLabelsValidated:44`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-profile-route-copy-parity.test.js scripts/ui-effects.test.js scripts/content-production.test.js` exit 0 with 55/55 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check and `git diff --check` exit 0; after direct `npm ci --prefer-offline --no-audit`, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; Playwright/system-Chrome exported-web smoke on `/profile` confirmed `Framsteg utan konto`, `Studieinställningar`, `Dagligt mål, språk och ljud`, audio state, the Settings link accessibility label, navigation to `/settings`, and browser errors 0.
-PR: #947 ready for review from `task/profile-study-setup-cta-20260519` at handoff commit time.
-Blocked? no for this Profile settings shortcut atom.
-Next suggested validator action: inspect the Profile Study setup card and rerun the focused profile copy parity test plus the exported-web `/profile` settings-shortcut smoke if runtime evidence is needed.

@@ -1,8 +1,8 @@
 export * from './Button';
 export * from './ChapterProgressCard';
+export * from './ChapterRow';
 export * from './DisclaimerBanner';
 export * from './Divider';
-export * from './learning/BadgeRow';
 export * from './MockExamStatusBar';
 export * from './MockExamConfigPanel';
 export * from './OptionCard';
@@ -10,6 +10,7 @@ export * from './PillBadge';
 export * from './ProgressBar';
 export * from './QuestionNavigator';
 export * from './ResultSummary';
+export * from './Screen';
 export * from './Surface';
 export * from './Text';
 export * from './quiz/QuestionSourceCitation';

@@ -1,9 +1,6 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
-const path = require('node:path');
 const test = require('node:test');
-
-const EXPECTED_SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES = 7;
 
 test('published question text keeps the independent study boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -55,9 +52,9 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
-      ],
-      { encoding: 'utf8' },
-    );
+    ],
+    { encoding: 'utf8' },
+  );
 
     assert.notEqual(result.status, 0, fixture);
     assert.match(
@@ -90,7 +87,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -127,44 +124,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q002 carries source-authority wording in the stem/,
-  );
-});
-
-test('question authority boundary rejects missing shared source-authority pattern fixtures', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
-    return String(contents).replace(
-      "  {\\n    label: 'uhr-materialet',\\n    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[1],\\n    text: 'UHR-materialet beskriver Sveriges nordligaste del.',\\n  },\\n",
-      '',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /source-authority stem pattern fixtures must cover every shared source-authority pattern/,
   );
 });

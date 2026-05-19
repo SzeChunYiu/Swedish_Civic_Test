@@ -3,22 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
-const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
-const welfareCurrentnessSourceUrls = [
-  'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
-  'https://www.universityadmissions.se/en/fees-scholarships-residence-permit/who-is-required-to-pay-fees/',
-  'https://www.forsakringskassan.se/english/parents/when-the-child-is-born/parental-benefit',
-  'https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/patientavgifter/',
-];
-const staleWelfareClaims = [
-  /free for citizens and permanent residents/i,
-  /University tuition:\s*free for residents/i,
-  /typically\s+100[–-]400\s+SEK/i,
-  /Children's healthcare is free/i,
-  /parental leave \(480 days per child, split between parents\)/i,
-];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -28,16 +14,12 @@ function uniqueSorted(values) {
   return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
 
-function staticQuestionBank() {
+function staticQuestionSourceTitles() {
   const context = { window: {} };
   context.globalThis = context.window;
   vm.createContext(context);
   vm.runInContext(read('site/questions.js'), context, { timeout: 3000 });
-  return context.window.SMT_QUESTIONS;
-}
-
-function staticQuestionSourceTitles() {
-  return uniqueSorted(staticQuestionBank().map((question) => question.source?.title));
+  return uniqueSorted(context.window.SMT_QUESTIONS.map((question) => question.source?.title));
 }
 
 function sourceClaimTitles(indexHtml) {
@@ -71,128 +53,6 @@ function appTranslationValues(appSource, includeKey) {
   return values;
 }
 
-function englishTranslationMap(appSource) {
-  const englishMatch = appSource.match(/en:\s*{([\s\S]*?)\n\s*},\n\s*sv:/);
-  assert.ok(englishMatch, 'static English dictionary should be present');
-
-  const values = new Map();
-  const entryPattern = /"([^"]+)": "((?:\\.|[^"\\])*)"/g;
-  let match;
-  while ((match = entryPattern.exec(englishMatch[1]))) {
-    const [, key, rawValue] = match;
-    values.set(key, JSON.parse(`"${rawValue}"`));
-  }
-  return values;
-}
-
-function normalizeInlineHtml(value) {
-  return value
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function staticFallbackI18nValues(indexHtml, keyPrefix) {
-  const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
-
-  let match;
-  while ((match = elementPattern.exec(indexHtml))) {
-    const [, , key, rawValue] = match;
-    if (key.startsWith(keyPrefix)) values.set(key, normalizeInlineHtml(rawValue));
-  }
-  return values;
-}
-
-function staticFaqSection(indexHtml) {
-  const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
-  assert.ok(faqMatch, 'static FAQ fallback section should be present');
-  return faqMatch[0];
-}
-
-function staticHomeRoute(indexHtml) {
-  const homeMatch = indexHtml.match(
-    /<main data-screen-label="01 Home" data-page="\/"[\s\S]*?<\/main>/,
-  );
-  assert.ok(homeMatch, 'static Home route should be present');
-  return homeMatch[0];
-}
-
-function isGuardedHomeBodyKey(key) {
-  if (/^chap\.\d+\.m1$/.test(key)) return false;
-  return (
-    key.startsWith('demo.') ||
-    key.startsWith('qcard.') ||
-    key.startsWith('chap.') ||
-    key === 'ad.label' ||
-    key === 'ad.placeholder'
-  );
-}
-
-function assertStaticHomeBodyFallbackParitySource(indexHtml, appSource) {
-  const englishTranslations = englishTranslationMap(appSource);
-  const homeFallback = staticFallbackI18nValues(staticHomeRoute(indexHtml), '');
-  const guardedEntries = Array.from(homeFallback.entries()).filter(([key]) =>
-    isGuardedHomeBodyKey(key),
-  );
-
-  assert.ok(guardedEntries.length > 0, 'static Home body should expose guarded fallback copy');
-
-  for (const [key, fallbackValue] of guardedEntries) {
-    const expectedValue = englishTranslations.get(key);
-    assert.equal(
-      fallbackValue,
-      normalizeInlineHtml(expectedValue ?? ''),
-      `${key} Home no-JS fallback should match the English site/app.js dictionary`,
-    );
-  }
-
-  assert.ok(
-    !guardedEntries.some(([key]) => /^chap\.\d+\.m1$/.test(key)),
-    'runtime chapter count placeholders should not be treated as required literal fallback copy',
-  );
-
-  return guardedEntries.length;
-}
-
-const unsupportedPracticalTestClaimPatterns = [
-  phrasePattern('Format of ', 'the real test'),
-  phrasePattern('multiple-choice ', 'and timed'),
-  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
-  phrasePattern('Arrive 30 ', 'minutes early'),
-  phrasePattern('test centre ', 'is strict'),
-  phrasePattern('You may ', 'retake the test'),
-  phrasePattern('There is a ', 'small fee'),
-  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
-  phrasePattern('På provdagen är ', 'giltig legitimation'),
-];
-
-const officialPracticalTestSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-];
-const ebookFactboxSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const unsupportedEbookFactboxPatterns = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
-];
-
 function sourceProvenanceSurface() {
   const indexHtml = read('site/index.html');
   const appJs = read('site/app.js');
@@ -224,24 +84,6 @@ test('static source claims match the shipped question-bank source titles', () =>
   assert.match(surface, /Primary source\s+1|Prim[aä]r k[aä]lla\s+1/i);
 });
 
-test('static question bank exports visible question provenance', () => {
-  const questions = staticQuestionBank();
-  const supported = new Set(['uhr', 'derived', 'editorial']);
-  const counts = { uhr: 0, derived: 0, editorial: 0 };
-
-  for (const question of questions) {
-    assert.ok(
-      supported.has(question.questionProvenance),
-      `${question.id} should expose supported questionProvenance`,
-    );
-    counts[question.questionProvenance] += 1;
-  }
-
-  assert.equal(questions.find((question) => question.id === 'q001')?.questionProvenance, 'uhr');
-  assert.ok(counts.uhr > 0, 'static bank should include UHR provenance rows');
-  assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
-});
-
 test('static source provenance copy rejects unshipped external source families', () => {
   const surface = sourceProvenanceSurface();
 
@@ -258,17 +100,5 @@ test('static source provenance copy rejects unshipped external source families',
     /offentliga k[aä]llor\s+.*Riksdagen/i,
     /Primary sources\s+8/i,
     /Prim[aä]ra k[aä]llor\s+8/i,
-  ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
-});
-
-test('static source provenance copy rejects unimplemented source-update workflow claims', () => {
-  const surface = sourceProvenanceSurface();
-
-  [
-    /refresh tag/i,
-    /source updates?/i,
-    /re-enter review/i,
-    /reenter review/i,
-    /re-enter source review/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });

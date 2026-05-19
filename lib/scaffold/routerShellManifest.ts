@@ -1,5 +1,3 @@
-import { webDocumentMetaDescriptions, webDocumentMetadata } from './webDocumentMetadata';
-
 export type ExpoRouterShellRole =
   | 'initial-redirect'
   | 'root-layout'
@@ -58,8 +56,6 @@ export type ExpoRouterWebDocumentMetaDescription = {
   readonly description: string;
 };
 
-export type ExpoRouterWebDocumentMetadata = typeof webDocumentMetadata;
-
 export type ExpoRouterStandaloneRoute = {
   readonly name: string;
   readonly file: string;
@@ -112,16 +108,6 @@ export const expoRouterRootStackScreens = [
     name: 'search',
     file: 'app/search.tsx',
     purpose: 'Search route registered in the root stack',
-  },
-  {
-    name: 'dashboard',
-    file: 'app/dashboard.tsx',
-    purpose: 'Progress dashboard route registered in the root stack',
-  },
-  {
-    name: 'citizenship-requirements',
-    file: 'app/citizenship-requirements.tsx',
-    purpose: 'Citizenship requirements guide route registered in the root stack',
   },
   {
     name: '+not-found',
@@ -210,9 +196,6 @@ export const expoRouterRootLayoutGlobalPlacements = [
 
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
-  '/about-the-test',
-  '/citizenship-requirements',
-  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -222,7 +205,6 @@ export const expoRouterNativeIntentStaticRoutes = [
   '/practice',
   '/privacy',
   '/profile',
-  '/search',
   '/settings',
   '/sources',
   '/support',
@@ -254,31 +236,15 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/practice?mode=review#question',
   },
   {
-    input: '/search?q=riksdag',
-    expectedPath: '/search?q=riksdag',
-  },
-  {
-    input: '/search?query=riksdag',
-    expectedPath: '/search?query=riksdag',
-  },
-  {
-    input: '/about-the-test',
-    expectedPath: '/about-the-test',
-  },
-  {
-    input: 'almost-swedish://app/chapter/ch01?from=learn',
+    input: 'swedish-civic-test://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
   },
   {
-    input: 'almost-swedish://app/about-the-test',
-    expectedPath: '/about-the-test',
-  },
-  {
-    input: 'almost-swedish://quiz/q001',
+    input: 'swedish-civic-test://quiz/q001',
     expectedPath: '/quiz/q001',
   },
   {
-    input: 'almost-swedish://app/not-real',
+    input: 'swedish-civic-test://app/not-real',
     expectedPath: '/home',
   },
 ] as const satisfies readonly ExpoRouterNativeIntentRuntimeSample[];
@@ -288,8 +254,7 @@ export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-inten
 export const expoRouterWebDocumentMetaDescriptions = [
   {
     language: 'sv',
-    description:
-      'Öva på svensk samhällskunskap med quiz som fungerar offline, lokalt sparade framsteg och källhänvisningar.',
+    description: 'Öva svensk samhällskunskap med offlinequiz, lokala framsteg och källreferenser.',
   },
   {
     language: 'en',
@@ -371,7 +336,7 @@ export const expoRouterShellContract = {
   themeColorToken: 'colors.canvas',
   statusBarStyle: 'auto',
   nativeFallbackHref: '/home',
-  appScheme: 'almost-swedish',
+  appScheme: 'swedish-civic-test',
 } as const;
 
 export type ExpoRouterShellFilePath = (typeof expoRouterShellFiles)[number]['file'];
