@@ -1555,6 +1555,8 @@ test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live 
   const runCommands = workflow.match(/run: \|\n([\s\S]*)/)?.[1] ?? '';
 
   assert.equal(pkg.scripts['test:site-live'], 'node scripts/check-live-site.js');
+  assert.match(workflow, /schedule:\s*\n\s+- cron: ['"]\*\/30 \* \* \* \*['"]/);
+  assert.doesNotMatch(workflow, /cron: ['"]\*\/15 \* \* \* \*['"]/);
   assert.match(workflow, /branches:\s*\n\s+- main/);
   assert.match(workflow, /paths:\s*\n(?:\s+- ['"].+['"]\n)+/);
   assert.match(workflow, /['"]site\/\*\*['"]/);
