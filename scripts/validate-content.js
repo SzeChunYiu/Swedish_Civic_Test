@@ -819,6 +819,20 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Bläddra bland alla samhällskapitel',
     'Bläddra bland kapitel',
     'nivå',
+    'Snabbstart',
+    'Välj ett tydligt nästa steg utan att leta i flikarna.',
+    'Kort övning',
+    'Fortsätt med nästa fråga och direkt återkoppling.',
+    'Starta en kort övning från startsidan',
+    'Övningsprov',
+    'Kontrollera tiden, poängen och redoindikatorn.',
+    'Starta ett övningsprov från startsidan',
+    'Sparat och svårt',
+    'Öppna bokmärken och frågor du svarat fel på.',
+    'Öppna sparade och svåra frågor',
+    'Sök fråga',
+    'Hitta begrepp, svar och förklaringar i banken.',
+    'Sök i frågebanken',
     'XP-baserad',
     'dagars svit',
     'daglig vana',
@@ -898,6 +912,20 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Browse all civic chapters',
     'Browse chapters',
     'level',
+    'Quick start',
+    'Choose the next study step without hunting through tabs.',
+    'Short practice',
+    'Continue with the next question and instant feedback.',
+    'Start a short practice session from the dashboard',
+    'Practice exam',
+    'Check timing, score, and readiness.',
+    'Start a practice exam from the dashboard',
+    'Saved and tricky',
+    'Open bookmarks and questions you missed.',
+    'Open saved and tricky questions',
+    'Search questions',
+    'Find terms, answers, and explanations in the bank.',
+    'Search the question bank',
     'XP-based',
     'day streak',
     'daily habit',
@@ -1054,6 +1082,20 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home chapter link must expose localized accessibility copy',
   ],
   ['{copy.browseChapters}', 'home chapter link must render localized copy'],
+  ['const router = useRouter();', 'home quick actions must navigate through expo-router'],
+  ['const quickActions = [', 'home route must define quick action shortcuts'],
+  ['{copy.quickActionsTitle}', 'home quick-actions title must render localized copy'],
+  [
+    '<Text style={styles.quickActionsSubtitle}>{copy.quickActionsSubtitle}</Text>',
+    'home quick-actions subtitle must render localized copy',
+  ],
+  [
+    'accessibilityLabel={action.accessibilityLabel}',
+    'home quick actions must expose localized accessibility labels',
+  ],
+  ['onPress={() => router.push(action.href)}', 'home quick actions must navigate on press'],
+  ['{action.title}', 'home quick action title must render localized copy'],
+  ['{action.description}', 'home quick action description must render localized copy'],
   ['label={copy.levelMetric}', 'home level metric must render localized copy'],
   ['helper={copy.xpBasedHelper}', 'home XP helper must render localized copy'],
   ['label={copy.dayStreakMetric}', 'home streak metric must render localized copy'],
@@ -1904,8 +1946,9 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.feedbackTitle\}>\s*\{copy\.feedbackTitle\}\s*<\/Text>/,
   },
   {
-    label: 'guided path section title',
-    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.guidedPathTitle\}/,
+    label: 'quick-actions card title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.quickActionsTitle\}>\s*\{copy\.quickActionsTitle\}\s*<\/Text>/,
   },
   {
     label: 'study-loop section title',
@@ -10032,7 +10075,9 @@ function validateHomeRouteHeaderParity() {
   }
 
   const unheaderedCardHeadings =
-    homeRoute.match(/<Text\s+style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/g) || [];
+    homeRoute.match(
+      /<Text\s+style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle|quickActionsTitle)\}>/g,
+    ) || [];
   if (unheaderedCardHeadings.length > 0) {
     reject('home route card headings must expose accessibilityRole="header"');
   }

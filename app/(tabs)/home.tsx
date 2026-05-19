@@ -1,6 +1,5 @@
-import { Link } from 'expo-router';
-import { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Link, useRouter } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
   GuidedPracticePath,
@@ -35,7 +34,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type StudyLoopItemCopy = {
   label: string;
@@ -80,6 +79,20 @@ type HomeCopy = {
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
+  quickActionsTitle: string;
+  quickActionsSubtitle: string;
+  quickPracticeTitle: string;
+  quickPracticeDescription: string;
+  quickPracticeAccessibilityLabel: string;
+  quickExamTitle: string;
+  quickExamDescription: string;
+  quickExamAccessibilityLabel: string;
+  quickMistakesTitle: string;
+  quickMistakesDescription: string;
+  quickMistakesAccessibilityLabel: string;
+  quickSearchTitle: string;
+  quickSearchDescription: string;
+  quickSearchAccessibilityLabel: string;
   readinessAccessibilityLabel: (score: number, verdict: string, details: string) => string;
   readinessCta: string;
   readinessCtaAccessibilityLabel: string;
@@ -209,6 +222,20 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     freeBankText:
       'Alla 13 ämnen och hela frågebanken ingår gratis. Betala bara om du vill ta bort annonser från studieskärmar.',
     levelMetric: 'nivå',
+    quickActionsTitle: 'Snabbstart',
+    quickActionsSubtitle: 'Välj ett tydligt nästa steg utan att leta i flikarna.',
+    quickPracticeTitle: 'Kort övning',
+    quickPracticeDescription: 'Fortsätt med nästa fråga och direkt återkoppling.',
+    quickPracticeAccessibilityLabel: 'Starta en kort övning från startsidan',
+    quickExamTitle: 'Övningsprov',
+    quickExamDescription: 'Kontrollera tiden, poängen och redoindikatorn.',
+    quickExamAccessibilityLabel: 'Starta ett övningsprov från startsidan',
+    quickMistakesTitle: 'Sparat och svårt',
+    quickMistakesDescription: 'Öppna bokmärken och frågor du svarat fel på.',
+    quickMistakesAccessibilityLabel: 'Öppna sparade och svåra frågor',
+    quickSearchTitle: 'Sök fråga',
+    quickSearchDescription: 'Hitta begrepp, svar och förklaringar i banken.',
+    quickSearchAccessibilityLabel: 'Sök i frågebanken',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
     readinessAccessibilityLabel: (score, verdict, details) =>
@@ -285,6 +312,20 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     freeBankText:
       'All 13 topics and the full question bank are included for free. Pay only if you want to remove ads from study screens.',
     levelMetric: 'level',
+    quickActionsTitle: 'Quick start',
+    quickActionsSubtitle: 'Choose the next study step without hunting through tabs.',
+    quickPracticeTitle: 'Short practice',
+    quickPracticeDescription: 'Continue with the next question and instant feedback.',
+    quickPracticeAccessibilityLabel: 'Start a short practice session from the dashboard',
+    quickExamTitle: 'Practice exam',
+    quickExamDescription: 'Check timing, score, and readiness.',
+    quickExamAccessibilityLabel: 'Start a practice exam from the dashboard',
+    quickMistakesTitle: 'Saved and tricky',
+    quickMistakesDescription: 'Open bookmarks and questions you missed.',
+    quickMistakesAccessibilityLabel: 'Open saved and tricky questions',
+    quickSearchTitle: 'Search questions',
+    quickSearchDescription: 'Find terms, answers, and explanations in the bank.',
+    quickSearchAccessibilityLabel: 'Search the question bank',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
     readinessAccessibilityLabel: (score, verdict, details) =>
@@ -342,6 +383,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 };
 
 export default function Screen() {
+  const router = useRouter();
   const {
     entitlements: monetizationEntitlements,
     entitlementsReady: monetizationEntitlementsReady,
@@ -396,51 +438,40 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-  const dashboardProgress = useMemo(
-    () =>
-      buildDashboardProgressSnapshot({
-        answerDates,
-        answerAttempts,
-        dailyGoalAnswers,
-        mockExamSessions,
-        questionProgress,
-        totalXp,
-      }),
-    [answerAttempts, answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
-  );
-  const dashboardQuestionChapterIndex = useMemo(
-    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
-    [],
-  );
-  const dashboard = useMemo(
-    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
-    [dashboardProgress, dashboardQuestionChapterIndex],
-  );
-  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
-  const guidedPathStages = useMemo(
-    () => buildGuidedPracticePathStages(copy, questionProgress),
-    [copy, questionProgress],
-  );
-  const guidedPathActiveStage =
-    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
-  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
-  const guidedPathCopy: GuidedPracticePathCopy = {
-    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
-      completedToday,
-      dailyGoalAnswers,
-    ),
-    dailyPracticeCta: copy.guidedPathDailyCta,
-    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
-    dailyPracticeTitle: copy.guidedPathDailyTitle,
-    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
-      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
-    ),
-    resumeCta: copy.guidedPathResumeCta,
-  };
-
-  useEffect(() => {
-    setStreakFreezeState(streakWithFreeze.freezeState);
-  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
+  const quickActions = [
+    {
+      key: 'practice',
+      title: copy.quickPracticeTitle,
+      description: copy.quickPracticeDescription,
+      accessibilityLabel: copy.quickPracticeAccessibilityLabel,
+      href: '/practice',
+      tone: 'primary',
+    },
+    {
+      key: 'exam',
+      title: copy.quickExamTitle,
+      description: copy.quickExamDescription,
+      accessibilityLabel: copy.quickExamAccessibilityLabel,
+      href: '/exam',
+      tone: 'secondary',
+    },
+    {
+      key: 'mistakes',
+      title: copy.quickMistakesTitle,
+      description: copy.quickMistakesDescription,
+      accessibilityLabel: copy.quickMistakesAccessibilityLabel,
+      href: '/mistakes',
+      tone: 'secondary',
+    },
+    {
+      key: 'search',
+      title: copy.quickSearchTitle,
+      description: copy.quickSearchDescription,
+      accessibilityLabel: copy.quickSearchAccessibilityLabel,
+      href: '/search',
+      tone: 'secondary',
+    },
+  ] as const;
 
   return (
     <ScreenShell
@@ -543,14 +574,48 @@ export default function Screen() {
         </Link>
       </View>
 
-      <SectionHeader title={copy.guidedPathTitle} subtitle={copy.guidedPathSubtitle} />
-      <GuidedPracticePath
-        copy={guidedPathCopy}
-        dailyProgress={progress}
-        language={language}
-        resumeHref={guidedPathResumeHref}
-        stages={guidedPathStages}
-      />
+      <Card style={styles.quickActionsCard}>
+        <View style={styles.quickActionsHeader}>
+          <Text accessibilityRole="header" style={styles.quickActionsTitle}>
+            {copy.quickActionsTitle}
+          </Text>
+          <Text style={styles.quickActionsSubtitle}>{copy.quickActionsSubtitle}</Text>
+        </View>
+        <View style={styles.quickActionGrid}>
+          {quickActions.map((action) => {
+            const primary = action.tone === 'primary';
+
+            return (
+              <Pressable
+                key={action.key}
+                accessibilityLabel={action.accessibilityLabel}
+                accessibilityRole="button"
+                aria-label={action.accessibilityLabel}
+                onPress={() => router.push(action.href)}
+                style={({ pressed }) => [
+                  styles.quickAction,
+                  primary ? styles.quickActionPrimary : styles.quickActionSecondary,
+                  pressed ? styles.quickActionPressed : null,
+                ]}
+              >
+                <Text
+                  style={[styles.quickActionTitle, primary ? styles.quickActionTitlePrimary : null]}
+                >
+                  {action.title}
+                </Text>
+                <Text
+                  style={[
+                    styles.quickActionDescription,
+                    primary ? styles.quickActionDescriptionPrimary : null,
+                  ]}
+                >
+                  {action.description}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </Card>
 
       <View style={styles.statsRow}>
         <MetricCard
@@ -780,21 +845,65 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: space[1.5],
   },
-  streakFreezeCard: {
-    gap: space[1],
+  quickActionsCard: {
+    gap: space[1.5],
   },
-  streakFreezeText: {
+  quickActionsHeader: {
+    gap: space[0.5],
+  },
+  quickActionsTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  quickActionsSubtitle: {
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  freeBankCard: {
+  quickActionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: space[1],
   },
-  freeBankText: {
+  quickAction: {
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    flexBasis: 148,
+    flexGrow: 1,
+    gap: space[0.5],
+    minHeight: space[9],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1.25],
+  },
+  quickActionPrimary: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  quickActionSecondary: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+  },
+  quickActionPressed: {
+    transform: [{ scale: motion.pressedScale }],
+  },
+  quickActionTitle: {
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
+  },
+  quickActionTitlePrimary: {
+    color: colors.surface,
+  },
+  quickActionDescription: {
     color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+  },
+  quickActionDescriptionPrimary: {
+    color: colors.surface,
   },
   feedbackCard: {
     gap: space[1],

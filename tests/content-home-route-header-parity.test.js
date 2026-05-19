@@ -26,7 +26,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 108);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
@@ -99,9 +99,15 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /\{copy\.readinessCaveat\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.quickActionsTitle\}>/);
+  assert.match(source, /\{copy\.quickActionsTitle\}/);
+  assert.match(source, /const quickActions = \[/);
+  assert.match(source, /router\.push\(action\.href\)/);
+  assert.match(source, /Snabbstart/);
+  assert.match(source, /Quick start/);
   assert.doesNotMatch(
     source,
-    /<Text style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/,
+    /<Text style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle|quickActionsTitle)\}>/,
   );
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
