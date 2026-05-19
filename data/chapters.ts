@@ -43,7 +43,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.',
     descriptionEn:
       'The fundamental laws, the justice system, rule of law, and the right of public access.',
-    questionCount: 70,
+    questionCount: 45,
   },
   {
     id: 'ch06',
@@ -52,7 +52,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Fria medier, olika slags medier, public service och källkritik.',
     descriptionEn:
       'Free media, different types of media, public service broadcasting, and source criticism.',
-    questionCount: 30,
+    questionCount: 55,
   },
   {
     id: 'ch07',

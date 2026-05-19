@@ -35,6 +35,25 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.match(countdownBanner, /The civic-knowledge test is expected in August 2026/);
   assert.match(countdownBanner, /Nya medborgarskapsregler gäller från/);
   assert.match(countdownBanner, /Samhällskunskapsprovet väntas starta i augusti 2026/);
+  assert.match(countdownBanner, /CITIZENSHIP_TIMELINE_SOURCE_URLS/);
+  assert.doesNotMatch(
+    countdownBanner,
+    /<View\\s+accessibilityLabel=\\{resolvedAccessibilityLabel\\}/,
+  );
+  assert.match(countdownBanner, /accessibilityRole="alert"/);
+  assert.match(countdownBanner, /accessibilitySummary/);
+  assert.match(countdownBanner, /Officiella datumkällor:/);
+  assert.match(countdownBanner, /Official date sources:/);
+  assert.match(countdownBanner, /Migrationsverket/);
+  assert.match(countdownBanner, /UHR/);
+  assert.match(countdownBanner, /Regeringen/);
+  assert.match(countdownBanner, /target="_blank"/);
+  assert.match(countdownBanner, /minHeight: space\[6\]/);
+  assert.match(countdownBanner, /minWidth: space\[6\]/);
+
+  const homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  assert.match(homeRoute, /import \{ CountdownBanner \}/);
+  assert.match(homeRoute, /<CountdownBanner language=\{language\} \/>/);
 });
 
 test('countdown banner parity rejects collapsing the civic test deadline into the rules date', () => {
