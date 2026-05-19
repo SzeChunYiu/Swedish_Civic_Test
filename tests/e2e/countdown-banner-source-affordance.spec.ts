@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
-import type { Locator, Page } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 
 import { CITIZENSHIP_TIMELINE_SOURCE_URLS } from '../../lib/learning/examDate';
+import { dismissBlockingModals } from './browserLaunch';
 
 type BoundingBox = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
 
@@ -19,34 +20,6 @@ const expectedSources = [
     url: CITIZENSHIP_TIMELINE_SOURCE_URLS.civicKnowledgeTestDeadline,
   },
 ] as const;
-
-async function closeBlockingModalsIfPresent(page: Page) {
-  const closeLaunchSponsorAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (
-    await closeLaunchSponsorAd
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await closeLaunchSponsorAd.first().click();
-  }
-
-  const skipFirstRunGuide = page.getByRole('button', {
-    name: /Skip the guide|Hoppa över guiden/,
-  });
-  if (
-    await skipFirstRunGuide
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await skipFirstRunGuide.first().click();
-  }
-
-  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
-}
 
 async function expectTargetSize(locator: Locator, label: string) {
   const box = await locator.boundingBox();
@@ -75,7 +48,7 @@ test('home countdown banner exposes official source links as mobile-safe targets
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/home', { waitUntil: 'networkidle' });
-  await closeBlockingModalsIfPresent(page);
+  await dismissBlockingModals(page);
 
   const countdownBody = page.getByText(/Nya medborgarskapsregler gäller från/).first();
   const sourceLabel = page.getByText('Officiella datumkällor:', { exact: true });

@@ -15,7 +15,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, space, typography } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
