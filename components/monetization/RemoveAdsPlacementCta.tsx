@@ -27,7 +27,7 @@ type RemoveAdsPlacementCtaCopy = {
 
 const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> = {
   sv: {
-    body: 'Döljer den här och andra studieannonser efter butikens bekräftelse. Prov är redan annonsfria.',
+    body: 'Döljer den här och andra studieannonser efter butikens bekräftelse. Tidsatta övningsprov är redan annonsfria.',
     buyAccessibilityHint:
       'Köpet döljer den här annonsplaceringen och andra studieannonser på den här enheten.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
