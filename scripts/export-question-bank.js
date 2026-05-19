@@ -54,6 +54,7 @@ function optionPayload(question, field) {
 }
 
 const questions = loadTs('data/questions.ts', 'questions');
+const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
 const rows = [
   [
     'id',
@@ -72,6 +73,7 @@ const rows = [
     'difficulty',
     'reviewStatus',
     'tags',
+    'questionProvenance',
   ],
   ...questions.map((question) => [
     question.id,
@@ -90,6 +92,7 @@ const rows = [
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),
+    getQuestionProvenance(question),
   ]),
 ];
 
