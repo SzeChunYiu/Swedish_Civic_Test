@@ -202,6 +202,27 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
   }
 }
 
+function createSourcePatchPreload(tmpDir, body) {
+  const preloadPath = path.join(tmpDir, 'source-patch-preload.js');
+  fs.writeFileSync(
+    preloadPath,
+    [
+      "const fs = require('node:fs');",
+      'const originalReadFileSync = fs.readFileSync;',
+      'fs.readFileSync = function patchedReadFileSync(filePath, ...args) {',
+      "  const normalizedPath = String(filePath).replace(/\\\\/g, '/');",
+      '  const value = originalReadFileSync.call(this, filePath, ...args);',
+      "  if (typeof value !== 'string' && !Buffer.isBuffer(value)) return value;",
+      "  const text = Buffer.isBuffer(value) ? value.toString(args[0] || 'utf8') : value;",
+      body,
+      '  return value;',
+      '};',
+      '',
+    ].join('\n'),
+  );
+  return preloadPath;
+}
+
 function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
   const releaseScopeOverride =
     options.includeReleaseScopeOverride === false
@@ -1104,8 +1125,121 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   assert.match(scopeGate.evidence, /tests\/v1-1-/i);
   assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
   assert.match(scopeGate.evidence, /unchecked manual checklist item/i);
-  assert.match(scopeGate.nextAction, /test -f lib\/monetization\/purchases\.ts/);
+  assert.match(scopeGate.nextAction, /Remove Ads structural gate/i);
+  assert.match(scopeGate.nextAction, /canonical buy\/restore flows/i);
   assert.match(scopeGate.nextAction, /test -f reports\/release-ads-iap-device-qa\.md/);
+});
+
+test('release preflight blocks Remove Ads step 3 when canonical buy wiring drifts', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-remove-ads-buy-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const deviceQaReport = createRemoveAdsDeviceQaReport();
+  const preload = createSourcePatchPreload(
+    tmpDir,
+    [
+      "  if (normalizedPath.endsWith('lib/monetization/purchases.ts')) {",
+      "    return text.replace('const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);', 'const purchase = await provider.requestRemoveAdsPurchase(\"debug.removeads\");');",
+      '  }',
+    ].join('\n'),
+  );
+
+  try {
+    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        NODE_OPTIONS: `--require ${preload}`,
+        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    assert.equal(scopeGate.status, 'BLOCKED');
+    assert.match(scopeGate.evidence, /buyRemoveAds must request REMOVE_ADS_PRODUCT_ID/);
+    assert.doesNotMatch(scopeGate.evidence, /exact command is red/i);
+  } finally {
+    deviceQaReport.cleanup();
+  }
+});
+
+test('release preflight blocks Remove Ads step 3 when restore wiring drifts', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-remove-ads-restore-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const deviceQaReport = createRemoveAdsDeviceQaReport();
+  const preload = createSourcePatchPreload(
+    tmpDir,
+    [
+      "  if (normalizedPath.endsWith('lib/monetization/purchases.ts')) {",
+      "    return text.replace('const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);', 'const purchases = await provider.restorePurchases([\"debug.removeads\"]);');",
+      '  }',
+    ].join('\n'),
+  );
+
+  try {
+    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        NODE_OPTIONS: `--require ${preload}`,
+        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    assert.equal(scopeGate.status, 'BLOCKED');
+    assert.match(scopeGate.evidence, /restoreRemoveAdsPurchase must restore REMOVE_ADS_PRODUCT_ID/);
+  } finally {
+    deviceQaReport.cleanup();
+  }
+});
+
+test('release preflight blocks Remove Ads step 3 when price or wiring disappears', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-remove-ads-price-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const deviceQaReport = createRemoveAdsDeviceQaReport();
+  const preload = createSourcePatchPreload(
+    tmpDir,
+    [
+      '  if (/(^|\\/)(app|components|lib)\\//.test(normalizedPath)) {',
+      "    let patched = text.replace('REMOVE_ADS_PRICE_LABEL = \\'29 SEK\\'', 'REMOVE_ADS_PRICE_LABEL = \\'39 SEK\\'');",
+      "    patched = patched.replace(/remove[-_\\s]?ads/gi, 'premium');",
+      '    return patched;',
+      '  }',
+    ].join('\n'),
+  );
+
+  try {
+    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        NODE_OPTIONS: `--require ${preload}`,
+        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    assert.equal(scopeGate.status, 'BLOCKED');
+    assert.match(scopeGate.evidence, /Remove Ads price label must stay 29 SEK/);
+    assert.match(scopeGate.evidence, /Remove Ads wiring must be visible in app\/components\/lib/);
+  } finally {
+    deviceQaReport.cleanup();
+  }
 });
 
 test('release preflight blocks generic Remove Ads device-QA prose', () => {
