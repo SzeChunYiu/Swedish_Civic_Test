@@ -165,6 +165,23 @@ test('button derives an accessibility label from plain text children by default'
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('shared buttons use token disabled styles without dimming child labels', () => {
+  const uiButtonSource = read('components/ui/Button.tsx');
+  const appButtonSource = read('components/Button.tsx');
+
+  for (const source of [uiButtonSource, appButtonSource]) {
+    assert.doesNotMatch(source, /disabled:\s*\{\s*opacity\s*:/);
+    assert.match(
+      source,
+      /disabled:\s*\{[\s\S]*backgroundColor:\s*colors\.surfaceWarm[\s\S]*borderColor:\s*colors\.border[\s\S]*\}/,
+    );
+    assert.match(source, /disabledLabel:\s*\{[\s\S]*color:\s*colors\.textMuted[\s\S]*\}/);
+  }
+
+  assert.match(uiButtonSource, /disabled \? styles\.disabledLabel : null/);
+  assert.match(appButtonSource, /if \(disabled\) \{\s*return colors\.textMuted;\s*\}/);
+});
+
 test('language picker future-language rows are disabled instead of selectable', () => {
   const source = read('components/ui/LanguagePicker.tsx');
 
