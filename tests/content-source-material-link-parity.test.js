@@ -23,6 +23,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
     return String(contents).${patchExpression};
   }
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replaceAll(
+      'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
+      'https://www.uhr.se/globalassets/_uhr.se/other/sverige-i-fokus.pdf',
+    );
+  }
   return contents;
 };
 require('./scripts/validate-content.js');

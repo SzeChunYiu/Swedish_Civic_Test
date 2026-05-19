@@ -83,7 +83,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 17 columns, expected 16/,
+    /content\/question-bank\.csv row 2 has 20 columns, expected 19/,
   );
 });
 
@@ -148,5 +148,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /content\/question-bank\.csv row 2 q001 explanationEn is "The exported explanation drifted from the source question\.", expected "Sweden is in the Nordic region/,
+  );
+});
+
+test('question-bank CSV contract rejects UHR source metadata drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(
+      'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf',
+      'https://example.com/wrong-source.pdf',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /content\/question-bank\.csv row 2 q001 uhrSourceUrl is "https:\/\/example\.com\/wrong-source\.pdf", expected "https:\/\/www\.uhr\.se\/globalassets\/_uhr\.se\/medborgarskapsprovet\/utbildningsmaterial\/sverige-i-fokus\.pdf"/,
   );
 });
