@@ -124,7 +124,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                 return (
                   <Pressable
                     key={opt.code}
-                    accessibilityRole="button"
+                    aria-disabled={!opt.available}
+                    aria-selected={selected}
+                    accessibilityRole="menuitem"
                     accessibilityLabel={`${opt.label}${opt.available ? '' : copy.unavailableSuffix}`}
                     accessibilityState={{ selected, disabled: !opt.available }}
                     disabled={!opt.available}

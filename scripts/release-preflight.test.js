@@ -162,7 +162,17 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     [
       '#!/bin/sh',
       'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
-      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
+      ...(options.easWhoamiMixedFailure
+        ? [
+            'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then',
+            '  echo "eas-cli@19.0.1 is now available. Proceeding with outdated version." >&2',
+            '  echo "Not logged in"',
+            '  exit 1',
+            'fi',
+          ]
+        : [
+            'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
+          ]),
       'echo "unexpected npx command: $@" >&2',
       'exit 2',
       '',
@@ -1512,6 +1522,28 @@ test('release preflight can pass after recorded external evidence and EAS auth a
     report.gates.every((gate) => gate.status === 'READY'),
     true,
   );
+});
+
+test('release preflight eas-auth failure preserves stderr warning and stdout auth blocker', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-eas-auth-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir, { easWhoamiMixedFailure: true });
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const easAuth = report.gates.find((gate) => gate.id === 'eas-auth');
+  assert.equal(easAuth.status, 'BLOCKED');
+  assert.match(easAuth.evidence, /eas-cli@19\.0\.1 is now available/i);
+  assert.match(easAuth.evidence, /Proceeding with outdated version/i);
+  assert.match(easAuth.evidence, /Not logged in/i);
 });
 
 test('release preflight blocks stale public URL evidence when live check fails', () => {
