@@ -37,6 +37,46 @@
       ? "Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga."
       : "Independent study practice, not a real exam or an official UHR question.";
   }
+  const provenanceCopy = {
+    uhr: {
+      en: { label: "UHR", description: "Directly from UHR's study material Sverige i fokus." },
+      sv: { label: "UHR", description: "Direkt från UHR:s utbildningsmaterial Sverige i fokus." },
+    },
+    derived: {
+      en: { label: "Supplementary", description: "Variant generated from a UHR question." },
+      sv: { label: "Tillägg", description: "Variant som genererats från en UHR-fråga." },
+    },
+    editorial: {
+      en: { label: "Editorial", description: "Hand-written editorial context." },
+      sv: { label: "Redaktionell", description: "Redaktionellt skrivet sammanhang." },
+    },
+  };
+  function questionProvenance(question) {
+    const direct = question && question.questionProvenance;
+    if (direct === "uhr" || direct === "derived" || direct === "editorial") return direct;
+    const tags = Array.isArray(question && question.tags) ? question.tags : [];
+    if (tags.includes("editorial")) return "editorial";
+    if (tags.includes("published-variant")) return "derived";
+    return "uhr";
+  }
+  function provenanceBadge(question) {
+    const sv = lang() === "sv";
+    const provenance = questionProvenance(question);
+    const copy = provenanceCopy[provenance][sv ? "sv" : "en"] || provenanceCopy[provenance].en;
+    const ariaPrefix = sv ? "Källtyp" : "Provenance";
+    const notePrefix = sv ? "Källanteckning" : "Source note";
+    const label = escapeHtml(copy.label);
+    const note = escapeHtml(`${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`);
+    return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
+  }
+  function questionSourceRow(question, citationClassName = "quiz__source") {
+    return `
+      <div class="quiz__source-row">
+        ${provenanceBadge(question)}
+        <p class="${citationClassName}">${escapeHtml(sourceCitation(question))}</p>
+      </div>
+    `;
+  }
   function hashString(value) {
     let hash = 2166136261;
     const text = String(value ?? "");
@@ -489,7 +529,7 @@
         <div class="mock-card">
           <div class="quiz__crumb">Ch ${q.chapterId}</div>
           <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
-          <p class="quiz__source">${escapeHtml(sourceCitation(q))}</p>
+          ${questionSourceRow(q)}
           <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           <div class="quiz__opts">${opts}</div>
         </div>
@@ -577,7 +617,7 @@
               </div>
             </dl>
             <p class="mock-review__why">${escapeHtml(tr(q.why))}</p>
-            <p class="mock-review__source">${escapeHtml(sourceCitation(q))}</p>
+            ${questionSourceRow(q, "mock-review__source")}
             <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           </div>
         </details>
