@@ -11763,7 +11763,7 @@ function validateReviewStoreHydrationParity() {
       'review store hydration must keep only normalized graded-day counters',
     ],
     [
-      'return normalize(JSON.parse(raw));',
+      'state: normalize(JSON.parse(result.value))',
       'review store hydration must normalize parsed persisted JSON',
     ],
   ];

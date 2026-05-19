@@ -12,7 +12,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 const easyReadFontKey = 'a11y.easyReadFont.v1';
 const fontSizeStepKey = 'a11y.fontSizeStep.v1';
@@ -40,20 +40,73 @@ try {
   accessibilityStorage = null;
 }
 
-function readEasyReadFont(): boolean {
-  return accessibilityStorage?.getBoolean(easyReadFontKey) ?? false;
+type InitialAccessibilityState = {
+  easyReadFont: boolean;
+  fontSizeStep: FontSizeStep;
+  audioPlaybackRate: AudioPlaybackRate;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+};
+
+function readEasyReadFont(): {
+  value: boolean;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(
+    accessibilityStorage,
+    accessibilityStorageId,
+    easyReadFontKey,
+    () => accessibilityStorage?.getBoolean(easyReadFontKey),
+  );
+  return { value: result.value ?? false, persistenceWarning: result.warning };
 }
 
-function readFontSizeStep(): FontSizeStep {
-  const v = accessibilityStorage?.getNumber(fontSizeStepKey);
-  if (v === 0 || v === 1 || v === 2 || v === 3) return v;
-  return 1;
+function readFontSizeStep(): {
+  value: FontSizeStep;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(
+    accessibilityStorage,
+    accessibilityStorageId,
+    fontSizeStepKey,
+    () => accessibilityStorage?.getNumber(fontSizeStepKey),
+  );
+  const v = result.value;
+  if (v === 0 || v === 1 || v === 2 || v === 3) {
+    return { value: v, persistenceWarning: result.warning };
+  }
+  return { value: 1, persistenceWarning: result.warning };
 }
 
-function readAudioPlaybackRate(): AudioPlaybackRate {
-  const v = accessibilityStorage?.getNumber(audioPlaybackRateKey);
-  if (v === 0.5 || v === 0.75 || v === 1.0 || v === 1.25) return v;
-  return 1.0;
+function readAudioPlaybackRate(): {
+  value: AudioPlaybackRate;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(
+    accessibilityStorage,
+    accessibilityStorageId,
+    audioPlaybackRateKey,
+    () => accessibilityStorage?.getNumber(audioPlaybackRateKey),
+  );
+  const v = result.value;
+  if (v === 0.5 || v === 0.75 || v === 1.0 || v === 1.25) {
+    return { value: v, persistenceWarning: result.warning };
+  }
+  return { value: 1.0, persistenceWarning: result.warning };
+}
+
+function readInitialAccessibilityState(): InitialAccessibilityState {
+  const easyReadFont = readEasyReadFont();
+  const fontSizeStep = readFontSizeStep();
+  const audioPlaybackRate = readAudioPlaybackRate();
+  return {
+    easyReadFont: easyReadFont.value,
+    fontSizeStep: fontSizeStep.value,
+    audioPlaybackRate: audioPlaybackRate.value,
+    persistenceWarning:
+      easyReadFont.persistenceWarning ??
+      fontSizeStep.persistenceWarning ??
+      audioPlaybackRate.persistenceWarning,
+  };
 }
 
 type AccessibilityState = {
@@ -68,10 +121,7 @@ type AccessibilityState = {
 };
 
 export const useAccessibilityStore = create<AccessibilityState>((set) => ({
-  easyReadFont: readEasyReadFont(),
-  fontSizeStep: readFontSizeStep(),
-  audioPlaybackRate: readAudioPlaybackRate(),
-  persistenceWarning: null,
+  ...readInitialAccessibilityState(),
   setEasyReadFont: (enabled) => {
     const persistenceWarning = writeRecoverably(
       accessibilityStorage,
