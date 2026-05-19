@@ -14,9 +14,9 @@ addresses in both store records and in the release evidence file.
 
 ## Support URL page copy
 
-# Almost Swedish support
+# Sweden Citizenship Test Prep support
 
-Almost Swedish is an independent study app for Swedish civic
+Sweden Citizenship Test Prep is an independent study app for Swedish civic
 knowledge practice. It is not official and is not affiliated with UHR,
 Skolverket, Migrationsverket, or the Swedish government.
 
@@ -37,7 +37,7 @@ provide official exam answers, migration advice, or government decisions.
 
 ## Privacy Policy URL page copy
 
-# Almost Swedish privacy policy
+# Sweden Citizenship Test Prep privacy policy
 
 The MVP app requires no account, email address, phone number, or profile
 registration.

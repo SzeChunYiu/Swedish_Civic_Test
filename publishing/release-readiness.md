@@ -2,10 +2,10 @@
 
 ## Current final app identity
 
-- App name: Almost Swedish
-- Expo slug: almost-swedish
-- iOS bundle identifier: com.billyyiu.almostswedish
-- Android package: com.billyyiu.almostswedish
+- App name: Sweden Citizenship Test Prep
+- Expo slug: swedish-civic-test
+- iOS bundle identifier: com.billyyiu.swedishcivictest
+- Android package: com.billyyiu.swedishcivictest
 
 ## Prepared artifacts
 

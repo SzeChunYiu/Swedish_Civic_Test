@@ -1,4 +1,4 @@
-/* Almost Swedish — Multi-language strings beyond EN + SV.
+/* Sveriges Medborgartest — Multi-language strings beyond EN + SV.
    Languages: zh-Hans, zh-Hant, ar, so.
    Body content (privacy, terms, ebook) stays English in MVP — these dicts
    cover the high-frequency UI surface: nav, hero, CTAs, settings, consent,
@@ -21,9 +21,9 @@
       "nav.sources": "来源",
 
       "hero.eyebrow": "瑞典公民测验非官方学习应用",
-      "hero.h1a": "学习资料。",
-      "hero.h1b": "按来源练习。",
-      "hero.h1c": "考试日更从容。",
+      "hero.h1a": "通过测试。",
+      "hero.h1b": "拿到护照。",
+      "hero.h1c": "在仲夏节炫耀。",
       "hero.lede": "一个安静的、非官方的瑞典公民身份考试学习应用。简短章节,智能练习模式,还有一份让考试日没那么吓人的模拟考。",
       "hero.cta1": "开始一轮练习 →",
       "hero.cta2": "随便试一题",
@@ -47,10 +47,6 @@
       "ad.placeholder": "AdSense 广告将显示在此处。",
       "ad.anchor.placeholder": "底部锚定广告",
       "ad.native.placeholder": "原生赞助行",
-      "a11y.settings.open": "设置",
-      "a11y.close": "关闭",
-      "a11y.ad.close": "关闭广告",
-      "a11y.studyBuddy": "学习伙伴",
 
       "consent.title": "Cookie,刚刚好。",
       "consent.body": "我们使用 Google AdSense 显示少量广告。AdSense 会设置 cookie 并可能用于个性化广告。全部接受、仅必要,或阅读<a href=\"#/privacy\">隐私页面</a>。",
@@ -80,8 +76,8 @@
       "settings.savedHint": "更改会自动保存。",
       "settings.done": "完成",
 
-      "footer.t1": "学习资料。",
-      "footer.t2": "按来源练习。",
+      "footer.t1": "通过测试。",
+      "footer.t2": "在仲夏节炫耀。",
       "footer.h.study": "学习",
       "footer.h.legal": "细则",
       "footer.h.about": "关于",
@@ -105,9 +101,9 @@
       "nav.sources": "來源",
 
       "hero.eyebrow": "瑞典公民測驗非官方學習應用",
-      "hero.h1a": "學習資料。",
-      "hero.h1b": "依據來源練習。",
-      "hero.h1c": "考試日更從容。",
+      "hero.h1a": "通過測試。",
+      "hero.h1b": "拿到護照。",
+      "hero.h1c": "在仲夏節炫耀。",
       "hero.lede": "一個安靜的、非官方的瑞典公民身分考試學習應用。簡短章節,智慧練習模式,還有一份讓考試日沒那麼嚇人的模擬考。",
       "hero.cta1": "開始一輪練習 →",
       "hero.cta2": "隨便試一題",
@@ -131,10 +127,6 @@
       "ad.placeholder": "AdSense 廣告將顯示在此處。",
       "ad.anchor.placeholder": "底部錨定廣告",
       "ad.native.placeholder": "原生贊助列",
-      "a11y.settings.open": "設定",
-      "a11y.close": "關閉",
-      "a11y.ad.close": "關閉廣告",
-      "a11y.studyBuddy": "學習夥伴",
 
       "consent.title": "Cookie,剛剛好。",
       "consent.body": "我們使用 Google AdSense 顯示少量廣告。AdSense 會設定 cookie 並可能用於個人化廣告。全部接受、僅必要,或閱讀<a href=\"#/privacy\">隱私頁面</a>。",
@@ -164,8 +156,8 @@
       "settings.savedHint": "變更會自動儲存。",
       "settings.done": "完成",
 
-      "footer.t1": "學習資料。",
-      "footer.t2": "依據來源練習。",
+      "footer.t1": "通過測試。",
+      "footer.t2": "在仲夏節炫耀。",
       "footer.h.study": "學習",
       "footer.h.legal": "細則",
       "footer.h.about": "關於",
@@ -189,9 +181,9 @@
       "nav.sources": "المصادر",
 
       "hero.eyebrow": "تطبيق دراسة غير رسمي لاختبار المواطنة السويدي",
-      "hero.h1a": "ادرس المواد.",
-      "hero.h1b": "تدرّب مع المصادر.",
-      "hero.h1c": "ادخل يوم الاختبار بهدوء أكثر.",
+      "hero.h1a": "اجتز الاختبار.",
+      "hero.h1b": "احصل على الجواز.",
+      "hero.h1c": "تباهَ في عيد منتصف الصيف.",
       "hero.lede": "تطبيق دراسة هادئ وغير رسمي لاختبار المواطنة السويدي. فصول قصيرة، ووضع تدريب ذكي، واختبار وهمي يجعل يوم الامتحان أقل رعباً.",
       "hero.cta1": "ابدأ جولة تدريب ←",
       "hero.cta2": "جرّب سؤالاً",
@@ -215,10 +207,6 @@
       "ad.placeholder": "ستظهر إعلانات AdSense هنا.",
       "ad.anchor.placeholder": "إعلان سفلي",
       "ad.native.placeholder": "صف إعلاني أصلي",
-      "a11y.settings.open": "الإعدادات",
-      "a11y.close": "إغلاق",
-      "a11y.ad.close": "إغلاق الإعلان",
-      "a11y.studyBuddy": "رفيق الدراسة",
 
       "consent.title": "ملفات تعريف الارتباط، باعتدال.",
       "consent.body": "نستخدم Google AdSense لعرض إعلانات قليلة. يستخدم AdSense ملفات تعريف الارتباط وقد يستخدمها لتخصيص الإعلانات. اقبل الكل أو الضروري فقط، أو اقرأ <a href=\"#/privacy\">صفحة الخصوصية</a>.",
@@ -248,8 +236,8 @@
       "settings.savedHint": "تُحفظ التغييرات تلقائياً.",
       "settings.done": "تم",
 
-      "footer.t1": "ادرس المواد.",
-      "footer.t2": "تدرّب مع المصادر.",
+      "footer.t1": "اجتز الاختبار.",
+      "footer.t2": "تباهَ في عيد منتصف الصيف.",
       "footer.h.study": "الدراسة",
       "footer.h.legal": "التفاصيل القانونية",
       "footer.h.about": "نبذة",
@@ -273,9 +261,9 @@
       "nav.sources": "Ilaha",
 
       "hero.eyebrow": "App-ka barashada ee aan rasmi ahayn ee imtixaanka muwaadinnimada Iswiidhan",
-      "hero.h1a": "Baro casharrada.",
-      "hero.h1b": "Ku tababar ilo cad.",
-      "hero.h1c": "Maalinta imtixaanka ku gal deganaan.",
+      "hero.h1a": "Imtixaanka uga gud.",
+      "hero.h1b": "Hel baasaboorka.",
+      "hero.h1c": "Ku faan munaasabadda Midsommar.",
       "hero.lede": "App barasho aamusan oo aan rasmi ahayn oo loogu talagalay imtixaanka muwaadinnimada Iswiidhan. Cutubyo gaaban, qaab tababar caqli badan, iyo imtixaan tijaabo ah oo ka yaraan cabsida ka yaraan sheekooyinka deriskaaga.",
       "hero.cta1": "Bilow wareeg tababar →",
       "hero.cta2": "Isku day su'aal",
@@ -299,10 +287,6 @@
       "ad.placeholder": "Goobta xayaysiinta AdSense halkan ayey ka soo bixi doontaa.",
       "ad.anchor.placeholder": "Xayaysiin barxad",
       "ad.native.placeholder": "Saf xayaysiin asal ah",
-      "a11y.settings.open": "Goobinta",
-      "a11y.close": "Xir",
-      "a11y.ad.close": "Xir xayaysiiska",
-      "a11y.studyBuddy": "Saaxiibka barashada",
 
       "consent.title": "Cookies, si lagom ah.",
       "consent.body": "Waxaan u isticmaalnaa Google AdSense si aan u tusno xayaysiimo yar. AdSense waxay isticmaashaa cookies waxayna isticmaali kartaa qaab gaar ah. Aqbal dhammaan, kaliya kuwa muhiimka ah, ama akhri <a href=\"#/privacy\">bogga asturnaanta</a>.",
@@ -332,8 +316,8 @@
       "settings.savedHint": "Isbeddelladu si toos ah ayey isu kaydiyaan.",
       "settings.done": "Gudaha",
 
-      "footer.t1": "Baro casharrada.",
-      "footer.t2": "Ku tababar ilo cad.",
+      "footer.t1": "Imtixaanka uga gud.",
+      "footer.t2": "Ku faan munaasabadda Midsommar.",
       "footer.h.study": "Barasho",
       "footer.h.legal": "Tafaasiisha",
       "footer.h.about": "Annaga",
@@ -349,7 +333,6 @@
   // Merge into the main i18n dictionary (defined in app.js)
   if (window.i18n) {
     Object.assign(window.i18n, extra);
-    if (window.smtUpdateStaticControlLabels) window.smtUpdateStaticControlLabels();
   } else {
     // app.js hasn't loaded yet — stash for it
     window.__i18n_extra = extra;

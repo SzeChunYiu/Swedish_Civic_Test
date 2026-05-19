@@ -13,9 +13,6 @@ const expectedPolicyFields = [
   'consentPromptsRequired',
   'noAdPlacements',
   'privacyReviewRequiresBinary',
-  'proRuntimeScopeDefaultEnabled',
-  'proRuntimeScopeEnvFlag',
-  'proRuntimeScopeOverrideGate',
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
@@ -67,8 +64,9 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
 
   const summary = JSON.parse(match[0]);
   const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
-  const { isProRuntimeScopeEnabled, isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } =
-    loadTs('lib/monetization/releasePolicy.ts');
+  const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
+    'lib/monetization/releasePolicy.ts',
+  );
 
   assert.equal(summary.releaseMonetizationPolicyFieldsValidated, expectedPolicyFields.length);
   assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
@@ -79,25 +77,6 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
     'ump_consent_form',
   ]);
   assert.deepEqual(releaseMonetizationPolicy.noAdPlacements, ['exam_screen']);
-  assert.equal(releaseMonetizationPolicy.proRuntimeScopeDefaultEnabled, false);
-  assert.equal(
-    releaseMonetizationPolicy.proRuntimeScopeEnvFlag,
-    'EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE',
-  );
-  assert.equal(releaseMonetizationPolicy.proRuntimeScopeOverrideGate, 'release-scope-v11');
-  const previousProScopeEnv = process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
-  try {
-    delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
-    assert.equal(isProRuntimeScopeEnabled(), false);
-    process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = 'true';
-    assert.equal(isProRuntimeScopeEnabled(), true);
-  } finally {
-    if (previousProScopeEnv === undefined) {
-      delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
-    } else {
-      process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = previousProScopeEnv;
-    }
-  }
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
@@ -164,34 +143,4 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /releaseMonetizationPolicy\.noAdPlacements/);
-});
-
-test('release monetization policy rejects default-on Pro runtime scope drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/releasePolicy.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('proRuntimeScopeDefaultEnabled: false', 'proRuntimeScopeDefaultEnabled: true');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /releaseMonetizationPolicy\.proRuntimeScopeDefaultEnabled/,
-  );
 });

@@ -72,7 +72,6 @@ export function ProvenanceBadge({ question, language = 'sv' }: ProvenanceBadgePr
   return (
     <View style={styles.container}>
       <Pressable
-        aria-expanded={sourceNoteVisible}
         accessibilityHint={copy.sourceNoteHint}
         accessibilityLabel={`${copy.accessibilityPrefix}: ${label}. ${noteLabel}`}
         accessibilityRole="button"

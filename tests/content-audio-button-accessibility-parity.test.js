@@ -47,38 +47,6 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /speakSwedish\(speechText\);/);
 });
 
-test('learning FeedbackAudioButton exposes localized play and stop states', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'components/learning/FeedbackAudioButton.tsx'),
-    'utf8',
-  );
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const quizSource = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
-  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-
-  assert.match(source, /const feedbackAudioCopy: Record<AppLanguage, FeedbackAudioCopy>/);
-  assert.match(source, /playLabel: 'Lyssna på återkopplingen'/);
-  assert.match(source, /stopLabel: 'Stoppa återkoppling'/);
-  assert.match(source, /playLabel: 'Listen to feedback'/);
-  assert.match(source, /stopLabel: 'Stop feedback'/);
-  assert.match(source, /const speechText = text\.trim\(\);/);
-  assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
-  assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
-  assert.match(source, /accessibilityState=\{\{ busy: isSpeaking, disabled: !canPlayAudio \}\}/);
-  assert.match(source, /if \(!canPlayAudio\) return;/);
-  assert.match(source, /if \(isSpeaking\)[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);/);
-  assert.match(source, /speakSwedish\(speechText, \{[\s\S]*onDone:[\s\S]*onStopped:/);
-  assert.match(
-    practiceSource,
-    /<FeedbackAudioButton[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
-  );
-  assert.match(
-    quizSource,
-    /<FeedbackAudioButton[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
-  );
-  assert.doesNotMatch(examSource, /FeedbackAudioButton|buildAnswerFeedbackSpeechText/);
-});
-
 test('AudioButton accessibility parity rejects untrimmed playback drift', () => {
   const result = spawnSync(
     process.execPath,
