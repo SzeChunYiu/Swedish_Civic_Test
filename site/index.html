@@ -75,7 +75,12 @@
           <a href="#/support" data-route="/support" data-i18n="nav.support">Support</a>
         </nav>
         <div class="topbar__tools">
-          <button class="icon-btn icon-btn--square" id="settings-open" aria-label="Settings">
+          <button
+            class="icon-btn icon-btn--square"
+            id="settings-open"
+            aria-label="Settings"
+            data-a11y-label="a11y.settings.open"
+          >
             <svg
               viewBox="0 0 24 24"
               width="18"
@@ -1096,7 +1101,14 @@
           <h2 id="settings-title" class="modal__title">
             <span data-i18n="settings.title">Settings</span>
           </h2>
-          <button class="modal__close" data-close="settings" aria-label="Close">✕</button>
+          <button
+            class="modal__close"
+            data-close="settings"
+            aria-label="Close"
+            data-a11y-label="a11y.close"
+          >
+            ✕
+          </button>
         </header>
         <div class="modal__body">
           <div class="set-group">
@@ -1226,7 +1238,14 @@
 
     <!-- ============================================================ ANCHOR AD (mobile, dismissible) -->
     <div class="ad-anchor" data-ad-slot="anchor" hidden>
-      <button class="ad-anchor__close" id="ad-anchor-close" aria-label="Close ad">✕</button>
+      <button
+        class="ad-anchor__close"
+        id="ad-anchor-close"
+        aria-label="Close ad"
+        data-a11y-label="a11y.ad.close"
+      >
+        ✕
+      </button>
       <span class="ad-anchor__label" data-i18n="ad.label">Sponsored</span>
       <div class="ad-anchor__frame">
         <ins
@@ -1266,11 +1285,24 @@
     <!-- ============================================================ DALA — STUDY BUDDY -->
     <div class="dala-buddy" id="dala-buddy" hidden>
       <div class="dala-bubble" id="dala-bubble" hidden role="status">
-        <button class="dala-bubble__close" id="dala-bubble-close" aria-label="Close">✕</button>
+        <button
+          class="dala-bubble__close"
+          id="dala-bubble-close"
+          aria-label="Close"
+          data-a11y-label="a11y.close"
+        >
+          ✕
+        </button>
         <span class="dala-bubble__name" id="dala-name">Buddy</span>
         <div class="dala-bubble__msg" id="dala-msg"></div>
       </div>
-      <div id="dala-figure" role="button" tabindex="0" aria-label="Study buddy"></div>
+      <div
+        id="dala-figure"
+        role="button"
+        tabindex="0"
+        aria-label="Study buddy"
+        data-a11y-label="a11y.studyBuddy"
+      ></div>
     </div>
 
     <!-- ============================================================ SCRIPTS -->

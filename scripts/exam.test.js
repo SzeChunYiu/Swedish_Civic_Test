@@ -301,23 +301,57 @@ test('shouldAutoSubmitExam submits only when a live exam reaches zero', () => {
   const { shouldAutoSubmitExam } = loadTs('lib/quiz/examGenerator.ts');
 
   assert.equal(
-    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: false, questionCount: 20 }),
+    shouldAutoSubmitExam({
+      examActive: true,
+      remainingSeconds: 0,
+      submitted: false,
+      questionCount: 20,
+    }),
     true,
   );
   assert.equal(
-    shouldAutoSubmitExam({ remainingSeconds: -1, submitted: false, questionCount: 20 }),
+    shouldAutoSubmitExam({
+      examActive: true,
+      remainingSeconds: -1,
+      submitted: false,
+      questionCount: 20,
+    }),
     true,
   );
   assert.equal(
-    shouldAutoSubmitExam({ remainingSeconds: 1, submitted: false, questionCount: 20 }),
+    shouldAutoSubmitExam({
+      examActive: true,
+      remainingSeconds: 1,
+      submitted: false,
+      questionCount: 20,
+    }),
     false,
   );
   assert.equal(
-    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: true, questionCount: 20 }),
+    shouldAutoSubmitExam({
+      examActive: true,
+      remainingSeconds: 0,
+      submitted: true,
+      questionCount: 20,
+    }),
     false,
   );
   assert.equal(
-    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: false, questionCount: 0 }),
+    shouldAutoSubmitExam({
+      examActive: true,
+      remainingSeconds: 0,
+      submitted: false,
+      questionCount: 0,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldAutoSubmitExam({
+      examActive: false,
+      remainingSeconds: 0,
+      submitted: false,
+      questionCount: 20,
+    }),
     false,
   );
 });

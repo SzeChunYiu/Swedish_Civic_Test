@@ -68,6 +68,32 @@ function withEnv(overrides, fn) {
   }
 }
 
+function assertRealAdUnitEnvInliningSource(adsSource, adsConfig) {
+  assert.match(
+    adsSource,
+    /REAL_AD_UNIT_ENV_VALUES/,
+    'real ad units should use a literal env-value table for bundler inlining',
+  );
+  assert.doesNotMatch(
+    adsSource,
+    /process\.env\s*\[[^\]]+\]/,
+    'real ad unit IDs must not use dynamic process.env[key] lookup',
+  );
+
+  for (const [placement, envKeys] of Object.entries(adsConfig.realUnitEnvKeys)) {
+    for (const [platform, envKey] of Object.entries(envKeys)) {
+      const literalReadPattern = new RegExp(
+        `${placement}:\\s*\\{[\\s\\S]*${platform}:\\s*readEnvString\\(\\s*process\\.env\\.${envKey}\\s*,?\\s*\\)`,
+      );
+      assert.match(
+        adsSource,
+        literalReadPattern,
+        `${placement} ${platform} real ad unit must read ${envKey} through a literal process.env.${envKey} expression`,
+      );
+    }
+  }
+}
+
 test('ad rendering is enabled by default with test units and env-driven real switch', () => {
   withEnv(
     {
@@ -106,6 +132,7 @@ test('ad rendering is enabled by default with test units and env-driven real swi
 
 test('every ad placement has a configured unit and real-unit env slot', () => {
   const { TEST_AD_UNITS, adsConfig, getAdUnit } = loadTs('lib/monetization/ads.ts');
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
   const expectedPlacements = [
     'home_banner',
     'chapter_list_banner',
@@ -126,6 +153,36 @@ test('every ad placement has a configured unit and real-unit env slot', () => {
     assert.match(adsConfig.realUnitEnvKeys[placement].android, /^EXPO_PUBLIC_ADMOB_ANDROID_/);
     assert.match(adsConfig.realUnitEnvKeys[placement].ios, /^EXPO_PUBLIC_ADMOB_IOS_/);
   }
+
+  assertRealAdUnitEnvInliningSource(adsSource, adsConfig);
+});
+
+test('real ad unit env inlining guard rejects dynamic or missing env reads', () => {
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  const { adsConfig } = loadTs('lib/monetization/ads.ts');
+
+  assert.throws(
+    () =>
+      assertRealAdUnitEnvInliningSource(
+        adsSource.replace(
+          'process.env.EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID',
+          'process.env[envKeys.android]',
+        ),
+        adsConfig,
+      ),
+    /dynamic process\.env\[key\]|home_banner android real ad unit/,
+  );
+  assert.throws(
+    () =>
+      assertRealAdUnitEnvInliningSource(
+        adsSource.replace(
+          'process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
+          'process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_ID',
+        ),
+        adsConfig,
+      ),
+    /rewarded_extra_exam ios real ad unit/,
+  );
 });
 
 test('real ad units are selected from env when the real ads flag is enabled', () => {
@@ -328,6 +385,40 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
       );
     },
   );
+});
+
+test('rewarded extra exam ad copy uses Swedish practice-exam wording', () => {
+  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
+  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
+  const rewardedPlacementLabel = adBannerCopy.sv.placementLabels.rewarded_extra_exam;
+  const liveAccessibilityLabel = adBannerCopy.sv.accessibilityLabel(
+    rewardedPlacementLabel,
+    adBannerCopy.sv.liveStatus,
+  );
+  const testAccessibilityLabel = adBannerCopy.sv.accessibilityLabel(
+    rewardedPlacementLabel,
+    adBannerCopy.sv.testStatus,
+  );
+  const placementCtaTitle = `Ta bort annonser vid ${rewardedPlacementLabel.toLowerCase()}`;
+
+  for (const renderedCopy of [
+    rewardedPlacementLabel,
+    liveAccessibilityLabel,
+    testAccessibilityLabel,
+    placementCtaTitle,
+  ]) {
+    assert.match(renderedCopy, /övningsprov/i);
+    assert.doesNotMatch(renderedCopy, /\bextra prov\b|\bprov\b|\bprovet\b/i);
+  }
+
+  assert.equal(rewardedPlacementLabel, 'Annons för extra övningsprov');
+  assert.match(placementCtaSource, /adBannerCopy\[language\]\.placementLabels\[placement\]/);
+  assert.match(placementCtaSource, /copy\.title\(placementLabel\)/);
+  assert.doesNotMatch(adCopySource, /\bAnnons för extra prov\b|\bextra prov\b/i);
 });
 
 test('rewarded extra exam access honors real-ad consent readiness', () => {

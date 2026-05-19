@@ -87,6 +87,10 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
 
   const unit = getAdUnit('app_open_launch');
 
+  if (!visible) {
+    return null;
+  }
+
   return (
     <Modal
       accessibilityLabel={copy.dialogAccessibilityLabel}

@@ -104,6 +104,12 @@ const QUESTION_BANK_CSV_HEADER = [
   'tags',
   'questionProvenance',
 ];
+const QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS = Object.freeze({
+  uhrSourceTitle: 'title',
+  uhrSourcePublisher: 'publisher',
+  uhrSourceUrl: 'url',
+  uhrSourceRetrievedAt: 'retrievedDate',
+});
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -146,6 +152,22 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'kostnadsfritt',
   'generöst med tid',
   'Praktiska detaljer väntar hos UHR',
+];
+const STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS = [
+  /Facts you'll see on the test/i,
+  /what you'll see on the test/i,
+  /\b69%\s+is\s+forest/i,
+  /\b9%\s+lake/i,
+  /35\s*000\s+km\s+of\s+coastline/i,
+  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /historically commits\s+~?1%\s+of\s+GNI/i,
+  /Citizenship test starts:\s*6 June 2026/i,
+];
+const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
 ];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
@@ -267,6 +289,10 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /^Many people voting\b/i,
+  /^Fewer people taking\b/i,
+  /^People with [^.?!]*\bliving closer\b/i,
+  /^People living completely separated\b/i,
 ];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -1029,6 +1055,7 @@ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
+const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -3186,6 +3213,7 @@ const EXPECTED_EXAM_GENERATOR_INTERFACES = [
   {
     name: 'ExamAutoSubmitState',
     fields: [
+      { name: 'examActive', type: 'boolean', optional: false },
       { name: 'remainingSeconds', type: 'number', optional: false },
       { name: 'submitted', type: 'boolean', optional: false },
       { name: 'questionCount', type: 'number', optional: false },
@@ -3757,6 +3785,46 @@ function validateStaticEbookPracticalTestClaims() {
   };
 }
 
+function validateStaticEbookFactboxSources() {
+  const source = loadText('site/ebook.js');
+  let unsupportedFactboxPatternsValidated = 0;
+  let sourceUrlsValidated = 0;
+
+  STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static ebook factbox/prose copy retains unsourced claim pattern: ${pattern}`);
+      return;
+    }
+    unsupportedFactboxPatternsValidated += 1;
+  });
+
+  STATIC_EBOOK_FACTBOX_SOURCE_URLS.forEach((url) => {
+    if (!source.includes(url)) {
+      fail(`static ebook factbox source metadata missing ${url}`);
+      return;
+    }
+    sourceUrlsValidated += 1;
+  });
+
+  if (!source.includes('EBOOK_FACTBOX_SOURCE_NOTES')) {
+    fail('static ebook factboxes must use shared source-note metadata');
+  }
+  if (!source.includes("retrievedDate: '2026-05-19'")) {
+    fail('static ebook factbox source metadata must include the current retrieved date');
+  }
+  if (!/ebookFactBox\('en', 'Facts to review'/.test(source)) {
+    fail('static ebook English factboxes must use the sourced factbox helper');
+  }
+  if (!/ebookFactBox\('sv', 'Fakta att repetera'/.test(source)) {
+    fail('static ebook Swedish factboxes must use the sourced factbox helper');
+  }
+
+  return {
+    sourceUrlsValidated,
+    unsupportedFactboxPatternsValidated,
+  };
+}
+
 function questionSentenceEndingsAreComplete(question) {
   return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
     textHasSentenceEnding(question[field]),
@@ -4122,6 +4190,20 @@ function englishGerundPhrase(value) {
   else if (/[^aeiou]e$/i.test(lower)) gerund = `${lower.slice(0, -1)}ing`;
   return [gerund, ...rest].join(' ');
 }
+function englishCivicActionClause(value) {
+  return lowerFirst(stripLeadingPurposeEn(value).trim())
+    .replace(/^many people voting\b/i, 'many people vote')
+    .replace(/\bgetting involved\b/gi, 'get involved')
+    .replace(/\blearning about\b/gi, 'learn about')
+    .replace(/^fewer people taking\b/i, 'fewer people take')
+    .replace(/^people avoiding\b/i, 'people avoid')
+    .replace(/^only authorities being allowed\b/i, 'only authorities are allowed')
+    .replace(/^people with (.+?) living closer\b/i, 'people with $1 live closer')
+    .replace(/\band feeling included\b/i, 'and feel included')
+    .replace(/^people living\b/i, 'people live')
+    .replace(/^public services being available\b/i, 'public services are available')
+    .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
+}
 function swedishCommonToDoStatement(timePhrase, answer) {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -4346,6 +4428,12 @@ function describesStatementEn(subject, answer) {
   }
   if (/^They should\s+/i.test(answer) && /free media/i.test(subject)) {
     return `Free media in a democracy should ${lowerFirst(answer.replace(/^They should\s+/i, ''))}`;
+  }
+  if (
+    /^(?:People|Public services|Political engagement)\b/i.test(answer) &&
+    /^integration\b/i.test(subject)
+  ) {
+    return `${upperFirst(subject)} means ${englishCivicActionClause(answer)}`;
   }
   if (/^To\s+/i.test(answer)) {
     return `${upperFirst(subject)} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -4767,6 +4855,10 @@ function civicStatementSv(source, option) {
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
+  if (match) {
+    return `${upperFirst(match[1])} blir ${match[2]} när ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  }
   match = q.match(/^Vilka tre nivåer delar (.+)$/i);
   if (match) return `${upperFirst(answer)} delar ${match[1]}`;
   match = q.match(/^Vilken av följande uppgifter har (.+)$/i);
@@ -5064,6 +5156,10 @@ function civicStatementEn(source, option) {
   if (match) return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What does it mean to (.+)$/i);
   if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^What can make (.+?) (stronger)$/i);
+  if (match) {
+    return `${upperFirst(match[1])} becomes ${match[2]} when ${englishCivicActionClause(answer)}`;
+  }
   match = q.match(/^Which three levels share (.+)$/i);
   if (match) return `${upperFirst(answer)} share ${match[1]}`;
   match = q.match(/^Which of the following tasks belongs to (.+)$/i);
@@ -6126,6 +6222,8 @@ const adsModule = loadTs('lib/monetization/ads.ts');
 const adsConfig = adsModule.adsConfig;
 const shouldShowAd = adsModule.shouldShowAd;
 const shouldSuppressLaunchPopupAdForPath = adsModule.shouldSuppressLaunchPopupAdForPath;
+const adCopyModule = loadTs('lib/monetization/adCopy.ts');
+const adBannerCopy = adCopyModule.adBannerCopy;
 const consentModule = loadTs('lib/monetization/consent.ts');
 const consentConfig = consentModule.consentConfig;
 const premiumModule = loadTs('lib/monetization/premium.ts');
@@ -6298,6 +6396,8 @@ let removeAdsPurchaseRuntimeCasesValidated = 0;
 let removeAdsPurchaseRuntimeParityValidated = false;
 let removeAdsSvExamCopyNaturalnessCasesValidated = 0;
 let removeAdsSvExamCopyNaturalnessValidated = false;
+let adCopySvRewardedPracticeExamCasesValidated = 0;
+let adCopySvRewardedPracticeExamNaturalnessValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
@@ -6393,6 +6493,9 @@ let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
+let staticEbookFactboxClaimPatternsValidated = 0;
+let staticEbookFactboxSourceUrlsValidated = 0;
+let staticEbookFactboxSourceParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -6477,6 +6580,14 @@ staticSiteOutcomeSloganParityValidated =
     staticEbookPracticalTestRequiredCopyValidated ===
       STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
     staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
+}
+{
+  const factboxValidation = validateStaticEbookFactboxSources();
+  staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxPatternsValidated;
+  staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
+  staticEbookFactboxSourceParityValidated =
+    staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS.length &&
+    staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
@@ -7592,10 +7703,18 @@ function validateMockExamTimerParity(config) {
 
   const totalSeconds = config.durationMinutes * 60;
   let valid = true;
+  let examRoute = '';
 
   function reject(message) {
     valid = false;
     fail(message);
+  }
+
+  try {
+    examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/exam.tsx could not be read: ${error.message}`);
+    return;
   }
 
   if (!Number.isInteger(totalSeconds) || totalSeconds < 60) {
@@ -7611,6 +7730,7 @@ function validateMockExamTimerParity(config) {
   }
 
   const liveExamState = {
+    examActive: true,
     remainingSeconds: totalSeconds,
     submitted: false,
     questionCount: config.questionCount,
@@ -7644,8 +7764,35 @@ function validateMockExamTimerParity(config) {
   ) {
     reject('shouldAutoSubmitExam must not submit an empty exam');
   }
+  if (
+    shouldAutoSubmitExam({
+      ...liveExamState,
+      examActive: false,
+      remainingSeconds: 0,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must wait for an explicitly started exam');
+  }
   if (formatExamTime(-1) !== '00:00') {
     reject('formatExamTime must clamp negative remaining time to 00:00');
+  }
+  if (
+    !examRoute.includes(
+      'if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;',
+    )
+  ) {
+    reject('mock exam timer interval must wait for the explicit start state');
+  }
+  if (!examRoute.includes('examActive: examUnlocked')) {
+    reject('mock exam auto-submit must be gated by the explicit start state');
+  }
+  if (
+    examRoute.includes(
+      "accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit'",
+    ) ||
+    (examRoute.match(/setExamUnlocked\(true\)/g) || []).length !== 1
+  ) {
+    reject('mock exam route must not auto-unlock free or premium exams before Start is pressed');
   }
 
   if (valid) mockExamTimerParityValidated = true;
@@ -10818,6 +10965,10 @@ function validateProgressStoreSchemaParity() {
       'question progress hydration must normalize seenCount',
     ],
     [
+      "if (typeof item.bookmarked === 'boolean') { normalizedQuestionProgress.bookmarked = item.bookmarked; }",
+      'question progress hydration must preserve only boolean bookmark values',
+    ],
+    [
       'totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp)',
       'progress hydration must normalize totalXp',
     ],
@@ -10826,12 +10977,12 @@ function validateProgressStoreSchemaParity() {
       'progress hydration must normalize persisted answerDates',
     ],
     [
-      'lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),',
-      'question progress hydration must normalize lastAnsweredAt timestamps',
+      'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
+      'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
     ],
     [
-      'nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),',
-      'question progress hydration must normalize nextReviewAt timestamps',
+      'if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;',
+      'question progress hydration must normalize and omit absent nextReviewAt timestamps',
     ],
     [
       'const completedAt = normalizeIsoTimestamp(item.completedAt);',
@@ -10847,8 +10998,16 @@ function validateProgressStoreSchemaParity() {
     ],
     ['score: clampScore(item.score ?? 0)', 'mock-exam hydration must clamp persisted score'],
     [
-      'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
+      'const serializedProgress = JSON.stringify(progress);',
+      'writeProgress must serialize progress once before persistence and readback',
+    ],
+    [
+      'progressStorage?.set(progressStateKey, serializedProgress);',
       'writeProgress must persist JSON through progressStateKey',
+    ],
+    [
+      'return normalizeProgress(JSON.parse(serializedProgress));',
+      'writeProgress must return the normalized JSON readback shape',
     ],
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
     ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
@@ -10875,8 +11034,15 @@ function validateProgressStoreSchemaParity() {
       'mock exam completion XP must update persisted total XP',
     ],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
-    ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
-    ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
+    [
+      'const persistedProgress = writeProgress(nextProgress);',
+      'progress mutations must persist and canonicalize nextProgress',
+    ],
+    ['return persistedProgress;', 'progress mutations must return persisted readback state'],
+    [
+      'const persistedProgress = writeProgress(emptyProgress);',
+      'resetProgress must persist and canonicalize the empty progress state',
+    ],
   ];
 
   requiredSnippets.forEach(([snippet, message]) => {
@@ -10899,11 +11065,17 @@ function validateProgressStoreSchemaParity() {
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
+    'bookmarked: item.bookmarked,',
+    'bookmarked: Boolean(item.bookmarked)',
+    'bookmarked: !!item.bookmarked',
   ];
 
   forbiddenHydrationSnippets.forEach((snippet) => {
     if (normalizedProgressStore.includes(snippet)) {
-      reject(`progress hydration must not use raw numeric expression ${snippet}`);
+      const label = snippet.startsWith('bookmarked:')
+        ? 'raw bookmark expression'
+        : 'raw numeric expression';
+      reject(`progress hydration must not use ${label} ${snippet}`);
     }
   });
 
@@ -11386,6 +11558,122 @@ function validateRemoveAdsSvExamCopyNaturalness() {
     removeAdsSvExamCopyNaturalnessCasesValidated === EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES
   ) {
     removeAdsSvExamCopyNaturalnessValidated = true;
+  }
+}
+
+function validateAdCopySvRewardedPracticeExamNaturalness() {
+  let valid = true;
+  let adCopySource = '';
+  let webBannerSource = '';
+  let nativeBannerSource = '';
+  let placementCtaSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function hasPracticeQualifier(value) {
+    if (typeof value !== 'string') return false;
+    const normalizedValue = value.toLowerCase();
+    return (
+      normalizedValue.includes('övningsprov') ||
+      normalizedValue.includes('övningsläget') ||
+      normalizedValue.includes('övningsläge')
+    );
+  }
+
+  function hasBareExamWord(value) {
+    return /\bextra prov\b|\bextra provet\b|\bprov\b|\bprovet\b/i.test(value);
+  }
+
+  function isSafeRewardedPracticeCopy(value) {
+    return typeof value === 'string' && hasPracticeQualifier(value) && !hasBareExamWord(value);
+  }
+
+  try {
+    adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+    webBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+    nativeBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+      'utf8',
+    );
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`Rewarded ad Swedish copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  const svAdCopy = adBannerCopy?.sv;
+  const rewardedPlacementLabel = svAdCopy?.placementLabels?.rewarded_extra_exam;
+  const liveAccessibilityLabel =
+    typeof svAdCopy?.accessibilityLabel === 'function'
+      ? svAdCopy.accessibilityLabel(rewardedPlacementLabel, svAdCopy.liveStatus)
+      : '';
+  const testAccessibilityLabel =
+    typeof svAdCopy?.accessibilityLabel === 'function'
+      ? svAdCopy.accessibilityLabel(rewardedPlacementLabel, svAdCopy.testStatus)
+      : '';
+  const placementCtaTitle =
+    typeof rewardedPlacementLabel === 'string'
+      ? `Ta bort annonser vid ${rewardedPlacementLabel.toLowerCase()}`
+      : '';
+  const rewardedAdCopySource = `${adCopySource}\n${webBannerSource}\n${nativeBannerSource}\n${placementCtaSource}`;
+  const copyCases = [
+    [
+      rewardedPlacementLabel === 'Annons för extra övningsprov',
+      'rewarded_extra_exam Swedish ad placement label must say "Annons för extra övningsprov"',
+    ],
+    [
+      isSafeRewardedPracticeCopy(rewardedPlacementLabel),
+      'rewarded_extra_exam Swedish ad placement label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(liveAccessibilityLabel),
+      'rewarded_extra_exam Swedish live ad accessibility label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(testAccessibilityLabel),
+      'rewarded_extra_exam Swedish test ad accessibility label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(placementCtaTitle),
+      'RemoveAdsPlacementCta rewarded_extra_exam title must qualify the exam as an övningsprov',
+    ],
+    [
+      /const placementLabel = copy\.placementLabels\[placement\];/.test(webBannerSource) &&
+        /const placementLabel = copy\.placementLabels\[placement\];/.test(nativeBannerSource) &&
+        /const placementLabel = adBannerCopy\[language\]\.placementLabels\[placement\];/.test(
+          placementCtaSource,
+        ) &&
+        /copy\.title\(placementLabel\)/.test(placementCtaSource),
+      'Ad banners and RemoveAdsPlacementCta must derive labels from shared adBannerCopy placement labels',
+    ],
+    [
+      !/\bAnnons för extra prov\b|\bextra prov\b/i.test(rewardedAdCopySource),
+      'rewarded ad copy sources must not contain bare Swedish "extra prov" wording',
+    ],
+  ];
+
+  copyCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    adCopySvRewardedPracticeExamCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    adCopySvRewardedPracticeExamCasesValidated === EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES
+  ) {
+    adCopySvRewardedPracticeExamNaturalnessValidated = true;
   }
 }
 
@@ -13535,6 +13823,34 @@ function validateQuestionBankCsvContract() {
     );
   }
 
+  const sourceMetadataMismatches = [];
+
+  function formatCsvMismatch(mismatch) {
+    return `content/question-bank.csv row ${mismatch.rowNumber} ${mismatch.label} ${
+      mismatch.field
+    } is ${JSON.stringify(mismatch.actual)}, expected ${JSON.stringify(mismatch.expected)}`;
+  }
+
+  function formatCsvSourceMetadataDrift(field, mismatches) {
+    const sourceField = QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS[field];
+    const actualValues = Array.from(new Set(mismatches.map((mismatch) => mismatch.actual))).map(
+      (value) => JSON.stringify(value),
+    );
+    const expectedValues = Array.from(new Set(mismatches.map((mismatch) => mismatch.expected))).map(
+      (value) => JSON.stringify(value),
+    );
+    const actualSummary =
+      actualValues.length === 1
+        ? actualValues[0]
+        : `${actualValues.slice(0, 3).join(', ')}${actualValues.length > 3 ? ', ...' : ''}`;
+    const expectedSummary =
+      expectedValues.length === 1
+        ? expectedValues[0]
+        : `${expectedValues.slice(0, 3).join(', ')}${expectedValues.length > 3 ? ', ...' : ''}`;
+
+    return `content/question-bank.csv ${field} metadata drift: ${mismatches.length} rows disagree with content/uhr-section-map.json source.${sourceField}; saw ${actualSummary}, expected ${expectedSummary}`;
+  }
+
   dataRows.forEach((row, index) => {
     const question = questions[index];
     const rowNumber = index + 2;
@@ -13582,17 +13898,39 @@ function validateQuestionBankCsvContract() {
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
-        reject(
-          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
-            row[fieldIndex],
-          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
-        );
+        rowIsValid = false;
+        const mismatch = {
+          rowNumber,
+          label,
+          field,
+          actual: row[fieldIndex],
+          expected: expectedRow[fieldIndex],
+        };
+        if (QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS[field]) {
+          sourceMetadataMismatches.push(mismatch);
+        } else {
+          reject(formatCsvMismatch(mismatch));
+        }
       }
     });
 
     if (rowIsValid) {
       questionBankCsvRowsValidated += 1;
       questionBankCsvProvenanceCounts[getQuestionProvenance(question)] += 1;
+    }
+  });
+
+  const aggregatedSourceMetadataFields = new Set();
+  Object.keys(QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS).forEach((field) => {
+    const mismatches = sourceMetadataMismatches.filter((mismatch) => mismatch.field === field);
+    if (mismatches.length === dataRows.length && dataRows.length > 1) {
+      aggregatedSourceMetadataFields.add(field);
+      fail(formatCsvSourceMetadataDrift(field, mismatches));
+    }
+  });
+  sourceMetadataMismatches.forEach((mismatch) => {
+    if (!aggregatedSourceMetadataFields.has(mismatch.field)) {
+      fail(formatCsvMismatch(mismatch));
     }
   });
 }
@@ -14696,6 +15034,7 @@ validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
 validateRemoveAdsPurchaseRuntimeParity();
 validateRemoveAdsSvExamCopyNaturalness();
+validateAdCopySvRewardedPracticeExamNaturalness();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
@@ -14879,6 +15218,8 @@ console.log(
       removeAdsPurchaseRuntimeParityValidated,
       removeAdsSvExamCopyNaturalnessCasesValidated,
       removeAdsSvExamCopyNaturalnessValidated,
+      adCopySvRewardedPracticeExamCasesValidated,
+      adCopySvRewardedPracticeExamNaturalnessValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,
@@ -15020,6 +15361,9 @@ console.log(
       staticEbookPracticalTestRequiredCopyValidated,
       staticEbookPracticalTestSourceUrlsValidated,
       staticEbookPracticalTestCurrentnessValidated,
+      staticEbookFactboxClaimPatternsValidated,
+      staticEbookFactboxSourceUrlsValidated,
+      staticEbookFactboxSourceParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,
