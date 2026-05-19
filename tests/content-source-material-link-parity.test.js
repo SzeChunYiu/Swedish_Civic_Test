@@ -110,7 +110,7 @@ test('sources parity rejects UHR map source URLs outside the education material 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /UHR section map source URL must be under the UHR education material path/,
+    /UHR section map source URL must be https:\/\/www\.uhr\.se\/globalassets\/_uhr\.se\/medborgarskapsprovet\/utbildningsmaterial\/sverige-i-fokus\.pdf|UHR section map source URL must be under the UHR education material path/,
   );
 });
 
