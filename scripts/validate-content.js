@@ -1984,8 +1984,26 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
     pattern: /<View[\s\S]*>/,
   },
   {
+    label: 'exported MetricCard props interface',
+    pattern:
+      /export interface MetricCardProps extends Omit<ComponentProps<typeof View>, 'children' \| 'style'>/,
+  },
+  {
+    label: 'documented defaults',
+    pattern:
+      /Defaults: `tone="warm"`, `accessible=true`, `accessibilityRole="summary"`,[\s\S]*accessibility label derived from the visible label\/value\/helper text/,
+  },
+  {
     label: 'explicit accessibility label prop',
     pattern: /accessibilityLabel\?: string;/,
+  },
+  {
+    label: 'caller style prop',
+    pattern: /style\?: ComponentProps<typeof View>\['style'\];/,
+  },
+  {
+    label: 'summary role default',
+    pattern: /accessibilityRole = 'summary'/,
   },
   {
     label: 'label value helper summary',
@@ -1998,7 +2016,11 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'native grouped surface',
-    pattern: /\s+accessible\s+/,
+    pattern: /accessible=\{accessible\}/,
+  },
+  {
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
   },
   {
     label: 'native accessibility label',
@@ -2018,7 +2040,11 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'blue tone style path',
-    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
+    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null, style\]\}/,
+  },
+  {
+    label: 'token hairline border width',
+    pattern: /borderWidth:\s*space\.hairline/,
   },
 ];
 const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
