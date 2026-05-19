@@ -102,3 +102,21 @@ test('static source provenance copy rejects unshipped external source families',
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
+
+test('static source provenance copy stays learner-facing', () => {
+  const surface = sourceProvenanceSurface();
+  const appSource = read('site/app.js');
+
+  [
+    /static question bank/i,
+    /statiska fr[aå]gebanken/i,
+    /stores the same source title/i,
+    /lagrar samma k[aä]lltitel/i,
+  ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+
+  assert.match(
+    surface,
+    /visible source line names the same source title,\s*chapter,\s*section,\s*and page/i,
+  );
+  assert.match(appSource, /synliga k[aä]llrad anger k[aä]lltitel,\s*kapitel,\s*avsnitt och sida/i);
+});
