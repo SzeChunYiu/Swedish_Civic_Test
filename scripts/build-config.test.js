@@ -44,6 +44,64 @@ test('release validation includes dependency security audit', () => {
   assert.equal(pkg.overrides.postcss, '8.5.10');
 });
 
+test('npm test dispatcher preserves full suite and focused monetization selector', () => {
+  const pkg = readJson('package.json');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const fakeNpm = path.join(tmpDir, 'npm');
+  fs.writeFileSync(fakeNpm, ['#!/bin/sh', `echo "$@" >> "${npmLog}"`, 'exit 0', ''].join('\n'), {
+    mode: 0o755,
+  });
+
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_NPM: fakeNpm,
+    TEST_DISPATCH_CAPTURE: '1',
+  };
+
+  assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/test-dispatch.js')), true);
+  assert.match(pkg.scripts['test:all'], /^npm run test:learning\b/);
+  assert.match(pkg.scripts['test:all'], /npm run test:monetization/);
+  assert.match(pkg.scripts['test:all'], /npm run test:a11y-labels$/);
+
+  const fullResult = spawnSync(process.execPath, ['scripts/test-dispatch.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env,
+  });
+  assert.equal(fullResult.status, 0, fullResult.stderr || fullResult.stdout);
+  assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:all\n');
+
+  fs.writeFileSync(npmLog, '');
+  const monetizationResult = spawnSync(
+    process.execPath,
+    ['scripts/test-dispatch.js', 'monetization'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env,
+    },
+  );
+  assert.equal(
+    monetizationResult.status,
+    0,
+    monetizationResult.stderr || monetizationResult.stdout,
+  );
+  assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
+
+  const bogusResult = spawnSync(process.execPath, ['scripts/test-dispatch.js', 'bogus'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env,
+  });
+  assert.equal(bogusResult.status, 1);
+  assert.match(bogusResult.stderr, /Unsupported npm test selector: bogus/);
+  assert.match(bogusResult.stderr, /monetization -> npm run test:monetization/);
+  assert.match(bogusResult.stderr, /Run `npm test` with no selector/);
+  assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
+});
+
 test('GitHub release secrets check reports whether EXPO_TOKEN is configured without leaking values', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-release-secrets-check-'));
   const reportPath = path.join(tmpDir, 'github-secrets.md');
