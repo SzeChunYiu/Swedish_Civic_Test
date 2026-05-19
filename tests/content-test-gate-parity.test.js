@@ -5,6 +5,27 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+test('source-authority stem checks use the shared pattern helper', () => {
+  const helperSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts', 'sourceAuthorityStemPatterns.js'),
+    'utf8',
+  );
+  const validateSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts', 'validate-content.js'),
+    'utf8',
+  );
+  const csvGateSource = fs.readFileSync(
+    path.join(repoRoot, 'tests', 'content-uhr-source-citation-stem.test.js'),
+    'utf8',
+  );
+
+  assert.match(helperSource, /SOURCE_AUTHORITY_STEM_PATTERNS\s*=\s*Object\.freeze\(\[/);
+  assert.match(validateSource, /require\('\.\/sourceAuthorityStemPatterns'\)/);
+  assert.match(csvGateSource, /require\('\.\.\/scripts\/sourceAuthorityStemPatterns'\)/);
+  assert.doesNotMatch(validateSource, /QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS\s*=/);
+  assert.doesNotMatch(csvGateSource, /\bBANNED\s*=\s*\[/);
+});
+
 test('test:content script includes every content test file exactly once', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
   const testContentScript = packageJson.scripts?.['test:content'];

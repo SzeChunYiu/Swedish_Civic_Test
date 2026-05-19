@@ -11,24 +11,9 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { hasSourceAuthorityStemPattern } = require('../scripts/sourceAuthorityStemPatterns');
 
 const CSV = path.resolve(__dirname, '..', 'content', 'question-bank.csv');
-
-const BANNED = [
-  /enligt\s+UHR\b/i,
-  /UHR[\s-]?(?:materialet|avsnittet)/i,
-  /UHR:s\s+material/i,
-  /according to\s+(?:the\s+)?UHR\b/i,
-  /(?:the\s+)?UHR\s+(?:material|section)/i,
-  /st(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR/i,
-  /best matches (?:the\s+)?UHR section/i,
-  /n(?:ä|a)mns\s+som\s+exempel/i,
-  /mentioned\s+as\s+examples?/i,
-  /n(?:ä|a)mns\s+som\s+en\s+anledning/i,
-  /mentioned\s+as\s+a\s+reason/i,
-  /n(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l/i,
-  /mentioned\s+as\s+(?:historical\s+)?reasons/i,
-];
 
 function parseCsv(text) {
   // RFC4180-ish: every field quoted (QUOTE_ALL export).
@@ -78,7 +63,7 @@ function collectStemAuthorityConnectiveOffenders(text) {
     const id = rows[r][idIdx];
     for (const col of [svIdx, enIdx]) {
       const v = rows[r][col] || '';
-      if (BANNED.some((re) => re.test(v))) {
+      if (hasSourceAuthorityStemPattern(v)) {
         offenders.push(`${id} [${header[col]}]: ${v}`);
       }
     }
