@@ -2342,6 +2342,340 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Det är korrekt att Svaret är genom att kontrollera information.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'It is correct that the answer is checking information.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects generated true/false describes-that stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att statschefen saknar politisk makt.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'That the head of state lacks political power describes that Sweden is a constitutional monarchy.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects residual generated true/false option-fragment stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'Everyone who has the right to vote has one vote each is part of free elections in a democracy.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects residual generated true/false applies-to stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects residual generated true/false definition splices', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'They implement decisions and must follow laws and government instructions describes government agencies.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects residual generated true/false list and meaning splices', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Allemansrätten innebär att den ger alla möjlighet att vara i naturen.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'The right of public access means it gives everyone the opportunity to be in nature.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects residual generated true/false fragment-only stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Genom att allmänna handlingar kan begäras ut.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'By allowing public documents to be requested.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects generated true/false statement-about-statement stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'The statement is true: Sweden is in the Nordic region.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects generated true/false negative meta-stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Det är inte sant att Sveriges nordligaste del ligger norr om polcirkeln.',
+      )
+      .replace(
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'It is not true that Sweden is in northern Europe.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects false-answer explanations that say True is correct', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
     return String(contents).replace(
       'Sveriges nordligaste del ligger norr om polcirkeln.',
       'Äktenskap mellan personer av samma kön i Sverige är tillåtet att gifta sig med en person av samma kön.',

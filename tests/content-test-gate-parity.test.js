@@ -2,8 +2,59 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function contentTestFiles() {
+  return fs
+    .readdirSync(path.join(repoRoot, 'tests'))
+    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
+    .map((fileName) => `tests/${fileName}`)
+    .sort();
+}
+
+function propertyName(node) {
+  if (!node) return '';
+  if (ts.isIdentifier(node) || ts.isStringLiteral(node) || ts.isNumericLiteral(node)) {
+    return node.text;
+  }
+  return node.getText();
+}
+
+function isProcessExecPath(node) {
+  return (
+    node &&
+    ts.isPropertyAccessExpression(node) &&
+    node.name.text === 'execPath' &&
+    ts.isIdentifier(node.expression) &&
+    node.expression.text === 'process'
+  );
+}
+
+function isEvalFlagArray(node) {
+  return (
+    node &&
+    ts.isArrayLiteralExpression(node) &&
+    node.elements.length > 0 &&
+    ts.isStringLiteral(node.elements[0]) &&
+    node.elements[0].text === '-e'
+  );
+}
+
+function hasRepoRootCwdOption(node) {
+  return (
+    node &&
+    ts.isObjectLiteralExpression(node) &&
+    node.properties.some(
+      (property) =>
+        ts.isPropertyAssignment(property) &&
+        propertyName(property.name) === 'cwd' &&
+        ts.isIdentifier(property.initializer) &&
+        property.initializer.text === 'repoRoot',
+    )
+  );
+}
 
 test('test:content script includes every content test file exactly once', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
@@ -11,17 +62,17 @@ test('test:content script includes every content test file exactly once', () => 
 
   assert.equal(typeof testContentScript, 'string');
 
-  const contentTestFiles = fs
-    .readdirSync(path.join(repoRoot, 'tests'))
-    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
-    .map((fileName) => `tests/${fileName}`)
-    .sort();
   const wiredContentTests = testContentScript
     .split(/\s+/)
     .filter((token) => token.startsWith('tests/content-') && token.endsWith('.test.js'));
 
-  const missingTests = contentTestFiles.filter((fileName) => !wiredContentTests.includes(fileName));
-  const unknownTests = wiredContentTests.filter((fileName) => !contentTestFiles.includes(fileName));
+  const expectedContentTests = contentTestFiles();
+  const missingTests = expectedContentTests.filter(
+    (fileName) => !wiredContentTests.includes(fileName),
+  );
+  const unknownTests = wiredContentTests.filter(
+    (fileName) => !expectedContentTests.includes(fileName),
+  );
   const duplicateTests = wiredContentTests.filter(
     (fileName, index) => wiredContentTests.indexOf(fileName) !== index,
   );
@@ -39,18 +90,42 @@ test('test:content script includes every content test file exactly once', () => 
   );
 });
 
-test('generated-id fixture guard scans content test globs', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
-    'utf8',
-  );
+test('content eval spawnSync calls run from repoRoot', () => {
+  const violations = [];
 
-  assert.match(source, /function contentMutationFixtureFiles\(\)/);
-  assert.match(source, /readdirSync\(path\.join\(repoRoot, 'tests'\)\)/);
-  assert.match(source, /\^content-\.\*\\\.test\\\.js\$/);
-  assert.match(source, /readdirSync\(path\.join\(repoRoot, 'scripts'\)\)/);
-  assert.match(source, /\^.\*content.\*\\\.test\\\.js\$/);
-  assert.doesNotMatch(source, /const scannedFiles = \[\s*['"`]tests\/content-published/);
-  assert.match(source, /generated id fixture guard rejects raw generated ids/);
-  assert.match(source, /generated id fixture guard allows source ids and helper-derived ids/);
+  for (const relativePath of contentTestFiles()) {
+    const absolutePath = path.join(repoRoot, relativePath);
+    const source = fs.readFileSync(absolutePath, 'utf8');
+    const sourceFile = ts.createSourceFile(
+      absolutePath,
+      source,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.JS,
+    );
+
+    function visit(node) {
+      if (
+        ts.isCallExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        node.expression.text === 'spawnSync' &&
+        isProcessExecPath(node.arguments[0]) &&
+        isEvalFlagArray(node.arguments[1]) &&
+        !hasRepoRootCwdOption(node.arguments[2])
+      ) {
+        const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+        violations.push(`${relativePath}:${line + 1}`);
+      }
+
+      ts.forEachChild(node, visit);
+    }
+
+    visit(sourceFile);
+  }
+
+  assert.deepEqual(
+    violations,
+    [],
+    `spawnSync(process.execPath, ['-e', ...]) calls must pass { cwd: repoRoot }: ${violations.join(', ')}`,
+  );
 });
