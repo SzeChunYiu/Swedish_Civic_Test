@@ -1069,6 +1069,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
@@ -1098,6 +1102,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /Tidsatta övningsprov är redan annonsfria/);
   assert.match(paywallSource, /Provläget är redan annonsfritt/);
+  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
+  assert.doesNotMatch(placementCtaSource, /\bProv är redan annonsfria\b/);
+  assert.doesNotMatch(placementCtaSource, /\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i);
   assert.doesNotMatch(paywallSource, /\bprov förblir annonsfria\b/i);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
