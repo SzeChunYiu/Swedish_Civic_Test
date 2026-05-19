@@ -6,6 +6,12 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { colors, typography } from '../lib/theme';
 
 const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+const SUPPORT_INTAKE_URL =
+  'https://github.com/SzeChunYiu/Swedish_Civic_Test/issues/new?' +
+  'title=Almost%20Swedish%20support%20request&' +
+  'body=Please%20do%20not%20include%20personal%20data.%0A%0A' +
+  'Issue%20type%3A%20content%20issue%20%2F%20Swedish%20wording%20%2F%20source%20reference%20%2F%20audio%20problem%20%2F%20study-flow%20bug%20%2F%20store-build%20issue.%0A%0A' +
+  'Describe%20what%20you%20saw%20without%20IDs%20or%20case%20details%3A%0A';
 
 type LegalRouteSectionCopy = {
   body: string;
@@ -13,11 +19,14 @@ type LegalRouteSectionCopy = {
 };
 
 type SupportRouteCopy = {
+  openSupportIntakeAccessibilityLabel: string;
   openSupportPageAccessibilityLabel: string;
+  supportIntakeLinkLabel: string;
   sections: {
     whatToReport: LegalRouteSectionCopy;
     noPersonalData: LegalRouteSectionCopy;
     independentStudyTool: LegalRouteSectionCopy;
+    supportIntake: LegalRouteSectionCopy;
     publicSupportPage: LegalRouteSectionCopy;
   };
   title: string;
@@ -25,10 +34,12 @@ type SupportRouteCopy = {
 
 const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
   sv: {
+    openSupportIntakeAccessibilityLabel: 'Öppna supportintaget',
     openSupportPageAccessibilityLabel: 'Öppna den offentliga supportsidan',
+    supportIntakeLinkLabel: 'Öppna supportintag',
     sections: {
       whatToReport: {
-        body: 'Skicka ett supportmeddelande om du hittar ett innehållsfel, oklar svensk formulering, trasig källreferens, ett ljudproblem eller ett fel i studieflödet.',
+        body: 'Supportintaget är till för innehållsfel, oklar svensk formulering, trasig källreferens, ljudproblem, fel i studieflödet eller butik/buildproblem.',
         title: 'Vad du kan rapportera',
       },
       noPersonalData: {
@@ -39,6 +50,10 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
         body: 'Supporten kan hjälpa till med appfunktioner och innehållsrättelser, men kan inte ge officiella provsvar, migrationsråd eller myndighetsbeslut.',
         title: 'Oberoende studieverktyg',
       },
+      supportIntake: {
+        body: 'Öppna supportintaget och ta bort allt personligt från den förifyllda texten innan du skickar.',
+        title: 'Supportintag',
+      },
       publicSupportPage: {
         body: 'Skicka återkoppling via den offentliga supportsidan:',
         title: 'Offentlig supportsida',
@@ -47,10 +62,12 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
     title: 'Support och återkoppling',
   },
   en: {
+    openSupportIntakeAccessibilityLabel: 'Open support intake',
     openSupportPageAccessibilityLabel: 'Open public support page',
+    supportIntakeLinkLabel: 'Open support intake',
     sections: {
       whatToReport: {
-        body: 'Send a support note if you find a content issue, confusing Swedish wording, a broken source reference, an audio problem, or a bug in the study flow.',
+        body: 'The support intake is for content issues, confusing Swedish wording, broken source references, audio problems, study-flow bugs, or store/build issues.',
         title: 'What to report',
       },
       noPersonalData: {
@@ -60,6 +77,10 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       independentStudyTool: {
         body: 'Support can help with app functionality and content corrections, but it cannot provide official exam answers, migration advice, or government decisions.',
         title: 'Independent study tool',
+      },
+      supportIntake: {
+        body: 'Open the support intake and remove anything personal from the prefilled message before sending.',
+        title: 'Support intake',
       },
       publicSupportPage: {
         body: 'Send feedback through the public support page:',
@@ -84,6 +105,17 @@ export default function Screen() {
       </LegalSection>
       <LegalSection title={copy.sections.independentStudyTool.title}>
         {copy.sections.independentStudyTool.body}
+      </LegalSection>
+      <LegalSection title={copy.sections.supportIntake.title}>
+        {copy.sections.supportIntake.body}{' '}
+        <Link
+          accessibilityLabel={copy.openSupportIntakeAccessibilityLabel}
+          accessibilityRole="link"
+          href={SUPPORT_INTAKE_URL}
+          style={styles.externalLink}
+        >
+          {copy.supportIntakeLinkLabel}
+        </Link>
       </LegalSection>
       <LegalSection title={copy.sections.publicSupportPage.title}>
         {copy.sections.publicSupportPage.body}{' '}

@@ -107,12 +107,15 @@ const expectedLegalRoutes = [
       'Support and feedback',
       'What to report',
       'Öppna den offentliga supportsidan',
+      'Öppna supportintag',
       'Open public support page',
+      'Open support intake',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.supportIntake\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>/,
     ],
     title: 'Support and feedback',
@@ -121,6 +124,7 @@ const expectedLegalRoutes = [
       'What to report',
       'No personal data',
       'Independent study tool',
+      'Support intake',
       'Public support page',
     ],
   },
@@ -146,7 +150,7 @@ test('legal, source, and support routes stay on shared accessible header path', 
     'utf8',
   );
 
-  assert.equal(summary.legalRouteHeadersValidated, 23);
+  assert.equal(summary.legalRouteHeadersValidated, 24);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);

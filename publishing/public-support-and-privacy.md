@@ -20,7 +20,7 @@ Almost Swedish is an independent study app for Swedish civic
 knowledge practice. It is not official and is not affiliated with UHR,
 Skolverket, Migrationsverket, or the Swedish government.
 
-Contact support if you find:
+The support intake covers:
 
 - a content issue,
 - confusing Swedish wording,
@@ -31,6 +31,11 @@ Contact support if you find:
 
 Please include no personal data, government identifiers, immigration case
 details, or sensitive account information in support messages.
+
+Open the support intake and remove anything personal from the prefilled message
+before sending:
+
+`https://github.com/SzeChunYiu/Swedish_Civic_Test/issues/new?title=Almost%20Swedish%20support%20request&body=Please%20do%20not%20include%20personal%20data.%0A%0AIssue%20type%3A%20content%20issue%20%2F%20Swedish%20wording%20%2F%20source%20reference%20%2F%20audio%20problem%20%2F%20study-flow%20bug%20%2F%20store-build%20issue.%0A%0ADescribe%20what%20you%20saw%20without%20IDs%20or%20case%20details%3A%0A`
 
 Support can help with app functionality and content corrections, but cannot
 provide official exam answers, migration advice, or government decisions.

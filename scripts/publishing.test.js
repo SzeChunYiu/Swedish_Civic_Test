@@ -140,6 +140,8 @@ test('public support and privacy URL copy is ready for hosting', () => {
   assert.match(publicCopy, /Privacy Policy URL/i);
   assert.match(publicCopy, /app-ads\.txt/i);
   assert.match(publicCopy, /no personal data/i);
+  assert.match(publicCopy, /support intake/i);
+  assert.match(publicCopy, /github\.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/new/i);
   assert.match(publicCopy, /no account/i);
   assert.match(publicCopy, /not affiliated/i);
   assertCurrentPublicPrivacyPosture(publicCopy);
@@ -153,6 +155,9 @@ test('hostable public support, privacy, and app-ads files are prepared', () => {
   assert.match(support, /Almost Swedish support/i);
   assert.match(support, /content issue/i);
   assert.match(support, /no personal data/i);
+  assert.match(support, /Open support intake/i);
+  assert.match(support, /github\.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/new/i);
+  assert.doesNotMatch(support, /Contact support if you find/i);
   assert.match(support, /not affiliated/i);
   assert.match(support, /<html lang="en">/i);
 

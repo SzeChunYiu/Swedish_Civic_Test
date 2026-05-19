@@ -71,11 +71,17 @@ test('compliance pages and source links are present', () => {
   assert.match(supportRoute, /Support och återkoppling/);
   assert.match(supportRoute, /Vad du kan rapportera/);
   assert.match(supportRoute, /Öppna den offentliga supportsidan/);
+  assert.match(supportRoute, /Öppna supportintag/);
+  assert.match(supportRoute, /Open support intake/);
   assert.match(supportRoute, /content issue/i);
   assert.match(supportRoute, /no personal data/i);
   assert.match(supportRoute, /szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/support/i);
+  assert.match(supportRoute, /github\.com\/SzeChunYiu\/Swedish_Civic_Test\/issues\/new/i);
   assert.match(supportRoute, /<Link[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
+  assert.match(supportRoute, /<Link[\s\S]*href=\{SUPPORT_INTAKE_URL\}/);
   assert.match(supportRoute, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
+  assert.match(supportRoute, /accessibilityLabel=\{copy\.openSupportIntakeAccessibilityLabel\}/);
+  assert.doesNotMatch(supportRoute, /Send a support note|Skicka ett supportmeddelande/);
   assert.doesNotMatch(supportRoute, /release checklist items/i);
   const complianceLinks = read('components/compliance/ComplianceLinks.tsx');
   assert.match(complianceLinks, /Juridik och källor/);
