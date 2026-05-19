@@ -215,6 +215,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady: monetizationEntitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -327,7 +328,7 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      {!monetizationEntitlements.adsDisabled ? (
+      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -412,13 +413,15 @@ export default function Screen() {
         })}
       </View>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
-      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
+      {monetizationEntitlementsReady ? (
+        <PremiumBanner
+          entitlements={monetizationEntitlements}
+          language={language}
+          onEntitlementsChange={setMonetizationEntitlements}
+          runtimeOptions={purchaseRuntime}
+        />
+      ) : null}
+      <AdBanner placement="home_banner" />
     </ScreenShell>
   );
 }
