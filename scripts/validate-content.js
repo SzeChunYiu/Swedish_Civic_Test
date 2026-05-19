@@ -5959,6 +5959,9 @@ let questionBankCsvRowsValidated = 0;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
+let contentTestValidateContentExecCallsValidated = 0;
+let contentTestValidateContentExecCwdPinnedValidated = 0;
+let contentTestValidateContentExecCwdParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -13074,6 +13077,62 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+function collectValidateContentExecFileSyncCalls(sourceText) {
+  const calls = [];
+  const callPattern =
+    /execFileSync\(\s*process\.execPath,\s*\[\s*(['"])scripts\/validate-content\.js\1\s*\],\s*\{([\s\S]*?)\}\s*\)/g;
+  let match;
+  while ((match = callPattern.exec(sourceText)) !== null) {
+    calls.push({
+      index: match.index,
+      hasPinnedCwd: /\bcwd\s*:\s*repoRoot\b/.test(match[2]),
+    });
+  }
+  return calls;
+}
+
+function validateContentTestExecCwdParity() {
+  let valid = true;
+  const testsDir = path.join(repoRoot, 'tests');
+  const contentTestFiles = fs
+    .readdirSync(testsDir)
+    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
+    .sort();
+
+  for (const fileName of contentTestFiles) {
+    const relativePath = `tests/${fileName}`;
+    const sourceText = fs.readFileSync(path.join(testsDir, fileName), 'utf8');
+    const calls = collectValidateContentExecFileSyncCalls(sourceText);
+
+    contentTestValidateContentExecCallsValidated += calls.length;
+    for (const call of calls) {
+      if (call.hasPinnedCwd) {
+        contentTestValidateContentExecCwdPinnedValidated += 1;
+      } else {
+        valid = false;
+        const lineNumber = sourceText.slice(0, call.index).split('\n').length;
+        fail(`${relativePath}:${lineNumber} validate-content execFileSync must set cwd: repoRoot`);
+      }
+    }
+  }
+
+  if (contentTestValidateContentExecCallsValidated === 0) {
+    valid = false;
+    fail('content tests must include direct validate-content execFileSync coverage');
+  }
+  if (
+    contentTestValidateContentExecCwdPinnedValidated !==
+    contentTestValidateContentExecCallsValidated
+  ) {
+    valid = false;
+    fail(
+      `content tests pin ${contentTestValidateContentExecCwdPinnedValidated}/${contentTestValidateContentExecCallsValidated} validate-content execFileSync calls to cwd: repoRoot`,
+    );
+  }
+
+  if (valid) contentTestValidateContentExecCwdParityValidated = true;
+}
+
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
@@ -13394,6 +13453,7 @@ validateMasteryRules();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
+validateContentTestExecCwdParity();
 
 if (failures.length) {
   console.error('Content validation failed:');
@@ -13658,6 +13718,9 @@ console.log(
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
+      contentTestValidateContentExecCallsValidated,
+      contentTestValidateContentExecCwdPinnedValidated,
+      contentTestValidateContentExecCwdParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,

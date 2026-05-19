@@ -1,6 +1,9 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const path = require('node:path');
 const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary(output) {
   const match = output.match(/\{[\s\S]*\}/);
@@ -10,6 +13,7 @@ function parseValidationSummary(output) {
 
 test('speech runtime parity validates Swedish TTS language and stop handling', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const summary = parseValidationSummary(output);
