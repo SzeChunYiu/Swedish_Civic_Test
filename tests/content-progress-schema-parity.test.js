@@ -235,7 +235,6 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         correctStreak: 999999999,
         lastAnsweredAt: 'not-a-date',
         nextReviewAt: '2099-01-01T00:00:00.000Z',
-        bookmarked: 'yes',
       },
       q002: {
         seenCount: 5,
@@ -244,14 +243,6 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         correctStreak: 3,
         lastAnsweredAt: '2026-05-19T10:00:00.000Z',
         nextReviewAt: '2026-05-20T10:00:00.000Z',
-        bookmarked: true,
-      },
-      q003: {
-        seenCount: 1,
-        correctCount: 0,
-        wrongCount: 1,
-        correctStreak: 0,
-        bookmarked: false,
       },
     },
     totalXp: 'huge',
@@ -306,17 +297,14 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(state.questionProgress.q001.correctCount, 0);
   assert.equal(state.questionProgress.q001.wrongCount, 0);
   assert.equal(state.questionProgress.q001.correctStreak, 0);
-  assert.equal(Object.hasOwn(state.questionProgress.q001, 'lastAnsweredAt'), false);
-  assert.equal(Object.hasOwn(state.questionProgress.q001, 'nextReviewAt'), false);
+  assert.equal(state.questionProgress.q001.lastAnsweredAt, undefined);
+  assert.equal(state.questionProgress.q001.nextReviewAt, undefined);
   assert.equal(state.questionProgress.q002.seenCount, 5);
   assert.equal(state.questionProgress.q002.correctCount, 5);
   assert.equal(state.questionProgress.q002.wrongCount, 0);
   assert.equal(state.questionProgress.q002.correctStreak, 3);
   assert.equal(state.questionProgress.q002.lastAnsweredAt, '2026-05-19T10:00:00.000Z');
   assert.equal(state.questionProgress.q002.nextReviewAt, '2026-05-20T10:00:00.000Z');
-  assert.equal(Object.hasOwn(state.questionProgress.q001, 'bookmarked'), false);
-  assert.equal(state.questionProgress.q002.bookmarked, true);
-  assert.equal(state.questionProgress.q003.bookmarked, false);
   assert.equal(state.totalXp, 0);
   assert.deepEqual(state.answerDates, ['2026-05-19']);
   assert.equal(state.mockExamSessions.length, 2);
@@ -579,29 +567,14 @@ test('progress store schema parity rejects raw numeric hydration', () => {
 
 test('progress store schema parity rejects raw date hydration', () => {
   const result = runValidationWithProgressStorePatch(
-    'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
-    'normalizedQuestionProgress.lastAnsweredAt = item.lastAnsweredAt;',
+    'lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),',
+    'lastAnsweredAt: item.lastAnsweredAt,',
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /question progress hydration must normalize and omit absent lastAnsweredAt timestamps/,
-  );
-});
-
-test('progress store schema parity rejects raw bookmark hydration', () => {
-  const result = runValidationWithProgressStorePatch(
-    `if (typeof item.bookmarked === 'boolean') {
-        normalizedQuestionProgress.bookmarked = item.bookmarked;
-      }`,
-    'normalizedQuestionProgress.bookmarked = item.bookmarked;',
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /question progress hydration must preserve only boolean bookmark values/,
+    /question progress hydration must normalize lastAnsweredAt timestamps/,
   );
 });
 

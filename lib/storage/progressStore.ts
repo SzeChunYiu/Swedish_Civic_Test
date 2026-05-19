@@ -92,32 +92,6 @@ function clampScore(value: unknown): number {
   return Math.max(0, Math.min(1, value));
 }
 
-function normalizeMockExamAnswers(value: unknown): MockExamAnswerProgress[] {
-  if (!Array.isArray(value)) return [];
-
-  const answers: MockExamAnswerProgress[] = [];
-  for (const answer of value) {
-    if (answers.length >= maxHydratedMockQuestionCount) break;
-    if (!answer || typeof answer !== 'object') continue;
-
-    const item = answer as Partial<MockExamAnswerProgress>;
-    if (typeof item.questionId !== 'string' || item.questionId.trim().length === 0) continue;
-    if (typeof item.isCorrect !== 'boolean') continue;
-
-    answers.push({
-      questionId: item.questionId,
-      isCorrect: item.isCorrect,
-      timeSpentSeconds: normalizeNonNegativeInteger(
-        item.timeSpentSeconds,
-        0,
-        maxHydratedMockQuestionTimeSeconds,
-      ),
-    });
-  }
-
-  return answers;
-}
-
 function isHydratableDateTime(timeMs: number): boolean {
   return Number.isFinite(timeMs) && timeMs <= Date.now() + maxHydratedFutureDateMs;
 }
@@ -229,6 +203,9 @@ function normalizeProgress(value: unknown): PersistedProgress {
         correctCount,
         wrongCount,
         correctStreak,
+        lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),
+        nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),
+        bookmarked: item.bookmarked,
       };
       const lastAnsweredAt = normalizeIsoTimestamp(item.lastAnsweredAt);
       const nextReviewAt = normalizeIsoTimestamp(item.nextReviewAt);
@@ -247,7 +224,6 @@ function normalizeProgress(value: unknown): PersistedProgress {
       const item = session as Partial<MockExamProgress>;
       const completedAt = normalizeIsoTimestamp(item.completedAt);
       if (typeof item.sessionId !== 'string' || !completedAt) continue;
-      const normalizedAnswers = normalizeMockExamAnswers(item.answers);
       const totalCount = normalizeNonNegativeInteger(
         item.totalCount,
         normalizedAnswers.length,

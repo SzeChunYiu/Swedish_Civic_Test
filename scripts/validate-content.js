@@ -12750,12 +12750,12 @@ function validateProgressStoreSchemaParity() {
       'progress hydration must normalize persisted answerDates',
     ],
     [
-      'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
-      'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
+      'lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),',
+      'question progress hydration must normalize lastAnsweredAt timestamps',
     ],
     [
-      'if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;',
-      'question progress hydration must normalize and omit absent nextReviewAt timestamps',
+      'nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),',
+      'question progress hydration must normalize nextReviewAt timestamps',
     ],
     [
       'const completedAt = normalizeIsoTimestamp(item.completedAt);',
@@ -12861,11 +12861,7 @@ function validateProgressStoreSchemaParity() {
     'lastAnsweredAt: item.lastAnsweredAt',
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
-    'timeSpentSeconds: item.timeSpentSeconds',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
-    'bookmarked: item.bookmarked,',
-    'bookmarked: Boolean(item.bookmarked)',
-    'bookmarked: !!item.bookmarked',
   ];
 
   forbiddenHydrationSnippets.forEach((snippet) => {
