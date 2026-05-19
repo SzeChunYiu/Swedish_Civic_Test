@@ -5,8 +5,7 @@ import type { PremiumEntitlements } from '../../types/monetization';
 export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
 export const REMOVE_ADS_PRICE_LABEL = '29 SEK';
 export const REMOVE_ADS_STORAGE_KEY = 'monetization.removeAds.adsDisabled.v1';
-
-const STORED_TRUE = 'true';
+export const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;
 
 type NativeIapModule = typeof import('react-native-iap');
 type SecureStoreModule = typeof import('expo-secure-store');
@@ -22,6 +21,17 @@ export interface RemoveAdsPurchaseRecord {
   purchaseToken?: string | null;
   transactionId?: string | null;
   raw?: unknown;
+}
+
+export type RemoveAdsGrantSource = 'purchase' | 'restore';
+
+export interface StoredRemoveAdsEntitlementRecord {
+  grantedAt: string;
+  productId: typeof REMOVE_ADS_PRODUCT_ID;
+  purchaseToken?: string | null;
+  schemaVersion: typeof REMOVE_ADS_RECORD_SCHEMA_VERSION;
+  source: RemoveAdsGrantSource;
+  transactionId?: string | null;
 }
 
 export interface RemoveAdsPurchaseProvider {
@@ -54,7 +64,6 @@ export interface NativePurchaseProviderOptions {
 
 export interface MockPurchaseProviderOptions {
   owned?: boolean;
-  ownedProductIds?: readonly string[];
   pendingPurchase?: boolean;
 }
 
@@ -78,6 +87,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function optionalString(value: unknown): string | null | undefined {
   return typeof value === 'string' ? value : undefined;
+}
+
+function optionalStoredString(value: unknown): string | null | undefined {
+  if (value === null) return null;
+  return typeof value === 'string' ? value : undefined;
+}
+
+function isValidIsoDate(value: unknown): value is string {
+  return typeof value === 'string' && !Number.isNaN(new Date(value).getTime());
 }
 
 function getBrowserPurchaseStorage(): BrowserPurchaseStorage | undefined {
@@ -119,17 +137,73 @@ function normalizePurchases(value: unknown): RemoveAdsPurchaseRecord[] {
   return purchase ? [purchase] : [];
 }
 
-function purchaseMatchesProductId(purchase: RemoveAdsPurchaseRecord, productId: string): boolean {
-  if (purchase.productId === productId) return true;
+function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
+  if (purchase.productId === REMOVE_ADS_PRODUCT_ID) return true;
   if (!isRecord(purchase.raw)) return false;
   return (
     Array.isArray(purchase.raw.ids) &&
-    purchase.raw.ids.some((rawProductId) => rawProductId === productId)
+    purchase.raw.ids.some((productId) => productId === REMOVE_ADS_PRODUCT_ID)
   );
 }
 
-function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
-  return purchaseMatchesProductId(purchase, REMOVE_ADS_PRODUCT_ID);
+function hasStoreConfirmation(record: StoredRemoveAdsEntitlementRecord): boolean {
+  return Boolean(record.purchaseToken || record.transactionId);
+}
+
+function createStoredRemoveAdsEntitlementRecord({
+  grantedAt = new Date(),
+  purchase,
+  source,
+}: {
+  grantedAt?: Date;
+  purchase?: RemoveAdsPurchaseRecord;
+  source: RemoveAdsGrantSource;
+}): StoredRemoveAdsEntitlementRecord {
+  return {
+    grantedAt: grantedAt.toISOString(),
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: purchase?.purchaseToken ?? null,
+    schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    source,
+    transactionId: purchase?.transactionId ?? `local-${source}-remove-ads`,
+  };
+}
+
+function parseStoredRemoveAdsEntitlementRecord(
+  storedValue: string | null,
+): StoredRemoveAdsEntitlementRecord | null {
+  if (!storedValue) return null;
+
+  try {
+    const parsed = JSON.parse(storedValue) as unknown;
+    if (!isRecord(parsed)) return null;
+
+    const source = optionalString(parsed.source);
+    const record: StoredRemoveAdsEntitlementRecord = {
+      grantedAt: optionalString(parsed.grantedAt) ?? '',
+      productId: optionalString(parsed.productId) as typeof REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: optionalStoredString(parsed.purchaseToken),
+      schemaVersion: parsed.schemaVersion as typeof REMOVE_ADS_RECORD_SCHEMA_VERSION,
+      source: source as RemoveAdsGrantSource,
+      transactionId: optionalStoredString(parsed.transactionId),
+    };
+
+    if (record.schemaVersion !== REMOVE_ADS_RECORD_SCHEMA_VERSION) return null;
+    if (record.productId !== REMOVE_ADS_PRODUCT_ID) return null;
+    if (record.source !== 'purchase' && record.source !== 'restore') return null;
+    if (!isValidIsoDate(record.grantedAt)) return null;
+    if (!hasStoreConfirmation(record)) return null;
+
+    return record;
+  } catch {
+    return null;
+  }
+}
+
+function serializeStoredRemoveAdsEntitlementRecord(
+  record: StoredRemoveAdsEntitlementRecord,
+): string {
+  return JSON.stringify(record);
 }
 
 function createResult(
@@ -174,7 +248,14 @@ export function createSecureStorePurchaseStorage(): PurchaseStorage {
 
 export function createMemoryPurchaseStorage(initialAdsDisabled = false): PurchaseStorage {
   const values = new Map<string, string>();
-  if (initialAdsDisabled) values.set(REMOVE_ADS_STORAGE_KEY, STORED_TRUE);
+  if (initialAdsDisabled) {
+    values.set(
+      REMOVE_ADS_STORAGE_KEY,
+      serializeStoredRemoveAdsEntitlementRecord(
+        createStoredRemoveAdsEntitlementRecord({ source: 'restore' }),
+      ),
+    );
+  }
 
   return {
     async deleteItemAsync(key) {
@@ -196,7 +277,12 @@ export function createWebPurchaseStorage(initialAdsDisabled = false): PurchaseSt
   if (browserStorage && initialAdsDisabled) {
     try {
       if (browserStorage.getItem(REMOVE_ADS_STORAGE_KEY) === null) {
-        browserStorage.setItem(REMOVE_ADS_STORAGE_KEY, STORED_TRUE);
+        browserStorage.setItem(
+          REMOVE_ADS_STORAGE_KEY,
+          serializeStoredRemoveAdsEntitlementRecord(
+            createStoredRemoveAdsEntitlementRecord({ source: 'restore' }),
+          ),
+        );
       }
     } catch {
       // Fall back to in-memory storage when browser persistence is unavailable.
@@ -243,10 +329,23 @@ export function createWebPurchaseStorage(initialAdsDisabled = false): PurchaseSt
 
 export async function setRemoveAdsEntitlement(
   adsDisabled: boolean,
-  { storage = createSecureStorePurchaseStorage() }: Pick<PurchaseRuntimeOptions, 'storage'> = {},
+  {
+    grantedAt,
+    purchase,
+    source = 'purchase',
+    storage = createSecureStorePurchaseStorage(),
+  }: Pick<PurchaseRuntimeOptions, 'storage'> & {
+    grantedAt?: Date;
+    purchase?: RemoveAdsPurchaseRecord;
+    source?: RemoveAdsGrantSource;
+  } = {},
 ): Promise<PremiumEntitlements> {
   if (adsDisabled) {
-    await storage.setItemAsync(REMOVE_ADS_STORAGE_KEY, STORED_TRUE);
+    const record = createStoredRemoveAdsEntitlementRecord({ grantedAt, purchase, source });
+    await storage.setItemAsync(
+      REMOVE_ADS_STORAGE_KEY,
+      serializeStoredRemoveAdsEntitlementRecord(record),
+    );
   } else if (storage.deleteItemAsync) {
     await storage.deleteItemAsync(REMOVE_ADS_STORAGE_KEY);
   } else {
@@ -260,7 +359,7 @@ export async function getPurchaseEntitlements({
   storage = createSecureStorePurchaseStorage(),
 }: Pick<PurchaseRuntimeOptions, 'storage'> = {}): Promise<PremiumEntitlements> {
   const storedValue = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
-  return removeAdsEntitlements(storedValue === STORED_TRUE);
+  return removeAdsEntitlements(Boolean(parseStoredRemoveAdsEntitlementRecord(storedValue)));
 }
 
 export function createNativePurchaseProvider({
@@ -297,9 +396,7 @@ export function createNativePurchaseProvider({
         let settled = false;
         const subscriptions = [
           iap.purchaseUpdatedListener((purchase) => {
-            const matched = normalizePurchases(purchase).find((candidate) =>
-              purchaseMatchesProductId(candidate, productId),
-            );
+            const matched = normalizePurchases(purchase).find(isRemoveAdsPurchase);
             if (matched) settle(undefined, matched);
           }),
           iap.purchaseErrorListener((error) => {
@@ -334,44 +431,35 @@ export function createNativePurchaseProvider({
             type: 'in-app',
           })
           .then((requestResult) => {
-            const matched = normalizePurchases(requestResult).find((candidate) =>
-              purchaseMatchesProductId(candidate, productId),
-            );
+            const matched = normalizePurchases(requestResult).find(isRemoveAdsPurchase);
             if (matched) settle(undefined, matched);
           })
           .catch((error: unknown) => settle(error));
       });
     },
-    async restorePurchases(productIds) {
+    async restorePurchases() {
       const iap = await getIap();
       await iap.restorePurchases();
-      return normalizePurchases(await iap.getAvailablePurchases()).filter((purchase) =>
-        productIds.some((productId) => purchaseMatchesProductId(purchase, productId)),
-      );
+      return normalizePurchases(await iap.getAvailablePurchases()).filter(isRemoveAdsPurchase);
     },
   };
 }
 
 export function createMockPurchaseProvider({
   owned = false,
-  ownedProductIds = owned ? [REMOVE_ADS_PRODUCT_ID] : [],
   pendingPurchase = false,
 }: MockPurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
   let connected = false;
-  const ownedProductIdsSet = new Set(ownedProductIds);
+  let ownsRemoveAds = owned;
 
   function assertConnected() {
     if (!connected) throw new Error('Mock purchase provider is not connected');
   }
 
-  function createMockPurchase(
-    transactionId: string,
-    productId = REMOVE_ADS_PRODUCT_ID,
-  ): RemoveAdsPurchaseRecord {
+  function createMockPurchase(transactionId: string): RemoveAdsPurchaseRecord {
     return {
-      productId,
+      productId: REMOVE_ADS_PRODUCT_ID,
       purchaseToken: `mock-token-${transactionId}`,
-      raw: { ids: [productId] },
       transactionId,
     };
   }
@@ -386,27 +474,16 @@ export function createMockPurchaseProvider({
     async finishPurchase() {
       assertConnected();
     },
-    async requestRemoveAdsPurchase(productId) {
+    async requestRemoveAdsPurchase() {
       assertConnected();
       if (pendingPurchase) return null;
-      ownedProductIdsSet.add(productId);
-      return createMockPurchase(
-        productId === REMOVE_ADS_PRODUCT_ID ? 'buy-remove-ads' : 'buy-purchase',
-        productId,
-      );
+      ownsRemoveAds = true;
+      return createMockPurchase('buy-remove-ads');
     },
     async restorePurchases(productIds) {
       assertConnected();
-      if (
-        productIds.includes(REMOVE_ADS_PRODUCT_ID) &&
-        ownedProductIdsSet.has(REMOVE_ADS_PRODUCT_ID)
-      ) {
-        return [createMockPurchase('restore-remove-ads')];
-      }
-
-      const productId = productIds.find((candidate) => ownedProductIdsSet.has(candidate));
-      if (!productId) return [];
-      return [createMockPurchase('restore-purchase', productId)];
+      if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];
+      return [createMockPurchase('restore-remove-ads')];
     },
   };
 }
@@ -424,7 +501,11 @@ export async function buyRemoveAds({
     }
 
     await provider.finishPurchase?.(purchase);
-    const entitlements = await setRemoveAdsEntitlement(true, { storage });
+    const entitlements = await setRemoveAdsEntitlement(true, {
+      purchase,
+      source: 'purchase',
+      storage,
+    });
     return createResult('purchased', entitlements, purchase);
   } finally {
     await provider.disconnect?.();
@@ -444,7 +525,11 @@ export async function restoreRemoveAdsPurchase({
       return createResult('not_found', await getPurchaseEntitlements({ storage }));
     }
 
-    const entitlements = await setRemoveAdsEntitlement(true, { storage });
+    const entitlements = await setRemoveAdsEntitlement(true, {
+      purchase,
+      source: 'restore',
+      storage,
+    });
     return createResult('restored', entitlements, purchase);
   } finally {
     await provider.disconnect?.();

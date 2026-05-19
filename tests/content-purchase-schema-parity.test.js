@@ -30,7 +30,6 @@ test('purchase TypeScript schema stays in parity with validator expectations', (
     purchaseSource,
     /restorePurchases\(productIds: readonly string\[\]\): Promise<RemoveAdsPurchaseRecord\[\]>;/,
   );
-  assert.match(purchaseSource, /ownedProductIds\?: readonly string\[\];/);
 });
 
 test('purchase schema parity rejects result optionality drift', () => {
