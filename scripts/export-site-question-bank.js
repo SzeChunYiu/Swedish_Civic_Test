@@ -52,7 +52,6 @@ function parseChapterNumber(chapterId) {
 function buildSiteQuestionBank() {
   const questions = loadTs('data/questions.ts', 'questions');
   const chapters = loadTs('data/chapters.ts', 'chapters');
-  const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
   const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
   const chapterEmoji = new Map([
     ['ch01', '🌍'],
@@ -95,7 +94,6 @@ function buildSiteQuestionBank() {
         section: question.uhrReference.section,
         page: question.uhrReference.pageApprox,
       },
-      questionProvenance: getQuestionProvenance(question),
       difficulty: question.difficulty,
       tags: question.tags,
     };
@@ -117,7 +115,7 @@ function buildSiteQuestionBank() {
 
 function generateStaticSiteQuestionBankJs() {
   const bank = buildSiteQuestionBank();
-  return `/* Almost Swedish - generated static question bank.
+  return `/* Sveriges Medborgartest - generated static question bank.
    Source: data/questions.ts and data/chapters.ts.
    Run: node scripts/export-site-question-bank.js
 */
