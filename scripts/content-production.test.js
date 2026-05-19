@@ -2,6 +2,8 @@ const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const test = require('node:test');
 
+const EXPECTED_SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES = 7;
+
 test('full content production validates published UHR-referenced questions', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -270,6 +272,11 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionTextFieldsNormalizedValidated, summary.publishedQuestions);
   assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.sourceAuthorityStemPatternFixturesValidated,
+    EXPECTED_SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES,
+  );
+  assert.equal(summary.sourceAuthorityStemPatternFixtureParityValidated, true);
   assert.equal(summary.questionNestedMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionJudgementMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
