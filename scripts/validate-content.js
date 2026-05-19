@@ -403,8 +403,12 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
   ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
   [
-    '{copy.completedQuestions(completedQuestionIds.length)}',
+    '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
+  ],
+  [
+    'getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
+    'practice route must scope completed progress to the visible question bank',
   ],
   [
     'accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}',
@@ -6032,6 +6036,8 @@ const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
+const getCompletedQuestionIdsForQuestionBank =
+  practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -11768,7 +11774,11 @@ function validatePracticeScoringRules() {
 }
 
 function validatePracticeFlowParity() {
-  if (!Array.isArray(questions) || typeof getPracticeQuestionForSession !== 'function') {
+  if (
+    !Array.isArray(questions) ||
+    typeof getPracticeQuestionForSession !== 'function' ||
+    typeof getCompletedQuestionIdsForQuestionBank !== 'function'
+  ) {
     return;
   }
 
@@ -11823,7 +11833,33 @@ function validatePracticeFlowParity() {
       activeQuestionId: null,
       expectedId: firstQuestion.id,
     },
+    {
+      label: 'completion outside visible bank is ignored',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [thirdQuestion.id],
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+      expectedScopedCompletedIds: [],
+    },
+    {
+      label: 'visible completion advances within filtered bank',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [thirdQuestion.id, firstQuestion.id],
+      activeQuestionId: null,
+      expectedId: secondQuestion.id,
+      expectedScopedCompletedIds: [firstQuestion.id],
+    },
+    {
+      label: 'sparse visible completion returns first unanswered question',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [secondQuestion.id],
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+      expectedScopedCompletedIds: [secondQuestion.id],
+    },
   ];
+  const expectedValidationCount =
+    cases.length + cases.filter((testCase) => testCase.expectedScopedCompletedIds).length;
 
   let valid = true;
 
@@ -11834,9 +11870,15 @@ function validatePracticeFlowParity() {
       completedQuestionIds,
       activeQuestionId,
       expectedId,
+      expectedScopedCompletedIds,
     } = testCase;
     let actualQuestion;
+    let actualScopedCompletedIds;
     try {
+      actualScopedCompletedIds = getCompletedQuestionIdsForQuestionBank(
+        caseQuestions,
+        completedQuestionIds,
+      );
       actualQuestion = getPracticeQuestionForSession(
         caseQuestions,
         completedQuestionIds,
@@ -11859,9 +11901,23 @@ function validatePracticeFlowParity() {
     } else {
       practiceFlowCasesValidated += 1;
     }
+
+    if (
+      expectedScopedCompletedIds &&
+      JSON.stringify(actualScopedCompletedIds) !== JSON.stringify(expectedScopedCompletedIds)
+    ) {
+      valid = false;
+      fail(
+        `practice flow ${label} scoped completed ids returned ${JSON.stringify(
+          actualScopedCompletedIds,
+        )}, expected ${JSON.stringify(expectedScopedCompletedIds)}`,
+      );
+    } else if (expectedScopedCompletedIds) {
+      practiceFlowCasesValidated += 1;
+    }
   });
 
-  if (valid && practiceFlowCasesValidated === cases.length) {
+  if (valid && practiceFlowCasesValidated === expectedValidationCount) {
     practiceFlowParityValidated = true;
   }
 }

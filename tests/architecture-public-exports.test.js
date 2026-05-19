@@ -44,6 +44,7 @@ const architectureExpectedExports = {
   ],
   'lib/quiz/practiceFlow.ts': [
     'getChapterQuizSessionId',
+    'getCompletedQuestionIdsForQuestionBank',
     'getFirstQuestionForChapter',
     'getPracticeQuestionForSession',
   ],
