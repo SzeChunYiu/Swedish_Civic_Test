@@ -19,19 +19,24 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 36);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 32);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
-  assert.match(source, /const localizedBadgeTitles: Record<AppLanguage, Record<string, string>>/);
+  assert.match(source, /BadgeRow/);
+  assert.match(source, /deriveBadges, getBadgeDescription, getBadgeTitle/);
   assert.match(source, /const copy = profileCopy\[language\]/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Progress without an account/);
-  assert.match(source, /Första övningen/);
   assert.match(source, /<ScreenShell eyebrow=\{copy\.eyebrow\} title=\{copy\.title\}/);
   assert.match(source, /<MetricCard label=\{copy\.levelMetric\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
-  assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
+  assert.match(source, /const title = getBadgeTitle\(badge, language\);/);
+  assert.match(source, /const description = getBadgeDescription\(badge, language\);/);
+  assert.match(
+    source,
+    /<BadgeRow key=\{badge\.id\} title=\{title\} description=\{description\} \/>/,
+  );
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
 });
 
@@ -92,7 +97,7 @@ require('./scripts/validate-content.js');
   assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
 });
 
-test('profile route copy parity rejects badge-title localization drift', () => {
+test('profile route copy parity rejects bypassing badge catalog localization', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -105,7 +110,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("first_practice: 'Första övningen'", "first_practice: 'First practice'");
+      .replace(
+        'const title = getBadgeTitle(badge, language);',
+        "const title = badge.titleEn;",
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -116,5 +124,5 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
+  assert.match(`${result.stdout}\n${result.stderr}`, /profile badge title must use catalog locale/);
 });
