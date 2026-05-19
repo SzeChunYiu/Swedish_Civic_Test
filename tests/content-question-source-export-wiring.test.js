@@ -5,17 +5,31 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
-const {
-  generatedTrueFalseResidualQuestions,
-  questionNumber,
-} = require('./generatedQuestionRangeHelpers');
-
 const repoRoot = path.resolve(__dirname, '..');
 const generatedVariantsPerSource = 4;
 const moduleCache = new Map();
 
+function questionNumber(question) {
+  return Number(String(question.id).replace(/^q/, ''));
+}
+
 function nextQuestionId(questionNumberValue) {
   return `q${String(questionNumberValue).padStart(3, '0')}`;
+}
+
+function generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions) {
+  const firstGeneratedQuestionNumber = sourceQuestions.length + 1;
+  const lastGeneratedQuestionNumber =
+    firstGeneratedQuestionNumber + generatedPublishedQuestions.length - 1;
+
+  return generatedPublishedQuestions.filter((question) => {
+    const idNumber = questionNumber(question);
+    return (
+      question.type === 'true_false' &&
+      idNumber >= firstGeneratedQuestionNumber &&
+      idNumber <= lastGeneratedQuestionNumber
+    );
+  });
 }
 
 function parseValidationSummary() {
