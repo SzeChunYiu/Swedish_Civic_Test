@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
@@ -81,15 +80,12 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
-  const hasSeenAboutTheTest = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markAboutTheTestSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
   const copy = aboutTheTestCopy[language];
 
-  useEffect(() => {
-    if (!hasSeenAboutTheTest) {
-      markAboutTheTestSeen();
-    }
-  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);
+  if (!useSettingsStore.getState().hasSeenAboutTheTest) {
+    markAboutTheTestSeen();
+  }
 
   const sections: readonly { title: string; body: string }[] = [
     { title: copy.sectionWhatTitle, body: copy.sectionWhatBody },
@@ -123,17 +119,22 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <View style={styles.actions}>
-        <ComplianceActionLink
+        <Link
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
+          accessibilityRole="link"
           href="/practice"
-          label={copy.openPractice}
-          variant="primary"
-        />
-        <ComplianceActionLink
+          style={styles.primaryLink}
+        >
+          {copy.openPractice}
+        </Link>
+        <Link
           accessibilityLabel={copy.backHomeAccessibilityLabel}
+          accessibilityRole="link"
           href="/home"
-          label={copy.backHome}
-        />
+          style={styles.secondaryLink}
+        >
+          {copy.backHome}
+        </Link>
       </View>
     </ScrollView>
   );
@@ -197,5 +198,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
+  },
+  primaryLink: {
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  secondaryLink: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
 });
