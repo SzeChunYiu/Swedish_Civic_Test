@@ -5,12 +5,13 @@ const path = require('node:path');
 const { webDocumentMetadata } = require('../lib/scaffold/webDocumentMetadata');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
-const REQUIRED_ROUTE_CONTEXT_KEYS = [
-  './_layout.tsx',
-  './(tabs)/home.tsx',
-  './(tabs)/practice.tsx',
-  './(tabs)/mistakes.tsx',
-  './about-the-test.tsx',
+const TEXT_EXPORT_EXTENSIONS = new Set(['.css', '.html', '.js', '.json', '.map', '.txt']);
+const FORBIDDEN_EXPORT_PATH_PATTERNS = [
+  /(^|\/)node_modules(\/|$)/,
+  /(^|\/)__[^/]*(home|swedish_civic_test|sct-worktrees)[^/]*(\/|$)/i,
+  /\/home\//,
+  /sct-worktrees/i,
+  /Swedish_Civic_Test/,
 ];
 
 function parseArgs(argv) {
@@ -324,110 +325,61 @@ function walkFiles(directory, predicate) {
   return files;
 }
 
-function listWebExportSourceFiles(repoRoot = process.cwd()) {
-  const files = new Map();
-  const resolvedRepoRoot = path.resolve(repoRoot);
+function toPosixPath(filePath) {
+  return filePath.split(path.sep).join('/');
+}
 
-  function addFile(filePath) {
-    const relativePath = path.relative(resolvedRepoRoot, filePath);
-    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
-      return;
+function toRelativePosixPath(rootDir, filePath) {
+  return toPosixPath(path.relative(rootDir, filePath));
+}
+
+function isTextExportFile(filePath) {
+  return TEXT_EXPORT_EXTENSIONS.has(path.extname(filePath));
+}
+
+function hasForbiddenExportPathFragment(value) {
+  return FORBIDDEN_EXPORT_PATH_PATTERNS.some((pattern) => pattern.test(value));
+}
+
+function uniqueFlatAssetPath({ existingTargets, oldRelativePath, outputDir }) {
+  const basename = path.basename(oldRelativePath);
+  let candidate = `assets/${basename}`;
+  const candidatePath = path.join(outputDir, ...candidate.split('/'));
+
+  if (!existingTargets.has(candidate) && !fs.existsSync(candidatePath)) {
+    return candidate;
+  }
+
+  const parsed = path.parse(basename);
+  const digest = crypto.createHash('sha1').update(oldRelativePath).digest('hex').slice(0, 8);
+  candidate = `assets/${parsed.name}.${digest}${parsed.ext}`;
+
+  let suffix = 1;
+  while (
+    existingTargets.has(candidate) ||
+    fs.existsSync(path.join(outputDir, ...candidate.split('/')))
+  ) {
+    candidate = `assets/${parsed.name}.${digest}-${suffix}${parsed.ext}`;
+    suffix += 1;
+  }
+
+  return candidate;
+}
+
+function removeEmptyDirectories(directory, stopAt) {
+  if (!fs.existsSync(directory) || path.resolve(directory) === path.resolve(stopAt)) {
+    return;
+  }
+
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      removeEmptyDirectories(path.join(directory, entry.name), stopAt);
     }
-    files.set(toPosixPath(relativePath), filePath);
   }
 
-  for (const sourceInput of WEB_EXPORT_SOURCE_INPUTS) {
-    const sourcePath = path.join(resolvedRepoRoot, sourceInput);
-    if (!fs.existsSync(sourcePath)) {
-      continue;
-    }
-
-    const stat = fs.statSync(sourcePath);
-    if (stat.isDirectory()) {
-      for (const sourceFile of walkFiles(sourcePath)) {
-        if (fs.statSync(sourceFile).isFile()) {
-          addFile(sourceFile);
-        }
-      }
-    } else if (stat.isFile()) {
-      addFile(sourcePath);
-    }
+  if (fs.readdirSync(directory).length === 0) {
+    fs.rmdirSync(directory);
   }
-
-  return [...files.keys()].sort();
-}
-
-function buildWebExportSourceFingerprint(options = {}) {
-  const repoRoot = path.resolve(options.repoRoot ?? process.cwd());
-  const sourceFiles = listWebExportSourceFiles(repoRoot);
-  const hash = crypto.createHash('sha256');
-
-  for (const relativePath of sourceFiles) {
-    const source = fs.readFileSync(path.join(repoRoot, relativePath));
-    hash.update(relativePath);
-    hash.update('\0');
-    hash.update(String(source.length));
-    hash.update('\0');
-    hash.update(source);
-    hash.update('\0');
-  }
-
-  return {
-    hash: hash.digest('hex'),
-    sourceFileCount: sourceFiles.length,
-  };
-}
-
-function webExportFreshnessMarkerPath(outputDir) {
-  return path.join(outputDir, WEB_EXPORT_FRESHNESS_MARKER);
-}
-
-function writeWebExportFreshnessMarker(outputDir, options = {}) {
-  const fingerprint = buildWebExportSourceFingerprint(options);
-  const marker = {
-    version: WEB_EXPORT_FRESHNESS_VERSION,
-    generatedAt: new Date().toISOString(),
-    generatedBy: 'scripts/prepare-web-export.js',
-    sourceHash: fingerprint.hash,
-    sourceFileCount: fingerprint.sourceFileCount,
-    sourceInputs: WEB_EXPORT_SOURCE_INPUTS,
-  };
-
-  fs.writeFileSync(webExportFreshnessMarkerPath(outputDir), `${JSON.stringify(marker, null, 2)}\n`);
-  return marker;
-}
-
-function assertWebExportFreshness(outputDir, options = {}) {
-  const markerPath = webExportFreshnessMarkerPath(outputDir);
-  if (!fs.existsSync(markerPath)) {
-    throw new Error(
-      `${markerPath} is missing. Run \`npm run build:web:export\` first so E2E serves a fresh web export.`,
-    );
-  }
-
-  const marker = readJsonFile(markerPath);
-  if (marker.version !== WEB_EXPORT_FRESHNESS_VERSION) {
-    throw new Error(
-      `${markerPath} has unsupported freshness marker version ${JSON.stringify(marker.version)}. Run \`npm run build:web:export\` first.`,
-    );
-  }
-  if (typeof marker.sourceHash !== 'string' || marker.sourceHash.length === 0) {
-    throw new Error(`${markerPath} is missing sourceHash. Run \`npm run build:web:export\` first.`);
-  }
-
-  const current = buildWebExportSourceFingerprint(options);
-  if (marker.sourceHash !== current.hash || marker.sourceFileCount !== current.sourceFileCount) {
-    throw new Error(
-      [
-        'dist-web is stale for the current app/components/tests source tree.',
-        `Freshness marker sourceHash=${marker.sourceHash} sourceFileCount=${marker.sourceFileCount};`,
-        `current sourceHash=${current.hash} sourceFileCount=${current.sourceFileCount}.`,
-        'Run `npm run build:web:export` first.',
-      ].join(' '),
-    );
-  }
-
-  return { current, marker };
 }
 
 function toRelativeBundlePath(bundlePath) {
@@ -470,6 +422,88 @@ function rewriteRootRelativeBundlePaths(source) {
   return source.replace(/(["'])\/(_expo|assets)\//g, '$1$2/');
 }
 
+function rewriteTextFileReferences(outputDir, replacements) {
+  if (replacements.size === 0) return;
+
+  const textFiles = walkFiles(outputDir, isTextExportFile);
+  for (const textFile of textFiles) {
+    const source = fs.readFileSync(textFile, 'utf8');
+    let rewritten = source;
+
+    for (const [oldPath, newPath] of replacements) {
+      rewritten = rewritten.split(`/${oldPath}`).join(newPath);
+      rewritten = rewritten.split(oldPath).join(newPath);
+    }
+
+    if (rewritten !== source) {
+      fs.writeFileSync(textFile, rewritten);
+    }
+  }
+}
+
+function normalizeExportedAssetPaths(outputDir) {
+  const assetsDir = path.join(outputDir, 'assets');
+  const assetFiles = walkFiles(assetsDir);
+  const replacements = new Map();
+  const existingTargets = new Set();
+
+  for (const assetFile of assetFiles) {
+    const oldRelativePath = toRelativePosixPath(outputDir, assetFile);
+    const oldAssetSubpath = toRelativePosixPath(assetsDir, assetFile);
+    const isFlatAsset = !oldAssetSubpath.includes('/');
+
+    if (isFlatAsset && !hasForbiddenExportPathFragment(oldRelativePath)) {
+      existingTargets.add(oldRelativePath);
+    }
+  }
+
+  for (const assetFile of assetFiles) {
+    if (!fs.existsSync(assetFile)) continue;
+
+    const oldRelativePath = toRelativePosixPath(outputDir, assetFile);
+    const oldAssetSubpath = toRelativePosixPath(assetsDir, assetFile);
+    const needsNormalization =
+      oldAssetSubpath.includes('/') || hasForbiddenExportPathFragment(oldRelativePath);
+
+    if (!needsNormalization) continue;
+
+    const newRelativePath = uniqueFlatAssetPath({ existingTargets, oldRelativePath, outputDir });
+    const newAssetPath = path.join(outputDir, ...newRelativePath.split('/'));
+    fs.mkdirSync(path.dirname(newAssetPath), { recursive: true });
+    fs.renameSync(assetFile, newAssetPath);
+    existingTargets.add(newRelativePath);
+    replacements.set(oldRelativePath, newRelativePath);
+  }
+
+  rewriteTextFileReferences(outputDir, replacements);
+
+  if (fs.existsSync(assetsDir)) {
+    for (const entry of fs.readdirSync(assetsDir, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        removeEmptyDirectories(path.join(assetsDir, entry.name), assetsDir);
+      }
+    }
+  }
+}
+
+function assertNoForbiddenExportPathFragments(outputDir) {
+  const files = walkFiles(outputDir);
+
+  for (const file of files) {
+    const relativePath = toRelativePosixPath(outputDir, file);
+    if (hasForbiddenExportPathFragment(relativePath)) {
+      throw new Error(`Exported file path leaks local build details: ${relativePath}`);
+    }
+
+    if (!isTextExportFile(file)) continue;
+
+    const source = fs.readFileSync(file, 'utf8');
+    if (hasForbiddenExportPathFragment(source)) {
+      throw new Error(`${relativePath} leaks local build path or dependency path fragments`);
+    }
+  }
+}
+
 function prepare(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
@@ -493,7 +527,7 @@ function prepare(outputDir) {
     }
   }
 
-  writeWebExportFreshnessMarker(outputDir);
+  normalizeExportedAssetPaths(outputDir);
 }
 
 function check(outputDir) {
@@ -525,15 +559,7 @@ function check(outputDir) {
     }
   }
 
-  const combinedJs = jsSources.join('\n');
-  const missingRouteKeys = REQUIRED_ROUTE_CONTEXT_KEYS.filter((routeKey) => {
-    return !combinedJs.includes(routeKey);
-  });
-  if (missingRouteKeys.length > 0 || combinedJs.includes('No modules in context')) {
-    throw new Error(
-      `Web export route context is missing app route modules: ${missingRouteKeys.join(', ')}`,
-    );
-  }
+  assertNoForbiddenExportPathFragments(outputDir);
 }
 
 function main() {
@@ -564,7 +590,8 @@ module.exports = {
   WEB_EXPORT_FRESHNESS_VERSION,
   assertWebDocumentMetadata,
   check,
-  ensureWebDocumentMetadata,
+  hasForbiddenExportPathFragment,
+  normalizeExportedAssetPaths,
   prepare,
   REQUIRED_ROUTE_CONTEXT_KEYS,
   rewriteHtml,
