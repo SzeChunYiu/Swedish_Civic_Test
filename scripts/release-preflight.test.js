@@ -12,7 +12,7 @@ const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 
 function storeRecordReadyEvidence(extra = '') {
   return [
-    `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest.`,
+    `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
     `Support URL ${supportUrl} and Privacy Policy URL ${privacyUrl} entered in both stores.`,
     `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
     extra,
@@ -243,7 +243,7 @@ function createEasBuildEvidence(options = {}) {
       profile: 'internal',
       buildId: 'android-build-100',
       buildUrl:
-        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/android-build-100',
+        'https://expo.dev/accounts/example/projects/almost-swedish/builds/android-build-100',
       artifactType: 'aab',
       installOrTestStatus: 'ready-for-device-smoke',
     },
@@ -251,7 +251,7 @@ function createEasBuildEvidence(options = {}) {
       profile: 'internal',
       buildId: 'ios-build-100',
       buildUrl:
-        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/ios-build-100',
+        'https://expo.dev/accounts/example/projects/almost-swedish/builds/ios-build-100',
       artifactType: 'ipa',
       installOrTestStatus: 'ready-for-testflight',
     },
@@ -602,7 +602,7 @@ function createStoreRecordEvidence(options = {}) {
 
   const evidence = {
     status: 'ready',
-    bundleIdentifier: 'com.billyyiu.swedishcivictest',
+    bundleIdentifier: 'com.billyyiu.almostswedish',
     appStoreConnectUrl: 'https://appstoreconnect.apple.com/apps/1234567890/appstore',
     googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
     supportUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
@@ -658,10 +658,10 @@ function createStoreCredentialEvidence(options = {}) {
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
     android: {
-      serviceAccountEmail: 'play-submit@swedish-civic-test.iam.gserviceaccount.com',
+      serviceAccountEmail: 'play-submit@almost-swedish.iam.gserviceaccount.com',
       serviceAccountKeyFingerprint:
         'SHA256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
-      packageName: 'com.billyyiu.swedishcivictest',
+      packageName: 'com.billyyiu.almostswedish',
       credentialsSource: 'local secure file outside git',
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
@@ -1389,7 +1389,7 @@ test('release preflight blocks store records without support and privacy URL ent
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; AdMob app configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; AdMob app configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
@@ -1976,7 +1976,7 @@ test('release preflight blocks store record evidence without exact public URLs',
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
