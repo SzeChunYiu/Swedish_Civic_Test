@@ -43,6 +43,23 @@ true/false standalone wording from current VERIFY evidence, preserving the new
 generated single-choice guard coverage and rerunning generator/static/content/
 type/lint/ownership gates with PR/merge evidence.
 
+Iteration: 2026-05-19T03:27+02:00
+Rows moved to accepted: none in A1-A8; accepted SETUP source commit `4106058`
+for `READINESS-MOCK-SCORES-1`.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
+blocked on external production deploy capacity/operator evidence; no Vercel CLI
+was run.
+Evidence: manager recheck passed focused readiness/progress/exam/home parity
+tests 21/21, `validate:content`, typecheck, lint, ownership, targeted Prettier,
+commit-range and current-tree diff whitespace checks, plus source inspection
+showing completed mock exams are recorded in progress storage and included in
+the Home readiness calculation. Latest `origin/main` `cd8d8e0` is
+source-equivalent for this atom after a claim-only queue commit; worker handoff
+also records exported-web mock completion smoke with Home readiness changing
+after a completed mock.
+Next worker task queued: none for this readiness/mock-score route; do not
+duplicate it without fresh current-main regression evidence.
+
 Iteration: 2026-05-19T03:24+02:00
 Rows moved to accepted: none in A1-A8; accepted UIUX-COMPONENTS source commit
 `761e91f` / PR #892 for `BADGE-STYLE-OVERRIDE-PARITY-1`.
