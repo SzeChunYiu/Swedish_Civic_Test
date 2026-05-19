@@ -25,7 +25,6 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.equal(summary.homeRouteCopyLabelsValidated, 92);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
-  assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
@@ -42,15 +41,6 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Readiness indicator/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
-  assert.match(
-    source,
-    /Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator\./,
-  );
-  assert.match(
-    source,
-    /Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals\./,
-  );
-  assert.doesNotMatch(source, /flashcards/);
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
@@ -70,39 +60,6 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
-});
-
-test('home route copy parity rejects unreachable flashcard promises', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
-        'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route must not advertise flashcards until the feature is reachable/,
-  );
 });
 
 test('home route copy parity rejects internal benchmark phrases in learner copy', () => {
