@@ -832,6 +832,18 @@ test('learn route chapter links announce chapter progress', () => {
   assert.match(source, /subtitle=\{routeCopy\.sectionSubtitle\}/);
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy>/);
   assert.match(source, /const copy = chapterLinkCopy\[language\]/);
+  assert.match(
+    source,
+    /function buildChapterProgressById\(completedQuestionIds: readonly string\[\]\)/,
+  );
+  assert.match(source, /const chapterProgressById = useMemo\(/);
+  assert.match(source, /buildChapterProgressById\(completedQuestionIds\)/);
+  assert.doesNotMatch(source, /function questionCountForChapter/);
+  assert.doesNotMatch(source, /function completedCountForChapter/);
+  assert.doesNotMatch(
+    source,
+    /questions\.filter\(\s*\(question\) => question\.chapterId === chapter\.id/,
+  );
   assert.match(source, /function getChapterLinkAccessibilityLabel/);
   assert.match(source, /Öppna kapitel \$\{primaryName\}/);
   assert.match(source, /Engelskt namn: \$\{secondaryName\}/);

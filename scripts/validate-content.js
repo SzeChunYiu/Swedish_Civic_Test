@@ -486,8 +486,25 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
   ],
 };
 const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
+  ["import { useMemo } from 'react';", 'learn route must memoize chapter progress derivation'],
   ['useSettingsStore, type AppLanguage', 'learn route must import AppLanguage from settings'],
   ['type ChapterLinkCopy = {', 'learn route must define a typed chapter-link copy contract'],
+  [
+    'type ChapterProgressCounts = {',
+    'learn route must keep chapter-progress counts in one typed map',
+  ],
+  [
+    'function buildChapterProgressById(completedQuestionIds: readonly string[])',
+    'learn route must derive chapter progress through one shared reducer',
+  ],
+  [
+    'const chapterProgressById = useMemo(',
+    'learn route must memoize chapter progress from the completed-id set',
+  ],
+  [
+    'buildChapterProgressById(completedQuestionIds)',
+    'learn route must compute chapter progress once per completed-id snapshot',
+  ],
   [
     'const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {',
     'learn route chapter-link copy must cover every AppLanguage value',
@@ -8236,6 +8253,29 @@ function validateLearnRouteLinkCopyParity() {
   EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!learnRoute.includes(snippet)) reject(message);
   });
+
+  const rejectedProgressDerivationPatterns = [
+    [
+      /function\s+questionCountForChapter\b/,
+      'learn route must not reintroduce per-row questionCountForChapter scans',
+    ],
+    [
+      /function\s+completedCountForChapter\b/,
+      'learn route must not reintroduce per-row completedCountForChapter scans',
+    ],
+    [
+      /chapters\.map\([\s\S]*?questions\.filter\(/,
+      'learn route must not filter the full question bank inside the chapter row map',
+    ],
+    [
+      /chapters\.map\([\s\S]*?new Set\(completedQuestionIds\)/,
+      'learn route must not rebuild completed-id Sets inside the chapter row map',
+    ],
+  ];
+
+  for (const [pattern, message] of rejectedProgressDerivationPatterns) {
+    if (pattern.test(learnRoute)) reject(message);
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS).forEach(([language, labels]) => {
