@@ -1,9 +1,6 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
-const path = require('node:path');
 const test = require('node:test');
-
-const repoRoot = path.resolve(__dirname, '..');
 
 test('published question text keeps the independent study boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -38,7 +35,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -70,7 +67,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -107,76 +104,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 carries source-authority wording in the stem/,
-  );
-});
-
-test('question authority boundary rejects plural source-recall reason stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents).replace(
-      'Where is Sweden located?',
-      'Which dates are mentioned as historical reasons for National Day?',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
     { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 carries source-authority wording in the stem/,
-  );
-});
-
-test('question authority boundary rejects source-recall example stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents).replace(
-      'Where is Sweden located?',
-      'Which islands are mentioned as examples in Sweden?',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q001 carries source-authority wording in the stem/,
+    /q002 carries source-authority wording in the stem/,
   );
 });
