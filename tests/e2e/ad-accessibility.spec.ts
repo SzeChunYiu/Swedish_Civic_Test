@@ -160,5 +160,23 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
   ).toHaveCount(0);
   await expect(page.getByText('Remove ads near practice completion ad')).toHaveCount(0);
 
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByText('Ad-free study is active')).toBeVisible();
+  await expect(
+    page.getByText('Purchase confirmed. Study ads are disabled on this device'),
+  ).toBeVisible();
+  await expect(page.getByText(/Pay 29 SEK once/)).toHaveCount(0);
+  await expect(page.getByText('Buy 29 SEK')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' })).toHaveCount(0);
+  await expectReachableButton(page.getByRole('button', { name: 'Restore Remove Ads purchase' }));
+
+  await page.goto('/profile', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByText('Ad-free study is active')).toBeVisible();
+  await expect(page.getByText(/Pay 29 SEK once/)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' })).toHaveCount(0);
+  await expectReachableButton(page.getByRole('button', { name: 'Restore Remove Ads purchase' }));
+
   expect(consoleErrors).toEqual([]);
 });
