@@ -697,14 +697,8 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     byId.get('q151')?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(
-    byId.get('q150')?.explanationSv,
-    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln.',
-  );
-  assert.equal(
-    byId.get('q150')?.explanationEn,
-    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
-  );
+  assert.equal(byId.get('q150')?.explanationSv, sourceQ002.explanationSv);
+  assert.equal(byId.get('q150')?.explanationEn, sourceQ002.explanationEn);
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
