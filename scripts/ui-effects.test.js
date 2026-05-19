@@ -119,6 +119,20 @@ test('button derives an accessibility label from plain text children by default'
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('language picker future-language rows are disabled instead of selectable', () => {
+  const source = read('components/ui/LanguagePicker.tsx');
+
+  assert.match(source, /if \(!option\.available\) return;/);
+  assert.match(source, /disabled=\{!opt\.available\}/);
+  assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
+  assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
+  assert.doesNotMatch(
+    source,
+    /const handleSelect = \(option: LocaleOption\) => \{[\s\S]*setOpen\(false\);[\s\S]*if \(!option\.available\) return;/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('screen scaffold exposes page and section titles as headers', () => {
   const source = read('components/ui/ScreenShell.tsx');
 
