@@ -6,6 +6,7 @@ const test = require('node:test');
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
+const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -59,4 +60,13 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
   }
 
   assert.deepEqual(offenders, []);
+});
+
+test('QuestionNavigator tabs keep token-sized touch targets', () => {
+  const source = fs.readFileSync(QUESTION_NAVIGATOR_SOURCE, 'utf8');
+
+  assert.match(source, /accessibilityRole="tab"/);
+  assert.match(source, /hitSlop=\{space\[1\]\}/);
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /minWidth:\s*space\[6\]/);
 });
