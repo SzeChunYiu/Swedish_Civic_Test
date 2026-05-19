@@ -974,8 +974,20 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
+  assert.match(paywallSource, /bodyActive:/);
+  assert.match(paywallSource, /bodyIdle: \(price\) =>/);
+  assert.match(paywallSource, /Purchase confirmed\. Study ads are disabled on this device/);
+  assert.match(paywallSource, /Köpet är bekräftat\. Studieannonser är avstängda/);
+  assert.match(
+    paywallSource,
+    /\{adsDisabled \? copy\.bodyActive : copy\.bodyIdle\(REMOVE_ADS_PRICE_LABEL\)\}/,
+  );
   assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
+  assert.match(
+    paywallSource,
+    /\{!adsDisabled \? \(\s*<Button[\s\S]*copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*\) : null\}/,
+  );
   assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /Provläget är redan annonsfritt/);
@@ -984,6 +996,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
   assert.match(paywallSource, /same store account/);
   assert.match(paywallSource, /samma butikskonto/);
+  assert.match(paywallSource, /status === 'restored' \? 'restored' : 'purchased'/);
+  assert.doesNotMatch(paywallSource, /adsDisabled \? copy\.bodyIdle/);
+  assert.doesNotMatch(paywallSource, /activeAction !== null \|\| adsDisabled/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(
