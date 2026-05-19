@@ -99,7 +99,7 @@ export const chapters: Chapter[] = [
     descriptionSv:
       'Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik.',
     descriptionEn: 'Nordic, European, and global cooperation, plus defence and security policy.',
-    questionCount: 35,
+    questionCount: 60,
   },
   {
     id: 'ch12',
