@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { dismissBlockingModals } from './browserLaunch';
+
 test('ad placements announce Remove Ads in web accessible names', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -9,12 +11,7 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/home', { waitUntil: 'networkidle' });
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
 
   await expect(
     page.getByLabel(
@@ -23,6 +20,7 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   ).toBeVisible();
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
   await expect(
     page.getByLabel(
       /Google AdMob: (chapter list banner|Annons i kapitellistan)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
@@ -30,6 +28,7 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   ).toBeVisible();
 
   await page.goto('/mistakes', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
   await expect(
     page.getByLabel(
       /(Test native ad: Sponsored study placement|Inbyggd testannons: Sponsrad studieplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
@@ -37,6 +36,7 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   ).toBeVisible();
 
   await page.goto('/exam', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
   await expect(page.getByLabel(/Hidden after Remove Ads is active\./)).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);

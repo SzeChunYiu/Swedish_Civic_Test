@@ -1,20 +1,13 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-const totalQuestions = 20;
+import { dismissBlockingModals } from './browserLaunch';
 
-async function closeLaunchAdIfPresent(page: Page) {
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
-}
+const totalQuestions = 20;
 
 async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
@@ -35,7 +28,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/exam', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
 
   await expect(page.getByText('Övningsprov')).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-baserade frågor`))).toBeVisible();
@@ -85,7 +78,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await enableEnglishSupport(page);
   await page.goto('/exam', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
 
   await expect(page.getByText('Mock exam')).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();

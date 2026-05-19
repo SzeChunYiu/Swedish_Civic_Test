@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { dismissBlockingModals } from './browserLaunch';
+
 test('learning path opens a source-backed chapter detail screen and returns to the chapter list', async ({
   page,
 }) => {
@@ -11,12 +13,7 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
 
   await expect(page.locator('body')).toContainText('Studieväg');
   await expect(page.locator('body')).toContainText('13 samhällsområden');
@@ -60,12 +57,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
@@ -75,9 +67,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   );
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
 
   await expect(page.locator('body')).toContainText('Learning path');
   const firstChapter = page.getByLabel(

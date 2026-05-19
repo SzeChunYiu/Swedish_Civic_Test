@@ -946,6 +946,34 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 
+test('E2E specs centralize blocking modal cleanup helpers', () => {
+  const e2eDir = path.join(repoRoot, 'tests/e2e');
+  const helper = fs.readFileSync(path.join(e2eDir, 'browserLaunch.ts'), 'utf8');
+
+  assert.match(helper, /export async function dismissBlockingModals/);
+  assert.match(helper, /export async function closeLaunchAdIfPresent/);
+  assert.match(helper, /export async function dismissFirstRunAboutModalIfPresent/);
+  assert.match(helper, /export async function dismissLanguagePickerIfPresent/);
+  assert.match(helper, /export async function seedSettingsLanguage/);
+  assert.match(helper, /settings\\\\language/);
+  assert.match(helper, /settings\\\\hasSeenAboutTheTest/);
+
+  const specsWithAllowedLaunchModalAssertions = new Set(['launch-modal-accessibility.spec.ts']);
+  const duplicatedLaunchCleanupPattern =
+    /closeLaunchAdIfPresent|closeLaunchSponsorAd|Close launch sponsor ad|Stäng startannons/;
+
+  for (const fileName of fs.readdirSync(e2eDir).filter((name) => name.endsWith('.spec.ts'))) {
+    if (specsWithAllowedLaunchModalAssertions.has(fileName)) continue;
+
+    const source = fs.readFileSync(path.join(e2eDir, fileName), 'utf8');
+    assert.doesNotMatch(
+      source,
+      duplicatedLaunchCleanupPattern,
+      `${fileName} should use dismissBlockingModals from tests/e2e/browserLaunch.ts`,
+    );
+  }
+});
+
 test('manual external blocker loop workflow runs redacted evidence loop and uploads report', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/external-blocker-loop.yml');
   assert.equal(fs.existsSync(workflowPath), true);
