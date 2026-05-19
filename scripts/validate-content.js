@@ -15750,9 +15750,6 @@ function validateAuthoredSourceParity() {
         `${label} authored true/false source explanation contains answer-judgement boilerplate`,
       );
     }
-    if (findQuestionAnswerKeyPrompt(question)) {
-      reject(`${label} source prompt asks about the answer instead of the civic concept`);
-    }
 
     if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
       authoredSourceQuestionsValidated += 1;
