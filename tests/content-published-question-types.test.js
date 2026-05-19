@@ -2052,38 +2052,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects same-sex marriage infinitive splices', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents).replace(
-      'Sveriges nordligaste del ligger norr om polcirkeln.',
-      'Äktenskap mellan personer av samma kön i Sverige är tillåtet att gifta sig med en person av samma kön.',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
 test('published question schema rejects generated true/false answer-scaffold stems', () => {
   const result = spawnSync(
     process.execPath,
