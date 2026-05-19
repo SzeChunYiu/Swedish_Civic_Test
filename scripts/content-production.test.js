@@ -1,9 +1,13 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
+const path = require('node:path');
 const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
 
 test('full content production validates published UHR-referenced questions', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -212,7 +216,6 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(summary.masteryRulesValidated, 7);
   assert.equal(summary.masteryRulesParityValidated, true);
-  assert.equal(summary.sourceQuestions, 144);
   assert.equal(summary.generatedPublishedQuestions, expectedGeneratedQuestions);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
@@ -274,4 +277,35 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.uhrSourceRetrievedDateValidated, true);
   assert.equal(summary.questionChapterReferenceParityValidated, summary.publishedQuestions);
   assert.equal(summary.uhrReferencesValidated, summary.publishedQuestions);
+});
+
+test('content production rejects source publication gaps without hardcoded totals', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const sourceQuestions: PracticeQuestion[] = publishQuestions([\\n  ...baseQuestions,\\n  ...additionalQuestions,\\n]);",
+      "export const sourceQuestions: PracticeQuestion[] = publishQuestions([\\n  ...baseQuestions,\\n  ...additionalQuestions.slice(1),\\n]);",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /sourceQuestions has \d+ rows, expected \d+ authored questions/);
+  assert.match(output, /q021 published source id does not match authored source/);
 });

@@ -27,11 +27,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 144;
-const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
-const EXPECTED_PUBLISHED_QUESTIONS =
-  EXPECTED_SOURCE_QUESTIONS * (GENERATED_VARIANTS_PER_SOURCE + 1);
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
 const GENERATED_VARIANT_CONVENTIONS = [
@@ -12368,19 +12364,10 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'tags',
 ];
 
-function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
+function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber) {
   if (!Array.isArray(questionsToValidate)) return;
 
-  if (questionsToValidate.length !== count) {
-    fail(`${label} has ${questionsToValidate.length} rows, expected ${count}`);
-  }
-
   questionsToValidate.forEach((question, index) => {
-    if (index >= count) {
-      fail(`${label}[${index}] exceeds expected ${count} rows`);
-      return;
-    }
-
     const expectedId = `q${String(startQuestionNumber + index).padStart(3, '0')}`;
     const actualId = question?.id;
     if (actualId !== expectedId) {
@@ -12411,25 +12398,14 @@ function validateAuthoredSourceParity() {
     return;
   }
 
-  validateAuthoredSourcePartition(
-    baseQuestions,
-    'baseQuestions',
-    1,
-    EXPECTED_BASE_SOURCE_QUESTIONS,
-  );
+  validateAuthoredSourcePartition(baseQuestions, 'baseQuestions', 1);
   validateAuthoredSourcePartition(
     additionalQuestions,
     'additionalQuestions',
-    EXPECTED_BASE_SOURCE_QUESTIONS + 1,
-    EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
+    baseQuestions.length + 1,
   );
 
   const authoredQuestions = [...baseQuestions, ...additionalQuestions];
-  if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
-    fail(
-      `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
-    );
-  }
   if (sourceQuestions.length !== authoredQuestions.length) {
     fail(
       `sourceQuestions has ${sourceQuestions.length} rows, expected ${authoredQuestions.length} authored questions`,
@@ -12501,9 +12477,6 @@ function validateGenerationParity() {
   }
 
   const expectedGeneratedCount = sourceQuestions.length * GENERATED_VARIANTS_PER_SOURCE;
-  if (sourceQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
-    fail(`expected ${EXPECTED_SOURCE_QUESTIONS} source questions, found ${sourceQuestions.length}`);
-  }
   if (generatedPublishedQuestions.length !== expectedGeneratedCount) {
     fail(
       `expected ${expectedGeneratedCount} generated published questions, found ${generatedPublishedQuestions.length}`,
@@ -12614,7 +12587,7 @@ function validateGeneratedSourceMetadataParity() {
       let variantIsValid = true;
       const convention = GENERATED_VARIANT_CONVENTIONS[variantIndex];
       const expectedId = `q${String(
-        EXPECTED_SOURCE_QUESTIONS + 1 + sourceIndex * GENERATED_VARIANTS_PER_SOURCE + variantIndex,
+        sourceQuestions.length + 1 + sourceIndex * GENERATED_VARIANTS_PER_SOURCE + variantIndex,
       ).padStart(3, '0')}`;
       const label = `${sourceQuestion.id} generated variant[${variantIndex}]`;
 
@@ -13096,8 +13069,11 @@ if (Array.isArray(chapters)) {
 }
 
 if (Array.isArray(questions)) {
-  if (questions.length !== EXPECTED_PUBLISHED_QUESTIONS) {
-    fail(`expected ${EXPECTED_PUBLISHED_QUESTIONS} questions, found ${questions.length}`);
+  if (Array.isArray(sourceQuestions) && Array.isArray(generatedPublishedQuestions)) {
+    const expectedPublishedQuestions = sourceQuestions.length + generatedPublishedQuestions.length;
+    if (questions.length !== expectedPublishedQuestions) {
+      fail(`expected ${expectedPublishedQuestions} questions, found ${questions.length}`);
+    }
   }
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
   const promptTexts = {
