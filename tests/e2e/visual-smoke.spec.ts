@@ -88,10 +88,10 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }, tes
 
   for (const [name, route] of routes) {
     await page.goto(route, { waitUntil: 'networkidle' });
-    const dismissal = await dismissBlockingModals(page);
-    const bodyText = (await page.locator('body').innerText()).trim();
-    expect(bodyText.length, `${name} should render route-specific text`).toBeGreaterThan(0);
-    expect(bodyText, `${name} should not surface the router empty-context error`).not.toContain(
+    const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
+    const bodyText = await page.locator('body').innerText();
+    expect(bodyText.trim(), `${name} should render route content`).not.toEqual('');
+    expect(bodyText, `${name} should not boot with an empty Expo Router context`).not.toContain(
       'No routes found',
     );
     await expect(page.locator('body')).not.toContainText('Not Found');

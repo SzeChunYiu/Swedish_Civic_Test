@@ -495,12 +495,12 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
   const packageJson = readJson('package.json');
   const tsconfig = readJson('tsconfig.json');
   const babelConfig = readText('babel.config.js');
+  const entry = readText('index.js');
 
   assert.equal(packageJson.main, 'index.js');
-  assert.match(
-    fs.readFileSync(path.join(repoRoot, 'index.js'), 'utf8'),
-    /require\.context\(\s*['"]\.\/app['"]/,
-  );
+  assert.match(entry, /require\.context\(\s*['"]\.\/app['"]/);
+  assert.match(entry, /<ExpoRoot context=\{ctx\} \/>/);
+  assert.match(entry, /renderRootComponent\(App\)/);
   assert.equal(packageJson.scripts.start, 'expo start');
   assert.equal(packageJson.scripts.typecheck, 'tsc --noEmit');
   assert.equal(packageJson.dependencies.expo.startsWith('~54.'), true);
