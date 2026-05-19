@@ -530,7 +530,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
-  assert.match(tabLayout, /exam: 'Prov'/);
+  assert.match(tabLayout, /exam: 'Övningsprov'/);
   assert.match(tabLayout, /mistakes: 'Misstag'/);
   assert.match(tabLayout, /profile: 'Profil'/);
   assert.match(tabLayout, /home: 'Home'/);
