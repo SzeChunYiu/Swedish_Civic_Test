@@ -294,6 +294,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.staticSiteQuestionBankParityValidated, true);
   assert.equal(summary.staticHeadMetadataDescriptionsValidated, 1);
   assert.equal(summary.staticHeadMetadataDescriptionValidated, true);
+  assert.equal(summary.staticV11ReadinessUnsupportedCopyValidated, 4);
+  assert.equal(summary.staticV11ReadinessRequiredCopyValidated, 8);
+  assert.equal(summary.staticV11ReadinessCopyParityValidated, true);
   assert.equal(summary.staticEbookOutcomeClaimPatternsValidated, 6);
   assert.equal(summary.staticEbookOutcomeClaimParityValidated, true);
   assert.equal(summary.uhrSourceMetadataValidated, true);
