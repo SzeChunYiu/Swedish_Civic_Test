@@ -70,10 +70,8 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   return (
     <>
       <Pressable
-        aria-expanded={open}
         accessibilityRole="button"
         accessibilityLabel={copy.triggerLabel(currentLabel)}
-        accessibilityState={{ expanded: open }}
         hitSlop={space[1]}
         onPress={() => setOpen(true)}
         style={({ pressed }) => [styles.trigger, pressed ? styles.triggerPressed : null]}
@@ -161,9 +159,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     flexDirection: 'row',
     gap: space[0.5],
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
     paddingHorizontal: space[1.25],
     paddingVertical: space[0.5],
   },

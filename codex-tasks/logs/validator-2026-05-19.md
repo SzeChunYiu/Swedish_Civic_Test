@@ -1,37 +1,3 @@
-Iteration: 2026-05-19T03:51+02:00
-Rows moved to accepted: none in A1-A8; accepted UIUX-COMPONENTS source commit
-`023a9042` for the Card component-contract pass.
-Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
-blocked on external production deploy capacity/operator evidence; no Vercel CLI
-was run.
-Evidence: clean manager worktree `/home/billy/manager_build_accept_worktree`
-verified the Card contract after parity repair `5ccf15d1` and acceptance head
-`32ff781e`: Card parity/content-production coverage, `validate:content` with
-Card parity green, `test:ui-effects` 50/50, typecheck, lint, theme discipline,
-a11y labels, ownership, targeted Prettier, Card token grep, commit-range diff
-checks for `023a9042` and `5ccf15d1`, plus current-tree `git diff --check`.
-Next worker task queued: none for the Card component-contract route; do not
-duplicate it without fresh current-main regression evidence.
-
-Iteration: 2026-05-19T03:49+02:00
-Rows moved to accepted: none in A1-A8; accepted SETUP/IAP source commit
-`f7b51252` for `REMOVE-ADS-RECEIPT-VALIDATION-1`, UIUX-COMPONENTS source
-commit `30e7a389` for the MetricCard component-contract pass, and UIUX PR
-#902 / `5ccf15d1` for `REVIEWER-CARD-CONTRACT-PARITY-RED-1`.
-Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
-blocked on external production deploy capacity/operator evidence; no Vercel CLI
-was run.
-Evidence: clean manager worktree `/home/billy/manager_build_accept_worktree`
-on `origin/main` `5ccf15d1` passed `npm run test:monetization` 23/23, focused
-content-production/purchase/Card/MetricCard parity tests 12/12,
-`npm run validate:content` with Card, MetricCard, and Remove Ads runtime parity
-green, `npm run test:ui-effects` 50/50, typecheck, lint, theme discipline, a11y
-labels, ownership, targeted Prettier, token grep for Card/MetricCard, commit
-range diff checks for `f7b51252`, `30e7a389`, and `5ccf15d1`, plus current-tree
-`git diff --check`.
-Next worker task queued: none for these accepted routes; keep q150 DATA-INTEGRITY
-separate until its branch rebases onto the now-green Card/MetricCard mirrors.
-
 Iteration: 2026-05-19T00:11+02:00
 Rows moved to accepted: none in A1-A8; accepted
 `SITE-AUDIT-STATIC-ASSET-REFERENCE-GUARD-1` as a SETUP/static-site guard on
@@ -76,51 +42,6 @@ Next worker task queued: DATA-INTEGRITY - repair q270/q271 generated
 true/false standalone wording from current VERIFY evidence, preserving the new
 generated single-choice guard coverage and rerunning generator/static/content/
 type/lint/ownership gates with PR/merge evidence.
-
-Iteration: 2026-05-19T03:28+02:00
-Rows moved to accepted: none in A1-A8; accepted SETUP source commit `e96237f`
-for `REVIEWER-HOME-UI-EFFECTS-RED-1`.
-Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
-blocked on external production deploy capacity/operator evidence; no Vercel CLI
-was run.
-Evidence: manager recheck on current `origin/main` `f7b5125` passed
-`test:ui-effects` 50/50, `validate:content`, typecheck, lint, ownership,
-targeted Prettier, commit-range diff whitespace, and current-tree diff
-whitespace checks.
-Next worker task queued: none for this Home UI-effects guard; do not duplicate
-it without fresh current-main regression evidence.
-
-Iteration: 2026-05-19T03:27+02:00
-Rows moved to accepted: none in A1-A8; accepted SETUP source commit `4106058`
-for `READINESS-MOCK-SCORES-1`.
-Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
-blocked on external production deploy capacity/operator evidence; no Vercel CLI
-was run.
-Evidence: manager recheck passed focused readiness/progress/exam/home parity
-tests 21/21, `validate:content`, typecheck, lint, ownership, targeted Prettier,
-commit-range and current-tree diff whitespace checks, plus source inspection
-showing completed mock exams are recorded in progress storage and included in
-the Home readiness calculation. Latest `origin/main` `cd8d8e0` is
-source-equivalent for this atom after a claim-only queue commit; worker handoff
-also records exported-web mock completion smoke with Home readiness changing
-after a completed mock.
-Next worker task queued: none for this readiness/mock-score route; do not
-duplicate it without fresh current-main regression evidence.
-
-Iteration: 2026-05-19T03:24+02:00
-Rows moved to accepted: none in A1-A8; accepted UIUX-COMPONENTS source commit
-`761e91f` / PR #892 for `BADGE-STYLE-OVERRIDE-PARITY-1`.
-Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
-blocked on external production deploy capacity/operator evidence; no Vercel CLI
-was run.
-Evidence: current `origin/main` `0203801` contains the badge style validator
-source commit and CSV explanation acceptance. Manager recheck in
-`/tmp/sct-manager-badge-style-6IF6a2/wt` passed `validate:content` with badge
-accessibility parity green, focused badge parity tests 3/3, typecheck, lint,
-ownership, targeted Prettier, commit-range diff whitespace, and current-tree
-diff whitespace checks.
-Next worker task queued: none for Badge style-override parity; do not duplicate
-it without fresh current-main regression evidence.
 
 Iteration: 2026-05-19T03:22+02:00
 Rows moved to accepted: none in A1-A8; accepted DATA-INTEGRITY source commit

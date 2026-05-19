@@ -6471,8 +6471,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "In which part of the world is Sweden located?",
-      "sv": "I vilken del av världen ligger Sverige?"
+      "en": "Which answer best matches? Where is Sweden located?",
+      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?"
     },
     "opts": [
       {
@@ -6596,8 +6596,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden is located ...",
-      "sv": "Sverige ligger ..."
+      "en": "Choose the correct option: Where is Sweden located?",
+      "sv": "Välj rätt alternativ: Var ligger Sverige?"
     },
     "opts": [
       {
@@ -6814,136 +6814,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What approximate distance does Sweden stretch from Treriksröset to Smygehuk?",
-      "sv": "Vilken ungefärlig sträcka har Sverige från Treriksröset till Smygehuk?"
-    },
-    "opts": [
-      {
-        "en": "About 160 kilometres",
-        "sv": "Cirka 160 kilometer"
-      },
-      {
-        "en": "About 1,600 kilometres",
-        "sv": "Cirka 1 600 kilometer"
-      },
-      {
-        "en": "About 16,000 kilometres",
-        "sv": "Cirka 16 000 kilometer"
-      },
-      {
-        "en": "About 60 kilometres",
-        "sv": "Cirka 60 kilometer"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Geografi, klimat och natur",
-      "page": 5
-    },
-    "difficulty": "medium",
-    "tags": [
-      "geography",
-      "distance",
-      "treriksroset",
-      "smygehuk",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q154",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "true_false",
-    "q": {
-      "en": "Sweden stretches about 1,600 kilometres from Treriksröset to Smygehuk.",
-      "sv": "Sverige sträcker sig cirka 1 600 kilometer från Treriksröset till Smygehuk."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Geografi, klimat och natur",
-      "page": 5
-    },
-    "difficulty": "medium",
-    "tags": [
-      "geography",
-      "distance",
-      "treriksroset",
-      "smygehuk",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q155",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "true_false",
-    "q": {
-      "en": "Sweden stretches about 160 kilometres from Treriksröset to Smygehuk.",
-      "sv": "Sverige sträcker sig cirka 160 kilometer från Treriksröset till Smygehuk."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Geografi, klimat och natur",
-      "page": 5
-    },
-    "difficulty": "medium",
-    "tags": [
-      "geography",
-      "distance",
-      "treriksroset",
-      "smygehuk",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q156",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "single_choice",
-    "q": {
-      "en": "Sweden stretches ... from Treriksröset to Smygehuk.",
-      "sv": "Sverige sträcker sig ... från Treriksröset till Smygehuk."
+      "en": "Which answer best matches? Approximately how far does Sweden stretch from Treriksröset to Smygehuk?",
+      "sv": "Vilket svar stämmer bäst? Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?"
     },
     "opts": [
       {
@@ -7032,7 +6904,7 @@
     ]
   },
   {
-    "id": "q158",
+    "id": "q154",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7061,7 +6933,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "geography",
       "coast",
@@ -7071,7 +6943,7 @@
     ]
   },
   {
-    "id": "q159",
+    "id": "q155",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7100,7 +6972,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "geography",
       "coast",
@@ -7110,13 +6982,61 @@
     ]
   },
   {
-    "id": "q160",
+    "id": "q156",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "The sea along Sweden's eastern coast is called ...",
-      "sv": "Havet vid Sveriges östra kust heter ..."
+      "en": "Choose the correct option: Approximately how far does Sweden stretch from Treriksröset to Smygehuk?",
+      "sv": "Välj rätt alternativ: Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?"
+    },
+    "opts": [
+      {
+        "en": "About 160 kilometres",
+        "sv": "Cirka 160 kilometer"
+      },
+      {
+        "en": "About 1,600 kilometres",
+        "sv": "Cirka 1 600 kilometer"
+      },
+      {
+        "en": "About 16,000 kilometres",
+        "sv": "Cirka 16 000 kilometer"
+      },
+      {
+        "en": "About 60 kilometres",
+        "sv": "Cirka 60 kilometer"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Geografi, klimat och natur",
+      "page": 5
+    },
+    "difficulty": "medium",
+    "tags": [
+      "geography",
+      "distance",
+      "treriksroset",
+      "smygehuk",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q157",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What is the sea along Sweden's eastern coast called?",
+      "sv": "Vilket svar stämmer bäst? Vad heter havet vid Sveriges östra kust?"
     },
     "opts": [
       {
@@ -7164,6 +7084,181 @@
     "q": {
       "en": "Which are Sweden's two largest islands?",
       "sv": "Vilka är Sveriges två största öar?"
+    },
+    "opts": [
+      {
+        "en": "Gotland and Öland",
+        "sv": "Gotland och Öland"
+      },
+      {
+        "en": "Hisingen and Orust",
+        "sv": "Hisingen och Orust"
+      },
+      {
+        "en": "Värmdö and Tjörn",
+        "sv": "Värmdö och Tjörn"
+      },
+      {
+        "en": "Malmö and Gothenburg",
+        "sv": "Malmö och Göteborg"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden's two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are also Swedish islands but are not the two largest, and Malmö and Gothenburg are cities.",
+      "sv": "Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn är också svenska öar men är inte de två största, och Malmö och Göteborg är städer."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Geografi, klimat och natur",
+      "page": 5
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "gotland",
+      "oland",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q158",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden's two largest islands are Gotland and Öland.",
+      "sv": "Sveriges två största öar är Gotland och Öland."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden's two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are also Swedish islands but are not the two largest, and Malmö and Gothenburg are cities.",
+      "sv": "Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn är också svenska öar men är inte de två största, och Malmö och Göteborg är städer."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Geografi, klimat och natur",
+      "page": 5
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "gotland",
+      "oland",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q159",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden's two largest islands are Hisingen and Orust.",
+      "sv": "Sveriges två största öar är Hisingen och Orust."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Sweden's two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are also Swedish islands but are not the two largest, and Malmö and Gothenburg are cities.",
+      "sv": "Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn är också svenska öar men är inte de två största, och Malmö och Göteborg är städer."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Geografi, klimat och natur",
+      "page": 5
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "gotland",
+      "oland",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q160",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is the sea along Sweden's eastern coast called?",
+      "sv": "Välj rätt alternativ: Vad heter havet vid Sveriges östra kust?"
+    },
+    "opts": [
+      {
+        "en": "The North Sea",
+        "sv": "Nordsjön"
+      },
+      {
+        "en": "The Mediterranean Sea",
+        "sv": "Medelhavet"
+      },
+      {
+        "en": "The Baltic Sea",
+        "sv": "Östersjön"
+      },
+      {
+        "en": "The Atlantic Ocean",
+        "sv": "Atlanten"
+      }
+    ],
+    "answer": 2,
+    "why": {
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Geografi, klimat och natur",
+      "page": 5
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "coast",
+      "baltic-sea",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q161",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which islands are Sweden's two largest?",
+      "sv": "Vilket svar stämmer bäst? Vilka öar är Sveriges två största?"
     },
     "opts": [
       {
@@ -7290,8 +7385,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's two largest islands are ...",
-      "sv": "Sveriges två största öar är ..."
+      "en": "Choose the correct option: Which islands are Sweden's two largest?",
+      "sv": "Välj rätt alternativ: Vilka öar är Sveriges två största?"
     },
     "opts": [
       {
@@ -7509,133 +7604,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What name does Sweden's highest mountain have?",
-      "sv": "Vilket namn har sveriges högsta berg?"
-    },
-    "opts": [
-      {
-        "en": "Kebnekaise",
-        "sv": "Kebnekaise"
-      },
-      {
-        "en": "Smygehuk",
-        "sv": "Smygehuk"
-      },
-      {
-        "en": "Treriksröset",
-        "sv": "Treriksröset"
-      },
-      {
-        "en": "Mälaren",
-        "sv": "Mälaren"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Sweden's highest mountain is Kebnekaise, at about 2,000 metres. It is in the mountain region called fjällen, part of the Scandinavian Mountains along the border with Norway.",
-      "sv": "Sveriges högsta berg heter Kebnekaise och är cirka 2 000 meter högt. Det ligger i fjällen, den del av bergskedjan Skanderna som går längs gränsen mot Norge."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Fjäll",
-      "page": 6
-    },
-    "difficulty": "easy",
-    "tags": [
-      "geography",
-      "mountains",
-      "kebnekaise",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q170",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "true_false",
-    "q": {
-      "en": "Sweden's highest mountain is called Kebnekaise.",
-      "sv": "Sveriges högsta berg heter Kebnekaise."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Sweden's highest mountain is Kebnekaise, at about 2,000 metres. It is in the mountain region called fjällen, part of the Scandinavian Mountains along the border with Norway.",
-      "sv": "Sveriges högsta berg heter Kebnekaise och är cirka 2 000 meter högt. Det ligger i fjällen, den del av bergskedjan Skanderna som går längs gränsen mot Norge."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Fjäll",
-      "page": 6
-    },
-    "difficulty": "easy",
-    "tags": [
-      "geography",
-      "mountains",
-      "kebnekaise",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q171",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "true_false",
-    "q": {
-      "en": "Sweden's highest mountain is called Smygehuk.",
-      "sv": "Sveriges högsta berg heter Smygehuk."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Sweden's highest mountain is Kebnekaise, at about 2,000 metres. It is in the mountain region called fjällen, part of the Scandinavian Mountains along the border with Norway.",
-      "sv": "Sveriges högsta berg heter Kebnekaise och är cirka 2 000 meter högt. Det ligger i fjällen, den del av bergskedjan Skanderna som går längs gränsen mot Norge."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Fjäll",
-      "page": 6
-    },
-    "difficulty": "easy",
-    "tags": [
-      "geography",
-      "mountains",
-      "kebnekaise",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q172",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "single_choice",
-    "q": {
-      "en": "Sweden's highest mountain is called ...",
-      "sv": "Sveriges högsta berg heter ..."
+      "en": "Which answer best matches? What is the name of Sweden's highest mountain?",
+      "sv": "Vilket svar stämmer bäst? Vad heter Sveriges högsta berg?"
     },
     "opts": [
       {
@@ -7725,7 +7695,7 @@
     ]
   },
   {
-    "id": "q174",
+    "id": "q170",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7766,7 +7736,7 @@
     ]
   },
   {
-    "id": "q175",
+    "id": "q171",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7807,13 +7777,60 @@
     ]
   },
   {
-    "id": "q176",
+    "id": "q172",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's three largest lakes are ...",
-      "sv": "Sveriges tre största sjöar är ..."
+      "en": "Choose the correct option: What is the name of Sweden's highest mountain?",
+      "sv": "Välj rätt alternativ: Vad heter Sveriges högsta berg?"
+    },
+    "opts": [
+      {
+        "en": "Kebnekaise",
+        "sv": "Kebnekaise"
+      },
+      {
+        "en": "Smygehuk",
+        "sv": "Smygehuk"
+      },
+      {
+        "en": "Treriksröset",
+        "sv": "Treriksröset"
+      },
+      {
+        "en": "Mälaren",
+        "sv": "Mälaren"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden's highest mountain is Kebnekaise, at about 2,000 metres. It is in the mountain region called fjällen, part of the Scandinavian Mountains along the border with Norway.",
+      "sv": "Sveriges högsta berg heter Kebnekaise och är cirka 2 000 meter högt. Det ligger i fjällen, den del av bergskedjan Skanderna som går längs gränsen mot Norge."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Fjäll",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "mountains",
+      "kebnekaise",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q173",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which are Sweden's three largest lakes?",
+      "sv": "Vilket svar stämmer bäst? Vilka är Sveriges tre största sjöar?"
     },
     "opts": [
       {
@@ -7903,7 +7920,7 @@
     ]
   },
   {
-    "id": "q178",
+    "id": "q174",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7942,7 +7959,7 @@
     ]
   },
   {
-    "id": "q179",
+    "id": "q175",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7981,13 +7998,62 @@
     ]
   },
   {
-    "id": "q180",
+    "id": "q176",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "... people live in Sweden.",
-      "sv": "... människor bor i Sverige."
+      "en": "Choose the correct option: Which are Sweden's three largest lakes?",
+      "sv": "Välj rätt alternativ: Vilka är Sveriges tre största sjöar?"
+    },
+    "opts": [
+      {
+        "en": "Vänern, Vättern, and Mälaren",
+        "sv": "Vänern, Vättern och Mälaren"
+      },
+      {
+        "en": "The Baltic Sea, Kattegat, and Skagerrak",
+        "sv": "Östersjön, Kattegatt och Skagerrak"
+      },
+      {
+        "en": "Gotland, Öland, and Orust",
+        "sv": "Gotland, Öland och Orust"
+      },
+      {
+        "en": "Stockholm, Gothenburg, and Malmö",
+        "sv": "Stockholm, Göteborg och Malmö"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has many lakes throughout the country, and the three largest are Vänern, Vättern, and Mälaren. The other choices list sea areas, islands, or cities instead of lakes.",
+      "sv": "Sverige har många sjöar spridda över hela landet, och de tre största är Vänern, Vättern och Mälaren. De andra alternativen räknar upp havsområden, öar eller städer i stället för sjöar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "lakes",
+      "vanern",
+      "vattern",
+      "malaren",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q177",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Approximately how many people live in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Ungefär hur många människor bor i Sverige?"
     },
     "opts": [
       {
@@ -8076,7 +8142,7 @@
     ]
   },
   {
-    "id": "q182",
+    "id": "q178",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8116,7 +8182,7 @@
     ]
   },
   {
-    "id": "q183",
+    "id": "q179",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8156,13 +8222,60 @@
     ]
   },
   {
-    "id": "q184",
+    "id": "q180",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "... are important natural resources in Sweden.",
-      "sv": "... är viktiga naturresurser i Sverige."
+      "en": "Choose the correct option: Approximately how many people live in Sweden?",
+      "sv": "Välj rätt alternativ: Ungefär hur många människor bor i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Almost 11 million",
+        "sv": "Nästan 11 miljoner"
+      },
+      {
+        "en": "Almost 1 million",
+        "sv": "Nästan 1 miljon"
+      },
+      {
+        "en": "About 50 million",
+        "sv": "Cirka 50 miljoner"
+      },
+      {
+        "en": "About 100 million",
+        "sv": "Cirka 100 miljoner"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Almost 11 million people live in Sweden. The population is not evenly distributed: most people live in the southern part of the country and along the coasts.",
+      "sv": "Det bor nästan 11 miljoner människor i Sverige. Befolkningen är inte jämnt fördelad: de flesta bor i den södra delen av landet och längs kusterna."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Befolkning",
+      "page": 7
+    },
+    "difficulty": "easy",
+    "tags": [
+      "population",
+      "demography",
+      "sweden",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q181",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which natural resources are important in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilka naturresurser är viktiga i Sverige?"
     },
     "opts": [
       {
@@ -8211,6 +8324,179 @@
     "q": {
       "en": "How is democracy explained?",
       "sv": "Hur förklaras demokrati?"
+    },
+    "opts": [
+      {
+        "en": "Rule by the people",
+        "sv": "Folkstyre"
+      },
+      {
+        "en": "Military rule",
+        "sv": "Militärstyre"
+      },
+      {
+        "en": "Autocracy",
+        "sv": "Envälde"
+      },
+      {
+        "en": "Rule by companies",
+        "sv": "Företagsstyre"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges demokratiska system",
+      "section": "Demokrati betyder folkstyre",
+      "page": 10
+    },
+    "difficulty": "easy",
+    "tags": [
+      "democracy",
+      "definition",
+      "folkstyre",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q182",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "Democracy means rule by the people.",
+      "sv": "Demokrati betyder folkstyre."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges demokratiska system",
+      "section": "Demokrati betyder folkstyre",
+      "page": 10
+    },
+    "difficulty": "easy",
+    "tags": [
+      "democracy",
+      "definition",
+      "folkstyre",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q183",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "true_false",
+    "q": {
+      "en": "Democracy means military rule.",
+      "sv": "Demokrati betyder militärstyre."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges demokratiska system",
+      "section": "Demokrati betyder folkstyre",
+      "page": 10
+    },
+    "difficulty": "easy",
+    "tags": [
+      "democracy",
+      "definition",
+      "folkstyre",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q184",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which natural resources are important in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka naturresurser är viktiga i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Iron ore and other minerals, forest, agricultural land, and water",
+        "sv": "Järnmalm och andra mineraler, skog, jordbruksmark och vatten"
+      },
+      {
+        "en": "Oil, natural gas, desert land, and tropical rain",
+        "sv": "Olja, naturgas, ökenmark och tropiskt regn"
+      },
+      {
+        "en": "Coal, diamond mines, volcanic soil, and palm trees",
+        "sv": "Kol, diamantgruvor, vulkanjord och palmer"
+      },
+      {
+        "en": "Rice fields, cotton plantations, coral reefs, and tides",
+        "sv": "Risfält, bomullsplantager, korallrev och tidvatten"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Naturresurser",
+      "page": 7
+    },
+    "difficulty": "easy",
+    "tags": [
+      "natural-resources",
+      "minerals",
+      "forest",
+      "water",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q185",
+    "chapterId": 2,
+    "chapter": "Ch. 02 · Sweden's democratic system",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What does democracy mean?",
+      "sv": "Vilket svar stämmer bäst? Vad betyder demokrati?"
     },
     "opts": [
       {
@@ -8334,8 +8620,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Democracy means ...",
-      "sv": "Demokrati betyder ..."
+      "en": "Choose the correct option: What does democracy mean?",
+      "sv": "Välj rätt alternativ: Vad betyder demokrati?"
     },
     "opts": [
       {
@@ -8381,8 +8667,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "What is part of free elections in a democracy?",
-      "sv": "Vad ingår i fria val i en demokrati?"
+      "en": "Which answer best matches? Which of the following is part of free elections in a democracy?",
+      "sv": "Vilket svar stämmer bäst? Vilket av följande ingår i fria val i en demokrati?"
     },
     "opts": [
       {
@@ -8553,8 +8839,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "How can people influence and participate in society?",
-      "sv": "Hur kan man påverka och delta i samhället?"
+      "en": "Which answer best matches? Which is a way to influence and participate in society?",
+      "sv": "Vilket svar stämmer bäst? Vilket är ett sätt att påverka och delta i samhället?"
     },
     "opts": [
       {
@@ -8678,8 +8964,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "One way to influence and participate in society is to ...",
-      "sv": "Ett sätt att påverka och delta i samhället är att ..."
+      "en": "Choose the correct option: Which is a way to influence and participate in society?",
+      "sv": "Välj rätt alternativ: Vilket är ett sätt att påverka och delta i samhället?"
     },
     "opts": [
       {
@@ -8725,133 +9011,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "What concept describes when laws apply equally to everyone and no one can be convicted without a fair trial?",
-      "sv": "Vilket begrepp beskriver när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
-    },
-    "opts": [
-      {
-        "en": "Legal certainty",
-        "sv": "Rättssäkerhet"
-      },
-      {
-        "en": "Censorship",
-        "sv": "Censur"
-      },
-      {
-        "en": "Segregation",
-        "sv": "Segregation"
-      },
-      {
-        "en": "Monarchy",
-        "sv": "Monarki"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges demokratiska system",
-      "section": "Demokrati betyder folkstyre",
-      "page": 10
-    },
-    "difficulty": "medium",
-    "tags": [
-      "legal-certainty",
-      "democracy",
-      "fair-trial",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q198",
-    "chapterId": 2,
-    "chapter": "Ch. 02 · Sweden's democratic system",
-    "type": "true_false",
-    "q": {
-      "en": "When laws apply equally to everyone and no one can be convicted without a fair trial, it is called legal certainty.",
-      "sv": "När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det rättssäkerhet."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges demokratiska system",
-      "section": "Demokrati betyder folkstyre",
-      "page": 10
-    },
-    "difficulty": "medium",
-    "tags": [
-      "legal-certainty",
-      "democracy",
-      "fair-trial",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q199",
-    "chapterId": 2,
-    "chapter": "Ch. 02 · Sweden's democratic system",
-    "type": "true_false",
-    "q": {
-      "en": "When laws apply equally to everyone and no one can be convicted without a fair trial, it is called censorship.",
-      "sv": "När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det censur."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges demokratiska system",
-      "section": "Demokrati betyder folkstyre",
-      "page": 10
-    },
-    "difficulty": "medium",
-    "tags": [
-      "legal-certainty",
-      "democracy",
-      "fair-trial",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q200",
-    "chapterId": 2,
-    "chapter": "Ch. 02 · Sweden's democratic system",
-    "type": "single_choice",
-    "q": {
-      "en": "When laws apply equally to everyone and no one can be convicted without a fair trial, it is called ...",
-      "sv": "När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det ..."
+      "en": "Which answer best matches? What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?",
+      "sv": "Vilket svar stämmer bäst? Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
     },
     "opts": [
       {
@@ -8939,7 +9100,7 @@
     ]
   },
   {
-    "id": "q202",
+    "id": "q198",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8968,7 +9129,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "democracy",
       "voter-turnout",
@@ -8978,7 +9139,7 @@
     ]
   },
   {
-    "id": "q203",
+    "id": "q199",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9007,7 +9168,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "democracy",
       "voter-turnout",
@@ -9017,13 +9178,60 @@
     ]
   },
   {
-    "id": "q204",
+    "id": "q200",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "... when a low voter turnout affects democracy.",
-      "sv": "... när ett lågt valdeltagande påverkar demokratin."
+      "en": "Choose the correct option: What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?",
+      "sv": "Välj rätt alternativ: Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
+    },
+    "opts": [
+      {
+        "en": "Legal certainty",
+        "sv": "Rättssäkerhet"
+      },
+      {
+        "en": "Censorship",
+        "sv": "Censur"
+      },
+      {
+        "en": "Segregation",
+        "sv": "Segregation"
+      },
+      {
+        "en": "Monarchy",
+        "sv": "Monarki"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges demokratiska system",
+      "section": "Demokrati betyder folkstyre",
+      "page": 10
+    },
+    "difficulty": "medium",
+    "tags": [
+      "legal-certainty",
+      "democracy",
+      "fair-trial",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q201",
+    "chapterId": 2,
+    "chapter": "Ch. 02 · Sweden's democratic system",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? How can a low voter turnout affect democracy?",
+      "sv": "Vilket svar stämmer bäst? Hur kan ett lågt valdeltagande påverka demokratin?"
     },
     "opts": [
       {
@@ -9111,9 +9319,9 @@
     ]
   },
   {
-    "id": "q206",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "id": "q202",
+    "chapterId": 2,
+    "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
       "en": "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
@@ -9140,7 +9348,7 @@
       "section": "Staten",
       "page": 12
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
       "riksdag",
       "representative-democracy",
@@ -9150,9 +9358,9 @@
     ]
   },
   {
-    "id": "q207",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "id": "q203",
+    "chapterId": 2,
+    "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
       "en": "The courts elect all members of the Riksdag.",
@@ -9179,7 +9387,7 @@
       "section": "Staten",
       "page": 12
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
       "riksdag",
       "representative-democracy",
@@ -9189,13 +9397,60 @@
     ]
   },
   {
-    "id": "q208",
+    "id": "q204",
+    "chapterId": 2,
+    "chapter": "Ch. 02 · Sweden's democratic system",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: How can a low voter turnout affect democracy?",
+      "sv": "Välj rätt alternativ: Hur kan ett lågt valdeltagande påverka demokratin?"
+    },
+    "opts": [
+      {
+        "en": "People may have fewer opportunities to influence political decisions",
+        "sv": "Människor kan få mindre möjlighet att påverka politiska beslut"
+      },
+      {
+        "en": "All voters get two votes each in the next election",
+        "sv": "Alla väljare får två röster var i nästa val"
+      },
+      {
+        "en": "The courts take over the Riksdag's tasks",
+        "sv": "Domstolarna tar över riksdagens uppgifter"
+      },
+      {
+        "en": "Society automatically becomes more integrated",
+        "sv": "Samhället blir automatiskt mer integrerat"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Low voter turnout can leave people with fewer opportunities to influence political decisions in everyday life. It can also widen differences between groups in society; the other options describe effects that do not follow from low voter turnout.",
+      "sv": "Ett lågt valdeltagande kan göra det svårare för människor att påverka politiska beslut i sin vardag. Det kan också öka skillnaderna mellan grupper i samhället; de andra alternativen beskriver följder som inte följer av lågt valdeltagande."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges demokratiska system",
+      "section": "Hot mot demokratin",
+      "page": 11
+    },
+    "difficulty": "easy",
+    "tags": [
+      "democracy",
+      "voter-turnout",
+      "threats-to-democracy",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q205",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy ...",
-      "sv": "Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati ..."
+      "en": "Which answer best matches? How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
+      "sv": "Vilket svar stämmer bäst? Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?"
     },
     "opts": [
       {
@@ -9283,7 +9538,7 @@
     ]
   },
   {
-    "id": "q210",
+    "id": "q206",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9312,7 +9567,7 @@
       "section": "Staten",
       "page": 12
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "riksdag",
       "parliament",
@@ -9322,7 +9577,7 @@
     ]
   },
   {
-    "id": "q211",
+    "id": "q207",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9351,7 +9606,7 @@
       "section": "Staten",
       "page": 12
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "riksdag",
       "parliament",
@@ -9361,13 +9616,60 @@
     ]
   },
   {
-    "id": "q212",
+    "id": "q208",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The Riksdag has ... members.",
-      "sv": "Riksdagen har ... ledamöter."
+      "en": "Choose the correct option: How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
+      "sv": "Välj rätt alternativ: Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?"
+    },
+    "opts": [
+      {
+        "en": "By voting in general elections",
+        "sv": "Genom att rösta i allmänna val"
+      },
+      {
+        "en": "The courts elect all members of the Riksdag",
+        "sv": "Domstolarna väljer alla riksdagsledamöter"
+      },
+      {
+        "en": "The king alone decides over the Riksdag",
+        "sv": "Kungen bestämmer ensam över riksdagen"
+      },
+      {
+        "en": "Government agencies vote the government into office",
+        "sv": "Myndigheter röstar fram regeringen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden is a parliamentary representative democracy: citizens elect members of the Riksdag by voting in general elections. The Riksdag then decides on laws and the state budget, so the courts, the king, and government agencies do not choose its members.",
+      "sv": "Sverige är en parlamentarisk representativ demokrati: medborgarna väljer riksdagsledamöter genom att rösta i allmänna val. Riksdagen fattar sedan beslut om lagar och statens budget, så varken domstolarna, kungen eller myndigheter väljer ledamöterna."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
+    },
+    "difficulty": "medium",
+    "tags": [
+      "riksdag",
+      "representative-democracy",
+      "parliament",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q209",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? How many members does the Riksdag have?",
+      "sv": "Vilket svar stämmer bäst? Hur många ledamöter har riksdagen?"
     },
     "opts": [
       {
@@ -9455,7 +9757,7 @@
     ]
   },
   {
-    "id": "q214",
+    "id": "q210",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9484,7 +9786,7 @@
       "section": "Staten",
       "page": 12
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
       "government",
       "prime-minister",
@@ -9494,7 +9796,7 @@
     ]
   },
   {
-    "id": "q215",
+    "id": "q211",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9523,7 +9825,7 @@
       "section": "Staten",
       "page": 12
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
       "government",
       "prime-minister",
@@ -9533,13 +9835,60 @@
     ]
   },
   {
-    "id": "q216",
+    "id": "q212",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The prime minister is chosen by ...",
-      "sv": "Statsministern väljs av ..."
+      "en": "Choose the correct option: How many members does the Riksdag have?",
+      "sv": "Välj rätt alternativ: Hur många ledamöter har riksdagen?"
+    },
+    "opts": [
+      {
+        "en": "21",
+        "sv": "21"
+      },
+      {
+        "en": "290",
+        "sv": "290"
+      },
+      {
+        "en": "349",
+        "sv": "349"
+      },
+      {
+        "en": "1,600",
+        "sv": "1 600"
+      }
+    ],
+    "answer": 2,
+    "why": {
+      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
+    },
+    "difficulty": "easy",
+    "tags": [
+      "riksdag",
+      "parliament",
+      "members",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q213",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Who chooses the prime minister?",
+      "sv": "Vilket svar stämmer bäst? Vem väljer statsministern?"
     },
     "opts": [
       {
@@ -9587,6 +9936,178 @@
     "q": {
       "en": "What age is required to have the right to vote?",
       "sv": "Vilken ålder krävs för att ha rösträtt?"
+    },
+    "opts": [
+      {
+        "en": "16 years old",
+        "sv": "16 år"
+      },
+      {
+        "en": "18 years old",
+        "sv": "18 år"
+      },
+      {
+        "en": "20 years old",
+        "sv": "20 år"
+      },
+      {
+        "en": "25 years old",
+        "sv": "25 år"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.",
+      "sv": "Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Politiska val och partier",
+      "section": "Val och röstning",
+      "page": 14
+    },
+    "difficulty": "easy",
+    "tags": [
+      "voting-age",
+      "elections",
+      "riksdag",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q214",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "true_false",
+    "q": {
+      "en": "A person must be 18 years old to have the right to vote.",
+      "sv": "Man måste ha fyllt 18 år för att ha rösträtt."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.",
+      "sv": "Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Politiska val och partier",
+      "section": "Val och röstning",
+      "page": 14
+    },
+    "difficulty": "medium",
+    "tags": [
+      "voting-age",
+      "elections",
+      "riksdag",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q215",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "true_false",
+    "q": {
+      "en": "A person must be 16 years old to have the right to vote.",
+      "sv": "Man måste ha fyllt 16 år för att ha rösträtt."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.",
+      "sv": "Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Politiska val och partier",
+      "section": "Val och röstning",
+      "page": 14
+    },
+    "difficulty": "medium",
+    "tags": [
+      "voting-age",
+      "elections",
+      "riksdag",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q216",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Who chooses the prime minister?",
+      "sv": "Välj rätt alternativ: Vem väljer statsministern?"
+    },
+    "opts": [
+      {
+        "en": "The Riksdag",
+        "sv": "Riksdagen"
+      },
+      {
+        "en": "The king alone",
+        "sv": "Kungen ensam"
+      },
+      {
+        "en": "The Swedish Police Authority",
+        "sv": "Polismyndigheten"
+      },
+      {
+        "en": "The regional council",
+        "sv": "Regionfullmäktige"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Riksdag chooses the prime minister, who is then tasked with forming a government. The prime minister chooses the ministers; neither the king, the Swedish Police Authority, nor regional councils choose the prime minister.",
+      "sv": "Riksdagen väljer statsministern, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna; varken kungen, Polismyndigheten eller regionfullmäktige väljer statsminister."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
+    },
+    "difficulty": "medium",
+    "tags": [
+      "government",
+      "prime-minister",
+      "riksdag",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q217",
+    "chapterId": 4,
+    "chapter": "Ch. 04 · Political elections and parties",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? How old must a person be to have the right to vote?",
+      "sv": "Vilket svar stämmer bäst? Hur gammal måste man ha fyllt för att ha rösträtt?"
     },
     "opts": [
       {
@@ -9710,8 +10231,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "A person must be ... to have the right to vote.",
-      "sv": "Man måste ha fyllt ... för att ha rösträtt."
+      "en": "Choose the correct option: How old must a person be to have the right to vote?",
+      "sv": "Välj rätt alternativ: Hur gammal måste man ha fyllt för att ha rösträtt?"
     },
     "opts": [
       {
@@ -9757,8 +10278,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "What is meant by saying that referendums in Sweden are advisory?",
-      "sv": "Hur förklaras det att folkomröstningar i Sverige är rådgivande?"
+      "en": "Which answer best matches? What does it mean that referendums in Sweden are advisory?",
+      "sv": "Vilket svar stämmer bäst? Vad betyder det att folkomröstningar i Sverige är rådgivande?"
     },
     "opts": [
       {
@@ -9929,133 +10450,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which three levels share political responsibility in Sweden?",
-      "sv": "Kunskapsfråga: Vilka tre nivåer delar det politiska ansvaret i Sverige?"
-    },
-    "opts": [
-      {
-        "en": "The state, regions, and municipalities",
-        "sv": "Stat, regioner och kommuner"
-      },
-      {
-        "en": "The king, church, and nobility",
-        "sv": "Kung, kyrka och adel"
-      },
-      {
-        "en": "Police, court, and prison",
-        "sv": "Polis, domstol och fängelse"
-      },
-      {
-        "en": "Banks, companies, and households",
-        "sv": "Banker, företag och hushåll"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Political responsibility in Sweden is divided between national, regional, and municipal levels. In practice, that means the state, regions, and municipalities. EU decisions can also affect Sweden.",
-      "sv": "Det politiska ansvaret i Sverige delas mellan nationell, regional och kommunal nivå. I praktiken betyder det staten, regionerna och kommunerna. EU-beslut kan också påverka Sverige."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Landet styrs på olika nivåer",
-      "page": 12
-    },
-    "difficulty": "medium",
-    "tags": [
-      "government",
-      "levels",
-      "state-region-municipality",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q226",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
-    "type": "true_false",
-    "q": {
-      "en": "The state, regions, and municipalities share political responsibility in Sweden.",
-      "sv": "Stat, regioner och kommuner delar det politiska ansvaret i Sverige."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Political responsibility in Sweden is divided between national, regional, and municipal levels. In practice, that means the state, regions, and municipalities. EU decisions can also affect Sweden.",
-      "sv": "Det politiska ansvaret i Sverige delas mellan nationell, regional och kommunal nivå. I praktiken betyder det staten, regionerna och kommunerna. EU-beslut kan också påverka Sverige."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Landet styrs på olika nivåer",
-      "page": 12
-    },
-    "difficulty": "medium",
-    "tags": [
-      "government",
-      "levels",
-      "state-region-municipality",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q227",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
-    "type": "true_false",
-    "q": {
-      "en": "The king, church, and nobility share political responsibility in Sweden.",
-      "sv": "Kung, kyrka och adel delar det politiska ansvaret i Sverige."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Political responsibility in Sweden is divided between national, regional, and municipal levels. In practice, that means the state, regions, and municipalities. EU decisions can also affect Sweden.",
-      "sv": "Det politiska ansvaret i Sverige delas mellan nationell, regional och kommunal nivå. I praktiken betyder det staten, regionerna och kommunerna. EU-beslut kan också påverka Sverige."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Landet styrs på olika nivåer",
-      "page": 12
-    },
-    "difficulty": "medium",
-    "tags": [
-      "government",
-      "levels",
-      "state-region-municipality",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q228",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
-    "type": "single_choice",
-    "q": {
-      "en": "... share political responsibility in Sweden.",
-      "sv": "... delar det politiska ansvaret i Sverige."
+      "en": "Which answer best matches? Which three levels share political responsibility in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilka tre nivåer delar det politiska ansvaret i Sverige?"
     },
     "opts": [
       {
@@ -10103,6 +10499,178 @@
     "q": {
       "en": "Which task belongs to the Riksdag?",
       "sv": "Vilken uppgift har riksdagen?"
+    },
+    "opts": [
+      {
+        "en": "To manage regional public transport",
+        "sv": "Att sköta regionernas kollektivtrafik"
+      },
+      {
+        "en": "To be Sweden's head of state",
+        "sv": "Att vara Sveriges statschef"
+      },
+      {
+        "en": "To decide laws and how the state's money should be used",
+        "sv": "Att besluta om lagar och hur statens pengar ska användas"
+      },
+      {
+        "en": "To investigate crimes alone",
+        "sv": "Att ensam utreda brott"
+      }
+    ],
+    "answer": 2,
+    "why": {
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
+    },
+    "difficulty": "easy",
+    "tags": [
+      "riksdag",
+      "laws",
+      "state-budget",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q226",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "true_false",
+    "q": {
+      "en": "The Riksdag has the task to decide laws and how the state's money should be used.",
+      "sv": "Riksdagen har uppgiften att besluta om lagar och hur statens pengar ska användas."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
+    },
+    "difficulty": "medium",
+    "tags": [
+      "riksdag",
+      "laws",
+      "state-budget",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q227",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "true_false",
+    "q": {
+      "en": "The Riksdag has the task to manage regional public transport.",
+      "sv": "Riksdagen har uppgiften att sköta regionernas kollektivtrafik."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
+    },
+    "difficulty": "medium",
+    "tags": [
+      "riksdag",
+      "laws",
+      "state-budget",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q228",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which three levels share political responsibility in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka tre nivåer delar det politiska ansvaret i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "The state, regions, and municipalities",
+        "sv": "Stat, regioner och kommuner"
+      },
+      {
+        "en": "The king, church, and nobility",
+        "sv": "Kung, kyrka och adel"
+      },
+      {
+        "en": "Police, court, and prison",
+        "sv": "Polis, domstol och fängelse"
+      },
+      {
+        "en": "Banks, companies, and households",
+        "sv": "Banker, företag och hushåll"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Political responsibility in Sweden is divided between national, regional, and municipal levels. In practice, that means the state, regions, and municipalities. EU decisions can also affect Sweden.",
+      "sv": "Det politiska ansvaret i Sverige delas mellan nationell, regional och kommunal nivå. I praktiken betyder det staten, regionerna och kommunerna. EU-beslut kan också påverka Sverige."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Så här styrs Sverige",
+      "section": "Landet styrs på olika nivåer",
+      "page": 12
+    },
+    "difficulty": "medium",
+    "tags": [
+      "government",
+      "levels",
+      "state-region-municipality",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q229",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which of the following tasks belongs to the Riksdag?",
+      "sv": "Vilket svar stämmer bäst? Vilken av följande uppgifter har riksdagen?"
     },
     "opts": [
       {
@@ -10226,8 +10794,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The Riksdag has the task ...",
-      "sv": "Riksdagen har uppgiften ..."
+      "en": "Choose the correct option: Which of the following tasks belongs to the Riksdag?",
+      "sv": "Välj rätt alternativ: Vilken av följande uppgifter har riksdagen?"
     },
     "opts": [
       {
@@ -10445,8 +11013,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which description fits government agencies?",
-      "sv": "Vilken beskrivning passar för statliga myndigheter?"
+      "en": "Which answer best matches? Which statement describes government agencies?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver statliga myndigheter?"
     },
     "opts": [
       {
@@ -10617,8 +11185,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is Sweden's regions foremost task?",
-      "sv": "Vad är regionernas främsta uppgift i Sverige?"
+      "en": "Which answer best matches? What is the foremost task of Sweden's regions?",
+      "sv": "Vilket svar stämmer bäst? Vilken är regionernas främsta uppgift i Sverige?"
     },
     "opts": [
       {
@@ -10742,8 +11310,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The foremost task of Sweden's regions is ...",
-      "sv": "Regionernas främsta uppgift i Sverige är ..."
+      "en": "Choose the correct option: What is the foremost task of Sweden's regions?",
+      "sv": "Välj rätt alternativ: Vilken är regionernas främsta uppgift i Sverige?"
     },
     "opts": [
       {
@@ -10789,8 +11357,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which example fits municipal responsibilities?",
-      "sv": "Vilket exempel passar för kommunernas ansvar?"
+      "en": "Which answer best matches? Which example describes municipal responsibilities?",
+      "sv": "Vilket svar stämmer bäst? Vilket exempel beskriver kommunernas ansvar?"
     },
     "opts": [
       {
@@ -10914,8 +11482,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "... belong among municipal responsibilities.",
-      "sv": "... är exempel på kommunernas ansvar."
+      "en": "Choose the correct option: Which example describes municipal responsibilities?",
+      "sv": "Välj rätt alternativ: Vilket exempel beskriver kommunernas ansvar?"
     },
     "opts": [
       {
@@ -10961,8 +11529,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is meant by saying that sweden is a constitutional monarchy?",
-      "sv": "Hur förklaras det att Sverige är en konstitutionell monarki?"
+      "en": "Which answer best matches? What does it mean that Sweden is a constitutional monarchy?",
+      "sv": "Vilket svar stämmer bäst? Vad betyder det att Sverige är en konstitutionell monarki?"
     },
     "opts": [
       {
@@ -11086,8 +11654,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "That Sweden is a constitutional monarchy means ...",
-      "sv": "Att Sverige är en konstitutionell monarki betyder ..."
+      "en": "Choose the correct option: What does it mean that Sweden is a constitutional monarchy?",
+      "sv": "Välj rätt alternativ: Vad betyder det att Sverige är en konstitutionell monarki?"
     },
     "opts": [
       {
@@ -11305,8 +11873,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "At what interval are elections to the Riksdag, regional councils, and municipal councils held in Sweden?",
-      "sv": "Med vilket intervall hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
+      "en": "Which answer best matches? How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
     },
     "opts": [
       {
@@ -11430,8 +11998,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held ... in Sweden.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige hålls ..."
+      "en": "Choose the correct option: How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?",
+      "sv": "Välj rätt alternativ: Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
     },
     "opts": [
       {
@@ -11477,8 +12045,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which requirements must be met for voting in Sweden’s Riksdag election?",
-      "sv": "Vilka krav måste uppfyllas för att rösta i Sveriges riksdagsval?"
+      "en": "Which answer best matches? Which requirements apply to voting in Sweden’s Riksdag election?",
+      "sv": "Vilket svar stämmer bäst? Vilka krav gäller för att rösta i Sveriges riksdagsval?"
     },
     "opts": [
       {
@@ -11821,8 +12389,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "For what reason do voters vote behind a screen at the polling station?",
-      "sv": "Av vilken anledning röstar väljare bakom en skärm i vallokalen?"
+      "en": "Which answer best matches? Why do voters vote behind a screen at the polling station?",
+      "sv": "Vilket svar stämmer bäst? Varför röstar väljare bakom en skärm i vallokalen?"
     },
     "opts": [
       {
@@ -11993,8 +12561,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What do people in a political party have in common?",
-      "sv": "Kunskapsfråga: Vad har människor i ett politiskt parti gemensamt?"
+      "en": "Which answer best matches? What do people in a political party have in common?",
+      "sv": "Vilket svar stämmer bäst? Vad har människor i ett politiskt parti gemensamt?"
     },
     "opts": [
       {
@@ -12165,8 +12733,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "What is the result in a proportional election if a party receives 20 percent of the votes?",
-      "sv": "Vad blir följden i ett proportionellt val om ett parti får 20 procent av rösterna?"
+      "en": "Which answer best matches? What happens in a proportional election if a party receives 20 percent of the votes?",
+      "sv": "Vilket svar stämmer bäst? Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?"
     },
     "opts": [
       {
@@ -12337,8 +12905,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "What minimum vote share is required for a party to enter the Riksdag?",
-      "sv": "Vilken minsta röstandel krävs för att ett parti ska komma in i riksdagen?"
+      "en": "Which answer best matches? What minimum share of votes must a party receive to enter the Riksdag?",
+      "sv": "Vilket svar stämmer bäst? Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?"
     },
     "opts": [
       {
@@ -12462,8 +13030,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "A party must receive ... to enter the Riksdag.",
-      "sv": "Ett parti måste få ... för att komma in i riksdagen."
+      "en": "Choose the correct option: What minimum share of votes must a party receive to enter the Riksdag?",
+      "sv": "Välj rätt alternativ: Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?"
     },
     "opts": [
       {
@@ -12509,8 +13077,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which list consists only of Sweden's four constitutional laws?",
-      "sv": "Vilken lista består bara av sveriges fyra grundlagar?"
+      "en": "Which answer best matches? Which list contains only Sweden's four constitutional laws?",
+      "sv": "Vilket svar stämmer bäst? Vilken lista innehåller bara Sveriges fyra grundlagar?"
     },
     "opts": [
       {
@@ -12634,8 +13202,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "The list with ... contains only Sweden's four constitutional laws.",
-      "sv": "Listan med ... innehåller bara Sveriges fyra grundlagar."
+      "en": "Choose the correct option: Which list contains only Sweden's four constitutional laws?",
+      "sv": "Välj rätt alternativ: Vilken lista innehåller bara Sveriges fyra grundlagar?"
     },
     "opts": [
       {
@@ -12681,8 +13249,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "How does the Instrument of Government describe public power in Sweden?",
-      "sv": "Hur beskriver regeringsformen offentlig makt i Sverige?"
+      "en": "Which answer best matches? What does the Instrument of Government say about public power in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad säger regeringsformen om offentlig makt i Sverige?"
     },
     "opts": [
       {
@@ -12853,8 +13421,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "What does the Act of Succession govern?",
-      "sv": "Vad styr successionsordningen?"
+      "en": "Which answer best matches? What does the Act of Succession regulate?",
+      "sv": "Vilket svar stämmer bäst? Vad reglerar successionsordningen?"
     },
     "opts": [
       {
@@ -13025,8 +13593,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "How is the right of public access explained?",
-      "sv": "Vad betyder allemansrätten?"
+      "en": "Which answer best matches? What does the right of public access mean?",
+      "sv": "Vilket svar stämmer bäst? Vad innebär allemansrätten?"
     },
     "opts": [
       {
@@ -13197,8 +13765,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which authorities belong to the Swedish justice system?",
-      "sv": "Vilka myndigheter hör till det svenska rättsväsendet?"
+      "en": "Which answer best matches? Which authorities are part of the Swedish justice system?",
+      "sv": "Vilket svar stämmer bäst? Vilka myndigheter ingår i det svenska rättsväsendet?"
     },
     "opts": [
       {
@@ -13322,8 +13890,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "... are part of the Swedish justice system.",
-      "sv": "... ingår i det svenska rättsväsendet."
+      "en": "Choose the correct option: Which authorities are part of the Swedish justice system?",
+      "sv": "Välj rätt alternativ: Vilka myndigheter ingår i det svenska rättsväsendet?"
     },
     "opts": [
       {
@@ -13369,8 +13937,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which description fits legal certainty in Sweden?",
-      "sv": "Vilken beskrivning passar för rättssäkerhet i Sverige?"
+      "en": "Which answer best matches? Which statement describes legal certainty in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver rättssäkerhet i Sverige?"
     },
     "opts": [
       {
@@ -13541,8 +14109,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which rule applies to a person suspected of a crime in Sweden?",
-      "sv": "Vilken regel gäller för en person som är misstänkt för brott i Sverige?"
+      "en": "Which answer best matches? What applies to a person suspected of a crime in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gäller för en person som är misstänkt för brott i Sverige?"
     },
     "opts": [
       {
@@ -13713,133 +14281,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which description fits the role of the police in Sweden?",
-      "sv": "Vilken beskrivning passar för polisens uppgift i Sverige?"
-    },
-    "opts": [
-      {
-        "en": "To maintain law and order and prevent and investigate crimes",
-        "sv": "Att upprätthålla lag och ordning samt förebygga och utreda brott"
-      },
-      {
-        "en": "To decide the state budget",
-        "sv": "Att besluta statens budget"
-      },
-      {
-        "en": "To appoint lay judges",
-        "sv": "Att utse nämndemän"
-      },
-      {
-        "en": "To finance public service broadcasting",
-        "sv": "Att finansiera public service"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The police maintain law and order and prevent and investigate crimes. They also work with schools, municipalities, companies, associations, and other authorities for safety and can help people exposed to crime or needing protection.",
-      "sv": "Polisens uppgift är att upprätthålla lag och ordning samt att förebygga och utreda brott. Polisen samarbetar också med skolor, kommuner, företag, föreningar och andra myndigheter för trygghet och kan hjälpa personer som utsatts för brott eller behöver skydd."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Polisen",
-      "page": 18
-    },
-    "difficulty": "medium",
-    "tags": [
-      "police",
-      "law-and-order",
-      "crime-prevention",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q314",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The role of the police in Sweden is to maintain law and order and prevent and investigate crimes.",
-      "sv": "Polisens uppgift i Sverige är att upprätthålla lag och ordning samt förebygga och utreda brott."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The police maintain law and order and prevent and investigate crimes. They also work with schools, municipalities, companies, associations, and other authorities for safety and can help people exposed to crime or needing protection.",
-      "sv": "Polisens uppgift är att upprätthålla lag och ordning samt att förebygga och utreda brott. Polisen samarbetar också med skolor, kommuner, företag, föreningar och andra myndigheter för trygghet och kan hjälpa personer som utsatts för brott eller behöver skydd."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Polisen",
-      "page": 18
-    },
-    "difficulty": "medium",
-    "tags": [
-      "police",
-      "law-and-order",
-      "crime-prevention",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q315",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The role of the police in Sweden is to decide the state budget.",
-      "sv": "Polisens uppgift i Sverige är att besluta statens budget."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The police maintain law and order and prevent and investigate crimes. They also work with schools, municipalities, companies, associations, and other authorities for safety and can help people exposed to crime or needing protection.",
-      "sv": "Polisens uppgift är att upprätthålla lag och ordning samt att förebygga och utreda brott. Polisen samarbetar också med skolor, kommuner, företag, föreningar och andra myndigheter för trygghet och kan hjälpa personer som utsatts för brott eller behöver skydd."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Polisen",
-      "page": 18
-    },
-    "difficulty": "medium",
-    "tags": [
-      "police",
-      "law-and-order",
-      "crime-prevention",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q316",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "The role of the police in Sweden is ...",
-      "sv": "Polisens uppgift i Sverige är ..."
+      "en": "Which answer best matches? Which statement describes the role of the police in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver polisens uppgift i Sverige?"
     },
     "opts": [
       {
@@ -13887,6 +14330,178 @@
     "q": {
       "en": "At what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
       "sv": "Vid vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
+    },
+    "opts": [
+      {
+        "en": "13 years",
+        "sv": "13 år"
+      },
+      {
+        "en": "15 years",
+        "sv": "15 år"
+      },
+      {
+        "en": "18 years",
+        "sv": "18 år"
+      },
+      {
+        "en": "21 years",
+        "sv": "21 år"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
+      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Straffmyndighet och belastningsregister",
+      "page": 19
+    },
+    "difficulty": "medium",
+    "tags": [
+      "criminal-responsibility",
+      "age-15",
+      "criminal-record",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q314",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "In what way does the principle of public access make it easier to scrutinize authorities?",
+      "sv": "Kunskapsfråga: Hur underlättar offentlighetsprincipen granskning av myndigheter?"
+    },
+    "opts": [
+      {
+        "en": "By allowing public documents to be requested unless they are covered by secrecy rules",
+        "sv": "Genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess"
+      },
+      {
+        "en": "By letting the state decide what media may write",
+        "sv": "Genom att staten bestämmer vad medier får skriva"
+      },
+      {
+        "en": "By allowing only politicians to read authority documents",
+        "sv": "Genom att bara politiker får läsa myndigheters handlingar"
+      },
+      {
+        "en": "By making all authority decisions secret",
+        "sv": "Genom att alla myndighetsbeslut blir hemliga"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The principle of public access means public documents held by authorities are public. Journalists and others can therefore request email and other documents to examine how decisions were made, unless the documents are covered by secrecy rules.",
+      "sv": "Offentlighetsprincipen innebär att allmänna handlingar hos myndigheter är offentliga. Journalister och andra kan därför begära ut e-post och andra handlingar för att granska hur beslut har fattats, om handlingarna inte omfattas av sekretess."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Fria medier",
+      "page": 20
+    },
+    "difficulty": "medium",
+    "tags": [
+      "public-access",
+      "public-documents",
+      "media-scrutiny",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q315",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The principle of public access makes it easier to scrutinize authorities by allowing public documents to be requested unless they are covered by secrecy rules.",
+      "sv": "Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The principle of public access means public documents held by authorities are public. Journalists and others can therefore request email and other documents to examine how decisions were made, unless the documents are covered by secrecy rules.",
+      "sv": "Offentlighetsprincipen innebär att allmänna handlingar hos myndigheter är offentliga. Journalister och andra kan därför begära ut e-post och andra handlingar för att granska hur beslut har fattats, om handlingarna inte omfattas av sekretess."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Fria medier",
+      "page": 20
+    },
+    "difficulty": "medium",
+    "tags": [
+      "public-access",
+      "public-documents",
+      "media-scrutiny",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q316",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "The principle of public access makes it easier to scrutinize authorities by letting the state decide what media may write.",
+      "sv": "Offentlighetsprincipen underlättar granskning av myndigheter genom att staten bestämmer vad medier får skriva."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The principle of public access means public documents held by authorities are public. Journalists and others can therefore request email and other documents to examine how decisions were made, unless the documents are covered by secrecy rules.",
+      "sv": "Offentlighetsprincipen innebär att allmänna handlingar hos myndigheter är offentliga. Journalister och andra kan därför begära ut e-post och andra handlingar för att granska hur beslut har fattats, om handlingarna inte omfattas av sekretess."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Fria medier",
+      "page": 20
+    },
+    "difficulty": "medium",
+    "tags": [
+      "public-access",
+      "public-documents",
+      "media-scrutiny",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q317",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
+      "sv": "Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -14010,8 +14625,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about Straffmyndighet och belastningsregister?",
-      "sv": "Från ... är en person i Sverige straffmyndig och kan bli åtalad för brott."
+      "en": "Choose the correct option: From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
+      "sv": "Välj rätt alternativ: Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -14057,8 +14672,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which description fits an important role of free media in a democracy?",
-      "sv": "Vilken beskrivning passar för en viktig uppgift för fria medier i en demokrati?"
+      "en": "Which answer best matches? Which answer describes an important role of free media in a democracy?",
+      "sv": "Vilket svar stämmer bäst? Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -14182,8 +14797,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "An important role of free media in a democracy is ...",
-      "sv": "En viktig uppgift för fria medier i en demokrati är ..."
+      "en": "Choose the correct option: Which answer describes an important role of free media in a democracy?",
+      "sv": "Välj rätt alternativ: Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -14229,8 +14844,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "In what way does the principle of public access make it easier to scrutinize authorities?",
-      "sv": "Kunskapsfråga: Hur underlättar offentlighetsprincipen granskning av myndigheter?"
+      "en": "Which answer best matches? How does the principle of public access make it easier to scrutinize authorities?",
+      "sv": "Vilket svar stämmer bäst? Hur underlättar offentlighetsprincipen granskning av myndigheter?"
     },
     "opts": [
       {
@@ -14354,8 +14969,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "The principle of public access makes it easier to scrutinize authorities ...",
-      "sv": "Offentlighetsprincipen underlättar granskning av myndigheter ..."
+      "en": "Choose the correct option: How does the principle of public access make it easier to scrutinize authorities?",
+      "sv": "Välj rätt alternativ: Hur underlättar offentlighetsprincipen granskning av myndigheter?"
     },
     "opts": [
       {
@@ -14573,8 +15188,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which three companies are called public service in Sweden?",
-      "sv": "Kunskapsfråga: Vilka tre företag kallas public service i Sverige?"
+      "en": "Which answer best matches? Which three companies are called public service in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilka tre företag kallas public service i Sverige?"
     },
     "opts": [
       {
@@ -14701,8 +15316,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "... are called public service in Sweden.",
-      "sv": "... kallas public service i Sverige."
+      "en": "Choose the correct option: Which three companies are called public service in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka tre företag kallas public service i Sverige?"
     },
     "opts": [
       {
@@ -14921,133 +15536,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What does it mean to be source-critical?",
-      "sv": "Hur förklaras det att vara källkritisk?"
-    },
-    "opts": [
-      {
-        "en": "Questioning and checking whether information is correct",
-        "sv": "Att ifrågasätta och kontrollera om information är korrekt"
-      },
-      {
-        "en": "Never reading news",
-        "sv": "Att aldrig läsa nyheter"
-      },
-      {
-        "en": "Only trusting social media",
-        "sv": "Att bara lita på sociala medier"
-      },
-      {
-        "en": "Spreading information before checking it",
-        "sv": "Att sprida uppgifter innan man kontrollerar dem"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
-      "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mediernas roll",
-      "section": "Källkritik",
-      "page": 21
-    },
-    "difficulty": "easy",
-    "tags": [
-      "source-criticism",
-      "media-literacy",
-      "information",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q342",
-    "chapterId": 6,
-    "chapter": "Ch. 06 · The role of the media",
-    "type": "true_false",
-    "q": {
-      "en": "To be source-critical means questioning and checking whether information is correct.",
-      "sv": "Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
-      "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mediernas roll",
-      "section": "Källkritik",
-      "page": 21
-    },
-    "difficulty": "easy",
-    "tags": [
-      "source-criticism",
-      "media-literacy",
-      "information",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q343",
-    "chapterId": 6,
-    "chapter": "Ch. 06 · The role of the media",
-    "type": "true_false",
-    "q": {
-      "en": "To be source-critical means never reading news.",
-      "sv": "Att vara källkritisk betyder att aldrig läsa nyheter."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
-      "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mediernas roll",
-      "section": "Källkritik",
-      "page": 21
-    },
-    "difficulty": "easy",
-    "tags": [
-      "source-criticism",
-      "media-literacy",
-      "information",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q344",
-    "chapterId": 6,
-    "chapter": "Ch. 06 · The role of the media",
-    "type": "single_choice",
-    "q": {
-      "en": "To be source-critical means ...",
-      "sv": "Att vara källkritisk betyder ..."
+      "en": "Which answer best matches? What does it mean to be source-critical?",
+      "sv": "Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?"
     },
     "opts": [
       {
@@ -15095,6 +15585,178 @@
     "q": {
       "en": "For what reason was the United Nations created after the Second World War?",
       "sv": "Av vilken anledning bildades Förenta nationerna efter andra världskriget?"
+    },
+    "opts": [
+      {
+        "en": "To prevent war and protect human rights",
+        "sv": "För att förhindra krig och skydda människors rättigheter"
+      },
+      {
+        "en": "To decide Swedish municipal taxes",
+        "sv": "För att bestämma svenska kommunalskatter"
+      },
+      {
+        "en": "To replace the EU",
+        "sv": "För att ersätta EU"
+      },
+      {
+        "en": "To control all newspapers",
+        "sv": "För att kontrollera alla tidningar"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "After the Second World War in 1945, 51 countries created the United Nations to prevent future wars and protect every person’s rights. One of the UN’s first tasks was to agree on rights that all people have.",
+      "sv": "Efter andra världskriget 1945 skapade 51 länder Förenta nationerna för att förhindra framtida krig och skydda varje människas rättigheter. Ett av FN:s första uppdrag var att komma överens om rättigheter som alla människor har."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Mänskliga rättigheter gäller alla",
+      "page": 22
+    },
+    "difficulty": "easy",
+    "tags": [
+      "un",
+      "human-rights",
+      "history",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q342",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "The United Nations was created after the Second World War to prevent war and protect human rights.",
+      "sv": "Förenta nationerna bildades efter andra världskriget för att förhindra krig och skydda människors rättigheter."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "After the Second World War in 1945, 51 countries created the United Nations to prevent future wars and protect every person’s rights. One of the UN’s first tasks was to agree on rights that all people have.",
+      "sv": "Efter andra världskriget 1945 skapade 51 länder Förenta nationerna för att förhindra framtida krig och skydda varje människas rättigheter. Ett av FN:s första uppdrag var att komma överens om rättigheter som alla människor har."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Mänskliga rättigheter gäller alla",
+      "page": 22
+    },
+    "difficulty": "easy",
+    "tags": [
+      "un",
+      "human-rights",
+      "history",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q343",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "The United Nations was created after the Second World War to decide Swedish municipal taxes.",
+      "sv": "Förenta nationerna bildades efter andra världskriget för att bestämma svenska kommunalskatter."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "After the Second World War in 1945, 51 countries created the United Nations to prevent future wars and protect every person’s rights. One of the UN’s first tasks was to agree on rights that all people have.",
+      "sv": "Efter andra världskriget 1945 skapade 51 länder Förenta nationerna för att förhindra framtida krig och skydda varje människas rättigheter. Ett av FN:s första uppdrag var att komma överens om rättigheter som alla människor har."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Mänskliga rättigheter gäller alla",
+      "page": 22
+    },
+    "difficulty": "easy",
+    "tags": [
+      "un",
+      "human-rights",
+      "history",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q344",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What does it mean to be source-critical?",
+      "sv": "Välj rätt alternativ: Vad betyder det att vara källkritisk?"
+    },
+    "opts": [
+      {
+        "en": "Questioning and checking whether information is correct",
+        "sv": "Att ifrågasätta och kontrollera om information är korrekt"
+      },
+      {
+        "en": "Never reading news",
+        "sv": "Att aldrig läsa nyheter"
+      },
+      {
+        "en": "Only trusting social media",
+        "sv": "Att bara lita på sociala medier"
+      },
+      {
+        "en": "Spreading information before checking it",
+        "sv": "Att sprida uppgifter innan man kontrollerar dem"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
+      "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Källkritik",
+      "page": 21
+    },
+    "difficulty": "easy",
+    "tags": [
+      "source-criticism",
+      "media-literacy",
+      "information",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q345",
+    "chapterId": 7,
+    "chapter": "Ch. 07 · Human rights",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Why was the United Nations created after the Second World War?",
+      "sv": "Vilket svar stämmer bäst? Varför bildades Förenta nationerna efter andra världskriget?"
     },
     "opts": [
       {
@@ -15218,8 +15880,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "The United Nations was created after the Second World War ...",
-      "sv": "Förenta nationerna bildades efter andra världskriget ..."
+      "en": "Choose the correct option: Why was the United Nations created after the Second World War?",
+      "sv": "Välj rätt alternativ: Varför bildades Förenta nationerna efter andra världskriget?"
     },
     "opts": [
       {
@@ -15265,8 +15927,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about the UN Universal Declaration of Human Rights?",
-      "sv": "Vilken uppgift stämmer om FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Which answer best matches? Which statement is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
@@ -15437,8 +16099,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "How is the goal of Sweden’s gender equality policy explained?",
-      "sv": "Vad betyder målet med Sveriges jämställdhetspolitik?"
+      "en": "Which answer best matches? What does the goal of Sweden’s gender equality policy mean?",
+      "sv": "Vilket svar stämmer bäst? Vad innebär målet med Sveriges jämställdhetspolitik?"
     },
     "opts": [
       {
@@ -15562,8 +16224,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "The goal of Sweden’s gender equality policy means ...",
-      "sv": "Målet med Sveriges jämställdhetspolitik innebär ..."
+      "en": "Choose the correct option: What does the goal of Sweden’s gender equality policy mean?",
+      "sv": "Välj rätt alternativ: Vad innebär målet med Sveriges jämställdhetspolitik?"
     },
     "opts": [
       {
@@ -15609,8 +16271,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which rule applies to violence in close relationships and honour-related violence and oppression in Sweden?",
-      "sv": "Vilken regel gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige?"
+      "en": "Which answer best matches? What applies to violence in close relationships and honour-related violence and oppression in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige?"
     },
     "opts": [
       {
@@ -15785,8 +16447,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which rule applies to buying sex in Sweden?",
-      "sv": "Vilken regel gäller för att köpa sex i Sverige?"
+      "en": "Which answer best matches? What applies to buying sex in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gäller för att köpa sex i Sverige?"
     },
     "opts": [
       {
@@ -15957,133 +16619,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "From what year has the Convention on the Rights of the Child been law in Sweden?",
-      "sv": "Från vilket år är barnkonventionen lag i Sverige?"
-    },
-    "opts": [
-      {
-        "en": "1979",
-        "sv": "1979"
-      },
-      {
-        "en": "2000",
-        "sv": "2000"
-      },
-      {
-        "en": "2020",
-        "sv": "2020"
-      },
-      {
-        "en": "2024",
-        "sv": "2024"
-      }
-    ],
-    "answer": 2,
-    "why": {
-      "en": "The Convention on the Rights of the Child protects every child’s human rights. In Sweden, the convention has been law since 2020, so 2020 is the correct year.",
-      "sv": "Barnkonventionen ska skydda alla barns mänskliga rättigheter. I Sverige har barnkonventionen varit lag sedan 2020, därför är 2020 rätt år."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
-    },
-    "difficulty": "easy",
-    "tags": [
-      "children-rights",
-      "law",
-      "2020",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q366",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "true_false",
-    "q": {
-      "en": "The Convention on the Rights of the Child has been law in Sweden since 2020.",
-      "sv": "Barnkonventionen är lag i Sverige sedan 2020."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Convention on the Rights of the Child protects every child’s human rights. In Sweden, the convention has been law since 2020, so 2020 is the correct year.",
-      "sv": "Barnkonventionen ska skydda alla barns mänskliga rättigheter. I Sverige har barnkonventionen varit lag sedan 2020, därför är 2020 rätt år."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
-    },
-    "difficulty": "easy",
-    "tags": [
-      "children-rights",
-      "law",
-      "2020",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q367",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "true_false",
-    "q": {
-      "en": "The Convention on the Rights of the Child has been law in Sweden since 1979.",
-      "sv": "Barnkonventionen är lag i Sverige sedan 1979."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The Convention on the Rights of the Child protects every child’s human rights. In Sweden, the convention has been law since 2020, so 2020 is the correct year.",
-      "sv": "Barnkonventionen ska skydda alla barns mänskliga rättigheter. I Sverige har barnkonventionen varit lag sedan 2020, därför är 2020 rätt år."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
-    },
-    "difficulty": "easy",
-    "tags": [
-      "children-rights",
-      "law",
-      "2020",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q368",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "single_choice",
-    "q": {
-      "en": "The Convention on the Rights of the Child has been law in Sweden since ...",
-      "sv": "Barnkonventionen är lag i Sverige sedan ..."
+      "en": "Which answer best matches? Since what year has the Convention on the Rights of the Child been law in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Sedan vilket år är barnkonventionen lag i Sverige?"
     },
     "opts": [
       {
@@ -16171,7 +16708,7 @@
     ]
   },
   {
-    "id": "q370",
+    "id": "q366",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16210,7 +16747,7 @@
     ]
   },
   {
-    "id": "q371",
+    "id": "q367",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16249,13 +16786,60 @@
     ]
   },
   {
-    "id": "q372",
+    "id": "q368",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "In 1979, Sweden was the first country in the world to decide ...",
-      "sv": "År 1979 beslutade Sverige som första land i världen ..."
+      "en": "Choose the correct option: Since what year has the Convention on the Rights of the Child been law in Sweden?",
+      "sv": "Välj rätt alternativ: Sedan vilket år är barnkonventionen lag i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "1979",
+        "sv": "1979"
+      },
+      {
+        "en": "2000",
+        "sv": "2000"
+      },
+      {
+        "en": "2020",
+        "sv": "2020"
+      },
+      {
+        "en": "2024",
+        "sv": "2024"
+      }
+    ],
+    "answer": 2,
+    "why": {
+      "en": "The Convention on the Rights of the Child protects every child’s human rights. In Sweden, the convention has been law since 2020, so 2020 is the correct year.",
+      "sv": "Barnkonventionen ska skydda alla barns mänskliga rättigheter. I Sverige har barnkonventionen varit lag sedan 2020, därför är 2020 rätt år."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Barns rättigheter",
+      "page": 24
+    },
+    "difficulty": "easy",
+    "tags": [
+      "children-rights",
+      "law",
+      "2020",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q369",
+    "chapterId": 7,
+    "chapter": "Ch. 07 · Human rights",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What did Sweden decide as the first country in the world in 1979?",
+      "sv": "Vilket svar stämmer bäst? Vad beslutade Sverige som första land i världen 1979?"
     },
     "opts": [
       {
@@ -16343,7 +16927,7 @@
     ]
   },
   {
-    "id": "q374",
+    "id": "q370",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16372,7 +16956,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "difficulty": "hard",
+    "difficulty": "easy",
     "tags": [
       "national-minorities",
       "minority-rights",
@@ -16382,7 +16966,7 @@
     ]
   },
   {
-    "id": "q375",
+    "id": "q371",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16411,7 +16995,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "difficulty": "hard",
+    "difficulty": "easy",
     "tags": [
       "national-minorities",
       "minority-rights",
@@ -16421,13 +17005,60 @@
     ]
   },
   {
-    "id": "q376",
+    "id": "q372",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's five national minorities are ...",
-      "sv": "Sveriges fem nationella minoriteter är ..."
+      "en": "Choose the correct option: What did Sweden decide as the first country in the world in 1979?",
+      "sv": "Välj rätt alternativ: Vad beslutade Sverige som första land i världen 1979?"
+    },
+    "opts": [
+      {
+        "en": "That hitting children is prohibited",
+        "sv": "Att det är förbjudet att slå barn"
+      },
+      {
+        "en": "That the Convention on the Rights of the Child became Swedish law",
+        "sv": "Att barnkonventionen blev svensk lag"
+      },
+      {
+        "en": "That bans on violence apply only at school",
+        "sv": "Att förbud mot våld bara gäller i skolan"
+      },
+      {
+        "en": "That children are not covered by Swedish law",
+        "sv": "Att barn inte omfattas av svensk lag"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "All violence against children is prohibited under both the Convention on the Rights of the Child and Swedish law. In 1979, Sweden became the first country in the world to prohibit hitting children; the convention became Swedish law only in 2020, and the ban is not limited to schools.",
+      "sv": "Allt våld mot barn är förbjudet både enligt barnkonventionen och svensk lag. År 1979 blev Sverige först i världen med att förbjuda att slå barn; barnkonventionen blev svensk lag först 2020, och förbudet gäller inte bara i skolan."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Barns rättigheter",
+      "page": 25
+    },
+    "difficulty": "easy",
+    "tags": [
+      "children-rights",
+      "violence-against-children",
+      "1979",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q373",
+    "chapterId": 7,
+    "chapter": "Ch. 07 · Human rights",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which groups are Sweden's five national minorities?",
+      "sv": "Vilket svar stämmer bäst? Vilka är Sveriges fem nationella minoriteter?"
     },
     "opts": [
       {
@@ -16475,6 +17106,178 @@
     "q": {
       "en": "Which role belongs to the Sami Parliament?",
       "sv": "Kunskapsfråga: Vilken uppgift har Sametinget?"
+    },
+    "opts": [
+      {
+        "en": "To represent the Sami population on questions of language, culture, and identity",
+        "sv": "Att representera den samiska befolkningen i frågor om språk, kultur och identitet"
+      },
+      {
+        "en": "To decide the state budget",
+        "sv": "Att besluta statens budget"
+      },
+      {
+        "en": "To judge criminal cases in court",
+        "sv": "Att döma brottmål i domstol"
+      },
+      {
+        "en": "To coordinate the EU’s four freedoms",
+        "sv": "Att samordna EU:s fyra friheter"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Sami are a recognized Indigenous people in Sweden and have their own elected parliament, the Sami Parliament. The Sami Parliament represents the Sami population on questions of language, culture, and identity and is an advisory body with some public-authority tasks.",
+      "sv": "Samerna är ett erkänt urfolk i Sverige och har ett eget folkvalt parlament, Sametinget. Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet och är ett rådgivande organ med vissa myndighetsuppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Nationella minoriteter och urfolk",
+      "page": 25
+    },
+    "difficulty": "medium",
+    "tags": [
+      "sami-parliament",
+      "sami",
+      "indigenous-people",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q374",
+    "chapterId": 7,
+    "chapter": "Ch. 07 · Human rights",
+    "type": "true_false",
+    "q": {
+      "en": "One task of the Sami Parliament is to represent the Sami population on questions of language, culture, and identity.",
+      "sv": "Sametinget har uppgiften att representera den samiska befolkningen i frågor om språk, kultur och identitet."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Sami are a recognized Indigenous people in Sweden and have their own elected parliament, the Sami Parliament. The Sami Parliament represents the Sami population on questions of language, culture, and identity and is an advisory body with some public-authority tasks.",
+      "sv": "Samerna är ett erkänt urfolk i Sverige och har ett eget folkvalt parlament, Sametinget. Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet och är ett rådgivande organ med vissa myndighetsuppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Nationella minoriteter och urfolk",
+      "page": 25
+    },
+    "difficulty": "hard",
+    "tags": [
+      "sami-parliament",
+      "sami",
+      "indigenous-people",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q375",
+    "chapterId": 7,
+    "chapter": "Ch. 07 · Human rights",
+    "type": "true_false",
+    "q": {
+      "en": "One task of the Sami Parliament is to decide the state budget.",
+      "sv": "Sametinget har uppgiften att besluta statens budget."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The Sami are a recognized Indigenous people in Sweden and have their own elected parliament, the Sami Parliament. The Sami Parliament represents the Sami population on questions of language, culture, and identity and is an advisory body with some public-authority tasks.",
+      "sv": "Samerna är ett erkänt urfolk i Sverige och har ett eget folkvalt parlament, Sametinget. Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet och är ett rådgivande organ med vissa myndighetsuppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Nationella minoriteter och urfolk",
+      "page": 25
+    },
+    "difficulty": "hard",
+    "tags": [
+      "sami-parliament",
+      "sami",
+      "indigenous-people",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q376",
+    "chapterId": 7,
+    "chapter": "Ch. 07 · Human rights",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which groups are Sweden's five national minorities?",
+      "sv": "Välj rätt alternativ: Vilka är Sveriges fem nationella minoriteter?"
+    },
+    "opts": [
+      {
+        "en": "Jews, Roma, Sami, Sweden Finns, and Tornedalians",
+        "sv": "Judar, romer, samer, sverigefinnar och tornedalingar"
+      },
+      {
+        "en": "Danes, Norwegians, Icelanders, Germans, and French",
+        "sv": "Danskar, norrmän, islänningar, tyskar och fransmän"
+      },
+      {
+        "en": "Students, pensioners, entrepreneurs, teachers, and doctors",
+        "sv": "Studenter, pensionärer, företagare, lärare och läkare"
+      },
+      {
+        "en": "People from Stockholm, Gothenburg, Malmö, Uppsala, and Umeå",
+        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umebor"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In 2000, Sweden recognized Jews, Roma, Sami, Sweden Finns, and Tornedalians as national minorities. National minorities have special protection and the right to use their minority languages in contacts with authorities, preschool, and elderly care.",
+      "sv": "Sverige erkände år 2000 judar, romer, samer, sverigefinnar och tornedalingar som nationella minoriteter. De nationella minoriteterna har särskilt skydd och rätt att använda sina minoritetsspråk i kontakter med myndigheter, förskola och äldreomsorg."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mänskliga rättigheter",
+      "section": "Nationella minoriteter och urfolk",
+      "page": 25
+    },
+    "difficulty": "hard",
+    "tags": [
+      "national-minorities",
+      "minority-rights",
+      "sami",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q377",
+    "chapterId": 7,
+    "chapter": "Ch. 07 · Human rights",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What is one task of the Sami Parliament?",
+      "sv": "Vilket svar stämmer bäst? Vilken uppgift har Sametinget?"
     },
     "opts": [
       {
@@ -16598,8 +17401,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "One task of the Sami Parliament is ...",
-      "sv": "Sametinget har uppgiften ..."
+      "en": "Choose the correct option: What is one task of the Sami Parliament?",
+      "sv": "Välj rätt alternativ: Vilken uppgift har Sametinget?"
     },
     "opts": [
       {
@@ -16645,8 +17448,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which rule applies to marriage between people of the same sex in Sweden?",
-      "sv": "Vilken regel gäller för äktenskap mellan personer av samma kön i Sverige?"
+      "en": "Which answer best matches? What applies to marriage between people of the same sex in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gäller för äktenskap mellan personer av samma kön i Sverige?"
     },
     "opts": [
       {
@@ -16817,8 +17620,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which role belongs to the Equality Ombudsman (DO)?",
-      "sv": "Vilken uppgift gäller en uppgift för Diskrimineringsombudsmannen (DO)?"
+      "en": "Which answer best matches? What is one role of the Equality Ombudsman (DO)?",
+      "sv": "Vilket svar stämmer bäst? Vad är en uppgift för Diskrimineringsombudsmannen (DO)?"
     },
     "opts": [
       {
@@ -16989,133 +17792,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What is meant by the public sector in Sweden?",
-      "sv": "Kunskapsfråga: Vad menas med offentlig sektor i Sverige?"
-    },
-    "opts": [
-      {
-        "en": "Activities for which the state, regions, and municipalities are responsible",
-        "sv": "Verksamheter som staten, regionerna och kommunerna ansvarar för"
-      },
-      {
-        "en": "All privately owned companies",
-        "sv": "Alla privatägda företag"
-      },
-      {
-        "en": "Only banks and insurance companies",
-        "sv": "Endast banker och försäkringsbolag"
-      },
-      {
-        "en": "Only non-profit associations",
-        "sv": "Bara ideella föreningar"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
-      "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Arbetsmarknad och privatekonomi",
-      "section": "Så fungerar arbetsmarknaden",
-      "page": 27
-    },
-    "difficulty": "medium",
-    "tags": [
-      "public-sector",
-      "work",
-      "tax",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q390",
-    "chapterId": 8,
-    "chapter": "Ch. 08 · Labour market and personal finance",
-    "type": "true_false",
-    "q": {
-      "en": "The public sector in Sweden means activities for which the state, regions, and municipalities are responsible.",
-      "sv": "Offentlig sektor i Sverige är verksamheter som staten, regionerna och kommunerna ansvarar för."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
-      "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Arbetsmarknad och privatekonomi",
-      "section": "Så fungerar arbetsmarknaden",
-      "page": 27
-    },
-    "difficulty": "medium",
-    "tags": [
-      "public-sector",
-      "work",
-      "tax",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q391",
-    "chapterId": 8,
-    "chapter": "Ch. 08 · Labour market and personal finance",
-    "type": "true_false",
-    "q": {
-      "en": "The public sector in Sweden means all privately owned companies.",
-      "sv": "Offentlig sektor i Sverige är alla privatägda företag."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
-      "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Arbetsmarknad och privatekonomi",
-      "section": "Så fungerar arbetsmarknaden",
-      "page": 27
-    },
-    "difficulty": "medium",
-    "tags": [
-      "public-sector",
-      "work",
-      "tax",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q392",
-    "chapterId": 8,
-    "chapter": "Ch. 08 · Labour market and personal finance",
-    "type": "single_choice",
-    "q": {
-      "en": "The public sector in Sweden means ...",
-      "sv": "Offentlig sektor i Sverige är ..."
+      "en": "Which answer best matches? What is meant by the public sector in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad menas med offentlig sektor i Sverige?"
     },
     "opts": [
       {
@@ -17163,6 +17841,178 @@
     "q": {
       "en": "Study question: What share of the workforce works in Sweden's private sector?",
       "sv": "Kunskapsfråga: Hur stor del av arbetskraften jobbar i privat sektor i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "About 30 percent",
+        "sv": "Cirka 30 procent"
+      },
+      {
+        "en": "About 50 percent",
+        "sv": "Cirka 50 procent"
+      },
+      {
+        "en": "About 70 percent",
+        "sv": "Cirka 70 procent"
+      },
+      {
+        "en": "About 95 percent",
+        "sv": "Cirka 95 procent"
+      }
+    ],
+    "answer": 2,
+    "why": {
+      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Så fungerar arbetsmarknaden",
+      "page": 27
+    },
+    "difficulty": "easy",
+    "tags": [
+      "private-sector",
+      "labour-market",
+      "percentage",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q390",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
+    "q": {
+      "en": "About 70 percent of the workforce works in Sweden's private sector.",
+      "sv": "Cirka 70 procent av arbetskraften jobbar i privat sektor i Sverige."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Så fungerar arbetsmarknaden",
+      "page": 27
+    },
+    "difficulty": "medium",
+    "tags": [
+      "private-sector",
+      "labour-market",
+      "percentage",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q391",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
+    "q": {
+      "en": "About 30 percent of the workforce works in Sweden's private sector.",
+      "sv": "Cirka 30 procent av arbetskraften jobbar i privat sektor i Sverige."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Så fungerar arbetsmarknaden",
+      "page": 27
+    },
+    "difficulty": "medium",
+    "tags": [
+      "private-sector",
+      "labour-market",
+      "percentage",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q392",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is meant by the public sector in Sweden?",
+      "sv": "Välj rätt alternativ: Vad menas med offentlig sektor i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Activities for which the state, regions, and municipalities are responsible",
+        "sv": "Verksamheter som staten, regionerna och kommunerna ansvarar för"
+      },
+      {
+        "en": "All privately owned companies",
+        "sv": "Alla privatägda företag"
+      },
+      {
+        "en": "Only banks and insurance companies",
+        "sv": "Endast banker och försäkringsbolag"
+      },
+      {
+        "en": "Only non-profit associations",
+        "sv": "Bara ideella föreningar"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
+      "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Så fungerar arbetsmarknaden",
+      "page": 27
+    },
+    "difficulty": "medium",
+    "tags": [
+      "public-sector",
+      "work",
+      "tax",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q393",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What share of the workforce works in Sweden's private sector?",
+      "sv": "Vilket svar stämmer bäst? Hur stor del av arbetskraften jobbar i privat sektor i Sverige?"
     },
     "opts": [
       {
@@ -17286,8 +18136,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "... of the workforce works in Sweden's private sector.",
-      "sv": "... av arbetskraften jobbar i privat sektor i Sverige."
+      "en": "Choose the correct option: What share of the workforce works in Sweden's private sector?",
+      "sv": "Välj rätt alternativ: Hur stor del av arbetskraften jobbar i privat sektor i Sverige?"
     },
     "opts": [
       {
@@ -17333,8 +18183,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What do trade unions do in the labour market?",
-      "sv": "Kunskapsfråga: Vad gör fackförbund på arbetsmarknaden?"
+      "en": "Which answer best matches? What do trade unions do in the labour market?",
+      "sv": "Vilket svar stämmer bäst? Vad gör fackförbund på arbetsmarknaden?"
     },
     "opts": [
       {
@@ -17505,8 +18355,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Study question: How are wages set in Sweden?",
-      "sv": "Kunskapsfråga: Hur bestäms löner i Sverige?"
+      "en": "Which answer best matches? How are wages set in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Hur bestäms löner i Sverige?"
     },
     "opts": [
       {
@@ -17677,8 +18527,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "For what reason does Sweden have labour-market laws?",
-      "sv": "Av vilken anledning finns lagar på arbetsmarknaden i Sverige?"
+      "en": "Which answer best matches? Why does Sweden have labour-market laws?",
+      "sv": "Vilket svar stämmer bäst? Varför finns lagar på arbetsmarknaden i Sverige?"
     },
     "opts": [
       {
@@ -17802,8 +18652,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Sweden has labour-market laws ...",
-      "sv": "Lagar på arbetsmarknaden i Sverige finns ..."
+      "en": "Choose the correct option: Why does Sweden have labour-market laws?",
+      "sv": "Välj rätt alternativ: Varför finns lagar på arbetsmarknaden i Sverige?"
     },
     "opts": [
       {
@@ -17849,8 +18699,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What support can A-kassan provide to unemployed members?",
-      "sv": "Kunskapsfråga: Vilket stöd kan A-kassan ge arbetslösa medlemmar?"
+      "en": "Which answer best matches? What support can A-kassan provide to unemployed members?",
+      "sv": "Vilket svar stämmer bäst? Vilket stöd kan A-kassan ge arbetslösa medlemmar?"
     },
     "opts": [
       {
@@ -18021,8 +18871,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "In what way does the Swedish Enforcement Authority help with debts?",
-      "sv": "På vilket sätt hjälper kronofogdemyndigheten till med skulder?"
+      "en": "Which answer best matches? How does the Swedish Enforcement Authority help with debts?",
+      "sv": "Vilket svar stämmer bäst? Hur hjälper Kronofogdemyndigheten till med skulder?"
     },
     "opts": [
       {
@@ -18197,8 +19047,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What role do taxes have in Sweden's welfare system?",
-      "sv": "Kunskapsfråga: Vilken roll har skatter i Sveriges välfärd?"
+      "en": "Which answer best matches? What role do taxes have in Sweden's welfare system?",
+      "sv": "Vilket svar stämmer bäst? Vilken roll har skatter i Sveriges välfärd?"
     },
     "opts": [
       {
@@ -18369,8 +19219,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which statement about tax and VAT is correct?",
-      "sv": "Kunskapsfråga: Vilket påstående om skatt och moms stämmer?"
+      "en": "Which answer best matches? Which statement about tax and VAT is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om skatt och moms stämmer?"
     },
     "opts": [
       {
@@ -18494,8 +19344,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about Skatter för Sveriges välfärd?",
-      "sv": "Vad är korrekt om skatter för Sveriges välfärd?"
+      "en": "Choose the correct option: Which statement about tax and VAT is correct?",
+      "sv": "Välj rätt alternativ: Vilket påstående om skatt och moms stämmer?"
     },
     "opts": [
       {
@@ -18541,8 +19391,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What does the state finance within welfare?",
-      "sv": "Kunskapsfråga: Vad finansierar staten inom välfärden?"
+      "en": "Which answer best matches? What does the state finance within welfare?",
+      "sv": "Vilket svar stämmer bäst? Vad finansierar staten inom välfärden?"
     },
     "opts": [
       {
@@ -18669,8 +19519,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "The state finances ...",
-      "sv": "Staten finansierar ..."
+      "en": "Choose the correct option: What does the state finance within welfare?",
+      "sv": "Välj rätt alternativ: Vad finansierar staten inom välfärden?"
     },
     "opts": [
       {
@@ -18717,8 +19567,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What responsibility do Sweden's regions have within welfare?",
-      "sv": "Kunskapsfråga: Vilket ansvar har Sveriges regioner inom välfärden?"
+      "en": "Which answer best matches? What responsibility do Sweden's regions have within welfare?",
+      "sv": "Vilket svar stämmer bäst? Vilket ansvar har Sveriges regioner inom välfärden?"
     },
     "opts": [
       {
@@ -18889,8 +19739,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which answer gives examples of municipal welfare?",
-      "sv": "Kunskapsfråga: Vilket svar ger exempel på kommunal välfärd?"
+      "en": "Which answer best matches? Which answer gives examples of municipal welfare?",
+      "sv": "Vilket svar stämmer bäst? Vilket svar ger exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -19014,8 +19864,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "... are examples of municipal welfare.",
-      "sv": "... är exempel på kommunal välfärd."
+      "en": "Choose the correct option: Which answer gives examples of municipal welfare?",
+      "sv": "Välj rätt alternativ: Vilket svar ger exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -19233,8 +20083,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which description fits Sweden two hundred years ago?",
-      "sv": "Vilken beskrivning passar för sverige för tvåhundra år sedan?"
+      "en": "Which answer best matches? Which statement describes Sweden two hundred years ago?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver Sverige för tvåhundra år sedan?"
     },
     "opts": [
       {
@@ -19405,136 +20255,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "For what reason did Sweden’s population grow during the 19th century?",
-      "sv": "Av vilken anledning ökade Sveriges befolkning under 1800-talet?"
-    },
-    "opts": [
-      {
-        "en": "Better farming methods and medical advances",
-        "sv": "Bättre jordbruksmetoder och medicinska framsteg"
-      },
-      {
-        "en": "EU membership",
-        "sv": "EU-medlemskapet"
-      },
-      {
-        "en": "Internet and smartphones",
-        "sv": "Internet och smarta telefoner"
-      },
-      {
-        "en": "Reduced food production",
-        "sv": "Minskad matproduktion"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "At the start of the 19th century, Sweden had about 2.5 million inhabitants, and one hundred years later the population was twice as large. The population grew because better farming methods produced more food and medical advances reduced the risk of children dying from disease.",
-      "sv": "I början av 1800-talet hade Sverige omkring 2,5 miljoner invånare, och hundra år senare var befolkningen dubbelt så stor. Befolkningen växte eftersom bättre jordbruksmetoder gav mer mat och medicinska framsteg minskade risken att barn dog av sjukdomar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Befolkningsökning",
-      "page": 32
-    },
-    "difficulty": "medium",
-    "tags": [
-      "population-growth",
-      "1800s",
-      "food",
-      "medical-advances",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q446",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "true_false",
-    "q": {
-      "en": "Sweden’s population grew during the 19th century because of better farming methods and medical advances.",
-      "sv": "Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "At the start of the 19th century, Sweden had about 2.5 million inhabitants, and one hundred years later the population was twice as large. The population grew because better farming methods produced more food and medical advances reduced the risk of children dying from disease.",
-      "sv": "I början av 1800-talet hade Sverige omkring 2,5 miljoner invånare, och hundra år senare var befolkningen dubbelt så stor. Befolkningen växte eftersom bättre jordbruksmetoder gav mer mat och medicinska framsteg minskade risken att barn dog av sjukdomar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Befolkningsökning",
-      "page": 32
-    },
-    "difficulty": "medium",
-    "tags": [
-      "population-growth",
-      "1800s",
-      "food",
-      "medical-advances",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q447",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "true_false",
-    "q": {
-      "en": "Sweden’s population grew during the 19th century because of EU membership.",
-      "sv": "Sveriges befolkning ökade under 1800-talet på grund av EU-medlemskapet."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "At the start of the 19th century, Sweden had about 2.5 million inhabitants, and one hundred years later the population was twice as large. The population grew because better farming methods produced more food and medical advances reduced the risk of children dying from disease.",
-      "sv": "I början av 1800-talet hade Sverige omkring 2,5 miljoner invånare, och hundra år senare var befolkningen dubbelt så stor. Befolkningen växte eftersom bättre jordbruksmetoder gav mer mat och medicinska framsteg minskade risken att barn dog av sjukdomar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Befolkningsökning",
-      "page": 32
-    },
-    "difficulty": "medium",
-    "tags": [
-      "population-growth",
-      "1800s",
-      "food",
-      "medical-advances",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q448",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "single_choice",
-    "q": {
-      "en": "Sweden’s population grew during the 19th century because of ...",
-      "sv": "Sveriges befolkning ökade under 1800-talet på grund av ..."
+      "en": "Which answer best matches? Why did Sweden’s population grow during the 19th century?",
+      "sv": "Vilket svar stämmer bäst? Varför ökade Sveriges befolkning under 1800-talet?"
     },
     "opts": [
       {
@@ -19583,6 +20305,179 @@
     "q": {
       "en": "Study question: Approximately how many Swedes emigrated to the United States between 1850 and 1920?",
       "sv": "Kunskapsfråga: Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?"
+    },
+    "opts": [
+      {
+        "en": "More than one million",
+        "sv": "Över en miljon"
+      },
+      {
+        "en": "About ten thousand",
+        "sv": "Cirka tio tusen"
+      },
+      {
+        "en": "Almost the whole population",
+        "sv": "Nästan hela befolkningen"
+      },
+      {
+        "en": "No Swedes emigrated",
+        "sv": "Inga svenskar utvandrade"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden was still poor, and many people had difficulty finding work. Therefore many chose to leave Sweden, and more than one million Swedes emigrated to the United States between 1850 and 1920 in the hope of a better life.",
+      "sv": "Sverige var fortfarande fattigt, och många hade svårt att få arbete. Därför valde många att lämna Sverige, och över en miljon svenskar utvandrade till USA mellan 1850 och 1920 i hopp om ett bättre liv."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Befolkningsökning",
+      "page": 32
+    },
+    "difficulty": "medium",
+    "tags": [
+      "emigration",
+      "usa",
+      "history",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q446",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "true_false",
+    "q": {
+      "en": "More than one million Swedes emigrated to the United States between 1850 and 1920.",
+      "sv": "Över en miljon svenskar utvandrade till USA mellan 1850 och 1920."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden was still poor, and many people had difficulty finding work. Therefore many chose to leave Sweden, and more than one million Swedes emigrated to the United States between 1850 and 1920 in the hope of a better life.",
+      "sv": "Sverige var fortfarande fattigt, och många hade svårt att få arbete. Därför valde många att lämna Sverige, och över en miljon svenskar utvandrade till USA mellan 1850 och 1920 i hopp om ett bättre liv."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Befolkningsökning",
+      "page": 32
+    },
+    "difficulty": "medium",
+    "tags": [
+      "emigration",
+      "usa",
+      "history",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q447",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "true_false",
+    "q": {
+      "en": "About ten thousand Swedes emigrated to the United States between 1850 and 1920.",
+      "sv": "Cirka tio tusen svenskar utvandrade till USA mellan 1850 och 1920."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Sweden was still poor, and many people had difficulty finding work. Therefore many chose to leave Sweden, and more than one million Swedes emigrated to the United States between 1850 and 1920 in the hope of a better life.",
+      "sv": "Sverige var fortfarande fattigt, och många hade svårt att få arbete. Därför valde många att lämna Sverige, och över en miljon svenskar utvandrade till USA mellan 1850 och 1920 i hopp om ett bättre liv."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Befolkningsökning",
+      "page": 32
+    },
+    "difficulty": "medium",
+    "tags": [
+      "emigration",
+      "usa",
+      "history",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q448",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Why did Sweden’s population grow during the 19th century?",
+      "sv": "Välj rätt alternativ: Varför ökade Sveriges befolkning under 1800-talet?"
+    },
+    "opts": [
+      {
+        "en": "Better farming methods and medical advances",
+        "sv": "Bättre jordbruksmetoder och medicinska framsteg"
+      },
+      {
+        "en": "EU membership",
+        "sv": "EU-medlemskapet"
+      },
+      {
+        "en": "Internet and smartphones",
+        "sv": "Internet och smarta telefoner"
+      },
+      {
+        "en": "Reduced food production",
+        "sv": "Minskad matproduktion"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "At the start of the 19th century, Sweden had about 2.5 million inhabitants, and one hundred years later the population was twice as large. The population grew because better farming methods produced more food and medical advances reduced the risk of children dying from disease.",
+      "sv": "I början av 1800-talet hade Sverige omkring 2,5 miljoner invånare, och hundra år senare var befolkningen dubbelt så stor. Befolkningen växte eftersom bättre jordbruksmetoder gav mer mat och medicinska framsteg minskade risken att barn dog av sjukdomar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Befolkningsökning",
+      "page": 32
+    },
+    "difficulty": "medium",
+    "tags": [
+      "population-growth",
+      "1800s",
+      "food",
+      "medical-advances",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q449",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Approximately how many Swedes emigrated to the United States between 1850 and 1920?",
+      "sv": "Vilket svar stämmer bäst? Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?"
     },
     "opts": [
       {
@@ -19706,8 +20601,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "... Swedes emigrated to the United States between 1850 and 1920.",
-      "sv": "... svenskar utvandrade till USA mellan 1850 och 1920."
+      "en": "Choose the correct option: Approximately how many Swedes emigrated to the United States between 1850 and 1920?",
+      "sv": "Välj rätt alternativ: Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?"
     },
     "opts": [
       {
@@ -19753,8 +20648,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What changed through the new constitution in 1809?",
-      "sv": "Kunskapsfråga: Vad förändrades genom den nya grundlagen år 1809?"
+      "en": "Which answer best matches? What changed through the new constitution in 1809?",
+      "sv": "Vilket svar stämmer bäst? Vad förändrades genom den nya grundlagen år 1809?"
     },
     "opts": [
       {
@@ -19925,133 +20820,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which four popular movements were among the largest in Sweden during the 19th century?",
-      "sv": "Kunskapsfråga: Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?"
-    },
-    "opts": [
-      {
-        "en": "The labour movement, free church movement, women’s movement, and temperance movement",
-        "sv": "Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen"
-      },
-      {
-        "en": "The banking movement, royal movement, court movement, and mining movement",
-        "sv": "Bankrörelsen, kungarörelsen, hovrörelsen och gruvrörelsen"
-      },
-      {
-        "en": "Only sports associations",
-        "sv": "Endast idrottsföreningar"
-      },
-      {
-        "en": "Only political parties in the EU",
-        "sv": "Endast politiska partier i EU"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
-      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Folkrörelserna",
-      "page": 33
-    },
-    "difficulty": "hard",
-    "tags": [
-      "popular-movements",
-      "democracy",
-      "history",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q458",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "true_false",
-    "q": {
-      "en": "The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.",
-      "sv": "Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
-      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Folkrörelserna",
-      "page": 33
-    },
-    "difficulty": "hard",
-    "tags": [
-      "popular-movements",
-      "democracy",
-      "history",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q459",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "true_false",
-    "q": {
-      "en": "The banking movement, royal movement, court movement, and mining movement were among the largest popular movements in Sweden during the 19th century.",
-      "sv": "Bankrörelsen, kungarörelsen, hovrörelsen och gruvrörelsen var bland de största folkrörelserna i Sverige under 1800-talet."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
-      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Folkrörelserna",
-      "page": 33
-    },
-    "difficulty": "hard",
-    "tags": [
-      "popular-movements",
-      "democracy",
-      "history",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q460",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "single_choice",
-    "q": {
-      "en": "... were among the largest popular movements in Sweden during the 19th century.",
-      "sv": "... var bland de största folkrörelserna i Sverige under 1800-talet."
+      "en": "Which answer best matches? Which four popular movements were among the largest in Sweden during the 19th century?",
+      "sv": "Vilket svar stämmer bäst? Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?"
     },
     "opts": [
       {
@@ -20139,7 +20909,7 @@
     ]
   },
   {
-    "id": "q462",
+    "id": "q458",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20168,7 +20938,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
-    "difficulty": "medium",
+    "difficulty": "hard",
     "tags": [
       "suffrage",
       "1921",
@@ -20178,7 +20948,7 @@
     ]
   },
   {
-    "id": "q463",
+    "id": "q459",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20207,7 +20977,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
-    "difficulty": "medium",
+    "difficulty": "hard",
     "tags": [
       "suffrage",
       "1921",
@@ -20217,13 +20987,60 @@
     ]
   },
   {
-    "id": "q464",
+    "id": "q460",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The first Riksdag election held in which both women and men could vote and women could become members of the Riksdag was in ...",
-      "sv": "Det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter hölls ..."
+      "en": "Choose the correct option: Which four popular movements were among the largest in Sweden during the 19th century?",
+      "sv": "Välj rätt alternativ: Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?"
+    },
+    "opts": [
+      {
+        "en": "The labour movement, free church movement, women’s movement, and temperance movement",
+        "sv": "Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen"
+      },
+      {
+        "en": "The banking movement, royal movement, court movement, and mining movement",
+        "sv": "Bankrörelsen, kungarörelsen, hovrörelsen och gruvrörelsen"
+      },
+      {
+        "en": "Only sports associations",
+        "sv": "Endast idrottsföreningar"
+      },
+      {
+        "en": "Only political parties in the EU",
+        "sv": "Endast politiska partier i EU"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Popular movements were important in Sweden's transition to democracy because people organized for rights such as an eight-hour workday, suffrage, and freedom of religion. Among the largest movements in the 19th century were the labour movement, free church movement, women's movement, and temperance movement.",
+      "sv": "Folkrörelserna var viktiga i Sveriges övergång till demokrati eftersom människor organiserade sig för rättigheter som åtta timmars arbetsdag, rösträtt och religionsfrihet. Bland de största rörelserna under 1800-talet fanns arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Folkrörelserna",
+      "page": 33
+    },
+    "difficulty": "hard",
+    "tags": [
+      "popular-movements",
+      "democracy",
+      "history",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q461",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? In which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?",
+      "sv": "Vilket svar stämmer bäst? Vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
     },
     "opts": [
       {
@@ -20271,6 +21088,178 @@
     "q": {
       "en": "Study question: What did the 1938 Saltsjöbaden Agreement become important for?",
       "sv": "Kunskapsfråga: Vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
+    },
+    "opts": [
+      {
+        "en": "Cooperation between trade unions and employers",
+        "sv": "Samarbetet mellan fackföreningar och arbetsgivare"
+      },
+      {
+        "en": "Sweden’s entry into the EU",
+        "sv": "Sveriges inträde i EU"
+      },
+      {
+        "en": "Introducing monarchy",
+        "sv": "Att införa monarki"
+      },
+      {
+        "en": "Creating public service",
+        "sv": "Att skapa public service"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Den svenska modellen",
+      "page": 35
+    },
+    "difficulty": "medium",
+    "tags": [
+      "saltsjobaden",
+      "swedish-model",
+      "labour-market",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q462",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "true_false",
+    "q": {
+      "en": "The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.",
+      "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Den svenska modellen",
+      "page": 35
+    },
+    "difficulty": "medium",
+    "tags": [
+      "saltsjobaden",
+      "swedish-model",
+      "labour-market",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q463",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "true_false",
+    "q": {
+      "en": "The 1938 Saltsjöbaden Agreement became important for Sweden’s entry into the EU.",
+      "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för Sveriges inträde i EU."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Den svenska modellen",
+      "page": 35
+    },
+    "difficulty": "medium",
+    "tags": [
+      "saltsjobaden",
+      "swedish-model",
+      "labour-market",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q464",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: In which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?",
+      "sv": "Välj rätt alternativ: Vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
+    },
+    "opts": [
+      {
+        "en": "1809",
+        "sv": "1809"
+      },
+      {
+        "en": "1865",
+        "sv": "1865"
+      },
+      {
+        "en": "1921",
+        "sv": "1921"
+      },
+      {
+        "en": "2005",
+        "sv": "2005"
+      }
+    ],
+    "answer": 2,
+    "why": {
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.",
+      "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Demokratins genombrott",
+      "page": 34
+    },
+    "difficulty": "medium",
+    "tags": [
+      "suffrage",
+      "1921",
+      "democracy",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q465",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What did the 1938 Saltsjöbaden Agreement become important for?",
+      "sv": "Vilket svar stämmer bäst? Vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
     },
     "opts": [
       {
@@ -20394,8 +21383,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The 1938 Saltsjöbaden Agreement became important for ...",
-      "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för ..."
+      "en": "Choose the correct option: What did the 1938 Saltsjöbaden Agreement become important for?",
+      "sv": "Välj rätt alternativ: Vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
     },
     "opts": [
       {
@@ -20441,133 +21430,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "For what reason is the period after the Second World War often called the Swedish record years?",
-      "sv": "Av vilken anledning kallas tiden efter andra världskriget ofta de svenska rekordåren?"
-    },
-    "opts": [
-      {
-        "en": "Sweden had long-lasting strong economic growth and could carry out major reforms",
-        "sv": "Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer"
-      },
-      {
-        "en": "Sweden had almost no industry",
-        "sv": "Sverige saknade nästan all industri"
-      },
-      {
-        "en": "All welfare services were abolished",
-        "sv": "Alla välfärdstjänster avskaffades"
-      },
-      {
-        "en": "Unemployment was extremely high throughout the period",
-        "sv": "Arbetslösheten var extremt hög under hela perioden"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Rekordåren",
-      "page": 36
-    },
-    "difficulty": "medium",
-    "tags": [
-      "record-years",
-      "welfare",
-      "postwar",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q470",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "true_false",
-    "q": {
-      "en": "The period after the Second World War is often called the Swedish record years because Sweden had long-lasting strong economic growth and could carry out major reforms.",
-      "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Rekordåren",
-      "page": 36
-    },
-    "difficulty": "medium",
-    "tags": [
-      "record-years",
-      "welfare",
-      "postwar",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q471",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "true_false",
-    "q": {
-      "en": "The period after the Second World War is often called the Swedish record years because Sweden had almost no industry.",
-      "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige saknade nästan all industri."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Rekordåren",
-      "page": 36
-    },
-    "difficulty": "medium",
-    "tags": [
-      "record-years",
-      "welfare",
-      "postwar",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q472",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
-    "type": "single_choice",
-    "q": {
-      "en": "The period after the Second World War is often called the Swedish record years because ...",
-      "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom ..."
+      "en": "Which answer best matches? Why is the period after the Second World War often called the Swedish record years?",
+      "sv": "Vilket svar stämmer bäst? Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?"
     },
     "opts": [
       {
@@ -20655,7 +21519,7 @@
     ]
   },
   {
-    "id": "q474",
+    "id": "q470",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20694,7 +21558,7 @@
     ]
   },
   {
-    "id": "q475",
+    "id": "q471",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20733,13 +21597,60 @@
     ]
   },
   {
-    "id": "q476",
+    "id": "q472",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The goal of the Million Programme during the 1960s was ...",
-      "sv": "Miljonprogrammets mål under 1960-talet var ..."
+      "en": "Choose the correct option: Why is the period after the Second World War often called the Swedish record years?",
+      "sv": "Välj rätt alternativ: Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?"
+    },
+    "opts": [
+      {
+        "en": "Sweden had long-lasting strong economic growth and could carry out major reforms",
+        "sv": "Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer"
+      },
+      {
+        "en": "Sweden had almost no industry",
+        "sv": "Sverige saknade nästan all industri"
+      },
+      {
+        "en": "All welfare services were abolished",
+        "sv": "Alla välfärdstjänster avskaffades"
+      },
+      {
+        "en": "Unemployment was extremely high throughout the period",
+        "sv": "Arbetslösheten var extremt hög under hela perioden"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Rekordåren",
+      "page": 36
+    },
+    "difficulty": "medium",
+    "tags": [
+      "record-years",
+      "welfare",
+      "postwar",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q473",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What was the goal of the Million Programme during the 1960s?",
+      "sv": "Vilket svar stämmer bäst? Vad var miljonprogrammets mål under 1960-talet?"
     },
     "opts": [
       {
@@ -20827,7 +21738,7 @@
     ]
   },
   {
-    "id": "q478",
+    "id": "q474",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20866,7 +21777,7 @@
     ]
   },
   {
-    "id": "q479",
+    "id": "q475",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20905,13 +21816,60 @@
     ]
   },
   {
-    "id": "q480",
+    "id": "q476",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The digital revolution has changed ...",
-      "sv": "Den digitala revolutionen har förändrat ..."
+      "en": "Choose the correct option: What was the goal of the Million Programme during the 1960s?",
+      "sv": "Välj rätt alternativ: Vad var miljonprogrammets mål under 1960-talet?"
+    },
+    "opts": [
+      {
+        "en": "To build one million homes in ten years",
+        "sv": "Att bygga en miljon bostäder på tio år"
+      },
+      {
+        "en": "To plant one million trees",
+        "sv": "Att plantera en miljon träd"
+      },
+      {
+        "en": "To start one million companies",
+        "sv": "Att starta en miljon företag"
+      },
+      {
+        "en": "To reduce Sweden’s population by one million",
+        "sv": "Att minska Sveriges befolkning med en miljon"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Rapid movement into cities created a housing shortage. To solve the problem, the state started the Million Programme during the 1960s, with the goal of building one million homes in ten years.",
+      "sv": "Den snabba inflyttningen till städerna skapade brist på bostäder. För att lösa problemet startade staten miljonprogrammet under 1960-talet, med målet att bygga en miljon bostäder på tio år."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Sverige blir ett invandrarland",
+      "page": 36
+    },
+    "difficulty": "medium",
+    "tags": [
+      "million-programme",
+      "housing",
+      "1960s",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q477",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What has the digital revolution changed?",
+      "sv": "Vilket svar stämmer bäst? Vad har den digitala revolutionen förändrat?"
     },
     "opts": [
       {
@@ -20999,9 +21957,9 @@
     ]
   },
   {
-    "id": "q482",
-    "chapterId": 11,
-    "chapter": "Ch. 11 · Sweden and the outside world",
+    "id": "q478",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
       "en": "Sweden's Nordic cooperation mainly takes place through the Nordic Council and the Nordic Council of Ministers.",
@@ -21038,9 +21996,9 @@
     ]
   },
   {
-    "id": "q483",
-    "chapterId": 11,
-    "chapter": "Ch. 11 · Sweden and the outside world",
+    "id": "q479",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
       "en": "Sweden's Nordic cooperation mainly takes place through the Riksdag and municipal councils.",
@@ -21077,13 +22035,60 @@
     ]
   },
   {
-    "id": "q484",
+    "id": "q480",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What has the digital revolution changed?",
+      "sv": "Välj rätt alternativ: Vad har den digitala revolutionen förändrat?"
+    },
+    "opts": [
+      {
+        "en": "How people work, study, communicate, and access information",
+        "sv": "Hur människor arbetar, studerar, kommunicerar och tar del av information"
+      },
+      {
+        "en": "Only how people celebrate Midsummer",
+        "sv": "Bara hur människor firar midsommar"
+      },
+      {
+        "en": "Only Sweden’s constitutional laws",
+        "sv": "Endast Sveriges grundlagar"
+      },
+      {
+        "en": "Who is head of state",
+        "sv": "Vem som är statschef"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sveriges moderna historia",
+      "section": "Digital revolution och globalisering",
+      "page": 38
+    },
+    "difficulty": "medium",
+    "tags": [
+      "digital-revolution",
+      "globalization",
+      "information-society",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q481",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's Nordic cooperation mainly takes place through ...",
-      "sv": "Sveriges nordiska samarbete sker främst genom ..."
+      "en": "Which answer best matches? Through which two bodies does Sweden's Nordic cooperation mainly take place?",
+      "sv": "Vilket svar stämmer bäst? Genom vilka två organ sker Sveriges nordiska samarbete främst?"
     },
     "opts": [
       {
@@ -21131,6 +22136,178 @@
     "q": {
       "en": "During which year did sweden become a member of the EU?",
       "sv": "Under vilket år blev Sverige medlem i EU?"
+    },
+    "opts": [
+      {
+        "en": "1949",
+        "sv": "1949"
+      },
+      {
+        "en": "1995",
+        "sv": "1995"
+      },
+      {
+        "en": "2005",
+        "sv": "2005"
+      },
+      {
+        "en": "2024",
+        "sv": "2024"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "EU och Europarådet",
+      "page": 39
+    },
+    "difficulty": "easy",
+    "tags": [
+      "eu",
+      "1995",
+      "foreign-relations",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q482",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden became a member of the EU in 1995.",
+      "sv": "Sverige blev medlem i EU 1995."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "EU och Europarådet",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "eu",
+      "1995",
+      "foreign-relations",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q483",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden became a member of the EU in 1949.",
+      "sv": "Sverige blev medlem i EU 1949."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "EU och Europarådet",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "eu",
+      "1995",
+      "foreign-relations",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q484",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Through which two bodies does Sweden's Nordic cooperation mainly take place?",
+      "sv": "Välj rätt alternativ: Genom vilka två organ sker Sveriges nordiska samarbete främst?"
+    },
+    "opts": [
+      {
+        "en": "The Nordic Council and the Nordic Council of Ministers",
+        "sv": "Nordiska rådet och Nordiska ministerrådet"
+      },
+      {
+        "en": "The Riksdag and municipal councils",
+        "sv": "Riksdagen och kommunfullmäktige"
+      },
+      {
+        "en": "The Sami Parliament and Enforcement Authority",
+        "sv": "Sametinget och Kronofogden"
+      },
+      {
+        "en": "The EU Court and the Parliamentary Ombudsmen",
+        "sv": "EU-domstolen och JO"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Nordiskt samarbete",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "nordic-cooperation",
+      "nordic-council",
+      "foreign-relations",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q485",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? In what year did Sweden become a member of the EU?",
+      "sv": "Vilket svar stämmer bäst? Vilket år blev Sverige medlem i EU?"
     },
     "opts": [
       {
@@ -21254,8 +22431,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sweden became a member of the EU in ...",
-      "sv": "Sverige blev medlem i EU ..."
+      "en": "Choose the correct option: In what year did Sweden become a member of the EU?",
+      "sv": "Välj rätt alternativ: Vilket år blev Sverige medlem i EU?"
     },
     "opts": [
       {
@@ -21301,8 +22478,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What do the EU's four freedoms mean?",
-      "sv": "Vad betyder EU:s fyra friheter?"
+      "en": "Which answer best matches? What do the EU's four freedoms mean?",
+      "sv": "Vilket svar stämmer bäst? Vad innebär EU:s fyra friheter?"
     },
     "opts": [
       {
@@ -21473,8 +22650,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What goal does the Council of Europe work for?",
-      "sv": "Vilket mål arbetar Europarådet för?"
+      "en": "Which answer best matches? What does the Council of Europe work for?",
+      "sv": "Vilket svar stämmer bäst? Vad arbetar Europarådet för?"
     },
     "opts": [
       {
@@ -21598,8 +22775,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "The Council of Europe works for ...",
-      "sv": "Europarådet arbetar för ..."
+      "en": "Choose the correct option: What does the Council of Europe work for?",
+      "sv": "Välj rätt alternativ: Vad arbetar Europarådet för?"
     },
     "opts": [
       {
@@ -21645,8 +22822,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What goal does Sida work for?",
-      "sv": "Vilket mål arbetar Sida för?"
+      "en": "Which answer best matches? What does Sida work to do?",
+      "sv": "Vilket svar stämmer bäst? Vad arbetar Sida för?"
     },
     "opts": [
       {
@@ -21770,8 +22947,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sida works ...",
-      "sv": "Sida arbetar för ..."
+      "en": "Choose the correct option: What does Sida work to do?",
+      "sv": "Välj rätt alternativ: Vad arbetar Sida för?"
     },
     "opts": [
       {
@@ -21817,8 +22994,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What did Sweden and Finland do after Russia's attack on Ukraine in 2022?",
-      "sv": "Vad gjorde Sverige och Finland efter Rysslands attack mot Ukraina 2022?"
+      "en": "Which answer best matches? What did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
+      "sv": "Vilket svar stämmer bäst? Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?"
     },
     "opts": [
       {
@@ -22161,8 +23338,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What is meant by saying that sweden is a secular state?",
-      "sv": "Hur förklaras det att Sverige är en sekulär stat?"
+      "en": "Which answer best matches? What does it mean that Sweden is a secular state?",
+      "sv": "Vilket svar stämmer bäst? Vad betyder det att Sverige är en sekulär stat?"
     },
     "opts": [
       {
@@ -22333,8 +23510,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which law marked the final breakthrough for religious freedom in 1951?",
-      "sv": "Kunskapsfråga: Vilken lag markerade religionsfrihetens slutliga genombrott 1951?"
+      "en": "Which answer best matches? Which law marked the final breakthrough for religious freedom in 1951?",
+      "sv": "Vilket svar stämmer bäst? Vilken lag markerade religionsfrihetens slutliga genombrott 1951?"
     },
     "opts": [
       {
@@ -22458,8 +23635,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... marked the final breakthrough for religious freedom in 1951.",
-      "sv": "... markerade religionsfrihetens slutliga genombrott 1951."
+      "en": "Choose the correct option: Which law marked the final breakthrough for religious freedom in 1951?",
+      "sv": "Välj rätt alternativ: Vilken lag markerade religionsfrihetens slutliga genombrott 1951?"
     },
     "opts": [
       {
@@ -22677,133 +23854,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which tradition does the Church of Sweden have historical roots in?",
-      "sv": "Kunskapsfråga: Vilken tradition har Svenska kyrkan historiska rötter i?"
-    },
-    "opts": [
-      {
-        "en": "The Lutheran Protestant tradition",
-        "sv": "Den lutherska, protestantiska traditionen"
-      },
-      {
-        "en": "The Buddhist tradition",
-        "sv": "Den buddhistiska traditionen"
-      },
-      {
-        "en": "The Hindu tradition",
-        "sv": "Den hinduiska traditionen"
-      },
-      {
-        "en": "The Islamic tradition",
-        "sv": "Den islamiska traditionen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Kristendom",
-      "page": 43
-    },
-    "difficulty": "medium",
-    "tags": [
-      "church-of-sweden",
-      "christianity",
-      "lutheranism",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q522",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Kristendom",
-      "page": 43
-    },
-    "difficulty": "medium",
-    "tags": [
-      "church-of-sweden",
-      "christianity",
-      "lutheranism",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q523",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "The Church of Sweden has historical roots in the Buddhist tradition.",
-      "sv": "Svenska kyrkan har historiska rötter i den buddhistiska traditionen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Kristendom",
-      "page": 43
-    },
-    "difficulty": "medium",
-    "tags": [
-      "church-of-sweden",
-      "christianity",
-      "lutheranism",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q524",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "single_choice",
-    "q": {
-      "en": "The Church of Sweden has historical roots in ...",
-      "sv": "Svenska kyrkan har historiska rötter i ..."
+      "en": "Which answer best matches? Which tradition does the Church of Sweden have historical roots in?",
+      "sv": "Vilket svar stämmer bäst? Vilken tradition har Svenska kyrkan historiska rötter i?"
     },
     "opts": [
       {
@@ -22851,6 +23903,178 @@
     "q": {
       "en": "Study question: Which religion is described as the second largest in Sweden?",
       "sv": "Kunskapsfråga: Vilken religion beskrivs som den näst största i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Judaism",
+        "sv": "Judendom"
+      },
+      {
+        "en": "Islam",
+        "sv": "Islam"
+      },
+      {
+        "en": "Hinduism",
+        "sv": "Hinduism"
+      },
+      {
+        "en": "Buddhism",
+        "sv": "Buddhism"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Islam",
+      "page": 44
+    },
+    "difficulty": "medium",
+    "tags": [
+      "islam",
+      "religion",
+      "sweden",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q522",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "Islam is described as the second-largest religion in Sweden.",
+      "sv": "Islam beskrivs som den näst största religionen i Sverige."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Islam",
+      "page": 44
+    },
+    "difficulty": "medium",
+    "tags": [
+      "islam",
+      "religion",
+      "sweden",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q523",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "Judaism is described as the second-largest religion in Sweden.",
+      "sv": "Judendom beskrivs som den näst största religionen i Sverige."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Islam",
+      "page": 44
+    },
+    "difficulty": "medium",
+    "tags": [
+      "islam",
+      "religion",
+      "sweden",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q524",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which tradition does the Church of Sweden have historical roots in?",
+      "sv": "Välj rätt alternativ: Vilken tradition har Svenska kyrkan historiska rötter i?"
+    },
+    "opts": [
+      {
+        "en": "The Lutheran Protestant tradition",
+        "sv": "Den lutherska, protestantiska traditionen"
+      },
+      {
+        "en": "The Buddhist tradition",
+        "sv": "Den buddhistiska traditionen"
+      },
+      {
+        "en": "The Hindu tradition",
+        "sv": "Den hinduiska traditionen"
+      },
+      {
+        "en": "The Islamic tradition",
+        "sv": "Den islamiska traditionen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Kristendom",
+      "page": 43
+    },
+    "difficulty": "medium",
+    "tags": [
+      "church-of-sweden",
+      "christianity",
+      "lutheranism",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q525",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which religion is described as the second largest in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilken religion beskrivs som den näst största i Sverige?"
     },
     "opts": [
       {
@@ -22974,8 +24198,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... is described as the second-largest religion in Sweden.",
-      "sv": "... beskrivs som den näst största religionen i Sverige."
+      "en": "Choose the correct option: Which religion is described as the second largest in Sweden?",
+      "sv": "Välj rätt alternativ: Vilken religion beskrivs som den näst största i Sverige?"
     },
     "opts": [
       {
@@ -23021,8 +24245,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What is common to do on New Year’s Eve, 31 December, in Sweden?",
-      "sv": "Vilken uppgift gäller vanligt att göra på nyårsafton den 31 december i Sverige?"
+      "en": "Which answer best matches? What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
       {
@@ -23146,8 +24370,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On New Year’s Eve, 31 December, it is common to ...",
-      "sv": "På nyårsafton den 31 december är det vanligt att ..."
+      "en": "Choose the correct option: What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "sv": "Välj rätt alternativ: Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
       {
@@ -23193,136 +24417,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What commonly happens on Sweden’s National Day, 6 June?",
-      "sv": "Vad är vanligt att hända på Sveriges nationaldag den 6 juni?"
-    },
-    "opts": [
-      {
-        "en": "Flags are raised, speeches are held, and many municipalities welcome new citizens",
-        "sv": "Flaggan hissas, tal hålls och många kommuner välkomnar nya medborgare"
-      },
-      {
-        "en": "The labour movement arranges demonstrations",
-        "sv": "Arbetarrörelsen arrangerar demonstrationer"
-      },
-      {
-        "en": "The new year is celebrated at night with fireworks",
-        "sv": "Det nya året firas på natten med fyrverkerier"
-      },
-      {
-        "en": "The Lucia celebration spreads light at the darkest time of year",
-        "sv": "Luciafirandet sprider ljus när året är som mörkast"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "6 June is Sweden’s National Day, and it became a public holiday through a Riksdag decision in 2005. On National Day, flags are raised, speeches are held, and many municipalities arrange ceremonies to welcome new citizens.",
-      "sv": "Den 6 juni är Sveriges nationaldag, och dagen blev helgdag genom ett riksdagsbeslut 2005. På nationaldagen hissas flaggan, tal hålls och många kommuner ordnar ceremonier för att välkomna nya medborgare."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Sveriges nationaldag",
-      "page": 46
-    },
-    "difficulty": "easy",
-    "tags": [
-      "national-day",
-      "june-6",
-      "citizenship-ceremony",
-      "traditions",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q534",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "On Sweden’s National Day, 6 June, flags are raised, speeches are held, and many municipalities welcome new citizens.",
-      "sv": "På Sveriges nationaldag den 6 juni brukar flaggan hissas, tal hålls och många kommuner välkomnar nya medborgare."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "6 June is Sweden’s National Day, and it became a public holiday through a Riksdag decision in 2005. On National Day, flags are raised, speeches are held, and many municipalities arrange ceremonies to welcome new citizens.",
-      "sv": "Den 6 juni är Sveriges nationaldag, och dagen blev helgdag genom ett riksdagsbeslut 2005. På nationaldagen hissas flaggan, tal hålls och många kommuner ordnar ceremonier för att välkomna nya medborgare."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Sveriges nationaldag",
-      "page": 46
-    },
-    "difficulty": "easy",
-    "tags": [
-      "national-day",
-      "june-6",
-      "citizenship-ceremony",
-      "traditions",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q535",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "On Sweden’s National Day, 6 June, the labour movement arranges demonstrations.",
-      "sv": "På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "6 June is Sweden’s National Day, and it became a public holiday through a Riksdag decision in 2005. On National Day, flags are raised, speeches are held, and many municipalities arrange ceremonies to welcome new citizens.",
-      "sv": "Den 6 juni är Sveriges nationaldag, och dagen blev helgdag genom ett riksdagsbeslut 2005. På nationaldagen hissas flaggan, tal hålls och många kommuner ordnar ceremonier för att välkomna nya medborgare."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Sveriges nationaldag",
-      "page": 46
-    },
-    "difficulty": "easy",
-    "tags": [
-      "national-day",
-      "june-6",
-      "citizenship-ceremony",
-      "traditions",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q536",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "single_choice",
-    "q": {
-      "en": "On Sweden’s National Day, 6 June, ...",
-      "sv": "På Sveriges nationaldag den 6 juni brukar ..."
+      "en": "Which answer best matches? What usually happens on Sweden’s National Day, 6 June?",
+      "sv": "Vilket svar stämmer bäst? Vad brukar hända på Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {
@@ -23412,7 +24508,7 @@
     ]
   },
   {
-    "id": "q538",
+    "id": "q534",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23452,7 +24548,7 @@
     ]
   },
   {
-    "id": "q539",
+    "id": "q535",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23492,13 +24588,61 @@
     ]
   },
   {
-    "id": "q540",
+    "id": "q536",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Midsummer Eve is observed ...",
-      "sv": "Midsommarafton firas ..."
+      "en": "Choose the correct option: What usually happens on Sweden’s National Day, 6 June?",
+      "sv": "Välj rätt alternativ: Vad brukar hända på Sveriges nationaldag den 6 juni?"
+    },
+    "opts": [
+      {
+        "en": "Flags are raised, speeches are held, and many municipalities welcome new citizens",
+        "sv": "Flaggan hissas, tal hålls och många kommuner välkomnar nya medborgare"
+      },
+      {
+        "en": "The labour movement arranges demonstrations",
+        "sv": "Arbetarrörelsen arrangerar demonstrationer"
+      },
+      {
+        "en": "The new year is celebrated at night with fireworks",
+        "sv": "Det nya året firas på natten med fyrverkerier"
+      },
+      {
+        "en": "The Lucia celebration spreads light at the darkest time of year",
+        "sv": "Luciafirandet sprider ljus när året är som mörkast"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "6 June is Sweden’s National Day, and it became a public holiday through a Riksdag decision in 2005. On National Day, flags are raised, speeches are held, and many municipalities arrange ceremonies to welcome new citizens.",
+      "sv": "Den 6 juni är Sveriges nationaldag, och dagen blev helgdag genom ett riksdagsbeslut 2005. På nationaldagen hissas flaggan, tal hålls och många kommuner ordnar ceremonier för att välkomna nya medborgare."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Sveriges nationaldag",
+      "page": 46
+    },
+    "difficulty": "easy",
+    "tags": [
+      "national-day",
+      "june-6",
+      "citizenship-ceremony",
+      "traditions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q537",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? When is Midsummer Eve celebrated in Sweden?",
+      "sv": "Vilket svar stämmer bäst? När firas midsommarafton i Sverige?"
     },
     "opts": [
       {
@@ -23547,6 +24691,182 @@
     "q": {
       "en": "What is the focus of the Lucia celebration in Sweden?",
       "sv": "Vad står luciafirandet mycket om i Sverige för?"
+    },
+    "opts": [
+      {
+        "en": "Spreading light when the year is at its darkest",
+        "sv": "Att sprida ljus när året är som mörkast"
+      },
+      {
+        "en": "Welcoming spring with large bonfires",
+        "sv": "Att välkomna våren med stora brasor"
+      },
+      {
+        "en": "Celebrating National Day with speeches",
+        "sv": "Att fira nationaldagen med tal"
+      },
+      {
+        "en": "Holding demonstrations on workers’ day",
+        "sv": "Att ordna demonstrationer på arbetarnas dag"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Lucia",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "lucia",
+      "light",
+      "procession",
+      "traditions",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q538",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när året är som mörkast."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Lucia",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "lucia",
+      "light",
+      "procession",
+      "traditions",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q539",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "The Lucia celebration is largely about welcoming spring with large bonfires.",
+      "sv": "Luciafirandet handlar mycket om att välkomna våren med stora brasor."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Lucia",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "lucia",
+      "light",
+      "procession",
+      "traditions",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q540",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: When is Midsummer Eve celebrated in Sweden?",
+      "sv": "Välj rätt alternativ: När firas midsommarafton i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "On a Friday between 19 and 25 June",
+        "sv": "På en fredag mellan 19 och 25 juni"
+      },
+      {
+        "en": "On New Year’s Eve, 31 December",
+        "sv": "På nyårsafton den 31 december"
+      },
+      {
+        "en": "On Walpurgis Night, 30 April",
+        "sv": "På Valborgsmässoafton den 30 april"
+      },
+      {
+        "en": "On Lucia Day, 13 December",
+        "sv": "På Luciadagen den 13 december"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Midsummer Eve is always celebrated on a Friday between 19 and 25 June. The celebration welcomes summer and light and has older roots from before Christianity, with outdoor parties, flower wreaths, dancing and playing around a midsummer pole, and food such as herring, new potatoes, and strawberries.",
+      "sv": "Midsommarafton firas alltid på en fredag mellan 19 juni och 25 juni. Firandet välkomnar sommaren och ljuset och har äldre rötter från tiden före kristendomen, med utomhusfester, blomsterkransar, dans och lek runt midsommarstången samt mat som sill, färskpotatis och jordgubbar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Midsommar",
+      "page": 46
+    },
+    "difficulty": "easy",
+    "tags": [
+      "midsummer",
+      "midsummer-eve",
+      "june",
+      "traditions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q541",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What is the Lucia celebration largely about in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad handlar luciafirandet mycket om i Sverige?"
     },
     "opts": [
       {
@@ -23673,8 +24993,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "The Lucia celebration is largely about ...",
-      "sv": "Luciafirandet handlar mycket om ..."
+      "en": "Choose the correct option: What is the Lucia celebration largely about in Sweden?",
+      "sv": "Välj rätt alternativ: Vad handlar luciafirandet mycket om i Sverige?"
     },
     "opts": [
       {
@@ -23721,8 +25041,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?",
-      "sv": "Kunskapsfråga: Vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?"
+      "en": "Which answer best matches? Which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?",
+      "sv": "Vilket svar stämmer bäst? Vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?"
     },
     "opts": [
       {
@@ -23893,8 +25213,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What characterizes Walpurgis Night, 30 April, in Sweden?",
-      "sv": "Vilken uppgift gäller typiskt för valborgsmässoafton den 30 april i Sverige?"
+      "en": "Which answer best matches? What is typical of Walpurgis Night, 30 April, in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad är typiskt för valborgsmässoafton den 30 april i Sverige?"
     },
     "opts": [
       {
@@ -24021,8 +25341,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... are typical of Walpurgis Night, 30 April.",
-      "sv": "Typiskt för valborgsmässoafton den 30 april är ..."
+      "en": "Choose the correct option: What is typical of Walpurgis Night, 30 April, in Sweden?",
+      "sv": "Välj rätt alternativ: Vad är typiskt för valborgsmässoafton den 30 april i Sverige?"
     },
     "opts": [
       {
@@ -24069,8 +25389,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What do people mark on First of May in Sweden?",
-      "sv": "Vad markerar man på första maj i Sverige?"
+      "en": "Which answer best matches? What is marked on First of May in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad uppmärksammas på första maj i Sverige?"
     },
     "opts": [
       {
@@ -24197,8 +25517,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "First of May marks ...",
-      "sv": "På första maj uppmärksammas ..."
+      "en": "Choose the correct option: What is marked on First of May in Sweden?",
+      "sv": "Välj rätt alternativ: Vad uppmärksammas på första maj i Sverige?"
     },
     "opts": [
       {
@@ -24245,8 +25565,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What is common to do on All Saints’ Day in Sweden?",
-      "sv": "Vilken uppgift gäller vanligt att göra på Alla helgons dag i Sverige?"
+      "en": "Which answer best matches? What is common to do on All Saints’ Day in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -24373,8 +25693,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On All Saints’ Day, it is common to ...",
-      "sv": "På Alla helgons dag är det vanligt att ..."
+      "en": "Choose the correct option: What is common to do on All Saints’ Day in Sweden?",
+      "sv": "Välj rätt alternativ: Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -24421,8 +25741,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "At what time does Advent occur in Sweden?",
-      "sv": "Vid vilken tid infaller advent i Sverige?"
+      "en": "Which answer best matches? When does Advent occur in Sweden?",
+      "sv": "Vilket svar stämmer bäst? När infaller advent i Sverige?"
     },
     "opts": [
       {
@@ -24549,8 +25869,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Advent occurs on ...",
-      "sv": "Advent infaller ..."
+      "en": "Choose the correct option: When does Advent occur in Sweden?",
+      "sv": "Välj rätt alternativ: När infaller advent i Sverige?"
     },
     "opts": [
       {
@@ -24597,8 +25917,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What do families commonly do on Christmas Eve, 24 December, in Sweden?",
-      "sv": "Vilken uppgift gäller vanligt att familjer gör på julafton den 24 december i Sverige?"
+      "en": "Which answer best matches? What do families commonly do on Christmas Eve, 24 December, in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad är vanligt att familjer gör på julafton den 24 december i Sverige?"
     },
     "opts": [
       {
@@ -24773,8 +26093,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which holidays are examples of traditions that have come to Sweden with immigrants?",
-      "sv": "Kunskapsfråga: Vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?"
+      "en": "Which answer best matches? Which holidays are examples of traditions that have come to Sweden with immigrants?",
+      "sv": "Vilket svar stämmer bäst? Vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?"
     },
     "opts": [
       {
@@ -24949,8 +26269,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What can exist in different places in Sweden for Buddhists and Hindus?",
-      "sv": "Vad kan finnas på olika platser i Sverige för buddhister och hinduer?"
+      "en": "Which answer best matches? What exists in different places in Sweden for Buddhists and Hindus?",
+      "sv": "Vilket svar stämmer bäst? Vad finns på olika platser i Sverige för buddhister och hinduer?"
     },
     "opts": [
       {
@@ -25077,8 +26397,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "In different places in Sweden, there are ... for Buddhists and Hindus.",
-      "sv": "På olika platser i Sverige finns ... för buddhister och hinduer."
+      "en": "Choose the correct option: What exists in different places in Sweden for Buddhists and Hindus?",
+      "sv": "Välj rätt alternativ: Vad finns på olika platser i Sverige för buddhister och hinduer?"
     },
     "opts": [
       {
@@ -25125,8 +26445,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which statement about the role of religion in Sweden is correct?",
-      "sv": "Kunskapsfråga: Vilket påstående om religionens roll i Sverige stämmer?"
+      "en": "Which answer best matches? Which statement about the role of religion in Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om religionens roll i Sverige stämmer?"
     },
     "opts": [
       {
@@ -25301,8 +26621,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which statement about Judaism's history in Sweden is correct?",
-      "sv": "Kunskapsfråga: Vilket påstående om judendomens historia i Sverige stämmer?"
+      "en": "Which answer best matches? Which statement about Judaism's history in Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om judendomens historia i Sverige stämmer?"
     },
     "opts": [
       {
@@ -25477,136 +26797,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What is one goal of religion studies in Swedish schools?",
-      "sv": "Vilken uppgift gäller ett mål med religionskunskapen i svensk skola?"
-    },
-    "opts": [
-      {
-        "en": "To promote understanding, tolerance, and respect for differences",
-        "sv": "Att främja förståelse, tolerans och respekt för olikheter"
-      },
-      {
-        "en": "To decide which religion pupils should belong to",
-        "sv": "Att bestämma vilken religion elever ska tillhöra"
-      },
-      {
-        "en": "To forbid pupils from talking about worldviews",
-        "sv": "Att förbjuda elever att tala om livsåskådningar"
-      },
-      {
-        "en": "To teach only about one religion from Sweden",
-        "sv": "Att bara undervisa om en religion från Sverige"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionsfrihet",
-      "page": 42
-    },
-    "difficulty": "easy",
-    "tags": [
-      "religious-education",
-      "religious-freedom",
-      "tolerance",
-      "school",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q586",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "One goal of religion studies in Swedish schools is to promote understanding, tolerance, and respect for differences.",
-      "sv": "Ett mål med religionskunskapen i svensk skola är att främja förståelse, tolerans och respekt för olikheter."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionsfrihet",
-      "page": 42
-    },
-    "difficulty": "easy",
-    "tags": [
-      "religious-education",
-      "religious-freedom",
-      "tolerance",
-      "school",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q587",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "One goal of religion studies in Swedish schools is to decide which religion pupils should belong to.",
-      "sv": "Ett mål med religionskunskapen i svensk skola är att bestämma vilken religion elever ska tillhöra."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionsfrihet",
-      "page": 42
-    },
-    "difficulty": "easy",
-    "tags": [
-      "religious-education",
-      "religious-freedom",
-      "tolerance",
-      "school",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q588",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "single_choice",
-    "q": {
-      "en": "One goal of religion studies in Swedish schools is ...",
-      "sv": "Ett mål med religionskunskapen i svensk skola är ..."
+      "en": "Which answer best matches? What is one goal of religion studies in Swedish schools?",
+      "sv": "Vilket svar stämmer bäst? Vad är ett mål med religionskunskapen i svensk skola?"
     },
     "opts": [
       {
@@ -25696,7 +26888,7 @@
     ]
   },
   {
-    "id": "q590",
+    "id": "q586",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25736,7 +26928,7 @@
     ]
   },
   {
-    "id": "q591",
+    "id": "q587",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25776,13 +26968,61 @@
     ]
   },
   {
-    "id": "q592",
+    "id": "q588",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's first mosques were built ...",
-      "sv": "Sveriges första moskéer byggdes ..."
+      "en": "Choose the correct option: What is one goal of religion studies in Swedish schools?",
+      "sv": "Välj rätt alternativ: Vad är ett mål med religionskunskapen i svensk skola?"
+    },
+    "opts": [
+      {
+        "en": "To promote understanding, tolerance, and respect for differences",
+        "sv": "Att främja förståelse, tolerans och respekt för olikheter"
+      },
+      {
+        "en": "To decide which religion pupils should belong to",
+        "sv": "Att bestämma vilken religion elever ska tillhöra"
+      },
+      {
+        "en": "To forbid pupils from talking about worldviews",
+        "sv": "Att förbjuda elever att tala om livsåskådningar"
+      },
+      {
+        "en": "To teach only about one religion from Sweden",
+        "sv": "Att bara undervisa om en religion från Sverige"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
+      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Religionsfrihet",
+      "page": 42
+    },
+    "difficulty": "easy",
+    "tags": [
+      "religious-education",
+      "religious-freedom",
+      "tolerance",
+      "school",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q589",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? When were Sweden's first mosques built?",
+      "sv": "Vilket svar stämmer bäst? När byggdes Sveriges första moskéer?"
     },
     "opts": [
       {
@@ -25831,6 +27071,174 @@
     "q": {
       "en": "Study question: Which Christian churches or communities are mentioned as examples in Sweden today?",
       "sv": "Kunskapsfråga: Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Orthodox churches, the Catholic Church, and Protestant churches",
+        "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor"
+      },
+      {
+        "en": "Only the Church of Sweden and no other communities",
+        "sv": "Bara Svenska kyrkan och inga andra samfund"
+      },
+      {
+        "en": "Only Buddhist and Hindu temples",
+        "sv": "Endast buddhistiska och hinduiska tempel"
+      },
+      {
+        "en": "Mosques and Muslim prayer rooms",
+        "sv": "Moskéer och muslimska bönelokaler"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In present-day Sweden there are many Christian communities representing different traditions and beliefs. Examples include Orthodox churches, the Catholic Church, and different Protestant churches; the options about only the Church of Sweden, Buddhist and Hindu temples, or mosques describe other or too narrow parts.",
+      "sv": "I dagens Sverige finns många kristna samfund som representerar olika traditioner och trosinriktningar. Exempel är ortodoxa kyrkor, katolska kyrkan och olika protestantiska kyrkor; alternativen om bara Svenska kyrkan, buddhistiska och hinduiska tempel eller moskéer beskriver andra eller för snäva delar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Kristendom",
+      "page": 43
+    },
+    "difficulty": "easy",
+    "tags": [
+      "christianity",
+      "christian-communities",
+      "orthodox-catholic-protestant",
+      "religion",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q590",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "Orthodox churches, the Catholic Church, and Protestant churches are mentioned as examples in Sweden today.",
+      "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor nämns som exempel i dagens Sverige."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In present-day Sweden there are many Christian communities representing different traditions and beliefs. Examples include Orthodox churches, the Catholic Church, and different Protestant churches; the options about only the Church of Sweden, Buddhist and Hindu temples, or mosques describe other or too narrow parts.",
+      "sv": "I dagens Sverige finns många kristna samfund som representerar olika traditioner och trosinriktningar. Exempel är ortodoxa kyrkor, katolska kyrkan och olika protestantiska kyrkor; alternativen om bara Svenska kyrkan, buddhistiska och hinduiska tempel eller moskéer beskriver andra eller för snäva delar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Kristendom",
+      "page": 43
+    },
+    "difficulty": "easy",
+    "tags": [
+      "christianity",
+      "christian-communities",
+      "orthodox-catholic-protestant",
+      "religion",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q591",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "In 1860, Swedes were permitted to leave the Church of Sweden, but only if they joined another Christian community.",
+      "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om man gick med i ett annat kristet samfund."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Religionsfrihet",
+      "page": 42
+    },
+    "difficulty": "easy",
+    "tags": [
+      "religious-freedom",
+      "church-of-sweden",
+      "1860",
+      "christian-community",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q592",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "In 1860, Swedes were permitted to choose any religion or no religion at all completely freely.",
+      "sv": "År 1860 blev det tillåtet för svenskar att helt fritt välja vilken religion som helst eller ingen religion alls."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Religionsfrihet",
+      "page": 42
+    },
+    "difficulty": "easy",
+    "tags": [
+      "religious-freedom",
+      "church-of-sweden",
+      "1860",
+      "christian-community",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q593",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which Christian churches or communities are mentioned as examples in Sweden today?",
+      "sv": "Vilket svar stämmer bäst? Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
     },
     "opts": [
       {
@@ -25957,8 +27365,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... are mentioned as examples in Sweden today.",
-      "sv": "... nämns som exempel i dagens Sverige."
+      "en": "Choose the correct option: Which Christian churches or communities are mentioned as examples in Sweden today?",
+      "sv": "Välj rätt alternativ: Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
     },
     "opts": [
       {
@@ -26005,8 +27413,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Kunskapsfråga: Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "Which answer best matches? What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vilket svar stämmer bäst? Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -26136,8 +27544,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... are mentioned as examples of contacts with Hindus and Buddhists in Sweden during the 20th century.",
-      "sv": "... nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
+      "en": "Choose the correct option: What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Välj rätt alternativ: Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -26185,8 +27593,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What became permitted for Swedes in 1860?",
-      "sv": "Kunskapsfråga: Vad blev tillåtet för svenskar år 1860?"
+      "en": "Which answer best matches? What became permitted for Swedes in 1860?",
+      "sv": "Vilket svar stämmer bäst? Vad blev tillåtet för svenskar år 1860?"
     },
     "opts": [
       {
@@ -26313,8 +27721,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "In 1860, Swedes were permitted ...",
-      "sv": "År 1860 blev det tillåtet för svenskar ..."
+      "en": "Choose the correct option: What became permitted for Swedes in 1860?",
+      "sv": "Välj rätt alternativ: Vad blev tillåtet för svenskar år 1860?"
     },
     "opts": [
       {
@@ -26361,8 +27769,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What does the Instrument of Government protect regarding religion?",
-      "sv": "Kunskapsfråga: Vad skyddar regeringsformen när det gäller religion?"
+      "en": "Which answer best matches? What does the Instrument of Government protect regarding religion?",
+      "sv": "Vilket svar stämmer bäst? Vad skyddar regeringsformen när det gäller religion?"
     },
     "opts": [
       {
@@ -26537,8 +27945,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?",
-      "sv": "Kunskapsfråga: Vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?"
+      "en": "Which answer best matches? Which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?",
+      "sv": "Vilket svar stämmer bäst? Vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?"
     },
     "opts": [
       {
@@ -26717,142 +28125,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which religious rituals are still common in Sweden?",
-      "sv": "Kunskapsfråga: Vilka religiösa ritualer är fortfarande vanliga i Sverige?"
-    },
-    "opts": [
-      {
-        "en": "Baptisms, church weddings, and Christian funerals",
-        "sv": "Dop, bröllop i kyrkan och kristen begravning"
-      },
-      {
-        "en": "Only state ceremonies without religious elements",
-        "sv": "Endast statliga ceremonier utan religiösa inslag"
-      },
-      {
-        "en": "Only holidays that came with immigrants",
-        "sv": "Bara högtider som kommit med invandrare"
-      },
-      {
-        "en": "Only church services on Christmas Day",
-        "sv": "Enbart gudstjänster på juldagen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Baptisms, church weddings, and Christian funerals are still common religious rituals in Sweden, even among members who do not describe themselves as believers. The other options make the rituals too narrow or confuse them with other kinds of ceremonies and holidays.",
-      "sv": "Dop, bröllop i kyrkan och kristen begravning är fortfarande vanliga religiösa ritualer i Sverige, även bland medlemmar som inte beskriver sig som troende. De andra alternativen gör ritualerna för snäva eller blandar ihop dem med andra slags ceremonier och högtider."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionens roll",
-      "page": 42
-    },
-    "difficulty": "easy",
-    "tags": [
-      "christianity",
-      "rituals",
-      "baptism",
-      "church-wedding",
-      "funeral",
-      "religion",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q614",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "Baptisms, church weddings, and Christian funerals are still common in Sweden.",
-      "sv": "Dop, bröllop i kyrkan och kristen begravning är fortfarande vanliga i Sverige."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Baptisms, church weddings, and Christian funerals are still common religious rituals in Sweden, even among members who do not describe themselves as believers. The other options make the rituals too narrow or confuse them with other kinds of ceremonies and holidays.",
-      "sv": "Dop, bröllop i kyrkan och kristen begravning är fortfarande vanliga religiösa ritualer i Sverige, även bland medlemmar som inte beskriver sig som troende. De andra alternativen gör ritualerna för snäva eller blandar ihop dem med andra slags ceremonier och högtider."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionens roll",
-      "page": 42
-    },
-    "difficulty": "easy",
-    "tags": [
-      "christianity",
-      "rituals",
-      "baptism",
-      "church-wedding",
-      "funeral",
-      "religion",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q615",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "Only state ceremonies without religious elements are still common in Sweden.",
-      "sv": "Endast statliga ceremonier utan religiösa inslag är fortfarande vanliga i Sverige."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Baptisms, church weddings, and Christian funerals are still common religious rituals in Sweden, even among members who do not describe themselves as believers. The other options make the rituals too narrow or confuse them with other kinds of ceremonies and holidays.",
-      "sv": "Dop, bröllop i kyrkan och kristen begravning är fortfarande vanliga religiösa ritualer i Sverige, även bland medlemmar som inte beskriver sig som troende. De andra alternativen gör ritualerna för snäva eller blandar ihop dem med andra slags ceremonier och högtider."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionens roll",
-      "page": 42
-    },
-    "difficulty": "easy",
-    "tags": [
-      "christianity",
-      "rituals",
-      "baptism",
-      "church-wedding",
-      "funeral",
-      "religion",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q616",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "single_choice",
-    "q": {
-      "en": "... are still common in Sweden.",
-      "sv": "... är fortfarande vanliga i Sverige."
+      "en": "Which answer best matches? Which religious rituals are still common in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilka religiösa ritualer är fortfarande vanliga i Sverige?"
     },
     "opts": [
       {
@@ -26903,6 +28177,184 @@
     "q": {
       "en": "Study question: What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?",
       "sv": "Kunskapsfråga: Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?"
+    },
+    "opts": [
+      {
+        "en": "A Catholic country",
+        "sv": "Ett katolskt land"
+      },
+      {
+        "en": "A Buddhist kingdom",
+        "sv": "Ett buddhistiskt kungarike"
+      },
+      {
+        "en": "A country without Christian churches",
+        "sv": "Ett land utan kristna kyrkor"
+      },
+      {
+        "en": "A country where Islam was largest",
+        "sv": "Ett land där islam var störst"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Kristendom",
+      "page": 43
+    },
+    "difficulty": "medium",
+    "tags": [
+      "christianity",
+      "middle-ages",
+      "catholic-country",
+      "church-of-sweden",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q614",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden was a Catholic country during the Middle Ages.",
+      "sv": "Sverige var ett katolskt land under medeltiden."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Kristendom",
+      "page": 43
+    },
+    "difficulty": "easy",
+    "tags": [
+      "christianity",
+      "middle-ages",
+      "catholic-country",
+      "church-of-sweden",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q615",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden was a Buddhist kingdom during the Middle Ages.",
+      "sv": "Sverige var ett buddhistiskt kungarike under medeltiden."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Kristendom",
+      "page": 43
+    },
+    "difficulty": "easy",
+    "tags": [
+      "christianity",
+      "middle-ages",
+      "catholic-country",
+      "church-of-sweden",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q616",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which religious rituals are still common in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka religiösa ritualer är fortfarande vanliga i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Baptisms, church weddings, and Christian funerals",
+        "sv": "Dop, bröllop i kyrkan och kristen begravning"
+      },
+      {
+        "en": "Only state ceremonies without religious elements",
+        "sv": "Endast statliga ceremonier utan religiösa inslag"
+      },
+      {
+        "en": "Only holidays that came with immigrants",
+        "sv": "Bara högtider som kommit med invandrare"
+      },
+      {
+        "en": "Only church services on Christmas Day",
+        "sv": "Enbart gudstjänster på juldagen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Baptisms, church weddings, and Christian funerals are still common religious rituals in Sweden, even among members who do not describe themselves as believers. The other options make the rituals too narrow or confuse them with other kinds of ceremonies and holidays.",
+      "sv": "Dop, bröllop i kyrkan och kristen begravning är fortfarande vanliga religiösa ritualer i Sverige, även bland medlemmar som inte beskriver sig som troende. De andra alternativen gör ritualerna för snäva eller blandar ihop dem med andra slags ceremonier och högtider."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Religionens roll",
+      "page": 42
+    },
+    "difficulty": "easy",
+    "tags": [
+      "christianity",
+      "rituals",
+      "baptism",
+      "church-wedding",
+      "funeral",
+      "religion",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q617",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?",
+      "sv": "Vilket svar stämmer bäst? Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?"
     },
     "opts": [
       {
@@ -27029,8 +28481,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Sweden was ... during the Middle Ages.",
-      "sv": "Sverige var ... under medeltiden."
+      "en": "Choose the correct option: What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?",
+      "sv": "Välj rätt alternativ: Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?"
     },
     "opts": [
       {
@@ -27077,8 +28529,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which right did Jews gain in Sweden in the 18th century?",
-      "sv": "Vilken rätt fick judar i Sverige på 1700-talet?"
+      "en": "Which answer best matches? What did Jews gain the right to do in Sweden in the 18th century?",
+      "sv": "Vilket svar stämmer bäst? Vad fick judar rätt att göra i Sverige på 1700-talet?"
     },
     "opts": [
       {
@@ -27253,8 +28705,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which branches of Islam are mentioned as examples in Swedish Muslim congregations?",
-      "sv": "Vilka inriktningar inom islam nämns som exempel i svenska muslimska församlingar?"
+      "en": "Which answer best matches? Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
+      "sv": "Vilket svar stämmer bäst? Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -27381,8 +28833,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... are mentioned as examples in Swedish Muslim congregations.",
-      "sv": "... nämns som exempel i svenska muslimska församlingar."
+      "en": "Choose the correct option: Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
+      "sv": "Välj rätt alternativ: Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -27429,8 +28881,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What do Muslim congregations in Sweden offer?",
-      "sv": "Kunskapsfråga: Vad erbjuder muslimska församlingar i Sverige?"
+      "en": "Which answer best matches? What do Muslim congregations in Sweden offer?",
+      "sv": "Vilket svar stämmer bäst? Vad erbjuder muslimska församlingar i Sverige?"
     },
     "opts": [
       {
@@ -27560,8 +29012,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Muslim congregations in Sweden offer ...",
-      "sv": "Muslimska församlingar i Sverige erbjuder ..."
+      "en": "Choose the correct option: What do Muslim congregations in Sweden offer?",
+      "sv": "Välj rätt alternativ: Vad erbjuder muslimska församlingar i Sverige?"
     },
     "opts": [
       {
@@ -27609,8 +29061,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which statement about Buddhists and Hindus in present-day Sweden is correct?",
-      "sv": "Kunskapsfråga: Vilket påstående om buddhister och hinduer i dagens Sverige stämmer?"
+      "en": "Which answer best matches? Which statement about Buddhists and Hindus in present-day Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om buddhister och hinduer i dagens Sverige stämmer?"
     },
     "opts": [
       {
@@ -27785,8 +29237,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
-      "sv": "Kunskapsfråga: Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
+      "en": "Which answer best matches? Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
+      "sv": "Vilket svar stämmer bäst? Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {
@@ -27913,8 +29365,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "The event from 1523 was that ...",
-      "sv": "Händelsen från 1523 var att ..."
+      "en": "Choose the correct option: Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
+      "sv": "Välj rätt alternativ: Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {
@@ -27961,8 +29413,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What is common during Midsummer celebrations in Sweden?",
-      "sv": "Vilken uppgift gäller vanligt vid midsommarfirande i Sverige?"
+      "en": "Which answer best matches? What is common during Midsummer celebrations in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad är vanligt vid midsommarfirande i Sverige?"
     },
     "opts": [
       {
@@ -28092,8 +29544,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... are common during Midsummer celebrations in Sweden.",
-      "sv": "Vid midsommarfirande i Sverige är det vanligt med ..."
+      "en": "Choose the correct option: What is common during Midsummer celebrations in Sweden?",
+      "sv": "Välj rätt alternativ: Vad är vanligt vid midsommarfirande i Sverige?"
     },
     "opts": [
       {
@@ -28141,8 +29593,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which statement about many public holidays in Sweden is correct?",
-      "sv": "Kunskapsfråga: Vilket påstående om många helgdagar i Sverige stämmer?"
+      "en": "Which answer best matches? Which statement about many public holidays in Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om många helgdagar i Sverige stämmer?"
     },
     "opts": [
       {
@@ -28317,136 +29769,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: Which holiday ends the fasting month of Ramadan?",
-      "sv": "Kunskapsfråga: Vilken högtid avslutar fastemånaden ramadan?"
-    },
-    "opts": [
-      {
-        "en": "Eid al-Fitr",
-        "sv": "Id al-fitr"
-      },
-      {
-        "en": "Nouruz",
-        "sv": "Nouruz"
-      },
-      {
-        "en": "Newroz",
-        "sv": "Newroz"
-      },
-      {
-        "en": "All Saints’ Day",
-        "sv": "Alla helgons dag"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Eid al-Fitr ends the fasting month of Ramadan. Nouruz and Newroz are instead Persian and Kurdish New Year traditions celebrated at the spring equinox on 21 March, and All Saints’ Day is a different holiday.",
-      "sv": "Id al-fitr avslutar fastemånaden ramadan. Nouruz och Newroz är i stället persiska och kurdiska nyårstraditioner som firas vid vårdagjämningen den 21 mars, och Alla helgons dag är en annan högtid."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Nya traditioner",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "eid-al-fitr",
-      "ramadan",
-      "new-traditions",
-      "immigration",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q650",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "Eid al-Fitr ends the fasting month of Ramadan.",
-      "sv": "Id al-fitr avslutar fastemånaden ramadan."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Eid al-Fitr ends the fasting month of Ramadan. Nouruz and Newroz are instead Persian and Kurdish New Year traditions celebrated at the spring equinox on 21 March, and All Saints’ Day is a different holiday.",
-      "sv": "Id al-fitr avslutar fastemånaden ramadan. Nouruz och Newroz är i stället persiska och kurdiska nyårstraditioner som firas vid vårdagjämningen den 21 mars, och Alla helgons dag är en annan högtid."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Nya traditioner",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "eid-al-fitr",
-      "ramadan",
-      "new-traditions",
-      "immigration",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q651",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "Nouruz ends the fasting month of Ramadan.",
-      "sv": "Nouruz avslutar fastemånaden ramadan."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Eid al-Fitr ends the fasting month of Ramadan. Nouruz and Newroz are instead Persian and Kurdish New Year traditions celebrated at the spring equinox on 21 March, and All Saints’ Day is a different holiday.",
-      "sv": "Id al-fitr avslutar fastemånaden ramadan. Nouruz och Newroz är i stället persiska och kurdiska nyårstraditioner som firas vid vårdagjämningen den 21 mars, och Alla helgons dag är en annan högtid."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Nya traditioner",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "eid-al-fitr",
-      "ramadan",
-      "new-traditions",
-      "immigration",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q652",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "single_choice",
-    "q": {
-      "en": "... ends the fasting month of Ramadan.",
-      "sv": "... avslutar fastemånaden ramadan."
+      "en": "Which answer best matches? Which holiday ends the fasting month of Ramadan?",
+      "sv": "Vilket svar stämmer bäst? Vilken högtid avslutar fastemånaden ramadan?"
     },
     "opts": [
       {
@@ -28536,7 +29860,7 @@
     ]
   },
   {
-    "id": "q654",
+    "id": "q650",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28576,7 +29900,7 @@
     ]
   },
   {
-    "id": "q655",
+    "id": "q651",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28616,13 +29940,61 @@
     ]
   },
   {
-    "id": "q656",
+    "id": "q652",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Nouruz and Newroz are observed ...",
-      "sv": "Nouruz och Newroz firas ..."
+      "en": "Choose the correct option: Which holiday ends the fasting month of Ramadan?",
+      "sv": "Välj rätt alternativ: Vilken högtid avslutar fastemånaden ramadan?"
+    },
+    "opts": [
+      {
+        "en": "Eid al-Fitr",
+        "sv": "Id al-fitr"
+      },
+      {
+        "en": "Nouruz",
+        "sv": "Nouruz"
+      },
+      {
+        "en": "Newroz",
+        "sv": "Newroz"
+      },
+      {
+        "en": "All Saints’ Day",
+        "sv": "Alla helgons dag"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Eid al-Fitr ends the fasting month of Ramadan. Nouruz and Newroz are instead Persian and Kurdish New Year traditions celebrated at the spring equinox on 21 March, and All Saints’ Day is a different holiday.",
+      "sv": "Id al-fitr avslutar fastemånaden ramadan. Nouruz och Newroz är i stället persiska och kurdiska nyårstraditioner som firas vid vårdagjämningen den 21 mars, och Alla helgons dag är en annan högtid."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Nya traditioner",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "eid-al-fitr",
+      "ramadan",
+      "new-traditions",
+      "immigration",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q653",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? When are Nouruz and Newroz celebrated?",
+      "sv": "Vilket svar stämmer bäst? När firas Nouruz och Newroz?"
     },
     "opts": [
       {
@@ -28671,6 +30043,182 @@
     "q": {
       "en": "Study question: What does the person who is Lucia usually wear in a Lucia procession?",
       "sv": "Vad är vanligt att personen som är Lucia bära i ett luciatåg?"
+    },
+    "opts": [
+      {
+        "en": "A crown of lights on their head",
+        "sv": "En ljuskrona på huvudet"
+      },
+      {
+        "en": "A flower wreath on their head",
+        "sv": "En blomsterkrans på huvudet"
+      },
+      {
+        "en": "A graduation cap on their head",
+        "sv": "En studentmössa på huvudet"
+      },
+      {
+        "en": "An Advent star in their hand",
+        "sv": "En adventsstjärna i handen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Lucia",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "lucia",
+      "lucia-procession",
+      "crown-of-lights",
+      "traditions",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q654",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "The person who is Lucia usually wears a crown of lights on their head.",
+      "sv": "Personen som är Lucia brukar bära en ljuskrona på huvudet."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Lucia",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "lucia",
+      "lucia-procession",
+      "crown-of-lights",
+      "traditions",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q655",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "The person who is Lucia usually wears a flower wreath on their head.",
+      "sv": "Personen som är Lucia brukar bära en blomsterkrans på huvudet."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Lucia",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "lucia",
+      "lucia-procession",
+      "crown-of-lights",
+      "traditions",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q656",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: When are Nouruz and Newroz celebrated?",
+      "sv": "Välj rätt alternativ: När firas Nouruz och Newroz?"
+    },
+    "opts": [
+      {
+        "en": "At the spring equinox on 21 March",
+        "sv": "Vid vårdagjämningen den 21 mars"
+      },
+      {
+        "en": "On Midsummer Eve between 19 and 25 June",
+        "sv": "På midsommarafton mellan 19 och 25 juni"
+      },
+      {
+        "en": "On New Year's Eve on 31 December",
+        "sv": "På nyårsafton den 31 december"
+      },
+      {
+        "en": "On Lucia Day on 13 December",
+        "sv": "På luciadagen den 13 december"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Nouruz and Newroz are Persian and Kurdish New Year traditions celebrated around the spring equinox on 21 March. The other options describe Midsummer, New Year’s Eve, and Lucia Day, which belong to other parts of the holiday year.",
+      "sv": "Nouruz och Newroz är persiska och kurdiska nyårstraditioner som firas i samband med vårdagjämningen den 21 mars. De andra alternativen beskriver midsommar, nyårsafton och luciadagen, som hör till andra delar av högtidsåret."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Nya traditioner",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "nouruz-newroz",
+      "spring-equinox",
+      "new-traditions",
+      "immigration",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q657",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What does the person who is Lucia usually wear in a Lucia procession?",
+      "sv": "Vilket svar stämmer bäst? Vad brukar personen som är Lucia bära i ett luciatåg?"
     },
     "opts": [
       {
@@ -28797,8 +30345,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "The person who is Lucia usually wears ...",
-      "sv": "Personen som är Lucia brukar bära ..."
+      "en": "Choose the correct option: What does the person who is Lucia usually wear in a Lucia procession?",
+      "sv": "Välj rätt alternativ: Vad brukar personen som är Lucia bära i ett luciatåg?"
     },
     "opts": [
       {
@@ -28845,136 +30393,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What name is used for the church service early on the morning of 25 December?",
-      "sv": "Kunskapsfråga: Vad kallas gudstjänsten tidigt på morgonen den 25 december?"
-    },
-    "opts": [
-      {
-        "en": "Julotta, a Christmas morning service",
-        "sv": "Julotta"
-      },
-      {
-        "en": "Lucia procession",
-        "sv": "Luciatåg"
-      },
-      {
-        "en": "Walpurgis bonfire",
-        "sv": "Valborgsbrasa"
-      },
-      {
-        "en": "Midsummer pole",
-        "sv": "Midsommarstång"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Julotta is a church service early on the morning of 25 December. Lucia processions, Walpurgis bonfires, and midsummer poles belong to other holidays and traditions during the year.",
-      "sv": "Julotta är en gudstjänst i kyrkan tidigt på morgonen den 25 december. Lucia, valborgsbrasa och midsommarstång hör till andra högtider och traditioner under året."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Jul",
-      "page": 47
-    },
-    "difficulty": "medium",
-    "tags": [
-      "christmas",
-      "julotta",
-      "christmas-morning-service",
-      "traditions",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q662",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "The church service early on the morning of 25 December is called Julotta, a Christmas morning service.",
-      "sv": "Gudstjänsten tidigt på morgonen den 25 december kallas Julotta."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Julotta is a church service early on the morning of 25 December. Lucia processions, Walpurgis bonfires, and midsummer poles belong to other holidays and traditions during the year.",
-      "sv": "Julotta är en gudstjänst i kyrkan tidigt på morgonen den 25 december. Lucia, valborgsbrasa och midsommarstång hör till andra högtider och traditioner under året."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Jul",
-      "page": 47
-    },
-    "difficulty": "medium",
-    "tags": [
-      "christmas",
-      "julotta",
-      "christmas-morning-service",
-      "traditions",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q663",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "The church service early on the morning of 25 December is called a Lucia procession.",
-      "sv": "Gudstjänsten tidigt på morgonen den 25 december kallas ett luciatåg."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Julotta is a church service early on the morning of 25 December. Lucia processions, Walpurgis bonfires, and midsummer poles belong to other holidays and traditions during the year.",
-      "sv": "Julotta är en gudstjänst i kyrkan tidigt på morgonen den 25 december. Lucia, valborgsbrasa och midsommarstång hör till andra högtider och traditioner under året."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Jul",
-      "page": 47
-    },
-    "difficulty": "medium",
-    "tags": [
-      "christmas",
-      "julotta",
-      "christmas-morning-service",
-      "traditions",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q664",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "single_choice",
-    "q": {
-      "en": "The church service early on the morning of 25 December is called ...",
-      "sv": "Gudstjänsten tidigt på morgonen den 25 december kallas ..."
+      "en": "Which answer best matches? What is the church service early on the morning of 25 December called?",
+      "sv": "Vilket svar stämmer bäst? Vad kallas gudstjänsten tidigt på morgonen den 25 december?"
     },
     "opts": [
       {
@@ -29023,6 +30443,185 @@
     "q": {
       "en": "Study question: What is common on Easter Saturday in Sweden?",
       "sv": "Vilken uppgift gäller vanligt på påskafton i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Eating eggs, lamb, salmon, and herring, and children getting candy in Easter eggs",
+        "sv": "Att äta ägg, lamm, lax och sill och att barn får godis i påskägg"
+      },
+      {
+        "en": "Lighting Advent candles and opening Advent calendars",
+        "sv": "Att tända adventsljus och öppna adventskalendrar"
+      },
+      {
+        "en": "Lighting candles on graves to remember people who have died",
+        "sv": "Att tända ljus på gravar för att minnas dem som har dött"
+      },
+      {
+        "en": "Holding demonstrations and speeches about social issues",
+        "sv": "Att ordna demonstrationer och tal om sociala frågor"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Påsk",
+      "page": 45
+    },
+    "difficulty": "easy",
+    "tags": [
+      "easter",
+      "easter-saturday",
+      "easter-eggs",
+      "holiday-food",
+      "traditions",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q662",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and for children to get candy in Easter eggs.",
+      "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill och att barn får godis i påskägg."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Påsk",
+      "page": 45
+    },
+    "difficulty": "medium",
+    "tags": [
+      "easter",
+      "easter-saturday",
+      "easter-eggs",
+      "holiday-food",
+      "traditions",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q663",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "On Easter Saturday, it is common to light Advent candles and open Advent calendars.",
+      "sv": "På påskafton är det vanligt att tända adventsljus och öppna adventskalendrar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Påsk",
+      "page": 45
+    },
+    "difficulty": "medium",
+    "tags": [
+      "easter",
+      "easter-saturday",
+      "easter-eggs",
+      "holiday-food",
+      "traditions",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q664",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is the church service early on the morning of 25 December called?",
+      "sv": "Välj rätt alternativ: Vad kallas gudstjänsten tidigt på morgonen den 25 december?"
+    },
+    "opts": [
+      {
+        "en": "Julotta, a Christmas morning service",
+        "sv": "Julotta"
+      },
+      {
+        "en": "Lucia procession",
+        "sv": "Luciatåg"
+      },
+      {
+        "en": "Walpurgis bonfire",
+        "sv": "Valborgsbrasa"
+      },
+      {
+        "en": "Midsummer pole",
+        "sv": "Midsommarstång"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Julotta is a church service early on the morning of 25 December. Lucia processions, Walpurgis bonfires, and midsummer poles belong to other holidays and traditions during the year.",
+      "sv": "Julotta är en gudstjänst i kyrkan tidigt på morgonen den 25 december. Lucia, valborgsbrasa och midsommarstång hör till andra högtider och traditioner under året."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Jul",
+      "page": 47
+    },
+    "difficulty": "medium",
+    "tags": [
+      "christmas",
+      "julotta",
+      "christmas-morning-service",
+      "traditions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q665",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What is common on Easter Saturday in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad är vanligt på påskafton i Sverige?"
     },
     "opts": [
       {
@@ -29152,8 +30751,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about Påsk?",
-      "sv": "På påskafton är det vanligt ..."
+      "en": "Choose the correct option: What is common on Easter Saturday in Sweden?",
+      "sv": "Välj rätt alternativ: Vad är vanligt på påskafton i Sverige?"
     },
     "opts": [
       {
@@ -29201,136 +30800,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What do children often do with an Advent calendar at home?",
-      "sv": "Kunskapsfråga: Vad gör barn ofta med en adventskalender hemma?"
-    },
-    "opts": [
-      {
-        "en": "Open one door each day until Christmas Eve",
-        "sv": "Öppnar en lucka varje dag fram till julafton"
-      },
-      {
-        "en": "Light large bonfires in the evening",
-        "sv": "Tänder stora brasor på kvällen"
-      },
-      {
-        "en": "Wear a crown of lights in a Lucia procession",
-        "sv": "Bär ljuskrona i ett luciatåg"
-      },
-      {
-        "en": "Go to julotta early in the morning",
-        "sv": "Går till julotta tidigt på morgonen"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "During Advent, many people have an Advent calendar at home, and children open one door each day until Christmas Eve. Bonfires, a crown of lights in a Lucia procession, and julotta belong to Walpurgis Night, Lucia, and Christmas, not the Advent calendar.",
-      "sv": "Under advent har många en adventskalender hemma, och barn öppnar en lucka varje dag fram till julafton. Brasor, ljuskrona i luciatåg och julotta hör till valborg, lucia och jul, inte adventskalendern."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Advent",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "advent",
-      "advent-calendar",
-      "christmas-eve",
-      "traditions",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q670",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "Children with an Advent calendar at home often open one door each day until Christmas Eve.",
-      "sv": "Barn med en adventskalender hemma öppnar en lucka varje dag fram till julafton."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "During Advent, many people have an Advent calendar at home, and children open one door each day until Christmas Eve. Bonfires, a crown of lights in a Lucia procession, and julotta belong to Walpurgis Night, Lucia, and Christmas, not the Advent calendar.",
-      "sv": "Under advent har många en adventskalender hemma, och barn öppnar en lucka varje dag fram till julafton. Brasor, ljuskrona i luciatåg och julotta hör till valborg, lucia och jul, inte adventskalendern."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Advent",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "advent",
-      "advent-calendar",
-      "christmas-eve",
-      "traditions",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q671",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "During Advent, children often light large bonfires in the evening.",
-      "sv": "Under advent tänder barn stora brasor på kvällen."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "During Advent, many people have an Advent calendar at home, and children open one door each day until Christmas Eve. Bonfires, a crown of lights in a Lucia procession, and julotta belong to Walpurgis Night, Lucia, and Christmas, not the Advent calendar.",
-      "sv": "Under advent har många en adventskalender hemma, och barn öppnar en lucka varje dag fram till julafton. Brasor, ljuskrona i luciatåg och julotta hör till valborg, lucia och jul, inte adventskalendern."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Advent",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "advent",
-      "advent-calendar",
-      "christmas-eve",
-      "traditions",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q672",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "single_choice",
-    "q": {
-      "en": "Children with an Advent calendar at home often ...",
-      "sv": "Barn med en adventskalender hemma ..."
+      "en": "Which answer best matches? What do children often do with an Advent calendar at home?",
+      "sv": "Vilket svar stämmer bäst? Vad gör barn ofta med en adventskalender hemma?"
     },
     "opts": [
       {
@@ -29421,7 +30892,7 @@
     ]
   },
   {
-    "id": "q674",
+    "id": "q670",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29450,7 +30921,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
       "national-day",
       "public-holiday",
@@ -29462,7 +30933,7 @@
     ]
   },
   {
-    "id": "q675",
+    "id": "q671",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29491,7 +30962,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
       "national-day",
       "public-holiday",
@@ -29503,13 +30974,61 @@
     ]
   },
   {
-    "id": "q676",
+    "id": "q672",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Sweden’s National Day became a public holiday through a Riksdag decision in ...",
-      "sv": "Sveriges nationaldag blev en helgdag genom riksdagsbeslut ..."
+      "en": "Choose the correct option: What do children often do with an Advent calendar at home?",
+      "sv": "Välj rätt alternativ: Vad gör barn ofta med en adventskalender hemma?"
+    },
+    "opts": [
+      {
+        "en": "Open one door each day until Christmas Eve",
+        "sv": "Öppnar en lucka varje dag fram till julafton"
+      },
+      {
+        "en": "Light large bonfires in the evening",
+        "sv": "Tänder stora brasor på kvällen"
+      },
+      {
+        "en": "Wear a crown of lights in a Lucia procession",
+        "sv": "Bär ljuskrona i ett luciatåg"
+      },
+      {
+        "en": "Go to julotta early in the morning",
+        "sv": "Går till julotta tidigt på morgonen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "During Advent, many people have an Advent calendar at home, and children open one door each day until Christmas Eve. Bonfires, a crown of lights in a Lucia procession, and julotta belong to Walpurgis Night, Lucia, and Christmas, not the Advent calendar.",
+      "sv": "Under advent har många en adventskalender hemma, och barn öppnar en lucka varje dag fram till julafton. Brasor, ljuskrona i luciatåg och julotta hör till valborg, lucia och jul, inte adventskalendern."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Advent",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "advent",
+      "advent-calendar",
+      "christmas-eve",
+      "traditions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q673",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? In which year did Sweden’s National Day become a public holiday through a Riksdag decision?",
+      "sv": "Vilket svar stämmer bäst? Vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?"
     },
     "opts": [
       {
@@ -29600,7 +31119,7 @@
     ]
   },
   {
-    "id": "q678",
+    "id": "q674",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29629,7 +31148,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "all-saints-day",
       "remembrance",
@@ -29640,7 +31159,7 @@
     ]
   },
   {
-    "id": "q679",
+    "id": "q675",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29669,7 +31188,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "all-saints-day",
       "remembrance",
@@ -29680,13 +31199,62 @@
     ]
   },
   {
-    "id": "q680",
+    "id": "q676",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "All Saints’ Day is observed ...",
-      "sv": "Alla helgons dag firas ..."
+      "en": "Choose the correct option: In which year did Sweden’s National Day become a public holiday through a Riksdag decision?",
+      "sv": "Välj rätt alternativ: Vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?"
+    },
+    "opts": [
+      {
+        "en": "2005",
+        "sv": "2005"
+      },
+      {
+        "en": "1523",
+        "sv": "1523"
+      },
+      {
+        "en": "1809",
+        "sv": "1809"
+      },
+      {
+        "en": "1995",
+        "sv": "1995"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden’s National Day on 6 June became a public holiday through a Riksdag decision in 2005. The years 1523 and 1809 are mentioned as historical reasons for the date, while 1995 belongs to Sweden’s EU membership.",
+      "sv": "Sveriges nationaldag den 6 juni gjordes till helgdag genom ett riksdagsbeslut 2005. Åren 1523 och 1809 nämns som historiska skäl till datumet, medan 1995 hör till Sveriges EU-medlemskap."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Sveriges nationaldag",
+      "page": 46
+    },
+    "difficulty": "medium",
+    "tags": [
+      "national-day",
+      "public-holiday",
+      "riksdag-decision",
+      "2005",
+      "traditions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q677",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? When is All Saints’ Day observed in Sweden?",
+      "sv": "Vilket svar stämmer bäst? När firas Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -29776,7 +31344,7 @@
     ]
   },
   {
-    "id": "q682",
+    "id": "q678",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29816,7 +31384,7 @@
     ]
   },
   {
-    "id": "q683",
+    "id": "q679",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29856,13 +31424,61 @@
     ]
   },
   {
-    "id": "q684",
+    "id": "q680",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... are common in many homes during Advent.",
-      "sv": "Under advent är det vanligt med ... i många hem."
+      "en": "Choose the correct option: When is All Saints’ Day observed in Sweden?",
+      "sv": "Välj rätt alternativ: När firas Alla helgons dag i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "On a Saturday at the end of October or the beginning of November",
+        "sv": "På en lördag i slutet av oktober eller början av november"
+      },
+      {
+        "en": "On a Friday between 19 and 25 June",
+        "sv": "På en fredag mellan 19 och 25 juni"
+      },
+      {
+        "en": "On 30 April every year",
+        "sv": "På den 30 april varje år"
+      },
+      {
+        "en": "On the four Sundays before Christmas Day",
+        "sv": "På de fyra söndagarna före juldagen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year, so those options are incorrect.",
+      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året, därför är de alternativen fel."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Alla helgons dag",
+      "page": 46
+    },
+    "difficulty": "easy",
+    "tags": [
+      "all-saints-day",
+      "remembrance",
+      "calendar",
+      "traditions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q681",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What is common in many homes during Advent?",
+      "sv": "Vilket svar stämmer bäst? Vad är vanligt i många hem under advent?"
     },
     "opts": [
       {
@@ -29911,6 +31527,184 @@
     "q": {
       "en": "Study question: What do many people do on All Saints’ Day in Sweden?",
       "sv": "Kunskapsfråga: Vad gör många på Alla helgons dag i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Go to cemeteries and light candles on graves",
+        "sv": "Går till kyrkogården och tänder ljus på gravar"
+      },
+      {
+        "en": "Dance around a midsummer pole and make flower wreaths",
+        "sv": "Dansar runt midsommarstången och binder blomsterkransar"
+      },
+      {
+        "en": "Light large bonfires to welcome spring",
+        "sv": "Tänder stora brasor för att välkomna våren"
+      },
+      {
+        "en": "Open one Advent calendar door each day",
+        "sv": "Öppnar en lucka i adventskalendern varje dag"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Alla helgons dag",
+      "page": 46
+    },
+    "difficulty": "easy",
+    "tags": [
+      "all-saints-day",
+      "cemetery",
+      "candles",
+      "remembrance",
+      "traditions",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q682",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on graves.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på gravar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Alla helgons dag",
+      "page": 46
+    },
+    "difficulty": "easy",
+    "tags": [
+      "all-saints-day",
+      "cemetery",
+      "candles",
+      "remembrance",
+      "traditions",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q683",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "On All Saints’ Day, many people dance around a midsummer pole and make flower wreaths.",
+      "sv": "På Alla helgons dag dansar många runt midsommarstången och binder blomsterkransar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "During Advent, many homes have a lit Advent star in the window and an Advent candleholder with four candles on the table. One candle is lit each Sunday until Christmas, while midsummer poles, fireworks, and demonstrations belong to other holidays.",
+      "sv": "Under advent har många en lysande adventsstjärna i fönstret och en adventsljusstake med fyra ljus på bordet. Ett ljus tänds varje söndag fram till jul, medan midsommarstång, fyrverkerier och demonstrationer hör till andra högtider."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Advent",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "advent",
+      "advent-star",
+      "advent-candleholder",
+      "christmas",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q684",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is common in many homes during Advent?",
+      "sv": "Välj rätt alternativ: Vad är vanligt i många hem under advent?"
+    },
+    "opts": [
+      {
+        "en": "An Advent star in the window and an Advent candleholder with four candles",
+        "sv": "En adventsstjärna i fönstret och en adventsljusstake med fyra ljus"
+      },
+      {
+        "en": "A midsummer pole in the living room and herring on the table",
+        "sv": "En midsommarstång i vardagsrummet och sill på bordet"
+      },
+      {
+        "en": "Fireworks every Sunday until Christmas Eve",
+        "sv": "Fyrverkerier varje söndag fram till julafton"
+      },
+      {
+        "en": "Demonstrations with speeches about social and political issues",
+        "sv": "Demonstrationer med tal om sociala och politiska frågor"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "During Advent, many homes have a lit Advent star in the window and an Advent candleholder with four candles on the table. One candle is lit each Sunday until Christmas, while midsummer poles, fireworks, and demonstrations belong to other holidays.",
+      "sv": "Under advent har många en lysande adventsstjärna i fönstret och en adventsljusstake med fyra ljus på bordet. Ett ljus tänds varje söndag fram till jul, medan midsommarstång, fyrverkerier och demonstrationer hör till andra högtider."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Advent",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "advent",
+      "advent-star",
+      "advent-candleholder",
+      "christmas",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q685",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What do many people do on All Saints’ Day in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gör många på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -30040,8 +31834,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On All Saints’ Day, many people ...",
-      "sv": "Vad är korrekt om många på Alla helgons dag i Sverige?"
+      "en": "Choose the correct option: What do many people do on All Saints’ Day in Sweden?",
+      "sv": "Välj rätt alternativ: Vad gör många på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -30089,8 +31883,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What can happen to traditions when people move to other countries?",
-      "sv": "Kunskapsfråga: Vad kan hända med traditioner när människor flyttar till andra länder?"
+      "en": "Which answer best matches? What can happen to traditions when people move to other countries?",
+      "sv": "Vilket svar stämmer bäst? Vad kan hända med traditioner när människor flyttar till andra länder?"
     },
     "opts": [
       {
@@ -30265,8 +32059,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What do many people do with a tree at Christmas in Sweden?",
-      "sv": "Kunskapsfråga: Vad gör många med en gran vid jul i Sverige?"
+      "en": "Which answer best matches? What do many people do with a tree at Christmas in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gör många med en gran vid jul i Sverige?"
     },
     "opts": [
       {
@@ -30393,8 +32187,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "At Christmas, many people ...",
-      "sv": "Vad är korrekt om många med en gran vid jul i Sverige?"
+      "en": "Choose the correct option: What do many people do with a tree at Christmas in Sweden?",
+      "sv": "Välj rätt alternativ: Vad gör många med en gran vid jul i Sverige?"
     },
     "opts": [
       {
@@ -30441,8 +32235,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What does Christmas traditionally celebrate in Christianity?",
-      "sv": "Kunskapsfråga: Vad firar julen traditionellt inom kristendomen?"
+      "en": "Which answer best matches? What does Christmas traditionally celebrate in Christianity?",
+      "sv": "Vilket svar stämmer bäst? Vad firar julen traditionellt inom kristendomen?"
     },
     "opts": [
       {
@@ -30569,8 +32363,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Christmas traditionally celebrates ... in Christianity.",
-      "sv": "Julen firar traditionellt ... inom kristendomen."
+      "en": "Choose the correct option: What does Christmas traditionally celebrate in Christianity?",
+      "sv": "Välj rätt alternativ: Vad firar julen traditionellt inom kristendomen?"
     },
     "opts": [
       {
@@ -30617,8 +32411,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about Christmas celebrations in Sweden?",
-      "sv": "Vilken uppgift stämmer om julfirande i Sverige?"
+      "en": "Which answer best matches? Which statement is correct about Christmas celebrations in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om julfirande i Sverige?"
     },
     "opts": [
       {
@@ -30745,8 +32539,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about Christmas celebrations in Sweden?",
-      "sv": "Vad är korrekt om julfirande i Sverige?"
+      "en": "Choose the correct option: Which statement is correct about Christmas celebrations in Sweden?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om julfirande i Sverige?"
     },
     "opts": [
       {
@@ -30793,136 +32587,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Study question: What is commonly served on 13 December in connection with Lucia?",
-      "sv": "Vad är vanligt att man bjuda på den 13 december i samband med lucia?"
-    },
-    "opts": [
-      {
-        "en": "Special saffron Lucia buns",
-        "sv": "Särskilda lussebullar med saffran"
-      },
-      {
-        "en": "Herring, new potatoes, and strawberries",
-        "sv": "Sill, färskpotatis och jordgubbar"
-      },
-      {
-        "en": "Eggs, lamb, salmon, and herring",
-        "sv": "Ägg, lamm, lax och sill"
-      },
-      {
-        "en": "Candy in Easter eggs",
-        "sv": "Godis i påskägg"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "On Lucia Day, 13 December, special saffron Lucia buns are commonly served. Herring, new potatoes, and strawberries belong to Midsummer, while eggs, lamb, salmon, herring, and candy in Easter eggs belong to Easter.",
-      "sv": "På luciadagen den 13 december brukar man bjuda på särskilda lussebullar med saffran. Sill, färskpotatis och jordgubbar hör till midsommar, medan ägg, lamm, lax, sill och godis i påskägg hör till påsk."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Lucia",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "lucia",
-      "saffron-buns",
-      "december-13",
-      "traditions",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q706",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "On 13 December, people commonly serve special saffron Lucia buns.",
-      "sv": "Den 13 december brukar man bjuda på särskilda lussebullar med saffran."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "On Lucia Day, 13 December, special saffron Lucia buns are commonly served. Herring, new potatoes, and strawberries belong to Midsummer, while eggs, lamb, salmon, herring, and candy in Easter eggs belong to Easter.",
-      "sv": "På luciadagen den 13 december brukar man bjuda på särskilda lussebullar med saffran. Sill, färskpotatis och jordgubbar hör till midsommar, medan ägg, lamm, lax, sill och godis i påskägg hör till påsk."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Lucia",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "lucia",
-      "saffron-buns",
-      "december-13",
-      "traditions",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q707",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "true_false",
-    "q": {
-      "en": "On 13 December, people commonly serve herring, new potatoes, and strawberries.",
-      "sv": "Den 13 december brukar man bjuda på sill, färskpotatis och jordgubbar."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "On Lucia Day, 13 December, special saffron Lucia buns are commonly served. Herring, new potatoes, and strawberries belong to Midsummer, while eggs, lamb, salmon, herring, and candy in Easter eggs belong to Easter.",
-      "sv": "På luciadagen den 13 december brukar man bjuda på särskilda lussebullar med saffran. Sill, färskpotatis och jordgubbar hör till midsommar, medan ägg, lamm, lax, sill och godis i påskägg hör till påsk."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Traditioner och högtider",
-      "section": "Lucia",
-      "page": 47
-    },
-    "difficulty": "easy",
-    "tags": [
-      "lucia",
-      "saffron-buns",
-      "december-13",
-      "traditions",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q708",
-    "chapterId": 13,
-    "chapter": "Ch. 13 · Traditions and holidays",
-    "type": "single_choice",
-    "q": {
-      "en": "On 13 December, people commonly serve ...",
-      "sv": "Den 13 december brukar man bjuda på ..."
+      "en": "Which answer best matches? What is commonly served on 13 December in connection with Lucia?",
+      "sv": "Vilket svar stämmer bäst? Vad brukar man bjuda på den 13 december i samband med lucia?"
     },
     "opts": [
       {
@@ -30971,6 +32637,182 @@
     "q": {
       "en": "What number applies to islands does Sweden have?",
       "sv": "Vilket antal gäller för öar har Sverige?"
+    },
+    "opts": [
+      {
+        "en": "About 250,000",
+        "sv": "Cirka 250 000"
+      },
+      {
+        "en": "About 25,000",
+        "sv": "Cirka 25 000"
+      },
+      {
+        "en": "About 2,500",
+        "sv": "Cirka 2 500"
+      },
+      {
+        "en": "About 250",
+        "sv": "Cirka 250"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q706",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden has about 250,000 islands.",
+      "sv": "Sverige har cirka 250 000 öar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q707",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "true_false",
+    "q": {
+      "en": "Sweden has about 25,000 islands.",
+      "sv": "Sverige har cirka 25 000 öar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "islands",
+      "archipelago",
+      "sweden",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q708",
+    "chapterId": 13,
+    "chapter": "Ch. 13 · Traditions and holidays",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is commonly served on 13 December in connection with Lucia?",
+      "sv": "Välj rätt alternativ: Vad brukar man bjuda på den 13 december i samband med lucia?"
+    },
+    "opts": [
+      {
+        "en": "Special saffron Lucia buns",
+        "sv": "Särskilda lussebullar med saffran"
+      },
+      {
+        "en": "Herring, new potatoes, and strawberries",
+        "sv": "Sill, färskpotatis och jordgubbar"
+      },
+      {
+        "en": "Eggs, lamb, salmon, and herring",
+        "sv": "Ägg, lamm, lax och sill"
+      },
+      {
+        "en": "Candy in Easter eggs",
+        "sv": "Godis i påskägg"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On Lucia Day, 13 December, special saffron Lucia buns are commonly served. Herring, new potatoes, and strawberries belong to Midsummer, while eggs, lamb, salmon, herring, and candy in Easter eggs belong to Easter.",
+      "sv": "På luciadagen den 13 december brukar man bjuda på särskilda lussebullar med saffran. Sill, färskpotatis och jordgubbar hör till midsommar, medan ägg, lamm, lax, sill och godis i påskägg hör till påsk."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Traditioner och högtider",
+      "section": "Lucia",
+      "page": 47
+    },
+    "difficulty": "easy",
+    "tags": [
+      "lucia",
+      "saffron-buns",
+      "december-13",
+      "traditions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q709",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? How many islands does Sweden have?",
+      "sv": "Vilket svar stämmer bäst? Hur många öar har Sverige?"
     },
     "opts": [
       {
@@ -31097,8 +32939,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden has ... islands.",
-      "sv": "Sverige har ... öar."
+      "en": "Choose the correct option: How many islands does Sweden have?",
+      "sv": "Välj rätt alternativ: Hur många öar har Sverige?"
     },
     "opts": [
       {
@@ -31325,8 +33167,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What number applies to historical provinces is Sweden divided into?",
-      "sv": "Vilket antal gäller för landskap är Sverige indelat i?"
+      "en": "Which answer best matches? How many historical provinces is Sweden divided into?",
+      "sv": "Vilket svar stämmer bäst? Hur många landskap är Sverige indelat i?"
     },
     "opts": [
       {

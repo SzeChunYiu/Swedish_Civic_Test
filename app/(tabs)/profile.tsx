@@ -17,8 +17,6 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
-  audioEnabledBadge: string;
-  audioMutedBadge: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
@@ -41,8 +39,6 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
-    audioEnabledBadge: 'Ljud på',
-    audioMutedBadge: 'Ljud av',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
@@ -51,9 +47,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Justera mål, språk och ljud',
-    openSettingsAccessibilityLabel: 'Justera mål, språk och ljud',
-    openSettingsHint: 'Öppnar inställningar för dagligt mål, språk och ljud.',
+    openSettings: 'Öppna inställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar',
     questionsHelper: 'frågor',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
@@ -64,8 +59,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
-    audioEnabledBadge: 'Audio on',
-    audioMutedBadge: 'Audio off',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
@@ -74,9 +67,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Adjust goal, language, and audio',
-    openSettingsAccessibilityLabel: 'Adjust goal, language, and audio',
-    openSettingsHint: 'Opens settings for daily goal, language, and audio.',
+    openSettings: 'Open settings',
+    openSettingsAccessibilityLabel: 'Open settings',
     questionsHelper: 'questions',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
@@ -117,11 +109,9 @@ export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
-  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
-  const audioBadge = audioEnabled ? copy.audioEnabledBadge : copy.audioMutedBadge;
   const level = calculateLevel(totalXp);
   const currentStreak = calculateStreak(answerDates);
   const wrongAnswerCount = Object.values(questionProgress).reduce(
@@ -159,15 +149,6 @@ export default function Screen() {
           <Badge tone="warm">{copy.languageBadge}</Badge>
           <Badge tone={audioEnabled ? 'green' : 'warm'}>{audioBadge}</Badge>
         </View>
-        <Link
-          accessibilityHint={copy.openSettingsHint}
-          accessibilityLabel={copy.openSettingsAccessibilityLabel}
-          accessibilityRole="link"
-          href="/settings"
-          style={styles.settingsLink}
-        >
-          {copy.openSettings}
-        </Link>
       </Card>
 
       <Card style={styles.cardWide}>
@@ -182,6 +163,15 @@ export default function Screen() {
         runtimeOptions={purchaseRuntime}
       />
       <ComplianceLinks />
+
+      <Link
+        accessibilityLabel={copy.openSettingsAccessibilityLabel}
+        accessibilityRole="link"
+        href="/settings"
+        style={styles.settingsLink}
+      >
+        {copy.openSettings}
+      </Link>
     </ScreenShell>
   );
 }
@@ -208,14 +198,12 @@ const styles = StyleSheet.create({
   settingsLink: {
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
-    borderRadius: radius.small,
+    borderRadius: radius.micro,
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-    minHeight: space[6],
     paddingHorizontal: space[2],
-    paddingVertical: space[1.5],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
   },
 });

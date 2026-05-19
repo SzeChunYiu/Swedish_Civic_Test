@@ -5,6 +5,8 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
+const { readWebDocumentMetadata } = require('./prepare-web-export.js');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 function readJson(relativePath) {
@@ -1356,6 +1358,22 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     },
   );
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
+
+  const wrongLanguage = metadata.language === 'sv' ? 'en' : 'sv';
+  const wrongIndex = index.replace(`lang="${metadata.language}"`, `lang="${wrongLanguage}"`);
+  fs.writeFileSync(path.join(outputDir, 'index.html'), wrongIndex);
+  fs.writeFileSync(path.join(outputDir, '404.html'), wrongIndex);
+
+  const staleMetadataCheck = spawnSync(
+    process.execPath,
+    ['scripts/prepare-web-export.js', '--check', outputDir],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.notEqual(staleMetadataCheck.status, 0);
+  assert.match(staleMetadataCheck.stderr || staleMetadataCheck.stdout, /must declare lang=/);
 });
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {

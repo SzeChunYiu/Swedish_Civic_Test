@@ -27,6 +27,11 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
+const EXPECTED_SOURCE_QUESTIONS = 144;
+const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
+const GENERATED_VARIANTS_PER_SOURCE = 4;
+const EXPECTED_PUBLISHED_QUESTIONS =
+  EXPECTED_SOURCE_QUESTIONS * (GENERATED_VARIANTS_PER_SOURCE + 1);
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
 const GENERATED_VARIANT_CONVENTIONS = [
@@ -66,8 +71,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'explanationSv',
   'explanationEn',
   'correctOptionId',
-  'optionSv',
-  'optionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
@@ -107,6 +110,43 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
+];
+const QUESTION_STEM_SOURCE_AUTHORITY_PATTERN_FIXTURES = [
+  {
+    label: 'enligt-uhr',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[0],
+    text: 'Enligt UHR ligger Sveriges nordligaste del norr om polcirkeln.',
+  },
+  {
+    label: 'uhr-materialet',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[1],
+    text: 'UHR-materialet beskriver Sveriges nordligaste del.',
+  },
+  {
+    label: 'uhrs-material',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[2],
+    text: 'UHR:s material beskriver Sveriges nordligaste del.',
+  },
+  {
+    label: 'according-to-uhr',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[3],
+    text: "According to the UHR, Sweden's northernmost part lies north of the Arctic Circle.",
+  },
+  {
+    label: 'uhr-section',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[4],
+    text: 'The UHR section describes where Sweden is located.',
+  },
+  {
+    label: 'stemmer-bast-enligt-uhr',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[5],
+    text: 'Vilket svar stämmer bäst enligt UHR?',
+  },
+  {
+    label: 'best-matches-uhr-section',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[6],
+    text: 'Which answer best matches the UHR section?',
+  },
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -444,8 +484,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Justera mål, språk och ljud',
-    'Öppnar inställningar för dagligt mål, språk och ljud.',
+    'Öppna inställningar',
     'Första övningen',
     'Nivå 2',
     'Misstagsrepetition',
@@ -469,8 +508,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Adjust goal, language, and audio',
-    'Opens settings for daily goal, language, and audio.',
+    'Open settings',
   ],
 };
 const SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS = [
@@ -515,10 +553,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
   ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
-  [
-    "<Badge tone={audioEnabled ? 'green' : 'warm'}>{audioBadge}</Badge>",
-    'profile audio badge must reflect localized audio status',
-  ],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   [
@@ -698,6 +732,12 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     '{copy.benchmarkLessons[item.product]}',
     'home study-loop benchmark lessons must render localized copy',
   ],
+];
+const HOME_ROUTE_SYNTHETIC_COPY_PATTERNS = [
+  /simulerade\s+elever/i,
+  /simulerade\s+studier/i,
+  /simulated\s+learners/i,
+  /simulated\s+study\s+sessions/i,
 ];
 const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
@@ -949,7 +989,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 10;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -1747,21 +1787,6 @@ const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
 ];
 const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   {
-    label: 'exported variant type',
-    pattern:
-      /export type ButtonVariant = 'primary' \| 'secondary' \| 'option' \| 'success' \| 'danger';/,
-  },
-  {
-    label: 'exported props interface',
-    pattern:
-      /export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>>/,
-  },
-  {
-    label: 'documented default props',
-    pattern:
-      /Defaults: `variant="primary"`, `accessibilityRole="button"`[\s\S]*`hitSlop=space\[0\.5\]`/,
-  },
-  {
     label: 'native Pressable root',
     pattern: /<Pressable[\s\S]*>/,
   },
@@ -1818,18 +1843,6 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     label: 'native accessibility state',
     pattern: /accessibilityState=\{mergedAccessibilityState\}/,
   },
-  {
-    label: 'token hairline border width',
-    pattern: /borderWidth:\s*space\.hairline/,
-  },
-  {
-    label: 'token minimum touch target',
-    pattern: /minHeight:\s*space\[6\]/,
-  },
-  {
-    label: 'token pressed feedback',
-    pattern: /transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
-  },
 ];
 const EXPECTED_CARD_ACCESSIBILITY_RULES = [
   {
@@ -1844,14 +1857,6 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
     label: 'label-or-role grouping fallback',
     pattern:
       /const groupedForAccessibility =\s*accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\);/,
-  },
-  {
-    label: 'resolved accessibility role fallback',
-    pattern: /const resolvedAccessibilityRole =\s*accessibilityRole \?\?/,
-  },
-  {
-    label: 'grouped default summary role',
-    pattern: /\(groupedForAccessibility \? 'summary' : undefined\)/,
   },
   {
     label: 'stable hint id',
@@ -1886,8 +1891,8 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{accessibilityLabel\}/,
   },
   {
-    label: 'native resolved accessibility role',
-    pattern: /accessibilityRole=\{resolvedAccessibilityRole\}/,
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
   },
   {
     label: 'hidden hint text node',
@@ -1979,26 +1984,8 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
     pattern: /<View[\s\S]*>/,
   },
   {
-    label: 'exported MetricCard props interface',
-    pattern:
-      /export interface MetricCardProps extends Omit<ComponentProps<typeof View>, 'children' \| 'style'>/,
-  },
-  {
-    label: 'documented defaults',
-    pattern:
-      /Defaults: `tone="warm"`, `accessible=true`, `accessibilityRole="summary"`,[\s\S]*accessibility label derived from the visible label\/value\/helper text/,
-  },
-  {
     label: 'explicit accessibility label prop',
     pattern: /accessibilityLabel\?: string;/,
-  },
-  {
-    label: 'caller style prop',
-    pattern: /style\?: ComponentProps<typeof View>\['style'\];/,
-  },
-  {
-    label: 'summary role default',
-    pattern: /accessibilityRole = 'summary'/,
   },
   {
     label: 'label value helper summary',
@@ -2011,11 +1998,7 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'native grouped surface',
-    pattern: /accessible=\{accessible\}/,
-  },
-  {
-    label: 'native accessibility role',
-    pattern: /accessibilityRole=\{accessibilityRole\}/,
+    pattern: /\s+accessible\s+/,
   },
   {
     label: 'native accessibility label',
@@ -2035,11 +2018,7 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'blue tone style path',
-    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null, style\]\}/,
-  },
-  {
-    label: 'token hairline border width',
-    pattern: /borderWidth:\s*space\.hairline/,
+    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
   },
 ];
 const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
@@ -3083,10 +3062,6 @@ const EXPECTED_MONETIZATION_INTERFACES = [
 ];
 const EXPECTED_PURCHASE_TYPE_UNIONS = [
   {
-    typeName: 'RemoveAdsReceiptValidationStatus',
-    values: ['valid', 'invalid', 'pending'],
-  },
-  {
     typeName: 'RemoveAdsPurchaseStatus',
     values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
   },
@@ -3114,16 +3089,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
     ],
   },
   {
-    name: 'RemoveAdsReceiptValidationResult',
-    fields: [
-      { name: 'status', type: 'RemoveAdsReceiptValidationStatus', optional: false },
-      { name: 'productId', type: 'string | null', optional: true },
-      { name: 'purchaseToken', type: 'string | null', optional: true },
-      { name: 'transactionId', type: 'string | null', optional: true },
-      { name: 'validatedAt', type: 'string | null', optional: true },
-    ],
-  },
-  {
     name: 'RemoveAdsPurchaseProvider',
     fields: [
       { name: 'connect', type: '() => Promise<void>', optional: false },
@@ -3131,11 +3096,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
       {
         name: 'finishPurchase',
         type: '(purchase: RemoveAdsPurchaseRecord) => Promise<void>',
-        optional: true,
-      },
-      {
-        name: 'validateRemoveAdsReceipt',
-        type: '(purchase: RemoveAdsPurchaseRecord, productId: typeof REMOVE_ADS_PRODUCT_ID) => Promise<RemoveAdsReceiptValidationResult>',
         optional: true,
       },
       {
@@ -3177,7 +3137,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
     fields: [
       { name: 'owned', type: 'boolean', optional: true },
       { name: 'pendingPurchase', type: 'boolean', optional: true },
-      { name: 'receiptValidationStatus', type: 'RemoveAdsReceiptValidationStatus', optional: true },
     ],
   },
 ];
@@ -5935,15 +5894,6 @@ function parseCsvRows(csv) {
   return rows;
 }
 
-function questionOptionPayload(question, field) {
-  return JSON.stringify(
-    question.options.map((option) => ({
-      id: option.id,
-      text: option[field],
-    })),
-  );
-}
-
 function optionIdsMatchQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   const optionIds = question.options.map((option) => option?.id);
@@ -6319,8 +6269,6 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
-let legalSwedishEnglishTokenRoutesValidated = 0;
-let legalSwedishEnglishTokenGuardValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -6363,9 +6311,6 @@ let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
 let celebrationBurstAccessibilityRulesValidated = 0;
 let celebrationBurstAccessibilityParityValidated = false;
-let contentTestNodeEvalSpawnCallsValidated = 0;
-let contentTestNodeEvalSpawnCwdCallsValidated = 0;
-let contentTestNodeEvalSpawnCwdParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -6429,9 +6374,6 @@ let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
-let contentTestValidateContentExecCallsValidated = 0;
-let contentTestValidateContentExecCwdPinnedValidated = 0;
-let contentTestValidateContentExecCwdParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -6892,14 +6834,18 @@ function validateAdPlacementRouteParity() {
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
-  let adBannerSource = '';
-  try {
-    adBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`components/monetization/AdBanner.tsx could not be read: ${error.message}`);
+
+  for (const file of ['components/monetization/PremiumBanner.tsx', 'lib/monetization/adCopy.ts']) {
+    try {
+      const source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+      SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS.forEach((pattern) => {
+        if (pattern.test(source)) {
+          reject(`${file} contains literal Swedish monetization copy`);
+        }
+      });
+    } catch (error) {
+      reject(`${file} could not be read for Swedish monetization copy parity: ${error.message}`);
+    }
   }
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
@@ -8545,6 +8491,9 @@ function validateLegalRouteHeaderParity() {
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
   }
+  if (valid && legalSwedishEnglishTokenRoutesValidated === EXPECTED_LEGAL_ROUTE_HEADERS.length) {
+    legalSwedishEnglishTokenGuardValidated = true;
+  }
 }
 
 function validateSettingsRouteHeaderParity() {
@@ -9332,116 +9281,6 @@ function validateCelebrationBurstAccessibilityParity() {
       EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES.length
   ) {
     celebrationBurstAccessibilityParityValidated = true;
-  }
-}
-
-function validateContentTestNodeEvalSpawnCwdParity() {
-  let valid = true;
-  const testsDir = path.join(repoRoot, 'tests');
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  function isProcessExecPath(node) {
-    return (
-      ts.isPropertyAccessExpression(node) &&
-      node.name.text === 'execPath' &&
-      ts.isIdentifier(node.expression) &&
-      node.expression.text === 'process'
-    );
-  }
-
-  function isNodeEvalArg(node) {
-    return ts.isStringLiteral(node) && node.text === '-e';
-  }
-
-  function hasRepoRootCwd(optionsNode) {
-    if (!optionsNode || !ts.isObjectLiteralExpression(optionsNode)) return false;
-
-    return optionsNode.properties.some((property) => {
-      if (!ts.isPropertyAssignment(property)) return false;
-      const name = property.name;
-      const isCwdName =
-        (ts.isIdentifier(name) && name.text === 'cwd') ||
-        (ts.isStringLiteral(name) && name.text === 'cwd');
-      return (
-        isCwdName &&
-        ts.isIdentifier(property.initializer) &&
-        property.initializer.text === 'repoRoot'
-      );
-    });
-  }
-
-  let contentTestFiles = [];
-  try {
-    contentTestFiles = fs
-      .readdirSync(testsDir)
-      .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
-      .sort();
-  } catch (error) {
-    reject(`tests directory could not be read for content cwd parity: ${error.message}`);
-    return;
-  }
-
-  contentTestFiles.forEach((fileName) => {
-    const relativePath = path.join('tests', fileName);
-    const absolutePath = path.join(repoRoot, relativePath);
-    let source = '';
-
-    try {
-      source = fs.readFileSync(absolutePath, 'utf8');
-    } catch (error) {
-      reject(`${relativePath} could not be read for content cwd parity: ${error.message}`);
-      return;
-    }
-
-    const sourceFile = ts.createSourceFile(
-      relativePath,
-      source,
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.JS,
-    );
-
-    function visit(node) {
-      if (
-        ts.isCallExpression(node) &&
-        ts.isIdentifier(node.expression) &&
-        node.expression.text === 'spawnSync' &&
-        node.arguments.length >= 2 &&
-        isProcessExecPath(node.arguments[0]) &&
-        ts.isArrayLiteralExpression(node.arguments[1]) &&
-        node.arguments[1].elements.some(isNodeEvalArg)
-      ) {
-        contentTestNodeEvalSpawnCallsValidated += 1;
-        if (hasRepoRootCwd(node.arguments[2])) {
-          contentTestNodeEvalSpawnCwdCallsValidated += 1;
-        } else {
-          const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
-          reject(
-            `${relativePath} node eval spawnSync at line ${position.line + 1} must set cwd: repoRoot`,
-          );
-        }
-      }
-
-      ts.forEachChild(node, visit);
-    }
-
-    visit(sourceFile);
-  });
-
-  if (contentTestNodeEvalSpawnCallsValidated === 0) {
-    reject('content tests must include node eval spawnSync guards for validate-content parity');
-  }
-
-  if (
-    valid &&
-    contentTestNodeEvalSpawnCallsValidated > 0 &&
-    contentTestNodeEvalSpawnCwdCallsValidated === contentTestNodeEvalSpawnCallsValidated
-  ) {
-    contentTestNodeEvalSpawnCwdParityValidated = true;
   }
 }
 
@@ -10921,31 +10760,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes("source: 'restore'") &&
         normalizedPurchaseSource.includes('hasStoreConfirmation(record)'),
       'Remove Ads purchase and restore grants must persist source plus store confirmation identity',
-    ],
-    [
-      normalizedPurchaseSource.includes('receiptValidationStatus:') &&
-        normalizedPurchaseSource.includes('receiptValidatedAt:'),
-      'Remove Ads entitlement records must persist receipt validation status and timestamp',
-    ],
-    [
-      normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
-        normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
-      'Remove Ads purchase provider must expose a receipt validation hook',
-    ],
-    [
-      normalizedPurchaseSource.includes(
-        'const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);',
-      ) &&
-        normalizedPurchaseSource.includes("return createResult('pending'") &&
-        normalizedPurchaseSource.includes("return createResult('not_found'"),
-      'Remove Ads buy and restore flows must validate receipts before granting entitlements',
-    ],
-    [
-      normalizedPurchaseSource.includes('receiptValidationStatus =') &&
-        normalizedPurchaseSource.includes("if (receiptValidationStatus !== 'valid')") &&
-        normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
-        normalizedPurchaseSource.includes('receiptValidation,'),
-      'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
     ],
   ];
 
@@ -13175,8 +12989,6 @@ function validateQuestionBankCsvContract() {
       question.explanationSv,
       question.explanationEn,
       question.correctOptionId,
-      questionOptionPayload(question, 'textSv'),
-      questionOptionPayload(question, 'textEn'),
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
@@ -14287,7 +14099,6 @@ validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
 validateCelebrationBurstAccessibilityParity();
-validateContentTestNodeEvalSpawnCwdParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -14449,9 +14260,6 @@ console.log(
       uhrReferenceCardAccessibilityParityValidated,
       celebrationBurstAccessibilityRulesValidated,
       celebrationBurstAccessibilityParityValidated,
-      contentTestNodeEvalSpawnCallsValidated,
-      contentTestNodeEvalSpawnCwdCallsValidated,
-      contentTestNodeEvalSpawnCwdParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,

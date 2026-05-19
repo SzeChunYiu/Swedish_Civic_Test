@@ -44,15 +44,6 @@ function csvCell(value) {
   return `"${String(value ?? '').replaceAll('"', '""')}"`;
 }
 
-function optionPayload(question, field) {
-  return JSON.stringify(
-    question.options.map((option) => ({
-      id: option.id,
-      text: option[field],
-    })),
-  );
-}
-
 const questions = loadTs('data/questions.ts', 'questions');
 const rows = [
   [
@@ -64,8 +55,6 @@ const rows = [
     'explanationSv',
     'explanationEn',
     'correctOptionId',
-    'optionSv',
-    'optionEn',
     'uhrChapter',
     'uhrSection',
     'uhrPageApprox',
@@ -82,8 +71,6 @@ const rows = [
     question.explanationSv,
     question.explanationEn,
     question.correctOptionId,
-    optionPayload(question, 'textSv'),
-    optionPayload(question, 'textEn'),
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,

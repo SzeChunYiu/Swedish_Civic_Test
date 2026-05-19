@@ -228,6 +228,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard must gate results_native through shouldShowAd/,
+    /AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd/,
   );
 });
