@@ -89,7 +89,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'mockExams',
-    labelSv: 'Övningsprov',
+    labelSv: 'Provexamina',
     labelEn: 'Mock exams',
     flag: 'unlimitedMockExams',
     free: { kind: 'text', sv: '3 / vecka', en: '3 / week' },
@@ -98,7 +98,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'mistakeReview',
-    labelSv: 'Öva missade frågor',
+    labelSv: 'Felgranskning',
     labelEn: 'Mistake review',
     flag: 'fullMistakeReview',
     free: { kind: 'text', sv: 'senaste 20', en: 'last 20' },
@@ -107,12 +107,30 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'spacedRepetition',
-    labelSv: 'Repetition med intervall',
+    labelSv: 'Distribuerad repetition',
     labelEn: 'Spaced repetition',
     flag: 'spacedRepetition',
     free: { kind: 'text', sv: '3 kort / dag', en: '3 cards / day' },
     adFree: { kind: 'text', sv: '3 kort / dag', en: '3 cards / day' },
     pro: { kind: 'text', sv: 'obegränsat', en: 'unlimited' },
+  },
+  {
+    id: 'highlights',
+    labelSv: 'Markeringar i e-bok',
+    labelEn: 'Ebook highlights',
+    flag: 'multiColorHighlights',
+    free: { kind: 'text', sv: 'endast gult', en: 'yellow only' },
+    adFree: { kind: 'text', sv: 'endast gult', en: 'yellow only' },
+    pro: { kind: 'text', sv: '4 färger + anteckningar', en: '4 colors + notes' },
+  },
+  {
+    id: 'notesExport',
+    labelSv: 'Exportera anteckningar (PDF / MD)',
+    labelEn: 'Notes export (PDF / MD)',
+    flag: 'notesExport',
+    free: CROSS,
+    adFree: CROSS,
+    pro: CHECK,
   },
   {
     id: 'nativeLangExplanations',
@@ -125,7 +143,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'customStudyPlan',
-    labelSv: 'Studieplan efter provdatum',
+    labelSv: 'Anpassad studieplan (provdatum)',
     labelEn: 'Custom study plan (test date)',
     flag: 'customStudyPlan',
     free: { kind: 'text', sv: 'endast nedräkning', en: 'countdown only' },
@@ -134,7 +152,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'predictedPass',
-    labelSv: 'Beräknad provberedskap',
+    labelSv: 'Provberedskap (%)',
     labelEn: 'Predicted pass probability',
     flag: 'predictedPassProbability',
     free: CROSS,
@@ -143,7 +161,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'confidenceSlider',
-    labelSv: 'Säkerhetsskala och kalibrering',
+    labelSv: 'Säkerhetsskala + kalibrering',
     labelEn: 'Confidence rating + calibration',
     flag: 'confidenceSlider',
     free: CROSS,
@@ -160,7 +178,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'accessibility',
-    labelSv: 'Lättläst typsnitt, textstorlek och mörkt läge',
+    labelSv: 'Lättläst typsnitt / textstorlek / mörkt läge',
     labelEn: 'Easy-read font / text size / dark mode',
     free: CHECK,
     adFree: CHECK,

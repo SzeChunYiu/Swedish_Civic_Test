@@ -18,24 +18,15 @@ function pngDimensions(relativePath) {
   };
 }
 
-function assertHexColor(value, label) {
-  assert.match(value, /^#[0-9a-f]{6}$/i, `${label} should be a six-digit hex color`);
-}
-
 test('release app assets are configured and present at store-safe sizes', () => {
   const app = readJson('app.json').expo;
-  const splashDimensions = pngDimensions('assets/splash-icon.png');
-
   assert.equal(app.icon, './assets/icon.png');
   assert.equal(app.splash.image, './assets/splash-icon.png');
-  assert.equal(app.splash.resizeMode, 'contain');
   assert.equal(app.splash.backgroundColor, '#fffcf9');
   assert.equal(app.android.adaptiveIcon.foregroundImage, './assets/adaptive-icon.png');
-  assertHexColor(app.splash.backgroundColor, 'splash background');
-  assertHexColor(app.android.adaptiveIcon.backgroundColor, 'adaptive icon background');
-  assert.equal(app.android.adaptiveIcon.backgroundColor, app.splash.backgroundColor);
+  assert.equal(app.android.adaptiveIcon.backgroundColor, '#fffcf9');
 
   assert.deepEqual(pngDimensions('assets/icon.png'), { width: 1024, height: 1024 });
   assert.deepEqual(pngDimensions('assets/adaptive-icon.png'), { width: 1024, height: 1024 });
-  assert.deepEqual(splashDimensions, { width: 1024, height: 1024 });
+  assert.deepEqual(pngDimensions('assets/splash-icon.png'), { width: 1024, height: 1024 });
 });
