@@ -26,7 +26,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 150);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
@@ -79,17 +79,12 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(guidedPathSource, /minHeight: space\[6\]/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
-  assert.match(
-    source,
-    /Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal\./,
-  );
-  assert.match(source, /genomgång av frågor du missat/);
-  assert.doesNotMatch(source, /felspårning|repetition av misstag/);
-  assert.match(
-    source,
-    /Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals\./,
-  );
-  assert.doesNotMatch(source, /flashcards/);
+  assert.match(source, /Hela banken gratis/);
+  assert.match(source, /Alla 13 ämnen och hela frågebanken ingår gratis/);
+  assert.match(source, /Full bank free/);
+  assert.match(source, /All 13 topics and the full question bank are included for free/);
+  assert.match(source, /<Badge tone="blue">\{copy\.freeBankBadge\}<\/Badge>/);
+  assert.match(source, /<Text style=\{styles\.freeBankText\}>\{copy\.freeBankText\}<\/Text>/);
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
