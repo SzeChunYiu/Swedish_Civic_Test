@@ -23,14 +23,22 @@ function loadTs(relativePath, exportName, moduleCache = new Map()) {
   function localRequire(specifier) {
     if (specifier.startsWith('.')) {
       const resolvedPath = path.resolve(path.dirname(filePath), specifier);
+      const directPath =
+        fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isFile()
+          ? resolvedPath
+          : undefined;
       const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
       const tsxPath = fs.existsSync(`${resolvedPath}.tsx`) ? `${resolvedPath}.tsx` : undefined;
+      const jsonPath = fs.existsSync(`${resolvedPath}.json`) ? `${resolvedPath}.json` : undefined;
       const indexTsPath = fs.existsSync(path.join(resolvedPath, 'index.ts'))
         ? path.join(resolvedPath, 'index.ts')
         : undefined;
-      const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
+      const resolvedTsPath = directPath ?? tsPath ?? tsxPath ?? jsonPath ?? indexTsPath;
 
       if (resolvedTsPath?.startsWith(repoRoot)) {
+        if (resolvedTsPath.endsWith('.json')) {
+          return JSON.parse(fs.readFileSync(resolvedTsPath, 'utf8'));
+        }
         return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
       }
     }
@@ -66,6 +74,13 @@ function withEnv(overrides, fn) {
       }
     }
   }
+}
+
+function loadExpoConfigWithEnv(overrides) {
+  return withEnv(overrides, () => {
+    const appConfigModule = loadTs('app.config.ts');
+    return appConfigModule.default();
+  });
 }
 
 test('ad rendering is enabled by default with test units and env-driven real switch', () => {
@@ -496,7 +511,12 @@ test('mock exam access persistence stores daily completions and rewarded credits
 });
 
 test('rewarded extra exam credit is granted only after an earned ad reward', async () => {
-  const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
+  const { showRewardedExtraExamAd } = withEnv(
+    {
+      EXPO_PUBLIC_REAL_ADS_ENABLED: undefined,
+    },
+    () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
+  );
   const { showRewardedExtraExamAd: showUnavailableRewardedExtraExamAd } = withEnv(
     {
       EXPO_PUBLIC_GOOGLE_ADS_ENABLED: 'false',
@@ -585,18 +605,61 @@ test('ad rendering flag disables all placements even for free users', () => {
   );
 });
 
-test('app config registers the Google Mobile Ads Expo plugin with test app ids', () => {
-  const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
-  const plugin = appJson.expo.plugins.find(
+test('app config registers the Google Mobile Ads Expo plugin with test app ids by default', () => {
+  const appConfig = loadExpoConfigWithEnv({
+    EXPO_PUBLIC_ADMOB_ANDROID_APP_ID: undefined,
+    EXPO_PUBLIC_ADMOB_IOS_APP_ID: undefined,
+    EXPO_PUBLIC_REAL_ADS_ENABLED: undefined,
+  });
+  const plugin = appConfig.plugins.find(
     (entry) => Array.isArray(entry) && entry[0] === 'react-native-google-mobile-ads',
   );
 
   assert.ok(plugin, 'react-native-google-mobile-ads plugin should be configured');
-  assert.match(plugin[1].androidAppId, /^ca-app-pub-/);
-  assert.match(plugin[1].iosAppId, /^ca-app-pub-/);
+  assert.equal(plugin[1].androidAppId, 'ca-app-pub-3940256099942544~3347511713');
+  assert.equal(plugin[1].iosAppId, 'ca-app-pub-3940256099942544~1458002511');
   assert.equal(plugin[1].delayAppMeasurementInit, true);
-  assert.ok(appJson.expo.plugins.includes('expo-secure-store'));
-  assert.ok(appJson.expo.plugins.includes('react-native-iap'));
+  assert.ok(appConfig.plugins.includes('expo-secure-store'));
+  assert.ok(appConfig.plugins.includes('react-native-iap'));
+});
+
+test('app config switches to recorded real AdMob app ids only when real ads are enabled', () => {
+  const appConfig = loadExpoConfigWithEnv({
+    EXPO_PUBLIC_ADMOB_ANDROID_APP_ID: 'ca-app-pub-2451892671779738~5027760693',
+    EXPO_PUBLIC_ADMOB_IOS_APP_ID: 'ca-app-pub-2451892671779738~8452000382',
+    EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+  });
+  const plugin = appConfig.plugins.find(
+    (entry) => Array.isArray(entry) && entry[0] === 'react-native-google-mobile-ads',
+  );
+
+  assert.ok(plugin, 'react-native-google-mobile-ads plugin should be configured');
+  assert.equal(plugin[1].androidAppId, 'ca-app-pub-2451892671779738~5027760693');
+  assert.equal(plugin[1].iosAppId, 'ca-app-pub-2451892671779738~8452000382');
+  assert.doesNotMatch(plugin[1].androidAppId, /3940256099942544/);
+  assert.doesNotMatch(plugin[1].iosAppId, /3940256099942544/);
+});
+
+test('app config rejects sample or mismatched AdMob app ids for real ads', () => {
+  assert.throws(
+    () =>
+      loadExpoConfigWithEnv({
+        EXPO_PUBLIC_ADMOB_ANDROID_APP_ID: 'ca-app-pub-3940256099942544~3347511713',
+        EXPO_PUBLIC_ADMOB_IOS_APP_ID: 'ca-app-pub-2451892671779738~8452000382',
+        EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+      }),
+    /must not use Google's sample AdMob publisher id/,
+  );
+
+  assert.throws(
+    () =>
+      loadExpoConfigWithEnv({
+        EXPO_PUBLIC_ADMOB_ANDROID_APP_ID: 'ca-app-pub-2451892671779738~0000000000',
+        EXPO_PUBLIC_ADMOB_IOS_APP_ID: 'ca-app-pub-2451892671779738~8452000382',
+        EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+      }),
+    /must match publishing\/admob-progress\.md/,
+  );
 });
 
 test('launch popup ad respects launch cap and adsDisabled entitlement', () => {

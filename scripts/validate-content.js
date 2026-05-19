@@ -776,6 +776,11 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-tracking-transparency',
 ];
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.swedishcivictest';
+const GOOGLE_SAMPLE_ADMOB_PUBLISHER_ID = '3940256099942544';
+const EXPECTED_REAL_ADMOB_APP_IDS = {
+  android: 'ca-app-pub-2451892671779738~5027760693',
+  ios: 'ca-app-pub-2451892671779738~8452000382',
+};
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
@@ -3340,7 +3345,14 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
-  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const candidates = [
+    base,
+    `${base}.ts`,
+    `${base}.tsx`,
+    `${base}.js`,
+    `${base}.json`,
+    path.join(base, 'index.ts'),
+  ];
   const found = candidates.find(
     (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
   );
@@ -3371,6 +3383,9 @@ function loadTs(relativePath, exportName) {
     }
     if (request.startsWith('.')) {
       const resolvedPath = resolveLocalModule(filePath, request);
+      if (resolvedPath.endsWith('.json')) {
+        return JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
+      }
       const relativeResolvedPath = path.relative(repoRoot, resolvedPath);
       return loadTs(relativeResolvedPath);
     }
@@ -3384,6 +3399,23 @@ function loadTs(relativePath, exportName) {
 
 function loadJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8'));
+}
+
+function loadExpoAppConfig() {
+  const appConfigPath = path.join(repoRoot, 'app.config.ts');
+  if (!fs.existsSync(appConfigPath)) return appJson;
+
+  try {
+    const appConfigModule = loadTs('app.config.ts');
+    const createConfig = appConfigModule.default ?? appConfigModule;
+    const expoConfig =
+      typeof createConfig === 'function' ? createConfig({ config: appJson.expo }) : createConfig;
+
+    return expoConfig?.expo ? expoConfig : { expo: expoConfig };
+  } catch (error) {
+    fail(`app.config.ts failed to load: ${error instanceof Error ? error.message : String(error)}`);
+    return appJson;
+  }
 }
 
 function fail(message) {
@@ -5736,7 +5768,8 @@ const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
 const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
-const appConfig = loadJson('app.json');
+const appJson = loadJson('app.json');
+const appConfig = loadExpoAppConfig();
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
@@ -6182,6 +6215,26 @@ function validateAppConfigSchema() {
       }
       if (!adMobAppIdPattern.test(String(googleAdsConfig.iosAppId ?? ''))) {
         reject('app.json react-native-google-mobile-ads iosAppId must be configured');
+      }
+      if (
+        String(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED ?? '')
+          .trim()
+          .toLowerCase() === 'true'
+      ) {
+        if (String(googleAdsConfig.androidAppId).includes(GOOGLE_SAMPLE_ADMOB_PUBLISHER_ID)) {
+          reject('app.config.ts real ads androidAppId must not use Google sample app id');
+        }
+        if (String(googleAdsConfig.iosAppId).includes(GOOGLE_SAMPLE_ADMOB_PUBLISHER_ID)) {
+          reject('app.config.ts real ads iosAppId must not use Google sample app id');
+        }
+        if (googleAdsConfig.androidAppId !== EXPECTED_REAL_ADMOB_APP_IDS.android) {
+          reject(
+            `app.config.ts real ads androidAppId must match ${EXPECTED_REAL_ADMOB_APP_IDS.android}`,
+          );
+        }
+        if (googleAdsConfig.iosAppId !== EXPECTED_REAL_ADMOB_APP_IDS.ios) {
+          reject(`app.config.ts real ads iosAppId must match ${EXPECTED_REAL_ADMOB_APP_IDS.ios}`);
+        }
       }
       if (googleAdsConfig.delayAppMeasurementInit !== true) {
         reject('app.json react-native-google-mobile-ads must delay app measurement initialization');
