@@ -11,13 +11,13 @@ import { Surface } from './Surface';
 import type { SurfaceProps } from './Surface';
 import { Text } from './Text';
 
-export type ResultSummaryStatus = 'pass' | 'review';
+export type ResultSummaryStatus = 'strong' | 'review';
 
 type ResultSummaryCopy = {
   metricLabel: (correctCount: number, totalCount: number) => string;
-  passingLineLabel: string;
   percentLabel: (percent: number) => string;
   progressLabel: (percent: number) => string;
+  resultBadgeLabel: string;
   scoreLabel: string;
   statusLabels: Record<ResultSummaryStatus, string>;
 };
@@ -25,23 +25,23 @@ type ResultSummaryCopy = {
 const resultSummaryCopy: Record<AppLanguage, ResultSummaryCopy> = {
   sv: {
     metricLabel: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
-    passingLineLabel: 'Gräns för godkänt',
     percentLabel: (percent) => `${percent} procent`,
     progressLabel: (percent) => `${percent} procent rätt`,
+    resultBadgeLabel: 'Övningsresultat',
     scoreLabel: 'Poäng',
     statusLabels: {
-      pass: 'Godkänt',
+      strong: 'Starkt övningsresultat',
       review: 'Behöver repeteras',
     },
   },
   en: {
     metricLabel: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
-    passingLineLabel: 'Passing line',
     percentLabel: (percent) => `${percent} percent`,
     progressLabel: (percent) => `${percent} percent correct`,
+    resultBadgeLabel: 'Practice result',
     scoreLabel: 'Score',
     statusLabels: {
-      pass: 'Passed',
+      strong: 'Strong practice result',
       review: 'Needs review',
     },
   },
@@ -62,18 +62,16 @@ export interface ResultSummaryMetric {
 }
 
 /**
- * Defaults: `passingPercent=75`, status inferred from score, `tone="surface"`,
+ * Defaults: a neutral practice-result badge, `tone="surface"`,
  * `elevation="card"`, localized fallback labels from settings, and
- * `accessibilityRole="summary"`. Pass localized label props for
- * screen-specific copy.
+ * `accessibilityRole="summary"`. Pass localized label props for screen-specific
+ * copy.
  */
 export interface ResultSummaryProps extends Omit<SurfaceProps, 'children'> {
   actions?: ResultSummaryAction[];
   correctCount: number;
   languageOverride?: AppLanguage;
   metricLabel?: string;
-  passingLineLabel?: string;
-  passingPercent?: number;
   progressAccessibilityLabel?: string;
   scoreLabel?: string;
   status?: ResultSummaryStatus;
@@ -98,16 +96,14 @@ function getPercent(correctCount: number, totalCount: number) {
 
 function getAccessibilityLabel({
   metricLabel,
-  passingLineLabel,
   percentLabel,
   statusLabel,
 }: {
   metricLabel: string;
-  passingLineLabel: string;
   percentLabel: string;
   statusLabel: string;
 }) {
-  return `${statusLabel}. ${percentLabel}. ${metricLabel}. ${passingLineLabel}.`;
+  return `${statusLabel}. ${percentLabel}. ${metricLabel}.`;
 }
 
 export function ResultSummary({
@@ -118,8 +114,6 @@ export function ResultSummary({
   elevation = 'card',
   languageOverride,
   metricLabel,
-  passingLineLabel,
-  passingPercent = 75,
   progressAccessibilityLabel,
   scoreLabel,
   status,
@@ -137,16 +131,19 @@ export function ResultSummary({
   const safeTotal = Number.isFinite(totalCount) && totalCount > 0 ? Math.round(totalCount) : 0;
   const safeCorrect = clampCount(correctCount, safeTotal);
   const percent = getPercent(safeCorrect, safeTotal);
-  const resolvedStatus = status ?? (percent >= passingPercent ? 'pass' : 'review');
-  const resolvedStatusLabel = statusLabel ?? copy.statusLabels[resolvedStatus];
+  const resolvedStatusLabel =
+    statusLabel ?? (status ? copy.statusLabels[status] : copy.resultBadgeLabel);
   const resolvedMetricLabel = metricLabel ?? copy.metricLabel(safeCorrect, safeTotal);
-  const resolvedPassingLineText = passingLineLabel ?? copy.passingLineLabel;
-  const resolvedPassingLineLabel = `${resolvedPassingLineText} ${passingPercent}%`;
   const percentAccessibilityLabel = copy.percentLabel(percent);
   const progressLabel = progressAccessibilityLabel ?? copy.progressLabel(percent);
   const resolvedScoreLabel = scoreLabel ?? copy.scoreLabel;
-  const badgeVariant = resolvedStatus === 'pass' ? 'success' : 'warning';
-  const fillStyle = resolvedStatus === 'pass' ? styles.passFill : styles.reviewFill;
+  const badgeVariant = status === 'strong' ? 'success' : status === 'review' ? 'warning' : 'accent';
+  const fillStyle =
+    status === 'strong'
+      ? styles.strongFill
+      : status === 'review'
+        ? styles.reviewFill
+        : styles.neutralFill;
 
   return (
     <Surface
@@ -154,7 +151,6 @@ export function ResultSummary({
         accessibilityLabel ??
         getAccessibilityLabel({
           metricLabel: resolvedMetricLabel,
-          passingLineLabel: resolvedPassingLineLabel,
           percentLabel: percentAccessibilityLabel,
           statusLabel: resolvedStatusLabel,
         })
@@ -192,14 +188,6 @@ export function ResultSummary({
           </Text>
           <Text style={styles.metricValue} variant="label">
             {resolvedMetricLabel}
-          </Text>
-        </View>
-        <View style={styles.metric}>
-          <Text tone="secondary" variant="caption">
-            {resolvedPassingLineText}
-          </Text>
-          <Text style={styles.metricValue} variant="label">
-            {passingPercent}%
           </Text>
         </View>
         {trailingMetrics.map((metric) => (
@@ -253,7 +241,10 @@ const styles = StyleSheet.create({
   progress: {
     height: space[1.25],
   },
-  passFill: {
+  neutralFill: {
+    backgroundColor: colors.accent,
+  },
+  strongFill: {
     backgroundColor: colors.success,
   },
   reviewFill: {
