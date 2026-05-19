@@ -10168,6 +10168,23 @@ function validateProgressStoreSchemaParity() {
       'readProgress must normalize parsed persisted JSON',
     ],
     [
+      'function normalizeNonNegativeInteger(value: unknown',
+      'progress hydration must normalize unknown numeric fields through a shared integer helper',
+    ],
+    [
+      'const seenCount = normalizeNonNegativeInteger(',
+      'question progress hydration must normalize seenCount',
+    ],
+    [
+      'totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp)',
+      'progress hydration must normalize totalXp',
+    ],
+    [
+      'available: normalizeNonNegativeInteger(candidate.available, fallback.available, 4)',
+      'streak-freeze hydration must clamp available freezes',
+    ],
+    ['score: clampScore(item.score ?? 0)', 'mock-exam hydration must clamp persisted score'],
+    [
       'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
       'writeProgress must persist JSON through progressStateKey',
     ],
@@ -10187,6 +10204,24 @@ function validateProgressStoreSchemaParity() {
   requiredSnippets.forEach(([snippet, message]) => {
     if (!normalizedProgressStore.includes(snippet)) {
       reject(message);
+    }
+  });
+
+  const forbiddenHydrationSnippets = [
+    'Math.max(0, item.seenCount ?? 0)',
+    'Math.max(0, item.correctCount ?? 0)',
+    'Math.max(0, item.wrongCount ?? 0)',
+    'Math.max(0, item.correctStreak ?? 0)',
+    'Math.max(0, item.totalCount ?? 0)',
+    'Math.max(0, candidate.totalXp ?? 0)',
+    'Math.round(candidate.available ?? fallback.available)',
+    'Math.round(candidate.lifetimeEarned ?? fallback.lifetimeEarned)',
+    'Math.round(candidate.lifetimeSpent ?? fallback.lifetimeSpent)',
+  ];
+
+  forbiddenHydrationSnippets.forEach((snippet) => {
+    if (normalizedProgressStore.includes(snippet)) {
+      reject(`progress hydration must not use raw numeric expression ${snippet}`);
     }
   });
 
