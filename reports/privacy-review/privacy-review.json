@@ -1,12 +1,38 @@
 {
   "gate": "privacy-review",
   "status": "blocked",
-  "binaryBuildIdOrUrl": "TBD",
-  "applePrivacyLabelsReviewed": false,
-  "googlePlayDataSafetyReviewed": false,
-  "googleMobileAdsSdkPostureReviewed": false,
-  "realAdsEnabledForV1": false,
+  "reviewedAt": "TBD",
   "reviewer": "TBD",
-  "checkedAtUtc": "TBD",
-  "notes": "Review against the generated binary before marking READY."
+  "reviewedBuild": {
+    "id": "TBD",
+    "version": "1.0.0",
+    "commit": "TBD"
+  },
+  "storeQuestionnaires": {
+    "appleAppStoreConnectReviewed": false,
+    "googlePlayConsoleReviewed": false
+  },
+  "applePrivacyLabels": {
+    "reviewed": false,
+    "path": "publishing/privacy-labels.md",
+    "matchesBinary": false
+  },
+  "googlePlayDataSafety": {
+    "reviewed": false,
+    "path": "publishing/google-play-data-safety.md",
+    "matchesBinary": false
+  },
+  "googleMobileAds": {
+    "sdkPresent": true,
+    "testAppIds": true,
+    "realAdsEnabled": true,
+    "removeAdsIapReviewed": false,
+    "consentFlowReviewed": false,
+    "gate": "EXPO_PUBLIC_REAL_ADS_ENABLED=true; Google Mobile Ads real-ad path; Remove Ads non-consumable in-app purchase at 29 SEK; ATT and UMP consent review required."
+  },
+  "disabledSdks": {
+    "analytics": true,
+    "crashReporting": true
+  },
+  "notes": "Blocked until a generated binary is reviewed against Apple privacy labels, Google Play Data safety, Google Mobile Ads, ATT/UMP consent, and the 29 SEK Remove Ads IAP. Do not mark READY with placeholder evidence."
 }

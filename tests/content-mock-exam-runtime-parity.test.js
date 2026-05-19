@@ -74,3 +74,27 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
     ),
   );
 });
+
+test('web rewarded unlocks require explicit completion before credit grant path', async () => {
+  const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
+  const rewardedAdSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedAd.ts'),
+    'utf8',
+  );
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const defaultResult = await showRewardedExtraExamAd();
+  const confirmedResult = await showRewardedExtraExamAd({
+    confirmReward: () => true,
+  });
+
+  assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
+  assert.equal(confirmedResult.status, 'earned_reward');
+  assert.match(
+    rewardedAdSource,
+    /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};[\s\S]*\}/,
+  );
+  assert.match(
+    examSource,
+    /const rewardedAdResult = await showRewardedExtraExamAd\(\{ entitlements \}\);[\s\S]*if \(rewardedAdResult\.status !== 'earned_reward'\) \{[\s\S]*return;[\s\S]*\}[\s\S]*await grantRewardedExamCredit\(\);/,
+  );
+});
