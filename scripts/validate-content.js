@@ -7127,6 +7127,7 @@ const mascotAssetPath = mascotModule.mascotAssetPath;
 const adsModule = loadTs('lib/monetization/ads.ts');
 const adsConfig = adsModule.adsConfig;
 const shouldShowAd = adsModule.shouldShowAd;
+const WEB_AD_FALLBACK_CONSENT_DECISION = adsModule.WEB_AD_FALLBACK_CONSENT_DECISION;
 const shouldSuppressLaunchPopupAdForPath = adsModule.shouldSuppressLaunchPopupAdForPath;
 const adCopyModule = loadTs('lib/monetization/adCopy.ts');
 const adBannerCopy = adCopyModule.adBannerCopy;
@@ -7570,6 +7571,15 @@ if (!isObjectRecord(space)) fail('theme space export is not an object');
 if (!isObjectRecord(typography)) fail('theme typography export is not an object');
 if (!isObjectRecord(adsConfig)) fail('adsConfig export is not an object');
 if (typeof shouldShowAd !== 'function') fail('shouldShowAd export is not a function');
+if (
+  !isObjectRecord(WEB_AD_FALLBACK_CONSENT_DECISION) ||
+  WEB_AD_FALLBACK_CONSENT_DECISION.adServingAllowed !== true
+) {
+  fail('WEB_AD_FALLBACK_CONSENT_DECISION must explicitly allow web placeholder ads');
+}
+if (adsConfig.webFallbackConsentDecision !== WEB_AD_FALLBACK_CONSENT_DECISION) {
+  fail('adsConfig.webFallbackConsentDecision must reference WEB_AD_FALLBACK_CONSENT_DECISION');
+}
 if (typeof shouldSuppressLaunchPopupAdForPath !== 'function') {
   fail('shouldSuppressLaunchPopupAdForPath export is not a function');
 }
@@ -7890,6 +7900,27 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
+  let adBannerSource = '';
+  let nativeAdCardSource = '';
+
+  try {
+    adBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`AdBanner could not be read for web fallback parity: ${error.message}`);
+  }
+
+  try {
+    nativeAdCardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`NativeAdCard could not be read for web fallback parity: ${error.message}`);
+  }
+
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
@@ -8061,20 +8092,34 @@ function validateAdPlacementRouteParity() {
       }
     }
 
+    if (spec.component === 'AdBanner') {
+      if (!adBannerSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('AdBanner must import WEB_AD_FALLBACK_CONSENT_DECISION for web fallback ads');
+        routeIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/.test(
+          adBannerSource,
+        )
+      ) {
+        reject('AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd');
+        routeIsValid = false;
+      }
+    }
+
     if (spec.component === 'NativeAdCard') {
-      const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
-      );
-      const nativeAdCardSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
-        'utf8',
-      );
-      const nativeAdCardNativeSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
-        'utf8',
-      );
-      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
-        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+      if (!nativeAdCardSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('NativeAdCard must import WEB_AD_FALLBACK_CONSENT_DECISION for web fallback ads');
+        routeIsValid = false;
+      }
+      if (
+        !new RegExp(
+          `shouldShowAd\\(\\s*'${spec.placement}',\\s*resolvedEntitlements,\\s*WEB_AD_FALLBACK_CONSENT_DECISION\\s*\\)`,
+        ).test(nativeAdCardSource)
+      ) {
+        reject(
+          `NativeAdCard must gate ${spec.placement} through shouldShowAd with WEB_AD_FALLBACK_CONSENT_DECISION`,
+        );
         routeIsValid = false;
       }
       if (nativeAdCardSource.includes('react-native-google-mobile-ads')) {

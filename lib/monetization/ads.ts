@@ -12,6 +12,10 @@ type AdUnitEnvValues = Record<
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 export type AdRuntimePlatform = 'ios' | 'android' | 'web' | string;
 
+export const WEB_AD_FALLBACK_CONSENT_DECISION: AdConsentGate = {
+  adServingAllowed: true,
+};
+
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',
@@ -229,7 +233,7 @@ export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
-  realUnitOverrideEnvKey: 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON',
+  webFallbackConsentDecision: WEB_AD_FALLBACK_CONSENT_DECISION,
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
   realUnitOverrides: REAL_AD_UNIT_OVERRIDES,
   realUnitEnvValues: REAL_AD_UNIT_ENV_VALUES,

@@ -1,7 +1,11 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
-import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
+import {
+  getAdUnit,
+  shouldShowAd,
+  WEB_AD_FALLBACK_CONSENT_DECISION,
+} from '../../lib/monetization/ads';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
@@ -20,7 +24,12 @@ export function AdBanner({
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
 
-  if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;
+  if (
+    !entitlementsReady ||
+    !shouldShowAd(placement, resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION)
+  ) {
+    return null;
+  }
 
   const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
