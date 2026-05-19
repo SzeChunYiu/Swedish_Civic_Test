@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-
 import { dismissBlockingModals } from './browserLaunch';
 
 async function useEnglishSupport(page: Page) {

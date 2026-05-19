@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-
 import { dismissBlockingModals } from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
