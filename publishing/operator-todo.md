@@ -13,7 +13,7 @@ Updated: 2026-05-17.
 - [ ] Apple Developer Program membership active
 - [ ] Register App ID com.billyyiu.almostswedish
 - [ ] App Store Connect: create app record
-- [ ] IAP > Non-Consumable: "Remove Ads", id com.billyyiu.almostswedish.removeads,
+- [ ] IAP > Non-Consumable: "Remove Ads", id com.billyyiu.swedishcivictest.removeads,
       ~29 SEK, EN+SV copy, screenshot; create Sandbox tester
 
 ### A2. Google Play "Remove Ads" IAP (needs Play Console, $25 one-time)
@@ -40,10 +40,6 @@ Updated: 2026-05-17.
 =====================================================================
 Do NOT start these until the mobile app is shipped.
 
-- [ ] App Store Connect: create Pro Lifetime non-consumable product
-      `com.billyyiu.almostswedish.prolifetime`, 59 SEK, EN+SV copy, screenshot
-- [ ] Play Console: create Pro Lifetime in-app product
-      `com.billyyiu.almostswedish.prolifetime`, 59 SEK, Activate
 - [ ] Create Supabase project (free tier); save URL + anon key for factory
 - [ ] Google Cloud: OAuth 2.0 client (web + iOS + Android) for Supabase Auth
 - [ ] Facebook: developer app + Login product; App ID/secret into Supabase

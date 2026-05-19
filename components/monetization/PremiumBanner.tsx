@@ -24,14 +24,12 @@ type PremiumBannerCopy = {
   bodyIdle: (price: string) => string;
   buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
-  buyHint: string;
   buyIdle: (price: string) => string;
   buying: string;
   eyebrowActive: string;
   eyebrowIdle: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
-  restoreHint: string;
   restoreIdle: string;
   restoring: string;
   statusAccessibilityLabel: (message: string) => string;
@@ -45,11 +43,10 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     bodyActive:
       'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen.',
     bodyIdle: (price) =>
-      `Hela frågebanken och alla 13 ämnen ingår gratis. Betala ${price} en gång för att ta bort annonser från studieskärmar; provläget är redan annonsfritt.`,
+      `Gratisstudier visar AdMob-annonser. Betala ${price} en gång för att ta bort annonser från studieskärmar. Tidsatta övningsprov är redan annonsfria.`,
     buyAccessibilityHint:
       'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
-    buyHint: 'Startar ett engångsköp som tar bort annonser från studieskärmar.',
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
@@ -57,7 +54,6 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     restoreAccessibilityHint:
       'Kontrollerar om Ta bort annonser redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
-    restoreHint: 'Kontrollerar om Ta bort annonser redan har köpts.',
     restoreIdle: 'Återställ',
     restoring: 'Återställer...',
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
@@ -76,11 +72,10 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     bodyActive:
       'Purchase confirmed. Study ads are disabled on this device, and Restore stays available if this store account needs to be checked again.',
     bodyIdle: (price) =>
-      `The full question bank and all 13 topics are free. Pay ${price} once to remove ads from study screens; exams stay ad-free.`,
+      `Free study keeps AdMob ads on. Pay ${price} once to remove ads from study screens while exams stay ad-free.`,
     buyAccessibilityHint:
       'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
-    buyHint: 'Starts a one-time purchase that removes ads from study screens.',
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
@@ -88,7 +83,6 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     restoreAccessibilityHint:
       'Checks whether Remove Ads was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
-    restoreHint: 'Checks whether Remove Ads has already been purchased.',
     restoreIdle: 'Restore',
     restoring: 'Restoring...',
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
@@ -109,17 +103,6 @@ function getStatusMessage(status: PurchaseUiStatus, copy: PremiumBannerCopy): st
   return copy.statusMessages[status];
 }
 
-/**
- * Defaults: Swedish copy, local purchase runtime derived from the current
- * `adsDisabled` entitlement, and visible Buy/Restore actions.
- */
-export interface PremiumBannerProps {
-  entitlements: PremiumEntitlements;
-  language?: AppLanguage;
-  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
-  runtimeOptions?: PurchaseRuntimeOptions;
-}
-
 function getVisibleStatus(adsDisabled: boolean, status: PurchaseUiStatus): PurchaseUiStatus {
   if (!adsDisabled) return status;
   return status === 'restored' ? 'restored' : 'purchased';
@@ -130,7 +113,12 @@ export function PremiumBanner({
   language = 'sv',
   onEntitlementsChange,
   runtimeOptions,
-}: PremiumBannerProps) {
+}: {
+  entitlements: PremiumEntitlements;
+  language?: AppLanguage;
+  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
+  runtimeOptions?: PurchaseRuntimeOptions;
+}) {
   const copy = premiumBannerCopy[language];
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(() => {
     if (runtimeOptions) return runtimeOptions;
@@ -249,7 +237,7 @@ const styles = StyleSheet.create({
     marginTop: space[0.5],
   },
   actionButton: {
-    minWidth: space[15],
+    minWidth: 128,
   },
   status: {
     color: colors.textMuted,

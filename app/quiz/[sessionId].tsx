@@ -7,7 +7,6 @@ import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButt
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
-import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -16,8 +15,6 @@ import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
-import { calculateStreak } from '../../lib/learning/streaks';
-import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -97,8 +94,6 @@ export default function QuizSessionScreen() {
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const totalXp = useProgressStore((state) => state.totalXp);
-  const answerDates = useProgressStore((state) => state.answerDates);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = quizSessionCopy[language];
@@ -131,12 +126,6 @@ export default function QuizSessionScreen() {
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
-  const answerXp = hasSelectedAnswer
-    ? calculateAnswerXp({ isCorrect: selectedIsCorrect, explanationRead: true })
-    : 0;
-  const streakDays = calculateStreak(answerDates);
-  const level = calculateLevel(totalXp);
-  const correctStreak = questionProgress[question.id]?.correctStreak ?? 0;
 
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
@@ -203,16 +192,6 @@ export default function QuizSessionScreen() {
             active={selectedIsCorrect}
             languageOverride={language}
             streak={celebrationStreak}
-          />
-          <PostAnswerRewardPanel
-            answerXp={answerXp}
-            correctStreak={correctStreak}
-            isCorrect={selectedIsCorrect}
-            language={language}
-            level={level}
-            question={question}
-            streakDays={streakDays}
-            totalXp={totalXp}
           />
           {score ? (
             <Text style={styles.score}>

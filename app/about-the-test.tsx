@@ -1,7 +1,7 @@
+import { Link } from 'expo-router';
 import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
@@ -24,8 +24,6 @@ type AboutTheTestCopy = {
   backHomeAccessibilityLabel: string;
   openPractice: string;
   openPracticeAccessibilityLabel: string;
-  openRequirements: string;
-  openRequirementsAccessibilityLabel: string;
 };
 
 const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
@@ -53,8 +51,6 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     backHomeAccessibilityLabel: 'Tillbaka till startsidan',
     openPractice: 'Börja öva',
     openPracticeAccessibilityLabel: 'Öppna övningsläget',
-    openRequirements: 'Se kravguiden',
-    openRequirementsAccessibilityLabel: 'Öppna kravguiden för svenskt medborgarskap 2026',
   },
   en: {
     eyebrow: 'About the test',
@@ -80,8 +76,6 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     backHomeAccessibilityLabel: 'Back to home',
     openPractice: 'Start practising',
     openPracticeAccessibilityLabel: 'Open practice mode',
-    openRequirements: 'View requirements guide',
-    openRequirementsAccessibilityLabel: 'Open the Swedish citizenship 2026 requirements guide',
   },
 };
 
@@ -129,22 +123,22 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <View style={styles.actions}>
-        <ComplianceActionLink
+        <Link
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
+          accessibilityRole="link"
           href="/practice"
-          label={copy.openPractice}
-          variant="primary"
-        />
-        <ComplianceActionLink
-          accessibilityLabel={copy.openRequirementsAccessibilityLabel}
-          href="/citizenship-requirements"
-          label={copy.openRequirements}
-        />
-        <ComplianceActionLink
+          style={styles.primaryLink}
+        >
+          {copy.openPractice}
+        </Link>
+        <Link
           accessibilityLabel={copy.backHomeAccessibilityLabel}
+          accessibilityRole="link"
           href="/home"
-          label={copy.backHome}
-        />
+          style={styles.secondaryLink}
+        >
+          {copy.backHome}
+        </Link>
       </View>
     </ScrollView>
   );
@@ -208,5 +202,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
+  },
+  primaryLink: {
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  secondaryLink: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
 });

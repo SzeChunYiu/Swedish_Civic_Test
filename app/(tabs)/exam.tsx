@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -26,10 +25,6 @@ import {
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
-import {
-  buildCompletedExamQuizSession,
-  buildExamDiagnostic,
-} from '../../lib/learning/examDiagnostic';
 import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
@@ -80,61 +75,58 @@ type ExamRouteCopy = {
 const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   sv: {
     accessStatus: {
-      access_read_failed:
-        'Det gick inte att läsa lokal åtkomst för övningsprov. Försök igen om en stund.',
       ads_unavailable: 'Extra övningsprov är inte tillgängliga just nu.',
-      consent_required: 'Annonsmedgivande krävs innan ett extra övningsprov kan låsas upp.',
+      consent_required: 'Annonsmedgivande krävs innan ett extra prov kan låsas upp.',
       free_exam_available: 'Dagens kostnadsfria övningsprov är tillgängligt.',
       premium_unlimited_mock_exams: 'Obegränsade övningsprov är aktiva.',
       remove_ads_active: 'Dagens kostnadsfria övningsprov är använt. Belöningsannonser är dolda.',
       rewarded_ad_available:
-        'Dagens kostnadsfria övningsprov är använt. Extra övningsprov är tillgängligt.',
+        'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
       rewarded_exam_credit: 'Extra övningsprov är upplåst.',
     },
-    accessTitle: 'Åtkomst till övningsprov',
+    accessTitle: 'Provåtkomst',
     activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet`,
+      `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} besvarade`,
     chapterBreakdownTitle: 'Kapitelöversikt',
-    checkingAccess: 'Kontrollerar åtkomst till övningsprov.',
-    completionStoreFailure: 'Resultatet från övningsprovet kunde inte sparas på den här enheten.',
+    checkingAccess: 'Kontrollerar provåtkomst.',
+    completionStoreFailure: 'Provresultatet kunde inte sparas på den här enheten.',
     correctAnswerLabel: 'Rätt svar',
     correctBadge: 'Rätt',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
-    examResultTitle: 'Resultat från övningsprov',
+    examResultTitle: 'Provresultat',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
     heroSubtitle: (durationMinutes, questionCount) =>
-      `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet`,
+      `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     mockExamTitle: 'Övningsprov',
-    nextExamTitle: 'Nästa övningsprov',
+    nextExamTitle: 'Nästa prov',
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
     resultBadge: 'Övningsresultat',
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
-    resultSubtitle:
-      'Förklaringar och genomgång visas först efter att övningsprovet har skickats in.',
+    resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
     reviewBadge: 'Granska',
     rewardedAdStatus: {
       closed_without_reward: 'Det extra övningsprovet kräver att belöningsannonsen slutförs.',
       earned_reward: 'Extra övningsprov upplåst.',
       failed_to_load: 'Belöningsannonsen kunde inte laddas just nu.',
       show_failed: 'Belöningsannonsen kunde inte visas just nu.',
-      timed_out: 'Belöningsannonsen hann löpa ut innan det extra övningsprovet låstes upp.',
+      timed_out: 'Belöningsannonsen hann löpa ut innan det extra provet låstes upp.',
       unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
     },
     savedBadge: 'Sparat',
     savingBadge: 'Sparar',
     savingCompletion: 'Sparar dagens övningsprov.',
     selectedAnswerLabel: 'Valt svar',
-    startExtraExam: 'Lås upp extra övningsprov',
+    startExtraExam: 'Lås upp extra prov',
     startMockExam: 'Starta övningsprov',
-    startUnlockedExtraExam: 'Starta upplåst extra övningsprov',
-    submitAccessibilityLabel: 'Skicka in övningsprovet',
-    submitLabel: 'Skicka övningsprov',
+    startUnlockedExtraExam: 'Starta upplåst extra prov',
+    submitAccessibilityLabel: 'Skicka övningsprov',
+    submitLabel: 'Skicka prov',
     timedSimulationBadge: 'Tidsatt simulering',
     timeExpiredBadge: 'Tiden gick ut',
     timeExpiredResultNote: ' Obesvarade frågor räknas som fel och markeras som inte besvarade.',
@@ -142,19 +134,17 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   },
   en: {
     accessStatus: {
-      access_read_failed:
-        'Mock exam access could not be checked on this device. Try again in a moment.',
       ads_unavailable: 'Extra mock exams are unavailable right now.',
-      consent_required: 'Ad consent is needed before an extra mock exam can be unlocked.',
+      consent_required: 'Ad consent is needed before an extra exam can be unlocked.',
       free_exam_available: 'Daily free mock exam available.',
       premium_unlimited_mock_exams: 'Unlimited mock exams active.',
       remove_ads_active: 'Daily free mock exam used. Rewarded ads are hidden.',
-      rewarded_ad_available: 'Daily free mock exam used. Extra mock exam available.',
+      rewarded_ad_available: 'Daily free mock exam used. Extra exam available.',
       rewarded_exam_credit: 'Extra mock exam unlocked.',
     },
-    accessTitle: 'Mock exam access',
+    accessTitle: 'Exam access',
     activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during mock exam`,
+      `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} answered`,
@@ -164,36 +154,36 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctAnswerLabel: 'Correct answer',
     correctBadge: 'Correct',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
-    examResultTitle: 'Mock exam result',
+    examResultTitle: 'Exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
     heroSubtitle: (durationMinutes, questionCount) =>
-      `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during mock exam`,
+      `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
     mockExamTitle: 'Mock exam',
-    nextExamTitle: 'Next mock exam',
+    nextExamTitle: 'Next exam',
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
-    resultBadge: 'Mock exam score',
+    resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
-    resultSubtitle: 'Explanations and review are shown only after the mock exam is submitted.',
+    resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
     reviewBadge: 'Review',
     rewardedAdStatus: {
       closed_without_reward: 'Extra mock exam unlock needs a completed rewarded ad.',
       earned_reward: 'Extra mock exam unlocked.',
       failed_to_load: 'Rewarded ad could not load right now.',
       show_failed: 'Rewarded ad could not be shown right now.',
-      timed_out: 'Rewarded ad timed out before the extra mock exam unlocked.',
+      timed_out: 'Rewarded ad timed out before the extra exam unlocked.',
       unavailable: 'Rewarded ad is unavailable on this device right now.',
     },
     savedBadge: 'Saved',
     savingBadge: 'Saving',
     savingCompletion: "Saving today's mock exam completion.",
     selectedAnswerLabel: 'Selected answer',
-    startExtraExam: 'Unlock extra mock exam',
+    startExtraExam: 'Unlock extra exam',
     startMockExam: 'Start mock exam',
-    startUnlockedExtraExam: 'Start unlocked extra mock exam',
-    submitAccessibilityLabel: 'Submit the mock exam',
-    submitLabel: 'Submit mock exam',
+    startUnlockedExtraExam: 'Start unlocked extra exam',
+    submitAccessibilityLabel: 'Submit mock exam',
+    submitLabel: 'Submit exam',
     timedSimulationBadge: 'Timed simulation',
     timeExpiredBadge: 'Time expired',
     timeExpiredResultNote: ' Unanswered questions count as incorrect and are marked Not answered.',
@@ -221,22 +211,14 @@ export default function Screen() {
     [examSessionId],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [answerTimingsSeconds, setAnswerTimingsSeconds] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
-  const [submittedAt, setSubmittedAt] = useState<string | null>(null);
   const [examUnlocked, setExamUnlocked] = useState(false);
-  const [examStartedAt, setExamStartedAt] = useState<string | null>(null);
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
-  const examStartedAtMsRef = useRef<number | null>(null);
-  const lastQuestionAnsweredAtMsRef = useRef<number | null>(null);
-  const reviewCardRefs = useRef<Record<string, { focus?: () => void } | null>>({});
-  const reviewCardYByQuestionIdRef = useRef<Record<string, number>>({});
-  const scrollViewRef = useRef<ScrollView | null>(null);
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
@@ -270,7 +252,6 @@ export default function Screen() {
         questionCount: examQuestions.length,
       })
     ) {
-      setSubmittedAt((current) => current ?? new Date().toISOString());
       setSubmitted(true);
     }
   }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
@@ -282,41 +263,6 @@ export default function Screen() {
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
-  const completedExamSession = useMemo(() => {
-    if (!submitted || !submittedAt) return null;
-
-    return buildCompletedExamQuizSession({
-      answerTimingsSeconds,
-      answers,
-      completedAt: submittedAt,
-      questions: examQuestions,
-      score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      sessionId: examSessionId,
-      startedAt: examStartedAt ?? submittedAt,
-    });
-  }, [
-    answerTimingsSeconds,
-    answers,
-    examQuestions,
-    examSessionId,
-    examStartedAt,
-    resultCorrectCount,
-    resultTotalCount,
-    submitted,
-    submittedAt,
-  ]);
-  const completedExamDiagnostic = useMemo(() => {
-    if (!completedExamSession) return null;
-
-    const questionChapterIndex = Object.fromEntries(
-      examQuestions.map((question) => [question.id, question.chapterId]),
-    );
-
-    return buildExamDiagnostic({
-      questionChapterIndex,
-      session: completedExamSession,
-    });
-  }, [completedExamSession, examQuestions]);
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
@@ -337,64 +283,12 @@ export default function Screen() {
     : getAccessStatusText(accessDecision.reason, language);
 
   const resetExamAttempt = useCallback(() => {
-    const startedAt = new Date();
-    examStartedAtMsRef.current = startedAt.getTime();
-    lastQuestionAnsweredAtMsRef.current = startedAt.getTime();
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
-    setAnswerTimingsSeconds({});
     setSubmitted(false);
-    setSubmittedAt(null);
-    setExamStartedAt(startedAt.toISOString());
     setCompletionRecorded(false);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
-  }, []);
-
-  const handleSelectAnswer = useCallback(
-    (questionId: string, optionId: string) => {
-      const answeredAtMs = Date.now();
-      const startedAtMs = examStartedAtMsRef.current ?? answeredAtMs;
-      const previousAnswerAtMs = lastQuestionAnsweredAtMsRef.current ?? startedAtMs;
-
-      examStartedAtMsRef.current = startedAtMs;
-
-      if (!answerTimingsSeconds[questionId]) {
-        const elapsedSeconds = Math.max(
-          1,
-          Math.min(
-            defaultMockExamConfig.durationMinutes * 60,
-            Math.ceil((answeredAtMs - previousAnswerAtMs) / 1000),
-          ),
-        );
-
-        lastQuestionAnsweredAtMsRef.current = answeredAtMs;
-        setAnswerTimingsSeconds((current) => ({ ...current, [questionId]: elapsedSeconds }));
-      }
-
-      setAnswers((current) => ({ ...current, [questionId]: optionId }));
-    },
-    [answerTimingsSeconds],
-  );
-
-  const handleSubmitExam = useCallback(() => {
-    setSubmittedAt((current) => current ?? new Date().toISOString());
-    setSubmitted(true);
-  }, []);
-
-  const handleSelectHeatmapQuestion = useCallback((questionId: string) => {
-    const reviewY = reviewCardYByQuestionIdRef.current[questionId];
-    if (typeof reviewY === 'number') {
-      scrollViewRef.current?.scrollTo({
-        animated: true,
-        y: Math.max(0, reviewY - space[2]),
-      });
-    }
-
-    const reviewCard = reviewCardRefs.current[questionId];
-    if (reviewCard && typeof reviewCard.focus === 'function') {
-      setTimeout(() => reviewCard.focus?.(), 250);
-    }
   }, []);
 
   const handleStartAccessibleExam = useCallback(async () => {
@@ -443,18 +337,13 @@ export default function Screen() {
   ]);
 
   useEffect(() => {
-    if (!submitted || completionRecorded || !completedExamSession) return undefined;
+    if (!submitted || completionRecorded) return undefined;
 
     let isMounted = true;
     recordMockExamSession({
-      answers: completedExamSession.answers.map((answer) => ({
-        questionId: answer.questionId,
-        isCorrect: answer.isCorrect,
-        timeSpentSeconds: answer.timeSpentSeconds,
-      })),
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: completedExamSession.completedAt,
+      completedAt: new Date().toISOString(),
       correctCount: resultCorrectCount,
       totalCount: resultTotalCount,
     });
@@ -474,7 +363,6 @@ export default function Screen() {
     };
   }, [
     completionRecorded,
-    completedExamSession,
     copy.completionStoreFailure,
     examSessionId,
     recordExamCompletion,
@@ -523,11 +411,7 @@ export default function Screen() {
 
   if (result) {
     return (
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.container}
-        contentContainerStyle={styles.content}
-      >
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
           <Badge tone={endedByTime ? 'orange' : 'blue'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
@@ -549,14 +433,6 @@ export default function Screen() {
           subtitle={copy.resultNote}
           totalCount={result.totalCount}
         />
-        {completedExamSession && completedExamDiagnostic ? (
-          <MockExamTimeHeatmap
-            answers={completedExamSession.answers}
-            language={language}
-            medianMs={completedExamDiagnostic.medianMs}
-            onSelectQuestion={handleSelectHeatmapQuestion}
-          />
-        ) : null}
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -609,18 +485,7 @@ export default function Screen() {
           {copy.questionReviewTitle}
         </Text>
         {reviewItems.map((item, index) => (
-          <View
-            key={item.questionId}
-            onLayout={(event) => {
-              reviewCardYByQuestionIdRef.current[item.questionId] = event.nativeEvent.layout.y;
-            }}
-            ref={(node) => {
-              reviewCardRefs.current[item.questionId] = node as unknown as {
-                focus?: () => void;
-              } | null;
-            }}
-            style={styles.reviewCard}
-          >
+          <View key={item.questionId} style={styles.reviewCard}>
             <View style={styles.reviewHeader}>
               <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
               <Badge tone={item.isCorrect ? 'green' : 'orange'}>
@@ -710,7 +575,9 @@ export default function Screen() {
                   accessibilityState={{ checked: isSelected, selected: isSelected }}
                   label={optionText}
                   languageOverride={language}
-                  onPress={() => handleSelectAnswer(question.id, option.id)}
+                  onPress={() =>
+                    setAnswers((current) => ({ ...current, [question.id]: option.id }))
+                  }
                   state={isSelected ? 'selected' : 'idle'}
                 />
               );
@@ -725,7 +592,7 @@ export default function Screen() {
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSubmit }}
         disabled={!canSubmit}
-        onPress={handleSubmitExam}
+        onPress={() => setSubmitted(true)}
         style={styles.actionButton}
       >
         {copy.submitLabel}

@@ -2,11 +2,6 @@ import { Link } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import {
-  GuidedPracticePath,
-  type GuidedPracticePathCopy,
-  type GuidedPracticePathStage,
-} from '../../components/learning/GuidedPracticePath';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
@@ -30,32 +25,16 @@ import {
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswerAttemptsForLocalDate } from '../../lib/learning/streaks';
+import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
-import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
+import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type StudyLoopItemCopy = {
   label: string;
   lesson: string;
-};
-
-type GuidedPathStageCopy = {
-  accessibilityLabel: (
-    title: string,
-    chapterRange: string,
-    progress: string,
-    status: string,
-  ) => string;
-  chapterRange: string;
-  cta: (isCompleted: boolean) => string;
-  ctaAccessibilityLabel: (title: string, isCompleted: boolean) => string;
-  description: string;
-  levelLabel: string;
-  progressLabel: (completedChapters: number, totalChapters: number) => string;
-  title: string;
 };
 
 type HomeCopy = {
@@ -75,8 +54,6 @@ type HomeCopy = {
   feedbackLinkAccessibilityLabel: string;
   feedbackText: string;
   feedbackTitle: string;
-  freeBankBadge: string;
-  freeBankText: string;
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
@@ -85,7 +62,7 @@ type HomeCopy = {
   readinessCtaAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
   readinessMetricLabel: string;
-  readinessCaveat: string;
+  readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
   reviewWeakChapters: string;
@@ -102,89 +79,6 @@ type HomeCopy = {
   weakChaptersMetric: string;
   xpBasedHelper: string;
 };
-
-const guidedPathChapterGroups = [
-  { id: 'beginner', chapterIds: ['ch01', 'ch02', 'ch03', 'ch04'] },
-  { id: 'builder', chapterIds: ['ch05', 'ch06', 'ch07', 'ch08', 'ch09'] },
-  { id: 'advanced', chapterIds: ['ch10', 'ch11', 'ch12', 'ch13'] },
-] as const;
-
-function getAnsweredChapterIds(questionProgress: Record<string, QuestionProgress>) {
-  const answeredChapterIds = new Set<string>();
-
-  questions.forEach((question) => {
-    const progress = questionProgress[question.id];
-    const hasAnswered =
-      (progress?.seenCount ?? 0) > 0 ||
-      (progress?.correctCount ?? 0) > 0 ||
-      (progress?.wrongCount ?? 0) > 0;
-
-    if (hasAnswered) answeredChapterIds.add(question.chapterId);
-  });
-
-  return answeredChapterIds;
-}
-
-function buildGuidedPracticePathStages(
-  copy: HomeCopy,
-  questionProgress: Record<string, QuestionProgress>,
-): GuidedPracticePathStage[] {
-  const answeredChapterIds = getAnsweredChapterIds(questionProgress);
-  const progressByGroup = guidedPathChapterGroups.map((group) => {
-    const completedChapterCount = group.chapterIds.filter((chapterId) =>
-      answeredChapterIds.has(chapterId),
-    ).length;
-
-    return {
-      ...group,
-      completedChapterCount,
-      progress: completedChapterCount / group.chapterIds.length,
-    };
-  });
-  const activeGroupId =
-    progressByGroup.find((group) => group.completedChapterCount < group.chapterIds.length)?.id ??
-    'advanced';
-
-  return progressByGroup.map((group, index) => {
-    const stageCopy = copy.guidedPathStages[index];
-    const progressLabel = stageCopy.progressLabel(
-      group.completedChapterCount,
-      group.chapterIds.length,
-    );
-    const isCompleted = group.completedChapterCount === group.chapterIds.length;
-    const isActive = group.id === activeGroupId;
-    const statusLabel = isCompleted
-      ? copy.guidedPathStageStatuses.completed
-      : isActive
-        ? copy.guidedPathStageStatuses.active
-        : copy.guidedPathStageStatuses.upcoming;
-    const nextChapterId = group.chapterIds.find((chapterId) => !answeredChapterIds.has(chapterId));
-    const href = nextChapterId
-      ? (`/chapter/${nextChapterId}` as GuidedPracticePathStage['href'])
-      : '/exam';
-
-    return {
-      accessibilityLabel: stageCopy.accessibilityLabel(
-        stageCopy.title,
-        stageCopy.chapterRange,
-        progressLabel,
-        statusLabel,
-      ),
-      chapterRange: stageCopy.chapterRange,
-      cta: stageCopy.cta(isCompleted),
-      ctaAccessibilityLabel: stageCopy.ctaAccessibilityLabel(stageCopy.title, isCompleted),
-      description: stageCopy.description,
-      href,
-      id: group.id,
-      isActive,
-      levelLabel: stageCopy.levelLabel,
-      progress: group.progress,
-      progressLabel,
-      statusLabel,
-      title: stageCopy.title,
-    };
-  });
-}
 
 const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
@@ -205,28 +99,24 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     feedbackTitle: 'Håll koll på det som behöver övas',
-    freeBankBadge: 'Hela banken gratis',
-    freeBankText:
-      'Alla 13 ämnen och hela frågebanken ingår gratis. Betala bara om du vill ta bort annonser från studieskärmar.',
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Förberedelsesignal: ${score} procent. ${verdict}. ${details}`,
-    readinessCta: 'Gör ett tidsatt övningsprov',
-    readinessCtaAccessibilityLabel:
-      'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
+    readinessCta: 'Gör ett mockprov',
+    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade`,
-    readinessMetricLabel: 'lokalt',
-    readinessCaveat:
-      'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
-    readinessTitle: 'Förberedelsesignal',
+      `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
+    readinessMetricLabel: 'redo',
+    readinessSparseNote:
+      'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    readinessTitle: 'Redoindikator',
     readinessVerdicts: {
-      not_ready_yet: 'Mer underlag behövs',
-      getting_there: 'Framsteg syns',
-      almost_ready: 'Bra övningstakt',
-      strong_preparation: 'Stark lokal övning',
+      not_ready_yet: 'Öva mer först',
+      getting_there: 'På rätt väg',
+      almost_ready: 'Nästan redo',
+      strong_preparation: 'Stark förberedelse',
     },
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
@@ -248,16 +138,15 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
       },
       {
-        label: 'Övningsläge',
-        lesson:
-          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+        label: 'Provredo',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
       'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',
@@ -281,28 +170,24 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     feedbackTitle: 'Keep track of what needs review',
-    freeBankBadge: 'Full bank free',
-    freeBankText:
-      'All 13 topics and the full question bank are included for free. Pay only if you want to remove ads from study screens.',
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Preparation signal: ${score} percent. ${verdict}. ${details}`,
-    readinessCta: 'Take a timed practice exam',
-    readinessCtaAccessibilityLabel:
-      'Start a timed practice exam to compare with your local preparation signal',
+      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
+    readinessCta: 'Take a mock exam',
+    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried`,
-    readinessMetricLabel: 'local',
-    readinessCaveat:
-      'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
-    readinessTitle: 'Preparation signal',
+      `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
+    readinessMetricLabel: 'ready',
+    readinessSparseNote:
+      'Based on your answers so far. Answer more questions for a steadier signal.',
+    readinessTitle: 'Readiness indicator',
     readinessVerdicts: {
-      not_ready_yet: 'More evidence needed',
-      getting_there: 'Progress is visible',
-      almost_ready: 'Solid practice pace',
-      strong_preparation: 'Strong local practice',
+      not_ready_yet: 'Keep practicing first',
+      getting_there: 'Getting there',
+      almost_ready: 'Almost ready',
+      strong_preparation: 'Strong preparation',
     },
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
@@ -324,9 +209,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Get one simple next action and gentle habit feedback without blocking serious study.',
       },
       {
-        label: 'Timed practice',
+        label: 'Exam readiness',
         lesson:
-          'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
@@ -349,7 +234,6 @@ export default function Screen() {
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const answerAttempts = useProgressStore((state) => state.answerAttempts);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
@@ -358,10 +242,7 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
-  const completedToday = Math.min(
-    countAnswerAttemptsForLocalDate({ answerAttempts, questionProgress }),
-    dailyGoalAnswers,
-  );
+  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const streakWithFreeze = useMemo(
     () =>
@@ -400,13 +281,12 @@ export default function Screen() {
     () =>
       buildDashboardProgressSnapshot({
         answerDates,
-        answerAttempts,
         dailyGoalAnswers,
         mockExamSessions,
         questionProgress,
         totalXp,
       }),
-    [answerAttempts, answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
   );
   const dashboardQuestionChapterIndex = useMemo(
     () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
@@ -417,26 +297,6 @@ export default function Screen() {
     [dashboardProgress, dashboardQuestionChapterIndex],
   );
   const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
-  const guidedPathStages = useMemo(
-    () => buildGuidedPracticePathStages(copy, questionProgress),
-    [copy, questionProgress],
-  );
-  const guidedPathActiveStage =
-    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
-  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
-  const guidedPathCopy: GuidedPracticePathCopy = {
-    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
-      completedToday,
-      dailyGoalAnswers,
-    ),
-    dailyPracticeCta: copy.guidedPathDailyCta,
-    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
-    dailyPracticeTitle: copy.guidedPathDailyTitle,
-    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
-      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
-    ),
-    resumeCta: copy.guidedPathResumeCta,
-  };
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -502,7 +362,9 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
-        <Text style={styles.readinessCaveat}>{copy.readinessCaveat}</Text>
+        {readiness.isSparse ? (
+          <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
+        ) : null}
         <Link
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
           accessibilityRole="link"
@@ -513,11 +375,7 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      <Card style={styles.freeBankCard}>
-        <Badge tone="blue">{copy.freeBankBadge}</Badge>
-        <Text style={styles.freeBankText}>{copy.freeBankText}</Text>
-      </Card>
-      {!monetizationEntitlements.adsDisabled ? (
+      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -542,15 +400,6 @@ export default function Screen() {
           {copy.browseChapters}
         </Link>
       </View>
-
-      <SectionHeader title={copy.guidedPathTitle} subtitle={copy.guidedPathSubtitle} />
-      <GuidedPracticePath
-        copy={guidedPathCopy}
-        dailyProgress={progress}
-        language={language}
-        resumeHref={guidedPathResumeHref}
-        stages={guidedPathStages}
-      />
 
       <View style={styles.statsRow}>
         <MetricCard
@@ -710,7 +559,7 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  readinessCaveat: {
+  readinessSparseNote: {
     color: colors.textDisclaimer,
     fontSize: typography.micro.fontSize,
     lineHeight: typography.micro.lineHeight,
@@ -784,14 +633,6 @@ const styles = StyleSheet.create({
     gap: space[1],
   },
   streakFreezeText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  freeBankCard: {
-    gap: space[1],
-  },
-  freeBankText: {
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,

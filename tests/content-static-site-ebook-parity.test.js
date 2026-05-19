@@ -16,12 +16,6 @@ const staleEbookCopyPatterns = [
   /Coming soon/i,
   /Kommer snart/i,
 ];
-const swedishEbookQuizLoanwordPatterns = [
-  phrasePattern('gör ett ', 'quiz'),
-  phrasePattern('quiz', 'frågor'),
-  phrasePattern('quiz', 'pass'),
-  phrasePattern('quiz', 'et'),
-];
 const unsupportedEbookOutcomeClaimPatterns = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -158,12 +152,6 @@ function assertNoStaleEbookCopy(value) {
   }
 }
 
-function assertNoSwedishEbookQuizLoanwords(value) {
-  for (const pattern of swedishEbookQuizLoanwordPatterns) {
-    assert.doesNotMatch(value, pattern);
-  }
-}
-
 function assertNoUnsupportedEbookOutcomeClaim(value) {
   for (const pattern of unsupportedEbookOutcomeClaimPatterns) {
     assert.doesNotMatch(value, pattern);
@@ -206,7 +194,6 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
 
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assertNoStaleEbookCopy(source);
-  assertNoSwedishEbookQuizLoanwords(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
   assertNoUnsupportedFactboxClaim(source);
@@ -260,7 +247,6 @@ test('static ebook renders every chapter with Swedish and English body parity', 
 
     assertNoStaleEbookCopy(englishHtml);
     assertNoStaleEbookCopy(swedishHtml);
-    assertNoSwedishEbookQuizLoanwords(swedishHtml);
     assertNoUnsupportedEbookOutcomeClaim(englishHtml);
     assertNoUnsupportedEbookOutcomeClaim(swedishHtml);
     assertNoUnsupportedPracticalTestClaim(englishHtml);
@@ -292,7 +278,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
       assert.match(englishHtml, /What this book is/);
       assert.match(englishHtml, /Short, repeated sessions make it easier/);
       assert.match(swedishHtml, /Vad den h[aä]r boken [aä]r/);
-      assert.match(swedishHtml, /gör en övning/);
+      assert.match(swedishHtml, /Avsluta veckan med ett [oö]vningsprov/);
     } else {
       assert.doesNotMatch(englishHtml, /<div class="ebook__crumb">How to read this book<\/div>/);
       assert.doesNotMatch(
