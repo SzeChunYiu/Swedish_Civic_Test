@@ -213,6 +213,21 @@ function loadScripts(context, practiceInjection = '') {
   vm.runInContext(read('site/settings.js'), context.sandbox, { timeout: 3000 });
 }
 
+const mockOfficialPassLineClaimPatterns = [
+  new RegExp(['passing', 'line'].join('\\s+'), 'i'),
+  new RegExp('godk' + '[aä]nt[-\\s]*gr[aä]ns', 'i'),
+  new RegExp('75\\s*' + '%\\s*next\\s*time', 'i'),
+  new RegExp(['you', 'passed'].join('\\s+'), 'i'),
+  new RegExp('underk' + '[aä]nt', 'i'),
+  new RegExp('godk' + '[aä]nt', 'i'),
+];
+
+function assertNoMockOfficialPassLineCopy(html) {
+  for (const pattern of mockOfficialPassLineClaimPatterns) {
+    assert.doesNotMatch(html, pattern);
+  }
+}
+
 test('Settings language change rerenders an active Practice question without reload', () => {
   const context = createRenderContext({ hash: '#/practice?c=1', language: 'en' });
   loadScripts(context);
@@ -234,11 +249,16 @@ test('Settings language change rerenders the Mock landing without reload', () =>
   loadScripts(context, 'renderMockLanding();');
 
   assert.match(context.element('mock-stage').innerHTML, /Build your exam\./);
+  assert.match(context.element('mock-stage').innerHTML, /Practice score/);
+  assertNoMockOfficialPassLineCopy(context.element('mock-stage').innerHTML);
   context.clickSettingsLanguage('sv');
 
   const html = context.element('mock-stage').innerHTML;
-  assert.match(html, /Bygg din tentamen\./);
-  assert.match(html, /Starta tentamen/);
+  assert.match(html, /Bygg ditt övningsprov\./);
+  assert.match(html, /Starta övningsprov/);
+  assert.match(html, /Övningspoäng/);
+  assertNoMockOfficialPassLineCopy(html);
+  assert.doesNotMatch(html, /Skarp tentamen|Bygg din tentamen|Starta tentamen/);
   assert.equal(context.reloadCount, 0);
 });
 
@@ -261,10 +281,11 @@ test('Settings language change rerenders an active Mock exam without reload', ()
   context.clickSettingsLanguage('sv');
 
   const html = context.element('mock-stage').innerHTML;
-  assert.match(html, /Skarp tentamen/);
+  assert.match(html, /Övningsprov/);
   assert.match(html, /Återstår/);
   assert.match(html, /Lämna in/);
   assert.match(html, /Var ligger Sverige\?/);
+  assert.doesNotMatch(html, /Skarp tentamen|tentamen/);
   assert.equal(context.reloadCount, 0);
 });
 
@@ -288,6 +309,8 @@ test('Settings language change rerenders submitted Mock results without restarti
   const html = context.element('mock-stage').innerHTML;
   assert.match(html, /Frågegenomgång/);
   assert.match(html, /Rätt svar/);
-  assert.doesNotMatch(html, /Build your exam|Bygg din tentamen/);
+  assert.match(html, /Övningen är klar/);
+  assertNoMockOfficialPassLineCopy(html);
+  assert.doesNotMatch(html, /Build your exam|Bygg din tentamen|Starta tentamen|Skarp tentamen/);
   assert.equal(context.reloadCount, 0);
 });

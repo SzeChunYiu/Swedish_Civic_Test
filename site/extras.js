@@ -1,37 +1,46 @@
-/* Sveriges Medborgartest — Extras
+/* Almost Swedish — Extras
    - Reveal-on-scroll for chapter list
    - Easter eggs: fika, abba, snö, vasa, ikea, skål, lagom, brand-tap, "?" cheatsheet, triple-click facts
    - Smooth in-page anchor scroll
 */
 
 (function () {
-  "use strict";
+  'use strict';
 
   // ---------- Reveal chapter rows on scroll ----------
 
   function setupReveal() {
-    const items = document.querySelectorAll(".list-quiet li");
-    if (!items.length || !("IntersectionObserver" in window)) {
-      items.forEach((el) => el.classList.add("is-in"));
+    const items = document.querySelectorAll('.list-quiet li');
+    if (!items.length || !('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-in'));
       return;
     }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          const idx = Array.from(items).indexOf(e.target);
-          setTimeout(() => e.target.classList.add("is-in"), Math.min(idx * 40, 240));
-          io.unobserve(e.target);
-        }
-      });
-    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.05 });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const idx = Array.from(items).indexOf(e.target);
+            setTimeout(() => e.target.classList.add('is-in'), Math.min(idx * 40, 240));
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
+    );
     items.forEach((el) => io.observe(el));
   }
 
   // ---------- Lang helper ----------
-  function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
+  function lang() {
+    try {
+      return localStorage.getItem('smt_lang') || 'en';
+    } catch {
+      return 'en';
+    }
+  }
   function isTyping() {
     const a = document.activeElement;
-    return a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable);
+    return a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable);
   }
 
   // ---------- Type-a-word easter eggs ----------
@@ -39,20 +48,20 @@
   const WORDS = {
     fika: fikaEgg,
     abba: abbaEgg,
-    "snö": snowEgg,
+    snö: snowEgg,
     snow: snowEgg,
     vasa: vasaEgg,
     ikea: ikeaEgg,
-    "skål": skalEgg,
+    skål: skalEgg,
     skol: skalEgg,
     lagom: lagomEgg,
   };
   const MAX_LEN = 5; // longest trigger length
-  let buf = "";
-  document.addEventListener("keydown", (e) => {
+  let buf = '';
+  document.addEventListener('keydown', (e) => {
     if (isTyping()) return;
     // "?" cheatsheet
-    if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+    if (e.key === '?' || (e.shiftKey && e.key === '/')) {
       toggleCheatsheet();
       return;
     }
@@ -61,7 +70,7 @@
     for (const w in WORDS) {
       if (buf.endsWith(w)) {
         WORDS[w]();
-        buf = "";
+        buf = '';
         return;
       }
     }
@@ -72,50 +81,54 @@
   function fikaEgg() {
     const fx = window.smtFx;
     if (fx) {
-      const cx = innerWidth * 0.5, cy = innerHeight * 0.3;
-      fx.burst(cx, cy, { colors: ["#8a5a2b", "#5a3416", "#fff", "#fecc00"], count: 30 });
-      fx.toast("☕ Fika break.", { duration: 2200 });
+      const cx = innerWidth * 0.5,
+        cy = innerHeight * 0.3;
+      fx.burst(cx, cy, { colors: ['#8a5a2b', '#5a3416', '#fff', '#fecc00'], count: 30 });
+      fx.toast('☕ Fika break.', { duration: 2200 });
     }
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate("Fika break? Always allowed.", "Fika? Alltid tillåtet.");
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate('Fika break? Always allowed.', 'Fika? Alltid tillåtet.');
   }
 
   function abbaEgg() {
     // disco rainbow confetti from center top
     const fx = window.smtFx;
     if (fx) {
-      const cols = ["#ff3d8c", "#ff8c1a", "#fecc00", "#3eda9a", "#3aa7ff", "#b46cf4", "#fff"];
+      const cols = ['#ff3d8c', '#ff8c1a', '#fecc00', '#3eda9a', '#3aa7ff', '#b46cf4', '#fff'];
       for (let i = 0; i < 4; i++) {
         setTimeout(() => {
-          fx.burst(innerWidth * (.2 + Math.random()*.6), 80 + Math.random()*100,
-            { colors: cols, count: 40, spread: 240 });
+          fx.burst(innerWidth * (0.2 + Math.random() * 0.6), 80 + Math.random() * 100, {
+            colors: cols,
+            count: 40,
+            spread: 240,
+          });
         }, i * 220);
       }
-      fx.toast("💃 Take a chance on me.", { flavor: "win", duration: 2800 });
+      fx.toast('💃 Take a chance on me.', { flavor: 'win', duration: 2800 });
     }
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-      "Mamma mia, here we go again.", "Mamma mia, här går vi igen."
-    );
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate('Mamma mia, here we go again.', 'Mamma mia, här går vi igen.');
   }
 
   function snowEgg() {
-    if (document.getElementById("smt-snow")) return; // already running
-    const layer = document.createElement("div");
-    layer.id = "smt-snow";
-    layer.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:94;overflow:hidden";
+    if (document.getElementById('smt-snow')) return; // already running
+    const layer = document.createElement('div');
+    layer.id = 'smt-snow';
+    layer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:94;overflow:hidden';
     document.body.appendChild(layer);
-    const flakes = ["❄", "❅", "❆", "·", "*"];
+    const flakes = ['❄', '❅', '❆', '·', '*'];
     const N = 60;
     for (let i = 0; i < N; i++) {
-      const f = document.createElement("span");
-      f.textContent = flakes[Math.floor(Math.random()*flakes.length)];
-      const size = 10 + Math.random()*16;
+      const f = document.createElement('span');
+      f.textContent = flakes[Math.floor(Math.random() * flakes.length)];
+      const size = 10 + Math.random() * 16;
       const x = Math.random() * innerWidth;
       const dx = (Math.random() - 0.5) * 160;
-      const dur = 5500 + Math.random()*4500;
+      const dur = 5500 + Math.random() * 4500;
       const delay = Math.random() * 4000;
       f.style.cssText = `
         position:absolute; left:${x}px; top:-30px;
-        color: rgba(255,255,255,${0.55 + Math.random()*0.35});
+        color: rgba(255,255,255,${0.55 + Math.random() * 0.35});
         font-size:${size}px;
         text-shadow: 0 1px 2px rgba(0,80,160,.4);
         will-change: transform, opacity;
@@ -123,24 +136,30 @@
       layer.appendChild(f);
       f.animate(
         [
-          { transform: "translate(0,0) rotate(0)", opacity: 0 },
-          { transform: `translate(${dx*.3}px,${innerHeight*.3}px) rotate(80deg)`, opacity: 1, offset: .2 },
-          { transform: `translate(${dx}px,${innerHeight+40}px) rotate(360deg)`, opacity: 0 },
+          { transform: 'translate(0,0) rotate(0)', opacity: 0 },
+          {
+            transform: `translate(${dx * 0.3}px,${innerHeight * 0.3}px) rotate(80deg)`,
+            opacity: 1,
+            offset: 0.2,
+          },
+          { transform: `translate(${dx}px,${innerHeight + 40}px) rotate(360deg)`, opacity: 0 },
         ],
-        { duration: dur, delay, easing: "cubic-bezier(.3,.4,.5,1)" }
+        { duration: dur, delay, easing: 'cubic-bezier(.3,.4,.5,1)' },
       ).onfinish = () => f.remove();
     }
-    if (window.smtFx) window.smtFx.toast("❄ Snow.", { duration: 2200 });
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-      "Vinter is here. Sip something hot.", "Vinter är här. Drick något varmt."
-    );
+    if (window.smtFx) window.smtFx.toast('❄ Snow.', { duration: 2200 });
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate(
+        'Vinter is here. Sip something hot.',
+        'Vinter är här. Drick något varmt.',
+      );
     setTimeout(() => layer.remove(), 11000);
   }
 
   function vasaEgg() {
-    if (document.getElementById("smt-vasa")) return;
-    const ship = document.createElement("div");
-    ship.id = "smt-vasa";
+    if (document.getElementById('smt-vasa')) return;
+    const ship = document.createElement('div');
+    ship.id = 'smt-vasa';
     ship.innerHTML = `
       <svg viewBox="0 0 220 140" width="180" height="115" aria-hidden="true">
         <line x1="60" y1="20" x2="60" y2="80" stroke="#3a2510" stroke-width="3"/>
@@ -167,65 +186,73 @@
     // sail across, then sink
     ship.animate(
       [
-        { transform: "translate(0,0) rotate(0)" },
-        { transform: `translate(${innerWidth*.7}px, 0) rotate(0)`, offset: .7 },
-        { transform: `translate(${innerWidth*.7}px, 60px) rotate(-25deg)`, offset: .9 },
-        { transform: `translate(${innerWidth*.72}px, 200px) rotate(-50deg)`, opacity: 0 },
+        { transform: 'translate(0,0) rotate(0)' },
+        { transform: `translate(${innerWidth * 0.7}px, 0) rotate(0)`, offset: 0.7 },
+        { transform: `translate(${innerWidth * 0.7}px, 60px) rotate(-25deg)`, offset: 0.9 },
+        { transform: `translate(${innerWidth * 0.72}px, 200px) rotate(-50deg)`, opacity: 0 },
       ],
-      { duration: 14000, easing: "cubic-bezier(.42,.05,.7,1)" }
+      { duration: 14000, easing: 'cubic-bezier(.42,.05,.7,1)' },
     ).onfinish = () => ship.remove();
-    if (window.smtFx) window.smtFx.toast("⛵ Vasa, on its way.", { duration: 2200 });
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-      "It sank in 1628. Don't get attached.",
-      "Det sjönk 1628. Knyt inte an för mycket."
-    );
+    if (window.smtFx) window.smtFx.toast('⛵ Vasa, on its way.', { duration: 2200 });
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate(
+        "It sank in 1628. Don't get attached.",
+        'Det sjönk 1628. Knyt inte an för mycket.',
+      );
   }
 
   function ikeaEgg() {
     if (window.smtFx) {
-      window.smtFx.toast("📦 Some assembly required.", { duration: 2400 });
+      window.smtFx.toast('📦 Some assembly required.', { duration: 2400 });
     }
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-      "Step 1: do not lose the small allen key. Step 2: there is no step 2.",
-      "Steg 1: tappa inte bort den lilla insexnyckeln. Steg 2: det finns inget steg 2."
-    );
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate(
+        'Step 1: do not lose the small allen key. Step 2: there is no step 2.',
+        'Steg 1: tappa inte bort den lilla insexnyckeln. Steg 2: det finns inget steg 2.',
+      );
   }
 
   function skalEgg() {
     if (window.smtFx) {
-      const cx = innerWidth * 0.5, cy = innerHeight * 0.3;
-      window.smtFx.burst(cx, cy, { colors: ["#fecc00", "#fff", "#fff3cf"], count: 24 });
-      window.smtFx.toast("🥂 Skål!", { duration: 1800 });
+      const cx = innerWidth * 0.5,
+        cy = innerHeight * 0.3;
+      window.smtFx.burst(cx, cy, { colors: ['#fecc00', '#fff', '#fff3cf'], count: 24 });
+      window.smtFx.toast('🥂 Skål!', { duration: 1800 });
     }
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-      "Eyes up. Glass up. Sip. Eyes again. That's the protocol.",
-      "Ögonkontakt. Höj glaset. Klunk. Ögonkontakt igen. Så går det till."
-    );
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate(
+        "Eyes up. Glass up. Sip. Eyes again. That's the protocol.",
+        'Ögonkontakt. Höj glaset. Klunk. Ögonkontakt igen. Så går det till.',
+      );
   }
 
   function lagomEgg() {
-    if (window.smtFx) window.smtFx.toast("👌 Lagom.", { duration: 1800 });
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-      "Not too much. Not too little. Just right.",
-      "Inte för mycket. Inte för lite. Precis lagom."
-    );
+    if (window.smtFx) window.smtFx.toast('👌 Lagom.', { duration: 1800 });
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate(
+        'Not too much. Not too little. Just right.',
+        'Inte för mycket. Inte för lite. Precis lagom.',
+      );
   }
 
   // ---------- Click brand logo 5× → flag flutter ----------
 
-  let brandClicks = 0; let brandClickTimer = null;
-  document.addEventListener("click", (e) => {
-    if (!e.target.closest(".brand, .footer__brand")) return;
+  let brandClicks = 0;
+  let brandClickTimer = null;
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.brand, .footer__brand')) return;
     brandClicks++;
     clearTimeout(brandClickTimer);
-    brandClickTimer = setTimeout(() => { brandClicks = 0; }, 1500);
+    brandClickTimer = setTimeout(() => {
+      brandClicks = 0;
+    }, 1500);
     if (brandClicks >= 5) {
       brandClicks = 0;
       flagFlutter();
     }
   });
   function flagFlutter() {
-    const flag = document.createElement("div");
+    const flag = document.createElement('div');
     flag.style.cssText = `
       position: fixed; top: 40%; left: 50%;
       width: 240px; height: 150px;
@@ -241,71 +268,104 @@
     document.body.appendChild(flag);
     flag.animate(
       [
-        { transform: "translate(-50%, -50%) scale(.3) rotate(-12deg)", opacity: 0 },
-        { transform: "translate(-50%, -50%) scale(1) rotate(0deg)", opacity: 1, offset: .25 },
-        { transform: "translate(-50%, -50%) scale(1.04) rotate(2deg) skewX(-3deg)", offset: .55 },
-        { transform: "translate(-50%, -50%) scale(1.02) rotate(-1deg) skewX(2deg)", offset: .85 },
-        { transform: "translate(-50%, -50%) scale(.95) rotate(0deg)", opacity: 0 },
+        { transform: 'translate(-50%, -50%) scale(.3) rotate(-12deg)', opacity: 0 },
+        { transform: 'translate(-50%, -50%) scale(1) rotate(0deg)', opacity: 1, offset: 0.25 },
+        { transform: 'translate(-50%, -50%) scale(1.04) rotate(2deg) skewX(-3deg)', offset: 0.55 },
+        { transform: 'translate(-50%, -50%) scale(1.02) rotate(-1deg) skewX(2deg)', offset: 0.85 },
+        { transform: 'translate(-50%, -50%) scale(.95) rotate(0deg)', opacity: 0 },
       ],
-      { duration: 2200, easing: "cubic-bezier(.3,.7,.4,1)" }
+      { duration: 2200, easing: 'cubic-bezier(.3,.7,.4,1)' },
     ).onfinish = () => flag.remove();
-    if (window.smtFx) window.smtFx.rain({ colors: ["#006aa7", "#fecc00"], count: 80 });
-    if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-      "Sweden mode. Hej hej.", "Sverige-läge. Hej hej."
-    );
+    if (window.smtFx) window.smtFx.rain({ colors: ['#006aa7', '#fecc00'], count: 80 });
+    if (window.smtBuddyCelebrate)
+      window.smtBuddyCelebrate('Sweden mode. Hej hej.', 'Sverige-läge. Hej hej.');
   }
 
   // ---------- Konami → flag rain (kept from before) ----------
 
-  const SEQ = ["arrowup","arrowup","arrowdown","arrowdown","arrowleft","arrowright","arrowleft","arrowright","b","a"];
+  const SEQ = [
+    'arrowup',
+    'arrowup',
+    'arrowdown',
+    'arrowdown',
+    'arrowleft',
+    'arrowright',
+    'arrowleft',
+    'arrowright',
+    'b',
+    'a',
+  ];
   let kbuf = [];
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener('keydown', (e) => {
     if (isTyping()) return;
     kbuf.push(e.key.toLowerCase());
     if (kbuf.length > SEQ.length) kbuf.shift();
-    if (kbuf.join(",") === SEQ.join(",")) {
-      if (window.smtFx) window.smtFx.rain({ colors: ["#006aa7", "#fecc00"], count: 160 });
-      if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-        "Sweden mode activated.", "Sverige-läge aktiverat."
-      );
+    if (kbuf.join(',') === SEQ.join(',')) {
+      if (window.smtFx) window.smtFx.rain({ colors: ['#006aa7', '#fecc00'], count: 160 });
+      if (window.smtBuddyCelebrate)
+        window.smtBuddyCelebrate('Sweden mode activated.', 'Sverige-läge aktiverat.');
       kbuf = [];
     }
   });
 
   // ---------- Triple-click → random Sweden fact ----------
 
-  let clicks = 0; let clickTimer = null;
-  document.addEventListener("click", (e) => {
+  let clicks = 0;
+  let clickTimer = null;
+  document.addEventListener('click', (e) => {
     // skip clicks on real interactive elements
-    if (e.target.closest("a, button, input, label, summary, .qopt, .quiz__opt, .nav, .modal, .dala-buddy")) return;
+    if (
+      e.target.closest(
+        'a, button, input, label, summary, .qopt, .quiz__opt, .nav, .modal, .dala-buddy',
+      )
+    )
+      return;
     clicks++;
     clearTimeout(clickTimer);
-    clickTimer = setTimeout(() => { clicks = 0; }, 600);
+    clickTimer = setTimeout(() => {
+      clicks = 0;
+    }, 600);
     if (clicks >= 3) {
       clicks = 0;
       const facts = [
-        ["Spotify, Skype, Minecraft, and Klarna were all started in Sweden.",
-         "Spotify, Skype, Minecraft och Klarna startade alla i Sverige."],
-        ["Sweden has been at peace since 1814.", "Sverige har varit i fred sedan 1814."],
-        ["Sweden recycles ~99% of household waste.", "Sverige återvinner ~99% av hushållsavfallet."],
-        ["~96,000 lakes. 200,000 islands.", "~96 000 sjöar. 200 000 öar."],
-        ["IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.", "IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd."],
-        ["480 days of paid parental leave per child.", "480 dagar betald föräldraledighet per barn."],
-        ["Volvo invented the three-point seatbelt and gave the patent away.",
-         "Volvo uppfann trepunktsbältet och gav bort patentet."],
+        [
+          'Spotify, Skype, Minecraft, and Klarna were all started in Sweden.',
+          'Spotify, Skype, Minecraft och Klarna startade alla i Sverige.',
+        ],
+        ['Sweden has been at peace since 1814.', 'Sverige har varit i fred sedan 1814.'],
+        [
+          'Sweden recycles ~99% of household waste.',
+          'Sverige återvinner ~99% av hushållsavfallet.',
+        ],
+        ['~96,000 lakes. 200,000 islands.', '~96 000 sjöar. 200 000 öar.'],
+        [
+          'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+          'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        ],
+        [
+          '480 days of paid parental leave per child.',
+          '480 dagar betald föräldraledighet per barn.',
+        ],
+        [
+          'Volvo invented the three-point seatbelt and gave the patent away.',
+          'Volvo uppfann trepunktsbältet och gav bort patentet.',
+        ],
       ];
-      const f = facts[Math.floor(Math.random()*facts.length)];
-      if (window.smtFx) window.smtFx.toast("💡 " + f[lang() === "sv" ? 1 : 0], { duration: 4200 });
+      const f = facts[Math.floor(Math.random() * facts.length)];
+      if (window.smtFx) window.smtFx.toast('💡 ' + f[lang() === 'sv' ? 1 : 0], { duration: 4200 });
     }
   });
 
   // ---------- "?" — easter eggs cheatsheet ----------
 
   function toggleCheatsheet() {
-    let el = document.getElementById("smt-cheats");
-    if (el) { el.remove(); return; }
-    el = document.createElement("div");
-    el.id = "smt-cheats";
+    let el = document.getElementById('smt-cheats');
+    if (el) {
+      el.remove();
+      return;
+    }
+    el = document.createElement('div');
+    el.id = 'smt-cheats';
     el.innerHTML = `
       <div class="cheats__panel">
         <button class="cheats__close" aria-label="Close">✕</button>
@@ -326,26 +386,27 @@
         <p class="cheats__foot">Hej hej.</p>
       </div>
     `;
-    el.style.cssText = "position:fixed;inset:0;z-index:101;display:grid;place-items:center;background:rgba(11,31,51,.55);backdrop-filter:blur(4px);animation:smt-cheats-in .18s ease-out";
+    el.style.cssText =
+      'position:fixed;inset:0;z-index:101;display:grid;place-items:center;background:rgba(11,31,51,.55);backdrop-filter:blur(4px);animation:smt-cheats-in .18s ease-out';
     document.body.appendChild(el);
-    el.addEventListener("click", (e) => {
-      if (e.target === el || e.target.closest(".cheats__close")) el.remove();
+    el.addEventListener('click', (e) => {
+      if (e.target === el || e.target.closest('.cheats__close')) el.remove();
     });
   }
 
   // ---------- Smooth in-page anchors ----------
 
-  document.addEventListener("click", (e) => {
+  document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
-    const h = a.getAttribute("href");
+    const h = a.getAttribute('href');
     if (h.length <= 1) return;
-    if (h.startsWith("#/")) return;
+    if (h.startsWith('#/')) return;
     const target = document.querySelector(h);
     if (!target) return;
     e.preventDefault();
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  window.addEventListener("DOMContentLoaded", setupReveal);
+  window.addEventListener('DOMContentLoaded', setupReveal);
 })();
