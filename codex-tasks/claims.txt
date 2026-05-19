@@ -470,3 +470,4 @@ CLAIMED HOME-TRUST-ROW-SOURCES-LINK-E2E-1 by pane0-manager-build-2687983 2026-05
 CLAIMED REVIEWER-GENERATED-TF-STANDALONE-Q270-Q271-CURRENT-1 by pane4-data-integrity-1779218614 2026-05-19T07:23:34Z
 CLAIMED NATIVE-LAUNCH-AD-SHOWN-CAP-1 by pane3-uiux-2696922 2026-05-19T19:25:49Z (all concrete P0 rows currently claimed; earlier P1 e2e rows blocked on missing prerequisite surfaces)
 CLAIMED SETTINGS-CLEAR-LOCAL-STUDY-DATA-1 by pane0-manager-build-2709957 2026-05-19T19:28:52Z (first unclaimed viable after claimed P0 rows and PR-gated e2e rows)
+CLAIMED NATIVE-AD-ASSET-DIRECT-CHILD-GUARD-1 by pane3-uiux-2724009 2026-05-19T19:31:34Z (all concrete P0 rows currently claimed; earlier unclaimed UI/e2e rows blocked on missing prerequisite surfaces)
