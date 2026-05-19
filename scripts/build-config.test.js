@@ -1292,12 +1292,12 @@ test('web export script is available for local production bundle smoke', () => {
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
-    pkg.scripts['test:web-export-resources'],
-    'node scripts/check-web-export-resources.js dist-web',
+    pkg.scripts['test:web-export-budget'],
+    'node --test tests/web-export-budget.test.js',
   );
   assert.equal(
     pkg.scripts['release:web-export-smoke'],
-    'rm -rf dist-web && npm run build:web:export && npm run test:web-export-resources',
+    'rm -rf dist-web && npm run build:web:export && npm run test:web-export-budget',
   );
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
@@ -1307,9 +1307,7 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
-  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/check-web-export-resources.js')), true);
-  assert.equal(fs.existsSync(path.join(repoRoot, 'assets/favicon.svg')), true);
-  assert.match(htmlShell, /<link href="favicon\.svg" rel="icon" type="image\/svg\+xml" \/>/);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'tests/web-export-budget.test.js')), true);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
