@@ -5,7 +5,7 @@ import { create } from 'zustand';
 import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
-import { calculateAnswerXp } from '../learning/xp';
+import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
 
 export type QuestionProgress = {
   questionId: string;
@@ -241,13 +241,22 @@ export const useProgressStore = create<ProgressState>((set) => ({
         correctCount: Math.max(0, session.correctCount ?? 0),
         totalCount: Math.max(0, session.totalCount ?? 0),
       };
+      const existingSession = state.mockExamSessions.find(
+        (item) => item.sessionId === nextSession.sessionId,
+      );
+      const completionXp = existingSession
+        ? 0
+        : calculateQuizCompletionXp({
+            answeredCount: nextSession.totalCount,
+            correctCount: nextSession.correctCount,
+          });
       const otherSessions = state.mockExamSessions.filter(
         (item) => item.sessionId !== nextSession.sessionId,
       );
       const nextProgress = {
         completedQuestionIds: state.completedQuestionIds,
         questionProgress: state.questionProgress,
-        totalXp: state.totalXp,
+        totalXp: state.totalXp + completionXp,
         answerDates: state.answerDates,
         mockExamSessions: [...otherSessions, nextSession],
         streakFreezeState: state.streakFreezeState,
