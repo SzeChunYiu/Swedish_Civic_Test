@@ -342,7 +342,7 @@ const i18n = window.i18n = {
     "sources.s5.t": "Editorial method",
     "sources.s5.callout.b": "House rule:",
     "sources.s5.callout.p": "if it can't be cited to a public source, it doesn't make the question bank.",
-    "sources.s5.p": "Every question goes through draft → source-check → plain-language pass → native-Swedish review. When a source updates (a new election, a law amendment, a renamed agency), the affected questions get a refresh tag and re-enter review.",
+    "sources.s5.p": "Every question goes through draft → source-check → plain-language pass → native-Swedish review before it ships. The cited source line is the contract: if a question disagrees with that public source, we fix the question or remove it.",
     "sources.s5.p2": "See a question that disagrees with its cited source? <a href=\"#/support\">Tell us</a> — corrections are usually live within a week.",
 
     "footer.brag1": "Study lagom.",
