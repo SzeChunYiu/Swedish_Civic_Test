@@ -70,3 +70,67 @@ test('topbar language picker exposes one compact close target and keeps disabled
 
   expect(consoleErrors).toEqual([]);
 });
+
+test('topbar language picker supports keyboard menu navigation', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const trigger = await openLanguagePicker(page);
+  const menu = page.getByRole('menu', { name: 'Språkväljare' });
+  const swedishRow = page.getByRole('menuitem', { name: 'Swedish' });
+  const englishRow = page.getByRole('menuitem', { name: 'English' });
+  const arabicRow = page.getByRole('menuitem', { name: 'Arabic, kommer snart' });
+
+  await expect(menu).toBeVisible();
+  await expect(swedishRow).toBeFocused();
+
+  await page.keyboard.press('ArrowDown');
+  await expect(englishRow).toBeFocused();
+  await expect(arabicRow).not.toBeFocused();
+
+  await page.keyboard.press('ArrowDown');
+  await expect(swedishRow).toBeFocused();
+
+  await page.keyboard.press('End');
+  await expect(englishRow).toBeFocused();
+
+  await page.keyboard.press('Enter');
+  await expect(menu).toHaveCount(0);
+
+  const englishTrigger = page.getByRole('button', {
+    name: 'Current language EN. Open language picker.',
+  });
+  await expect(englishTrigger).toBeFocused();
+  await expect(englishTrigger).toHaveAttribute('aria-expanded', 'false');
+
+  await englishTrigger.click();
+  await expect(page.getByRole('menu', { name: 'Language picker' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'English' })).toBeFocused();
+
+  await page.keyboard.press('Home');
+  await expect(page.getByRole('menuitem', { name: 'Swedish' })).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('menu', { name: /Language picker|Språkväljare/ })).toHaveCount(0);
+
+  const swedishTrigger = page.getByRole('button', {
+    name: 'Nuvarande språk SV. Öppna språkväljaren.',
+  });
+  await expect(swedishTrigger).toBeFocused();
+
+  await swedishTrigger.click();
+  await expect(page.getByRole('menu', { name: 'Språkväljare' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('menu', { name: 'Språkväljare' })).toHaveCount(0);
+  await expect(swedishTrigger).toBeFocused();
+  await expect(swedishTrigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+  expect(consoleErrors).toEqual([]);
+});
