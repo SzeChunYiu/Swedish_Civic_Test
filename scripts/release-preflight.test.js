@@ -250,8 +250,7 @@ function createEasBuildEvidence(options = {}) {
     ios: {
       profile: 'internal',
       buildId: 'ios-build-100',
-      buildUrl:
-        'https://expo.dev/accounts/example/projects/almost-swedish/builds/ios-build-100',
+      buildUrl: 'https://expo.dev/accounts/example/projects/almost-swedish/builds/ios-build-100',
       artifactType: 'ipa',
       installOrTestStatus: 'ready-for-testflight',
     },
