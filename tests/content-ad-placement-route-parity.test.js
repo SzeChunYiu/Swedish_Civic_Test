@@ -33,6 +33,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
+  assert.equal(summary.nativeAdAssetDirectChildrenValidated, 5);
   assert.equal(summary.adPlacementRouteParityValidated, true);
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
@@ -55,6 +56,20 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     /<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/,
   );
   assert.match(nativeAdCardNativeSource, /NativeAsset/);
+  for (const [assetType, directChild] of [
+    ['ICON', 'Image'],
+    ['HEADLINE', 'Text'],
+    ['BODY', 'Text'],
+    ['ADVERTISER', 'Text'],
+    ['CALL_TO_ACTION', 'Text'],
+  ]) {
+    assert.match(
+      nativeAdCardNativeSource,
+      new RegExp(
+        `<NativeAsset assetType=\\{NativeAssetType\\.${assetType}\\}>\\s*<${directChild}\\b`,
+      ),
+    );
+  }
   assert.match(nativeAdCardNativeSource, /NativeMediaView/);
   assert.match(
     nativeAdCardNativeSource,
@@ -315,5 +330,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /NativeAdCard native placement must expose the call-to-action as a labelled native asset button/,
+  );
+});
+
+test('ad placement route parity rejects wrapped native ad asset children', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<NativeAsset assetType={NativeAssetType.HEADLINE}>\\n              <Text',
+        '<NativeAsset assetType={NativeAssetType.HEADLINE}>\\n              <Pressable>\\n                <Text',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /NativeAdCard native HEADLINE asset must not wrap its registered child/,
   );
 });
