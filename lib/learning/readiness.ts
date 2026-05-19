@@ -53,27 +53,13 @@ function clamp01(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
 
-function validTimestampMs(value: string | undefined): number | null {
-  if (!value) return null;
-  const timestampMs = new Date(value).getTime();
-  return Number.isFinite(timestampMs) ? timestampMs : null;
-}
-
-function recencyFromProgressEvents(progress: UserProgress, now: Date): number {
+function recencyFromLastAnswer(progress: UserProgress, now: Date): number {
   let mostRecent: number | null = null;
-  const recordTimestamp = (timestampMs: number | null) => {
-    if (timestampMs === null) return;
-    if (mostRecent === null || timestampMs > mostRecent) mostRecent = timestampMs;
-  };
-
   for (const session of progress.sessions ?? []) {
-    if (session.mode === 'exam') {
-      recordTimestamp(validTimestampMs(session.completedAt));
-      continue;
-    }
-
     for (const answer of session.answers) {
-      recordTimestamp(validTimestampMs(answer.answeredAt));
+      const t = new Date(answer.answeredAt).getTime();
+      if (Number.isNaN(t)) continue;
+      if (mostRecent === null || t > mostRecent) mostRecent = t;
     }
   }
   if (mostRecent === null) return 0;
@@ -87,7 +73,6 @@ function rollingAccuracy(progress: UserProgress, now: Date, daysBack = 14): numb
   let total = 0;
   let correct = 0;
   for (const session of progress.sessions ?? []) {
-    if (session.mode === 'exam') continue;
     for (const answer of session.answers) {
       if (answer.answeredAt < cutoff) continue;
       total += 1;
@@ -251,7 +236,7 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
 
   const accuracy = rollingAccuracy(input.progress, now);
   const coverage = chapterCoverage(input.progress, input.chapters, input.questionChapterIndex);
-  const recency = recencyFromProgressEvents(input.progress, now);
+  const recency = recencyFromLastAnswer(input.progress, now);
   const mockAvg = mockAverage(input.progress);
 
   // Weights: accuracy is the strongest signal, coverage second, recency third,

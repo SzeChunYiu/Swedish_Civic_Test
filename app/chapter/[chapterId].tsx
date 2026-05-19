@@ -111,7 +111,7 @@ export default function ChapterScreen() {
           {copy.startQuiz}
         </Button>
       ) : null}
-      <QuestionDisclaimer language={language} />
+      <QuestionDisclaimer />
 
       <Text accessibilityRole="header" style={styles.sectionTitle}>
         {copy.practiceQuestionsTitle(chapterQuestions.length)}
