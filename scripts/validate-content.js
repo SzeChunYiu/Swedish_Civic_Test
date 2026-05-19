@@ -124,6 +124,22 @@ const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
   /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
 ];
+const STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS = [
+  /['"`]Readiness['"`]/,
+  /['"`]Din beredskap['"`]/,
+  /['"`]Almost ready['"`]/,
+  /['"`]Nästan redo['"`]/,
+];
+const STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY = [
+  'Local practice signal',
+  'Lokal övningssignal',
+  'Based only on practice and mock attempts on this device, not an official result forecast.',
+  'Bygger bara på övningar och övningsprov på den här enheten, inte en officiell prognos.',
+  'Practice looks steady',
+  'Övningen ser stabil ut',
+  'Strong practice base',
+  'Stark övningsgrund',
+];
 const STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS = [
   phrasePattern('Format of ', 'the real test'),
   phrasePattern('multiple-choice ', 'and timed'),
@@ -4431,6 +4447,30 @@ function validateStaticHeadMetadataDescription() {
   return extractStaticHeadMetaDescriptions(source).length;
 }
 
+function validateStaticV11ReadinessCopy() {
+  const source = loadText('site/v11.js');
+  let unsupportedCopyValidated = 0;
+  let requiredCopyValidated = 0;
+
+  STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static v1.1 dashboard contains unsupported readiness/pass-prediction copy: ${pattern}`);
+      return;
+    }
+    unsupportedCopyValidated += 1;
+  });
+
+  STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY.forEach((copy) => {
+    if (!source.includes(copy)) {
+      fail(`static v1.1 dashboard local-practice copy missing: ${copy}`);
+      return;
+    }
+    requiredCopyValidated += 1;
+  });
+
+  return { unsupportedCopyValidated, requiredCopyValidated };
+}
+
 function validateStaticEbookPracticalTestClaims() {
   const source = loadText('site/ebook.js');
   let unsupportedPracticalClaimsValidated = 0;
@@ -7688,6 +7728,9 @@ let staticSiteOutcomeSloganPatternsValidated = 0;
 let staticSiteOutcomeSloganParityValidated = false;
 let staticHeadMetadataDescriptionsValidated = 0;
 let staticHeadMetadataDescriptionValidated = false;
+let staticV11ReadinessUnsupportedCopyValidated = 0;
+let staticV11ReadinessRequiredCopyValidated = 0;
+let staticV11ReadinessCopyParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -7773,6 +7816,15 @@ staticSiteOutcomeSloganParityValidated =
   staticSiteOutcomeSloganPatternsValidated === UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
 staticHeadMetadataDescriptionsValidated = validateStaticHeadMetadataDescription();
 staticHeadMetadataDescriptionValidated = staticHeadMetadataDescriptionsValidated >= 1;
+{
+  const staticV11Validation = validateStaticV11ReadinessCopy();
+  staticV11ReadinessUnsupportedCopyValidated = staticV11Validation.unsupportedCopyValidated;
+  staticV11ReadinessRequiredCopyValidated = staticV11Validation.requiredCopyValidated;
+  staticV11ReadinessCopyParityValidated =
+    staticV11ReadinessUnsupportedCopyValidated ===
+      STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
+    staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY.length;
+}
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -17707,6 +17759,9 @@ console.log(
       staticSiteOutcomeSloganParityValidated,
       staticHeadMetadataDescriptionsValidated,
       staticHeadMetadataDescriptionValidated,
+      staticV11ReadinessUnsupportedCopyValidated,
+      staticV11ReadinessRequiredCopyValidated,
+      staticV11ReadinessCopyParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookPracticalTestClaimPatternsValidated,
