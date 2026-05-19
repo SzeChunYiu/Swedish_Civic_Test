@@ -5,6 +5,7 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { ResultSummary } from '../../components/ResultSummary';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -429,13 +430,14 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <View style={styles.resultCard}>
-          <Text style={styles.metric}>{result.percent}%</Text>
-          <Text style={styles.subtitle}>
-            {copy.correctCount(result.correctCount, result.totalCount)}
-          </Text>
-          <Text style={styles.resultNote}>{copy.resultNote}</Text>
-        </View>
+        <ResultSummary
+          correctCount={result.correctCount}
+          languageOverride={language}
+          metricLabel={copy.correctCount(result.correctCount, result.totalCount)}
+          status={endedByTime ? 'review' : undefined}
+          subtitle={copy.resultNote}
+          totalCount={result.totalCount}
+        />
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -703,22 +705,6 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     minHeight: space[5] + space[0.5],
-  },
-  resultCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    padding: space[2],
-  },
-  metric: {
-    color: colors.text,
-    fontSize: typography.subHeadingLarge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  resultNote: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[1],
   },
   breakdownRow: {
     alignItems: 'center',
