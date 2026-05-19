@@ -127,10 +127,17 @@ type ReadinessQuestionLike = {
   chapterId: string;
 };
 
+type MockExamReadinessSnapshot = {
+  sessionId: string;
+  score: number;
+  completedAt: string;
+};
+
 export interface QuestionProgressReadinessInput {
   questionProgress: Record<string, QuestionProgressSnapshot | undefined>;
   questions: ReadonlyArray<ReadinessQuestionLike>;
   chapters: ReadonlyArray<{ id: string; questionCount: number }>;
+  mockExamSessions?: ReadonlyArray<MockExamReadinessSnapshot>;
   now?: Date;
 }
 
@@ -158,6 +165,18 @@ function scoreReadinessComponents({
     mockAvg * weights.mock;
 
   return Math.round(clamp01(blended) * 100);
+}
+
+function mockAverageFromSnapshots(
+  mockExamSessions: ReadonlyArray<MockExamReadinessSnapshot> = [],
+): number {
+  const scored = mockExamSessions
+    .filter((session) => Number.isFinite(session.score))
+    .sort((a, b) => a.completedAt.localeCompare(b.completedAt))
+    .slice(-3);
+  if (scored.length === 0) return 0;
+  const total = scored.reduce((sum, session) => sum + clamp01(session.score), 0);
+  return total / scored.length;
 }
 
 export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
@@ -218,13 +237,14 @@ export function computeReadinessFromQuestionProgress(
     mostRecentAnswerAt === null
       ? 0
       : clamp01(1 - (now.getTime() - mostRecentAnswerAt) / DAY_MS / 14);
-  const mockAvg = 0;
+  const mockAvg = mockAverageFromSnapshots(input.mockExamSessions);
+  const hasMocks = (input.mockExamSessions ?? []).some((session) => Number.isFinite(session.score));
   const score = scoreReadinessComponents({
     accuracy,
     coverage,
     recency,
     mockAvg,
-    hasMocks: false,
+    hasMocks,
   });
 
   return {
