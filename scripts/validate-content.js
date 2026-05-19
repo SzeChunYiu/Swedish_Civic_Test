@@ -8,6 +8,8 @@ const {
 } = require('./export-site-question-bank');
 const {
   UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
+  extractStaticHeadMetaDescriptions,
+  findStaticHeadMetadataDescriptionIssues,
   findUnsupportedStaticOutcomeSlogans,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
@@ -3845,6 +3847,21 @@ function validateStaticOutcomeSloganPatterns() {
   return UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length - offenders.length;
 }
 
+function validateStaticHeadMetadataDescription() {
+  const source = loadText('site/index.html');
+  const issues = findStaticHeadMetadataDescriptionIssues(source);
+
+  if (issues.length > 0) {
+    fail(
+      `static head metadata description is missing, blank, or contains unsupported outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
+        issues,
+      )}`,
+    );
+  }
+
+  return extractStaticHeadMetaDescriptions(source).length;
+}
+
 function validateStaticEbookPracticalTestClaims() {
   const source = loadText('site/ebook.js');
   let unsupportedPracticalClaimsValidated = 0;
@@ -6647,6 +6664,8 @@ let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
 let staticSiteOutcomeSloganPatternsValidated = 0;
 let staticSiteOutcomeSloganParityValidated = false;
+let staticHeadMetadataDescriptionsValidated = 0;
+let staticHeadMetadataDescriptionValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -6728,6 +6747,8 @@ staticEbookOutcomeClaimParityValidated =
 staticSiteOutcomeSloganPatternsValidated = validateStaticOutcomeSloganPatterns();
 staticSiteOutcomeSloganParityValidated =
   staticSiteOutcomeSloganPatternsValidated === UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
+staticHeadMetadataDescriptionsValidated = validateStaticHeadMetadataDescription();
+staticHeadMetadataDescriptionValidated = staticHeadMetadataDescriptionsValidated >= 1;
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -15812,6 +15833,8 @@ console.log(
       staticSiteQuestionBankParityValidated,
       staticSiteOutcomeSloganPatternsValidated,
       staticSiteOutcomeSloganParityValidated,
+      staticHeadMetadataDescriptionsValidated,
+      staticHeadMetadataDescriptionValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookPracticalTestClaimPatternsValidated,

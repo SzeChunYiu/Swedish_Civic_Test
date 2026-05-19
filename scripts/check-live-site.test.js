@@ -38,6 +38,9 @@ function currentQuestionBank() {
 function currentAssets() {
   return {
     '/index.html': [
+      '<head>',
+      '<meta name="description" content="A friendly, unofficial study app for Swedish citizenship test practice.">',
+      '</head>',
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
       '<script src="questions.js"></script>',
@@ -173,6 +176,7 @@ test('live site check rejects stale deploy assets', async () => {
         'static question bank',
         'static question bank content',
         'practice hub assets',
+        'static head metadata description',
         'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',
@@ -180,6 +184,50 @@ test('live site check rejects stale deploy assets', async () => {
       ],
     );
   });
+});
+
+test('live site check rejects missing, blank, or outcome meta descriptions', async () => {
+  const cases = [
+    {
+      label: 'missing description',
+      indexHtml: currentAssets()['/index.html'].replace(
+        /<meta name="description" content="[^"]+">\n/,
+        '',
+      ),
+      expectedDetails: /missing static meta description/,
+    },
+    {
+      label: 'blank description',
+      indexHtml: currentAssets()['/index.html'].replace(
+        /<meta name="description" content="[^"]+">/,
+        '<meta name="description" content="">',
+      ),
+      expectedDetails: /blank static meta description/,
+    },
+    {
+      label: 'outcome description',
+      indexHtml: currentAssets()['/index.html'].replace(
+        /<meta name="description" content="[^"]+">/,
+        '<meta name="description" content="Pass the test.">',
+      ),
+      expectedDetails: /static meta description English pass-the-test slogan/,
+    },
+  ];
+
+  for (const { indexHtml, expectedDetails, label } of cases) {
+    await withStaticServer({ ...currentAssets(), '/index.html': indexHtml }, async (baseUrl) => {
+      const result = await checkLiveSite(baseUrl, {
+        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+        requiredQuestionCount: 715,
+      });
+      const failedCheck = result.checks.find(
+        (check) => check.name === 'static head metadata description',
+      );
+      assert.equal(result.ok, false, `${label} should fail live-site validation`);
+      assert.equal(failedCheck?.ok, false, `${label} should fail the metadata check`);
+      assert.match(failedCheck?.details ?? '', expectedDetails);
+    });
+  }
 });
 
 test('live site check rejects same-count stale question banks', async () => {
