@@ -3127,4 +3127,152 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['source-criticism', 'false-information', 'media-literacy'],
     'easy',
   ),
+  single(
+    'q155',
+    'ch09',
+    {
+      chapter: 'Välfärdssamhället',
+      section: 'Stat, regioner och kommuner har olika ansvar',
+      pageApprox: 30,
+    },
+    'Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?',
+    'How can a welfare service be private and still tax-funded?',
+    [
+      [
+        'Ett privat företag kan utföra tjänsten medan skattepengar betalar den',
+        'A private company can provide the service while tax revenue pays for it',
+      ],
+      [
+        'Tjänsten måste alltid betalas helt med privata lån',
+        'The service must always be paid for entirely with private loans',
+      ],
+      [
+        'Privata utförare tar över statens, regionernas och kommunernas ansvar',
+        'Private providers take over the responsibilities of the state, regions, and municipalities',
+      ],
+      [
+        'Skattepengar får bara användas om tjänsten drivs av staten',
+        'Tax revenue may be used only if the service is run by the state',
+      ],
+    ],
+    0,
+    'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat.',
+    'A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.',
+    ['welfare', 'tax-funding', 'private-providers', 'responsibility-split'],
+  ),
+  single(
+    'q156',
+    'ch09',
+    { chapter: 'Välfärdssamhället', section: 'Statligt finansierad välfärd', pageApprox: 30 },
+    'Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?',
+    'Which state security systems can provide financial support during illness, parenthood, or unemployment?',
+    [
+      [
+        'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring',
+        'Sickness insurance, parental insurance, and unemployment insurance',
+      ],
+      [
+        'Vårdcentraler, sjukhus och regional kollektivtrafik',
+        'Health centres, hospitals, and regional public transport',
+      ],
+      [
+        'Förskolor, fritidshem och kommunal vuxenutbildning',
+        'Preschools, after-school centres, and municipal adult education',
+      ],
+      [
+        'Privata kreditkort, billån och bostadslån',
+        'Private credit cards, car loans, and mortgages',
+      ],
+    ],
+    0,
+    'Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete.',
+    'The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.',
+    ['state-welfare', 'social-insurance', 'sickness-insurance', 'parental-insurance'],
+  ),
+  single(
+    'q157',
+    'ch09',
+    { chapter: 'Välfärdssamhället', section: 'Olika slags sjukvård', pageApprox: 31 },
+    'Vad ingår i primärvården?',
+    'What is included in primary care?',
+    [
+      [
+        'Vårdcentraler, barnavårdscentraler och mödravårdscentraler',
+        'Health centres, child health centres, and maternity clinics',
+      ],
+      [
+        'Domstolar, åklagare och kriminalvård',
+        'Courts, prosecutors, and prison and probation services',
+      ],
+      ['Pensioner, barnbidrag och studiestöd', 'Pensions, child allowance, and study support'],
+      [
+        'Dagstidningar, public service och sociala medier',
+        'Daily newspapers, public service broadcasting, and social media',
+      ],
+    ],
+    0,
+    'Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård.',
+    'Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.',
+    ['health-care', 'primary-care', 'health-centres', 'maternity-care'],
+    'easy',
+  ),
+  single(
+    'q158',
+    'ch09',
+    { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
+    'Vilket ansvar har kommunen för barns vardag och utbildning?',
+    'What responsibility does the municipality have for children’s everyday life and education?',
+    [
+      [
+        'Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor',
+        'To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools',
+      ],
+      [
+        'Att betala sjukförsäkring och statliga pensioner',
+        'To pay sickness insurance and state pensions',
+      ],
+      [
+        'Att driva regionernas sjukhus och vårdcentraler',
+        'To run regional hospitals and health centres',
+      ],
+      [
+        'Att bestämma domstolarnas straff i brottmål',
+        'To decide court sentences in criminal cases',
+      ],
+    ],
+    0,
+    'Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning.',
+    'Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.',
+    ['municipal-welfare', 'childcare', 'education', 'schools'],
+  ),
+  single(
+    'q159',
+    'ch09',
+    { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
+    'Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?',
+    'What help can older people receive from the municipality to manage everyday life?',
+    [
+      [
+        'Vård och service hemma eller boende som är anpassat för äldre personer',
+        'Care and services at home or housing adapted for older people',
+      ],
+      [
+        'Automatiskt studiestöd och plats på universitet',
+        'Automatic study support and a university place',
+      ],
+      [
+        'Beslut om vilka nyheter medier får publicera',
+        'Decisions about which news media may publish',
+      ],
+      [
+        'Privata lån som ersätter all kommunal hjälp',
+        'Private loans that replace all municipal help',
+      ],
+    ],
+    0,
+    'Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs.',
+    'Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.',
+    ['elderly-care', 'municipal-welfare', 'home-care', 'adapted-housing'],
+    'easy',
+  ),
 ];
