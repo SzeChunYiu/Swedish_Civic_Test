@@ -1,31 +1,10 @@
 CEO/GM cycle 2026-05-18T22:46:00+02:00
 Decision: HOLD/add-none.
-Evidence: latest observed `origin/main` during this cycle was `8c95ca29`.
-`codex-tasks/P0.md` still has unchecked SHUFFLE-FIX, TRANSLATE-COMPLETE,
-SOURCE-CITATION, and CRITICAL-REVIEWER standing work. `csup staff
---scenario=resume --dry-run` reported queued local work (`work=10`,
-`blockers=10`, `prompts=5`) but held the local lane on
-`reason=lunarc_requires_slurm_station`; other configured lanes reported
-STAFF-DOWN/no queued work.
-Routing: keep active work P0-only. DATA-INTEGRITY/VALIDATOR own generated
-prompt and source-citation defects; CONTENT/VALIDATOR own English naturalness
-atoms. Do not run `--apply`, launch non-P0 side work, or run external deploy
-CLI from this pane.
-
-CEO/GM cycle 2026-05-20T08:25:30+02:00
-Decision: HOLD/add-none.
-Evidence: local HEAD/origin observed as `1bcf4f7e` / `68267e89`; local tmux
-shows only `fleet: 1 windows`. `codex-tasks/P0.md` still has unchecked
-SHUFFLE-FIX, TRANSLATE-COMPLETE, SOURCE-CITATION, and CRITICAL-REVIEWER
-standing work. `codex-tasks/blockers.txt` contains active LANGUAGE and MASCOT
-infra/typecheck verification blockers. `csup staff --scenario=resume --dry-run`
-reported queued work on observed civic hosts (`work=10`, `blockers=10`,
-`prompts=1` or `5`) but held them on
-`reason=lunarc_requires_slurm_station`; the long dry-run was stopped after the
-same HOLD decision repeated across local, CEO, UIUX, design, runtime, QA, and
-release hosts.
-Routing: keep work P0-only. DATA-INTEGRITY continues generated prompt gates;
-CONTENT/VALIDATOR continue English naturalness and source-citation atoms only
-with executable verification; VALIDATOR owns the LANGUAGE and MASCOT
-infra/typecheck blocker verification queue. Do not run `--apply` or start
-non-P0 side work from this pane.
+Evidence: current `origin/main` is `7c690c0`; q451-q500 DATA-INTEGRITY
+cleanup is accepted via PR #703 / `c6299ce`; q501-q550 VERIFY is refreshed;
+REVIEWER-RELEASE-GATES-1 is accepted via PR #707 / `9d40c89`. Staffing
+remains blocked by `reason=lunarc_requires_slurm_station`, and factory audit
+remains RED for `missing:project_config`.
+Routing: DATA-INTEGRITY next owns q501-q550 for
+q526/q527/q530/q531/q535/q542/q543. q551-q600 stays behind q501-q550 unless
+VALIDATOR explicitly reorders. SITE-P0-5 remains external deploy freshness.

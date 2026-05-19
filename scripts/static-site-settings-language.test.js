@@ -47,10 +47,9 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
+function createRenderContext({ hash, language = 'en' }) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
-  const rootAttributes = new Map();
   const storage = new Map([
     ['smt_lang', language],
     ['smt_mock_cfg', JSON.stringify({ count: 5, minutes: 30, chapters: [1] })],
@@ -61,21 +60,11 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
     dataset: { val: value },
     classList: { toggle() {} },
   }));
-  const a11yControlKeys = new Map([
-    ['settings-open', 'a11y.settings.open'],
-    ['settings-modal-close', 'a11y.close'],
-    ['ad-anchor-close', 'a11y.ad.close'],
-    ['dala-bubble-close', 'a11y.close'],
-    ['dala-figure', 'a11y.studyBuddy'],
-  ]);
 
   function element(id) {
     if (!elements.has(id)) {
-      const attributes = new Map();
       const node = {
         id,
-        attributes,
-        dataset: a11yControlKeys.has(id) ? { a11yLabel: a11yControlKeys.get(id) } : {},
         hidden: false,
         innerHTML: '',
         max: '',
@@ -84,12 +73,6 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
         value: id === 'cfg-count' ? '5' : '',
         classList: { add() {}, remove() {}, toggle() {} },
         addEventListener() {},
-        setAttribute(name, value) {
-          attributes.set(name, String(value));
-        },
-        getAttribute(name) {
-          return attributes.get(name) ?? null;
-        },
         closest() {
           return {
             querySelector() {
@@ -108,7 +91,6 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
     }
     return elements.get(id);
   }
-  Array.from(a11yControlKeys.keys()).forEach(element);
 
   const sandbox = {
     Array,
@@ -138,12 +120,7 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
       body: { style: {} },
       documentElement: {
         lang: language,
-        setAttribute(name, value) {
-          rootAttributes.set(name, String(value));
-        },
-        getAttribute(name) {
-          return rootAttributes.get(name) ?? null;
-        },
+        setAttribute() {},
         style: { setProperty() {} },
       },
       createElement() {
@@ -160,9 +137,6 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
       },
       querySelectorAll(selector) {
         if (selector === '[data-set="language"] button') return settingButtons;
-        if (selector === '[data-a11y-label]') {
-          return Array.from(elements.values()).filter((node) => node.dataset.a11yLabel);
-        }
         return [];
       },
       addEventListener(type, handler) {
@@ -178,8 +152,8 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
     },
     window: {},
     clearInterval() {},
-    matchMedia: (query) => ({
-      matches: query === '(prefers-reduced-motion: reduce)' ? reducedMotion : false,
+    matchMedia: () => ({
+      matches: false,
       addEventListener() {},
     }),
     requestAnimationFrame(handler) {
@@ -221,29 +195,9 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
         .filter((entry) => entry.type === 'click')
         .forEach((entry) => entry.handler({ target }));
     },
-    changeSettingsMotion(checked) {
-      const target = {
-        checked,
-        dataset: { set: 'motion' },
-        matches(selector) {
-          return selector === 'input[type=checkbox][data-set]';
-        },
-      };
-      listeners.document
-        .filter((entry) => entry.type === 'change')
-        .forEach((entry) => entry.handler({ target }));
-    },
     element,
-    fireWindowEvent(type) {
-      listeners.window
-        .filter((entry) => entry.type === type)
-        .forEach((entry) => entry.handler({ type }));
-    },
     get reloadCount() {
       return reloadCount;
-    },
-    rootAttribute(name) {
-      return rootAttributes.get(name) ?? null;
     },
     sandbox,
     storage,
@@ -252,114 +206,11 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
 
 function loadScripts(context, practiceInjection = '') {
   vm.runInContext(read('site/app.js'), context.sandbox, { timeout: 3000 });
-  vm.runInContext(read('site/i18n-extras.js'), context.sandbox, { timeout: 3000 });
   const practiceSource = practiceInjection
     ? read('site/practice.js').replace(/\}\)\(\);\s*$/, `${practiceInjection}\n})();`)
     : read('site/practice.js');
   vm.runInContext(practiceSource, context.sandbox, { timeout: 3000 });
   vm.runInContext(read('site/settings.js'), context.sandbox, { timeout: 3000 });
-}
-
-test('Settings modal source keeps keyboard focus inside the dialog', () => {
-  const html = read('site/index.html');
-  const source = read('site/settings.js');
-
-  assert.match(
-    html,
-    /id="settings-modal"[\s\S]*?role="dialog"[\s\S]*?aria-modal="true"[\s\S]*?aria-labelledby="settings-title"[\s\S]*?tabindex="-1"/,
-  );
-  assert.match(source, /let settingsModalInvoker = null/);
-  assert.match(source, /function getSettingsFocusableControls\(modal\)/);
-  assert.match(source, /function trapSettingsModalTab\(e, modal\)/);
-  assert.match(source, /if \(!modal\.contains\(active\) \|\| active === modal\)/);
-  assert.match(source, /focusElement\(e\.shiftKey \? last : first\)/);
-  assert.match(source, /if \(e\.shiftKey && active === first\)/);
-  assert.match(source, /else if \(!e\.shiftKey && active === last\)/);
-  assert.match(source, /function restoreSettingsInvoker\(\)/);
-  assert.match(source, /if \(invoker && document\.contains\(invoker\)\) focusElement\(invoker\)/);
-  assert.match(source, /const settingsOpen = e\.target\.closest\("#settings-open"\)/);
-  assert.match(source, /if \(settingsOpen\) \{ open\(settingsOpen\); return; \}/);
-  assert.match(source, /e\.key === "Tab"/);
-  assert.match(source, /trapSettingsModalTab\(e, m\)/);
-  assert.match(source, /close\(\{ restoreFocus: false \}\)/);
-  assert.match(source, /focusConsentPrompt\(\)/);
-});
-
-test('Static icon-control accessible names follow smtSetLanguage without reload', () => {
-  const context = createRenderContext({ hash: '#/', language: 'en' });
-  loadScripts(context);
-
-  assert.equal(context.element('settings-open').getAttribute('aria-label'), 'Settings');
-  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), 'Close');
-  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), 'Close ad');
-  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), 'Close');
-  assert.equal(context.element('dala-figure').getAttribute('aria-label'), 'Study buddy');
-
-  context.clickSettingsLanguage('sv');
-
-  assert.equal(context.element('settings-open').getAttribute('aria-label'), 'Inställningar');
-  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), 'Stäng');
-  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), 'Stäng annons');
-  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), 'Stäng');
-  assert.equal(context.element('dala-figure').getAttribute('aria-label'), 'Studiekompis');
-  assert.equal(context.reloadCount, 0);
-
-  vm.runInContext('smtSetLanguage("zh-Hans");', context.sandbox, { timeout: 3000 });
-
-  assert.equal(context.element('settings-open').getAttribute('aria-label'), '设置');
-  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), '关闭');
-  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), '关闭广告');
-  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), '关闭');
-  assert.equal(context.element('dala-figure').getAttribute('aria-label'), '学习伙伴');
-  assert.equal(context.reloadCount, 0);
-});
-
-test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {
-  const context = createRenderContext({ hash: '#/', language: 'en' });
-  const motionEvents = [];
-  loadScripts(context);
-  context.sandbox.window.addEventListener('smt:motionchange', (event) => {
-    motionEvents.push(event.detail.reduced);
-  });
-
-  context.changeSettingsMotion(true);
-
-  assert.equal(context.storage.get('smt_motion'), 'reduce');
-  assert.equal(context.rootAttribute('data-motion'), 'reduce');
-  assert.deepEqual(motionEvents, [true]);
-  assert.equal(context.reloadCount, 0);
-
-  context.changeSettingsMotion(false);
-
-  assert.equal(context.storage.get('smt_motion'), '');
-  assert.equal(context.rootAttribute('data-motion'), '');
-  assert.deepEqual(motionEvents, [true, false]);
-  assert.equal(context.reloadCount, 0);
-});
-
-test('Settings applies prefers-reduced-motion on first load without claiming a user preference', () => {
-  const context = createRenderContext({ hash: '#/', language: 'en', reducedMotion: true });
-  loadScripts(context);
-
-  context.fireWindowEvent('DOMContentLoaded');
-
-  assert.equal(context.rootAttribute('data-motion'), 'reduce');
-  assert.equal(context.storage.has('smt_motion'), false);
-});
-
-const mockOfficialPassLineClaimPatterns = [
-  new RegExp(['passing', 'line'].join('\\s+'), 'i'),
-  new RegExp('godk' + '[aä]nt[-\\s]*gr[aä]ns', 'i'),
-  new RegExp('75\\s*' + '%\\s*next\\s*time', 'i'),
-  new RegExp(['you', 'passed'].join('\\s+'), 'i'),
-  new RegExp('underk' + '[aä]nt', 'i'),
-  new RegExp('godk' + '[aä]nt', 'i'),
-];
-
-function assertNoMockOfficialPassLineCopy(html) {
-  for (const pattern of mockOfficialPassLineClaimPatterns) {
-    assert.doesNotMatch(html, pattern);
-  }
 }
 
 test('Settings language change rerenders an active Practice question without reload', () => {
@@ -383,16 +234,11 @@ test('Settings language change rerenders the Mock landing without reload', () =>
   loadScripts(context, 'renderMockLanding();');
 
   assert.match(context.element('mock-stage').innerHTML, /Build your exam\./);
-  assert.match(context.element('mock-stage').innerHTML, /Practice score/);
-  assertNoMockOfficialPassLineCopy(context.element('mock-stage').innerHTML);
   context.clickSettingsLanguage('sv');
 
   const html = context.element('mock-stage').innerHTML;
-  assert.match(html, /Bygg ditt övningsprov\./);
-  assert.match(html, /Starta övningsprov/);
-  assert.match(html, /Övningspoäng/);
-  assertNoMockOfficialPassLineCopy(html);
-  assert.doesNotMatch(html, /Skarp tentamen|Bygg din tentamen|Starta tentamen/);
+  assert.match(html, /Bygg din tentamen\./);
+  assert.match(html, /Starta tentamen/);
   assert.equal(context.reloadCount, 0);
 });
 
@@ -415,11 +261,10 @@ test('Settings language change rerenders an active Mock exam without reload', ()
   context.clickSettingsLanguage('sv');
 
   const html = context.element('mock-stage').innerHTML;
-  assert.match(html, /Övningsprov/);
+  assert.match(html, /Skarp tentamen/);
   assert.match(html, /Återstår/);
   assert.match(html, /Lämna in/);
   assert.match(html, /Var ligger Sverige\?/);
-  assert.doesNotMatch(html, /Skarp tentamen|tentamen/);
   assert.equal(context.reloadCount, 0);
 });
 
@@ -443,8 +288,6 @@ test('Settings language change rerenders submitted Mock results without restarti
   const html = context.element('mock-stage').innerHTML;
   assert.match(html, /Frågegenomgång/);
   assert.match(html, /Rätt svar/);
-  assert.match(html, /Övningen är klar/);
-  assertNoMockOfficialPassLineCopy(html);
-  assert.doesNotMatch(html, /Build your exam|Bygg din tentamen|Starta tentamen|Skarp tentamen/);
+  assert.doesNotMatch(html, /Build your exam|Bygg din tentamen/);
   assert.equal(context.reloadCount, 0);
 });

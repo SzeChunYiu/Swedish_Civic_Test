@@ -45,24 +45,12 @@ function run(command, args, options = {}) {
   return spawnSync(command, args, { encoding: 'utf8', ...options });
 }
 
-function releasePreflightArgs() {
-  const args = ['scripts/release-preflight.js', '--json'];
-  if (!checkOnly) args.push('--run-validate');
-  return args;
-}
-
-function releasePreflightOptions() {
-  if (!checkOnly) return {};
-  return {
-    env: {
-      ...process.env,
-      RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS: '1',
-    },
-  };
-}
-
 function validateReleasePreflight() {
-  const preflight = run(process.execPath, releasePreflightArgs(), releasePreflightOptions());
+  const preflight = run(process.execPath, [
+    'scripts/release-preflight.js',
+    '--json',
+    '--run-validate',
+  ]);
   let report = null;
   try {
     report = JSON.parse(preflight.stdout || '{}');
