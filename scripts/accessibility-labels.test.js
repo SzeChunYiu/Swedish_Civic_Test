@@ -38,6 +38,12 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         const tag = collectOpeningTag(lines, index);
         const isButtonImplementation = relPath === 'components/ui/Button.tsx';
         const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
+        const isIntentionallyHidden =
+          tag.includes('accessible={false}') &&
+          tag.includes('importantForAccessibility="no-hide-descendants"');
+
+        if (isIntentionallyHidden) return;
+
         if (!isButtonImplementation && !tag.includes('accessibilityLabel=')) {
           offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
         }
