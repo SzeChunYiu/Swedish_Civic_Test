@@ -220,11 +220,13 @@ test('mockExamLibrary: library contains the canonical 7 mocks', () => {
   assert.ok(MOCK_EXAM_LIBRARY.find((m) => m.id === 'mock-random'));
 });
 
-test('mockExamLibrary: format constants match Sverige-i-fokus paraphrase', () => {
+test('mockExamLibrary: format constants keep practice exams bounded', () => {
   const lib = loadTs('lib/learning/mockExamLibrary.ts');
   assert.equal(lib.MOCK_EXAM_QUESTION_COUNT, 25);
   assert.equal(lib.MOCK_EXAM_TIME_LIMIT_MINUTES, 30);
-  assert.ok(lib.MOCK_EXAM_PASS_THRESHOLD >= 0.6 && lib.MOCK_EXAM_PASS_THRESHOLD <= 0.8);
+  assert.ok(
+    lib.MOCK_EXAM_PRACTICE_TARGET_ACCURACY >= 0.6 && lib.MOCK_EXAM_PRACTICE_TARGET_ACCURACY <= 0.8,
+  );
 });
 
 test('materializeMock: same mockId + same bank → deterministic question pick', () => {
@@ -277,7 +279,7 @@ function fakeExamSession(answers) {
   };
 }
 
-test('buildExamDiagnostic: overall accuracy + pass flag + per-chapter sort', () => {
+test('buildExamDiagnostic: overall accuracy + practice-target flag + per-chapter sort', () => {
   const { buildExamDiagnostic } = loadTs('lib/learning/examDiagnostic.ts');
   const answers = [
     // chapter c1: 4 of 6
@@ -309,10 +311,10 @@ test('buildExamDiagnostic: overall accuracy + pass flag + per-chapter sort', () 
   assert.equal(diag.totalCount, 14);
   assert.equal(diag.perChapter[0].chapterId, 'c2'); // weaker first
   assert.equal(diag.perChapter[1].chapterId, 'c1');
-  assert.equal(diag.passed, false); // 6/14 < 70%
+  assert.equal(diag.meetsPracticeTarget, false); // 6/14 is below the practice target
 });
 
-test('buildExamDiagnostic: high score → passed=true', () => {
+test('buildExamDiagnostic: high score reaches the practice target', () => {
   const { buildExamDiagnostic } = loadTs('lib/learning/examDiagnostic.ts');
   const answers = Array.from({ length: 25 }, (_, i) => ({
     questionId: `q${i}`,
@@ -329,7 +331,7 @@ test('buildExamDiagnostic: high score → passed=true', () => {
     session: fakeExamSession(answers),
     questionChapterIndex: idx,
   });
-  assert.equal(diag.passed, true);
+  assert.equal(diag.meetsPracticeTarget, true);
 });
 
 test('buildExamDiagnostic: time-per-question + median populated', () => {
@@ -366,8 +368,10 @@ test('buildExamDiagnostic: time-per-question + median populated', () => {
   assert.equal(diag.medianMs, 15000);
 });
 
-test('formatPassLine: passing message in Sv + En', () => {
-  const { buildExamDiagnostic, formatPassLine } = loadTs('lib/learning/examDiagnostic.ts');
+test('formatPracticeTargetLine: target-reached message in Sv + En', () => {
+  const { buildExamDiagnostic, formatPracticeTargetLine } = loadTs(
+    'lib/learning/examDiagnostic.ts',
+  );
   const answers = Array.from({ length: 25 }, (_, i) => ({
     questionId: `q${i}`,
     selectedOptionIds: [],
@@ -383,14 +387,16 @@ test('formatPassLine: passing message in Sv + En', () => {
     session: fakeExamSession(answers),
     questionChapterIndex: idx,
   });
-  const sv = formatPassLine(diag, 'sv');
-  const en = formatPassLine(diag, 'en');
-  assert.match(sv, /klarade/i);
-  assert.match(en, /threshold/i);
+  const sv = formatPracticeTargetLine(diag, 'sv');
+  const en = formatPracticeTargetLine(diag, 'en');
+  assert.match(sv, /övningsmålet/i);
+  assert.match(en, /practice target/i);
 });
 
-test('formatPassLine: failing message names the shortfall', () => {
-  const { buildExamDiagnostic, formatPassLine } = loadTs('lib/learning/examDiagnostic.ts');
+test('formatPracticeTargetLine: below-target message names the shortfall', () => {
+  const { buildExamDiagnostic, formatPracticeTargetLine } = loadTs(
+    'lib/learning/examDiagnostic.ts',
+  );
   const answers = Array.from({ length: 25 }, (_, i) => ({
     questionId: `q${i}`,
     selectedOptionIds: [],
@@ -406,7 +412,7 @@ test('formatPassLine: failing message names the shortfall', () => {
     session: fakeExamSession(answers),
     questionChapterIndex: idx,
   });
-  const en = formatPassLine(diag, 'en');
+  const en = formatPracticeTargetLine(diag, 'en');
   assert.match(en, /needed/i);
   assert.match(en, /to go/i);
 });
