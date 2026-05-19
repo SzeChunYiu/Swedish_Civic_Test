@@ -560,6 +560,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile settings link must expose localized accessibility copy',
   ],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ['entitlementsReady,', 'profile premium banner must read Remove Ads entitlement readiness'],
+  ['{entitlementsReady ? (', 'profile premium banner must fail closed while entitlements load'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {

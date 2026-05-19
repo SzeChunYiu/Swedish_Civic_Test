@@ -40,6 +40,8 @@ test('profile route shell copy stays keyed by the settings language', () => {
   );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
+  assert.match(source, /entitlementsReady/);
+  assert.match(source, /\{entitlementsReady \? \(\s*<PremiumBanner/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
 });
 
@@ -125,4 +127,35 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
+});
+
+test('profile route copy parity rejects Remove Ads paywall pending bypass', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('{entitlementsReady ? (\\n        <PremiumBanner', '<PremiumBanner')
+      .replace('\\n      ) : null}', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /profile premium banner must fail closed while entitlements load/,
+  );
 });
