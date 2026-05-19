@@ -4,11 +4,16 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const { readWebShellContract } = require('./prepare-web-export');
 
 const repoRoot = path.resolve(__dirname, '..');
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
+}
+
+function escapeRegExp(literal) {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 test('EAS build and submit profiles are configured for internal and production releases', () => {
@@ -1306,6 +1311,7 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-postbuild-'));
   const outputDir = path.join(tmpDir, 'dist-web');
   const bundleDir = path.join(outputDir, '_expo/static/js/web');
+  const shellContract = readWebShellContract();
   fs.mkdirSync(bundleDir, { recursive: true });
   fs.writeFileSync(
     path.join(outputDir, 'index.html'),
@@ -1336,6 +1342,19 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(index, /data-web-export-loader="true"/);
+  assert.match(index, new RegExp(`<html\\b[^>]*\\blang="${escapeRegExp(shellContract.language)}"`));
+  assert.match(
+    index,
+    new RegExp(`<meta name="viewport" content="${escapeRegExp(shellContract.viewport)}">`),
+  );
+  assert.match(
+    index,
+    new RegExp(`<meta name="description" content="${escapeRegExp(shellContract.description)}">`),
+  );
+  assert.match(
+    index,
+    new RegExp(`<meta name="theme-color" content="${escapeRegExp(shellContract.themeColor)}">`),
+  );
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);

@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { readWebShellContract } = require('./prepare-web-export');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -157,8 +158,9 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
+  const shellContract = readWebShellContract();
 
-  assertContains(htmlShell, '<html data-app-shell="expo-router" lang="sv">');
+  assertContains(htmlShell, `<html data-app-shell="expo-router" lang="${shellContract.language}">`);
   assertContains(htmlShell, '<meta charSet="utf-8" />');
   assertMatches(
     htmlShell,
@@ -176,10 +178,7 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /<body[\s\S]*backgroundColor:\s*colors\.canvas/,
     'web body background should use the theme canvas color',
   );
-  assertContains(
-    htmlShell,
-    'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
-  );
+  assertContains(htmlShell, shellContract.description);
 });
 
 test('router shell manifest stays aligned with special Expo Router files', () => {
