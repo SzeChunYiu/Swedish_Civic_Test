@@ -200,6 +200,20 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.match(nativeAdCardSource, /NativeAssetType\.HEADLINE/);
   assert.match(nativeAdCardSource, /NativeAssetType\.BODY/);
   assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
+  for (const [assetType, directChild] of [
+    ['ICON', 'Image'],
+    ['HEADLINE', 'Text'],
+    ['BODY', 'Text'],
+    ['ADVERTISER', 'Text'],
+    ['CALL_TO_ACTION', 'Text'],
+  ]) {
+    assert.match(
+      nativeAdCardSource,
+      new RegExp(
+        `<NativeAsset assetType=\\{NativeAssetType\\.${assetType}\\}>\\s*<${directChild}\\b`,
+      ),
+    );
+  }
   assert.match(
     nativeAdCardSource,
     /accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}/,
