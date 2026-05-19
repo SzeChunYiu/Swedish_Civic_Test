@@ -40,7 +40,6 @@ const architectureTargetFiles = [
   'components/learning/Flashcard.tsx',
   'components/learning/AudioButton.tsx',
   'components/monetization/AdBanner.tsx',
-  'components/monetization/PracticeInterstitialAd.tsx',
   'components/monetization/PremiumBanner.tsx',
   'data/chapters.ts',
   'data/questions.ts',
@@ -108,7 +107,6 @@ const routerShellRuntimeFiles = [
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
-  'app/dashboard.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -214,12 +212,9 @@ const monetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
-  'components/monetization/PracticeInterstitialAd.native.tsx',
-  'components/monetization/PracticeInterstitialAd.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
-  'app/(tabs)/practice.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/(tabs)/exam.tsx',
 ];
@@ -535,7 +530,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
-  assert.match(tabLayout, /exam: 'Övningsprov'/);
+  assert.match(tabLayout, /exam: 'Prov'/);
   assert.match(tabLayout, /mistakes: 'Misstag'/);
   assert.match(tabLayout, /profile: 'Profil'/);
   assert.match(tabLayout, /home: 'Home'/);
@@ -565,7 +560,6 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
     '(tabs)',
     '+not-found',
-    'dashboard',
     'index',
     'search',
   ]);

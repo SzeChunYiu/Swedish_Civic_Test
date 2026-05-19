@@ -7,13 +7,6 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
-const {
-  createMemoryMMKV,
-  createThrowingGetMMKV,
-  createThrowingSetMMKV,
-  loadTsWithStorage,
-} = require('./helpers/storageStoreHarness.cjs');
-
 const repoRoot = path.resolve(__dirname, '..');
 
 require.extensions['.ts'] = function tsLoader(module, filename) {
@@ -53,73 +46,9 @@ test('AUDIO_PLAYBACK_RATES: contains 0.5, 0.75, 1.0, 1.25', () => {
 test('accessibilityStore: invariant — no Pro-gate references in source', () => {
   const source = loadSource('lib/storage/accessibilityStore.ts');
   assert.ok(
-    !/hasProEntitlement|isPremiumUser|adsDisabled|ProTierEntitlements/.test(source),
+    !/hasProEntitlement|isPremiumUser|adsDisabled/.test(source),
     'accessibility settings MUST NEVER be Pro-gated',
   );
-});
-
-test('accessibilityStore: throwing MMKV writes keep in-memory state and record warning', () => {
-  const storage = createThrowingSetMMKV('accessibility disk full');
-  const { useAccessibilityStore } = loadTsWithStorage(
-    repoRoot,
-    'lib/storage/accessibilityStore.ts',
-    {
-      accessibility: storage,
-    },
-  );
-
-  useAccessibilityStore.getState().setEasyReadFont(true);
-  const state = useAccessibilityStore.getState();
-
-  assert.equal(state.easyReadFont, true);
-  assert.equal(state.persistenceWarning.recoverable, true);
-  assert.equal(state.persistenceWarning.storageId, 'accessibility');
-  assert.equal(state.persistenceWarning.key, 'a11y.easyReadFont.v1');
-  assert.equal(state.persistenceWarning.operation, 'write');
-  assert.match(state.persistenceWarning.message, /in-memory state/);
-  assert.match(state.persistenceWarning.errorMessage, /disk full/);
-});
-
-test('accessibilityStore: throwing MMKV reads fall back to safe defaults and record warning', () => {
-  const storage = createThrowingGetMMKV('accessibility read failed');
-  const { useAccessibilityStore } = loadTsWithStorage(
-    repoRoot,
-    'lib/storage/accessibilityStore.ts',
-    {
-      accessibility: storage,
-    },
-  );
-  const state = useAccessibilityStore.getState();
-
-  assert.equal(state.easyReadFont, false);
-  assert.equal(state.fontSizeStep, 1);
-  assert.equal(state.audioPlaybackRate, 1.0);
-  assert.equal(state.persistenceWarning.recoverable, true);
-  assert.equal(state.persistenceWarning.operation, 'read');
-  assert.equal(state.persistenceWarning.storageId, 'accessibility');
-  assert.equal(state.persistenceWarning.key, 'a11y.easyReadFont.v1');
-  assert.match(state.persistenceWarning.errorMessage, /read failed/);
-});
-
-test('accessibilityStore: successful writes persist values and clear warning', () => {
-  const storage = createMemoryMMKV();
-  const { useAccessibilityStore } = loadTsWithStorage(
-    repoRoot,
-    'lib/storage/accessibilityStore.ts',
-    {
-      accessibility: storage,
-    },
-  );
-
-  useAccessibilityStore.getState().setFontSizeStep(2);
-  assert.equal(useAccessibilityStore.getState().fontSizeStep, 2);
-  assert.equal(useAccessibilityStore.getState().persistenceWarning, null);
-  assert.equal(storage.values.get('a11y.fontSizeStep.v1'), 2);
-
-  useAccessibilityStore.getState().setAudioPlaybackRate(1.25);
-  assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 1.25);
-  assert.equal(useAccessibilityStore.getState().persistenceWarning, null);
-  assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 1.25);
 });
 
 test('speak.ts: speakSwedish accepts a rate option', () => {

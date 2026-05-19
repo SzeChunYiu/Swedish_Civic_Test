@@ -26,7 +26,7 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     startStudyingAccessibilityLabel: 'Börja studera',
     steps: [
       'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
-      'Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor.',
+      'Öva med UHR-refererade frågor och förklaringar.',
       'Följ framsteg lokalt på din enhet utan konto.',
     ],
     subtitle:
@@ -41,7 +41,7 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     startStudyingAccessibilityLabel: 'Start studying',
     steps: [
       'Study Swedish civic concepts with English support when needed.',
-      'The full question bank stays free; Remove Ads only changes ads, not question access.',
+      'Practice with UHR-referenced questions and explanations.',
       'Track progress locally on your device without an account.',
     ],
     subtitle:

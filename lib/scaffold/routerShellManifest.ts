@@ -1,5 +1,3 @@
-import { webDocumentMetaDescriptions, webDocumentMetadata } from './webDocumentMetadata';
-
 export type ExpoRouterShellRole =
   | 'initial-redirect'
   | 'root-layout'
@@ -58,8 +56,6 @@ export type ExpoRouterWebDocumentMetaDescription = {
   readonly description: string;
 };
 
-export type ExpoRouterWebDocumentMetadata = typeof webDocumentMetadata;
-
 export type ExpoRouterStandaloneRoute = {
   readonly name: string;
   readonly file: string;
@@ -112,11 +108,6 @@ export const expoRouterRootStackScreens = [
     name: 'search',
     file: 'app/search.tsx',
     purpose: 'Search route registered in the root stack',
-  },
-  {
-    name: 'dashboard',
-    file: 'app/dashboard.tsx',
-    purpose: 'Progress dashboard route registered in the root stack',
   },
   {
     name: '+not-found',
@@ -206,7 +197,6 @@ export const expoRouterRootLayoutGlobalPlacements = [
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
   '/about-the-test',
-  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -216,7 +206,6 @@ export const expoRouterNativeIntentStaticRoutes = [
   '/practice',
   '/privacy',
   '/profile',
-  '/search',
   '/settings',
   '/sources',
   '/support',
@@ -252,28 +241,12 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/about-the-test',
   },
   {
-    input: '/dashboard',
-    expectedPath: '/dashboard',
-  },
-  {
-    input: '/dashboard?from=home',
-    expectedPath: '/dashboard?from=home',
-  },
-  {
     input: 'almost-swedish://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
   },
   {
-    input: 'almost-swedish://app/dashboard',
-    expectedPath: '/dashboard',
-  },
-  {
     input: 'almost-swedish://app/about-the-test',
     expectedPath: '/about-the-test',
-  },
-  {
-    input: 'almost-swedish://app/search?q=riksdag',
-    expectedPath: '/search?q=riksdag',
   },
   {
     input: 'almost-swedish://quiz/q001',
@@ -287,11 +260,17 @@ export const expoRouterNativeIntentRuntimeSamples = [
 
 export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-intent.ts'] as const;
 
-export const expoRouterWebDocumentMetaDescriptions =
-  webDocumentMetaDescriptions satisfies readonly ExpoRouterWebDocumentMetaDescription[];
-
-export const expoRouterWebDocumentMetadata =
-  webDocumentMetadata satisfies ExpoRouterWebDocumentMetadata;
+export const expoRouterWebDocumentMetaDescriptions = [
+  {
+    language: 'sv',
+    description: 'Öva svensk samhällskunskap med offlinequiz, lokala framsteg och källreferenser.',
+  },
+  {
+    language: 'en',
+    description:
+      'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
+  },
+] as const satisfies readonly ExpoRouterWebDocumentMetaDescription[];
 
 export const expoRouterStandaloneRoutes = [
   {
