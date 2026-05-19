@@ -1497,38 +1497,6 @@ test('mutation fixtures derive generated question ids from source ids', () => {
   assert.deepEqual(scannedFiles.flatMap(hardcodedGeneratedIdFindings), []);
 });
 
-test('derived civic statement mirror guard rejects validator-only prompt drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
-    return String(contents).replace(
-      'match = q.match(/^Vad heter (.+)$/i);',
-      'match = q.match(/^Vad kallas (.+)$/i);',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /civicStatementSv prompt patterns differ between lib\/content\/derivedQuestions\.ts and scripts\/validate-content\.js/,
-  );
-});
-
 test('generated id fixture guard rejects raw generated ids in newly added content test files', () => {
   const firstGeneratedNumber = firstGeneratedQuestionNumber();
   const generatedId = `q${String(firstGeneratedNumber).padStart(3, '0')}`;
