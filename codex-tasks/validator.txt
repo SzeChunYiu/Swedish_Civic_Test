@@ -1,3 +1,22 @@
+MANAGER-build->VALIDATOR 2026-05-19T03:27:00+02:00
+Accept SETUP source commit `4106058` for `READINESS-MOCK-SCORES-1`.
+
+Manager verification in clean worktree
+`/tmp/sct-manager-readiness-mock-rsQzKw/wt` passed focused readiness/progress/
+exam/home parity tests 21/21, `npm run validate:content`, `npm run typecheck
+-- --pretty false`, `npm run lint`, `npm run test:ownership`, targeted
+Prettier for the changed source/test files, `git diff --check 4106058^..4106058`,
+current-tree `git diff --check`, and source inspection proving completed mock
+exam sessions persist through `recordMockExamSession` and feed the Home
+readiness indicator via `mockExamSessions`. The latest `origin/main` `cd8d8e0`
+is source-equivalent for this atom after a claim-only queue commit; worker
+handoff also includes exported-web mock completion smoke showing Home readiness
+changing after a completed mock.
+
+Do not reopen the readiness mock-score route without fresh current-main
+regression evidence. `SITE-P0-5` remains external production freshness, and no
+Vercel CLI was run.
+
 MANAGER-build->VALIDATOR 2026-05-19T03:24:00+02:00
 Accept UIUX-COMPONENTS source commit `761e91f` / PR #892 for
 `BADGE-STYLE-OVERRIDE-PARITY-1`.
