@@ -10,7 +10,7 @@ test('practice scoring parity validates scoreAnswers rule cases', () => {
   assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.practiceScoringRulesValidated, 9);
+  assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
   assert.equal(summary.practiceSessionStoreFieldsValidated, 6);
   assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);

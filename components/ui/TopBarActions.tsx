@@ -1,6 +1,6 @@
 import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
@@ -45,31 +45,6 @@ const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
 };
 
 const defaultIconSize = space[3];
-const topBarActionLinkClassName = 'top-bar-action-link';
-const topBarActionLinkStyleElementId = 'top-bar-action-link-style';
-
-function useTopBarActionLinkWebStyles() {
-  useEffect(() => {
-    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-    if (document.getElementById(topBarActionLinkStyleElementId)) return;
-
-    const styleElement = document.createElement('style');
-    styleElement.id = topBarActionLinkStyleElementId;
-    styleElement.textContent = `
-.${topBarActionLinkClassName}:hover,
-.${topBarActionLinkClassName}:focus-visible {
-  background-color: ${colors.focusSoft};
-  transform: scale(${motion.hoverScale});
-}
-
-.${topBarActionLinkClassName}:active {
-  background-color: ${colors.focusSoft};
-  transform: scale(${motion.pressedScale});
-}
-`;
-    document.head.appendChild(styleElement);
-  }, []);
-}
 
 /**
  * Defaults: reads language and audio state from settings, renders token-sized
@@ -80,8 +55,6 @@ export interface TopBarActionsProps {
 }
 
 export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps = {}) {
-  useTopBarActionLinkWebStyles();
-
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
@@ -91,7 +64,6 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
     <View style={styles.row}>
       <LanguagePicker />
       <Pressable
-        aria-checked={audioEnabled}
         accessibilityRole="switch"
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
         accessibilityState={{ checked: audioEnabled }}
@@ -115,22 +87,32 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
 }
 
 function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
+  const [isFocused, setIsFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
-  const clearPressedState = () => setIsPressed(false);
-  const linkInteractionHandlers = {
-    onPressIn: () => setIsPressed(true),
-    onPressOut: clearPressedState,
-  };
-  const webClassName = Platform.OS === 'web' ? { className: topBarActionLinkClassName } : {};
+  const webInteractionHandlers =
+    Platform.OS === 'web'
+      ? {
+          onBlur: () => setIsFocused(false),
+          onFocus: () => setIsFocused(true),
+          onMouseEnter: () => setIsHovered(true),
+          onMouseLeave: () => setIsHovered(false),
+        }
+      : {};
 
   return (
     <Link
-      {...linkInteractionHandlers}
-      {...webClassName}
+      {...webInteractionHandlers}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       href={href}
-      style={[styles.iconLink, isPressed ? styles.iconLinkPressed : null]}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      style={[
+        styles.iconLink,
+        isFocused || isHovered ? styles.iconLinkHover : null,
+        isPressed ? styles.iconLinkPressed : null,
+      ]}
     >
       {children}
     </Link>
@@ -158,7 +140,6 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
-    display: 'flex',
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],
