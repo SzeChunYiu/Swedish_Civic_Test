@@ -1018,10 +1018,20 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
   assert.match(workflow, /npm run validate/);
+  assert.match(workflow, /npm run test:screenshot-manifest/);
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
+  assert.ok(
+    workflow.indexOf('npm run validate') < workflow.indexOf('npm run test:screenshot-manifest'),
+    'release validation should verify the screenshot manifest after the full validation suite',
+  );
+  assert.ok(
+    workflow.indexOf('npm run test:screenshot-manifest') <
+      workflow.indexOf('actions/upload-artifact@v6'),
+    'release validation should verify the screenshot manifest before uploading artifacts',
+  );
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 
