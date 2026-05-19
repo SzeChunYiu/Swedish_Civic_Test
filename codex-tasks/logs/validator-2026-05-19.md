@@ -43,6 +43,19 @@ true/false standalone wording from current VERIFY evidence, preserving the new
 generated single-choice guard coverage and rerunning generator/static/content/
 type/lint/ownership gates with PR/merge evidence.
 
+Iteration: 2026-05-19T03:28+02:00
+Rows moved to accepted: none in A1-A8; accepted SETUP source commit `e96237f`
+for `REVIEWER-HOME-UI-EFFECTS-RED-1`.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
+blocked on external production deploy capacity/operator evidence; no Vercel CLI
+was run.
+Evidence: manager recheck on current `origin/main` `f7b5125` passed
+`test:ui-effects` 50/50, `validate:content`, typecheck, lint, ownership,
+targeted Prettier, commit-range diff whitespace, and current-tree diff
+whitespace checks.
+Next worker task queued: none for this Home UI-effects guard; do not duplicate
+it without fresh current-main regression evidence.
+
 Iteration: 2026-05-19T03:27+02:00
 Rows moved to accepted: none in A1-A8; accepted SETUP source commit `4106058`
 for `READINESS-MOCK-SCORES-1`.
