@@ -1037,6 +1037,7 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
 
 test('premium banner announces Remove Ads purchase status changes', () => {
   const source = read('components/monetization/PremiumBanner.tsx');
+  const placementCtaSource = read('components/monetization/RemoveAdsPlacementCta.tsx');
   const homeSource = read('app/(tabs)/home.tsx');
   const profileSource = read('app/(tabs)/profile.tsx');
 
@@ -1071,6 +1072,9 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Återställ köp av Ta bort annonser/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
   assert.match(source, /Tidsatta övningsprov är redan annonsfria/);
+  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
+  assert.doesNotMatch(placementCtaSource, /\bProv är redan annonsfria\b/);
+  assert.doesNotMatch(placementCtaSource, /\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i);
   assert.doesNotMatch(source, /\bprov förblir annonsfria\b/i);
   assert.match(source, /Remove Ads/);
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
@@ -1083,6 +1087,7 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(profileSource, /language=\{language\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(placementCtaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('profile shell copy follows Swedish and English settings language', () => {
