@@ -42,3 +42,25 @@ Next worker task queued: DATA-INTEGRITY - repair q270/q271 generated
 true/false standalone wording from current VERIFY evidence, preserving the new
 generated single-choice guard coverage and rerunning generator/static/content/
 type/lint/ownership gates with PR/merge evidence.
+
+Iteration: 2026-05-19T02:10+02:00
+Rows moved to accepted: none in A1-A8; accepted SETUP/IAP PR #864 /
+`9fa1c87` for `REMOVE-ADS-ENTITLEMENT-INTEGRITY-1`.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` remains blocked on external
+production deploy capacity/operator evidence; no Vercel CLI was run.
+Evidence: PR #864 was mergeable and squash-merged after manager verification
+from `/tmp/sct-manager-pr864-verify` at PR head `90713d4`.
+`npm run test:monetization` passed 22/22; `node --test
+tests/content-remove-ads-purchase-runtime-parity.test.js
+scripts/content-production.test.js` passed 4/4; `npm run validate:content`,
+`npm run typecheck -- --pretty false`, `npm run lint`, `npm run
+test:ownership`, `npm run format:check`, changed-script syntax checks, and
+`git diff --check origin/main..HEAD` all passed. The accepted source replaces
+the spoofable bare `"true"` Remove Ads grant with a structured, versioned
+record requiring canonical product id, source, grantedAt, and purchase token or
+transaction id; tests reject stale boolean, malformed JSON, missing identity,
+invalid date, and pending-purchase grants.
+Next worker task queued: Remove Ads hardening can proceed to
+`REMOVE-ADS-RECEIPT-VALIDATION-1`; do not duplicate
+`REMOVE-ADS-ENTITLEMENT-INTEGRITY-1` without fresh current-main regression
+evidence.
