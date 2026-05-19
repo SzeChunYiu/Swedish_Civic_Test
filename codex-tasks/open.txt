@@ -1,3 +1,4 @@
+P0-GATE-RED scripts/derived-content.test.js: q150 explanationSv/En assertions (~lines 698-705) pin OLD strings; data/questions.ts q150 explanation was legitimately enriched, so the test is STALE and fails npm run test:derived-content -> blocks the required CI -> NO PR can merge. FIX: update the q150 expected explanationSv/En in the test to exactly match current data/questions.ts (do NOT revert the enriched content). verify: npm run test:derived-content green. THIS BLOCKS EVERYONE — top priority.
 
 >>> READ codex-tasks/P0.md FIRST. While P0.md has open items, only P0-advancing
 >>> iterations are accepted; trivial product-path commits are reverted. <<<
