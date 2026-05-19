@@ -1,21 +1,26 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { daysUntil, EXAM_REFORM_DATE, formatExamDate } from '../../lib/learning/examDate';
+import {
+  CITIZENSHIP_RULES_EFFECTIVE_DATE,
+  CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE,
+  daysUntil,
+  formatExamDate,
+} from '../../lib/learning/examDate';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (date: string) =>
-      `Det nya samhällskunskapstestet träder i kraft ${date}. Förbered dig nu.`,
-    untilLabel: 'tills nya provet',
+    body: (rulesDate: string, testDeadline: string) =>
+      `Nya medborgarskapsregler gäller från ${rulesDate}. Samhällskunskapsprovet väntas starta i augusti 2026, senast ${testDeadline}. Förbered dig nu.`,
+    untilLabel: 'tills nya reglerna',
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (date: string) =>
-      `The new civic knowledge test takes effect on ${date}. Start preparing now.`,
-    untilLabel: 'until new exam',
+    body: (rulesDate: string, testDeadline: string) =>
+      `New citizenship rules apply from ${rulesDate}. The civic-knowledge test is expected in August 2026, no later than ${testDeadline}. Start preparing now.`,
+    untilLabel: 'until new rules',
   },
 } as const;
 
@@ -30,19 +35,24 @@ export interface CountdownBannerProps {
 }
 
 export function CountdownBanner({ accessibilityLabel, language }: CountdownBannerProps) {
-  const [days, setDays] = useState<number>(() => daysUntil(EXAM_REFORM_DATE));
+  const [days, setDays] = useState<number>(() => daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE));
 
   useEffect(() => {
-    const interval = setInterval(() => setDays(daysUntil(EXAM_REFORM_DATE)), 60 * 60 * 1000);
+    const interval = setInterval(
+      () => setDays(daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE)),
+      60 * 60 * 1000,
+    );
     return () => clearInterval(interval);
   }, []);
 
   if (days <= 0) return null;
 
   const t = copy[language];
-  const dateString = formatExamDate(EXAM_REFORM_DATE, language);
+  const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
+  const testDeadlineString = formatExamDate(CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE, language);
   const resolvedAccessibilityLabel =
-    accessibilityLabel ?? `${t.label(days)} ${t.untilLabel}. ${t.body(dateString)}`;
+    accessibilityLabel ??
+    `${t.label(days)} ${t.untilLabel}. ${t.body(rulesDateString, testDeadlineString)}`;
 
   return (
     <View
@@ -54,7 +64,7 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
         <Text style={styles.daysNumber}>{days}</Text>
         <Text style={styles.daysLabel}>{t.untilLabel}</Text>
       </View>
-      <Text style={styles.body}>{t.body(dateString)}</Text>
+      <Text style={styles.body}>{t.body(rulesDateString, testDeadlineString)}</Text>
     </View>
   );
 }

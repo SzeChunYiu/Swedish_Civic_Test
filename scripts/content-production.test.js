@@ -176,6 +176,11 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
+  assert.equal(summary.citizenshipRulesEffectiveDateValidated, '2026-06-06');
+  assert.equal(summary.civicKnowledgeTestDeadlineDateValidated, '2026-08-17');
+  assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 3);
+  assert.equal(summary.citizenshipTimelineDateParityValidated, true);
+  assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
   assert.equal(summary.practiceFlowCasesValidated, 6);
