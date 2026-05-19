@@ -126,9 +126,18 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /disabled=\{!opt\.available\}/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
   assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
+  assert.match(source, /accessible=\{false\}/);
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
+  assert.match(source, /styles\.closeButton/);
   assert.doesNotMatch(
     source,
     /const handleSelect = \(option: LocaleOption\) => \{[\s\S]*setOpen\(false\);[\s\S]*if \(!option\.available\) return;/,
+  );
+  assert.doesNotMatch(
+    source,
+    /<Pressable[\s\S]*accessibilityLabel=\{copy\.closeLabel\}[\s\S]*styles\.backdrop/,
   );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
