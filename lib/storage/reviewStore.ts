@@ -15,13 +15,16 @@ import { create } from 'zustand';
 import type { ReviewCard, ReviewGrade } from '../learning/spacedRepetition';
 import { createNewCard, gradeCard, isDue, sortByDueAscending } from '../learning/spacedRepetition';
 import { getLocalDateKey } from '../learning/streaks';
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
+import { writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
+const reviewStorageId = 'reviews';
 
 let reviewStorage: MMKV | null = null;
 try {
-  reviewStorage = createMMKV({ id: 'reviews' });
+  reviewStorage = createMMKV({ id: reviewStorageId });
 } catch {
   reviewStorage = null;
 }
@@ -79,23 +82,26 @@ function read(): PersistedReviews {
   }
 }
 
-function write(state: PersistedReviews): void {
-  reviewStorage?.set(REVIEW_STORE_KEY, JSON.stringify(state));
+function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
+  return writeRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, JSON.stringify(state));
 }
 
 type ReviewState = PersistedReviews & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
   /** Get-or-create a card for the question. */
   ensureCard: (questionId: string, now?: string) => ReviewCard;
   /** Grade a card; returns the new card. */
   grade: (questionId: string, grade: ReviewGrade, now?: string) => ReviewCard;
   /** Reset all reviews (used by "clear progress" in settings). */
   clearAll: () => void;
+  clearPersistenceWarning: () => void;
 };
 
 const initial = read();
 
 export const useReviewStore = create<ReviewState>((set, get) => ({
   ...initial,
+  persistenceWarning: null,
   ensureCard: (questionId, now) => {
     const existing = get().byId[questionId];
     if (existing) return existing;
@@ -105,8 +111,8 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
         byId: { ...state.byId, [questionId]: card },
         gradedPerDay: state.gradedPerDay,
       };
-      write(next);
-      return next;
+      const persistenceWarning = write(next);
+      return { ...next, persistenceWarning };
     });
     return card;
   },
@@ -119,14 +125,15 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
       byId: { ...state.byId, [questionId]: next },
       gradedPerDay: { ...state.gradedPerDay, [dayKey]: (state.gradedPerDay[dayKey] ?? 0) + 1 },
     };
-    write(nextState);
-    set(nextState);
+    const persistenceWarning = write(nextState);
+    set({ ...nextState, persistenceWarning });
     return next;
   },
   clearAll: () => {
-    write(EMPTY);
-    set(EMPTY);
+    const persistenceWarning = write(EMPTY);
+    set({ ...EMPTY, persistenceWarning });
   },
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 // ---- Pure selectors (usable outside React) ---------------------------------
