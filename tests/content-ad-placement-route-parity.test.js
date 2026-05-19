@@ -86,6 +86,29 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
+test('ad placement parity keeps real ad unit env reads literal for web export', () => {
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  const realAdEnvKeys = [...adsSource.matchAll(/['"](EXPO_PUBLIC_ADMOB_[A-Z_]+_UNIT_ID)['"]/g)].map(
+    (match) => match[1],
+  );
+
+  assert.match(adsSource, /REAL_AD_UNIT_ENV_VALUES/);
+  assert.doesNotMatch(
+    adsSource,
+    /process\.env\s*\[[^\]]+\]/,
+    'web export needs literal process.env.EXPO_PUBLIC_ADMOB_* reads for real ad IDs',
+  );
+  assert.ok(realAdEnvKeys.length >= 12, 'expected platform-specific real ad unit env keys');
+
+  for (const envKey of new Set(realAdEnvKeys)) {
+    assert.match(
+      adsSource,
+      new RegExp(`process\\.env\\.${envKey}\\b`),
+      `${envKey} must have a matching literal process.env.${envKey} read`,
+    );
+  }
+});
+
 test('ad placement route parity rejects a drifted study route placement', () => {
   const result = spawnSync(
     process.execPath,

@@ -47,8 +47,14 @@ test('topbar language picker exposes one compact close target and keeps disabled
   await expect(closeButtons).toHaveCount(1);
   await expectCompactTarget(closeButtons.first(), 'language picker close button');
 
-  const arabicRow = page.getByRole('button', { name: 'Arabic, kommer snart' });
+  const swedishRow = page.getByRole('menuitem', { name: 'Swedish' });
+  const englishRow = page.getByRole('menuitem', { name: 'English' });
+  const arabicRow = page.getByRole('menuitem', { name: 'Arabic, kommer snart' });
+
+  await expect(swedishRow).toHaveAttribute('aria-selected', 'true');
+  await expect(englishRow).toHaveAttribute('aria-selected', 'false');
   await expect(arabicRow).toHaveAttribute('aria-disabled', 'true');
+  await expect(arabicRow).toHaveAttribute('aria-selected', 'false');
   await arabicRow.click({ force: true });
   await expect(menu).toBeVisible();
 

@@ -196,7 +196,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
         correctStreak,
         lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),
         nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),
-        bookmarked: item.bookmarked,
+        ...(typeof item.bookmarked === 'boolean' ? { bookmarked: item.bookmarked } : {}),
       };
     }
   }
