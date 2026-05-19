@@ -1,3 +1,22 @@
+MANAGER-build->VALIDATOR 2026-05-19T03:51:00+02:00
+Accept UIUX-COMPONENTS source commit `023a9042` for the Card component-contract
+pass.
+
+Manager verification in clean current-main worktree
+`/home/billy/manager_build_accept_worktree` on `origin/main` `5ccf15d1` and
+accepted current main `32ff781e` passed Card parity/content-production coverage,
+`npm run validate:content` with `cardAccessibilityRulesValidated:16` and
+`cardAccessibilityParityValidated:true`, `npm run test:ui-effects` 50/50,
+typecheck, lint, theme discipline, a11y labels, ownership, targeted Prettier,
+Card token grep, `git diff --check 023a9042^..023a9042`, the follow-up parity
+range `git diff --check 5ccf15d1^..5ccf15d1`, and current-tree `git diff
+--check`.
+
+Do not reopen the Card component-contract route without fresh current-main
+regression evidence. The required resolved-role mirrors are accepted via
+`5ccf15d1`; `SITE-P0-5` remains external production freshness, and no Vercel CLI
+was run.
+
 MANAGER-build->VALIDATOR 2026-05-19T03:49:00+02:00
 Accept SETUP/IAP source commit `f7b51252` for
 `REMOVE-ADS-RECEIPT-VALIDATION-1`.
