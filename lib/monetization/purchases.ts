@@ -74,8 +74,14 @@ export interface PurchaseRuntimeOptions {
   storage?: PurchaseStorage;
 }
 
+export type NativeRemoveAdsReceiptValidator = (
+  purchase: RemoveAdsPurchaseRecord,
+  productId: typeof REMOVE_ADS_PRODUCT_ID,
+) => Promise<RemoveAdsReceiptValidationResult>;
+
 export interface NativePurchaseProviderOptions {
   purchaseTimeoutMs?: number;
+  receiptValidator?: NativeRemoveAdsReceiptValidator;
 }
 
 export interface MockPurchaseProviderOptions {
@@ -450,6 +456,7 @@ export async function getPurchaseEntitlements({
 
 export function createNativePurchaseProvider({
   purchaseTimeoutMs = 30000,
+  receiptValidator,
 }: NativePurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
   let iapPromise: Promise<NativeIapModule> | undefined;
   const getIap = () => {
@@ -474,8 +481,17 @@ export function createNativePurchaseProvider({
         purchase: purchase.raw as Purchase,
       });
     },
-    async validateRemoveAdsReceipt(purchase) {
-      return createReceiptValidationResult(purchase);
+    async validateRemoveAdsReceipt(purchase, productId) {
+      if (!receiptValidator) {
+        return {
+          productId,
+          purchaseToken: purchase.purchaseToken ?? null,
+          status: 'pending',
+          transactionId: purchase.transactionId ?? null,
+        };
+      }
+
+      return receiptValidator(purchase, productId);
     },
     async requestRemoveAdsPurchase(productId) {
       const iap = await getIap();
@@ -608,7 +624,7 @@ async function validateRemoveAdsReceipt(
 ): Promise<RemoveAdsReceiptValidationResult | null> {
   const receiptValidation = provider.validateRemoveAdsReceipt
     ? await provider.validateRemoveAdsReceipt(purchase, REMOVE_ADS_PRODUCT_ID)
-    : createReceiptValidationResult(purchase);
+    : ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);
 
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
 }

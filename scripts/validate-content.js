@@ -1383,7 +1383,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 16;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -3825,7 +3825,10 @@ const EXPECTED_PURCHASE_INTERFACES = [
   },
   {
     name: 'NativePurchaseProviderOptions',
-    fields: [{ name: 'purchaseTimeoutMs', type: 'number', optional: true }],
+    fields: [
+      { name: 'purchaseTimeoutMs', type: 'number', optional: true },
+      { name: 'receiptValidator', type: 'NativeRemoveAdsReceiptValidator', optional: true },
+    ],
   },
   {
     name: 'MockPurchaseProviderOptions',
@@ -13255,6 +13258,18 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
         normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
       'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      normalizedPurchaseSource.includes('receiptValidator?: NativeRemoveAdsReceiptValidator') &&
+        normalizedPurchaseSource.includes('if (!receiptValidator)') &&
+        normalizedPurchaseSource.includes("status: 'pending'"),
+      'native Remove Ads provider must fail closed without an injected platform receipt validator',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        ": ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);",
+      ) && !normalizedPurchaseSource.includes(': createReceiptValidationResult(purchase);'),
+      'Remove Ads receipt validation fallback must not locally validate store receipts',
     ],
     [
       normalizedPurchaseSource.includes(

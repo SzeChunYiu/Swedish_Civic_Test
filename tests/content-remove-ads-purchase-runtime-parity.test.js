@@ -26,7 +26,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 18);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 16);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -37,6 +37,10 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/);
   assert.match(purchaseSource, /restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/);
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
+  assert.match(purchaseSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
+  assert.match(purchaseSource, /if \(!receiptValidator\)/);
+  assert.match(purchaseSource, /status: 'pending'/);
+  assert.doesNotMatch(purchaseSource, /: createReceiptValidationResult\(purchase\);/);
   assert.match(purchaseSource, /const receiptValidation = await validateRemoveAdsReceipt/);
   assert.match(purchaseSource, /source: 'purchase'/);
   assert.match(purchaseSource, /source: 'restore'/);

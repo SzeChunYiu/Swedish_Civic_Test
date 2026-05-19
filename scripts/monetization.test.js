@@ -1314,6 +1314,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(Object.hasOwn(purchaseExports, removedVerifierExportName), false);
   assert.doesNotMatch(purchasesSource, new RegExp(['remove', '\\.\\?', 'ads'].join(''), 'i'));
   assert.match(purchasesSource, /validateRemoveAdsReceipt/);
+  assert.match(purchasesSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
   assert.match(purchasesSource, /receiptValidationStatus: 'valid'/);
   assert.match(purchasesSource, /receiptValidatedAt/);
 
@@ -1683,105 +1684,124 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
   assert.equal(await directGrantStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
-test('remove-ads purchase cleanup failures do not replace primary outcomes', async () => {
+test('native Remove Ads provider fails closed unless a platform verifier validates the receipt', async () => {
   const {
+    REMOVE_ADS_PRODUCT_ID,
     REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
     createMemoryPurchaseStorage,
-    createMockPurchaseProvider,
-    getPurchaseEntitlements,
+    createNativePurchaseProvider,
     restoreRemoveAdsPurchase,
   } = loadTs('lib/monetization/purchases.ts');
-
-  const purchaseCleanupCalls = [];
-  const purchasedStorage = createMemoryPurchaseStorage();
-  const successfulPurchaseProvider = {
-    ...createMockPurchaseProvider(),
-    async disconnect() {
-      purchaseCleanupCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
+  const fakePurchase = {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'fake-token-from-probe',
+    transactionId: 'fake-transaction-from-probe',
   };
-  const purchaseResult = await buyRemoveAds({
-    provider: successfulPurchaseProvider,
-    storage: purchasedStorage,
+
+  function createProvider(validateRemoveAdsReceipt) {
+    let finishCalls = 0;
+    return {
+      get finishCalls() {
+        return finishCalls;
+      },
+      provider: {
+        async connect() {},
+        async disconnect() {},
+        async finishPurchase() {
+          finishCalls += 1;
+        },
+        async requestRemoveAdsPurchase() {
+          return fakePurchase;
+        },
+        async restorePurchases() {
+          return [fakePurchase];
+        },
+        validateRemoveAdsReceipt,
+      },
+    };
+  }
+
+  const unverifiedNativeProvider = createNativePurchaseProvider();
+  const unverifiedValidation = await unverifiedNativeProvider.validateRemoveAdsReceipt(
+    fakePurchase,
+    REMOVE_ADS_PRODUCT_ID,
+  );
+
+  assert.deepEqual(unverifiedValidation, {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'fake-token-from-probe',
+    status: 'pending',
+    transactionId: 'fake-transaction-from-probe',
   });
 
-  assert.equal(purchaseResult.status, 'purchased');
-  assert.equal(purchaseResult.entitlements.adsDisabled, true);
-  assert.equal((await getPurchaseEntitlements({ storage: purchasedStorage })).adsDisabled, true);
-  assert.ok(await purchasedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
-  assert.deepEqual(purchaseCleanupCalls, ['disconnect']);
-
-  const restoreCleanupCalls = [];
-  const restoredStorage = createMemoryPurchaseStorage();
-  const successfulRestoreProvider = {
-    ...createMockPurchaseProvider({ owned: true }),
-    async disconnect() {
-      restoreCleanupCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
-  };
-  const restoreResult = await restoreRemoveAdsPurchase({
-    provider: successfulRestoreProvider,
-    storage: restoredStorage,
+  const pendingPurchaseProvider = createProvider(unverifiedNativeProvider.validateRemoveAdsReceipt);
+  const pendingPurchaseStorage = createMemoryPurchaseStorage();
+  const pendingPurchase = await buyRemoveAds({
+    provider: pendingPurchaseProvider.provider,
+    storage: pendingPurchaseStorage,
   });
 
-  assert.equal(restoreResult.status, 'restored');
-  assert.equal(restoreResult.entitlements.adsDisabled, true);
-  assert.equal((await getPurchaseEntitlements({ storage: restoredStorage })).adsDisabled, true);
-  assert.deepEqual(restoreCleanupCalls, ['disconnect']);
+  assert.equal(pendingPurchase.status, 'pending');
+  assert.equal(pendingPurchase.entitlements.adsDisabled, false);
+  assert.equal(pendingPurchaseProvider.finishCalls, 0);
+  assert.equal(await pendingPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 
-  const requestFailureCalls = [];
-  const requestFailureProvider = {
-    async connect() {
-      requestFailureCalls.push('connect');
-    },
-    async disconnect() {
-      requestFailureCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
-    async requestRemoveAdsPurchase() {
-      requestFailureCalls.push('request');
-      throw new Error('store request failed');
-    },
-    async restorePurchases() {
-      return [];
-    },
-  };
+  const pendingRestoreStorage = createMemoryPurchaseStorage();
+  const pendingRestore = await restoreRemoveAdsPurchase({
+    provider: createProvider(unverifiedNativeProvider.validateRemoveAdsReceipt).provider,
+    storage: pendingRestoreStorage,
+  });
 
-  await assert.rejects(
-    () =>
-      buyRemoveAds({
-        provider: requestFailureProvider,
-        storage: createMemoryPurchaseStorage(),
-      }),
-    /store request failed/,
+  assert.equal(pendingRestore.status, 'not_found');
+  assert.equal(pendingRestore.entitlements.adsDisabled, false);
+  assert.equal(await pendingRestoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const verifiedNativeProvider = createNativePurchaseProvider({
+    async receiptValidator(purchase, productId) {
+      return {
+        productId,
+        purchaseToken: purchase.purchaseToken ?? null,
+        status: 'valid',
+        transactionId: purchase.transactionId ?? null,
+        validatedAt: '2026-05-19T00:00:00.000Z',
+      };
+    },
+  });
+  const verifiedValidation = await verifiedNativeProvider.validateRemoveAdsReceipt(
+    fakePurchase,
+    REMOVE_ADS_PRODUCT_ID,
   );
-  assert.deepEqual(requestFailureCalls, ['connect', 'request', 'disconnect']);
 
-  const validationFailureCalls = [];
-  const validationFailureProvider = {
-    ...createMockPurchaseProvider(),
-    async disconnect() {
-      validationFailureCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
-    async validateRemoveAdsReceipt() {
-      validationFailureCalls.push('validate');
-      throw new Error('receipt validation failed');
-    },
-  };
+  assert.equal(verifiedValidation.status, 'valid');
+  assert.equal(verifiedValidation.validatedAt, '2026-05-19T00:00:00.000Z');
 
-  await assert.rejects(
-    () =>
-      buyRemoveAds({
-        provider: validationFailureProvider,
-        storage: createMemoryPurchaseStorage(),
-      }),
-    /receipt validation failed/,
+  const verifiedPurchaseProvider = createProvider(verifiedNativeProvider.validateRemoveAdsReceipt);
+  const verifiedPurchaseStorage = createMemoryPurchaseStorage();
+  const verifiedPurchase = await buyRemoveAds({
+    provider: verifiedPurchaseProvider.provider,
+    storage: verifiedPurchaseStorage,
+  });
+
+  assert.equal(verifiedPurchase.status, 'purchased');
+  assert.equal(verifiedPurchase.entitlements.adsDisabled, true);
+  assert.equal(verifiedPurchaseProvider.finishCalls, 1);
+
+  const storedPurchaseRecord = JSON.parse(
+    await verifiedPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
   );
-  assert.deepEqual(validationFailureCalls, ['validate', 'disconnect']);
+  assert.equal(storedPurchaseRecord.receiptValidationStatus, 'valid');
+  assert.equal(storedPurchaseRecord.receiptValidatedAt, '2026-05-19T00:00:00.000Z');
+  assert.equal(storedPurchaseRecord.purchaseToken, 'fake-token-from-probe');
+
+  const verifiedRestoreStorage = createMemoryPurchaseStorage();
+  const verifiedRestore = await restoreRemoveAdsPurchase({
+    provider: createProvider(verifiedNativeProvider.validateRemoveAdsReceipt).provider,
+    storage: verifiedRestoreStorage,
+  });
+
+  assert.equal(verifiedRestore.status, 'restored');
+  assert.equal(verifiedRestore.entitlements.adsDisabled, true);
 });
 
 test('remove-ads paywall is surfaced near an ad placement and wired to purchase helpers', () => {
