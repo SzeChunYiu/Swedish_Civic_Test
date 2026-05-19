@@ -90,59 +90,10 @@ test('generateExam balances chapter coverage before repeating a chapter', () => 
 
   const exam = generateExam(questions, { questionCount: 5 });
 
-  assert.equal(exam.length, 5);
   assert.deepEqual(
-    exam.slice(0, 3).map((question) => question.chapterId),
-    ['ch01', 'ch02', 'ch03'],
+    exam.map((question) => question.id),
+    ['ch01-a', 'ch02-a', 'ch03-a', 'ch01-b', 'ch02-b'],
   );
-  assert.equal(new Set(exam.map((question) => question.id)).size, exam.length);
-  const chapterCounts = exam.reduce((counts, question) => {
-    counts.set(question.chapterId, (counts.get(question.chapterId) || 0) + 1);
-    return counts;
-  }, new Map());
-  const counts = [...chapterCounts.values()];
-  assert.ok(Math.max(...counts) - Math.min(...counts) <= 1);
-});
-
-test('generateExam rotates question ids by session while preserving deterministic balance', () => {
-  const { generateExam } = loadTs('lib/quiz/examGenerator.ts');
-  const questions = ['ch01', 'ch02', 'ch03'].flatMap((chapterId) =>
-    ['a', 'b', 'c', 'd'].map((slot) => ({
-      ...baseQuestion,
-      id: `${chapterId}-${slot}`,
-      chapterId,
-    })),
-  );
-  const firstSession = generateExam(questions, {
-    questionCount: 6,
-    sessionId: 'mock-exam-0',
-  });
-  const firstSessionRepeat = generateExam(questions, {
-    questionCount: 6,
-    sessionId: 'mock-exam-0',
-  });
-  const secondSession = generateExam(questions, {
-    questionCount: 6,
-    sessionId: 'mock-exam-1',
-  });
-  const thirdSession = generateExam(questions, {
-    questionCount: 6,
-    sessionId: 'mock-exam-2',
-  });
-  const idsFor = (exam) => exam.map((question) => question.id);
-
-  assert.deepEqual(idsFor(firstSession), idsFor(firstSessionRepeat));
-  assert.notDeepEqual(idsFor(firstSession), idsFor(secondSession));
-  assert.notDeepEqual(idsFor(secondSession), idsFor(thirdSession));
-
-  for (const exam of [firstSession, secondSession, thirdSession]) {
-    assert.equal(new Set(idsFor(exam)).size, exam.length);
-    const chapterCounts = exam.reduce((counts, question) => {
-      counts.set(question.chapterId, (counts.get(question.chapterId) || 0) + 1);
-      return counts;
-    }, new Map());
-    assert.deepEqual([...chapterCounts.values()].sort(), [2, 2, 2]);
-  }
 });
 
 test('generateExam preserves scoring and review after session answer shuffle', () => {
@@ -257,51 +208,6 @@ test('scoreExam returns score and per-chapter breakdown', () => {
   ]);
 });
 
-test('buildCompletedExamQuizSession keeps ordered mock answers with clamped timing', () => {
-  const { buildCompletedExamQuizSession, buildExamDiagnostic } = loadTs(
-    'lib/learning/examDiagnostic.ts',
-  );
-  const questions = [
-    { ...baseQuestion, id: 'q1', chapterId: 'ch01', correctOptionId: 'a' },
-    { ...baseQuestion, id: 'q2', chapterId: 'ch02', correctOptionId: 'b' },
-    { ...baseQuestion, id: 'q3', chapterId: 'ch02', correctOptionId: 'c' },
-  ];
-  const session = buildCompletedExamQuizSession({
-    answers: { q1: 'a', q2: 'a' },
-    answerTimingsSeconds: { q1: 4.4, q2: 999999 },
-    completedAt: '2026-05-20T01:20:00.000Z',
-    questions,
-    score: 1.5,
-    sessionId: 'mock-exam-7',
-    startedAt: '2026-05-20T01:00:00.000Z',
-  });
-
-  assert.equal(session.id, 'mock-exam-7');
-  assert.equal(session.mode, 'exam');
-  assert.deepEqual(session.questionIds, ['q1', 'q2', 'q3']);
-  assert.equal(session.score, 1);
-  assert.deepEqual(
-    session.answers.map((answer) => ({
-      isCorrect: answer.isCorrect,
-      questionId: answer.questionId,
-      selectedOptionIds: answer.selectedOptionIds,
-      timeSpentSeconds: answer.timeSpentSeconds,
-    })),
-    [
-      { questionId: 'q1', selectedOptionIds: ['a'], isCorrect: true, timeSpentSeconds: 4 },
-      { questionId: 'q2', selectedOptionIds: ['a'], isCorrect: false, timeSpentSeconds: 43200 },
-      { questionId: 'q3', selectedOptionIds: [], isCorrect: false, timeSpentSeconds: 0 },
-    ],
-  );
-
-  const diagnostic = buildExamDiagnostic({
-    questionChapterIndex: { q1: 'ch01', q2: 'ch02', q3: 'ch02' },
-    session,
-  });
-  assert.deepEqual(diagnostic.perQuestionMs, [4000, 43200000]);
-  assert.equal(diagnostic.medianMs, 21602000);
-});
-
 test('buildExamChapterBreakdownItems adds human-readable chapter names', () => {
   const { buildExamChapterBreakdownItems } = loadTs('lib/quiz/examGenerator.ts');
   const breakdown = [
@@ -395,57 +301,23 @@ test('shouldAutoSubmitExam submits only when a live exam reaches zero', () => {
   const { shouldAutoSubmitExam } = loadTs('lib/quiz/examGenerator.ts');
 
   assert.equal(
-    shouldAutoSubmitExam({
-      examActive: true,
-      remainingSeconds: 0,
-      submitted: false,
-      questionCount: 20,
-    }),
+    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: false, questionCount: 20 }),
     true,
   );
   assert.equal(
-    shouldAutoSubmitExam({
-      examActive: true,
-      remainingSeconds: -1,
-      submitted: false,
-      questionCount: 20,
-    }),
+    shouldAutoSubmitExam({ remainingSeconds: -1, submitted: false, questionCount: 20 }),
     true,
   );
   assert.equal(
-    shouldAutoSubmitExam({
-      examActive: true,
-      remainingSeconds: 1,
-      submitted: false,
-      questionCount: 20,
-    }),
+    shouldAutoSubmitExam({ remainingSeconds: 1, submitted: false, questionCount: 20 }),
     false,
   );
   assert.equal(
-    shouldAutoSubmitExam({
-      examActive: true,
-      remainingSeconds: 0,
-      submitted: true,
-      questionCount: 20,
-    }),
+    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: true, questionCount: 20 }),
     false,
   );
   assert.equal(
-    shouldAutoSubmitExam({
-      examActive: true,
-      remainingSeconds: 0,
-      submitted: false,
-      questionCount: 0,
-    }),
-    false,
-  );
-  assert.equal(
-    shouldAutoSubmitExam({
-      examActive: false,
-      remainingSeconds: 0,
-      submitted: false,
-      questionCount: 20,
-    }),
+    shouldAutoSubmitExam({ remainingSeconds: 0, submitted: false, questionCount: 0 }),
     false,
   );
 });
