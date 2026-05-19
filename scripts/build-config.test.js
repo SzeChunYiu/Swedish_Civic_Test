@@ -11,6 +11,28 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
+function writeFastReleasePreflightNpmStub(tmpDir) {
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    [
+      '#!/bin/sh',
+      'if [ "$1 $2" = "run validate" ]; then echo "validate passed"; exit 0; fi',
+      'echo "unexpected npm command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+}
+
+function releasePreflightUnitEnv(tmpDir) {
+  return {
+    ...process.env,
+    PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+    RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS: '1',
+  };
+}
+
 test('EAS build and submit profiles are configured for internal and production releases', () => {
   const eas = readJson('eas.json');
   assert.equal(eas.cli.version, '>= 13.0.0');
@@ -1200,12 +1222,16 @@ test('EAS access evidence check writes a redacted blocked report when auth is mi
 });
 
 test('production build guard blocks while release preflight is not ready', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-build-guard-preflight-'));
+  writeFastReleasePreflightNpmStub(tmpDir);
+
   const result = spawnSync(
     process.execPath,
     ['scripts/build-production-guard.js', '--check-only'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
+      env: releasePreflightUnitEnv(tmpDir),
     },
   );
 
@@ -1247,6 +1273,8 @@ test('production submit guard blocks while release preflight is not ready', () =
   const easPath = path.join(repoRoot, 'eas.json');
   const originalEas = fs.readFileSync(easPath, 'utf8');
   const fakeServiceAccount = path.join(repoRoot, 'tmp/fake-google-play-service-account.json');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-submit-guard-preflight-'));
+  writeFastReleasePreflightNpmStub(tmpDir);
 
   try {
     const eas = JSON.parse(originalEas);
@@ -1265,6 +1293,7 @@ test('production submit guard blocks while release preflight is not ready', () =
       {
         cwd: repoRoot,
         encoding: 'utf8',
+        env: releasePreflightUnitEnv(tmpDir),
       },
     );
 
