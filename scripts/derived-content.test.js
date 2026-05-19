@@ -4,6 +4,12 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const {
+  generatedQuestionNumberRange,
+  generatedTrueFalseResidualQuestions,
+  questionNumber,
+} = require('../tests/generatedQuestionRangeHelpers');
+
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
 const { generatedQuestionId } = require('./generated-question-fixture-ids');
@@ -39,25 +45,6 @@ function loadTs(relativePath, exportName) {
   new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
   moduleCache.set(filePath, mod.exports);
   return exportName ? mod.exports[exportName] : mod.exports;
-}
-
-function questionNumber(question) {
-  return Number(String(question.id).replace(/^q/, ''));
-}
-
-function generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions) {
-  const firstGeneratedQuestionNumber = sourceQuestions.length + 1;
-  const lastGeneratedQuestionNumber =
-    firstGeneratedQuestionNumber + generatedPublishedQuestions.length - 1;
-
-  return generatedPublishedQuestions.filter((question) => {
-    const idNumber = questionNumber(question);
-    return (
-      question.type === 'true_false' &&
-      idNumber >= firstGeneratedQuestionNumber &&
-      idNumber <= lastGeneratedQuestionNumber
-    );
-  });
 }
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
@@ -770,6 +757,21 @@ test('generated residual scan includes true/false rows beyond the old q720 ceili
   assert.ok(lastGeneratedTrueFalseQuestion);
   assert.ok(questionNumber(lastGeneratedTrueFalseQuestion) > oldPublishedQuestionCeiling);
 
+  const generatedRange = generatedQuestionNumberRange(sourceQuestions, generatedPublishedQuestions);
+  const legacyCeilingResidualRows = generatedPublishedQuestions.filter((question) => {
+    const idNumber = questionNumber(question);
+    return (
+      question.type === 'true_false' &&
+      idNumber >= generatedRange.first &&
+      idNumber <= oldPublishedQuestionCeiling
+    );
+  });
+
+  assert.deepEqual(
+    legacyCeilingResidualRows,
+    [],
+    'a hardcoded q720 residual scan would miss the expanded generated true/false tail',
+  );
   assert.deepEqual(
     generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions).map(
       (question) => question.id,
