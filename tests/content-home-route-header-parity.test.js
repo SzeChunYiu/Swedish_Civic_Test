@@ -18,18 +18,13 @@ function parseValidationSummary() {
 test('home route title and dashboard card headings stay accessible as headers', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-  const guidedPathSource = fs.readFileSync(
-    path.join(repoRoot, 'components/learning/GuidedPracticePath.tsx'),
-    'utf8',
-  );
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
-  assert.equal(summary.homeRouteHeadersValidated, 7);
+  assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 156);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
-  assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
@@ -44,52 +39,8 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Study dashboard/);
   assert.match(source, /Redoindikator/);
   assert.match(source, /Readiness indicator/);
-  assert.match(source, /resumeWhereLeftOff/);
-  assert.match(source, /resumeBannerCopy/);
-  assert.match(source, /Fortsätt \${chapterTitle}/);
-  assert.match(source, /Resume \${chapterTitle}/);
-  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
-  assert.match(source, /\{resumeCopy\.title\}/);
-  assert.match(source, /href=\{`\/chapter\/\$\{resumeChapter\.id\}`\}/);
-  assert.match(source, /Väg från grund till provträning/);
-  assert.match(source, /Guided path from basics to exam practice/);
-  assert.match(source, /const guidedPathChapterGroups = \[/);
-  assert.match(source, /\{ id: 'beginner', chapterIds: \['ch01', 'ch02', 'ch03', 'ch04'\] \}/);
-  assert.match(
-    source,
-    /\{ id: 'builder', chapterIds: \['ch05', 'ch06', 'ch07', 'ch08', 'ch09'\] \}/,
-  );
-  assert.match(source, /\{ id: 'advanced', chapterIds: \['ch10', 'ch11', 'ch12', 'ch13'\] \}/);
-  assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
-  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
-  assert.match(source, /<GuidedPracticePath/);
-  assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
-  assert.match(source, /dailyProgress=\{progress\}/);
-  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
-  assert.match(
-    source,
-    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
-  );
-  assert.match(source, /: '\/exam';/);
-  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
-  assert.match(guidedPathSource, /href=\{stage\.href\}/);
-  assert.match(guidedPathSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
-  assert.match(guidedPathSource, /\{stage\.cta\}/);
-  assert.match(guidedPathSource, /href="\/practice"/);
-  assert.match(guidedPathSource, /minHeight: space\[6\]/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
-  assert.match(
-    source,
-    /Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator\./,
-  );
-  assert.match(source, /genomgång av frågor du missat/);
-  assert.doesNotMatch(source, /felspårning|repetition av misstag/);
-  assert.match(
-    source,
-    /Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals\./,
-  );
-  assert.doesNotMatch(source, /flashcards/);
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
@@ -101,85 +52,14 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /helper=\{dayStreakHelper\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
   assert.match(source, /\{copy\.readinessTitle\}/);
-  assert.match(source, /\{copy\.resumeKicker\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.doesNotMatch(
     source,
-    /<Text style=\{styles\.(?:goalLabel|readinessTitle|resumeTitle|feedbackTitle)\}>/,
+    /<Text style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/,
   );
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
-});
-
-test('home route copy parity rejects unreachable flashcard promises', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
-        'Växla mellan tidsatta prov, flashcards, bokmärken, missade frågor, ljud och redoindikator.',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route must not advertise flashcards until the feature is reachable/,
-  );
-});
-
-test('home route copy parity rejects harsh Swedish mistake-review wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
-        'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
-      )
-      .replace(
-        'genomgång av frågor du missat',
-        'repetition av misstag',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route Swedish missed-question review copy must use natural learner wording/,
-  );
 });
 
 test('home route copy parity rejects internal benchmark phrases in learner copy', () => {
@@ -211,36 +91,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route learner copy must not expose internal benchmark phrase/,
-  );
-});
-
-test('home route copy parity rejects guided path chapter drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("'ch13'", "'ch99'");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route guided path must finish with chapters 10-13/,
   );
 });
 

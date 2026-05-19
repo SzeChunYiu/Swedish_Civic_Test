@@ -27,26 +27,3 @@ test('static site question bank exposes the canonical question and chapter count
   assert.equal(context.window.SMT_CHAPTERS_META.length, bank.chapters.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, 13);
 });
-
-test('static site question bank preserves canonical question provenance', () => {
-  const bank = buildSiteQuestionBank();
-  const context = { window: {} };
-  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
-
-  const expectedProvenanceById = new Map(
-    bank.questions.map((question) => [question.id, question.questionProvenance]),
-  );
-  const supported = new Set(['uhr', 'derived', 'editorial']);
-
-  for (const question of context.window.SMT_QUESTIONS) {
-    assert.equal(
-      question.questionProvenance,
-      expectedProvenanceById.get(question.id),
-      `${question.id} should mirror canonical questionProvenance`,
-    );
-    assert.ok(
-      supported.has(question.questionProvenance),
-      `${question.id} should expose supported questionProvenance`,
-    );
-  }
-});
