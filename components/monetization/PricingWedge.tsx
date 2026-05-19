@@ -17,7 +17,7 @@ const copy = {
   sv: {
     proof: (q: number, c: number) => `${q} övningsfrågor i ${c} kapitel`,
     pitch: (price: string) =>
-      `Ta bort annonser för ${price} en gång. Ingen prenumeration, och tidsatta övningsprov är alltid annonsfria.`,
+      `Ta bort annonser för ${price} en gång. Ingen prenumeration, och provet är alltid annonsfritt.`,
   },
   en: {
     proof: (q: number, c: number) => `${q} practice questions across ${c} chapters`,

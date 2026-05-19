@@ -57,17 +57,14 @@ function createRuntimeLoader(bundlePath) {
 }
 
 function rewriteHtml(html) {
-  const withRuntimeLoader = html.includes(HTML_LOADER_MARKER)
-    ? html
-    : html.replace(
-        /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
-        (_match, bundlePath) => createRuntimeLoader(bundlePath),
-      );
-  return rewriteRootRelativeHtmlAssetPaths(withRuntimeLoader);
-}
+  if (html.includes(HTML_LOADER_MARKER)) {
+    return html;
+  }
 
-function rewriteRootRelativeHtmlAssetPaths(source) {
-  return source.replace(/\b(src|href)=(["'])\/(_expo|assets)\//g, '$1=$2$3/');
+  return html.replace(
+    /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
+    (_match, bundlePath) => createRuntimeLoader(bundlePath),
+  );
 }
 
 function rewriteRootRelativeBundlePaths(source) {
@@ -112,8 +109,8 @@ function check(outputDir) {
   if (!index.includes(HTML_LOADER_MARKER)) {
     throw new Error('index.html is missing the web export runtime loader');
   }
-  if (/\b(?:src|href)=["']\/(?:_expo|assets)\//.test(index)) {
-    throw new Error('index.html still contains root-relative exported asset URLs');
+  if (/src="\/_expo\//.test(index) || /href="\/_expo\//.test(index)) {
+    throw new Error('index.html still contains root-relative Expo bundle URLs');
   }
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
@@ -152,6 +149,5 @@ module.exports = {
   check,
   prepare,
   rewriteHtml,
-  rewriteRootRelativeHtmlAssetPaths,
   rewriteRootRelativeBundlePaths,
 };

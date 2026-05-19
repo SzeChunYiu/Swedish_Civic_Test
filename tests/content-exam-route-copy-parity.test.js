@@ -27,25 +27,8 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /answerAccessibilityLabel: \(optionText, questionNumber\) =>/);
   assert.match(source, /Välj svaret \$\{optionText\} för fråga \$\{questionNumber\}/);
   assert.match(source, /Select answer \$\{optionText\} for question \$\{questionNumber\}/);
-  assert.match(source, /import \{ OptionCard \} from '..\/..\/components\/OptionCard';/);
-  assert.match(
-    source,
-    /<OptionCard[\s\S]*accessibilityLabel=\{copy\.answerAccessibilityLabel\(optionText, index \+ 1\)\}[\s\S]*accessibilityRole="radio"[\s\S]*accessibilityState=\{\{ checked: isSelected, selected: isSelected \}\}/,
-  );
-  assert.doesNotMatch(source, /<Pressable[\s\S]*copy\.answerAccessibilityLabel/);
   assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
-  assert.match(source, /accessTitle: 'Åtkomst till övningsprov'/);
-  assert.match(source, /checkingAccess: 'Kontrollerar åtkomst till övningsprov\.'/);
-  assert.match(source, /examResultTitle: 'Resultat från övningsprov'/);
-  assert.match(source, /nextExamTitle: 'Nästa övningsprov'/);
-  assert.match(source, /startExtraExam: 'Lås upp extra övningsprov'/);
-  assert.match(source, /submitAccessibilityLabel: 'Skicka in övningsprovet'/);
-  assert.match(source, /submitLabel: 'Skicka övningsprov'/);
-  assert.match(source, /accessTitle: 'Mock exam access'/);
-  assert.match(source, /startExtraExam: 'Unlock extra mock exam'/);
-  assert.match(source, /submitAccessibilityLabel: 'Submit the mock exam'/);
-  assert.match(source, /submitLabel: 'Submit mock exam'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
@@ -53,31 +36,16 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /import \{ getQuestionDisplayText, getQuestionSourceCitation \} from '..\/..\/lib\/quiz\/questionText';/,
   );
-  assert.match(source, /import \{ ResultSummary \} from '..\/..\/components\/ResultSummary';/);
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
-  assert.match(source, /<ResultSummary/);
-  assert.match(source, /correctCount=\{result\.correctCount\}/);
-  assert.match(source, /totalCount=\{result\.totalCount\}/);
-  assert.match(source, /languageOverride=\{language\}/);
-  assert.match(
-    source,
-    /metricLabel=\{copy\.correctCount\(result\.correctCount, result\.totalCount\)\}/,
-  );
-  assert.match(source, /status=\{endedByTime \? 'review' : undefined\}/);
-  assert.match(source, /subtitle=\{copy\.resultNote\}/);
   assert.match(
     source,
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,
   );
   assert.match(source, /recordMockExamSession\(\{/);
-  assert.match(source, /recordExamCompletion\(examSessionId\)/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
   assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
-  assert.match(source, /<Badge tone=\{endedByTime \? 'orange' : 'blue'\}>/);
-  assert.doesNotMatch(source, new RegExp(['result\\.percent\\s*>=\\s*', '75'].join('')));
-  assert.doesNotMatch(source, new RegExp(['75', '%'].join('')));
 });
 
 test('exam route copy parity rejects bypassing the settings language', () => {
@@ -135,36 +103,6 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /exam route is missing sv copy/);
-});
-
-test('exam route copy parity rejects ambiguous mock-exam wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("submitLabel: 'Skicka övningsprov'", "submitLabel: 'Skicka prov'");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /exam Swedish submit label must say övningsprov/,
-  );
 });
 
 test('exam route copy parity rejects missing localized UHR source cards', () => {

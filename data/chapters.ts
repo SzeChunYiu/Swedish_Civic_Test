@@ -52,7 +52,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Fria medier, olika slags medier, public service och källkritik.',
     descriptionEn:
       'Free media, different types of media, public service broadcasting, and source criticism.',
-    questionCount: 55,
+    questionCount: 30,
   },
   {
     id: 'ch07',
