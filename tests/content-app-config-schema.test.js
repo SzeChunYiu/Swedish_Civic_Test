@@ -23,6 +23,11 @@ test('app config schema stays aligned with release app metadata and ad/IAP plugi
   assert.equal(appConfig.expo.version, packageMetadata.version);
   assert.equal(appConfig.expo.scheme, appConfig.expo.slug);
   assert.equal(appConfig.expo.ios.bundleIdentifier, appConfig.expo.android.package);
+  assert.match(appConfig.expo.splash.backgroundColor, /^#[0-9a-f]{6}$/i);
+  assert.equal(
+    appConfig.expo.android.adaptiveIcon.backgroundColor,
+    appConfig.expo.splash.backgroundColor,
+  );
   assert.ok(plugins.some((plugin) => plugin === 'react-native-iap'));
   assert.ok(
     plugins.some((plugin) => Array.isArray(plugin) && plugin[0] === 'expo-tracking-transparency'),

@@ -825,7 +825,9 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
   'react-native-iap',
   'expo-tracking-transparency',
 ];
-const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.swedishcivictest';
+const EXPECTED_APP_NAME = 'Almost Swedish';
+const EXPECTED_APP_SLUG = 'almost-swedish';
+const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
@@ -6319,11 +6321,11 @@ function validateAppConfigSchema() {
     return;
   }
 
-  if (expo.name !== 'Sweden Citizenship Test Prep') {
+  if (expo.name !== EXPECTED_APP_NAME) {
     reject('app.json expo.name must identify the release app');
   }
-  if (expo.slug !== 'swedish-civic-test') {
-    reject('app.json expo.slug must be swedish-civic-test');
+  if (expo.slug !== EXPECTED_APP_SLUG) {
+    reject(`app.json expo.slug must be ${EXPECTED_APP_SLUG}`);
   }
   if (expo.scheme !== expo.slug) {
     reject('app.json expo.scheme must match expo.slug');
@@ -6347,6 +6349,12 @@ function validateAppConfigSchema() {
   }
   if (expo.android?.package !== EXPECTED_APP_NATIVE_IDENTIFIER) {
     reject(`app.json android.package must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
+  }
+  if (!/^#[0-9a-f]{6}$/i.test(String(expo.splash?.backgroundColor ?? ''))) {
+    reject('app.json splash.backgroundColor must be a six-digit hex color');
+  }
+  if (expo.android?.adaptiveIcon?.backgroundColor !== expo.splash?.backgroundColor) {
+    reject('app.json android adaptive icon background must match splash background');
   }
 
   const plugins = expo.plugins;
