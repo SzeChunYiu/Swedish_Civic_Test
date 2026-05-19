@@ -206,6 +206,7 @@ export const expoRouterNativeIntentStaticRoutes = [
   '/practice',
   '/privacy',
   '/profile',
+  '/search',
   '/settings',
   '/sources',
   '/support',
@@ -249,6 +250,10 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/about-the-test',
   },
   {
+    input: 'almost-swedish://app/search?q=riksdag',
+    expectedPath: '/search?q=riksdag',
+  },
+  {
     input: 'almost-swedish://quiz/q001',
     expectedPath: '/quiz/q001',
   },
@@ -263,7 +268,8 @@ export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-inten
 export const expoRouterWebDocumentMetaDescriptions = [
   {
     language: 'sv',
-    description: 'Öva svensk samhällskunskap med offlinequiz, lokala framsteg och källreferenser.',
+    description:
+      'Öva svensk samhällskunskap med övningar utan uppkoppling, lokalt sparade framsteg och tydliga källhänvisningar.',
   },
   {
     language: 'en',
