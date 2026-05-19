@@ -70,6 +70,9 @@ const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
+function phrasePattern(...parts) {
+  return new RegExp(parts.join(''), 'i');
+}
 const QUESTION_BANK_CSV_HEADER = [
   'id',
   'chapterId',
@@ -95,6 +98,41 @@ const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /\b(?:typical|most)\s+(?:learners|people|users)[^.?!]*(?:pass|passing)[^.?!]*(?:days?|weeks?|months?)/i,
   /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
   /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
+];
+const STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS = [
+  phrasePattern('Format of ', 'the real test'),
+  phrasePattern('multiple-choice ', 'and timed'),
+  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
+  phrasePattern('Arrive 30 ', 'minutes early'),
+  phrasePattern('test centre ', 'is strict'),
+  phrasePattern('Multiple-choice:\\s*', 'every question'),
+  phrasePattern('You may ', 'retake the test'),
+  phrasePattern('There is a ', 'small fee'),
+  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
+  phrasePattern('På provdagen är ', 'giltig legitimation'),
+  phrasePattern('Tidsatt ', 'provträning'),
+];
+const STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+];
+const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
+  'OFFICIAL_TEST_SOURCE_NOTES',
+  "retrievedDate: '2026-05-19'",
+  'first civic-knowledge sitting will be held on 15 August 2026 in Stockholm',
+  'only people who receive a letter from Migrationsverket can sign up',
+  'Seats are limited',
+  'free of charge',
+  'generous time',
+  'UHR has not yet published the exact time and place',
+  'första samhällskunskapsprovet inom medborgarskapsprovet',
+  'brev från Migrationsverket',
+  'Antalet platser är begränsat',
+  'kostnadsfritt',
+  'generöst med tid',
+  'Praktiska detaljer väntar hos UHR',
 ];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
@@ -3525,6 +3563,43 @@ function validateStaticEbookOutcomeClaimPatterns() {
   return STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length - offenders.length;
 }
 
+function validateStaticEbookPracticalTestClaims() {
+  const source = loadText('site/ebook.js');
+  let unsupportedPracticalClaimsValidated = 0;
+  let sourceUrlsValidated = 0;
+  let requiredCopyValidated = 0;
+
+  STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static ebook contains unsupported practical test logistics claim: ${pattern}`);
+      return;
+    }
+    unsupportedPracticalClaimsValidated += 1;
+  });
+
+  STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.forEach((url) => {
+    if (!source.includes(url)) {
+      fail(`static ebook practical test source metadata missing ${url}`);
+      return;
+    }
+    sourceUrlsValidated += 1;
+  });
+
+  STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.forEach((text) => {
+    if (!source.includes(text)) {
+      fail(`static ebook practical test copy missing current sourced claim: ${text}`);
+      return;
+    }
+    requiredCopyValidated += 1;
+  });
+
+  return {
+    requiredCopyValidated,
+    sourceUrlsValidated,
+    unsupportedPracticalClaimsValidated,
+  };
+}
+
 function questionSentenceEndingsAreComplete(question) {
   return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
     textHasSentenceEnding(question[field]),
@@ -6139,6 +6214,10 @@ let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
+let staticEbookPracticalTestClaimPatternsValidated = 0;
+let staticEbookPracticalTestRequiredCopyValidated = 0;
+let staticEbookPracticalTestSourceUrlsValidated = 0;
+let staticEbookPracticalTestCurrentnessValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -6208,6 +6287,19 @@ staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatter
 staticEbookOutcomeClaimParityValidated =
   staticEbookOutcomeClaimPatternsValidated ===
   STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
+{
+  const practicalTestValidation = validateStaticEbookPracticalTestClaims();
+  staticEbookPracticalTestClaimPatternsValidated =
+    practicalTestValidation.unsupportedPracticalClaimsValidated;
+  staticEbookPracticalTestRequiredCopyValidated = practicalTestValidation.requiredCopyValidated;
+  staticEbookPracticalTestSourceUrlsValidated = practicalTestValidation.sourceUrlsValidated;
+  staticEbookPracticalTestCurrentnessValidated =
+    staticEbookPracticalTestClaimPatternsValidated ===
+      STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS.length &&
+    staticEbookPracticalTestRequiredCopyValidated ===
+      STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
+    staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
+}
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
@@ -13945,6 +14037,10 @@ console.log(
       staticSiteQuestionBankParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
+      staticEbookPracticalTestClaimPatternsValidated,
+      staticEbookPracticalTestRequiredCopyValidated,
+      staticEbookPracticalTestSourceUrlsValidated,
+      staticEbookPracticalTestCurrentnessValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,
