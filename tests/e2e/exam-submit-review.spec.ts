@@ -1,13 +1,20 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
-
 const totalQuestions = 20;
+
+async function closeLaunchAdIfPresent(page: Page) {
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
+  if (await closeLaunchAd.isVisible()) {
+    await closeLaunchAd.click();
+  }
+}
 
 async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await closeLaunchAdIfPresent(page);
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
@@ -28,14 +35,14 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await closeLaunchAdIfPresent(page);
 
   await expect(page.getByText('Övningsprov')).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-baserade frågor`))).toBeVisible();
   await expect(page.getByText(`0/${totalQuestions} besvarade`)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
 
-  const submit = page.getByLabel('Skicka in övningsprovet');
+  const submit = page.getByLabel('Skicka övningsprov');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
@@ -53,7 +60,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
 
   await submit.click();
 
-  await expect(page.getByText('Resultat från övningsprov', { exact: true })).toBeVisible();
+  await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();
   await expect(page.getByText('Övningsresultat')).toBeVisible();
   await expect(page.getByText(new RegExp(`/${totalQuestions} rätt`))).toBeVisible();
   await expect(page.getByText('Kapitelöversikt')).toBeVisible();
@@ -78,7 +85,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await enableEnglishSupport(page);
   await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await closeLaunchAdIfPresent(page);
 
   await expect(page.getByText('Mock exam')).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();
@@ -86,7 +93,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
   await expect(page.getByText('Övningsprov')).toHaveCount(0);
 
-  const submit = page.getByLabel('Submit the mock exam');
+  const submit = page.getByLabel('Submit mock exam');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
@@ -104,8 +111,8 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await submit.click();
 
-  await expect(page.getByText('Mock exam result', { exact: true })).toBeVisible();
-  await expect(page.getByText('Mock exam score')).toBeVisible();
+  await expect(page.getByText('Exam result', { exact: true })).toBeVisible();
+  await expect(page.getByText('Mock exam result')).toBeVisible();
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
   await expect(page.getByText('Chapter breakdown')).toBeVisible();
   await expect(page.getByText('The country of Sweden')).toBeVisible();
