@@ -28,6 +28,33 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
   await expect(dialogs).toHaveCount(0);
   await expect(page.getByText('Dagens mål')).toBeVisible();
 
+  const searchLink = page.getByRole('link', { name: 'Sök' }).first();
+  await expect(searchLink).toBeVisible();
+  const searchLinkBox = await searchLink.boundingBox();
+  expect(searchLinkBox).not.toBeNull();
+  expect(searchLinkBox?.width).toBeGreaterThanOrEqual(44);
+  expect(searchLinkBox?.height).toBeGreaterThanOrEqual(44);
+  const hitTest = await page.evaluate(
+    ({ x, y }) => {
+      const target = document.elementFromPoint(x, y);
+      const actionableTarget = target?.closest('a,button,[role="link"],[role="button"]');
+
+      return {
+        ariaLabel: actionableTarget?.getAttribute('aria-label') ?? null,
+        role: actionableTarget?.getAttribute('role') ?? null,
+        tagName: actionableTarget?.tagName ?? null,
+      };
+    },
+    {
+      x: (searchLinkBox?.x ?? 0) + (searchLinkBox?.width ?? 0) / 2,
+      y: (searchLinkBox?.y ?? 0) + (searchLinkBox?.height ?? 0) / 2,
+    },
+  );
+  expect(hitTest).toMatchObject({
+    ariaLabel: 'Sök',
+    tagName: 'A',
+  });
+
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
 
