@@ -196,6 +196,78 @@ test('readiness score includes recent persisted mock exam results', () => {
   assert.ok(withMocks.score > base.score);
 });
 
+test('readiness mock totals do not inflate rolling practice accuracy', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+
+  const result = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
+      {
+        sessionId: 'mock-with-counts',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: 32,
+        totalCount: 40,
+      },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.components.accuracy, 0);
+  assert.equal(result.components.mockAverage, 0.8);
+  assert.ok(result.score > 0);
+});
+
+test('mock exam completion XP is awarded once per stored session', () => {
+  const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
+  const store = useProgressStore;
+
+  store.getState().resetProgress();
+  store.getState().recordMockExamSession({
+    sessionId: 'empty-submission',
+    score: 0,
+    correctCount: 0,
+    totalCount: 0,
+    completedAt: '2026-05-19T10:00:00.000Z',
+  });
+  assert.equal(store.getState().totalXp, 0);
+
+  store.getState().recordMockExamSession({
+    sessionId: 'mock-perfect',
+    score: 1,
+    correctCount: 10,
+    totalCount: 10,
+    completedAt: '2026-05-19T10:05:00.000Z',
+  });
+  assert.equal(store.getState().totalXp, 70);
+
+  store.getState().recordMockExamSession({
+    sessionId: 'mock-perfect',
+    score: 0.9,
+    correctCount: 9,
+    totalCount: 10,
+    completedAt: '2026-05-19T10:06:00.000Z',
+  });
+  assert.equal(store.getState().totalXp, 70);
+  assert.equal(store.getState().mockExamSessions.length, 2);
+  assert.equal(
+    store.getState().mockExamSessions.find((session) => session.sessionId === 'mock-perfect')
+      .correctCount,
+    9,
+  );
+
+  store.getState().recordMockExamSession({
+    sessionId: 'mock-complete',
+    score: 0.6,
+    correctCount: 6,
+    totalCount: 10,
+    completedAt: '2026-05-19T10:10:00.000Z',
+  });
+  assert.equal(store.getState().totalXp, 90);
+});
+
 test('spaced repetition schedules wrong answers soon and known answers later', () => {
   const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
 
