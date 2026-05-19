@@ -1,10 +1,3 @@
-import {
-  REMOVE_ADS_ANDROID_PRODUCT_ID,
-  REMOVE_ADS_IOS_PRODUCT_ID,
-  REMOVE_ADS_PRICE_LABEL,
-  REMOVE_ADS_PRODUCT_ID,
-} from './purchases';
-
 export const releaseMonetizationPolicy = {
   adSupportedByDefault: true,
   adMobAppRecordRequired: true,
@@ -13,12 +6,8 @@ export const releaseMonetizationPolicy = {
   noAdPlacements: ['exam_screen'],
   privacyReviewRequiresBinary: true,
   realAdsEnvFlag: 'EXPO_PUBLIC_REAL_ADS_ENABLED',
-  removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL,
-  removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
-  removeAdsStoreProductIds: {
-    android: REMOVE_ADS_ANDROID_PRODUCT_ID,
-    ios: REMOVE_ADS_IOS_PRODUCT_ID,
-  },
+  removeAdsPriceLabel: '29 SEK',
+  removeAdsProductId: 'com.billyyiu.swedishcivictest.removeads',
   storeDisclosureTopics: [
     'Google Mobile Ads',
     'Remove Ads in-app purchase',
@@ -35,9 +24,6 @@ export function isReleaseMonetizationPolicyReady(): boolean {
     releaseMonetizationPolicy.consentPromptsRequired.length === 2 &&
     releaseMonetizationPolicy.noAdPlacements.includes('exam_screen') &&
     releaseMonetizationPolicy.privacyReviewRequiresBinary &&
-    releaseMonetizationPolicy.removeAdsPriceLabel === '29 SEK' &&
-    releaseMonetizationPolicy.removeAdsStoreProductIds.android === 'removeads' &&
-    releaseMonetizationPolicy.removeAdsStoreProductIds.ios ===
-      'com.billyyiu.swedishcivictest.removeads'
+    releaseMonetizationPolicy.removeAdsPriceLabel === '29 SEK'
   );
 }

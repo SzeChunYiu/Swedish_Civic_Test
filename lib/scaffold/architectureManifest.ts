@@ -124,6 +124,7 @@ export const architectureSharedUiRuntimeFiles = [
 export const architectureThemeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
+  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',
@@ -339,7 +340,6 @@ export const architectureRemoveAdsRuntimeFiles = [
   'lib/monetization/purchases.ts',
   'lib/monetization/useRemoveAdsEntitlements.ts',
   'components/monetization/PremiumBanner.tsx',
-  'components/monetization/RemoveAdsPlacementCta.tsx',
   'components/monetization/AdBanner.tsx',
   'components/monetization/AdBanner.native.tsx',
   'components/monetization/NativeAdCard.tsx',
@@ -504,11 +504,6 @@ export const architectureScaffoldFiles = [
     file: 'components/monetization/PremiumBanner.tsx',
     area: 'components',
     purpose: 'Remove Ads and premium upsell component',
-  },
-  {
-    file: 'components/monetization/RemoveAdsPlacementCta.tsx',
-    area: 'components',
-    purpose: 'Compact Remove Ads ad-placement affordance component',
   },
   {
     file: 'data/chapters.ts',

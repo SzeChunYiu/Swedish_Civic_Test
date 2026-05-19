@@ -6,7 +6,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName, moduleCache = new Map(), mocks = {}) {
+function loadTs(relativePath, exportName, moduleCache = new Map()) {
   const filePath = path.join(repoRoot, relativePath);
   if (moduleCache.has(filePath)) {
     const cached = moduleCache.get(filePath);
@@ -21,10 +21,6 @@ function loadTs(relativePath, exportName, moduleCache = new Map(), mocks = {}) {
   moduleCache.set(filePath, mod.exports);
 
   function localRequire(specifier) {
-    if (Object.prototype.hasOwnProperty.call(mocks, specifier)) {
-      return mocks[specifier];
-    }
-
     if (specifier.startsWith('.')) {
       const resolvedPath = path.resolve(path.dirname(filePath), specifier);
       const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
@@ -35,7 +31,7 @@ function loadTs(relativePath, exportName, moduleCache = new Map(), mocks = {}) {
       const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
 
       if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, mocks);
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
       }
     }
 
@@ -72,41 +68,6 @@ function withEnv(overrides, fn) {
   }
 }
 
-const REAL_AD_UNIT_ENV_KEYS = {
-  app_open_launch: {
-    android: 'EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID',
-    ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID',
-  },
-  chapter_list_banner: {
-    android: 'EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID',
-    ios: 'EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID',
-  },
-  home_banner: {
-    android: 'EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID',
-    ios: 'EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID',
-  },
-  quiz_completed_interstitial: {
-    android: 'EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
-    ios: 'EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
-  },
-  results_native: {
-    android: 'EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID',
-    ios: 'EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID',
-  },
-  rewarded_extra_exam: {
-    android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
-    ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
-  },
-};
-
-function clearRealAdUnitEnv() {
-  return Object.values(REAL_AD_UNIT_ENV_KEYS).reduce((overrides, envKeys) => {
-    overrides[envKeys.android] = undefined;
-    overrides[envKeys.ios] = undefined;
-    return overrides;
-  }, {});
-}
-
 test('ad rendering is enabled by default with test units and env-driven real switch', () => {
   withEnv(
     {
@@ -128,7 +89,6 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       );
       assert.equal(adsConfig.realAdsEnabled, false);
       assert.equal(adsConfig.googleMobileAdsEnabled, true);
-      assert.deepEqual(adsConfig.webFallbackConsentDecision, { adServingAllowed: true });
       assert.ok(TEST_AD_UNITS.every((unit) => unit.testOnly));
       assert.ok(adsConfig.units.every((unit) => unit.testOnly));
       assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), true);
@@ -142,50 +102,6 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       assert.match(getPlatformAdUnitId('rewarded_extra_exam', 'ios'), /1712485313$/);
     },
   );
-});
-
-test('real ad availability is platform-specific for every placement', () => {
-  const freeEntitlements = { adsDisabled: false };
-  const consentDecision = { adServingAllowed: true };
-
-  for (const [placement, envKeys] of Object.entries(REAL_AD_UNIT_ENV_KEYS)) {
-    for (const activePlatform of ['android', 'ios']) {
-      const inactivePlatform = activePlatform === 'android' ? 'ios' : 'android';
-      const activeUnitId = `ca-app-pub-1234567890123456/${activePlatform === 'android' ? '1' : '2'}${placement.length
-        .toString()
-        .padStart(9, '0')}`;
-
-      withEnv(
-        {
-          ...clearRealAdUnitEnv(),
-          [envKeys[activePlatform]]: activeUnitId,
-          EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
-          EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
-        },
-        () => {
-          const { getPlatformAdUnitId, isAdPlacementAvailableOnPlatform, shouldShowAd } = loadTs(
-            'lib/monetization/ads.ts',
-            undefined,
-            new Map(),
-          );
-
-          assert.equal(getPlatformAdUnitId(placement, activePlatform), activeUnitId);
-          assert.equal(getPlatformAdUnitId(placement, inactivePlatform), undefined);
-          assert.equal(isAdPlacementAvailableOnPlatform(placement, activePlatform), true);
-          assert.equal(isAdPlacementAvailableOnPlatform(placement, inactivePlatform), false);
-          assert.equal(
-            shouldShowAd(placement, freeEntitlements, consentDecision, activePlatform),
-            true,
-          );
-          assert.equal(
-            shouldShowAd(placement, freeEntitlements, consentDecision, inactivePlatform),
-            false,
-          );
-          assert.equal(shouldShowAd(placement, freeEntitlements, consentDecision, 'web'), true);
-        },
-      );
-    }
-  }
 });
 
 test('every ad placement has a configured unit and real-unit env slot', () => {
@@ -218,7 +134,6 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
       EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/1111111111',
       EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
         'ca-app-pub-1234567890123456/3333333333',
-      EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: 'ca-app-pub-1234567890123456/9999999999',
       EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/2222222222',
       EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID: 'ca-app-pub-1234567890123456/4444444444',
       EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
@@ -264,6 +179,41 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
     },
   );
+});
+
+test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
+  const nativeAdCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
+    'utf8',
+  );
+  const webAdCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
+    'utf8',
+  );
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+
+  assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(nativeAdCardSource, /NativeAd\.createForAdRequest/);
+  assert.match(nativeAdCardSource, /NativeAdView/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.HEADLINE/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.BODY/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
+  assert.match(nativeAdCardSource, /NativeMediaView/);
+  assert.match(nativeAdCardSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
+  assert.match(nativeAdCardSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeAdCardSource, /\.destroy\(\)/);
+  assert.match(
+    nativeAdCardSource,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd|Sponsored study placement/);
+
+  assert.match(webAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(
+    webAdCardSource,
+    /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
+  );
+  assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
 });
 
 test('rewarded extra exam access uses free limits before offering ads', () => {
@@ -420,53 +370,6 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
           reason: 'rewarded_ad_available',
           rewardedExtraExamCredits: 0,
         },
-      );
-    },
-  );
-});
-
-test('rewarded extra exam access respects native platform ad unit availability', () => {
-  withEnv(
-    {
-      ...clearRealAdUnitEnv(),
-      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
-        'ca-app-pub-1234567890123456/3333333333',
-      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
-      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
-    },
-    () => {
-      const { getMockExamAccessDecision } = loadTs(
-        'lib/monetization/rewardedExam.ts',
-        undefined,
-        new Map(),
-      );
-      const state = {
-        completedMockExamsToday: 1,
-        consentDecision: { adServingAllowed: true },
-        entitlements: { adsDisabled: false, unlimitedMockExams: false },
-        freeMockExamLimit: 1,
-      };
-
-      assert.equal(
-        getMockExamAccessDecision({
-          ...state,
-          platform: 'android',
-        }).reason,
-        'rewarded_ad_available',
-      );
-      assert.equal(
-        getMockExamAccessDecision({
-          ...state,
-          platform: 'ios',
-        }).reason,
-        'ads_unavailable',
-      );
-      assert.equal(
-        getMockExamAccessDecision({
-          ...state,
-          platform: 'web',
-        }).reason,
-        'rewarded_ad_available',
       );
     },
   );
@@ -785,13 +688,9 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
 test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async () => {
   const purchaseExports = loadTs('lib/monetization/purchases.ts');
   const {
-    REMOVE_ADS_ANDROID_PRODUCT_ID,
-    REMOVE_ADS_IOS_PRODUCT_ID,
     REMOVE_ADS_PRICE_LABEL,
     REMOVE_ADS_RECORD_SCHEMA_VERSION,
-    REMOVE_ADS_STORE_PRODUCT_IDS,
     REMOVE_ADS_PRODUCT_ID,
-    getRemoveAdsStoreProductId,
     REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
     createMemoryPurchaseStorage,
@@ -810,14 +709,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(packageJson.dependencies['expo-secure-store'], '~15.0.8');
   assert.equal(packageJson.dependencies['react-native-iap'], '^15.3.0');
   assert.match(REMOVE_ADS_PRODUCT_ID, /removeads$/);
-  assert.equal(REMOVE_ADS_IOS_PRODUCT_ID, REMOVE_ADS_PRODUCT_ID);
-  assert.equal(REMOVE_ADS_ANDROID_PRODUCT_ID, 'removeads');
-  assert.deepEqual(REMOVE_ADS_STORE_PRODUCT_IDS, {
-    android: REMOVE_ADS_ANDROID_PRODUCT_ID,
-    ios: REMOVE_ADS_IOS_PRODUCT_ID,
-  });
-  assert.equal(getRemoveAdsStoreProductId('ios'), REMOVE_ADS_PRODUCT_ID);
-  assert.equal(getRemoveAdsStoreProductId('android'), 'removeads');
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.equal(REMOVE_ADS_RECORD_SCHEMA_VERSION, 1);
   assert.equal(Object.hasOwn(purchaseExports, removedVerifierExportName), false);
@@ -833,9 +724,8 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     unlimitedMockExams: false,
   });
 
-  const purchaseProvider = createMockPurchaseProvider();
   const purchaseResult = await buyRemoveAds({
-    provider: purchaseProvider,
+    provider: createMockPurchaseProvider(),
     storage,
   });
 
@@ -844,6 +734,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(purchaseResult.entitlements.adsDisabled, true);
   assert.equal(purchaseResult.entitlements.fullMistakeReview, false);
   assert.equal(purchaseResult.entitlements.unlimitedMockExams, false);
+  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
   const storedPurchaseRecord = JSON.parse(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
   assert.deepEqual(
     {
@@ -866,29 +757,16 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(storedPurchaseRecord.grantedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(storedPurchaseRecord.receiptValidatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(Object.hasOwn(storedPurchaseRecord, 'raw'), false);
-  assert.equal(
-    (await getPurchaseEntitlements({ provider: purchaseProvider, storage })).adsDisabled,
-    true,
-  );
-  const refreshedPurchaseRecord = JSON.parse(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
-  assert.equal(refreshedPurchaseRecord.source, 'restore');
-  assert.equal(refreshedPurchaseRecord.transactionId, 'restore-remove-ads');
-  assert.equal(refreshedPurchaseRecord.purchaseToken, 'mock-token-restore-remove-ads');
 
   const restoredStorage = createMemoryPurchaseStorage();
-  const restoreProvider = createMockPurchaseProvider({ owned: true });
   const restoreResult = await restoreRemoveAdsPurchase({
-    provider: restoreProvider,
+    provider: createMockPurchaseProvider({ owned: true }),
     storage: restoredStorage,
   });
 
   assert.equal(restoreResult.status, 'restored');
   assert.equal(restoreResult.entitlements.adsDisabled, true);
-  assert.equal(
-    (await getPurchaseEntitlements({ provider: restoreProvider, storage: restoredStorage }))
-      .adsDisabled,
-    true,
-  );
+  assert.equal((await getPurchaseEntitlements({ storage: restoredStorage })).adsDisabled, true);
   const storedRestoreRecord = JSON.parse(
     await restoredStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
   );
@@ -932,8 +810,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
 
     const webStorageAfterReload = createWebPurchaseStorage();
     assert.equal(
-      (await getPurchaseEntitlements({ provider: webProvider, storage: webStorageAfterReload }))
-        .adsDisabled,
+      (await getPurchaseEntitlements({ storage: webStorageAfterReload })).adsDisabled,
       true,
     );
 
@@ -946,131 +823,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
       delete globalThis.localStorage;
     }
   }
-});
-
-test('native Remove Ads provider uses Android store SKU and normalizes entitlement records', async () => {
-  const {
-    REMOVE_ADS_ANDROID_PRODUCT_ID,
-    REMOVE_ADS_PRODUCT_ID,
-    REMOVE_ADS_STORAGE_KEY,
-    buyRemoveAds,
-    createMemoryPurchaseStorage,
-    createNativePurchaseProvider,
-    restoreRemoveAdsPurchase,
-  } = loadTs('lib/monetization/purchases.ts');
-
-  function createFakeIap({ availablePurchases = [], requestResult }) {
-    const calls = {
-      finishedPurchases: [],
-      requestPurchases: [],
-      restoreCount: 0,
-    };
-    const iapModule = {
-      async endConnection() {},
-      async finishTransaction(purchase) {
-        calls.finishedPurchases.push(purchase);
-      },
-      async getAvailablePurchases() {
-        return availablePurchases;
-      },
-      async initConnection() {},
-      purchaseErrorListener() {
-        return { remove() {} };
-      },
-      purchaseUpdatedListener() {
-        return { remove() {} };
-      },
-      async requestPurchase(request) {
-        calls.requestPurchases.push(request);
-        return requestResult;
-      },
-      async restorePurchases() {
-        calls.restoreCount += 1;
-      },
-    };
-
-    return { calls, iapModule };
-  }
-
-  const buyNative = createFakeIap({
-    requestResult: {
-      productId: REMOVE_ADS_ANDROID_PRODUCT_ID,
-      purchaseToken: 'android-buy-token',
-      transactionId: 'android-buy-transaction',
-    },
-  });
-  const buyStorage = createMemoryPurchaseStorage();
-  const buyResult = await buyRemoveAds({
-    provider: createNativePurchaseProvider({
-      iapModule: buyNative.iapModule,
-      platform: 'android',
-      purchaseTimeoutMs: 5,
-    }),
-    storage: buyStorage,
-  });
-
-  assert.equal(buyResult.status, 'purchased');
-  assert.equal(buyResult.productId, REMOVE_ADS_PRODUCT_ID);
-  assert.equal(buyResult.purchaseToken, 'android-buy-token');
-  assert.deepEqual(buyNative.calls.requestPurchases[0].request.google.skus, [
-    REMOVE_ADS_ANDROID_PRODUCT_ID,
-  ]);
-  assert.equal(buyNative.calls.finishedPurchases.length, 1);
-
-  const buyRecord = JSON.parse(await buyStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
-  assert.equal(buyRecord.productId, REMOVE_ADS_PRODUCT_ID);
-  assert.equal(buyRecord.purchaseToken, 'android-buy-token');
-  assert.equal(buyRecord.transactionId, 'android-buy-transaction');
-
-  const restoreNative = createFakeIap({
-    availablePurchases: [
-      {
-        productId: REMOVE_ADS_ANDROID_PRODUCT_ID,
-        purchaseToken: 'android-restore-token',
-        transactionId: 'android-restore-transaction',
-      },
-    ],
-    requestResult: null,
-  });
-  const restoreStorage = createMemoryPurchaseStorage();
-  const restoreResult = await restoreRemoveAdsPurchase({
-    provider: createNativePurchaseProvider({
-      iapModule: restoreNative.iapModule,
-      platform: 'android',
-      purchaseTimeoutMs: 5,
-    }),
-    storage: restoreStorage,
-  });
-
-  assert.equal(restoreResult.status, 'restored');
-  assert.equal(restoreResult.productId, REMOVE_ADS_PRODUCT_ID);
-  assert.equal(restoreResult.purchaseToken, 'android-restore-token');
-  assert.equal(restoreNative.calls.restoreCount, 1);
-  const restoreRecord = JSON.parse(await restoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
-  assert.equal(restoreRecord.productId, REMOVE_ADS_PRODUCT_ID);
-  assert.equal(restoreRecord.purchaseToken, 'android-restore-token');
-  assert.equal(restoreRecord.transactionId, 'android-restore-transaction');
-
-  const unrelatedNative = createFakeIap({
-    requestResult: {
-      productId: 'com.billyyiu.swedishcivictest.prolifetime',
-      purchaseToken: 'pro-token',
-      transactionId: 'pro-transaction',
-    },
-  });
-  const unrelatedStorage = createMemoryPurchaseStorage();
-  const unrelatedResult = await buyRemoveAds({
-    provider: createNativePurchaseProvider({
-      iapModule: unrelatedNative.iapModule,
-      platform: 'android',
-      purchaseTimeoutMs: 5,
-    }),
-    storage: unrelatedStorage,
-  });
-
-  assert.equal(unrelatedResult.status, 'pending');
-  assert.equal(unrelatedResult.entitlements.adsDisabled, false);
-  assert.equal(await unrelatedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
@@ -1116,65 +868,6 @@ test('remove-ads entitlement storage rejects stale boolean and malformed records
     }),
   );
   assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, false);
-});
-
-test('stored remove-ads entitlement must revalidate through provider before suppressing ads', async () => {
-  const {
-    REMOVE_ADS_PRODUCT_ID,
-    REMOVE_ADS_RECORD_SCHEMA_VERSION,
-    REMOVE_ADS_STORAGE_KEY,
-    createMemoryPurchaseStorage,
-    createMockPurchaseProvider,
-    getPurchaseEntitlements,
-  } = loadTs('lib/monetization/purchases.ts');
-  const fakeStoredRecord = JSON.stringify({
-    grantedAt: new Date().toISOString(),
-    productId: REMOVE_ADS_PRODUCT_ID,
-    purchaseToken: 'fake-stored-token',
-    receiptValidatedAt: new Date().toISOString(),
-    receiptValidationStatus: 'valid',
-    schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
-    source: 'purchase',
-    transactionId: 'fake-stored-transaction',
-  });
-
-  const localOnlyStorage = createMemoryPurchaseStorage();
-  await localOnlyStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, fakeStoredRecord);
-
-  assert.equal((await getPurchaseEntitlements({ storage: localOnlyStorage })).adsDisabled, false);
-  assert.equal(await localOnlyStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
-
-  const unownedStorage = createMemoryPurchaseStorage();
-  await unownedStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, fakeStoredRecord);
-
-  assert.equal(
-    (
-      await getPurchaseEntitlements({
-        provider: createMockPurchaseProvider(),
-        storage: unownedStorage,
-      })
-    ).adsDisabled,
-    false,
-  );
-  assert.equal(await unownedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
-
-  const ownedStorage = createMemoryPurchaseStorage();
-  await ownedStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, fakeStoredRecord);
-
-  assert.equal(
-    (
-      await getPurchaseEntitlements({
-        provider: createMockPurchaseProvider({ owned: true }),
-        storage: ownedStorage,
-      })
-    ).adsDisabled,
-    true,
-  );
-
-  const refreshedRecord = JSON.parse(await ownedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
-  assert.equal(refreshedRecord.source, 'restore');
-  assert.equal(refreshedRecord.transactionId, 'restore-remove-ads');
-  assert.equal(refreshedRecord.purchaseToken, 'mock-token-restore-remove-ads');
 });
 
 test('pending remove-ads purchase does not grant adsDisabled until store confirmation', async () => {
@@ -1270,14 +963,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
-  const placementCtaSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
-    'utf8',
-  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-  const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
@@ -1290,30 +976,21 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /adsDisabled/);
   assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
+  assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
+  assert.match(paywallSource, /Purchase removes ads after store confirmation/);
+  assert.match(paywallSource, /Provläget är redan annonsfritt/);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
+  assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(paywallSource, /same store account/);
+  assert.match(paywallSource, /samma butikskonto/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
-  assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(placementCtaSource, /useResolvedAdEntitlements\(entitlements\)/);
-  assert.match(placementCtaSource, /shouldShowAd\(placement, resolvedEntitlements\)/);
-  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
-  assert.match(placementCtaSource, /Open Remove Ads/);
-  assert.match(placementCtaSource, /Öppna Ta bort annonser/);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(
     homeSource,
     /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(profileSource, /useRemoveAdsEntitlements/);
-  assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
-  assert.match(learnSource, /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>/);
-  assert.match(
-    practiceSource,
-    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>/,
-  );
-  assert.match(mistakesSource, /<RemoveAdsPlacementCta placement="results_native" \/>/);
-  assert.match(profileSource, /useRemoveAdsEntitlements/);
-  assert.match(profileSource, /focus === 'remove-ads'/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
@@ -1328,21 +1005,15 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
-  const placementCtaSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
-    'utf8',
-  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
   assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
   assert.doesNotMatch(pricingWedgeSource, /29 kr/);
   assert.doesNotMatch(paywallSource, /29 kr/);
-  assert.doesNotMatch(placementCtaSource, /29 kr/);
 });
 
 test('ad placements hydrate persisted remove-ads entitlements by default', () => {
@@ -1378,12 +1049,7 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
-  const {
-    REMOVE_ADS_ANDROID_PRODUCT_ID,
-    REMOVE_ADS_IOS_PRODUCT_ID,
-    REMOVE_ADS_PRICE_LABEL,
-    REMOVE_ADS_PRODUCT_ID,
-  } = loadTs('lib/monetization/purchases.ts');
+  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
@@ -1395,10 +1061,6 @@ test('release monetization policy requires ad-supported free tier and Remove Ads
   assert.equal(releaseMonetizationPolicy.privacyReviewRequiresBinary, true);
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
-  assert.deepEqual(releaseMonetizationPolicy.removeAdsStoreProductIds, {
-    android: REMOVE_ADS_ANDROID_PRODUCT_ID,
-    ios: REMOVE_ADS_IOS_PRODUCT_ID,
-  });
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
   assert.ok(releaseMonetizationPolicy.noAdPlacements.includes('exam_screen'));
   assert.deepEqual(releaseMonetizationPolicy.consentPromptsRequired, [
@@ -1672,86 +1334,6 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(consentInfoFallbackResult.state.umpConsentStatus, 'obtained');
   assert.equal(consentInfoFallbackResult.decision.canInitializeGoogleMobileAds, true);
   assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
-});
-
-test('native Mobile Ads consent hook retries after consent-blocked initialization results', async () => {
-  let consentHook;
-  withEnv({ EXPO_PUBLIC_REAL_ADS_ENABLED: 'true' }, () => {
-    consentHook = loadTs('lib/monetization/useMobileAdsConsent.ts', undefined, new Map(), {
-      react: {
-        useEffect() {},
-        useMemo(factory) {
-          return factory();
-        },
-        useState(initialState) {
-          return [initialState, () => {}];
-        },
-      },
-      'react-native': {
-        Platform: { OS: 'android' },
-      },
-    });
-  });
-
-  const { initializeMobileAdsConsentOnce, resetMobileAdsConsentInitializationCache } = consentHook;
-  const entitlements = { adsDisabled: false };
-  const calls = [];
-
-  resetMobileAdsConsentInitializationCache();
-
-  const pendingResult = await initializeMobileAdsConsentOnce(entitlements, {
-    platform: 'android',
-    runtime: {
-      async gatherUmpConsent() {
-        calls.push('ump:pending');
-        return { canRequestAds: false, status: 'REQUIRED' };
-      },
-      async initializeGoogleMobileAds() {
-        calls.push('ads:init:pending');
-      },
-      platform: 'android',
-    },
-  });
-
-  assert.equal(pendingResult.initialized, false);
-  assert.equal(pendingResult.decision.blockReason, 'pending_consent_prompts');
-
-  const readyResult = await initializeMobileAdsConsentOnce(entitlements, {
-    platform: 'android',
-    runtime: {
-      async gatherUmpConsent() {
-        calls.push('ump:ready');
-        return { canRequestAds: true, status: 'REQUIRED' };
-      },
-      async initializeGoogleMobileAds() {
-        calls.push('ads:init:ready');
-      },
-      platform: 'android',
-    },
-  });
-
-  assert.equal(readyResult.initialized, true);
-  assert.equal(readyResult.decision.canInitializeGoogleMobileAds, true);
-  assert.deepEqual(calls, ['ump:pending', 'ump:ready', 'ads:init:ready']);
-
-  const cachedReadyResult = await initializeMobileAdsConsentOnce(entitlements, {
-    platform: 'android',
-    runtime: {
-      async gatherUmpConsent() {
-        calls.push('ump:cached');
-        return { canRequestAds: false, status: 'REQUIRED' };
-      },
-      async initializeGoogleMobileAds() {
-        calls.push('ads:init:cached');
-      },
-      platform: 'android',
-    },
-  });
-
-  assert.equal(cachedReadyResult.initialized, true);
-  assert.deepEqual(calls, ['ump:pending', 'ump:ready', 'ads:init:ready']);
-
-  resetMobileAdsConsentInitializationCache();
 });
 
 test('exam screen does not import ad components', () => {

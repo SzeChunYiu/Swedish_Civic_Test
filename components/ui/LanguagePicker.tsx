@@ -39,8 +39,6 @@ const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
   },
 };
 
-const triggerIconSize = space[2];
-
 /**
  * Defaults: reads and writes the settings-store language, opens the locale
  * menu in-place, and uses settings copy unless `languageOverride` is provided
@@ -61,9 +59,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const copy = languagePickerCopy[language];
 
   const handleSelect = (option: LocaleOption) => {
-    if (option.available) {
-      setLanguage(option.fallback);
-    }
+    if (!option.available) return;
+
+    setLanguage(option.fallback);
     setOpen(false);
   };
 
@@ -76,20 +74,25 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
         onPress={() => setOpen(true)}
         style={({ pressed }) => [styles.trigger, pressed ? styles.triggerPressed : null]}
       >
-        <GlobeIcon size={triggerIconSize} color={colors.textMuted} />
+        <GlobeIcon size={16} color={colors.textMuted} />
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
       </Pressable>
 
       <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
-        <View style={styles.backdropLayer}>
+        <Pressable
+          accessibilityLabel={copy.closeLabel}
+          accessibilityRole="button"
+          hitSlop={space[1]}
+          onPress={() => setOpen(false)}
+          style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
+        >
           <Pressable
-            accessibilityLabel={copy.closeLabel}
-            accessibilityRole="button"
-            hitSlop={space[1]}
-            onPress={() => setOpen(false)}
-            style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
-          />
-          <View accessibilityLabel={copy.menuLabel} accessibilityRole="menu" style={styles.card}>
+            accessibilityLabel={copy.menuLabel}
+            accessibilityRole="menu"
+            hitSlop={space[0]}
+            onPress={(e) => e.stopPropagation()}
+            style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
+          >
             <Text style={styles.title}>{copy.title}</Text>
             <Text style={styles.subtitle}>{copy.subtitle}</Text>
             <ScrollView style={styles.list}>
@@ -101,6 +104,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                     accessibilityRole="button"
                     accessibilityLabel={`${opt.label}${opt.available ? '' : copy.unavailableSuffix}`}
                     accessibilityState={{ selected, disabled: !opt.available }}
+                    disabled={!opt.available}
                     hitSlop={space[1]}
                     onPress={() => handleSelect(opt)}
                     style={({ pressed }) => [
@@ -130,8 +134,8 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                 );
               })}
             </ScrollView>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </>
   );
@@ -144,7 +148,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
-    flexShrink: 0,
     flexDirection: 'row',
     gap: space[0.5],
     paddingHorizontal: space[1.25],
@@ -161,15 +164,12 @@ const styles = StyleSheet.create({
     fontWeight: typography.badge.fontWeight,
     letterSpacing: typography.badge.letterSpacing,
   },
-  backdropLayer: {
+  backdrop: {
     alignItems: 'center',
+    backgroundColor: colors.surfaceMuted,
     flex: 1,
     justifyContent: 'center',
     padding: space[3],
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.surfaceMuted,
   },
   backdropPressed: {
     backgroundColor: colors.focusSoft,

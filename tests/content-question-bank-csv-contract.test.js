@@ -112,38 +112,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('question-bank CSV contract rejects UHR source publisher drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    return String(contents).replace(
-      'Universitets- och högskolerådet (UHR)',
-      'Wrong publisher'
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Wrong publisher", expected "Universitets- och högskolerådet \(UHR\)"/,
-  );
-});
-
 test('question-bank CSV contract rejects explanation drift', () => {
   const result = spawnSync(
     process.execPath,

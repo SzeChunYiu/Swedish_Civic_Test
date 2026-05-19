@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('progress question schema stays in parity with persisted progress records', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -26,7 +25,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 10);
+  assert.equal(summary.progressStoreFieldsValidated, 12);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.match(progressTypes, /export interface UserQuestionProgress/);
   assert.match(
@@ -41,7 +40,12 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /questionProgress: Record<string, QuestionProgress>;/);
   assert.match(progressStore, /completedQuestionIds: string\[\];/);
   assert.match(progressStore, /mockExamSessions: MockExamProgress\[\];/);
+  assert.match(progressStore, /streakFreezeState: StreakFreezeState;/);
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
+  assert.match(
+    progressStore,
+    /setStreakFreezeState: \(streakFreezeState: StreakFreezeState\) => void;/,
+  );
   assert.match(
     progressStore,
     /progressStorage\?\.set\(progressStateKey, JSON\.stringify\(progress\)\);/,

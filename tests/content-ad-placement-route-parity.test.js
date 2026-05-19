@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -27,11 +26,14 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
+  const nativeAdCardNativeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
+    'utf8',
+  );
 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
-  assert.equal(summary.adPlacementPlatformParityValidated, true);
   assert.match(
     homeSource,
     /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
@@ -39,10 +41,19 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
+  assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
+  assert.match(nativeAdCardNativeSource, /NativeAdView/);
+  assert.match(nativeAdCardNativeSource, /NativeAsset/);
+  assert.match(nativeAdCardNativeSource, /NativeMediaView/);
+  assert.match(nativeAdCardNativeSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeAdCardNativeSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(
-    nativeAdCardSource,
-    /shouldShowAd\('results_native', resolvedEntitlements, undefined, Platform\.OS\)/,
+    nativeAdCardNativeSource,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
+  assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
@@ -106,73 +117,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('ad placement route parity rejects routing practice interstitials through banners', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        '<AdInterstitial triggerKey={question.id} />',
-        '<AdBanner placement="quiz_completed_interstitial" />',
-      )
-      .replace(
-        "import { AdInterstitial } from '../../components/monetization/AdInterstitial';",
-        "import { AdBanner } from '../../components/monetization/AdBanner';",
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /app\/\(tabs\)\/practice\.tsx must import AdInterstitial from the monetization components/,
-  );
-});
-
-test('ad placement route parity rejects native interstitial banner fallback drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/AdInterstitial.native.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('InterstitialAd.createForAdRequest', 'BannerAd.createForAdRequest');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /AdInterstitial native placement must use the Google Mobile Ads interstitial API/,
-  );
-});
-
 test('ad placement route parity rejects native ad entitlement bypass drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -186,7 +130,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/monetization/NativeAdCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(/,\\s*undefined,\\s*Platform\\.OS/g, '');
+      .replace(
+        "!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)",
+        "!entitlementsReady",
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -199,11 +146,11 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard must gate results_native through shouldShowAd with Platform\.OS|NativeAdCard must pass Platform\.OS/,
+    /NativeAdCard must gate results_native through shouldShowAd/,
   );
 });
 
-test('ad placement route parity rejects web fallback consent drift', () => {
+test('ad placement route parity rejects placeholder-only native results ads', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -213,10 +160,10 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/AdBanner.tsx')) {
+  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(/,\s*WEB_AD_FALLBACK_CONSENT_DECISION/g, '');
+      .replace('NativeAd.createForAdRequest', 'createPlaceholderNativeAd');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -229,54 +176,39 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd/,
+    /NativeAdCard native placement must load results_native through NativeAd/,
   );
 });
 
-test('ad placement route parity rejects dropping native platform availability', () => {
-  const cases = [
-    {
-      file: '/components/monetization/LaunchPopupAd.native.tsx',
-      message: /LaunchPopupAd\.native must pass Platform\.OS/,
-    },
-    {
-      file: '/components/monetization/AdBanner.native.tsx',
-      message: /AdBanner\.native must pass Platform\.OS/,
-    },
-    {
-      file: '/components/monetization/NativeAdCard.tsx',
-      message: /NativeAdCard must pass Platform\.OS/,
-    },
-    {
-      file: '/lib/monetization/useMockExamAccess.ts',
-      message: /useMockExamAccess must pass Platform\.OS/,
-    },
-  ];
-
-  for (const driftCase of cases) {
-    const result = spawnSync(
-      process.execPath,
-      [
-        '-e',
-        `
+test('ad placement route parity rejects native results ad consent bypass drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('${driftCase.file}')) {
+  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(/Platform\\.OS/g, "'web'");
+      .replace(
+        "shouldShowAd('results_native', resolvedEntitlements, mobileAdsConsent.decision.consentDecision)",
+        "shouldShowAd('results_native', resolvedEntitlements)",
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
 require('./scripts/validate-content.js');
 `,
-      ],
-      { cwd: repoRoot, encoding: 'utf8' },
-    );
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
 
-    assert.notEqual(result.status, 0, `${driftCase.file} drift should fail`);
-    assert.match(`${result.stdout}\n${result.stderr}`, driftCase.message);
-  }
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /NativeAdCard native placement must gate results_native through consent-aware shouldShowAd/,
+  );
 });

@@ -2,10 +2,10 @@
 
 ## Current final app identity
 
-- App name: Sweden Citizenship Test Prep
-- Expo slug: swedish-civic-test
-- iOS bundle identifier: com.billyyiu.swedishcivictest
-- Android package: com.billyyiu.swedishcivictest
+- App name: Almost Swedish
+- Expo slug: almost-swedish
+- iOS bundle identifier: com.billyyiu.almostswedish
+- Android package: com.billyyiu.almostswedish
 
 ## Prepared artifacts
 
@@ -21,7 +21,10 @@
 - App icon/splash assets: `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash-icon.png`
 - In-app support surface: `/support`, evidence in `reports/2026-05-15-support-surface.md`
 - Public support/privacy hosting copy: `publishing/public-support-and-privacy.md`
-- Hostable public support/privacy pages: `publishing/public-site/support/index.html`, `publishing/public-site/privacy/index.html`
+- Hostable public support/privacy pages and AdMob seller file:
+  `publishing/public-site/support/index.html`,
+  `publishing/public-site/privacy/index.html`,
+  `publishing/public-site/app-ads.txt`
 - Screenshot manifest: `publishing/screenshot-manifest.json`
 - Web-draft screenshot evidence: `reports/2026-05-15-web-draft-screenshots.md`
 - Executable release preflight: `npm run release:preflight`
@@ -47,6 +50,7 @@
 - Google Play Console account access and app record.
 - Public support URL hosted: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/
 - Public privacy policy URL hosted: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/
+- Public app-ads.txt URL hosted: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt
   - Store-record entry remains blocked until Apple/Google app records exist.
 - Real screenshots from target devices.
 - TestFlight build upload and beta review.

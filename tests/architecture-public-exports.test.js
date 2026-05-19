@@ -98,12 +98,8 @@ const architectureExpectedExports = {
     'premiumConfig',
   ],
   'lib/monetization/purchases.ts': [
-    'REMOVE_ADS_ANDROID_PRODUCT_ID',
-    'REMOVE_ADS_IOS_PRODUCT_ID',
     'REMOVE_ADS_PRICE_LABEL',
     'REMOVE_ADS_PRODUCT_ID',
-    'REMOVE_ADS_STORE_PRODUCT_IDS',
-    'RemoveAdsStorePlatform',
     'buyRemoveAds',
     'createMemoryPurchaseStorage',
     'createMockPurchaseProvider',
@@ -111,7 +107,6 @@ const architectureExpectedExports = {
     'createSecureStorePurchaseStorage',
     'createWebPurchaseStorage',
     'getPurchaseEntitlements',
-    'getRemoveAdsStoreProductId',
     'restoreRemoveAdsPurchase',
     'setRemoveAdsEntitlement',
   ],
@@ -147,8 +142,19 @@ const architectureExpectedExports = {
   ],
   'lib/localization/strings.ts': ['strings'],
   'lib/localization/language.ts': ['SupportedLanguage', 'supportedLanguages'],
-  'lib/theme/index.ts': ['colors', 'motion', 'radius', 'shadows', 'space', 'typography'],
+  'lib/theme/index.ts': [
+    'colors',
+    'flagColors',
+    'SWEDISH_FLAG_BLUE',
+    'SWEDISH_FLAG_GOLD',
+    'motion',
+    'radius',
+    'shadows',
+    'space',
+    'typography',
+  ],
   'lib/theme/colors.ts': ['ColorToken', 'colors'],
+  'lib/theme/flag.ts': ['flagColors', 'SWEDISH_FLAG_BLUE', 'SWEDISH_FLAG_GOLD'],
   'lib/theme/motion.ts': ['motion'],
   'lib/theme/radius.ts': ['radius'],
   'lib/theme/shadows.ts': ['shadows'],
@@ -214,6 +220,10 @@ function readText(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function pathExists(relativePath) {
+  return fs.existsSync(path.join(repoRoot, relativePath));
+}
+
 function exportedNamePattern(exportName) {
   return new RegExp(
     `export\\s+(?:declare\\s+)?(?:async\\s+)?(?:function|const|let|var|type|interface|class)\\s+${exportName}\\b|export\\s*\\{[^}]*\\b${exportName}\\b[^}]*\\}`,
@@ -232,4 +242,12 @@ test('architecture scaffold files expose expected public exports', () => {
   );
 
   assert.deepEqual(missingExports, []);
+});
+
+test('root component barrel does not export the retired ChapterRow primitive', () => {
+  const componentBarrel = readText('components/index.ts');
+
+  assert.equal(pathExists('components/ChapterRow.tsx'), false);
+  assert.doesNotMatch(componentBarrel, /['"]\.\/ChapterRow['"]/);
+  assert.doesNotMatch(componentBarrel, /\bChapterRow\b/);
 });

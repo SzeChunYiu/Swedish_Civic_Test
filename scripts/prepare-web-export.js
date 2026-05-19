@@ -38,50 +38,6 @@ function toRelativeBundlePath(bundlePath) {
   return bundlePath.replace(/^\/+/, '');
 }
 
-function escapeRegExp(literal) {
-  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function escapeHtmlAttribute(value) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function extractManifestString(source, fieldName) {
-  const match = source.match(new RegExp(`${escapeRegExp(fieldName)}:\\s*['"]([^'"]+)['"]`));
-
-  if (!match) {
-    throw new Error(`Could not find ${fieldName} in router shell manifest`);
-  }
-
-  return match[1];
-}
-
-function extractMetaDescriptionForLanguage(source, language) {
-  const match = source.match(
-    new RegExp(
-      `language:\\s*['"]${escapeRegExp(language)}['"][\\s\\S]*?description:\\s*['"]([^'"]+)['"]`,
-    ),
-  );
-
-  if (!match) {
-    throw new Error(`Could not find ${language} web meta description in router shell manifest`);
-  }
-
-  return match[1];
-}
-
-function readWebDocumentMetadata() {
-  const manifest = fs.readFileSync(ROUTER_SHELL_MANIFEST_PATH, 'utf8');
-  const language = extractManifestString(manifest, 'webLanguage');
-  const description = extractMetaDescriptionForLanguage(manifest, language);
-
-  return { description, language };
-}
-
 function createRuntimeLoader(bundlePath) {
   const relativeBundlePath = toRelativeBundlePath(bundlePath);
   return [
@@ -118,19 +74,16 @@ function rewriteRootRelativeBundlePaths(source) {
 function prepare(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
-  const faviconPath = path.join(outputDir, FAVICON_FILE_NAME);
   assertFile(indexPath);
-  assertFile(FAVICON_SOURCE);
 
   const originalIndex = fs.readFileSync(indexPath, 'utf8');
   const preparedIndex = rewriteHtml(originalIndex);
-  if (!preparedIndex.includes(HTML_LOADER_MARKER)) {
+  if (preparedIndex === originalIndex && !preparedIndex.includes(HTML_LOADER_MARKER)) {
     throw new Error('Could not find Expo web bundle script in index.html');
   }
 
   fs.writeFileSync(indexPath, preparedIndex);
   fs.writeFileSync(fallbackPath, preparedIndex);
-  fs.copyFileSync(FAVICON_SOURCE, faviconPath);
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
   for (const jsFile of jsFiles) {
@@ -145,10 +98,8 @@ function prepare(outputDir) {
 function check(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
-  const faviconPath = path.join(outputDir, FAVICON_FILE_NAME);
   assertFile(indexPath);
   assertFile(fallbackPath);
-  assertFile(faviconPath);
 
   const index = fs.readFileSync(indexPath, 'utf8');
   const fallback = fs.readFileSync(fallbackPath, 'utf8');

@@ -2,6 +2,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -91,7 +93,31 @@ function readRouterShellManifest() {
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
     appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
+    nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
   };
+}
+
+function loadNativeIntentRuntime() {
+  const source = read('app/+native-intent.ts');
+  const module = { exports: {} };
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+
+  vm.runInNewContext(
+    transpiled,
+    {
+      module,
+      exports: module.exports,
+      URL,
+    },
+    { filename: 'app/+native-intent.ts' },
+  );
+
+  return module.exports;
 }
 
 test('router shell fallback is registered in the root Expo stack', () => {
@@ -231,7 +257,12 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.themeColorTokens, ['colors.canvas']);
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
-  assert.deepEqual(manifest.appSchemes, ['swedish-civic-test']);
+  assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
+  assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
+    true,
+    'native intent static route allowlist should include the about-the-test guide',
+  );
 
   for (const file of manifest.files) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
@@ -291,6 +322,24 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
 });
 
+test('native intent resolves about-the-test deep links before the Home fallback', () => {
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(typeof redirectSystemPath, 'function');
+  assert.equal(redirectSystemPath({ initial: true, path: '/about-the-test' }), '/about-the-test');
+  assert.equal(
+    redirectSystemPath({
+      initial: true,
+      path: 'almost-swedish://app/about-the-test',
+    }),
+    '/about-the-test',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'almost-swedish://app/not-real' }),
+    '/home',
+  );
+});
+
 test('router shell tooling guard is wired into package scripts', () => {
   const pkg = readJson('package.json');
 
@@ -299,42 +348,5 @@ test('router shell tooling guard is wired into package scripts', () => {
     pkg.scripts.test,
     /npm run test:router-shell/,
     'aggregate npm test should include the router shell scaffold guard',
-  );
-});
-
-test('top bar route links keep token-sized web anchors with feedback states', () => {
-  const topBarActions = read('components/ui/TopBarActions.tsx');
-
-  for (const href of ['/search', '/mistakes', '/settings']) {
-    assertContains(
-      topBarActions,
-      `href="${href}"`,
-      `${href} should remain a real route link in the top bar`,
-    );
-  }
-  assert.equal(
-    /<Link[\s\S]{0,360}asChild/.test(topBarActions),
-    false,
-    'top-bar route links should not use asChild on web because it can shrink exported anchors',
-  );
-  assertMatches(
-    topBarActions,
-    /<Link[\s\S]*accessibilityRole="link"[\s\S]*onPressIn=\{\(\) => setIsPressed\(true\)\}[\s\S]*onPressOut=\{\(\) => setIsPressed\(false\)\}[\s\S]*style=\{\[[\s\S]*styles\.iconLink,[\s\S]*isFocused \|\| isHovered \? styles\.iconLinkHover : null,[\s\S]*isPressed \? styles\.iconLinkPressed : null,[\s\S]*\]\}/,
-    'route links should expose link semantics and pressed/focused/hover feedback',
-  );
-  assertMatches(
-    topBarActions,
-    /iconLink:\s*\{[\s\S]*display:\s*'flex',[\s\S]*height:\s*space\[6\],[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*width:\s*space\[6\],[\s\S]*\}/,
-    'web anchors should keep a token-sized 48px layout box, not only the 24px icon glyph',
-  );
-  assertMatches(
-    topBarActions,
-    /iconLinkHover:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.hoverScale \}\],[\s\S]*\}/,
-    'hover feedback should stay token-driven',
-  );
-  assertMatches(
-    topBarActions,
-    /iconLinkPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\],[\s\S]*\}/,
-    'pressed feedback should stay token-driven',
   );
 });

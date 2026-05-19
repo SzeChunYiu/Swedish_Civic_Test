@@ -5,7 +5,8 @@ const test = require('node:test');
 
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
-const INTERACTIVE_TAG = /<(Pressable|Link|Button|RouteLink)\b/;
+const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
+const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -25,10 +26,6 @@ function collectOpeningTag(lines, startIndex) {
   return tag;
 }
 
-function read(relativePath) {
-  return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
-}
-
 test('interactive elements expose explicit accessibility labels, roles, and states', () => {
   const offenders = [];
 
@@ -40,21 +37,20 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         if (!INTERACTIVE_TAG.test(line)) return;
         const tag = collectOpeningTag(lines, index);
         const isButtonImplementation = relPath === 'components/ui/Button.tsx';
-        const isRouteLinkImplementation = relPath === 'components/ui/RouteLink.tsx';
-        const tagName = (tag.match(/<(Pressable|Link|Button|RouteLink)\b/) || [])[1];
+        const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
+        const isIntentionallyHidden =
+          tag.includes('accessible={false}') &&
+          tag.includes('importantForAccessibility="no-hide-descendants"');
+
+        if (isIntentionallyHidden) return;
+
         if (!isButtonImplementation && !tag.includes('accessibilityLabel=')) {
-          if (!isRouteLinkImplementation) {
-            offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
-          }
+          offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
         }
-        if (tagName !== 'RouteLink' && !tag.includes('accessibilityRole=')) {
+        if (!tag.includes('accessibilityRole=')) {
           offenders.push(`${relPath}:${index + 1}: missing accessibilityRole: ${line.trim()}`);
         }
-        if (
-          tagName === 'Link' &&
-          !isRouteLinkImplementation &&
-          !tag.includes('accessibilityRole="link"')
-        ) {
+        if (tagName === 'Link' && !tag.includes('accessibilityRole="link"')) {
           offenders.push(
             `${relPath}:${index + 1}: Link should use accessibilityRole="link": ${line.trim()}`,
           );
@@ -72,31 +68,11 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
   assert.deepEqual(offenders, []);
 });
 
-test('internal route links use the shared tokenized RouteLink target', () => {
-  const routeLinkSource = read('components/ui/RouteLink.tsx');
-  const migratedFiles = [
-    'app/(tabs)/home.tsx',
-    'app/(tabs)/learn.tsx',
-    'app/(tabs)/mistakes.tsx',
-    'app/about-the-test.tsx',
-    'app/chapter/[chapterId].tsx',
-    'app/onboarding.tsx',
-    'app/quiz/[sessionId].tsx',
-    'app/search.tsx',
-    'app/settings.tsx',
-    'components/compliance/ComplianceLinks.tsx',
-    'components/compliance/LegalPage.tsx',
-  ];
+test('QuestionNavigator tabs keep token-sized touch targets', () => {
+  const source = fs.readFileSync(QUESTION_NAVIGATOR_SOURCE, 'utf8');
 
-  assert.match(routeLinkSource, /accessibilityRole = 'link'/);
-  assert.match(routeLinkSource, /minHeight: space\[6\]/);
-  assert.match(routeLinkSource, /motion\.hoverScale/);
-  assert.match(routeLinkSource, /motion\.pressedScale/);
-  assert.match(routeLinkSource, /textDecorationLine: 'none'/);
-
-  for (const relativePath of migratedFiles) {
-    const source = read(relativePath);
-    assert.match(source, /<RouteLink\b/, `${relativePath} should use RouteLink`);
-    assert.doesNotMatch(source, /<Link\b/, `${relativePath} should not style Link directly`);
-  }
+  assert.match(source, /accessibilityRole="tab"/);
+  assert.match(source, /hitSlop=\{space\[1\]\}/);
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /minWidth:\s*space\[6\]/);
 });

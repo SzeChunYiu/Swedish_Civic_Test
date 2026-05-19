@@ -31,7 +31,6 @@ require('./scripts/validate-content.js');
 
 test('audio setting stays in parity between storage and settings switch', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -77,7 +76,6 @@ test('audio setting parity rejects missing route labels', () => {
 
 test('settings store schema stays in parity with persisted settings state', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

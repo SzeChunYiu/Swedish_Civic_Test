@@ -1,7 +1,6 @@
 const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
-const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
@@ -9,12 +8,11 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
-const appAdsUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 
 function storeRecordReadyEvidence(extra = '') {
   return [
-    `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest.`,
+    `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
     `Support URL ${supportUrl} and Privacy Policy URL ${privacyUrl} entered in both stores.`,
     `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
     extra,
@@ -48,50 +46,6 @@ function runPreflight(options = {}) {
     assert.equal(result.status, options.expectedStatus, result.stderr || result.stdout);
   }
   return JSON.parse(result.stdout);
-}
-
-function runPreflightWithSourceMutation(mutationBody) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-source-mutation-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-
-  writeAllReadyEvidence(evidencePath);
-  writeFakeReleaseCommands(tmpDir);
-
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  let source = originalReadFileSync.call(this, filePath, ...args);
-  if (typeof source !== 'string') return source;
-${mutationBody}
-  return source;
-};
-process.argv = [process.execPath, 'scripts/release-preflight.js', '--json'];
-require('./scripts/release-preflight.js');
-`,
-    ],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      env: {
-        ...process.env,
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    },
-  );
-
-  assert.ok(result.stdout.trim(), result.stderr);
-  return {
-    report: JSON.parse(result.stdout),
-    result,
-  };
 }
 
 function writeFakeReleaseCommands(tmpDir, options = {}) {
@@ -142,22 +96,6 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     ].join('\n'),
     { mode: 0o755 },
   );
-}
-
-function withPublicUrlServer(handler, callback) {
-  const server = http.createServer(handler);
-  return new Promise((resolve, reject) => {
-    server.listen(0, '127.0.0.1', async () => {
-      const { port } = server.address();
-      try {
-        resolve(await callback(`http://127.0.0.1:${port}`));
-      } catch (error) {
-        reject(error);
-      } finally {
-        server.close();
-      }
-    });
-  });
 }
 
 function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
@@ -213,7 +151,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
           'public-urls': {
             status: 'READY',
             evidence:
-              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ verified over HTTPS and entered in both store records.',
+              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/, Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/, and app-ads.txt URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt verified over HTTPS.',
           },
           'device-screenshots': {
             status: 'READY',
@@ -305,15 +243,14 @@ function createEasBuildEvidence(options = {}) {
       profile: 'internal',
       buildId: 'android-build-100',
       buildUrl:
-        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/android-build-100',
+        'https://expo.dev/accounts/example/projects/almost-swedish/builds/android-build-100',
       artifactType: 'aab',
       installOrTestStatus: 'ready-for-device-smoke',
     },
     ios: {
       profile: 'internal',
       buildId: 'ios-build-100',
-      buildUrl:
-        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/ios-build-100',
+      buildUrl: 'https://expo.dev/accounts/example/projects/almost-swedish/builds/ios-build-100',
       artifactType: 'ipa',
       installOrTestStatus: 'ready-for-testflight',
     },
@@ -357,9 +294,9 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
           },
           {
             id: 'public-urls',
-            label: 'Public support and privacy URLs',
+            label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
-            evidence: 'Support and Privacy Policy URLs returned HTTP 200.',
+            evidence: 'Support, Privacy Policy, and app-ads URLs returned HTTP 200.',
             nextAction: 'Enter URLs in both store records.',
           },
         ],
@@ -395,7 +332,7 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
     report,
     /\| `eas-auth` \| Expo\/EAS authentication \| Not logged in \| Log in to Expo\/EAS/,
   );
-  assert.doesNotMatch(report, /\| `public-urls` \| Public support, privacy, and app-ads URLs \|/);
+  assert.doesNotMatch(report, /\| `public-urls` \| Public support and privacy URLs \|/);
   assert.match(report, /## Ready gates/);
   assert.match(report, /`public-urls`/);
 });
@@ -420,9 +357,9 @@ test('release completion audit command maps objective to preflight evidence befo
           },
           {
             id: 'public-urls',
-            label: 'Public support and privacy URLs',
+            label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
-            evidence: 'SzeChunYiu Pages and app-ads.txt returned HTTP 200.',
+            evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
           },
         ],
@@ -483,9 +420,9 @@ test('release issue update draft command writes tracker-ready status comment', (
           },
           {
             id: 'public-urls',
-            label: 'Public support and privacy URLs',
+            label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
-            evidence: 'SzeChunYiu Pages and app-ads.txt returned HTTP 200.',
+            evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
           },
         ],
@@ -664,7 +601,7 @@ function createStoreRecordEvidence(options = {}) {
 
   const evidence = {
     status: 'ready',
-    bundleIdentifier: 'com.billyyiu.swedishcivictest',
+    bundleIdentifier: 'com.billyyiu.almostswedish',
     appStoreConnectUrl: 'https://appstoreconnect.apple.com/apps/1234567890/appstore',
     googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
     supportUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
@@ -720,10 +657,10 @@ function createStoreCredentialEvidence(options = {}) {
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
     android: {
-      serviceAccountEmail: 'play-submit@swedish-civic-test.iam.gserviceaccount.com',
+      serviceAccountEmail: 'play-submit@almost-swedish.iam.gserviceaccount.com',
       serviceAccountKeyFingerprint:
         'SHA256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
-      packageName: 'com.billyyiu.swedishcivictest',
+      packageName: 'com.billyyiu.almostswedish',
       credentialsSource: 'local secure file outside git',
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
@@ -1360,60 +1297,6 @@ test('release preflight blocks stale public URL evidence when live check fails',
   assert.match(publicUrls.evidence, /live URL check failed/i);
 });
 
-test('release preflight blocks public app-ads evidence when hosted seller line is missing', async () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-app-ads-url-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  writeFakeReleaseCommands(tmpDir);
-
-  await withPublicUrlServer(
-    (request, response) => {
-      if (request.url === '/support/' || request.url === '/privacy/') {
-        response.writeHead(200, { 'content-type': 'text/html' });
-        response.end('<html>ok</html>');
-        return;
-      }
-
-      response.writeHead(404, { 'content-type': 'text/plain' });
-      response.end('missing app-ads');
-    },
-    async (baseUrl) => {
-      const localSupportUrl = `${baseUrl}/support/`;
-      const localPrivacyUrl = `${baseUrl}/privacy/`;
-      const localAppAdsUrl = `${baseUrl}/app-ads.txt`;
-      writeAllReadyEvidence(evidencePath, {
-        'store-records': {
-          status: 'READY',
-          evidence: [
-            'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest.',
-            `Support URL ${localSupportUrl} and Privacy Policy URL ${localPrivacyUrl} entered in both stores.`,
-            `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
-          ].join(' '),
-        },
-        'public-urls': {
-          status: 'READY',
-          evidence: `Support URL ${localSupportUrl}, Privacy Policy URL ${localPrivacyUrl}, and app-ads.txt URL ${localAppAdsUrl} verified over HTTPS.`,
-        },
-      });
-
-      const report = runPreflight({
-        expectedStatus: 1,
-        env: {
-          PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-          RELEASE_PREFLIGHT_APP_ADS_URL: localAppAdsUrl,
-          RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-          RELEASE_PREFLIGHT_PRIVACY_URL: localPrivacyUrl,
-          RELEASE_PREFLIGHT_SUPPORT_URL: localSupportUrl,
-        },
-      });
-
-      const publicUrls = report.gates.find((gate) => gate.id === 'public-urls');
-      assert.equal(publicUrls.status, 'BLOCKED');
-      assert.match(publicUrls.evidence, /app-ads\.txt/i);
-      assert.match(publicUrls.evidence, /live URL check failed/i);
-    },
-  );
-});
-
 test('release preflight blocks READY manual gates with weak evidence', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-weak-evidence-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
@@ -1505,7 +1388,7 @@ test('release preflight blocks store records without support and privacy URL ent
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; AdMob app configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; AdMob app configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
@@ -2092,7 +1975,7 @@ test('release preflight blocks store record evidence without exact public URLs',
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);

@@ -1,9 +1,8 @@
+import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { ChapterCard } from '../../components/learning/ChapterCard';
 import { AdBanner } from '../../components/monetization/AdBanner';
-import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
-import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
@@ -116,7 +115,7 @@ export default function Screen() {
           const questionCount = questionCountForChapter(chapter.id);
           const completedCount = completedCountForChapter(chapter.id, completedQuestionIds);
           return (
-            <RouteLink
+            <Link
               key={chapter.id}
               accessibilityLabel={getChapterLinkAccessibilityLabel({
                 nameSv: chapter.nameSv,
@@ -126,9 +125,9 @@ export default function Screen() {
                 questionCount,
                 copy,
               })}
+              accessibilityRole="link"
               href={`/chapter/${chapter.id}`}
               style={styles.link}
-              variant="card"
             >
               <ChapterCard
                 chapter={chapter}
@@ -136,12 +135,11 @@ export default function Screen() {
                 language={language}
                 questionCount={questionCount}
               />
-            </RouteLink>
+            </Link>
           );
         })}
       </View>
 
-      <RemoveAdsPlacementCta placement="chapter_list_banner" />
       <AdBanner placement="chapter_list_banner" />
     </ScreenShell>
   );

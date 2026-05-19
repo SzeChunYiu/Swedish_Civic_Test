@@ -31,7 +31,7 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
       results_native: 'Annons i resultat och misstag',
       rewarded_extra_exam: 'Annons för extra prov',
     },
-    previewHint: 'Förhandsvisning av annonsplats.',
+    previewHint: 'Sponsrad annonsförhandsvisning.',
     removeAdsHint: 'Döljs när Ta bort annonser är aktivt.',
     testStatus: 'AdMob-testannons aktiv - webbförhandsvisning',
   },

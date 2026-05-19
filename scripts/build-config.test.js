@@ -5,8 +5,6 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { readWebDocumentMetadata } = require('./prepare-web-export.js');
-
 const repoRoot = path.resolve(__dirname, '..');
 
 function readJson(relativePath) {
@@ -1291,12 +1289,8 @@ test('web export script is available for local production bundle smoke', () => {
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
-    pkg.scripts['test:web-export-budget'],
-    'node --test tests/web-export-budget.test.js',
-  );
-  assert.equal(
     pkg.scripts['release:web-export-smoke'],
-    'rm -rf dist-web && npm run build:web:export && npm run test:web-export-budget',
+    'rm -rf dist-web && npm run build:web:export',
   );
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
@@ -1358,22 +1352,6 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     },
   );
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
-
-  const wrongLanguage = metadata.language === 'sv' ? 'en' : 'sv';
-  const wrongIndex = index.replace(`lang="${metadata.language}"`, `lang="${wrongLanguage}"`);
-  fs.writeFileSync(path.join(outputDir, 'index.html'), wrongIndex);
-  fs.writeFileSync(path.join(outputDir, '404.html'), wrongIndex);
-
-  const staleMetadataCheck = spawnSync(
-    process.execPath,
-    ['scripts/prepare-web-export.js', '--check', outputDir],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-  assert.notEqual(staleMetadataCheck.status, 0);
-  assert.match(staleMetadataCheck.stderr || staleMetadataCheck.stdout, /must declare lang=/);
 });
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
