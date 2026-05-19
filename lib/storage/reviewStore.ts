@@ -16,7 +16,7 @@ import type { ReviewCard, ReviewGrade } from '../learning/spacedRepetition';
 import { createNewCard, gradeCard, isDue, sortByDueAscending } from '../learning/spacedRepetition';
 import { getLocalDateKey } from '../learning/streaks';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { readRecoverably, writeRecoverably } from './persistenceWarning';
+import { writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
@@ -29,7 +29,7 @@ try {
   reviewStorage = null;
 }
 
-export interface PersistedReviews {
+interface PersistedReviews {
   byId: Record<string, ReviewCard>;
   /** Day key → number of reviews graded that day. Caps the Free tier. */
   gradedPerDay: Record<string, number>;
@@ -115,39 +115,18 @@ function normalize(value: unknown): PersistedReviews {
   return { byId, gradedPerDay };
 }
 
-export function normalizeImportedReviewState(value: unknown): PersistedReviews {
-  return normalize(value);
-}
-
-function read(): {
-  state: PersistedReviews;
-  persistenceWarning: RecoverablePersistenceWarning | null;
-} {
-  const result = readRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, () =>
-    reviewStorage?.getString(REVIEW_STORE_KEY),
-  );
-  if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
+function read(): PersistedReviews {
+  const raw = reviewStorage?.getString(REVIEW_STORE_KEY);
+  if (!raw) return EMPTY;
   try {
-    return { state: normalize(JSON.parse(result.value)), persistenceWarning: result.warning };
+    return normalize(JSON.parse(raw));
   } catch {
-    return { state: EMPTY, persistenceWarning: result.warning };
+    return EMPTY;
   }
 }
 
 function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
   return writeRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, JSON.stringify(state));
-}
-
-function mergeReviewState(current: PersistedReviews, imported: PersistedReviews): PersistedReviews {
-  const gradedPerDay = { ...current.gradedPerDay };
-  for (const [day, count] of Object.entries(imported.gradedPerDay)) {
-    gradedPerDay[day] = Math.max(gradedPerDay[day] ?? 0, count);
-  }
-
-  return normalize({
-    byId: { ...current.byId, ...imported.byId },
-    gradedPerDay,
-  });
 }
 
 type ReviewState = PersistedReviews & {
@@ -164,8 +143,8 @@ type ReviewState = PersistedReviews & {
 const initial = read();
 
 export const useReviewStore = create<ReviewState>((set, get) => ({
-  ...initial.state,
-  persistenceWarning: initial.persistenceWarning,
+  ...initial,
+  persistenceWarning: null,
   ensureCard: (questionId, now) => {
     const existing = get().byId[questionId];
     if (existing) return existing;
@@ -199,14 +178,6 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   },
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
-
-export function importReviewSnapshot(value: unknown): PersistedReviews {
-  const importedState = normalizeImportedReviewState(value);
-  const nextState = mergeReviewState(useReviewStore.getState(), importedState);
-  const persistenceWarning = write(nextState);
-  useReviewStore.setState({ ...nextState, persistenceWarning });
-  return nextState;
-}
 
 // ---- Pure selectors (usable outside React) ---------------------------------
 

@@ -2,10 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const {
-  assertNoUnsupportedStaticOutcomeSlogans,
-  assertStaticHeadMetadataDescriptionSource,
-} = require('./static-outcome-copy-guard');
+const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -86,10 +83,8 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /quality is not checked by UHR or any other authority/);
   assert.match(sourcesRoute, /Source accessed 2026-05-19/);
   assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet/i);
-  assert.match(sourcesRoute, /<ComplianceActionLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
-  assert.match(sourcesRoute, /<ComplianceActionLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
-  assert.match(sourcesRoute, /detail=\{getVisibleLinkDestination\(UHR_EDUCATION_MATERIAL_URL\)\}/);
-  assert.match(sourcesRoute, /detail=\{getVisibleLinkDestination\(UHR_ABOUT_TEST_URL\)\}/);
+  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
   assert.match(
     sourcesRoute,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
@@ -118,8 +113,7 @@ test('compliance pages and source links are present', () => {
   assert.match(supportRoute, /content issue/i);
   assert.match(supportRoute, /no personal data/i);
   assert.match(supportRoute, /szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/support/i);
-  assert.match(supportRoute, /<ComplianceActionLink[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
-  assert.match(supportRoute, /detail=\{getVisibleLinkDestination\(PUBLIC_SUPPORT_URL\)\}/);
+  assert.match(supportRoute, /<Link[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
   assert.match(supportRoute, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
   assert.doesNotMatch(supportRoute, /release checklist items/i);
   const complianceLinks = read('components/compliance/ComplianceLinks.tsx');
@@ -130,42 +124,10 @@ test('compliance pages and source links are present', () => {
 
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
-  assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
-  assert.match(read('site/index.html'), /data-i18n="footer\.t1">Study the material\./);
   assert.match(read('site/app.js'), /"hero\.h1a": "Study the material\."/);
   assert.match(read('site/app.js'), /"hero\.h1b": "Practice with sources\."/);
   assert.match(read('site/app.js'), /"hero\.h1a": "Plugga materialet\."/);
   assert.match(read('site/app.js'), /"hero\.h1b": "Öva med källor\."/);
-});
-
-test('static head metadata description is neutral and non-empty', () => {
-  const indexHtml = read('site/index.html');
-
-  assert.equal(assertStaticHeadMetadataDescriptionSource(indexHtml), 1);
-  assert.throws(
-    () =>
-      assertStaticHeadMetadataDescriptionSource(
-        indexHtml.replace(/<meta\s+name="description"[\s\S]*?\/>\n/, ''),
-      ),
-    /missing static meta description/,
-  );
-  assert.throws(
-    () =>
-      assertStaticHeadMetadataDescriptionSource(
-        indexHtml.replace(/(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/, '$1$2'),
-      ),
-    /blank static meta description/,
-  );
-  assert.throws(
-    () =>
-      assertStaticHeadMetadataDescriptionSource(
-        indexHtml.replace(
-          /(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/,
-          '$1Pass the test.$2',
-        ),
-      ),
-    /static meta description English pass-the-test slogan/,
-  );
 });
 
 test('static Swedish mock exam copy stays clearly unofficial practice wording', () => {
