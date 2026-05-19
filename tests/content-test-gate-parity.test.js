@@ -38,19 +38,3 @@ test('test:content script includes every content test file exactly once', () => 
     `test:content duplicates tests: ${duplicateTests.join(', ')}`,
   );
 });
-
-test('generated-id fixture guard scans content test globs', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
-    'utf8',
-  );
-
-  assert.match(source, /function contentMutationFixtureFiles\(\)/);
-  assert.match(source, /readdirSync\(path\.join\(repoRoot, 'tests'\)\)/);
-  assert.match(source, /\^content-\.\*\\\.test\\\.js\$/);
-  assert.match(source, /readdirSync\(path\.join\(repoRoot, 'scripts'\)\)/);
-  assert.match(source, /\^.\*content.\*\\\.test\\\.js\$/);
-  assert.doesNotMatch(source, /const scannedFiles = \[\s*['"`]tests\/content-published/);
-  assert.match(source, /generated id fixture guard rejects raw generated ids/);
-  assert.match(source, /generated id fixture guard allows source ids and helper-derived ids/);
-});

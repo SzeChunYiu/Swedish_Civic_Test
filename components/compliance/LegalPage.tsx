@@ -1,11 +1,10 @@
-import type { Href } from 'expo-router';
+import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { PropsWithChildren, ReactNode } from 'react';
+import type { ComponentProps, PropsWithChildren } from 'react';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
-import { ComplianceActionLink } from './ComplianceActionLink';
 
-type LegalBackHref = Href;
+type LegalBackHref = ComponentProps<typeof Link>['href'];
 type LegalPageCopy = {
   defaultBackAccessibilityLabel: string;
   defaultBackLabel: string;
@@ -37,11 +36,10 @@ export interface LegalPageProps extends PropsWithChildren {
 }
 
 /**
- * Defaults: renders a warm tokenized legal section with the provided `title`,
- * paragraph body copy, and no trailing action.
+ * Defaults: renders a warm tokenized legal section with the provided `title`
+ * and body copy.
  */
 export interface LegalSectionProps extends PropsWithChildren {
-  action?: ReactNode;
   title: string;
 }
 
@@ -62,11 +60,14 @@ export function LegalPage({
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <ComplianceActionLink
+      <Link
         accessibilityLabel={resolvedBackAccessibilityLabel}
+        accessibilityRole="link"
         href={backHref}
-        label={resolvedBackLabel}
-      />
+        style={styles.backLink}
+      >
+        {resolvedBackLabel}
+      </Link>
       <Text accessibilityRole="header" style={styles.title}>
         {title}
       </Text>
@@ -75,14 +76,13 @@ export function LegalPage({
   );
 }
 
-export function LegalSection({ action, title, children }: LegalSectionProps) {
+export function LegalSection({ title, children }: LegalSectionProps) {
   return (
     <View style={styles.section}>
       <Text accessibilityRole="header" style={styles.sectionTitle}>
         {title}
       </Text>
       <Text style={styles.paragraph}>{children}</Text>
-      {action ? <View style={styles.sectionAction}>{action}</View> : null}
     </View>
   );
 }
@@ -99,6 +99,12 @@ const styles = StyleSheet.create({
   content: {
     gap: space[2.25],
     padding: space[3],
+  },
+  backLink: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
   },
   title: {
     color: colors.text,
@@ -124,8 +130,5 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
-  },
-  sectionAction: {
-    marginTop: space[0.5],
   },
 });
