@@ -254,10 +254,11 @@ test('Settings language change rerenders the Mock landing without reload', () =>
   context.clickSettingsLanguage('sv');
 
   const html = context.element('mock-stage').innerHTML;
-  assert.match(html, /Bygg din tentamen\./);
-  assert.match(html, /Starta tentamen/);
+  assert.match(html, /Bygg ditt övningsprov\./);
+  assert.match(html, /Starta övningsprov/);
   assert.match(html, /Övningspoäng/);
   assertNoMockOfficialPassLineCopy(html);
+  assert.doesNotMatch(html, /Skarp tentamen|Bygg din tentamen|Starta tentamen/);
   assert.equal(context.reloadCount, 0);
 });
 
@@ -280,10 +281,11 @@ test('Settings language change rerenders an active Mock exam without reload', ()
   context.clickSettingsLanguage('sv');
 
   const html = context.element('mock-stage').innerHTML;
-  assert.match(html, /Skarp tentamen/);
+  assert.match(html, /Övningsprov/);
   assert.match(html, /Återstår/);
   assert.match(html, /Lämna in/);
   assert.match(html, /Var ligger Sverige\?/);
+  assert.doesNotMatch(html, /Skarp tentamen|tentamen/);
   assert.equal(context.reloadCount, 0);
 });
 
@@ -309,6 +311,6 @@ test('Settings language change rerenders submitted Mock results without restarti
   assert.match(html, /Rätt svar/);
   assert.match(html, /Övningen är klar/);
   assertNoMockOfficialPassLineCopy(html);
-  assert.doesNotMatch(html, /Build your exam|Bygg din tentamen/);
+  assert.doesNotMatch(html, /Build your exam|Bygg din tentamen|Starta tentamen|Skarp tentamen/);
   assert.equal(context.reloadCount, 0);
 });

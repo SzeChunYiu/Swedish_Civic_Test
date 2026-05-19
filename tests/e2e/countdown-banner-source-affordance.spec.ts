@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import type { Locator } from '@playwright/test';
+import { dismissBlockingModals } from './browserLaunch';
 
 import { CITIZENSHIP_TIMELINE_SOURCE_URLS } from '../../lib/learning/examDate';
-import { dismissBlockingModals } from './browserLaunch';
 
 type BoundingBox = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
 

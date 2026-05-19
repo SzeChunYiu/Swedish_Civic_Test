@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-
 import { dismissBlockingModals } from './browserLaunch';
 
 type BoundingBox = { x: number; y: number; width: number; height: number };
