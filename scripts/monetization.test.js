@@ -1064,6 +1064,107 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
   assert.equal(await directGrantStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
+test('remove-ads purchase cleanup failures do not replace primary outcomes', async () => {
+  const {
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    createMockPurchaseProvider,
+    getPurchaseEntitlements,
+    restoreRemoveAdsPurchase,
+  } = loadTs('lib/monetization/purchases.ts');
+
+  const purchaseCleanupCalls = [];
+  const purchasedStorage = createMemoryPurchaseStorage();
+  const successfulPurchaseProvider = {
+    ...createMockPurchaseProvider(),
+    async disconnect() {
+      purchaseCleanupCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+  };
+  const purchaseResult = await buyRemoveAds({
+    provider: successfulPurchaseProvider,
+    storage: purchasedStorage,
+  });
+
+  assert.equal(purchaseResult.status, 'purchased');
+  assert.equal(purchaseResult.entitlements.adsDisabled, true);
+  assert.equal((await getPurchaseEntitlements({ storage: purchasedStorage })).adsDisabled, true);
+  assert.ok(await purchasedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
+  assert.deepEqual(purchaseCleanupCalls, ['disconnect']);
+
+  const restoreCleanupCalls = [];
+  const restoredStorage = createMemoryPurchaseStorage();
+  const successfulRestoreProvider = {
+    ...createMockPurchaseProvider({ owned: true }),
+    async disconnect() {
+      restoreCleanupCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+  };
+  const restoreResult = await restoreRemoveAdsPurchase({
+    provider: successfulRestoreProvider,
+    storage: restoredStorage,
+  });
+
+  assert.equal(restoreResult.status, 'restored');
+  assert.equal(restoreResult.entitlements.adsDisabled, true);
+  assert.equal((await getPurchaseEntitlements({ storage: restoredStorage })).adsDisabled, true);
+  assert.deepEqual(restoreCleanupCalls, ['disconnect']);
+
+  const requestFailureCalls = [];
+  const requestFailureProvider = {
+    async connect() {
+      requestFailureCalls.push('connect');
+    },
+    async disconnect() {
+      requestFailureCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+    async requestRemoveAdsPurchase() {
+      requestFailureCalls.push('request');
+      throw new Error('store request failed');
+    },
+    async restorePurchases() {
+      return [];
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      buyRemoveAds({
+        provider: requestFailureProvider,
+        storage: createMemoryPurchaseStorage(),
+      }),
+    /store request failed/,
+  );
+  assert.deepEqual(requestFailureCalls, ['connect', 'request', 'disconnect']);
+
+  const validationFailureCalls = [];
+  const validationFailureProvider = {
+    ...createMockPurchaseProvider(),
+    async disconnect() {
+      validationFailureCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+    async validateRemoveAdsReceipt() {
+      validationFailureCalls.push('validate');
+      throw new Error('receipt validation failed');
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      buyRemoveAds({
+        provider: validationFailureProvider,
+        storage: createMemoryPurchaseStorage(),
+      }),
+    /receipt validation failed/,
+  );
+  assert.deepEqual(validationFailureCalls, ['validate', 'disconnect']);
+});
+
 test('remove-ads paywall is surfaced near an ad placement and wired to purchase helpers', () => {
   const paywallSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
@@ -1082,6 +1183,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
+  assert.match(paywallSource, /updateEntitlements\(result\.entitlements\)/);
+  assert.match(paywallSource, /setStatus\(result\.status\)/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
   assert.match(paywallSource, /bodyActive:/);
