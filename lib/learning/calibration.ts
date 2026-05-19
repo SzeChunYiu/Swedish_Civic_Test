@@ -89,8 +89,7 @@ export function generateCalibration(
     if (nonEmpty.length === 0) {
       verdict = 'insufficient';
     } else {
-      const avgDelta =
-        nonEmpty.reduce((sum, b) => sum + (b.deltaPoints ?? 0), 0) / nonEmpty.length;
+      const avgDelta = nonEmpty.reduce((sum, b) => sum + (b.deltaPoints ?? 0), 0) / nonEmpty.length;
       if (avgDelta < -10) verdict = 'over_confident';
       else if (avgDelta > 10) verdict = 'under_confident';
       else verdict = 'well_calibrated';
@@ -104,10 +103,7 @@ export function generateCalibration(
 // When a confidence rating is recorded, override the legacy isCorrect-only
 // grade map. Returns 1..4 matching ReviewGrade in spacedRepetition.ts.
 
-export function gradeFromConfidence(
-  isCorrect: boolean,
-  rating: ConfidenceRating,
-): 1 | 2 | 3 | 4 {
+export function gradeFromConfidence(isCorrect: boolean, rating: ConfidenceRating): 1 | 2 | 3 | 4 {
   if (!isCorrect) return 1; // always 'again'
   if (rating <= 3) return 3; // good
   return 4; // easy — confidence 4 or 5 AND correct
