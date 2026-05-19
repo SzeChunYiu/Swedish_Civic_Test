@@ -1144,3 +1144,13 @@ Verification (commands + result): `NODE_OPTIONS='--v8-pool-size=1' npm run conte
 PR (number + merged?): #884, yes via squash merge as `ccae92a`.
 Accepted by worker? yes
 Next suggested validator action: accept `QUESTION-BANK-CSV-EXPLANATION-PARITY-1`; the canonical CSV now exposes source explanations and the validator/test mirror rejects explanation drift. `QUESTION-BANK-CSV-OPTION-PARITY-1` and `QUESTION-BANK-CSV-CORRECT-ANSWER-PARITY-1` are already claimed in `codex-tasks/claims.txt`, so do not duplicate them unless their current claims are abandoned or rejected.
+
+Lane: DATA-INTEGRITY
+Host/branch: local `/tmp/sct-data-integrity-q150-nVI7Sv/wt`, `task/data-integrity/q150-derived-explanation-1779152724`
+Role type and manager: dynamic-worker under MANAGER-build / VALIDATOR
+Task / checklist item: `REVIEWER-DERIVED-CONTENT-Q150-EXPECTATION-RED-1` derived-content assertion parity after authored q002/q150 explanation naturalness update.
+Changed artifacts: `scripts/derived-content.test.js`, `docs/parallel-sessions/journals/data-integrity.md`.
+Verification (commands + result): clean `origin/main` `76fe765` reproduced the failure in `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content`: 5/6 passed, and q150 expected the shorter Swedish explanation while source/CSV/static output used the longer accepted explanation. Updated only the q150 `explanationSv` and `explanationEn` assertions to match current source/static output while preserving the no answer-judgement boilerplate guards. Post-repair `NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` passed 6/6; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` passed with 720 questions and static-site parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed 1/1; `npx --no-install prettier --check scripts/derived-content.test.js` passed; `git diff --check` passed; full `NODE_OPTIONS='--v8-pool-size=1' timeout 600s npm run validate` passed, including typecheck, lint, format, audit, 330/330 content tests, 50/50 UI effects tests, 46/46 release-preflight tests, and final `validate:content`.
+PR (number + merged?): pending push/PR at handoff write time.
+Accepted by worker? yes
+Next suggested validator action: accept this DATA-INTEGRITY parity repair after PR merge; `scripts/derived-content.test.js` now matches the accepted q150 source/static explanation and the top-level local validation gate is green again.
