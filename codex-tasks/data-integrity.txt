@@ -1,16 +1,5 @@
 
-`REVIEWER-GENERATED-TF-EXPLANATION-META-1` is accepted via PR #819 /
-`8782487`.
 
-Manager verification in `/tmp/sct-manager-di-accept-IHenjj/wt` on
-`origin/main` `69b94c4` passed a direct CSV/static scan showing 720 CSV rows,
-720 static rows, 576 generated rows, 288 generated true/false rows, zero stale
-q270/q271 generic `En anledning är att...` / `One reason is that...` reason
-stems, and zero generated true/false explanation answer-judgement/meta rows.
-Executable gates passed: `npm run validate:content`,
-`npm run test:derived-content`, focused
-`tests/content-published-question-types.test.js`
-`tests/content-static-site-question-bank-parity.test.js`
 `tests/content-test-gate-parity.test.js` plus `scripts/content-production.test.js`
 38/38, canonical export parity, static-site export parity, `node --check
 site/questions.js`, `npm run typecheck -- --pretty false`, `npm run lint`,
