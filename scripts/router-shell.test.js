@@ -89,6 +89,16 @@ function readRouterShellManifest() {
     notFoundFileProtocolFallbacks: valuesForFieldInSource(manifest, 'notFoundFileProtocolFallback'),
     webLanguages: valuesForFieldInSource(manifest, 'webLanguage'),
     webAppShellMarkers: valuesForFieldInSource(manifest, 'webAppShellMarker'),
+    webMetaDescriptionLanguages: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterWebDocumentMetaDescriptions',
+      'language',
+    ),
+    webMetaDescriptions: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterWebDocumentMetaDescriptions',
+      'description',
+    ),
     themeColorTokens: valuesForFieldInSource(manifest, 'themeColorToken'),
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
@@ -118,6 +128,14 @@ function loadNativeIntentRuntime() {
   );
 
   return module.exports;
+}
+
+function metaDescriptionForLanguage(manifest, language) {
+  const index = manifest.webMetaDescriptionLanguages.indexOf(language);
+
+  assert.notEqual(index, -1, `web manifest should define a ${language} meta description`);
+
+  return manifest.webMetaDescriptions[index];
 }
 
 test('router shell fallback is registered in the root Expo stack', () => {
@@ -183,8 +201,15 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
+  const manifest = readRouterShellManifest();
+  const webLanguage = manifest.webLanguages[0];
+  const localizedDescription = metaDescriptionForLanguage(manifest, webLanguage);
+  const englishDescription = metaDescriptionForLanguage(manifest, 'en');
 
-  assertContains(htmlShell, '<html data-app-shell="expo-router" lang="sv">');
+  assertContains(
+    htmlShell,
+    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${webLanguage}">`,
+  );
   assertContains(htmlShell, '<meta charSet="utf-8" />');
   assertMatches(
     htmlShell,
@@ -202,10 +227,25 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /<body[\s\S]*backgroundColor:\s*colors\.canvas/,
     'web body background should use the theme canvas color',
   );
-  assertContains(
-    htmlShell,
-    'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
+  assert.deepEqual([...manifest.webMetaDescriptionLanguages].sort(), ['en', 'sv']);
+  assert.notEqual(
+    localizedDescription,
+    englishDescription,
+    'localized web descriptions should not collapse to one English-only string',
   );
+  assert.doesNotMatch(
+    localizedDescription,
+    /\b(?:offline)?quiz(?:zes)?\b/i,
+    'Swedish web metadata should avoid English quiz loanwords',
+  );
+  assertContains(htmlShell, `content="${localizedDescription}"`);
+  if (webLanguage === 'sv') {
+    assert.equal(
+      htmlShell.includes(`content="${englishDescription}"`),
+      false,
+      'the Swedish web shell should not pair lang="sv" with the English meta description',
+    );
+  }
 });
 
 test('router shell manifest stays aligned with special Expo Router files', () => {
