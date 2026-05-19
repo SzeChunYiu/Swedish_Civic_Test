@@ -788,9 +788,7 @@ function trueStatementExplanationEn(source: PracticeQuestion): string {
 
 function falseStatementExplanationSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return `${sourceTrueFactSv(
-      source,
-    )} Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.`;
+    return ensureSentence(sourceTrueFactSv(source));
   }
 
   return source.explanationSv;
@@ -798,9 +796,7 @@ function falseStatementExplanationSv(source: PracticeQuestion): string {
 
 function falseStatementExplanationEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return `${sourceTrueFactEn(
-      source,
-    )} Therefore the statement in the question is false, so False is correct.`;
+    return ensureSentence(sourceTrueFactEn(source));
   }
 
   return source.explanationEn;

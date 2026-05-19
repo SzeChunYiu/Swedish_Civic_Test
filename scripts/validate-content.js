@@ -219,15 +219,20 @@ const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
 ];
 const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
   /\bPåståendet är sant\b/i,
+  /\bPåståendet är falskt\b/i,
   /\b(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\b/i,
   /\balternativet\s+Sant\b/i,
+  /\balternativet\s+Falskt\b/i,
+  /\bFalskt\s+stämmer\b/i,
   /\bmedan\s+Falskt\b/i,
   /\bThe statement is true\b/i,
+  /\bThe statement is false\b/i,
   /\bthe statement is true\b/i,
   /\bso\s+the\s+statement\s+is\s+true\b/i,
   /\bthat\s+makes\s+the\s+statement\s+true\b/i,
   /\bThat makes True correct\b/i,
   /\bTrue is correct\b/i,
+  /\bFalse is correct\b/i,
   /\bwhile False\b/i,
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
@@ -4033,18 +4038,14 @@ function trueStatementExplanationEn(source) {
 }
 function falseStatementExplanationSv(source) {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return `${sourceTrueFactSv(
-      source,
-    )} Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.`;
+    return ensureSentence(sourceTrueFactSv(source));
   }
 
   return source.explanationSv;
 }
 function falseStatementExplanationEn(source) {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return `${sourceTrueFactEn(
-      source,
-    )} Therefore the statement in the question is false, so False is correct.`;
+    return ensureSentence(sourceTrueFactEn(source));
   }
 
   return source.explanationEn;
