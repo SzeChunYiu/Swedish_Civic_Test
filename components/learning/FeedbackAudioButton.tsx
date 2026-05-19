@@ -1,0 +1,110 @@
+import { useEffect, useState } from 'react';
+
+import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
+import type { AppLanguage } from '../../lib/storage/settingsStore';
+import { Button } from '../ui/Button';
+
+type FeedbackAudioCopy = {
+  disabledHint: string;
+  disabledLabel: string;
+  playHint: string;
+  playLabel: string;
+  stopHint: string;
+  stopLabel: string;
+  unavailableHint: string;
+  unavailableLabel: string;
+};
+
+const feedbackAudioCopy: Record<AppLanguage, FeedbackAudioCopy> = {
+  sv: {
+    disabledHint: 'Aktivera ljud i Inställningar för att höra återkopplingen.',
+    disabledLabel: 'Ljud är avstängt',
+    playHint: 'Spelar upp ditt svar, rätt svar vid behov och den svenska förklaringen.',
+    playLabel: 'Lyssna på återkopplingen',
+    stopHint: 'Stoppar uppläsningen av återkopplingen.',
+    stopLabel: 'Stoppa återkoppling',
+    unavailableHint: 'Återkopplingsljud visas först när du har svarat.',
+    unavailableLabel: 'Återkopplingsljud saknas',
+  },
+  en: {
+    disabledHint: 'Enable audio in Settings to hear answer feedback.',
+    disabledLabel: 'Audio is disabled',
+    playHint: 'Plays your answer, the correct answer when needed, and the Swedish explanation.',
+    playLabel: 'Listen to feedback',
+    stopHint: 'Stops the feedback playback.',
+    stopLabel: 'Stop feedback',
+    unavailableHint: 'Feedback audio appears after you answer.',
+    unavailableLabel: 'Feedback audio is unavailable',
+  },
+};
+
+export function FeedbackAudioButton({
+  enabled = true,
+  language = 'sv',
+  rate,
+  text = '',
+}: {
+  enabled?: boolean;
+  language?: AppLanguage;
+  rate?: number;
+  text?: string;
+}) {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const speechText = text.trim();
+  const hasSpeechText = speechText.length > 0;
+  const canPlayAudio = enabled && hasSpeechText;
+  const copy = feedbackAudioCopy[language];
+  const label = !enabled
+    ? copy.disabledLabel
+    : !hasSpeechText
+      ? copy.unavailableLabel
+      : isSpeaking
+        ? copy.stopLabel
+        : copy.playLabel;
+  const accessibilityHint = !enabled
+    ? copy.disabledHint
+    : !hasSpeechText
+      ? copy.unavailableHint
+      : isSpeaking
+        ? copy.stopHint
+        : copy.playHint;
+
+  useEffect(() => {
+    setIsSpeaking(false);
+  }, [speechText]);
+
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, []);
+
+  return (
+    <Button
+      accessibilityHint={accessibilityHint}
+      accessibilityLabel={label}
+      accessibilityRole="button"
+      accessibilityState={{ busy: isSpeaking, disabled: !canPlayAudio }}
+      disabled={!canPlayAudio}
+      onPress={() => {
+        if (!canPlayAudio) return;
+        if (isSpeaking) {
+          stopSpeech();
+          setIsSpeaking(false);
+          return;
+        }
+        stopSpeech();
+        setIsSpeaking(true);
+        speakSwedish(speechText, {
+          rate,
+          onDone: () => setIsSpeaking(false),
+          onError: () => setIsSpeaking(false),
+          onStopped: () => setIsSpeaking(false),
+        });
+      }}
+      variant="secondary"
+    >
+      {label}
+    </Button>
+  );
+}
