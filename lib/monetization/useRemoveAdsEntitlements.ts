@@ -15,34 +15,10 @@ const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
   adsDisabled: true,
 };
 
-const REMOVE_ADS_ENTITLEMENT_DELAY_GLOBAL = '__SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS';
-const E2E_TEST_GLOBAL = '__SMT_E2E__';
-const MAX_TEST_ENTITLEMENT_DELAY_MS = 5000;
-
 let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
 let sharedRemoveAdsEntitlementsVersion = 0;
 const removeAdsEntitlementListeners = new Set<(entitlements: PremiumEntitlements) => void>();
-
-function getWebEntitlementDelayMs(): number {
-  if (Platform.OS !== 'web') return 0;
-
-  const webGlobals = globalThis as Record<string, unknown>;
-  if (webGlobals[E2E_TEST_GLOBAL] !== true) return 0;
-
-  const globalValue = webGlobals[REMOVE_ADS_ENTITLEMENT_DELAY_GLOBAL];
-  const delayMs = typeof globalValue === 'number' ? globalValue : Number(globalValue);
-
-  if (!Number.isFinite(delayMs) || delayMs <= 0) return 0;
-  return Math.min(Math.round(delayMs), MAX_TEST_ENTITLEMENT_DELAY_MS);
-}
-
-function waitForRemoveAdsEntitlementHydrationDelay(): Promise<void> {
-  const delayMs = getWebEntitlementDelayMs();
-
-  if (delayMs === 0) return Promise.resolve();
-  return new Promise((resolve) => setTimeout(resolve, delayMs));
-}
 
 function publishRemoveAdsEntitlements(entitlements: PremiumEntitlements) {
   const nextEntitlements = { ...entitlements };
@@ -107,10 +83,6 @@ export function useRemoveAdsEntitlements({
     }
 
     void getPurchaseEntitlements(purchaseRuntime)
-      .then(async (storedEntitlements) => {
-        await waitForRemoveAdsEntitlementHydrationDelay();
-        return storedEntitlements;
-      })
       .then((storedEntitlements) => {
         if (!isMounted) return;
 

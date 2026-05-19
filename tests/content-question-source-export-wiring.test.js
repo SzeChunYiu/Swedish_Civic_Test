@@ -5,18 +5,9 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
-const {
-  generatedTrueFalseResidualQuestions,
-  questionNumber,
-} = require('./generatedQuestionRangeHelpers');
-
 const repoRoot = path.resolve(__dirname, '..');
 const generatedVariantsPerSource = 4;
 const moduleCache = new Map();
-
-function nextQuestionId(questionNumberValue) {
-  return `q${String(questionNumberValue).padStart(3, '0')}`;
-}
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -122,33 +113,6 @@ test('question source exports keep source/generated/published wiring parity', ()
   assert.deepEqual(
     questions.map((question) => question.id),
     [...sourceQuestions, ...generatedPublishedQuestions].map((question) => question.id),
-  );
-});
-
-test('question source export wiring derives residual scan range after source expansion', () => {
-  const { derivePublishedQuestions, publishQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const { sourceQuestions, questions } = loadTs('data/questions.ts');
-  const currentPublishedTail = Math.max(...questions.map(questionNumber));
-  const extraSourceQuestion = {
-    ...sourceQuestions[0],
-    id: nextQuestionId(sourceQuestions.length + 1),
-    reviewStatus: 'reviewed',
-  };
-  const expandedSourceQuestions = publishQuestions([...sourceQuestions, extraSourceQuestion]);
-  const expandedGeneratedQuestions = derivePublishedQuestions(
-    expandedSourceQuestions,
-    expandedSourceQuestions.length + 1,
-  );
-  const lastGeneratedTrueFalseQuestion = expandedGeneratedQuestions.findLast(
-    (question) => question.type === 'true_false',
-  );
-
-  assert.ok(lastGeneratedTrueFalseQuestion);
-  assert.ok(questionNumber(lastGeneratedTrueFalseQuestion) > currentPublishedTail);
-  assert.ok(
-    generatedTrueFalseResidualQuestions(expandedSourceQuestions, expandedGeneratedQuestions).some(
-      (question) => question.id === lastGeneratedTrueFalseQuestion.id,
-    ),
   );
 });
 

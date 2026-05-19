@@ -1,4 +1,4 @@
-/* Almost Swedish — Tweaks panel
+/* Sveriges Medborgartest — Tweaks panel
    Swedish palette presets + slogan variants + display knobs.
 */
 
@@ -49,10 +49,10 @@ const SMT_PALETTES = {
 };
 
 const SMT_SLOGANS = {
-  midsommar: { a: "Study the material.", b: "Practice with sources.", c: "Chat at midsommar." },
-  abba:      { a: "Take a chance.",      b: "Mamma mia, study.",      c: "Review like a dancing queen." },
-  fika:      { a: "Sip the coffee.",     b: "Open the app.",          c: "Practice with pulla." },
-  serious:   { a: "Study Sweden's",      b: "civic material.",        c: "On your phone." },
+  midsommar: { a: "Pass the test.", b: "Earn the passport.", c: "Brag at midsommar." },
+  abba:      { a: "Take a chance.", b: "Mamma mia, study.", c: "Pass like a dancing queen." },
+  fika:      { a: "Sip the coffee.", b: "Open the app.",     c: "Pass with pulla." },
+  serious:   { a: "Study Sweden's", b: "civic test.",        c: "On your phone." },
 };
 
 function applyPalette(name) {

@@ -59,129 +59,101 @@ function chromeExecutablePath() {
   if (process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH) {
     return process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
   }
-
-  const systemCandidates = [
-    '/usr/bin/google-chrome',
-    '/usr/bin/chromium',
-    '/usr/bin/chromium-browser',
-  ];
-  return systemCandidates.find((candidate) => fs.existsSync(candidate));
+  return fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined;
 }
 
-function hasPlayableChromium() {
-  return Boolean(chromeExecutablePath()) || fs.existsSync(chromium.executablePath());
-}
+test('static Swedish flag surfaces keep official colors across palettes and themes', async () => {
+  const server = await createStaticServer();
+  const browser = await chromium.launch({
+    executablePath: chromeExecutablePath(),
+  });
 
-function chromiumTestOptions() {
-  return hasPlayableChromium()
-    ? {}
-    : {
-        skip: 'Chromium is not available; set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH or install a supported browser.',
-      };
-}
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(server.url, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => typeof window.smtApplyPalette === 'function');
 
-function chromiumLaunchOptions() {
-  const executablePath = chromeExecutablePath();
-  return executablePath ? { executablePath } : {};
-}
+    for (const theme of themes) {
+      for (const palette of palettes) {
+        const snapshot = await page.evaluate(
+          ({ nextPalette, nextTheme }) => {
+            window.smtApplyTheme(nextTheme);
+            window.smtApplyPalette(nextPalette);
+            const styleFor = (selector, pseudo) => {
+              const node = document.querySelector(selector);
+              if (!node) throw new Error(`Missing ${selector}`);
+              return getComputedStyle(node, pseudo || null).backgroundColor;
+            };
 
-test(
-  'static Swedish flag surfaces keep official colors across palettes and themes',
-  chromiumTestOptions(),
-  async () => {
-    const server = await createStaticServer();
-    let browser;
+            return {
+              brandBlue: styleFor('.brand__mark'),
+              brandCrossHorizontal: styleFor('.brand__mark', '::after'),
+              brandCrossVertical: styleFor('.brand__mark', '::before'),
+              ebookBlue: styleFor('.ebook__brand-mark'),
+              ebookCrossHorizontal: styleFor('.ebook__brand-mark', '::after'),
+              ebookCrossVertical: styleFor('.ebook__brand-mark', '::before'),
+              heroCrossHorizontal: styleFor('.hero__cross', '::after'),
+              heroCrossVertical: styleFor('.hero__cross', '::before'),
+              mutableBlue: getComputedStyle(document.documentElement)
+                .getPropertyValue('--blue')
+                .trim(),
+              mutableGold: getComputedStyle(document.documentElement)
+                .getPropertyValue('--gold')
+                .trim(),
+              fixedBlue: getComputedStyle(document.documentElement)
+                .getPropertyValue('--flag-blue')
+                .trim(),
+              fixedGold: getComputedStyle(document.documentElement)
+                .getPropertyValue('--flag-gold')
+                .trim(),
+            };
+          },
+          { nextPalette: palette, nextTheme: theme },
+        );
 
-    try {
-      browser = await chromium.launch(chromiumLaunchOptions());
-      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-      await page.goto(server.url, { waitUntil: 'domcontentloaded' });
-      await page.waitForFunction(() => typeof window.smtApplyPalette === 'function');
+        assert.equal(snapshot.fixedBlue, '#006aa7', `${theme}/${palette} fixed blue token`);
+        assert.equal(snapshot.fixedGold, '#fecc00', `${theme}/${palette} fixed gold token`);
+        assert.equal(snapshot.brandBlue, officialBlue, `${theme}/${palette} brand flag blue`);
+        assert.equal(
+          snapshot.brandCrossHorizontal,
+          officialGold,
+          `${theme}/${palette} brand flag horizontal cross`,
+        );
+        assert.equal(
+          snapshot.brandCrossVertical,
+          officialGold,
+          `${theme}/${palette} brand flag vertical cross`,
+        );
+        assert.equal(snapshot.ebookBlue, officialBlue, `${theme}/${palette} ebook flag blue`);
+        assert.equal(
+          snapshot.ebookCrossHorizontal,
+          officialGold,
+          `${theme}/${palette} ebook flag horizontal cross`,
+        );
+        assert.equal(
+          snapshot.ebookCrossVertical,
+          officialGold,
+          `${theme}/${palette} ebook flag vertical cross`,
+        );
+        assert.equal(
+          snapshot.heroCrossHorizontal,
+          officialBlue,
+          `${theme}/${palette} hero cross horizontal`,
+        );
+        assert.equal(
+          snapshot.heroCrossVertical,
+          officialBlue,
+          `${theme}/${palette} hero cross vertical`,
+        );
 
-      for (const theme of themes) {
-        for (const palette of palettes) {
-          const snapshot = await page.evaluate(
-            ({ nextPalette, nextTheme }) => {
-              window.smtApplyTheme(nextTheme);
-              window.smtApplyPalette(nextPalette);
-              const styleFor = (selector, pseudo) => {
-                const node = document.querySelector(selector);
-                if (!node) throw new Error(`Missing ${selector}`);
-                return getComputedStyle(node, pseudo || null).backgroundColor;
-              };
-
-              return {
-                brandBlue: styleFor('.brand__mark'),
-                brandCrossHorizontal: styleFor('.brand__mark', '::after'),
-                brandCrossVertical: styleFor('.brand__mark', '::before'),
-                ebookBlue: styleFor('.ebook__brand-mark'),
-                ebookCrossHorizontal: styleFor('.ebook__brand-mark', '::after'),
-                ebookCrossVertical: styleFor('.ebook__brand-mark', '::before'),
-                heroCrossHorizontal: styleFor('.hero__cross', '::after'),
-                heroCrossVertical: styleFor('.hero__cross', '::before'),
-                mutableBlue: getComputedStyle(document.documentElement)
-                  .getPropertyValue('--blue')
-                  .trim(),
-                mutableGold: getComputedStyle(document.documentElement)
-                  .getPropertyValue('--gold')
-                  .trim(),
-                fixedBlue: getComputedStyle(document.documentElement)
-                  .getPropertyValue('--flag-blue')
-                  .trim(),
-                fixedGold: getComputedStyle(document.documentElement)
-                  .getPropertyValue('--flag-gold')
-                  .trim(),
-              };
-            },
-            { nextPalette: palette, nextTheme: theme },
-          );
-
-          assert.equal(snapshot.fixedBlue, '#006aa7', `${theme}/${palette} fixed blue token`);
-          assert.equal(snapshot.fixedGold, '#fecc00', `${theme}/${palette} fixed gold token`);
-          assert.equal(snapshot.brandBlue, officialBlue, `${theme}/${palette} brand flag blue`);
-          assert.equal(
-            snapshot.brandCrossHorizontal,
-            officialGold,
-            `${theme}/${palette} brand flag horizontal cross`,
-          );
-          assert.equal(
-            snapshot.brandCrossVertical,
-            officialGold,
-            `${theme}/${palette} brand flag vertical cross`,
-          );
-          assert.equal(snapshot.ebookBlue, officialBlue, `${theme}/${palette} ebook flag blue`);
-          assert.equal(
-            snapshot.ebookCrossHorizontal,
-            officialGold,
-            `${theme}/${palette} ebook flag horizontal cross`,
-          );
-          assert.equal(
-            snapshot.ebookCrossVertical,
-            officialGold,
-            `${theme}/${palette} ebook flag vertical cross`,
-          );
-          assert.equal(
-            snapshot.heroCrossHorizontal,
-            officialBlue,
-            `${theme}/${palette} hero cross horizontal`,
-          );
-          assert.equal(
-            snapshot.heroCrossVertical,
-            officialBlue,
-            `${theme}/${palette} hero cross vertical`,
-          );
-
-          if (palette !== 'flag') {
-            assert.notEqual(snapshot.mutableBlue, '#006aa7', `${theme}/${palette} mutates UI blue`);
-            assert.notEqual(snapshot.mutableGold, '#fecc00', `${theme}/${palette} mutates UI gold`);
-          }
+        if (palette !== 'flag') {
+          assert.notEqual(snapshot.mutableBlue, '#006aa7', `${theme}/${palette} mutates UI blue`);
+          assert.notEqual(snapshot.mutableGold, '#fecc00', `${theme}/${palette} mutates UI gold`);
         }
       }
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-      await server.close();
     }
-  },
-);
+  } finally {
+    await browser.close();
+    await server.close();
+  }
+});

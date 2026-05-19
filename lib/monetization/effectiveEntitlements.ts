@@ -72,15 +72,10 @@ const FREE_ENTITLEMENT: ProTierEntitlements = {
   multiColorHighlights: false,
 };
 
-function parseIsoTimestamp(iso: string): number | null {
-  const t = new Date(iso).getTime();
-  return Number.isNaN(t) ? null : t;
-}
-
 function isUnexpired(iso: string | null | undefined, now: Date): boolean {
   if (!iso) return false;
-  const t = parseIsoTimestamp(iso);
-  if (t === null) return false;
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return false;
   return t > now.getTime();
 }
 
@@ -138,13 +133,7 @@ export function resolveEffectiveEntitlement(
 
 function earlierIso(a: string | null, b: string): string {
   if (!a) return b;
-  const aTime = parseIsoTimestamp(a);
-  const bTime = parseIsoTimestamp(b);
-
-  if (aTime === null) return b;
-  if (bTime === null) return a;
-
-  return bTime < aTime ? b : a;
+  return a < b ? a : b;
 }
 
 /**
