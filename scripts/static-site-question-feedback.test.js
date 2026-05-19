@@ -118,6 +118,8 @@ test('static Practice answer feedback renders citation and independent-study dis
 
   const html = element('quiz-stage').innerHTML;
   assert.match(html, /class="quiz__feedback is-wrong"/);
+  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
+  assert.match(html, /Provenance: UHR\. Source note:/);
   assert.match(html, /Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7/);
   assert.match(html, /Independent study practice, not a real exam or an official UHR question\./);
 });
@@ -137,10 +139,9 @@ test('static Mock review renders citation and disclaimer for every reviewed ques
   vm.runInContext(source, sandbox, { timeout: 3000 });
 
   const html = element('mock-stage').innerHTML;
-  assert.match(
-    html,
-    /class="mock-review__source">Källa: Sverige i fokus, Landet Sverige, Geografi, s\. 7<\/p>/,
-  );
+  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
+  assert.match(html, /Källtyp: UHR\. Källanteckning:/);
+  assert.match(html, /Källa: Sverige i fokus, Landet Sverige, Geografi, s\. 7/);
   assert.match(
     html,
     /class="mock-review__disclaimer">Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga\.<\/p>/,
@@ -164,10 +165,9 @@ test('static active Mock question renders citation and independent-study disclai
   vm.runInContext(source, sandbox, { timeout: 3000 });
 
   const html = element('mock-stage').innerHTML;
-  assert.match(
-    html,
-    /class="quiz__source">Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7<\/p>/,
-  );
+  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
+  assert.match(html, /Provenance: UHR\. Source note:/);
+  assert.match(html, /Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7/);
   assert.match(
     html,
     /class="quiz__disclaimer">Independent study practice, not a real exam or an official UHR question\.<\/p>/,
