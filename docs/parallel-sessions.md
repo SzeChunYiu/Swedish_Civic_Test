@@ -33,21 +33,22 @@ Read **this file** and **`codex-tasks/open.txt`**. Nothing else is mandatory
 meeting_sheet.md, AI_FACTORY.md, or lane boards — that context tax is what made
 the old model slower than a single session.
 
-## The worker loop — THINK, then PLAN, then SHIP (autonomous)
+## The worker loop — SELECT, build, then PLAN-THE-NEXT (autonomous)
 
-You are autonomous. Nobody tells you what to do. Each iteration you decide the
-single highest-value next step yourself, plan it, build it, ship it.
+You are autonomous. The deep "what is most valuable next" thinking happens at
+the END of an iteration (step 10), when you have just done the work and have
+maximal context — and it is written into the queue so the next pane inherits
+it. At the START you only do a cheap SELECT off that already-well-reasoned
+queue. Expensive judgement where context is rich; cheap pickup where it isn't.
 
 ```
 1. cd <repo checkout>; git fetch origin -q
 
-2. THINK — decide the ONE most valuable next step (bounded: minutes, in your
-   head, NO written artifact). Consider, in priority order:
-     a. the first unclaimed concrete atom in codex-tasks/open.txt (esp. P0/ADS/IAP),
-     b. a real gap between GOAL.md's acceptance test and the current code,
-     c. a concrete bug/regression you can see.
-   Pick exactly ONE bounded, product-scoped unit. If torn between options,
-   pick the SMALLEST one that ships real value. Never expand scope.
+2. SELECT — cheap, no deep deliberation (you have little context yet): take the
+   FIRST unclaimed task in codex-tasks/open.txt (it was already reasoned out by
+   a prior iteration's step 10 or a Scrutinizer — trust it). Only if the queue
+   is empty or every item is stale/duplicated, do a quick GOAL.md-gap scan and
+   pick the one obvious highest-value unit. Exactly ONE bounded product unit.
 
 3. LEARN — acquire the skill to do THIS task excellently, not generically.
    Briefly research what "good" means for this specific unit before coding:
@@ -90,10 +91,43 @@ single highest-value next step yourself, plan it, build it, ship it.
 
 9. git add -A && git commit -m "<what changed + the why from your plan>"
 10. git push origin HEAD:task/<branch>;  gh pr create --base main --head task/<branch> --fill
-11. STOP. Do NOT self-merge, do NOT wait. The required CI check + operator guard
-    decide the merge. The supervisor respawns you for the next iteration — where
-    you THINK about the best next step again (this is how it plans the next).
+
+11. PLAN-THE-NEXT — the high-judgement step, done HERE because your context is
+    now maximal (you just built and validated this and understand the code and
+    what it still needs). Decide the single most valuable next unit — not only
+    the next obvious increment toward GOAL.md, but actively ask "what ELSE does
+    this project need?" and "what would make it genuinely BETTER / delight
+    users more / beat competitors harder?" The product is never finished;
+    there is always a next improvement. Hand that one unit to the next pane:
+      echo "<NEW-ID> <product/path>: <specific next change> | why: <what you just learned that makes this next> | verify: <criteria>" >> codex-tasks/open.txt
+      git add codex-tasks/open.txt && git commit -qm "next: +<NEW-ID> [allow-meta]"
+      # rebase-retry push to origin/main; races are fine, skip on fail
+    Exactly ONE concrete product-scoped next task. This is the ONLY place deep
+    "what next" thinking belongs — and it is proven by having just shipped, so
+    it cannot become analysis paralysis. Skip only if an equivalent task
+    already sits in the queue.
+
+12. STOP. Do NOT self-merge, do NOT wait. The required CI check + operator guard
+    decide the merge. The supervisor respawns you; the next pane does the cheap
+    SELECT (step 2) of the well-reasoned task you just queued.
 ```
+
+**Definition of done — ATOMIC PERFECTION + BEAT COMPETITORS (the bar for every
+unit):** a unit is done only when, for its own scope, it is (a) *flawless* —
+correct, tested, optimized, accessible, natural-language, no rough edge, no
+gap — AND (b) *measurably as good as or better than the best comparable
+competitor* for that aspect. Every aspect of the product must be complete,
+perfect, and beat the competition at the atomic level. The scope may be small;
+the execution may not be sloppy and may not be merely "good enough." **No
+KNOWN defect, gap, unoptimized path, OR aspect where a competitor is better
+may ship** — if a competitor does an aspect better and you are not fixing it
+now, it MUST become a concrete queued task. This is not gold-plating and not a licence to
+stall: if you see an imperfection you are not fixing in this unit, it MUST
+become a concrete queued task (step 11 / scrutinizer file) so it is never
+silently dropped. Perfection is reached *per atom and iteratively* — relentless
+scrutiny finds every flaw, the queue carries it, a producer perfects it, the CI
+gate enforces it — never by one pane polishing one PR forever. Ship small,
+ship flawless, leave nothing known-broken behind.
 
 **The iron rule that keeps thinking/learning from becoming the disease:**
 every iteration MUST end in a pushed, *validated* product PR. THINK, LEARN and
