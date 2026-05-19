@@ -23,9 +23,22 @@ function staticChapterCount() {
 }
 
 function homeChapterListCount(indexHtml) {
+  return (homeChapterListHtml(indexHtml).match(/<li>/g) ?? []).length;
+}
+
+function homeChapterListHtml(indexHtml) {
   const listMatch = indexHtml.match(/<ol class="list-quiet">([\s\S]*?)<\/ol>/);
   assert.ok(listMatch, 'home chapter list should be present');
-  return (listMatch[1].match(/<li>/g) ?? []).length;
+  return listMatch[1];
+}
+
+function homeChapterListMetaKeys(indexHtml) {
+  return Array.from(
+    homeChapterListHtml(indexHtml).matchAll(
+      /<span class="list-quiet__meta" data-i18n="(chap\.\d+\.m1)"><\/span\s*>/g,
+    ),
+    (match) => match[1],
+  );
 }
 
 function normalizeWhitespace(value) {
@@ -132,6 +145,8 @@ test('static site chapter-count copy has non-numeric localized chapter wording',
 
 test('static site chapter-card question counts are derived from generated bank metadata', () => {
   const chapterMeta = staticChapterMeta();
+  const indexHtml = read('site/index.html');
+  const chapterListHtml = homeChapterListHtml(indexHtml);
   const appSource = read('site/app.js');
   const i18nElements = chapterMeta.map((chapter) => ({
     dataset: { i18n: `chap.${chapter.id}.m1` },
@@ -140,17 +155,22 @@ test('static site chapter-card question counts are derived from generated bank m
   const context = loadStaticAppContext(chapterMeta, i18nElements);
 
   assert.doesNotMatch(appSource, /"chap\.\d+\.m1"\s*:/);
+  assert.deepEqual(
+    homeChapterListMetaKeys(indexHtml),
+    Array.from(chapterMeta, (chapter) => `chap.${chapter.id}.m1`),
+  );
+  assert.doesNotMatch(chapterListHtml, /\b\d+\s+(?:questions|frågor|full mocks)\b/i);
 
   context.window.applyLang('en');
   assert.deepEqual(
-    i18nElements.map((element) => element.innerHTML),
-    chapterMeta.map((chapter) => `${chapter.questionCount} questions`),
+    Array.from(i18nElements, (element) => String(element.innerHTML)),
+    Array.from(chapterMeta, (chapter) => `${chapter.questionCount} questions`),
   );
 
   context.window.applyLang('sv');
   assert.deepEqual(
-    i18nElements.map((element) => element.innerHTML),
-    chapterMeta.map((chapter) => `${chapter.questionCount} frågor`),
+    Array.from(i18nElements, (element) => String(element.innerHTML)),
+    Array.from(chapterMeta, (chapter) => `${chapter.questionCount} frågor`),
   );
 
   assert.equal(context.window.smtChapterQuestionCountLabel(12, 'en'), '105 questions');

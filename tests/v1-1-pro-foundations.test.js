@@ -703,6 +703,40 @@ test('computeReadinessScore: idle 30 days drags recency to 0', () => {
   assert.equal(result.components.recency, 0);
 });
 
+test('computeReadinessScore: exam answers feed mock average, not practice accuracy', () => {
+  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+  const examAnswers = [
+    ...Array.from({ length: 32 }, () => true),
+    ...Array.from({ length: 8 }, () => false),
+  ].map((isCorrect, index) => ({
+    questionId: `exam-${index}`,
+    selectedOptionIds: [],
+    isCorrect,
+    answeredAt: '2026-05-19T10:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
+
+  const result = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'mock-with-answers',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: examAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.components.accuracy, 0);
+  assert.equal(result.components.mockAverage, 0.8);
+});
+
 // -------------------------------------------------------- Calibration
 
 test('generateCalibration: empty input → insufficient verdict', () => {

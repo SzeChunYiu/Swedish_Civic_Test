@@ -1046,10 +1046,22 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /const copy = premiumBannerCopy\[language\]/);
   assert.match(source, /const statusMessage = getStatusMessage/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+  assert.match(source, /bodyActive:/);
+  assert.match(source, /bodyIdle: \(price\) =>/);
+  assert.match(source, /Purchase confirmed\. Study ads are disabled on this device/);
+  assert.match(source, /Köpet är bekräftat\. Studieannonser är avstängda/);
+  assert.match(
+    source,
+    /\{adsDisabled \? copy\.bodyActive : copy\.bodyIdle\(REMOVE_ADS_PRICE_LABEL\)\}/,
+  );
   assert.match(source, /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/);
   assert.match(
     source,
     /accessibilityLabel=\{copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)\}/,
+  );
+  assert.match(
+    source,
+    /\{!adsDisabled \? \(\s*<Button[\s\S]*copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*\) : null\}/,
   );
   assert.match(source, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(source, /accessibilityLiveRegion="polite"/);
@@ -1064,6 +1076,8 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
   assert.match(source, /Restore Remove Ads purchase/);
   assert.match(source, /Ads are disabled on this device\./);
+  assert.doesNotMatch(source, /adsDisabled \? copy\.bodyIdle/);
+  assert.doesNotMatch(source, /activeAction !== null \|\| adsDisabled/);
   assert.match(homeSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(homeSource, /language=\{language\}/);
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
