@@ -118,7 +118,7 @@
     el.style.cssText = `
       position: absolute; left: ${x}px; top: ${y}px;
       transform: translate(-50%, -50%);
-      font-family: "Bricolage Grotesque", system-ui, sans-serif;
+      font-family: var(--display);
       font-weight: 700; font-size: 24px;
       color: ${color};
       pointer-events: none;
