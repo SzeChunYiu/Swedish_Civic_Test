@@ -528,17 +528,21 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'behöver repetition',
     'frågor',
     '${count} kapitel',
-    '10 000 elevers återkoppling',
-    'UX-förbättringar från simulerade studier',
-    '10 000 simulerade elever bad om tydligare framsteg, sparade svåra frågor, källstödd repetition och annonser som hålls borta från prov. De förbättringarna finns nu i studieflödet.',
+    'Fokuserad repetition',
+    'Håll koll på det som behöver övas',
+    'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     'Granska bokmärkta eller missade frågor',
     'Repetera sparade frågor',
-    'Optimerat studieflöde',
-    'Lärdomar från framgångsrika samhällsprovs- och språkstudieappar: ett tydligt nästa steg, direkt återkoppling och synliga framsteg.',
-    'Börja med kort ämnesövning, tydliga sviter, XP, märken och väg tillbaka efter misstag.',
-    'Visa behärskning per område så att eleven ser vad som är klart, repeterat eller fortfarande svagt.',
-    'Kombinera realistiska tidsatta prov med flashcards, bokmärken, felspårning, ljud, offline-studier och tydliga redo-signaler.',
-    'Ge en snabb första vinst, en självklar nästa handling och varsam daglig vanefeedback utan att hindra seriösa studier.',
+    'Smarta studievanor',
+    'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
+    'Korta pass',
+    'Börja med ett litet ämnespass, få direkt återkoppling och fortsätt utan krångel.',
+    'Tydlig behärskning',
+    'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
+    'Vana i vardagen',
+    'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
+    'Provredo',
+    'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',
@@ -570,19 +574,33 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'needs review',
     'questions',
     '${count} chapters',
-    '10,000-learner feedback pass',
-    'UX updates from simulated study sessions',
-    '10,000 simulated learners asked for clearer progress, saved hard questions, source-backed review, and ads that stay out of exams. Those fixes are now built into the study loop.',
+    'Focused review',
+    'Keep track of what needs review',
+    'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     'Review bookmarked or missed questions',
     'Review saved questions',
-    'Optimized study loop',
-    'Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress.',
-    'Lead with bite-sized topic practice, visible streaks, XP, badges, and mistake recovery.',
-    'Show mastery by skill area so learners know what is ready, reviewed, or still weak.',
-    'Combine realistic timed exams with flashcards, bookmarks, wrong-answer tracking, audio, offline study, and readiness indicators.',
-    'Give a fast first win, one obvious next action, and gentle daily habit feedback without blocking serious study.',
+    'Smart study habits',
+    'Choose one clear next step, get quick feedback, and follow progress without distractions in exam mode.',
+    'Bite-size practice',
+    'Start with a small topic set, get immediate feedback, and keep moving.',
+    'Clear mastery',
+    'See which areas are ready, reviewed, or still weak.',
+    'Study rhythm',
+    'Get one simple next action and gentle habit feedback without blocking serious study.',
+    'Exam readiness',
+    'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
   ],
 };
+const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
+  ['Civics', 'Go'],
+  ['Citizen', ' Pass'],
+  ['Duolingo', '-inspired'],
+  ['Life in the UK', ' Test apps'],
+  ['Borrowed from', ' successful'],
+  ['Lärdomar från', ' framgångsrika'],
+  ['Optimized', ' study loop'],
+  ['Optimerat', ' studieflöde'],
+].map((parts) => parts.join(''));
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
   ['type HomeCopy = {', 'home route must define a typed copy contract'],
@@ -655,10 +673,9 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['{copy.feedbackLink}', 'home feedback link must render localized copy'],
   ['title={copy.studyLoopTitle}', 'home study-loop title must render localized copy'],
   ['subtitle={copy.studyLoopSubtitle}', 'home study-loop subtitle must render localized copy'],
-  [
-    '{copy.benchmarkLessons[item.product]}',
-    'home study-loop benchmark lessons must render localized copy',
-  ],
+  ['copy.studyLoopItems[index]', 'home study-loop items must render localized copy by index'],
+  ['{itemCopy.label}', 'home study-loop badges must render learner-facing labels'],
+  ['{itemCopy.lesson}', 'home study-loop lessons must render learner-facing copy'],
 ];
 const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
@@ -5791,6 +5808,7 @@ let homeRouteHeadersValidated = 0;
 let homeRouteHeaderParityValidated = false;
 let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
+let homeRouteInternalBenchmarkCopyValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -7782,6 +7800,12 @@ function validateHomeRouteCopyParity() {
     if (!homeRoute.includes(snippet)) reject(message);
   });
 
+  FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
+    if (homeRoute.includes(forbidden)) {
+      reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
+    }
+  });
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -7811,6 +7835,7 @@ function validateHomeRouteCopyParity() {
   );
   if (valid && homeRouteCopyLabelsValidated === expectedLabelCount) {
     homeRouteCopyParityValidated = true;
+    homeRouteInternalBenchmarkCopyValidated = true;
   }
 }
 
@@ -13467,6 +13492,7 @@ console.log(
       homeRouteHeaderParityValidated,
       homeRouteCopyLabelsValidated,
       homeRouteCopyParityValidated,
+      homeRouteInternalBenchmarkCopyValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,

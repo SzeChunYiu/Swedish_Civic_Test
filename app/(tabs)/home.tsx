@@ -27,12 +27,14 @@ import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
-type BenchmarkProduct = (typeof uxBenchmarks)[number]['product'];
+type StudyLoopItemCopy = {
+  label: string;
+  lesson: string;
+};
 
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
-  benchmarkLessons: Record<BenchmarkProduct, string>;
   dailyGoalTitle: string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -57,6 +59,7 @@ type HomeCopy = {
   startPractice: string;
   startPracticeAccessibilityLabel: string;
   startPracticeSet: string;
+  studyLoopItems: StudyLoopItemCopy[];
   studyLoopSubtitle: string;
   studyLoopTitle: string;
   subtitle: string;
@@ -70,26 +73,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
-    benchmarkLessons: {
-      CivicsGo:
-        'Börja med kort ämnesövning, tydliga sviter, XP, märken och väg tillbaka efter misstag.',
-      'Citizen Pass':
-        'Visa behärskning per område så att eleven ser vad som är klart, repeterat eller fortfarande svagt.',
-      'Duolingo-inspired learning loops':
-        'Ge en snabb första vinst, en självklar nästa handling och varsam daglig vanefeedback utan att hindra seriösa studier.',
-      'Life in the UK Test apps':
-        'Kombinera realistiska tidsatta prov med flashcards, bokmärken, felspårning, ljud, offline-studier och tydliga redo-signaler.',
-    },
     dailyGoalTitle: 'Dagens mål',
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
-    feedbackBadge: '10 000 elevers återkoppling',
+    feedbackBadge: 'Fokuserad repetition',
     feedbackLink: 'Repetera sparade frågor',
     feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
     feedbackText:
-      '10 000 simulerade elever bad om tydligare framsteg, sparade svåra frågor, källstödd repetition och annonser som hålls borta från prov. De förbättringarna finns nu i studieflödet.',
-    feedbackTitle: 'UX-förbättringar från simulerade studier',
+      'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
+    feedbackTitle: 'Håll koll på det som behöver övas',
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
@@ -113,9 +106,29 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
     startPracticeSet: 'Starta en 5-minutersövning',
+    studyLoopItems: [
+      {
+        label: 'Korta pass',
+        lesson: 'Börja med ett litet ämnespass, få direkt återkoppling och fortsätt utan krångel.',
+      },
+      {
+        label: 'Tydlig behärskning',
+        lesson: 'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
+      },
+      {
+        label: 'Vana i vardagen',
+        lesson:
+          'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
+      },
+      {
+        label: 'Provredo',
+        lesson:
+          'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+      },
+    ],
     studyLoopSubtitle:
-      'Lärdomar från framgångsrika samhällsprovs- och språkstudieappar: ett tydligt nästa steg, direkt återkoppling och synliga framsteg.',
-    studyLoopTitle: 'Optimerat studieflöde',
+      'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
+    studyLoopTitle: 'Smarta studievanor',
     subtitle:
       'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
@@ -126,26 +139,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   en: {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
-    benchmarkLessons: {
-      CivicsGo:
-        'Lead with bite-sized topic practice, visible streaks, XP, badges, and mistake recovery.',
-      'Citizen Pass':
-        'Show mastery by skill area so learners know what is ready, reviewed, or still weak.',
-      'Duolingo-inspired learning loops':
-        'Give a fast first win, one obvious next action, and gentle daily habit feedback without blocking serious study.',
-      'Life in the UK Test apps':
-        'Combine realistic timed exams with flashcards, bookmarks, wrong-answer tracking, audio, offline study, and readiness indicators.',
-    },
     dailyGoalTitle: "Today's goal",
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
-    feedbackBadge: '10,000-learner feedback pass',
+    feedbackBadge: 'Focused review',
     feedbackLink: 'Review saved questions',
     feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
     feedbackText:
-      '10,000 simulated learners asked for clearer progress, saved hard questions, source-backed review, and ads that stay out of exams. Those fixes are now built into the study loop.',
-    feedbackTitle: 'UX updates from simulated study sessions',
+      'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
+    feedbackTitle: 'Keep track of what needs review',
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
@@ -169,9 +172,29 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
     startPracticeSet: 'Start a 5-minute practice set',
+    studyLoopItems: [
+      {
+        label: 'Bite-size practice',
+        lesson: 'Start with a small topic set, get immediate feedback, and keep moving.',
+      },
+      {
+        label: 'Clear mastery',
+        lesson: 'See which areas are ready, reviewed, or still weak.',
+      },
+      {
+        label: 'Study rhythm',
+        lesson:
+          'Get one simple next action and gentle habit feedback without blocking serious study.',
+      },
+      {
+        label: 'Exam readiness',
+        lesson:
+          'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+      },
+    ],
     studyLoopSubtitle:
-      'Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress.',
-    studyLoopTitle: 'Optimized study loop',
+      'Choose one clear next step, get quick feedback, and follow progress without distractions in exam mode.',
+    studyLoopTitle: 'Smart study habits',
     subtitle:
       'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     title: 'Prepare calmly, one civic concept at a time',
@@ -347,12 +370,17 @@ export default function Screen() {
 
       <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
       <View style={styles.loopGrid}>
-        {uxBenchmarks.map((item) => (
-          <Card key={item.product} style={styles.loopCard}>
-            <Badge tone="warm">{item.product}</Badge>
-            <Text style={styles.loopText}>{copy.benchmarkLessons[item.product]}</Text>
-          </Card>
-        ))}
+        {uxBenchmarks.map((item, index) => {
+          const itemCopy = copy.studyLoopItems[index];
+          if (!itemCopy) return null;
+
+          return (
+            <Card key={item.source} style={styles.loopCard}>
+              <Badge tone="warm">{itemCopy.label}</Badge>
+              <Text style={styles.loopText}>{itemCopy.lesson}</Text>
+            </Card>
+          );
+        })}
       </View>
 
       <PremiumBanner
