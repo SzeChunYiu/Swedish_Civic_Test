@@ -57,14 +57,14 @@
       tips: {
         en: [
           "Pace yourself. I've been carved from one piece of wood since the 1700s — and even *I* take breaks.",
-          "Pass the test. Earn the passport. Tell people I helped.",
+          "Study the material. Practice with sources. Tell people I helped.",
           "When two answers sound right, the shorter one usually isn't.",
           "My hometown is Mora. Lots of horses, not many beaches.",
           "Tap an option, even if you're guessing. Wrong answers come back later.",
         ],
         sv: [
           "Ta det lugnt. Jag har varit en träklump sedan 1700-talet — *jag* tar paus.",
-          "Klara provet. Få passet. Säg att jag hjälpte.",
+          "Plugga materialet. Öva med källor. Säg att jag höll dig sällskap.",
           "När två svar verkar rätt — det kortare är oftast fel.",
           "Min hemstad är Mora. Mycket hästar, få sandstränder.",
         ],

@@ -20,17 +20,32 @@ export type RewardedExtraExamAdResult = {
   status: RewardedExtraExamAdStatus;
 };
 
+export type RewardedExtraExamRewardConfirmation = () => boolean | Promise<boolean>;
+
 export type RewardedExtraExamAdOptions = {
+  confirmReward?: RewardedExtraExamRewardConfirmation;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
   requestNonPersonalizedAdsOnly?: boolean;
   timeoutMs?: number;
 };
 
 export async function showRewardedExtraExamAd({
+  confirmReward,
   entitlements = { adsDisabled: false },
 }: RewardedExtraExamAdOptions = {}): Promise<RewardedExtraExamAdResult> {
   if (!shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements)) {
     return { status: 'unavailable' };
+  }
+
+  let rewardConfirmed = false;
+  try {
+    rewardConfirmed = (await confirmReward?.()) === true;
+  } catch {
+    rewardConfirmed = false;
+  }
+
+  if (!rewardConfirmed) {
+    return { status: 'closed_without_reward' };
   }
 
   return {

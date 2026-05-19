@@ -1035,8 +1035,8 @@ p.deck {
   font-weight: 700;
   letter-spacing: 0;
 }
-.mock-result.is-pass .mock-result__verdict { color: #1e874b; }
-.mock-result.is-fail .mock-result__verdict { color: #c2410c; }
+.mock-result.is-strong .mock-result__verdict { color: #1e874b; }
+.mock-result.needs-study .mock-result__verdict { color: #c2410c; }
 .mock-result__pct {
   margin: 0 0 32px;
   font-family: var(--mono);
@@ -1553,7 +1553,7 @@ p.deck {
 .ebook__study-actions p { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
 .ebook__progress { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
 .ebook__study-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
-.ebook__study-links .btn { min-height: 42px; padding: 10px 14px; font-size: 13px; white-space: nowrap; }
+.ebook__study-links .btn { min-height: 44px; padding: 10px 14px; font-size: 13px; white-space: nowrap; }
 
 .ebook__notes { margin-top: 18px; }
 .ebook__notes h2 { margin-top: 28px; }
