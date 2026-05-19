@@ -503,6 +503,45 @@ test('practice and routed quiz answer options expose selected state', () => {
   assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
 });
 
+test('post-answer reward panel renders a Swedish-humor fact bubble with XP and streak context', () => {
+  const rewardPanelSource = read('components/quiz/PostAnswerRewardPanel.tsx');
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const routedQuizSource = read('app/quiz/[sessionId].tsx');
+
+  assert.match(rewardPanelSource, /type PostAnswerRewardPanelCopy =/);
+  assert.match(
+    rewardPanelSource,
+    /const postAnswerRewardPanelCopy: Record<AppLanguage, PostAnswerRewardPanelCopy>/,
+  );
+  assert.match(rewardPanelSource, /Visste du\?/);
+  assert.match(rewardPanelSource, /svensk kölapp/);
+  assert.match(rewardPanelSource, /Did you know\?/);
+  assert.match(rewardPanelSource, /Swedish queue ticket/);
+  assert.match(rewardPanelSource, /accessibilityRole="summary"/);
+  assert.match(rewardPanelSource, /accessibilityLabel=\{panelAccessibilityLabel\}/);
+  assert.match(rewardPanelSource, /aria-label=\{panelAccessibilityLabel\}/);
+  assert.match(rewardPanelSource, /answerXp/);
+  assert.match(rewardPanelSource, /streakDays/);
+  assert.match(rewardPanelSource, /totalXp/);
+  assert.match(rewardPanelSource, /correctStreak/);
+  assert.doesNotMatch(
+    rewardPanelSource,
+    /Animated\.|Easing|setTimeout|requestAnimationFrame|#[0-9a-fA-F]{6}|rgba?\(/,
+  );
+  assert.match(practiceSource, /import \{ PostAnswerRewardPanel \}/);
+  assert.match(routedQuizSource, /import \{ PostAnswerRewardPanel \}/);
+  assert.match(practiceSource, /calculateAnswerXp\(\{ isCorrect: selectedIsCorrect/);
+  assert.match(routedQuizSource, /calculateAnswerXp\(\{ isCorrect: selectedIsCorrect/);
+  assert.match(practiceSource, /const streakDays = calculateStreak\(answerDates\);/);
+  assert.match(routedQuizSource, /const streakDays = calculateStreak\(answerDates\);/);
+  assert.match(practiceSource, /const level = calculateLevel\(totalXp\);/);
+  assert.match(routedQuizSource, /const level = calculateLevel\(totalXp\);/);
+  assert.match(practiceSource, /<PostAnswerRewardPanel[\s\S]*question=\{question\}/);
+  assert.match(routedQuizSource, /<PostAnswerRewardPanel[\s\S]*question=\{question\}/);
+  assert.match(practiceSource, /<PostAnswerRewardPanel[\s\S]*streakDays=\{streakDays\}/);
+  assert.match(routedQuizSource, /<PostAnswerRewardPanel[\s\S]*streakDays=\{streakDays\}/);
+});
+
 test('answer option feedback remains available in the accessibility label', () => {
   const source = read('components/quiz/AnswerOption.tsx');
 
