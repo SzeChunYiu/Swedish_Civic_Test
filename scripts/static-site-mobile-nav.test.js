@@ -112,7 +112,7 @@ test('static study buddy role button has keyboard activation wiring', () => {
 
   assert.match(
     html,
-    /<div id="dala-figure" role="button" tabindex="0" aria-label="Study buddy"><\/div>/,
+    /<div[\s\S]*?id="dala-figure"[\s\S]*?role="button"[\s\S]*?tabindex="0"[\s\S]*?data-a11y-label="a11y\.studyBuddy"[\s\S]*?><\/div>/,
   );
   assert.match(source, /function activateBuddyFigure\(\)/);
   assert.match(
@@ -123,6 +123,40 @@ test('static study buddy role button has keyboard activation wiring', () => {
   assert.match(source, /e\.key !== "Enter" && e\.key !== " "/);
   assert.match(source, /e\.preventDefault\(\)/);
   assert.match(source, /activateBuddyFigure\(\)/);
+});
+
+test('static icon-only controls use localized accessible-name keys', () => {
+  const html = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
+  const app = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const extras = fs.readFileSync(path.join(siteRoot, 'extras.js'), 'utf8');
+  const extraI18n = fs.readFileSync(path.join(siteRoot, 'i18n-extras.js'), 'utf8');
+
+  [
+    /id="settings-open"[\s\S]*?aria-label="Settings"[\s\S]*?data-a11y-label="a11y\.settings\.open"/,
+    /class="modal__close"[\s\S]*?aria-label="Close"[\s\S]*?data-a11y-label="a11y\.close"/,
+    /id="ad-anchor-close"[\s\S]*?aria-label="Close ad"[\s\S]*?data-a11y-label="a11y\.ad\.close"/,
+    /id="dala-bubble-close"[\s\S]*?aria-label="Close"[\s\S]*?data-a11y-label="a11y\.close"/,
+    /id="dala-figure"[\s\S]*?aria-label="Study buddy"[\s\S]*?data-a11y-label="a11y\.studyBuddy"/,
+  ].forEach((pattern) => assert.match(html, pattern));
+
+  assert.match(app, /function smtUpdateStaticControlLabels\(lang\)/);
+  assert.match(app, /querySelectorAll\("\[data-a11y-label\]"\)/);
+  assert.match(extras, /class="cheats__close" data-a11y-label="a11y\.close"/);
+  assert.doesNotMatch(extras, /aria-label="Close"/);
+
+  ['zh-Hans', 'zh-Hant', 'ar', 'so'].forEach((lang) => {
+    const start = extraI18n.indexOf(`"${lang}": {`);
+    assert.notEqual(start, -1, `${lang} dictionary should exist`);
+    const nextMarker = extraI18n.indexOf(
+      '\n    // ============================================================',
+      start + 1,
+    );
+    const block = extraI18n.slice(start, nextMarker === -1 ? undefined : nextMarker);
+    assert.match(block, /"a11y\.settings\.open"/);
+    assert.match(block, /"a11y\.close"/);
+    assert.match(block, /"a11y\.ad\.close"/);
+    assert.match(block, /"a11y\.studyBuddy"/);
+  });
 });
 
 test(
