@@ -296,7 +296,7 @@ p.deck {
   border-top: 1px solid var(--line);
 }
 .list-quiet li {
-  display: flex; align-items: baseline; gap: 24px;
+  display: flex; align-items: flex-start; gap: 24px;
   padding: 22px 4px;
   border-bottom: 1px solid var(--line);
   font-family: var(--display);
@@ -314,6 +314,20 @@ p.deck {
   color: var(--blue);
   min-width: 32px;
   letter-spacing: .08em;
+}
+.list-quiet__copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+.list-quiet__meta {
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.25;
 }
 
 
