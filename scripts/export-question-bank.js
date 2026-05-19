@@ -54,122 +54,11 @@ function optionPayload(question, field) {
   );
 }
 
-function emptyProvenanceCounts() {
-  return QUESTION_PROVENANCE_VALUES.reduce((counts, provenance) => {
-    counts[provenance] = 0;
-    return counts;
-  }, {});
-}
-
-function jsonEqual(left, right) {
-  return JSON.stringify(left) === JSON.stringify(right);
-}
-
-function provenanceFromTags(question) {
-  const tags = Array.isArray(question.tags) ? question.tags : [];
-  if (tags.includes('editorial')) return 'editorial';
-  if (tags.includes('published-variant')) return 'derived';
-  return 'uhr';
-}
-
-function countQuestionProvenanceFromRows(dataRows, provenanceIndex, sourceLabel) {
-  const counts = emptyProvenanceCounts();
-  dataRows.forEach((row, index) => {
-    const provenance = row[provenanceIndex];
-    if (!QUESTION_PROVENANCE_VALUES.includes(provenance)) {
-      throw new Error(
-        `${sourceLabel} row ${index + 2} questionProvenance is ${JSON.stringify(
-          provenance,
-        )}, expected one of ${QUESTION_PROVENANCE_VALUES.join(', ')}`,
-      );
-    }
-    counts[provenance] += 1;
-  });
-  return counts;
-}
-
-function validateQuestionProvenanceComposition(tableRows, sourceLabel) {
-  const header = tableRows[0] ?? [];
-  const provenanceIndex = header.indexOf('questionProvenance');
-  if (provenanceIndex < 0) {
-    throw new Error(`${sourceLabel} is missing questionProvenance column`);
-  }
-
-  const actualCounts = countQuestionProvenanceFromRows(
-    tableRows.slice(1),
-    provenanceIndex,
-    sourceLabel,
-  );
-  const helperCounts = emptyProvenanceCounts();
-  const tagCounts = emptyProvenanceCounts();
-
-  questions.forEach((question) => {
-    const helperProvenance = getQuestionProvenance(question);
-    if (!QUESTION_PROVENANCE_VALUES.includes(helperProvenance)) {
-      throw new Error(
-        `question ${question.id} helper returned unsupported questionProvenance ${JSON.stringify(
-          helperProvenance,
-        )}`,
-      );
-    }
-    helperCounts[helperProvenance] += 1;
-    tagCounts[provenanceFromTags(question)] += 1;
-  });
-
-  if (!jsonEqual(actualCounts, helperCounts)) {
-    throw new Error(
-      `${sourceLabel} provenance counts are ${JSON.stringify(
-        actualCounts,
-      )}, expected helper-derived ${JSON.stringify(helperCounts)}`,
-    );
-  }
-  if (!jsonEqual(helperCounts, tagCounts)) {
-    throw new Error(
-      `question-bank export provenance helper composition is ${JSON.stringify(
-        helperCounts,
-      )}, expected tag-derived ${JSON.stringify(tagCounts)}`,
-    );
-  }
-  if (tagCounts.derived !== generatedPublishedQuestions.length) {
-    throw new Error(
-      `question-bank export derived provenance count is ${tagCounts.derived}, expected generatedPublishedQuestions ${generatedPublishedQuestions.length}`,
-    );
-  }
-  if (tagCounts.uhr + tagCounts.editorial !== sourceQuestions.length) {
-    throw new Error(
-      `question-bank export source provenance count is ${
-        tagCounts.uhr + tagCounts.editorial
-      }, expected sourceQuestions ${sourceQuestions.length}`,
-    );
-  }
-
-  const total = Object.values(actualCounts).reduce((sum, count) => sum + count, 0);
-  if (total !== questions.length) {
-    throw new Error(
-      `question-bank export provenance count total is ${total}, expected ${questions.length}`,
-    );
-  }
-}
-
-function parseCsvLine(line) {
-  return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
-    match[1].replaceAll('""', '"'),
-  );
-}
-
-function parseCsvRows(csvText) {
-  return csvText.trimEnd().split('\n').map(parseCsvLine);
-}
-
-const questionModule = loadTs('data/questions.ts');
-const questions = questionModule.questions;
-const sourceQuestions = questionModule.sourceQuestions;
-const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
-const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
+const questions = loadTs('data/questions.ts', 'questions');
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
 );
-const uhrSource = uhrSectionMap.source ?? {};
+const uhrSourcePublisher = uhrSectionMap.source?.publisher ?? '';
 const rows = [
   [
     'id',
@@ -212,10 +101,7 @@ const rows = [
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,
-    uhrSource.title,
-    uhrSource.publisher,
-    uhrSource.url,
-    uhrSource.retrievedDate,
+    uhrSourcePublisher,
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),
