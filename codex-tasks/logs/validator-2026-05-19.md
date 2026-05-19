@@ -64,3 +64,27 @@ Next worker task queued: Remove Ads hardening can proceed to
 `REMOVE-ADS-RECEIPT-VALIDATION-1`; do not duplicate
 `REMOVE-ADS-ENTITLEMENT-INTEGRITY-1` without fresh current-main regression
 evidence.
+
+Iteration: 2026-05-19T03:05+02:00
+Rows moved to accepted: none in A1-A8; accepted SETUP/release-public source
+commit `a28f235` for `REVIEWER-PUBLIC-PRIVACY-ADS-IAP-POSTURE-1`.
+Rows blocked: `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` / `SITE-P0-5` remains
+blocked on external production deploy capacity/operator evidence; no Vercel CLI
+was run.
+Evidence: current `origin/main` through `5fcf7a5` contains source commit
+`a28f235`; later commits in this acceptance scope do not touch the public
+privacy or release guard files. Clean manager worktree
+`/tmp/sct-manager-public-privacy-UWhpcM/wt` passed `npm run test:publishing`
+7/7, `npm run test:release-preflight` 46/46, `npm run typecheck -- --pretty
+false`, `npm run lint`, `npm run test:ownership`, syntax checks for
+`scripts/publishing.test.js` and `scripts/release-preflight.js`, targeted
+Prettier, `git diff --check a28f235^..a28f235`, and current-tree
+`git diff --check`. Direct stale-copy scan found zero public privacy matches
+for `no user data`, real ads disabled, or `Data Not Collected`; direct posture
+scan confirmed Google Mobile Ads/AdMob, Remove Ads, 29 SEK, ATT, UMP consent,
+and local device storage copy in the public privacy page, public privacy mirror,
+and Google Play listing.
+Next worker task queued: none for this public privacy posture route; do not
+duplicate it without fresh current-main regression evidence. Keep hosted
+production freshness separate until the scheduled hook makes production serve
+current main.
