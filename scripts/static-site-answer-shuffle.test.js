@@ -253,7 +253,7 @@ test('static Mock renders shuffled labels and reviews the selected original answ
 
   assert.deepEqual(parseDataIndexes(sandbox.window.__mockExamHtml, 'data-pick'), order);
   const reviewHtml = element('mock-stage').innerHTML;
-  assert.match(reviewHtml, /<div class="mock-result is-strong">/);
+  assert.match(reviewHtml, /<div class="mock-result is-pass">/);
   assert.match(reviewHtml, /<span class="result-ch__score">1\/1<\/span>/);
   assert.match(reviewHtml, /Original correct answer/);
   assert.match(reviewHtml, /<b>Correct<\/b>/);

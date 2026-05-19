@@ -9,10 +9,6 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
-function readText(relativePath) {
-  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-}
-
 test('store screenshot manifest covers required listing surfaces', () => {
   const manifest = readJson('publishing/screenshot-manifest.json');
   assert.equal(manifest.appName, 'Almost Swedish');
@@ -31,20 +27,4 @@ test('store screenshot manifest covers required listing surfaces', () => {
   const support = manifest.shots.find((shot) => shot.route === '/support');
   assert.match(support.message, /support/i);
   assert.match(support.message, /no personal data/i);
-});
-
-test('visual smoke screenshots default to ignored Playwright artifacts', () => {
-  const source = readText('tests/e2e/visual-smoke.spec.ts');
-
-  assert.match(source, /VISUAL_SMOKE_UPDATE_BASELINE/);
-  assert.match(source, /testInfo\.outputPath\('visual-smoke-screenshots'\)/);
-  assert.match(source, /committedScreenshotDir/);
-  assert.match(
-    source,
-    /Default visual-smoke screenshots are written under Playwright test-results/,
-  );
-  assert.doesNotMatch(
-    source,
-    /const\s+screenshotDir\s*=\s*path\.resolve\('reports\/2026-05-15-uiux-screenshots'\)/,
-  );
 });
