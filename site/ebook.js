@@ -6,49 +6,60 @@
 (function () {
   'use strict';
 
-  const EBOOK_FACTBOX_SOURCE_NOTES = Object.freeze({
-    retrievedDate: '2026-05-19',
-    sources: {
-      uhrStudy: {
-        en: 'UHR study material page',
-        sv: 'UHR studiematerial',
-        url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  const CURRENT_FACT_SOURCES = Object.freeze({
+    stateIncomeTax2026: {
+      href: {
+        en: 'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
+        sv: 'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
       },
-      scbLandUse: {
-        en: 'Statistics Sweden land-use statistics',
-        sv: 'SCB markanvändningsstatistik',
-        url: 'https://www.scb.se/mi0803-en',
+      label: {
+        en: 'Skatteverket, state income tax 2026',
+        sv: 'Skatteverket, statlig inkomstskatt 2026',
       },
-      riksbankHistory: {
-        en: 'Sveriges Riksbank history',
-        sv: 'Riksbankens historik',
-        url: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+      year: '2026',
+      retrieved: '2026-05-19',
+    },
+    citizenshipRules2026: {
+      href: {
+        en: 'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
+        sv: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
       },
-      governmentNato: {
-        en: 'Government Offices: Sweden is a NATO member',
-        sv: 'Regeringskansliet: Sverige är medlem i Nato',
-        url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+      label: {
+        en: 'Migrationsverket, new citizenship rules',
+        sv: 'Migrationsverket, nya medborgarskapsregler',
       },
+      year: '2026',
+      retrieved: '2026-05-19',
+    },
+    citizenshipTestTimeline2026: {
+      href: {
+        en: 'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-universitets--och-hogskoleradet-att-genomfora-en-forstudie-i-fraga-om-medborgarskapsprov/',
+        sv: 'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-universitets--och-hogskoleradet-att-genomfora-en-forstudie-i-fraga-om-medborgarskapsprov/',
+      },
+      label: {
+        en: 'Regeringen, UHR assignment timeline',
+        sv: 'Regeringen, tidplan för UHR-uppdraget',
+      },
+      year: '2026',
+      retrieved: '2026-05-19',
     },
   });
 
-  function ebookSourceNote(lang, sourceKeys) {
-    const sv = lang === 'sv';
-    const links = sourceKeys
-      .map((key) => EBOOK_FACTBOX_SOURCE_NOTES.sources[key])
-      .filter(Boolean)
-      .map((source) => `<a href="${source.url}">${source[lang] || source.en}</a>`)
-      .join('; ');
-    const label = sv ? 'Källor hämtade' : 'Sources accessed';
-
-    return `<p class="ebook__source-note">${label} ${EBOOK_FACTBOX_SOURCE_NOTES.retrievedDate}: ${links}.</p>`;
+  function currentFactSourceLink(key, lang) {
+    const source = CURRENT_FACT_SOURCES[key];
+    const locale = lang === 'sv' ? 'sv' : 'en';
+    const retrievedLabel = locale === 'sv' ? 'hämtad' : 'retrieved';
+    return `<a href="${source.href[locale]}">${source.label[locale]} (${source.year}, ${retrievedLabel} ${source.retrieved})</a>`;
   }
 
-  function ebookFactBox(lang, heading, facts, sourceKeys = ['uhrStudy']) {
-    return `<div class="ebook__factbox"><h4>${heading}</h4><p>${facts}</p>${ebookSourceNote(lang, sourceKeys)}</div>`;
+  function currentFactSourceNote(keys, lang) {
+    const label = lang === 'sv' ? 'Källor' : 'Sources';
+    return `<span class="ebook__source-note">${label}: ${keys
+      .map((key) => currentFactSourceLink(key, lang))
+      .join(' · ')}</span>`;
   }
 
-  function svStudyBrief(points, facts, practiceHint, sourceKeys = ['uhrStudy']) {
+  function svStudyBrief(points, facts, practiceHint) {
     const items = points.map((point) => `<li>${point}</li>`).join('');
     return `
       <h2>Det viktigaste</h2>
@@ -257,7 +268,7 @@
           <p>Salaries and conditions in Sweden are mostly set by <em>collective agreements</em> (kollektivavtal) — negotiated between unions and employer organisations. There is no legal minimum wage, but the agreed minimum in any given sector is usually well above the cost of living.</p>
           <p>Membership in a union is voluntary. About 65% of workers belong to one. Joining usually includes unemployment insurance (<em>a-kassa</em>).</p>
           <h2>Taxes</h2>
-          <p>Taxes fund the welfare state. Most people pay roughly 30% of their salary in municipal income tax. People earning above the state-tax threshold (~613 900 SEK in 2024) pay an additional 20% on the income above that line. Capital gains are taxed at 30%. VAT (<em>moms</em>) is 25% on most goods, 12% on food, 6% on books and culture.</p>
+          <p>Taxes fund the welfare state. Most people pay roughly 30% of their salary in municipal income tax. For income year 2026, Skatteverket lists the state income-tax threshold as 643,000 SEK after the basic allowance and the under-66 annual-income breakpoint as 660,400 SEK; taxable earned income above the threshold pays an additional 20% state income tax. Check the current year before using those figures. ${currentFactSourceNote(['stateIncomeTax2026'], 'en')}</p>
           <h2>Skatteverket</h2>
           <p>Skatteverket — the Swedish Tax Agency — is also the population registry. Your <em>personnummer</em> (personal number) ties you to taxes, healthcare, schools, and your address. Move? Tell them within a week.</p>
           <h2>The welfare state</h2>
@@ -271,7 +282,7 @@
             'Skatteverket hanterar skatt och folkbokföring. Personnummer och folkbokföringsadress används i många vardagliga kontakter.',
             'Privatekonomi i Sverige handlar ofta om lön efter skatt, räkningar, försäkringar, sparande och att betala i tid.',
           ],
-          'Kollektivavtal · Kommunalskatt · Skatteverket · Välfärd finansieras gemensamt.',
+          `Kollektivavtal · Kommunalskatt · Skatteverket · Statlig inkomstskatt har årsgränser. ${currentFactSourceNote(['stateIncomeTax2026'], 'sv')}`,
         ),
       },
     },
@@ -507,26 +518,27 @@
           <h2>Routes to permanent residence</h2>
           <p>You can come to Sweden as: a worker (with a job offer above a minimum wage), a student, a researcher, a family member of a resident, an EU citizen exercising freedom of movement, or an asylum seeker. After a period of legal residence — typically four to five years — you may apply for permanent residence (<em>permanent uppehållstillstånd</em>) or, for EU citizens, permanent right of residence.</p>
           <h2>Becoming Swedish</h2>
-          <p>To apply for Swedish citizenship by naturalisation, you generally need to:</p>
+          <p>Citizenship rules are changing in 2026. From 6 June 2026, Migrationsverket says new rules and knowledge requirements apply to applications without transitional arrangements. Treat this list as study context, not application advice:</p>
           <ul>
-            <li>Be at least 18 years old (children are usually included with a parent's application).</li>
+            <li>Be at least 18 years old for an adult application; from 6 June 2026, children submit their own application with a legal guardian's help.</li>
             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
-            <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
-            <li>Have led an orderly life — no significant criminal record.</li>
-            <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
+            <li>Have lived in Sweden for the qualifying period. Migrationsverket describes the new general adult rule from 6 June 2026 as at least eight years, with shorter periods for some groups.</li>
+            <li>Have lived an orderly and honest life and meet the support rules where they apply.</li>
+            <li>From 6 June 2026, show knowledge of Swedish and Swedish society if the requirement applies to you. If you do not have accepted documentation, the citizenship tests are introduced gradually: civic knowledge first in August 2026, with the government assignment requiring the first step no later than 17 August 2026; Swedish-language tests come later.</li>
           </ul>
+          <p>${currentFactSourceNote(['citizenshipRules2026', 'citizenshipTestTimeline2026'], 'en')}</p>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          ${ebookFactBox('en', 'Facts to review', 'Citizenship-test requirements are changing from 2026 · Residence requirements depend on the applicant · Dual citizenship has been allowed since 2001 · Decision authority: Migrationsverket.', ['uhrStudy'])}
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>New citizenship rules and knowledge requirements: 6 June 2026 · First civic-knowledge test step: August 2026, no later than 17 August 2026 · Dual citizenship: allowed since 2001 · Decision authority: Migrationsverket. ${currentFactSourceNote(['citizenshipRules2026', 'citizenshipTestTimeline2026'], 'en')}</p></div>
         `,
         sv: svStudyBrief(
           [
             'Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.',
             'Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.',
-            'Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.',
+            'Nya krav för svenskt medborgarskap börjar gälla den 6 juni 2026. Migrationsverket beskriver också stegvis införda kunskapsprov.',
             'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
           ],
-          'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
+          `Migrationsverket · Skatteverket · Nya medborgarskapsregler: 6 juni 2026 · Första samhällskunskapsprovet: augusti 2026, senast 17 augusti 2026 · Dubbelt medborgarskap tillåts sedan 2001. ${currentFactSourceNote(['citizenshipRules2026', 'citizenshipTestTimeline2026'], 'sv')}`,
           'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
         ),
       },

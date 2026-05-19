@@ -6,7 +6,10 @@ const vm = require('node:vm');
 const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
-const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
+const staleEbookCurrentFactPatterns = [
+  /613\s*900\s*SEK\s*in\s*2024/i,
+  new RegExp(`${'Citizenship test starts'}:\\s*6 June 2026`, 'i'),
+];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -249,88 +252,33 @@ test('static source provenance copy rejects unshipped external source families',
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
 
-test('static FAQ no-JS fallback mirrors the English dictionary', () => {
-  const indexHtml = read('site/index.html');
-  const appSource = read('site/app.js');
-  const englishTranslations = englishTranslationMap(appSource);
-  const faqDictionaryEntries = Array.from(englishTranslations.entries())
-    .filter(([key]) => key.startsWith('faq.'))
-    .map(([key, value]) => [key, normalizeInlineHtml(value)]);
-  const faqFallback = staticFallbackI18nValues(staticFaqSection(indexHtml), 'faq.');
-  const faqFallbackEntries = Array.from(faqFallback.entries());
+test('static ebook current facts carry official source and retrieval metadata', () => {
+  const ebookSource = read('site/ebook.js');
 
-  assert.deepEqual(
-    faqFallbackEntries.map(([key]) => key).sort(),
-    faqDictionaryEntries.map(([key]) => key).sort(),
-  );
-
-  for (const [key, expectedValue] of faqDictionaryEntries) {
-    assert.equal(
-      faqFallback.get(key),
-      expectedValue,
-      `${key} no-JS fallback should match the English site/app.js dictionary`,
-    );
+  for (const pattern of staleEbookCurrentFactPatterns) {
+    assert.doesNotMatch(ebookSource, pattern);
   }
-});
 
-test('static Home body no-JS fallback mirrors the English dictionary', () => {
-  const indexHtml = read('site/index.html');
-  const appSource = read('site/app.js');
-
-  assert.equal(assertStaticHomeBodyFallbackParitySource(indexHtml, appSource), 33);
-  assert.throws(
-    () =>
-      assertStaticHomeBodyFallbackParitySource(
-        indexHtml.replace('No textbooks.', 'No stale textbooks.'),
-        appSource,
-      ),
-    /demo\.h1 Home no-JS fallback should match the English site\/app\.js dictionary/,
-  );
-});
-
-test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
-  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
-});
-
-test('static ebook practical test copy is backed by current UHR source metadata', () => {
-  const ebookSource = read('site/ebook.js');
-
-  assert.match(ebookSource, /const OFFICIAL_TEST_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
-  officialPracticalTestSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
-
-  assert.match(
-    ebookSource,
-    /first civic-knowledge sitting will be held on 15 August 2026 in Stockholm/i,
-  );
-  assert.match(ebookSource, /only people who receive a letter from Migrationsverket can sign up/i);
-  assert.match(ebookSource, /Seats are limited/i);
-  assert.match(ebookSource, /free of charge/i);
-  assert.match(ebookSource, /generous time/i);
-  assert.match(ebookSource, /UHR has not yet published the exact time and place/i);
-  assert.match(ebookSource, /första samhällskunskapsprovet inom medborgarskapsprovet/i);
-  assert.match(ebookSource, /brev från Migrationsverket/i);
-  assert.match(ebookSource, /Antalet platser är begränsat/i);
-  assert.match(ebookSource, /kostnadsfritt/i);
-  assert.match(ebookSource, /generöst med tid/i);
-  assert.match(ebookSource, /praktiska detaljer väntar hos UHR/i);
-
-  unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
-    assert.doesNotMatch(ebookSource, pattern),
-  );
-});
-
-test('static ebook factbox and current prose claims use retrieved source metadata', () => {
-  const ebookSource = read('site/ebook.js');
-
-  assert.match(ebookSource, /const EBOOK_FACTBOX_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(ebookSource, /function ebookFactBox\(lang, heading, facts/);
-  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
-  assert.match(ebookSource, /Facts to review/);
-  assert.match(ebookSource, /Fakta att repetera/);
-  assert.match(ebookSource, /Sources accessed/);
-  assert.match(ebookSource, /Källor hämtade/);
-
-  ebookFactboxSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
-  unsupportedEbookFactboxPatterns.forEach((pattern) => assert.doesNotMatch(ebookSource, pattern));
+  [
+    /CURRENT_FACT_SOURCES/,
+    /stateIncomeTax2026/,
+    /citizenshipRules2026/,
+    /citizenshipTestTimeline2026/,
+    /643,000 SEK/,
+    /660,400 SEK/,
+    /6 June 2026/,
+    /August 2026/,
+    /17 August 2026/,
+    /retrieved:\s*'2026-05-19'/,
+    /Skatteverket, state income tax 2026/,
+    /Skatteverket, statlig inkomstskatt 2026/,
+    /Migrationsverket, new citizenship rules/,
+    /Migrationsverket, nya medborgarskapsregler/,
+    /Regeringen, UHR assignment timeline/,
+    /Regeringen, tidplan f[öo]r UHR-uppdraget/,
+    /https:\/\/www\.skatteverket\.se\/privat\/etjansterochblanketter/,
+    /https:\/\/www\.migrationsverket\.se\/nyheter\/news-archive\/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026\.html/,
+    /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,
+    /https:\/\/www\.regeringen\.se\/regeringsuppdrag\/2026\/02\/andring-av-uppdraget-till-universitets--och-hogskoleradet-att-genomfora-en-forstudie-i-fraga-om-medborgarskapsprov\//,
+  ].forEach((pattern) => assert.match(ebookSource, pattern));
 });

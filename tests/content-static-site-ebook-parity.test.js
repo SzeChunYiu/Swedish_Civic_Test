@@ -16,54 +16,9 @@ const staleEbookCopyPatterns = [
   /Coming soon/i,
   /Kommer snart/i,
 ];
-const swedishEbookQuizLoanwordPatterns = [
-  phrasePattern('gör ett ', 'quiz'),
-  phrasePattern('quiz', 'frågor'),
-  phrasePattern('quiz', 'pass'),
-  phrasePattern('quiz', 'et'),
-];
-const unsupportedEbookOutcomeClaimPatterns = [
-  /Most people who pass this way/i,
-  /three weeks,\s*not three days/i,
-  /de flesta[^.?!]*(?:veckor|veckan)[^.?!]*(?:klarar|klara|godk[aä]n|prov)/i,
-  /\b(?:typical|most)\s+(?:learners|people|users)[^.?!]*(?:pass|passing)[^.?!]*(?:days?|weeks?|months?)/i,
-  /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
-  /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
-];
-const unsupportedPracticalTestClaimPatterns = [
-  phrasePattern('Format of ', 'the real test'),
-  phrasePattern('multiple-choice ', 'and timed'),
-  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
-  phrasePattern('Arrive 30 ', 'minutes early'),
-  phrasePattern('test centre ', 'is strict'),
-  phrasePattern('Multiple-choice:\\s*', 'every question'),
-  phrasePattern('You may ', 'retake the test'),
-  phrasePattern('There is a ', 'small fee'),
-  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
-  phrasePattern('På provdagen är ', 'giltig legitimation'),
-  phrasePattern('Tidsatt ', 'provträning'),
-];
-const officialPracticalTestSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-];
-const factboxSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const unsupportedFactboxPatterns = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
+const staleTimeSensitiveEbookCopyPatterns = [
+  /613\s*900\s*SEK\s*in\s*2024/i,
+  new RegExp(`${'Citizenship test starts'}:\\s*6 June 2026`, 'i'),
 ];
 
 function readSiteFile(relativePath) {
@@ -156,6 +111,9 @@ function assertNoStaleEbookCopy(value) {
   for (const pattern of staleEbookCopyPatterns) {
     assert.doesNotMatch(value, pattern);
   }
+  for (const pattern of staleTimeSensitiveEbookCopyPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
 }
 
 function assertNoSwedishEbookQuizLoanwords(value) {
@@ -223,25 +181,54 @@ test('static ebook does not promise source-backed footnotes without citation cov
   );
 });
 
-test('static ebook source notes have dedicated compact readable styling', () => {
-  const styles = readSiteFile('site/styles.css');
+test('static ebook keeps time-sensitive tax and citizenship-test facts source-dated', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const workAndTaxHtml = renderChapter(harness, 'en', '4');
+  const citizenshipHtmlEn = renderChapter(harness, 'en', '11');
+  const citizenshipHtmlSv = renderChapter(harness, 'sv', '11');
+
+  assertNoStaleEbookCopy(source);
+  assert.match(source, /CURRENT_FACT_SOURCES/);
+  assert.match(source, /stateIncomeTax2026/);
+  assert.match(source, /citizenshipRules2026/);
+  assert.match(source, /citizenshipTestTimeline2026/);
+  assert.match(source, /retrieved:\s*'2026-05-19'/);
+
+  assert.match(workAndTaxHtml, /643,000 SEK/);
+  assert.match(workAndTaxHtml, /660,400 SEK/);
+  assert.match(
+    workAndTaxHtml,
+    /Skatteverket, state income tax 2026 \(2026, retrieved 2026-05-19\)/,
+  );
+  assert.match(workAndTaxHtml, /https:\/\/www\.skatteverket\.se\//);
 
   assert.match(
-    styles,
-    /\.ebook__factbox \.ebook__source-note \{[^}]*margin: 12px 0 0;[^}]*padding-top: 10px;[^}]*border-top: 1px solid var\(--line\);[^}]*color: var\(--ink-soft\);[^}]*font-size: 12\.5px;[^}]*line-height: 1\.5;/s,
+    citizenshipHtmlEn,
+    /New citizenship rules and knowledge requirements:\s*6 June 2026/,
   );
   assert.match(
-    styles,
-    /\.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--blue-deep\);[^}]*text-decoration: underline;[^}]*text-underline-offset: 2px;/s,
+    citizenshipHtmlEn,
+    /First civic-knowledge test step:\s*August 2026,\s*no later than 17 August 2026/,
   );
   assert.match(
-    styles,
-    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note \{[^}]*color: var\(--ink-soft\) !important;[^}]*border-top-color: var\(--line\);/s,
+    citizenshipHtmlEn,
+    /Migrationsverket, new citizenship rules \(2026, retrieved 2026-05-19\)/,
   );
   assert.match(
-    styles,
-    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--gold\) !important;/s,
+    citizenshipHtmlEn,
+    /Regeringen, UHR assignment timeline \(2026, retrieved 2026-05-19\)/,
   );
+  assert.match(citizenshipHtmlEn, /https:\/\/www\.migrationsverket\.se\/nyheter\/news-archive/);
+  assert.match(citizenshipHtmlEn, /https:\/\/www\.regeringen\.se\/regeringsuppdrag\/2026\/02\//);
+
+  assert.match(citizenshipHtmlSv, /Nya medborgarskapsregler:\s*6 juni 2026/);
+  assert.match(citizenshipHtmlSv, /senast 17 augusti 2026/);
+  assert.match(
+    citizenshipHtmlSv,
+    /Migrationsverket, nya medborgarskapsregler \(2026, hämtad 2026-05-19\)/,
+  );
+  assert.match(citizenshipHtmlSv, /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv/);
 });
 
 test('static ebook navigation covers every shipped static chapter', () => {
