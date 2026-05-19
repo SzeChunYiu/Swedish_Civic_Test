@@ -66,6 +66,49 @@ function makeMemoryStorage() {
   };
 }
 
+function makeNativeIapFixture({ availablePurchases = [] } = {}) {
+  const state = {
+    disconnected: false,
+    finishedProductIds: [],
+    requestedProductIds: [],
+    restored: false,
+  };
+
+  const iap = {
+    async initConnection() {},
+    async endConnection() {
+      state.disconnected = true;
+    },
+    async finishTransaction({ purchase }) {
+      state.finishedProductIds.push(purchase.productId);
+    },
+    async getAvailablePurchases() {
+      return availablePurchases;
+    },
+    purchaseErrorListener() {
+      return { remove() {} };
+    },
+    purchaseUpdatedListener() {
+      return { remove() {} };
+    },
+    async requestPurchase({ request }) {
+      const productId = request.apple.sku;
+      state.requestedProductIds.push(productId);
+      return {
+        ids: [productId],
+        productId,
+        purchaseToken: `tok-${productId}`,
+        transactionId: `tx-${productId}`,
+      };
+    },
+    async restorePurchases() {
+      state.restored = true;
+    },
+  };
+
+  return { iap, state };
+}
+
 test('proLifetime: product id + price label + storage key exported', () => {
   const m = loadTs('lib/monetization/proLifetimePurchase.ts');
   assert.equal(m.PRO_LIFETIME_PRODUCT_ID, 'com.billyyiu.swedishcivictest.prolifetime');
@@ -86,6 +129,31 @@ test('buyProLifetime: fresh buy persists entitlement and returns purchased statu
   assert.equal(post.spacedRepetition, true);
 });
 
+test('buyProLifetime: native provider matches the requested Pro product id', async () => {
+  const { createNativePurchaseProvider } = loadTs('lib/monetization/purchases.ts');
+  const { PRO_LIFETIME_PRODUCT_ID, buyProLifetime } = loadTs(
+    'lib/monetization/proLifetimePurchase.ts',
+  );
+  const { iap, state } = makeNativeIapFixture();
+  const storage = makeMemoryStorage();
+
+  const result = await buyProLifetime({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => iap,
+      purchaseTimeoutMs: 10,
+    }),
+    storage,
+  });
+
+  assert.equal(result.status, 'purchased');
+  assert.equal(result.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(result.purchaseToken, `tok-${PRO_LIFETIME_PRODUCT_ID}`);
+  assert.equal(result.entitlements.spacedRepetition, true);
+  assert.deepEqual(state.requestedProductIds, [PRO_LIFETIME_PRODUCT_ID]);
+  assert.deepEqual(state.finishedProductIds, [PRO_LIFETIME_PRODUCT_ID]);
+  assert.equal(state.disconnected, true);
+});
+
 test('restoreProLifetime: with no prior purchase returns not_found', async () => {
   const { restoreProLifetime } = loadTs('lib/monetization/proLifetimePurchase.ts');
   const result = await restoreProLifetime({
@@ -104,6 +172,47 @@ test('restoreProLifetime: with prior purchase persists entitlement', async () =>
   });
   assert.equal(result.status, 'restored');
   assert.equal(result.entitlements.spacedRepetition, true);
+});
+
+test('restoreProLifetime: native provider restores the Pro product from available purchases', async () => {
+  const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
+  const { PRO_LIFETIME_PRODUCT_ID, restoreProLifetime } = loadTs(
+    'lib/monetization/proLifetimePurchase.ts',
+  );
+  const { iap, state } = makeNativeIapFixture({
+    availablePurchases: [
+      {
+        ids: [REMOVE_ADS_PRODUCT_ID],
+        productId: REMOVE_ADS_PRODUCT_ID,
+        purchaseToken: 'tok-remove-ads',
+        transactionId: 'tx-remove-ads',
+      },
+      {
+        ids: [PRO_LIFETIME_PRODUCT_ID],
+        productId: 'store-wrapper',
+        purchaseToken: 'tok-pro-lifetime',
+        transactionId: 'tx-pro-lifetime',
+      },
+    ],
+  });
+
+  const result = await restoreProLifetime({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => iap,
+      purchaseTimeoutMs: 10,
+    }),
+    storage: makeMemoryStorage(),
+  });
+
+  assert.equal(result.status, 'restored');
+  assert.equal(result.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(result.purchaseToken, 'tok-pro-lifetime');
+  assert.equal(result.transactionId, 'tx-pro-lifetime');
+  assert.equal(result.entitlements.spacedRepetition, true);
+  assert.equal(state.restored, true);
+  assert.equal(state.disconnected, true);
 });
 
 test('setProLifetimeEntitlement: false clears persisted state', async () => {

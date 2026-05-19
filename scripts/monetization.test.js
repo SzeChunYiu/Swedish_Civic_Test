@@ -68,6 +68,43 @@ function withEnv(overrides, fn) {
   }
 }
 
+function makeNativeIapProductFixture({ availablePurchases = [] } = {}) {
+  const state = {
+    requestedProductIds: [],
+    restored: false,
+  };
+
+  const iap = {
+    async initConnection() {},
+    async endConnection() {},
+    async finishTransaction() {},
+    async getAvailablePurchases() {
+      return availablePurchases;
+    },
+    purchaseErrorListener() {
+      return { remove() {} };
+    },
+    purchaseUpdatedListener() {
+      return { remove() {} };
+    },
+    async requestPurchase({ request }) {
+      const productId = request.apple.sku;
+      state.requestedProductIds.push(productId);
+      return {
+        ids: [productId],
+        productId,
+        purchaseToken: `tok-${productId}`,
+        transactionId: `tx-${productId}`,
+      };
+    },
+    async restorePurchases() {
+      state.restored = true;
+    },
+  };
+
+  return { iap, state };
+}
+
 test('ad rendering is enabled by default with test units and env-driven real switch', () => {
   withEnv(
     {
@@ -823,6 +860,58 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
       delete globalThis.localStorage;
     }
   }
+});
+
+test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {
+  const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
+  const { PRO_LIFETIME_PRODUCT_ID } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const purchasesSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/purchases.ts'),
+    'utf8',
+  );
+  const { iap, state } = makeNativeIapProductFixture({
+    availablePurchases: [
+      {
+        ids: [REMOVE_ADS_PRODUCT_ID],
+        productId: REMOVE_ADS_PRODUCT_ID,
+        purchaseToken: 'tok-remove-ads',
+        transactionId: 'tx-remove-ads',
+      },
+      {
+        ids: [PRO_LIFETIME_PRODUCT_ID],
+        productId: 'store-wrapper',
+        purchaseToken: 'tok-pro-lifetime',
+        transactionId: 'tx-pro-lifetime',
+      },
+    ],
+  });
+  const provider = createNativePurchaseProvider({
+    loadIap: async () => iap,
+    purchaseTimeoutMs: 10,
+  });
+
+  const purchase = await provider.requestRemoveAdsPurchase(PRO_LIFETIME_PRODUCT_ID);
+  const restored = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);
+
+  assert.equal(purchase.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(purchase.purchaseToken, `tok-${PRO_LIFETIME_PRODUCT_ID}`);
+  assert.deepEqual(
+    restored.map((item) => item.purchaseToken),
+    ['tok-pro-lifetime'],
+  );
+  assert.equal(state.restored, true);
+  assert.deepEqual(state.requestedProductIds, [PRO_LIFETIME_PRODUCT_ID]);
+  assert.match(purchasesSource, /function isPurchaseForProduct/);
+  assert.match(
+    purchasesSource,
+    /requestRemoveAdsPurchase\(productId\)[\s\S]*isPurchaseForProduct\(candidate, productId\)/,
+  );
+  assert.match(
+    purchasesSource,
+    /restorePurchases\(productIds\)[\s\S]*productIds\.some\(\(productId\) => isPurchaseForProduct\(purchase, productId\)\)/,
+  );
 });
 
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {

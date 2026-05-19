@@ -3193,7 +3193,10 @@ const EXPECTED_PURCHASE_INTERFACES = [
   },
   {
     name: 'NativePurchaseProviderOptions',
-    fields: [{ name: 'purchaseTimeoutMs', type: 'number', optional: true }],
+    fields: [
+      { name: 'loadIap', type: '() => Promise<NativeIapModule>', optional: true },
+      { name: 'purchaseTimeoutMs', type: 'number', optional: true },
+    ],
   },
   {
     name: 'MockPurchaseProviderOptions',
