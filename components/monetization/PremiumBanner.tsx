@@ -21,11 +21,13 @@ type PurchaseAction = 'buy' | 'restore';
 type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error';
 type PremiumBannerCopy = {
   body: (price: string) => string;
+  buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
   buyIdle: (price: string) => string;
   buying: string;
   eyebrowActive: string;
   eyebrowIdle: string;
+  restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
   restoring: string;
@@ -38,12 +40,16 @@ type PremiumBannerCopy = {
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
     body: (price) =>
-      `Gratisstudier visar AdMob-annonser. Betala ${price} en gång för att ta bort annonser från studieskärmar medan prov förblir annonsfria.`,
+      `Gratisstudier visar AdMob-annonser. Betala ${price} en gång för att ta bort annonser från studieskärmar. Tidsatta övningsprov är redan annonsfria.`,
+    buyAccessibilityHint:
+      'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
     eyebrowIdle: 'Ta bort annonser',
+    restoreAccessibilityHint:
+      'Kontrollerar om Ta bort annonser redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
     restoreIdle: 'Återställ',
     restoring: 'Återställer...',
@@ -62,11 +68,15 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   en: {
     body: (price) =>
       `Free study keeps AdMob ads on. Pay ${price} once to remove ads from study screens while exams stay ad-free.`,
+    buyAccessibilityHint:
+      'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
     eyebrowIdle: 'Remove Ads',
+    restoreAccessibilityHint:
+      'Checks whether Remove Ads was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
     restoreIdle: 'Restore',
     restoring: 'Restoring...',
@@ -149,6 +159,7 @@ export function PremiumBanner({
       <Text style={styles.meta}>{copy.body(REMOVE_ADS_PRICE_LABEL)}</Text>
       <View style={styles.actions}>
         <Button
+          accessibilityHint={copy.buyAccessibilityHint}
           accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
           accessibilityRole="button"
           accessibilityState={{ disabled: activeAction !== null || adsDisabled }}
@@ -159,6 +170,7 @@ export function PremiumBanner({
           {activeAction === 'buy' ? copy.buying : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
         </Button>
         <Button
+          accessibilityHint={copy.restoreAccessibilityHint}
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
           accessibilityState={{ disabled: activeAction !== null }}
