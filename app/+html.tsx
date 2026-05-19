@@ -15,8 +15,8 @@ export default function RootHtml({ children }: PropsWithChildren) {
         <meta content={colors.canvas} name="theme-color" />
         <meta content={webDocumentMetadata.applicationName} name="application-name" />
         <meta
-          content={webDocumentMetadata.appleMobileWebAppTitle}
-          name="apple-mobile-web-app-title"
+          content="Öva på svensk samhällskunskap med quiz som fungerar offline, lokalt sparade framsteg och källhänvisningar."
+          name="description"
         />
         <meta content={webDocumentMetadata.description} name="description" />
         <meta content={webDocumentMetadata.openGraphSiteName} property="og:site_name" />

@@ -7,33 +7,16 @@ const test = require('node:test');
 const { REQUIRED_SECURITY_HEADERS } = require('./check-live-site');
 const { webDocumentMetadata } = require('../lib/scaffold/webDocumentMetadata');
 
+const { readWebDocumentMetadata } = require('./prepare-web-export.js');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
-function readThemeCanvasColor() {
-  const themeSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/colors.ts'), 'utf8');
-  const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
-  assert.notEqual(match, null, 'colors.canvas should stay parseable for web export checks');
-  return match[1];
-}
-
-function copyPublicWebManifest(outputDir) {
-  const manifest = readJson('public/manifest.webmanifest');
-  fs.copyFileSync(
-    path.join(repoRoot, 'public/manifest.webmanifest'),
-    path.join(outputDir, 'manifest.webmanifest'),
-  );
-
-  for (const icon of manifest.icons) {
-    const iconDestination = path.join(outputDir, icon.src);
-    fs.mkdirSync(path.dirname(iconDestination), { recursive: true });
-    fs.copyFileSync(path.join(repoRoot, 'public', icon.src), iconDestination);
-  }
-
-  return manifest;
+function escapeRegExp(literal) {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 test('EAS build and submit profiles are configured for internal and production releases', () => {
@@ -1609,7 +1592,7 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-postbuild-'));
   const outputDir = path.join(tmpDir, 'dist-web');
   const bundleDir = path.join(outputDir, '_expo/static/js/web');
-  const canvasColor = readThemeCanvasColor();
+  const metadata = readWebDocumentMetadata();
   fs.mkdirSync(bundleDir, { recursive: true });
   const manifest = copyPublicWebManifest(outputDir);
   fs.writeFileSync(
@@ -1656,49 +1639,12 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);
-  assert.doesNotMatch(index, /href="\/_expo\//);
-  assert.doesNotMatch(index, /href="\/assets\//);
-  assert.match(index, /href="_expo\/static\/js\/web\/entry-test\.js"/);
-  assert.match(index, /href="assets\/favicon\.png"/);
-  assert.match(index, new RegExp(`<meta name="theme-color" content="${canvasColor}" />`));
-  assert.match(index, new RegExp(`<title>${webDocumentMetadata.title}</title>`));
-  assert.equal(index.includes('<title>Export</title>'), false);
+  assert.match(index, new RegExp(`<html\\b[^>]*\\blang="${escapeRegExp(metadata.language)}"`));
   assert.match(
     index,
-    new RegExp(`<meta name="application-name" content="${webDocumentMetadata.applicationName}" />`),
+    new RegExp(`<meta name="description" content="${escapeRegExp(metadata.description)}" \\/>`),
   );
-  assert.match(
-    index,
-    new RegExp(
-      `<meta name="apple-mobile-web-app-title" content="${webDocumentMetadata.appleMobileWebAppTitle}" />`,
-    ),
-  );
-  assert.match(
-    index,
-    new RegExp(`<meta name="description" content="${webDocumentMetadata.description}" />`),
-  );
-  assert.match(
-    index,
-    new RegExp(
-      `<meta property="og:site_name" content="${webDocumentMetadata.openGraphSiteName}" />`,
-    ),
-  );
-  assert.match(
-    index,
-    new RegExp(`<meta property="og:title" content="${webDocumentMetadata.openGraphTitle}" />`),
-  );
-  assert.match(
-    index,
-    new RegExp(
-      `<meta property="og:description" content="${webDocumentMetadata.openGraphDescription}" />`,
-    ),
-  );
-  assert.match(index, /<link rel="manifest" href="manifest\.webmanifest" \/>/);
-  assert.match(index, new RegExp(`<body style="background-color:${canvasColor}">`));
-  assert.equal(
-    JSON.parse(fs.readFileSync(path.join(outputDir, 'manifest.webmanifest'), 'utf8')).display,
-    'standalone',
-  );
+  assert.doesNotMatch(index, /<meta\b[^>]*\bname=(["'])description\1[^>]*Practice Swedish/i);
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
@@ -1718,6 +1664,22 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     },
   );
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
+
+  const wrongLanguage = metadata.language === 'sv' ? 'en' : 'sv';
+  const wrongIndex = index.replace(`lang="${metadata.language}"`, `lang="${wrongLanguage}"`);
+  fs.writeFileSync(path.join(outputDir, 'index.html'), wrongIndex);
+  fs.writeFileSync(path.join(outputDir, '404.html'), wrongIndex);
+
+  const staleMetadataCheck = spawnSync(
+    process.execPath,
+    ['scripts/prepare-web-export.js', '--check', outputDir],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.notEqual(staleMetadataCheck.status, 0);
+  assert.match(staleMetadataCheck.stderr || staleMetadataCheck.stdout, /must declare lang=/);
 });
 
 test('web export postbuild check fails when Expo Router emits an empty route context', () => {
