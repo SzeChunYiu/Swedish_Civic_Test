@@ -27,11 +27,6 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 144;
-const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
-const GENERATED_VARIANTS_PER_SOURCE = 4;
-const EXPECTED_PUBLISHED_QUESTIONS =
-  EXPECTED_SOURCE_QUESTIONS * (GENERATED_VARIANTS_PER_SOURCE + 1);
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
 const GENERATED_VARIANT_CONVENTIONS = [
@@ -6333,6 +6328,7 @@ let releaseMonetizationPolicyParityValidated = false;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let adPlacementRouteParityValidated = false;
+let adPlacementPlatformParityValidated = false;
 let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
@@ -6375,6 +6371,8 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
+let legalSwedishEnglishTokenRoutesValidated = 0;
+let legalSwedishEnglishTokenGuardValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -6480,6 +6478,9 @@ let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
+let contentTestValidateContentExecCallsValidated = 0;
+let contentTestValidateContentExecCwdPinnedValidated = 0;
+let contentTestValidateContentExecCwdParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -6932,14 +6933,19 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
-  function compactSource(value) {
-    return value.replace(/\s+/g, ' ');
-  }
-
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
+  let adBannerSource = '';
+  try {
+    adBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`components/monetization/AdBanner.tsx could not be read: ${error.message}`);
+  }
 
   for (const file of ['components/monetization/PremiumBanner.tsx', 'lib/monetization/adCopy.ts']) {
     try {
@@ -6953,6 +6959,63 @@ function validateAdPlacementRouteParity() {
       reject(`${file} could not be read for Swedish monetization copy parity: ${error.message}`);
     }
   }
+
+  let platformSourcesValid = true;
+
+  function expectSourcePattern(file, pattern, message) {
+    let source = '';
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} could not be read for ad platform parity: ${error.message}`);
+      platformSourcesValid = false;
+      return '';
+    }
+
+    if (!pattern.test(source)) {
+      reject(message);
+      platformSourcesValid = false;
+    }
+
+    return source;
+  }
+
+  expectSourcePattern(
+    'components/monetization/AdBanner.native.tsx',
+    /getPlatformAdUnitId\(placement,\s*Platform\.OS\)[\s\S]*shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,?\s*\)/,
+    'AdBanner.native must pass Platform.OS to native unit lookup and shouldShowAd',
+  );
+  expectSourcePattern(
+    'components/monetization/LaunchPopupAd.native.tsx',
+    /(?=[\s\S]*getPlatformAdUnitId\('app_open_launch',\s*Platform\.OS\))(?=[\s\S]*platform:\s*Platform\.OS)/,
+    'LaunchPopupAd.native must pass Platform.OS to app-open unit lookup and launch visibility',
+  );
+  expectSourcePattern(
+    'components/monetization/NativeAdCard.tsx',
+    /shouldShowAd\('results_native',\s*resolvedEntitlements,\s*undefined,\s*Platform\.OS\)/,
+    'NativeAdCard must pass Platform.OS to results_native shouldShowAd',
+  );
+  expectSourcePattern(
+    'lib/monetization/useMockExamAccess.ts',
+    /(?=[\s\S]*buildAccessDecision\(\{[\s\S]*platform:\s*Platform\.OS[\s\S]*\}\))(?=[\s\S]*getMockExamAccessDecision\(\{[\s\S]*platform,)/,
+    'useMockExamAccess must pass Platform.OS into rewarded mock-exam access decisions',
+  );
+
+  if (
+    !/shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/.test(
+      adBannerSource,
+    )
+  ) {
+    reject('AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd');
+    platformSourcesValid = false;
+  }
+  if (adBannerSource.includes('Platform.OS')) {
+    reject('web AdBanner must not pin ad availability to a native platform');
+    platformSourcesValid = false;
+  }
+
+  if (platformSourcesValid) adPlacementPlatformParityValidated = true;
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -7011,8 +7074,16 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
       );
-      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
-        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+      if (
+        !/shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*undefined\s*,\s*Platform\.OS\s*\)/.test(
+          nativeAdCardSource,
+        )
+      ) {
+        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd with Platform.OS`);
+        routeIsValid = false;
+      }
+      if (nativeAdCardSource.includes('react-native-google-mobile-ads')) {
+        reject('NativeAdCard web fallback must not import native-only ad SDK APIs');
         routeIsValid = false;
       }
     }
@@ -7047,34 +7118,6 @@ function validateAdPlacementRouteParity() {
     }
 
     if (routeIsValid) noAdRoutesValidated += 1;
-  }
-
-  try {
-    const nativeAdBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-      'utf8',
-    );
-    if (
-      !/shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,\s*\)/.test(
-        nativeAdBannerSource,
-      )
-    ) {
-      reject('AdBanner.native must gate native banner placements through Platform.OS');
-    }
-  } catch (error) {
-    reject(`components/monetization/AdBanner.native.tsx could not be read: ${error.message}`);
-  }
-
-  try {
-    const useMockExamAccessSource = fs.readFileSync(
-      path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
-      'utf8',
-    );
-    if (!useMockExamAccessSource.includes('platform: Platform.OS')) {
-      reject('useMockExamAccess must pass Platform.OS into rewarded mock-exam ad decisions');
-    }
-  } catch (error) {
-    reject(`lib/monetization/useMockExamAccess.ts could not be read: ${error.message}`);
   }
 
   if (
@@ -14314,6 +14357,7 @@ console.log(
       adPlacementRoutesValidated,
       noAdRoutesValidated,
       adPlacementRouteParityValidated,
+      adPlacementPlatformParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
       removeAdsEntitlementHookCasesValidated,

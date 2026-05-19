@@ -31,6 +31,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
+  assert.equal(summary.adPlacementPlatformParityValidated, true);
   assert.match(
     homeSource,
     /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
@@ -38,7 +39,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
-  assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(
+    nativeAdCardSource,
+    /shouldShowAd\('results_native', resolvedEntitlements, undefined, Platform\.OS\)/,
+  );
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
@@ -182,7 +186,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/monetization/NativeAdCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(/,\\s*WEB_AD_FALLBACK_CONSENT_DECISION/g, '');
+      .replace(/,\\s*undefined,\\s*Platform\\.OS/g, '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -195,7 +199,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard must gate results_native through shouldShowAd with WEB_AD_FALLBACK_CONSENT_DECISION/,
+    /NativeAdCard must gate results_native through shouldShowAd with Platform\.OS|NativeAdCard must pass Platform\.OS/,
   );
 });
 
@@ -212,10 +216,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/monetization/AdBanner.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        "!shouldShowAd('results_native', resolvedEntitlements, undefined, Platform.OS)",
-        "!entitlementsReady",
-      );
+      .replace(/,\s*WEB_AD_FALLBACK_CONSENT_DECISION/g, '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -230,4 +231,52 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd/,
   );
+});
+
+test('ad placement route parity rejects dropping native platform availability', () => {
+  const cases = [
+    {
+      file: '/components/monetization/LaunchPopupAd.native.tsx',
+      message: /LaunchPopupAd\.native must pass Platform\.OS/,
+    },
+    {
+      file: '/components/monetization/AdBanner.native.tsx',
+      message: /AdBanner\.native must pass Platform\.OS/,
+    },
+    {
+      file: '/components/monetization/NativeAdCard.tsx',
+      message: /NativeAdCard must pass Platform\.OS/,
+    },
+    {
+      file: '/lib/monetization/useMockExamAccess.ts',
+      message: /useMockExamAccess must pass Platform\.OS/,
+    },
+  ];
+
+  for (const driftCase of cases) {
+    const result = spawnSync(
+      process.execPath,
+      [
+        '-e',
+        `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('${driftCase.file}')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(/Platform\\.OS/g, "'web'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+      ],
+      { cwd: repoRoot, encoding: 'utf8' },
+    );
+
+    assert.notEqual(result.status, 0, `${driftCase.file} drift should fail`);
+    assert.match(`${result.stdout}\n${result.stderr}`, driftCase.message);
+  }
 });

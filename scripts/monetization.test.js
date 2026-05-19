@@ -6,7 +6,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName, moduleCache = new Map()) {
+function loadTs(relativePath, exportName, moduleCache = new Map(), mocks = {}) {
   const filePath = path.join(repoRoot, relativePath);
   if (moduleCache.has(filePath)) {
     const cached = moduleCache.get(filePath);
@@ -35,7 +35,7 @@ function loadTs(relativePath, exportName, moduleCache = new Map()) {
       const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
 
       if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, mocks);
       }
     }
 
@@ -70,6 +70,41 @@ function withEnv(overrides, fn) {
       }
     }
   }
+}
+
+const REAL_AD_UNIT_ENV_KEYS = {
+  app_open_launch: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID',
+  },
+  chapter_list_banner: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID',
+  },
+  home_banner: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID',
+  },
+  quiz_completed_interstitial: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
+  },
+  results_native: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID',
+  },
+  rewarded_extra_exam: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
+  },
+};
+
+function clearRealAdUnitEnv() {
+  return Object.values(REAL_AD_UNIT_ENV_KEYS).reduce((overrides, envKeys) => {
+    overrides[envKeys.android] = undefined;
+    overrides[envKeys.ios] = undefined;
+    return overrides;
+  }, {});
 }
 
 test('ad rendering is enabled by default with test units and env-driven real switch', () => {
@@ -107,6 +142,50 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       assert.match(getPlatformAdUnitId('rewarded_extra_exam', 'ios'), /1712485313$/);
     },
   );
+});
+
+test('real ad availability is platform-specific for every placement', () => {
+  const freeEntitlements = { adsDisabled: false };
+  const consentDecision = { adServingAllowed: true };
+
+  for (const [placement, envKeys] of Object.entries(REAL_AD_UNIT_ENV_KEYS)) {
+    for (const activePlatform of ['android', 'ios']) {
+      const inactivePlatform = activePlatform === 'android' ? 'ios' : 'android';
+      const activeUnitId = `ca-app-pub-1234567890123456/${activePlatform === 'android' ? '1' : '2'}${placement.length
+        .toString()
+        .padStart(9, '0')}`;
+
+      withEnv(
+        {
+          ...clearRealAdUnitEnv(),
+          [envKeys[activePlatform]]: activeUnitId,
+          EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+          EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+        },
+        () => {
+          const { getPlatformAdUnitId, isAdPlacementAvailableOnPlatform, shouldShowAd } = loadTs(
+            'lib/monetization/ads.ts',
+            undefined,
+            new Map(),
+          );
+
+          assert.equal(getPlatformAdUnitId(placement, activePlatform), activeUnitId);
+          assert.equal(getPlatformAdUnitId(placement, inactivePlatform), undefined);
+          assert.equal(isAdPlacementAvailableOnPlatform(placement, activePlatform), true);
+          assert.equal(isAdPlacementAvailableOnPlatform(placement, inactivePlatform), false);
+          assert.equal(
+            shouldShowAd(placement, freeEntitlements, consentDecision, activePlatform),
+            true,
+          );
+          assert.equal(
+            shouldShowAd(placement, freeEntitlements, consentDecision, inactivePlatform),
+            false,
+          );
+          assert.equal(shouldShowAd(placement, freeEntitlements, consentDecision, 'web'), true);
+        },
+      );
+    }
+  }
 });
 
 test('every ad placement has a configured unit and real-unit env slot', () => {
@@ -341,6 +420,53 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
           reason: 'rewarded_ad_available',
           rewardedExtraExamCredits: 0,
         },
+      );
+    },
+  );
+});
+
+test('rewarded extra exam access respects native platform ad unit availability', () => {
+  withEnv(
+    {
+      ...clearRealAdUnitEnv(),
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
+        'ca-app-pub-1234567890123456/3333333333',
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const { getMockExamAccessDecision } = loadTs(
+        'lib/monetization/rewardedExam.ts',
+        undefined,
+        new Map(),
+      );
+      const state = {
+        completedMockExamsToday: 1,
+        consentDecision: { adServingAllowed: true },
+        entitlements: { adsDisabled: false, unlimitedMockExams: false },
+        freeMockExamLimit: 1,
+      };
+
+      assert.equal(
+        getMockExamAccessDecision({
+          ...state,
+          platform: 'android',
+        }).reason,
+        'rewarded_ad_available',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...state,
+          platform: 'ios',
+        }).reason,
+        'ads_unavailable',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...state,
+          platform: 'web',
+        }).reason,
+        'rewarded_ad_available',
       );
     },
   );
@@ -672,7 +798,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     createMockPurchaseProvider,
     createWebPurchaseStorage,
     getPurchaseEntitlements,
-    getRemoveAdsStoreProductId,
     restoreRemoveAdsPurchase,
   } = purchaseExports;
   const purchasesSource = fs.readFileSync(

@@ -37,11 +37,13 @@ function buildAccessDecision({
   consentDecision,
   entitlements,
   freeMockExamLimit,
+  platform,
   snapshot,
 }: {
   consentDecision?: Pick<AdConsentDecision, 'adServingAllowed'>;
   entitlements: PremiumEntitlements;
   freeMockExamLimit: number;
+  platform: string;
   snapshot: StoredMockExamAccessSnapshot;
 }): MockExamAccessDecision {
   return getMockExamAccessDecision({
@@ -49,6 +51,7 @@ function buildAccessDecision({
     consentDecision,
     entitlements,
     freeMockExamLimit,
+    platform,
     rewardedExtraExamCredits: snapshot.rewardedExtraExamCredits,
   });
 }
@@ -110,6 +113,7 @@ export function useMockExamAccess({
         consentDecision,
         entitlements,
         freeMockExamLimit,
+        platform: Platform.OS,
         snapshot,
       }),
     [

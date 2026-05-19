@@ -9,6 +9,8 @@ type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
+export const WEB_AD_FALLBACK_CONSENT_DECISION: AdConsentGate = { adServingAllowed: true };
+
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',
@@ -148,29 +150,41 @@ export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
   return getConfiguredAdUnits().find((unit) => unit.placement === placement);
 }
 
+export function isAdPlacementAvailableOnPlatform(
+  placement: AdPlacement,
+  platform?: AdRuntimePlatform,
+): boolean {
+  return isAdUnitAvailableForPlatform(getAdUnit(placement), platform);
+}
+
 export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   consentDecision?: AdConsentGate,
+  platform?: AdRuntimePlatform,
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
-  const unit = getAdUnit(placement);
-  return Boolean(unit?.enabled);
+  return isAdPlacementAvailableOnPlatform(placement, platform);
 }
 
 export function shouldShowLaunchPopupAd({
   alreadyShownThisLaunch,
   consentDecision,
   entitlements,
+  platform,
 }: {
   alreadyShownThisLaunch: boolean;
   consentDecision?: AdConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
+  platform?: AdRuntimePlatform;
 }): boolean {
-  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
+  return (
+    !alreadyShownThisLaunch &&
+    shouldShowAd('app_open_launch', entitlements, consentDecision, platform)
+  );
 }
 
 function pathMatchesRoute(pathname: string, route: string): boolean {
@@ -195,6 +209,7 @@ export const adsConfig = {
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
+  webFallbackConsentDecision: WEB_AD_FALLBACK_CONSENT_DECISION,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
   units: getConfiguredAdUnits(),
