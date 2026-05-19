@@ -137,12 +137,8 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
-          onBlur: () => {
-            setIsFocused(false);
-            setIsPressed(false);
-          },
+          onBlur: () => setIsFocused(false),
           onFocus: () => setIsFocused(true),
-          onMouseDown: () => setIsPressed(true),
           onMouseEnter: () => setIsHovered(true),
           onMouseLeave: () => {
             setIsHovered(false);
