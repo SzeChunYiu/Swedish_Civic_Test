@@ -375,6 +375,60 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
   );
 });
 
+test('mock exam access read failures fail closed for free users', () => {
+  const { getMockExamAccessDecision } = loadTs('lib/monetization/rewardedExam.ts');
+  const accessHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const freeEntitlements = { adsDisabled: false, unlimitedMockExams: false };
+
+  assert.deepEqual(
+    getMockExamAccessDecision({
+      accessReadFailed: true,
+      completedMockExamsToday: 0,
+      entitlements: freeEntitlements,
+      freeMockExamLimit: 1,
+      rewardedExtraExamCredits: 1,
+    }),
+    {
+      canOfferRewardedAd: false,
+      canStartExam: false,
+      freeExamsRemaining: 0,
+      placement: 'rewarded_extra_exam',
+      reason: 'access_read_failed',
+      rewardedExtraExamCredits: 1,
+    },
+  );
+  assert.deepEqual(
+    getMockExamAccessDecision({
+      accessReadFailed: true,
+      completedMockExamsToday: 0,
+      entitlements: { adsDisabled: true, unlimitedMockExams: true },
+      freeMockExamLimit: 1,
+    }),
+    {
+      canOfferRewardedAd: false,
+      canStartExam: true,
+      freeExamsRemaining: 0,
+      placement: 'rewarded_extra_exam',
+      reason: 'premium_unlimited_mock_exams',
+      rewardedExtraExamCredits: 0,
+    },
+  );
+  assert.match(
+    accessHookSource,
+    /const \[accessReadFailed, setAccessReadFailed\] = useState\(false\);/,
+  );
+  assert.match(accessHookSource, /accessReadFailed,/);
+  assert.match(accessHookSource, /setAccessReadFailed\(true\);[\s\S]*setAccessReady\(true\);/);
+  assert.doesNotMatch(accessHookSource, /if \(isMounted\) setAccessReady\(true\);/);
+  assert.match(examSource, /access_read_failed:/);
+  assert.match(examSource, /Det gick inte att läsa lokal åtkomst för övningsprov/);
+  assert.match(examSource, /Mock exam access could not be checked on this device/);
+});
+
 test('mock exam access persistence stores daily completions and rewarded credits', async () => {
   const rewardedExamSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),

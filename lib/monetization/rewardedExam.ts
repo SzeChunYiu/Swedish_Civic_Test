@@ -8,6 +8,7 @@ export const MOCK_EXAM_ACCESS_STORAGE_KEY = 'monetization.mockExamAccess.v1';
 export const FREE_MOCK_EXAM_DAILY_LIMIT = 1;
 
 export type MockExamAccessReason =
+  | 'access_read_failed'
   | 'free_exam_available'
   | 'premium_unlimited_mock_exams'
   | 'rewarded_exam_credit'
@@ -17,6 +18,7 @@ export type MockExamAccessReason =
   | 'ads_unavailable';
 
 export type MockExamAccessState = {
+  accessReadFailed?: boolean;
   completedMockExamsToday: number;
   consentDecision?: Pick<AdConsentDecision, 'adServingAllowed'>;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled' | 'unlimitedMockExams'>;
@@ -356,6 +358,7 @@ export function consumeRewardedExtraExamCredit(currentCredits = 0): number {
 }
 
 export function getMockExamAccessDecision({
+  accessReadFailed,
   completedMockExamsToday,
   consentDecision,
   entitlements,
@@ -367,7 +370,7 @@ export function getMockExamAccessDecision({
   const freeExamsRemaining = Math.max(0, freeLimit - completedExams);
   const credits = toNonNegativeInteger(rewardedExtraExamCredits);
   const baseDecision = {
-    freeExamsRemaining,
+    freeExamsRemaining: accessReadFailed ? 0 : freeExamsRemaining,
     placement: REWARDED_EXTRA_EXAM_PLACEMENT,
     rewardedExtraExamCredits: credits,
   };
@@ -378,6 +381,15 @@ export function getMockExamAccessDecision({
       canOfferRewardedAd: false,
       canStartExam: true,
       reason: 'premium_unlimited_mock_exams',
+    };
+  }
+
+  if (accessReadFailed) {
+    return {
+      ...baseDecision,
+      canOfferRewardedAd: false,
+      canStartExam: false,
+      reason: 'access_read_failed',
     };
   }
 
