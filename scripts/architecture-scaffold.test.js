@@ -514,24 +514,33 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
 test('Expo Router tab scaffold exposes the architecture tab routes', () => {
   const tabLayout = readText('app/(tabs)/_layout.tsx');
 
-  assert.match(tabLayout, /import\s+\{\s*Tabs\s*\}\s+from ['"]expo-router['"]/);
+  assert.match(tabLayout, /import\s+\{\s*Tabs,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
   assert.deepEqual(extractTabScreenNames(tabLayout).sort(), [...architectureTabRouteNames].sort());
 });
 
 test('Expo Router tab scaffold titles follow the persisted settings language', () => {
   const tabLayout = readText('app/(tabs)/_layout.tsx');
 
+  assert.match(tabLayout, /import \{ Tabs, usePathname \} from 'expo-router';/);
   assert.match(tabLayout, /useSettingsStore, type AppLanguage/);
   assert.match(
     tabLayout,
     /type TabRouteName = 'home' \| 'learn' \| 'practice' \| 'exam' \| 'mistakes' \| 'profile';/,
   );
   assert.match(tabLayout, /type TabTitleCopy = Record<TabRouteName, string>;/);
+  assert.match(tabLayout, /type TabIconMap = Record<TabRouteName, TabBarIconName>;/);
+  assert.match(tabLayout, /type TabPathMap = Record<TabRouteName, string>;/);
+  assert.match(tabLayout, /const tabIconMap: TabIconMap = \{/);
+  assert.match(tabLayout, /const tabPathMap: TabPathMap = \{/);
+  assert.match(tabLayout, /function isActiveTab\(routeName: TabRouteName, pathname: string\)/);
+  assert.match(tabLayout, /function TabRouteIcon/);
   assert.match(tabLayout, /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/);
-  assert.match(tabLayout, /const hiddenTabIcon = \(\) => null;/);
-  assert.match(tabLayout, /function getTabOptions\(title: string\)/);
+  assert.doesNotMatch(tabLayout, /hiddenTabIcon/);
+  assert.match(tabLayout, /function getTabOptions\(routeName: TabRouteName, title: string\)/);
   assert.match(tabLayout, /tabBarAccessibilityLabel: title/);
-  assert.match(tabLayout, /tabBarIcon: hiddenTabIcon/);
+  assert.match(tabLayout, /<TabRouteIcon routeName=\{routeName\} size=\{size\} \/>/);
+  assert.match(tabLayout, /tabBarActiveTintColor: colors\.accent/);
+  assert.match(tabLayout, /tabBarInactiveTintColor: colors\.textSecondary/);
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
@@ -551,7 +560,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
     assert.match(
       tabLayout,
       new RegExp(
-        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{getTabOptions\\(copy\\.${routeName}\\)\\}`,
+        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{getTabOptions\\('${routeName}', copy\\.${routeName}\\)\\}`,
       ),
     );
   }
